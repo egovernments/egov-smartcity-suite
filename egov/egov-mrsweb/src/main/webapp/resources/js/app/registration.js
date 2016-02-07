@@ -244,7 +244,9 @@ function performSelectedAction(dropdown) {
 	} else if (optionSelected === 'correction') {
 		url = '/mrs/registration/update/' + registrationId;
 	}
-    window.open(url);
+    
+    if (optionSelected != 'select')
+    	window.open(url);
 }
 
 function validateChecklists() {

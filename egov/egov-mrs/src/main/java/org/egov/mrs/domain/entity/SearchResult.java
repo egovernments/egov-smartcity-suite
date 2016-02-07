@@ -59,7 +59,7 @@ public class SearchResult {
     private Double feePaid;
     private boolean feeCollectionPending;
     private String applicationType;
-    private String remrks;
+    private String remarks;
 
     public Long getRegistrationId() {
         return registrationId;
@@ -149,11 +149,11 @@ public class SearchResult {
         this.applicationType = applicationType;
     }
 
-    public String getRemrks() {
-        return remrks;
+    public String getRemarks() {
+        return remarks;
     }
 
-    public void setRemrks(final String remrks) {
-        this.remrks = remrks;
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
     }
 }

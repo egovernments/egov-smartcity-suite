@@ -205,7 +205,7 @@
 					<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-6">
-					<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="256" placeholder="" autocomplete="off" required="required"/>
+					<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width is_valid_alphaNumWithsplchar" maxlength="256" placeholder="" autocomplete="off" required="required"/>
                     <form:errors path="${applicant}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 				</div>
 			</div>
@@ -218,7 +218,7 @@
 					<spring:message code="lbl.office.address"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-6">
-					<form:textarea path="${applicant}.contactInfo.officeAddress" id="txt-officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="256" placeholder="" autocomplete="off" required="required"/>
+					<form:textarea path="${applicant}.contactInfo.officeAddress" id="txt-officeAddress" type="text" class="form-control low-width is_valid_alphaNumWithsplchar" maxlength="256" placeholder="" autocomplete="off" required="required"/>
                     <form:errors path="${applicant}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 				</div>
 			</div>

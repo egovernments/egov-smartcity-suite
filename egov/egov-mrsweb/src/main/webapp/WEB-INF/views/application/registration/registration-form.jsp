@@ -176,5 +176,6 @@
 	</div>
 </div>
 
+<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/registration.js'/> "></script>

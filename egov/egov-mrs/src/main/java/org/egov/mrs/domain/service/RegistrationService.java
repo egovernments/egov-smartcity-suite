@@ -388,7 +388,7 @@ public class RegistrationService {
         //return registrationRepository.findAll();
     }
 
-    public List<Registration> searchRegistration(final SearchModel searchModel) {
+    public List<Registration> searchRegistration(final SearchModel searchModel, final boolean isForReport) {
         
         final Criteria criteria = getCurrentSession().createCriteria(Registration.class, "registration");
 
@@ -403,6 +403,16 @@ public class RegistrationService {
 
         if (StringUtils.isNotBlank(searchModel.getWifeName()))
             criteria.createCriteria("wife").add(Restrictions.ilike("name.firstName", searchModel.getWifeName()));
+        
+        if (isForReport) {
+            if (searchModel.getFromDate() != null && searchModel.getToDate() != null) 
+                criteria.add(Restrictions.between("createdDate", searchModel.getFromDate(), searchModel.getToDate()));
+                
+            ApplicationStatus status = searchModel.isRegistrationApproved() ? ApplicationStatus.Approved : ApplicationStatus.Rejected;
+            criteria.add(Restrictions.eq("status", status));
+        }
+        
+        
         
         /*QRegistration registration = QRegistration.registration;
         BooleanExpression withRegistrationNo = null;
@@ -431,8 +441,8 @@ public class RegistrationService {
             withWifeName = registration.wife().name().firstName.equalsIgnoreCase(searchModel.getWifeName());
             expression.and(withWifeName);
         }*/
-        
-         return criteria.list(); //registrationRepository.findAll(expression);
+            //registrationRepository.findAll(expression);
+         return criteria.list();
     }
 
     private FileStoreMapper addToFileStore(final MultipartFile file) {

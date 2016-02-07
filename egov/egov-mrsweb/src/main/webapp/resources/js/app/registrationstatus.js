@@ -56,29 +56,51 @@ $(document).ready( function () {
         }
     });
 	
+	$('#cb-registrationapproved').click( function () {
+		$('#cb-registrationrejected').prop('checked', false);
+	})
+	
+	$('#cb-registrationrejected').click( function () {
+		$('#cb-registrationapproved').prop('checked', false);
+	})
+	
 })
 
-var regstatus_table = null;
+var regstatus_table = $('#registrationstatus_table').dataTable({
+							"sPaginationType": "bootstrap",
+							"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+							"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+						});
 $('#btn_registrationstatus_search').click( function () {
-
-	regstatus_table = $('#registrationstatus_table').dataTable({
-		"sPaginationType": "bootstrap",
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
-		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-    });
+	
+	var date = $('#txt-fromdate').val().split('/');
+	var fromDate = date[2] + '-' + date[1] + '-' + date[0];
+	date = $('#txt-todate').val().split('/');
+	var toDate = date[2] + '-' + date[1] + '-' + date[0];
 	
 	$.ajax({
 		type : "POST",
 		contentType: "application/json",
 		accept: "application/json",
 		url : "/mrs/report/registrationstatus",
-		data : '{ "fromDate": "'+$('#txt-fromdate').val()+'", "toDate": "'+$('#txt-todate').val()+'", "registrationApproved": "'+$('#cb-registrationapproved').prop("checked")+'", "registrationRejected": "'+$('#cb-registrationrejected').val()+'" }',
+		data : '{ "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "registrationApproved": "'+$('#cb-registrationapproved').prop("checked")+'", "registrationRejected": "'+$('#cb-registrationrejected').prop("checked")+'" }',
 		dataType : "json",
 		success : function (response, textStatus, xhr) {
 			var searchResults = response.data;
 			console.log('searchResults = ' + searchResults);
+			regstatus_table.fnClearTable();
 			$.each(searchResults, function (index, result) {				
-				regstatus_table.fnAddData([(index + 1), result.husbandName, result.wifeName, result.dateOfRegistration, result.dateOfMarriage, result.applicationType, result.feePaid, result.status, result.remarks]);
+				regstatus_table.fnAddData([
+				                           (index + 1), 
+				                           result.husbandName, 
+				                           result.wifeName, 
+				                           result.registrationDate, 
+				                           result.dateOfMarriage, 
+				                           result.applicationType, 
+				                           result.feePaid, 
+				                           result.status, 
+				                           result.remarks
+				 ]);
             });
 			$('#regstatustable_container').show();
 			$('#registrationstatus_table_length').remove();				

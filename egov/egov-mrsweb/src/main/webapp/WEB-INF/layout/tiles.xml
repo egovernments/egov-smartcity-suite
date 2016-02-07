@@ -102,6 +102,6 @@
     
     <definition name="report-registrationstatus" extends="base_layout">
         <put-attribute name="page-title" value="title.registration" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/application/registration/report-registrationstatus.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/report-registrationstatus.jsp"/>
     </definition>
 </tiles-definitions>
