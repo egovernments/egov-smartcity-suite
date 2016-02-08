@@ -525,7 +525,7 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 							<%@include file="contingentBill-form.jsp"%>
 						</table>
 					</div>
-					<div class="tabbertab" id="checkList">
+				<!-- 	<div class="tabbertab" id="checkList">
 						<h2>Check List</h2>
 						<div class="yui-skin-sam" align="center">
 							<div id="checkListTable"></div>
@@ -537,9 +537,10 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 	</script>
 
 
-						<s:hidden name="actionName" id="actionName" />
+						
 
-					</div>
+					</div> -->
+					<s:hidden name="actionName" id="actionName" />
 					<div class="tabbertab" id="approval">
 						<h2>Approval Information</h2>
 						<font style='color: red;'>
