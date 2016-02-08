@@ -39,7 +39,6 @@
  */
 package org.egov.tl.web.actions.newtradelicense;
 
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
@@ -57,19 +56,16 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDocumentType;
-import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
-import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
@@ -177,10 +173,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
-        tradeLicense = this.tradeLicenseService.getLicenseById(tradeLicense.getId());
-        License license = tradeLicense;
-        if (!license.getState().getValue().isEmpty()) {
-            license.transition(true).withStateValue("");
+        this.prepareNewForm();
+        if (tradeLicense.getState() != null && !tradeLicense.getState().getValue().isEmpty()) {
+            tradeLicense.transition(true).withStateValue("");
         }
         return super.beforeRenew();
     }

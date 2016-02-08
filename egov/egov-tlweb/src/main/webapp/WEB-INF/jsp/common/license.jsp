@@ -127,8 +127,7 @@ function getUom(){
     </div>
 </div>
 <s:if test="%{feeAmount != 0}">
-csff
-<div class="form-group">
+	<div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='Fee Amount' /></label>
     <div class="col-sm-3 add-margin">
          <s:textarea name="feeAmount" id="feeAmount" value="%{feeAmount}" class="form-control"/>

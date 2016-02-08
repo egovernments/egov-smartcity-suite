@@ -121,7 +121,7 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
 
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
-        if (null == getModel() || null == getModel().getId() || getModel().getCurrentState().getValue().endsWith("NEW")) {
+        if (null == getModel() || null == getModel().getId() || getModel().getCurrentState() == null || getModel().getCurrentState().getValue().endsWith("NEW")) {
             validActions = Arrays.asList(FORWARD);
         } else {
             if (getModel().getCurrentState() != null) {

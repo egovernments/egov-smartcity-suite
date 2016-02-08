@@ -129,9 +129,7 @@ public class SearchTradeAction extends BaseFormAction {
         super.prepare();
         addDropdownData("categoryList", licenseCategoryService.findAll());
         addDropdownData("subCategoryList", Collections.emptyList());
-        final Long userId = securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            setRoleName(licenseUtils.getRolesForUserId(userId));
+        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
     }
 
     @Action(value="/search/searchTrade-newForm")
@@ -202,20 +200,20 @@ public class SearchTradeAction extends BaseFormAction {
                 else if(license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Print Certificate");
             }
-            else if(license.isLegacy() && license.isPaid() != true)
+            else if(license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");
             
-            if(roleName.equalsIgnoreCase(Constants.TL_CREATOR_ROLENAME)){
+            if(roleName.contains(Constants.TL_CREATOR_ROLENAME)){
                 if(license.getOldLicenseNumber()!=null && !license.getOldLicenseNumber().isEmpty()){
                     licenseActions.add("Modify License");
                 }
             }
-            if(roleName.equalsIgnoreCase(Constants.TL_CREATOR_ROLENAME) || roleName.equalsIgnoreCase(Constants.TL_APPROVER_ROLENAME)){
+            if(roleName.contains(Constants.TL_CREATOR_ROLENAME) || roleName.contains(Constants.TL_APPROVER_ROLENAME)){
                 if(license.getStatus()!=null && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)){
                     licenseActions.add("Renew License");
                 }
             } 
-            if(roleName.equalsIgnoreCase(Constants.TL_APPROVER_ROLENAME)){
+            if(roleName.contains(Constants.TL_APPROVER_ROLENAME)){
                 if(checkForRenewalNotice(license.getDateOfExpiry())){
                     licenseActions.add("Renewal Notice");
                 }

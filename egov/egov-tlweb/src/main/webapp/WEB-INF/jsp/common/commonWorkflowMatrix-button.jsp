@@ -97,7 +97,7 @@
 	<s:hidden id="workFlowAction" name="workFlowAction"/>
 	<table>
 		<tr>
-			<td><s:iterator value="%{getValidActions()}" var="name">
+			<td><s:iterator value="validActions" var="name">
 					<s:if test="%{name!=''}">
 					<td>
 						<s:submit type="submit" cssClass="buttonsubmit custom-button" value="%{name}"

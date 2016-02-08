@@ -39,7 +39,6 @@
  */
 package org.egov.tl.utils;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -73,8 +72,6 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
@@ -96,6 +93,7 @@ import org.hibernate.SessionFactory;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
@@ -646,21 +644,6 @@ public class LicenseUtils {
 			}
 		}
 		return violationReceiptList;
-	}
-
-	public String getRolesForUserId(final Long userId) {
-		LOGGER.debug("Entered into getRolesForUserId method");
-		LOGGER.debug("User id : " + userId);
-		String roleName;
-		final List<String> roleNameList = new ArrayList<String>();
-		final User user = userService.getUserById(userId);
-		for (final Role role : user.getRoles()) {
-			roleName = role.getName() != null ? role.getName() : "";
-			roleNameList.add(roleName.toUpperCase());
-		}
-		LOGGER.debug("Exit from method getRolesForUserId with return value : "
-				+ roleNameList.toString().toUpperCase());
-		return roleNameList.toString().toUpperCase();
 	}
 
 	/*

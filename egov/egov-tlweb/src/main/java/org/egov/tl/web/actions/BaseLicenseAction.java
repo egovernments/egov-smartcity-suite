@@ -451,9 +451,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public String showForApproval() {
         getSession().put("model.id", license().getId());
         String result = "approve";
-        final Long userId = securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            setRoleName(licenseUtils.getRolesForUserId(userId));
+        setRoleName(securityUtils.getCurrentUser().getRoles().toString());
         if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
             if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
                 result = "tl_generateCertificate";
@@ -571,6 +569,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         return total;
     }
 
+    public Map<String, Map<String,BigDecimal>> getOutstandingFee(){
+        return this.licenseService().getOutstandingFee(this.license());
+    }
+    
     public boolean isCitizen() {
         return securityUtils.currentUserType().equals(UserType.CITIZEN);
     }

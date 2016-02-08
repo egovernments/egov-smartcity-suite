@@ -56,7 +56,6 @@ import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseStatus;
@@ -233,9 +232,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     @SkipValidation
     @ValidationErrorPageExt(action = "approve", makeCall = true, toMethod = "setupWorkflowDetails")
     public String approve() {
-        Long userId = this.securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            this.setRoleName(this.licenseUtils.getRolesForUserId(userId));
+        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
         return super.approve();
     }
 
@@ -244,9 +241,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     @ValidationErrorPageExt(
             action = "approveRenew", makeCall = true, toMethod = "setupWorkflowDetails")
     public String approveRenew() {
-        Long userId = this.securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            this.setRoleName(this.licenseUtils.getRolesForUserId(userId));
+        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
         this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return super.approveRenew();
     }
@@ -270,10 +265,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
         this.requestObj = arg0;
     }
     
-    public Map<String, Map<String,BigDecimal>> getOutstandingFee(){
-        return this.tradeLicenseService.getOutstandingFee(this.license());
-    }
-
     public String getApplicationNo() {
         return applicationNo;
     }

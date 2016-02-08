@@ -132,9 +132,7 @@ public class SearchTradeAction extends BaseFormAction {
         addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
         addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, licenseUtils.getAllTradeNames("TradeLicense"));
         addDropdownData(Constants.DROPDOWN_NOTICE_LIST, noticelist);
-        final Long userId = securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            setRoleName(licenseUtils.getRolesForUserId(userId));
+        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
     }
 
     @SkipValidation
