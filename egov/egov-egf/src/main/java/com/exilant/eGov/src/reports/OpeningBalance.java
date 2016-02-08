@@ -107,12 +107,18 @@ public class OpeningBalance
             fundCondition = " and b.id=? ";
         if (!deptId.equalsIgnoreCase(""))
             deptCondition = " and a.DEPARTMENTID=? ";
-        query = "SELECT b.name AS \"fund\",c.glcode AS \"accountcode\",c.name AS \"accountname\",a.narration as \"narration\",SUM(a.openingdebitbalance) AS \"debit\","
+        query = "SELECT b.name AS \"fund\",c.glcode AS \"accountcode\",c.name AS \"accountname\",'' as \"narration\",SUM(a.openingdebitbalance) AS \"debit\","
                 + " SUM(a.openingcreditbalance)AS \"credit\",dept.code AS \"deptcode\",fn.code AS \"functioncode\"  FROM TRANSACTIONSUMMARY a,FUND  b,CHARTOFACCOUNTS c, eg_department dept,function fn "
-                + " WHERE a.departmentid= dept.id and fn.id = a.functionid and  a.financialyearid=? "
+                + " WHERE c.id in (select glcodeid from chartofaccountdetail  ) and a.departmentid= dept.id and fn.id = a.functionid and  a.financialyearid=? "
                 + fundCondition
                 + deptCondition
-                + " AND a.fundid=b.id AND a.glcodeid=c.id AND (a.openingdebitbalance>0 OR a.openingcreditbalance>0) GROUP BY b.name, c.glcode,c.name,dept.code,fn.code, a.narration ORDER BY  b.name,c.glcode";
+                + " AND a.fundid=b.id AND a.glcodeid=c.id AND (a.openingdebitbalance>0 OR a.openingcreditbalance>0) GROUP BY b.name, c.glcode,c.name,dept.code,fn.code union";
+        query = query + " SELECT b.name AS \"fund\",c.glcode AS \"accountcode\",c.name AS \"accountname\",a.narration as \"narration\",SUM(a.openingdebitbalance) AS \"debit\","
+                + " SUM(a.openingcreditbalance)AS \"credit\",dept.code AS \"deptcode\",fn.code AS \"functioncode\"  FROM TRANSACTIONSUMMARY a,FUND  b,CHARTOFACCOUNTS c, eg_department dept,function fn "
+                + " WHERE c.id not in (select glcodeid from chartofaccountdetail  ) and a.departmentid= dept.id and fn.id = a.functionid and  a.financialyearid=? "
+                + fundCondition
+                + deptCondition
+                + " AND a.fundid=b.id AND a.glcodeid=c.id AND (a.openingdebitbalance>0 OR a.openingcreditbalance>0) GROUP BY b.name, c.glcode,c.name,dept.code,fn.code, a.narration ";
        if (LOGGER.isDebugEnabled())
             LOGGER.debug("Opening balance Query ...." + query);
 
@@ -120,6 +126,11 @@ public class OpeningBalance
             OpeningBalanceBean ob = null;
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
             int i = 0;
+            pstmt.setLong(i++, Long.valueOf(finYear));
+            if (!fundId.equalsIgnoreCase(""))
+                pstmt.setLong(i++, Long.valueOf(fundId));
+            if (!deptId.equalsIgnoreCase(""))
+                pstmt.setLong(i++,Long.valueOf( deptId));
             pstmt.setLong(i++, Long.valueOf(finYear));
             if (!fundId.equalsIgnoreCase(""))
                 pstmt.setLong(i++, Long.valueOf(fundId));
