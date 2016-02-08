@@ -2078,8 +2078,8 @@ public class PropertyTaxUtil {
         // To retreive Arrear Demand and Collection Details
         arrear_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
                 + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment "
-                + "and im.id!=(select id from eg_installment_master where id_module=(select id from eg_module where name='Property Tax') "
-                + "and current_timestamp between start_date and end_date) ";
+                + "and im.start_date not between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
+                + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 
         arrear_innerCommonQry1 = "sum(GeneralTax) as arrearGT, sum(LibCessTax) as arrearLC, sum(EduCessTax) as arrearEC,"
                 + "sum(UnauthPenaltyTax) as arrearUPT,sum(PenaltyFinesTax) as arrearPFT,sum(SewTax) as arrearST,"
@@ -2093,8 +2093,9 @@ public class PropertyTaxUtil {
 
         // To retreive Current Demand and Collection Details
         current_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
-                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and now() between im.start_date and im.end_date "
-                + "and im.id_module = (select id from eg_module where name='Property Tax') ";
+                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment "
+                + "and im.start_date between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
+                + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 
         current_innerCommonQry1 = "0 as arrearGT, 0 as arrearLC, 0 as arrearEC,0 as arrearUPT,0 as arrearPFT,0 as arrearST,"
                 + "0 as arrearVLT,0 as arrearPSCT,0 as arrearGTColl,0 as arrearLCColl,0 as arrearECColl,0 as arrearUPTColl,"
@@ -2427,7 +2428,7 @@ public class PropertyTaxUtil {
      */
     public boolean checkIsNagarPanchayat() {
         HttpServletRequest request = ServletActionContext.getRequest();
-        String grade=(request.getSession().getAttribute("cityGrade")!=null?
+    	String grade=(request.getSession().getAttribute("cityGrade")!=null?
                 request.getSession().getAttribute("cityGrade").toString():null);
         return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
     }
@@ -2448,19 +2449,19 @@ public class PropertyTaxUtil {
         String arrearBalanceCond = " (pmv.aggrArrDmd - pmv.aggrArrColl) ";
         String orderByClause = " order by ";
         if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
-                query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
-                query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
+        	query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
+        	query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
         }
         if(wardId != null && wardId != -1){
-                query.append(" and pmv.ward.id = ").append(wardId);
+        	query.append(" and pmv.ward.id = ").append(wardId);
         }
-                
+        	
         orderByClause = orderByClause.concat(" pmv.ward.id asc, "+arrearBalanceCond+" desc ");
         query.append(orderByClause);
 
         final Query qry = persistenceService.getSession().createQuery(query.toString());
         if(limit != null && limit != -1)
-                qry.setMaxResults(limit);
+        	qry.setMaxResults(limit);
         return qry;
     }
 }
