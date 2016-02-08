@@ -39,10 +39,14 @@
  ******************************************************************************/
 package org.egov.services.voucher;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.CVoucherHeader;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.voucher.WorkflowBean;
@@ -50,6 +54,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.exility.common.TaskFailedException;
 
 @Transactional(readOnly = true)
 @Service
@@ -60,6 +66,19 @@ public class PreApprovedActionHelper {
     @Autowired
     @Qualifier("voucherService")
     private VoucherService voucherService;
+    @Autowired
+    @Qualifier("createVoucher")
+    private CreateVoucher createVoucher;
+
+    @Transactional
+    public CVoucherHeader createVoucherFromBill(CVoucherHeader voucherHeader, WorkflowBean workflowBean, Long billId,
+            String voucherNumber, Date voucherDate) throws ApplicationRuntimeException, SQLException, TaskFailedException {
+        Long voucherHeaderId = createVoucher.createVoucherFromBill(billId.intValue(), null,
+                voucherNumber, voucherDate);
+        voucherHeader = voucherService.findById(voucherHeaderId, false);
+        voucherHeader = sendForApproval(voucherHeader,workflowBean);
+        return voucherHeader;
+    }
 
     @Transactional
     public CVoucherHeader sendForApproval(CVoucherHeader voucherHeader, WorkflowBean workflowBean)

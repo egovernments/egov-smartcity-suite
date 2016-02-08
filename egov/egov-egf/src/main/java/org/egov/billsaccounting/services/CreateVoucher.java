@@ -322,8 +322,6 @@ public class CreateVoucher {
                 LOGGER.debug(" ---------------Generating Voucher for Bill-------");
             EgBillregister egBillregister = null;
             egBillregister = billsService.getBillRegisterById(Integer.valueOf(billId));
-            final PersistenceService persistenceService = new PersistenceService();
-            // persistenceService.setSessionFactory(new SessionFactory());
             /*
              * identify the bill type and delegate get the fund and fundsource check for mandatory fields for implementation if
              * missing throw exception department is mandatory for implementation type fund is mandatory for all implementations
@@ -333,7 +331,7 @@ public class CreateVoucher {
             try {
                 CVoucherHeader result;
                 if (billMis.getVoucherHeader() != null) {
-                    result = (CVoucherHeader) persistenceService.find(
+                    result = (CVoucherHeader) voucherService.find(
                             "select vh from CVoucherHeader vh where vh.id = ? and vh.status!=?", billMis.getVoucherHeader()
                                     .getId(), FinancialConstants.CANCELLEDVOUCHERSTATUS);
                     if (result != null)
@@ -535,7 +533,9 @@ public class CreateVoucher {
 
         } catch (final ValidationException e) {
             LOGGER.error(e.getErrors());
-            throw new ValidationException(e.getErrors());
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e)
         {
             LOGGER.error("Error in create voucher from bill" + e.getMessage());
@@ -741,7 +741,9 @@ public class CreateVoucher {
         } catch (final ValidationException ve)
         {
             LOGGER.error(ERR, ve);
-            throw ve;
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", ve.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e) {
             LOGGER.error(ERR, e);
             throw new ApplicationRuntimeException(e.getMessage());

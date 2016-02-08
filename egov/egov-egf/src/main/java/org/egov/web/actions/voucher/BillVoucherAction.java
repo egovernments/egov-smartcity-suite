@@ -113,10 +113,6 @@ public class BillVoucherAction extends BaseVoucherAction {
 
     @Action(value = "/voucher/billVoucher-newForm")
     public String newForm() {
-        if (false/* getValidActions("designation").size()==0 */)
-            addActionError(getText("pjv.designation.notmatching"));
-        else if (null == voucherHeader.getVouchermis().getDepartmentid())
-            voucherHeader.getVouchermis().setDepartmentid(voucherService.getCurrentDepartment());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("BillVoucherAction | newform | START");
         final List<String> listBillReg = VoucherHelper.EXPENDITURE_TYPES;

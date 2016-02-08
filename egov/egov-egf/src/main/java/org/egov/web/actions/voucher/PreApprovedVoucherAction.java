@@ -32,6 +32,7 @@ package org.egov.web.actions.voucher;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,7 +60,6 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfig;
@@ -69,7 +69,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -79,6 +78,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
+import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
@@ -86,7 +86,6 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.voucher.PreApprovedVoucher;
-import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -119,6 +118,7 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 @ParentPackage("egov")
 public class PreApprovedVoucherAction extends GenericWorkFlowAction
 {
+    private final static String FORWARD = "Forward";
     private static final String EGF = "EGF";
     private static final String EMPTY_STRING = "";
     private static final long serialVersionUID = 1L;
@@ -167,7 +167,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private String wfitemstate;
     private String voucherNumber;
     private Boolean displayVoucherNumber = true;
-
+    private String action = "";
     SimpleWorkflowService<ContraJournalVoucher> contraWorkflowService;
     private Map<String, Object> billDetails;
     // private Long vhid;
@@ -175,6 +175,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private JournalVoucherModifyAction journalvouchermodify;
     private boolean showVoucherDate;
     private ScriptService scriptService;
+    private String mode = "";
 
     @Override
     public StateAware getModel() {
@@ -193,26 +194,21 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     @SkipValidation
     public String list()
     {
-        if (getValidActions("designation").size() == 0)
-            addActionError(getText("pjv.designation.notmatching"));
+        final EgwStatus egwStatus = egwStatusDAO.getStatusByModuleAndCode("SBILL", "Approved");
+        getHeaderMandateFields();
+        if (isFieldMandatory("department"))
+            preApprovedVoucherList = getPersistenceService()
+                    .findAllBy(
+                            " from EgBillregister br where br.status=? and br.egBillregistermis.egDepartment.id=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
+                            egwStatus, getCurrentDepartment().getId());
         else
-        {
-            final EgwStatus egwStatus = egwStatusDAO.getStatusByModuleAndCode("SBILL", "Approved");
-            getHeaderMandateFields();
-            if (isFieldMandatory("department"))
-                preApprovedVoucherList = getPersistenceService()
-                        .findAllBy(
-                                " from EgBillregister br where br.status=? and br.egBillregistermis.egDepartment.id=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
-                                egwStatus, getCurrentDepartment().getId());
-            else
-                preApprovedVoucherList = getPersistenceService()
-                        .findAllBy(
-                                " from EgBillregister br where br.status=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
-                                egwStatus);
+            preApprovedVoucherList = getPersistenceService()
+                    .findAllBy(
+                            " from EgBillregister br where br.status=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
+                            egwStatus);
 
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug(preApprovedVoucherList);
-        }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug(preApprovedVoucherList);
         return "list";
     }
 
@@ -266,9 +262,75 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
                 errors.add(new ValidationError("exp", e.getMessage()));
                 throw new ValidationException(errors);
             }
+            action = "save";
             return "billview";
         }
 
+    }
+
+    public List<String> getValidActions() {
+
+        List<String> validActions = Collections.emptyList();
+        if (!action.equalsIgnoreCase("save"))
+            if (null == getModel() || null == getModel().getId() || getModel().getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FORWARD);
+            } else {
+                if (getModel().getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), getModel().getCurrentState().getValue(),
+                            getPendingActions(), getModel().getCreatedDate());
+                }
+            }
+        else {
+            CVoucherHeader model = new CVoucherHeader();
+            if (null == model || null == model.getId() || model.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FORWARD);
+            } else {
+                if (model.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(model
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), model.getCurrentState().getValue(),
+                            getPendingActions(), model.getCreatedDate());
+                }
+            }
+        }
+        return validActions;
+    }
+
+    public String getNextAction() {
+        WorkFlowMatrix wfMatrix = null;
+        if (!action.equalsIgnoreCase("save")) {
+            if (getModel().getId() != null) {
+                if (getModel().getCurrentState() != null) {
+                    wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
+                            getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel()
+                                    .getCurrentState().getValue(), getPendingActions(), getModel()
+                                    .getCreatedDate());
+                } else {
+                    wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
+                            getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                            State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel()
+                                    .getCreatedDate());
+                }
+            }
+        } else {
+            CVoucherHeader model = new CVoucherHeader();
+            if (model.getId() != null) {
+                if (model.getCurrentState() != null) {
+                    wfMatrix = this.customizedWorkFlowService.getWfMatrix(model.getStateType(),
+                            getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), model
+                                    .getCurrentState().getValue(), getPendingActions(), model
+                                    .getCreatedDate());
+                } else {
+                    wfMatrix = this.customizedWorkFlowService.getWfMatrix(model.getStateType(),
+                            getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                            State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), model
+                                    .getCreatedDate());
+                }
+            }
+        }
+        return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
     @SkipValidation
@@ -448,6 +510,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     @Action(value = "/voucher/preApprovedVoucher-save")
     public String save() throws ValidationException
     {
+        mode = "save";
         try
         {
             if (LOGGER.isDebugEnabled())
@@ -457,24 +520,19 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             egBillregister = billsService.getBillRegisterById(Integer.valueOf(parameters.get(BILLID)[0]));
             // egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
             // Long.valueOf(parameters.get(BILLID)[0]));
-            if (!financialYearDAO.isSameFinancialYear(egBillregister.getBilldate(), preApprovedVoucher.getVoucherDate()))
+            if (!financialYearDAO.isSameFinancialYear(egBillregister.getBilldate(), voucherHeader.getVoucherDate()))
                 throw new ValidationException(
                         "Voucher could not be permitted in the current year for the Bill prepared in the previous financial year/s",
                         "Voucher could not be permitted in the current year for the Bill prepared in the previous financial year/s");
             getMasterDataForBill();
             // Check if budgetary Appropriation is enabled for the application. Only if required we need to do the check.
             final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF, "budgetCheckRequired");
-            Long vhid = null;
             if (list.isEmpty())
                 throw new ValidationException(EMPTY_STRING, "budgetCheckRequired is not defined in AppConfig");
-            vhid = createVoucher.createVoucherFromBill(Integer.parseInt(parameters.get(BILLID)[0]), null,
-                    voucherNumber, preApprovedVoucher.getVoucherDate());
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("voucher id=======" + vhid);
-            voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, vhid);
-            voucherHeader.setLastModifiedDate(new Date());
-            voucherHeader.start().withOwner(getPosition()).withComments(parameters.get("comments")[0]);
-            sendForApproval();
+            populateWorkflowBean();
+            voucherHeader = preApprovedActionHelper.createVoucherFromBill(voucherHeader, workflowBean,
+                    Long.parseLong(parameters.get(BILLID)[0]), voucherNumber, voucherHeader.getVoucherDate());
+
             addActionMessage(getText(
                     egBillregister.getExpendituretype() + ".voucher.created",
                     new String[] { voucherHeader.getVoucherNumber(),
@@ -484,7 +542,15 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         {
             LOGGER.error(e.getErrors());
             voucher();
-            throw new ValidationException(e.getErrors());
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
+        } catch (final ApplicationRuntimeException e)
+        {
+            voucher();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e)
         {
 
@@ -499,7 +565,6 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             // loadApproverUser(type);
             throw new ValidationException(errors);
         }
-
         displayVoucherNumber = false;
         return "billview";
     }
@@ -510,32 +575,32 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("voucher id=======" + parameters.get(VHID)[0]);
         methodName = "update";
-        try{
-        voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]), false);
-        populateWorkflowBean();
-        voucherHeader = preApprovedActionHelper.sendForApproval(voucherHeader, workflowBean);
-        type = billsService.getBillTypeforVoucher(voucherHeader);
-        if (null == type)
-            type = "default";
+        try {
+            voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]), false);
+            populateWorkflowBean();
+            voucherHeader = preApprovedActionHelper.sendForApproval(voucherHeader, workflowBean);
+            type = billsService.getBillTypeforVoucher(voucherHeader);
+            if (null == type)
+                type = "default";
 
-        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(getText("pjv.voucher.rejected",
-                    new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
-                            .getOwnerPosition()) }));
-        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(getText("pjv.voucher.approved",
-                    new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
-        if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(getText("billVoucher.file.canceled"));
-        else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if ("Closed".equals(voucherHeader.getState().getValue()))
-                addActionMessage(getText("pjv.voucher.final.approval", new String[] { "The File has been approved" }));
-            else
-                addActionMessage(getText("pjv.voucher.approved",
+            if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                addActionMessage(getText("pjv.voucher.rejected",
                         new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
                                 .getOwnerPosition()) }));
-        }
-        }catch (final ValidationException e) {
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                addActionMessage(getText("pjv.voucher.approved",
+                        new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
+            if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                addActionMessage(getText("billVoucher.file.canceled"));
+            else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                if ("Closed".equals(voucherHeader.getState().getValue()))
+                    addActionMessage(getText("pjv.voucher.final.approval", new String[] { "The File has been approved" }));
+                else
+                    addActionMessage(getText("pjv.voucher.approved",
+                            new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
+                                    .getOwnerPosition()) }));
+            }
+        } catch (final ValidationException e) {
             e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
@@ -1036,22 +1101,6 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         return pos;
     }
 
-    public List<Action> getValidActions(final String purpose) {
-        final List<Action> validButtons = new ArrayList<Action>();
-        final List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons", ScriptService.createContext(
-                "eisCommonServiceBean", eisCommonService, "userId", EgovThreadLocals.getUserId().intValue(), "date", new Date(),
-                "purpose", purpose));
-        for (final Object s : list)
-        {
-            if ("invalid".equals(s))
-                break;
-            final Action action = (Action) getPersistenceService().find(
-                    " from org.egov.infstr.workflow.Action where type='CVoucherHeader' and name=?", s.toString());
-            validButtons.add(action);
-        }
-        return validButtons;
-    }
-
     public String ajaxValidateDetailCode()
     {
         final String code = parameters.get("code")[0];
@@ -1314,6 +1363,22 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
     public void setWorkflowBean(WorkflowBean workflowBean) {
         this.workflowBean = workflowBean;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
 }
