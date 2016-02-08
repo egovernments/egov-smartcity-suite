@@ -116,6 +116,8 @@ public class SearchTradeAction extends BaseFormAction {
     private String mobileNo;
     @Autowired
     private TradeLicenseService tradeLicenseService;
+    @Autowired
+    private LicenseUtils licenseUtils;
     
     @Override
     public Object getModel() {
@@ -127,6 +129,9 @@ public class SearchTradeAction extends BaseFormAction {
         super.prepare();
         addDropdownData("categoryList", licenseCategoryService.findAll());
         addDropdownData("subCategoryList", Collections.emptyList());
+        final Long userId = securityUtils.getCurrentUser().getId();
+        if (userId != null)
+            setRoleName(licenseUtils.getRolesForUserId(userId));
     }
 
     @Action(value="/search/searchTrade-newForm")
@@ -199,6 +204,11 @@ public class SearchTradeAction extends BaseFormAction {
             }
             else if(license.isLegacy() && license.isPaid() != true)
                 licenseActions.add("Modify Legacy License");
+            if(roleName.equalsIgnoreCase(Constants.TL_APPROVER_ROLENAME)){
+                if(checkForRenewalNotice(license.getDateOfExpiry())){
+                    licenseActions.add("Renewal Notice");
+                }
+            } 
             searchFormInfo.setActions(licenseActions); 
             finalList.add(searchFormInfo);
             }

@@ -201,9 +201,11 @@ function goToAction(obj){
 		window.open("/tl/integration/licenseBillCollect.action?licenseId="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Print Certificate')
 		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+	else if(obj.options[obj.selectedIndex].innerHTML=='Renewal Notice')
+		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(),"_self");
 }
 
-
+  
 function callAjaxForSearchTrade() {
 	var applicationNumber = jQuery('#applicationNumber').val();
 	var licenseNumber = jQuery('#licenseNumber').val();
