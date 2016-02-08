@@ -160,6 +160,8 @@ function fillNeibrAfterSplitGlcode(obj) {
 			document.getElementById('transactionSummaryList[' + $currRow
 					+ '].glcodeid.id').value = temp[2];
 			document.getElementById('transactionSummaryList[' + $currRow
+					+ '].id').value = "";
+			document.getElementById('transactionSummaryList[' + $currRow
 					+ '].accounthead').innerHTML = temp[1];// .split("`~`")[0];
 			var flag = false;
 			for (var i = 0; i < slDetailTableIndex; i++) {
@@ -441,7 +443,6 @@ function splitEntitiesDetailCode(obj) {
 					.split("`-`")[0];
 			document.getElementById(TRANSACTIONSUMMARYLIST + '[' + $currRow
 					+ ']' + '.accountdetailkey').value = entity_array[1];
-			// document.getElementById(TRANSACTIONSUMMARYLIST+'['+$currRow+']'+'.detailKey').value=entity_array[0].split("`-`")[1];
 		}
 	}
 
@@ -458,35 +459,6 @@ function splitEntitiesDetailCode(obj) {
 
 	if (glcodeid != '' && accountdetailtypeid != '' && accountdetailkey != ''
 			&& accountdetailkeyValue != '') {
-		/*
-		 * $ .ajax({ url : 'ajax/getTransactionSummary', type : "get", data : {
-		 * glcodeid : glcodeid, accountdetailtypeid :
-		 * accountdetailtypeid.trim(), accountdetailkey : accountdetailkey },
-		 * success : function(data, textStatus, jqXHR) { if (data.length != 0) {
-		 * bootbox .alert("Transaction Summary for this combination already
-		 * exists");
-		 * 
-		 * document.getElementById('transactionSummaryList' + '[' + $currRow +
-		 * '].glcodeid.id').value = 0;
-		 * document.getElementById('transactionSummaryList' + '[' + $currRow +
-		 * '].glcodeDetail').value = "";
-		 * document.getElementById('transactionSummaryList' + '[' + $currRow +
-		 * '].accounthead').innerHTML = ""; document
-		 * .getElementById('transactionSummaryList' + '[' + $currRow +
-		 * '].accountdetailtype.id').value = 0;
-		 * document.getElementById('transactionSummaryList' + '[' + $currRow +
-		 * '].accountdetailkey').value = "";
-		 * document.getElementById('transactionSummaryList' + '[' + $currRow +
-		 * '].accountdetailkeyValue').value = "";
-		 * document.getElementById('transactionSummaryList' + '[' + $currRow +
-		 * '].openingdebitbalance').value = ""; document
-		 * .getElementById('transactionSummaryList' + '[' + $currRow +
-		 * '].openingcreditbalance').value = "";
-		 * document.getElementById('transactionSummaryList' + '[' + $currRow +
-		 * '].narration').value = ""; } }, error : function(jqXHR, textStatus,
-		 * errorThrown) { // alert("Error validating duplicate Transaction"); }
-		 * });
-		 */
 		var resultLength = $('#result tr').length - 1;
 		var index;
 		for (var i = 1; i <= resultLength; i++) {
@@ -634,15 +606,18 @@ function autocompleteEntities(obj) {
 
 function onFocusDetailCode(obj) {
 	$currRow = getRowIndex(obj);
-	var detailtypeidObj = document.getElementById('transactionSummaryList['
+	var subledger = document.getElementById('transactionSummaryList['
 			+ $currRow + '].accountdetailtype.id');
-	if (detailtypeidObj.value == null || detailtypeidObj.value == "") {
+	var subledgerlength = $(subledger).children('option').length;
+	console.log("subledgerlength" + subledgerlength);
+	if (subledgerlength > 1
+			&& (subledger.value == null || subledger.value == "")) {
 		bootbox.alert("Please select subledger type")
 		return false;
 	}
-	if (detailTypeId != detailtypeidObj.value) {
-		detailTypeId = detailtypeidObj.value;
-		loadDropDownCodesForEntities(detailtypeidObj);
+	if (detailTypeId != subledger.value) {
+		detailTypeId = subledger.value;
+		loadDropDownCodesForEntities(subledger);
 	}
 }
 
@@ -674,7 +649,7 @@ $('body').on(
 		'click',
 		'#add-row',
 		function() {
-			if (validateInput()) {
+			if (validateOnAdd()) {
 				var rowCount = $('#result tr').length - 1;
 				var content = $('#resultrow0').html();
 				resultContent = content.replace(/0/g, rowCount);
@@ -748,54 +723,42 @@ $('body').on('click', '#remove-row', function() {
 	return false;
 });
 
-$('#buttonSubmit')
-		.click(
-				function(e) {
-					if (validateInput()) {
-						var myform = $('#transactionSummaryform');
+$('#buttonSubmit').click(function(e) {
+	if (validateOnCreate()) {
+		var myform = $('#transactionSummaryform');
 
-						// Find disabled inputs, and remove the "disabled"
-						// attribute
-						var disabled = myform.find(':input:disabled')
-								.removeAttr('disabled');
-						// serialize the form
-						var postData = $("#transactionSummaryform")
-								.serializeArray();
-						// re-disabled the set of inputs that you previously
-						// enabled
-						disabled.attr('disabled', 'disabled');
-						var formURL = $("#transactionSummaryform").attr(
-								"action");
-						$
-								.ajax({
-									url : formURL,
-									type : "post",
-									data : postData,
-									success : function(data, textStatus, jqXHR) {
-										bootbox.alert(
-												'Data Saved Successfully',
-												function() {
-													location.reload();
-												});
-										$.each(data, function(index) {
-											var obj = $("#result tbody tr")
-													.get(index);
-											$(obj).children(':first-child')
-													.val(data[index].id);
-										});
-									},
-									error : function(jqXHR, textStatus,
-											errorThrown) {
-										bootbox
-												.alert("Transaction Summary for this combination already exists");
-									}
-								});
-						e.preventDefault(); // STOP default action
-					} else {
-						window.scrollTo(0, 0);
-						e.preventDefault();
-					}
+		// Find disabled inputs, and remove the "disabled"
+		// attribute
+		var disabled = myform.find(':input:disabled').removeAttr('disabled');
+		// serialize the form
+		var postData = $("#transactionSummaryform").serializeArray();
+		// re-disabled the set of inputs that you previously
+		// enabled
+		disabled.attr('disabled', 'disabled');
+		var formURL = $("#transactionSummaryform").attr("action");
+		$.ajax({
+			url : formURL,
+			type : "post",
+			data : postData,
+			success : function(data, textStatus, jqXHR) {
+				bootbox.alert('Data Saved Successfully', function() {
+					location.reload();
 				});
+				$.each(data, function(index) {
+					var obj = $("#result tbody tr").get(index);
+					$(obj).children(':first-child').val(data[index].id);
+				});
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				bootbox.alert("Error while saving data");
+			}
+		});
+		e.preventDefault(); // STOP default action
+	} else {
+		window.scrollTo(0, 0);
+		e.preventDefault();
+	}
+});
 $('#buttonProceed')
 		.click(
 				function(e) {
@@ -826,7 +789,7 @@ $('#buttonProceed')
 									.getElementById('transactionSummaryList[0].glcodeDetail').value = minor;
 					}
 				});
-function validateInput() {
+function validateOnAdd() {
 	var flag = true;
 	var resultLength = $('#result tr').length - 1;
 	var index;
@@ -846,8 +809,60 @@ function validateInput() {
 				+ '].openingdebitbalance').value;
 		var credit = document.getElementById('transactionSummaryList[' + index
 				+ '].openingcreditbalance').value;
-		if ((glcode != '')
-				&& (glcodeid == null || glcodeid == '')) {
+		if ((glcode != '') && (glcodeid == null || glcodeid == '')) {
+			bootbox
+					.alert('Please select account code from auto complete for row '
+							+ i);
+			flag = false;
+		} else if (glcode == null || glcode == '') {
+			bootbox.alert('Please select account code for row ' + i);
+			flag = false;
+		} else if (subledgerlength > 1
+				&& (subledger.value == null || subledger.value == '')) {
+			bootbox.alert('Please select subledger type for account code  '
+					+ glcode);
+			flag = false;
+		} else if (subledgerlength > 1
+				&& (subledger.value != null || subledger.value != '')
+				&& (entity == null || entity == '')) {
+			bootbox.alert('Please select entity for account code  ' + glcode);
+			flag = false;
+		} else if ((debit == '' && credit == '') || (debit < 0 && credit < 0)) {
+			bootbox
+					.alert('Please select debit amount or credit amount for account code  '
+							+ glcode);
+			flag = false;
+		} else if (debit > 0 && credit > 0) {
+			bootbox
+					.alert("Opening debit amount and credit amount cannot be there for the account code   "
+							+ glcode);
+			flag = false;
+		}
+	}
+
+	return flag;
+}
+function validateOnCreate() {
+	var flag = true;
+	var resultLength = $('#result tr').length - 2;
+	var index;
+	for (var i = 1; i <= resultLength; i++) {
+		index = i - 1;
+		var glcodeid = document.getElementById('transactionSummaryList['
+				+ index + '].glcodeid.id').value;
+		var glcode = document.getElementById('transactionSummaryList[' + index
+				+ '].glcodeDetail').value;
+		var subledger = document.getElementById('transactionSummaryList['
+				+ index + '].accountdetailtype.id');
+		var subledgerlength = $(subledger).children('option').length;
+		console.log(glcode);
+		var entity = document.getElementById('transactionSummaryList[' + index
+				+ '].accountdetailkeyValue').value;
+		var debit = document.getElementById('transactionSummaryList[' + index
+				+ '].openingdebitbalance').value;
+		var credit = document.getElementById('transactionSummaryList[' + index
+				+ '].openingcreditbalance').value;
+		if ((glcode != '') && (glcodeid == null || glcodeid == '')) {
 			bootbox
 					.alert('Please select account code from auto complete for row '
 							+ i);
@@ -877,10 +892,67 @@ function validateInput() {
 			flag = false;
 		}
 	}
-
+	// Validate last row if glcode is there
+	var lastrow = resultLength;
+	var lastrowglcodeid = document.getElementById('transactionSummaryList['
+			+ lastrow + '].glcodeid.id').value;
+	var lastrowglcode = document.getElementById('transactionSummaryList['
+			+ lastrow + '].glcodeDetail').value;
+	var lastrowsubledger = document.getElementById('transactionSummaryList['
+			+ lastrow + '].accountdetailtype.id');
+	var lastrowsubledgerlength = $(lastrowsubledger).children('option').length;
+	console.log(glcode);
+	var lastrowentity = document.getElementById('transactionSummaryList['
+			+ lastrow + '].accountdetailkeyValue').value;
+	var lastrowdebit = document.getElementById('transactionSummaryList['
+			+ lastrow + '].openingdebitbalance').value;
+	var lastrowcredit = document.getElementById('transactionSummaryList['
+			+ lastrow + '].openingcreditbalance').value;
+	if (lastrowglcode != null && lastrowglcode != '') {
+		if ((lastrowglcode != '')
+				&& (lastrowglcodeid == null || lastrowglcodeid == '')) {
+			bootbox
+					.alert('Please select account code from auto complete for row '
+							+ i);
+			flag = false;
+		} else if (lastrowsubledgerlength > 1
+				&& (lastrowsubledger.value == null || lastrowsubledger.value == '')) {
+			bootbox.alert('Please select subledger type for account code  '
+					+ lastrowglcode);
+			flag = false;
+		} else if (lastrowsubledgerlength > 1
+				&& (lastrowsubledger.value != null || lastrowsubledger.value != '')
+				&& (lastrowentity == null || lastrowentity == '')) {
+			bootbox.alert('Please select entity for account code  '
+					+ lastrowglcode);
+			flag = false;
+		} else if ((lastrowdebit == '' && lastrowcredit == '')
+				|| (lastrowdebit < 0 && lastrowcredit < 0)) {
+			bootbox
+					.alert('Please select debit amount or credit amount for account code  '
+							+ lastrowglcode);
+			flag = false;
+		} else if (lastrowdebit > 0 && lastrowcredit > 0) {
+			bootbox
+					.alert("Opening debit amount and credit amount cannot be there for the account code   "
+							+ lastrowglcode);
+			flag = false;
+		}
+	} else {
+		document.getElementById('transactionSummaryList[' + lastrow + '].id').value = "";
+		document.getElementById('transactionSummaryList[' + lastrow
+				+ '].glcodeDetail').value = "";
+		document.getElementById('transactionSummaryList[' + lastrow
+				+ '].glcodeid.id').value = 0;
+		document.getElementById('transactionSummaryList[' + lastrow
+				+ '].accounthead').innerHTML = "";
+		document.getElementById('transactionSummaryList[' + lastrow
+				+ '].accountdetailkey').value = "";
+		document.getElementById('transactionSummaryList[' + lastrow
+				+ '].accountdetailkeyValue').value = "";
+	}
 	return flag;
 }
-
 function validSearch() {
 	var finYear = document.getElementById('financialyear.id').value;
 	var fund = document.getElementById('fund.id').value;

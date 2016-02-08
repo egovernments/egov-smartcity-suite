@@ -92,8 +92,9 @@ public class TransactionSummaryController {
             final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs, HttpServletResponse response) {
         List<TransactionSummary> transactionSummaries = new ArrayList<TransactionSummary>();
+        transactionSummaries = removeEmptyRows(transactionSummaryDto.getTransactionSummaryList());
         try {
-            for (TransactionSummary ts : transactionSummaryDto.getTransactionSummaryList()) {
+            for (TransactionSummary ts : transactionSummaries) {
                 TransactionSummary transactionSummary = null;
                 if (ts.getId() != null) {
                     transactionSummary = transactionSummaryService.findOne(ts.getId());
@@ -134,13 +135,28 @@ public class TransactionSummaryController {
                     transactionSummary.setOpeningdebitbalance(ts.getOpeningdebitbalance() == null ? BigDecimal.ZERO : ts
                             .getOpeningdebitbalance());
                     transactionSummary = transactionSummaryService.create(transactionSummary);
-                    transactionSummaries.add(transactionSummary);
                 }
             }
         } catch (Exception e) {
             return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<String>(HttpStatus.OK);
+    }
+
+    private List<TransactionSummary> removeEmptyRows(List<TransactionSummary> transactionSummaries) {
+
+        List<TransactionSummary> tempTransactionSummaries = new ArrayList<TransactionSummary>();
+        for (TransactionSummary transactionSummary : transactionSummaries)
+            if (transactionSummaries.size() != (tempTransactionSummaries.size() + 1))
+                tempTransactionSummaries.add(transactionSummary);
+
+        /**
+         * Checking last row : if glcode is not there then delete row . else keep the row
+         **/
+        if (transactionSummaries.get(transactionSummaries.size() - 1).getGlcodeDetail() != null
+                && transactionSummaries.get(transactionSummaries.size() - 1).getGlcodeDetail() != "")
+            tempTransactionSummaries.add(transactionSummaries.get(transactionSummaries.size() - 1));
+        return tempTransactionSummaries;
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
