@@ -211,16 +211,6 @@ public class TradeLicense extends License {
         return disablePrintCert;
     }
 
-    @Override
-    public String getAuditDetails() {
-        return new StringBuffer("[Name of the Establishment : ").
-                append(getNameOfEstablishment()).append(", Applicant Name : ").append(getLicensee().getApplicantName()).
-                append(", Application Date : ").append(DateUtils.toDefaultDateFormat(new LocalDate(getApplicationDate()))).
-                append(", Address : ").append(licensee.getAddress())
-                .append(", Trade Name : ").append(getTradeName().getName()).append(" ]").toString();
-
-    }
-    
     public List<MotorMaster> getMotorMasterList() {
         return motorMasterList;
     }

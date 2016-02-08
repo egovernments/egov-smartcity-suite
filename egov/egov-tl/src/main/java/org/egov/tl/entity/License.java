@@ -64,6 +64,7 @@ import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 public abstract class License extends StateAware {
 
@@ -370,6 +371,7 @@ public abstract class License extends StateAware {
         this.tinNumber = tinNumber;
     }
 
+    @Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
     public LicenseSubCategory getTradeName() {
         return tradeName;
     }
@@ -514,10 +516,6 @@ public abstract class License extends StateAware {
         this.violationFee = violationFee;
     }
 
-    public String getAuditDetails() {
-        return "";
-    }
-
     public String getPropertyNo() {
         return propertyNo;
     }
@@ -535,6 +533,7 @@ public abstract class License extends StateAware {
         this.address = address;
     }
 
+    @Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
     public LicenseCategory getCategory() {
         return category;
     }
