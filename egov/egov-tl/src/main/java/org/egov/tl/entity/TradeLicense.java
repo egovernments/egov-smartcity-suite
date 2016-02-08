@@ -55,23 +55,31 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.utils.DateUtils;
 import org.egov.tl.utils.Constants;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.joda.time.LocalDate;
 
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class TradeLicense extends License {
     private static final Logger LOGGER = Logger.getLogger(TradeLicense.class);
     private static final long serialVersionUID = 1L;
     private List<MotorMaster> motorMasterList;
     private List<String> hotelGradeList;
+    
     private String hotelGrade;
     private List hotelSubCatList;
     public static final String[] HOTELGRADE = { "Grade A", "Grade B", "Grade C" };
     private List licenseZoneList;
+    
     private BigDecimal sandBuckets;
     private BigDecimal waterBuckets;
     private BigDecimal dcpExtinguisher;
     private String nocNumber;
     private Boolean isCertificateGenerated;
+    
     private Long id;
+    
     private List<LicenseDocument> documents = new ArrayList<>();
 
     public Set<EgDemandDetails> additionalDemandDetails(final Set<EgDemandReasonMaster> egDemandReasonMasters,
@@ -230,6 +238,7 @@ public class TradeLicense extends License {
         this.hotelGradeList = hotelGradeList;
     }
 
+    @NotAudited
     public String getHotelGrade() {
         return hotelGrade;
     }
@@ -254,6 +263,7 @@ public class TradeLicense extends License {
         this.licenseZoneList = licenseZoneList;
     }
 
+    @NotAudited
     public BigDecimal getSandBuckets() {
         return sandBuckets;
     }
@@ -262,6 +272,7 @@ public class TradeLicense extends License {
         this.sandBuckets = sandBuckets;
     }
 
+    @NotAudited
     public BigDecimal getWaterBuckets() {
         return waterBuckets;
     }
@@ -270,6 +281,7 @@ public class TradeLicense extends License {
         this.waterBuckets = waterBuckets;
     }
 
+    @NotAudited
     public BigDecimal getDcpExtinguisher() {
         return dcpExtinguisher;
     }
@@ -278,6 +290,7 @@ public class TradeLicense extends License {
         this.dcpExtinguisher = dcpExtinguisher;
     }
 
+    @NotAudited
     public String getNocNumber() {
         return nocNumber;
     }
@@ -286,6 +299,7 @@ public class TradeLicense extends License {
         this.nocNumber = nocNumber;
     }
 
+    @NotAudited
     public Boolean getIsCertificateGenerated() {
         return isCertificateGenerated;
     }
@@ -305,6 +319,7 @@ public class TradeLicense extends License {
     }
 
     @Override
+    @NotAudited
     public List<LicenseDocument> getDocuments() {
         return documents;
     }

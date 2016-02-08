@@ -107,7 +107,7 @@
 		<property name="tinNumber" column="TIN_NUM" />
 		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.Boundary" column="ID_ADM_BNDRY" unique="true" />
 		<many-to-one name="parentBoundary" class="org.egov.infra.admin.master.entity.Boundary" column="ID_PARENT_BNDRY"  unique="true" />
-		<many-to-one name="tradeName" class="org.egov.tl.entity.LicenseSubCategory" fetch="select" unique="true">
+		<many-to-one name="tradeName" class="org.egov.tl.entity.LicenseSubCategory" fetch="select" unique="true" not-null="true">
 			<column name="ID_SUB_CATEGORY" precision="22" scale="0" />
 		</many-to-one>
 		<many-to-one name="licenseTransfer" class="org.egov.tl.entity.transfer.LicenseTransfer" fetch="select"

@@ -166,7 +166,6 @@
 						autoclose: true 
 					}); 
 				</script>
-		<script	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
         <script src="../resources/app/js/newtrade.js"></script>
         <script>
 
