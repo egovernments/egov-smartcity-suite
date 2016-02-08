@@ -204,6 +204,17 @@ public class SearchTradeAction extends BaseFormAction {
             }
             else if(license.isLegacy() && license.isPaid() != true)
                 licenseActions.add("Modify Legacy License");
+            
+            if(roleName.equalsIgnoreCase(Constants.TL_CREATOR_ROLENAME)){
+                if(license.getOldLicenseNumber()!=null && !license.getOldLicenseNumber().isEmpty()){
+                    licenseActions.add("Modify License");
+                }
+            }
+            if(roleName.equalsIgnoreCase(Constants.TL_CREATOR_ROLENAME) || roleName.equalsIgnoreCase(Constants.TL_APPROVER_ROLENAME)){
+                if(license.getStatus()!=null && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)){
+                    licenseActions.add("Renew License");
+                }
+            } 
             if(roleName.equalsIgnoreCase(Constants.TL_APPROVER_ROLENAME)){
                 if(checkForRenewalNotice(license.getDateOfExpiry())){
                     licenseActions.add("Renewal Notice");

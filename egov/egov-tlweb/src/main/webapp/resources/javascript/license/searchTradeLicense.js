@@ -203,6 +203,10 @@ function goToAction(obj){
 		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renewal Notice')
 		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(),"_self");
+	else if(obj.options[obj.selectedIndex].innerHTML=='Renew License')
+		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+jQuery('#licenseId').val(),"_self");
+	else if(obj.options[obj.selectedIndex].innerHTML=='Modify License')
+		window.open("../newtradelicense/editTradeLicense-beforeEdit.action?model.id="+jQuery('#licenseId').val(),"_self");
 }
 
   
