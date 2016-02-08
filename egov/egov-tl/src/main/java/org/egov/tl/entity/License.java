@@ -800,6 +800,18 @@ public abstract class License extends StateAware {
                 }
         return totBal;
     }
+    public BigDecimal getFeeAmount() {
+        BigDecimal totBal = BigDecimal.ZERO;
+        for (EgDemand demand : this.demandSet)
+            if (demand.getIsHistory().equals("N"))
+                for (EgDemandDetails dd : demand.getEgDemandDetails()) {
+                    if (!dd.getAmount().equals(BigDecimal.ZERO))
+                        totBal = totBal.add(dd.getAmount());
+                    if (!dd.getAmtRebate().equals(BigDecimal.ZERO))
+                        totBal = totBal.subtract(dd.getAmtRebate());
+                }
+        return totBal;
+    }
 
     public EgwStatus getEgwStatus() {
         return egwStatus;
