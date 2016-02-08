@@ -42,7 +42,6 @@ package org.egov.wtms.masters.repository;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.UsageType;
-import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -52,7 +51,7 @@ import org.springframework.stereotype.Repository;
 public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
 
     UsageType findByName(String name);
-    
+
     UsageType findByNameIgnoreCase(String name);
 
     List<UsageType> findByNameContainingIgnoreCase(String name);
@@ -65,7 +64,5 @@ public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
 
     @Query("select PU.usageType from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType.id=:propertyType ")
     List<UsageType> getAllUsageTypesByPropertyType(@Param("propertyType") Long propertyType);
-
-    
 
 }

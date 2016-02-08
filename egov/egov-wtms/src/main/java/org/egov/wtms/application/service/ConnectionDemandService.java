@@ -389,9 +389,9 @@ public class ConnectionDemandService {
                     currCollection = currCollection.add(new BigDecimal((Double) listObj[3]));
                 currDmd = currDmd.add((BigDecimal) listObj[2]);
             } else {
-                arrDmd = arrDmd.add((BigDecimal) listObj[2]);
-                if (listObj[3] != null && !listObj[3].equals(BigDecimal.ZERO))
-                    arrColelection = arrColelection.add((BigDecimal) listObj[2]);
+                arrDmd = arrDmd.add(new BigDecimal((Double)listObj[2]));
+                if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO))
+                    arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
             }
         }
         retMap.put(WaterTaxConstants.CURR_DMD_STR, currDmd);

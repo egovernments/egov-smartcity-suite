@@ -39,9 +39,6 @@
  */
 package org.egov.wtms.masters.service;
 
-
-import java.util.List;
-
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.entity.PropertyType;
@@ -61,7 +58,7 @@ public class PropertyCategoryService {
         this.propertyCategoryRepository = propertyCategoryRepository;
 
     }
-    
+
     @Transactional
     public PropertyCategory createPropertyCategory(final PropertyCategory propertyCategory) {
         return propertyCategoryRepository.save(propertyCategory);
@@ -71,16 +68,17 @@ public class PropertyCategoryService {
     public void updatePropertyCategory(final PropertyCategory propertyCategory) {
         propertyCategoryRepository.save(propertyCategory);
     }
-    
+
     public PropertyCategory getAllCategoryTypesByPropertyTypeAndCategory(final String propertyType,
             final String categoryType) {
-       
-            return propertyCategoryRepository.findByPropertyType_codeAndConnectionCategory_code(propertyType,categoryType);
+
+        return propertyCategoryRepository.findByPropertyType_codeAndConnectionCategory_code(propertyType, categoryType);
     }
-    
-    public PropertyCategory getByPropertyTypeAndCategory(final PropertyType propertyType,final ConnectionCategory connectionCategory) {
-       
-            return propertyCategoryRepository.findByPropertyTypeAndConnectionCategory(propertyType,connectionCategory);
+
+    public PropertyCategory getByPropertyTypeAndCategory(final PropertyType propertyType,
+            final ConnectionCategory connectionCategory) {
+
+        return propertyCategoryRepository.findByPropertyTypeAndConnectionCategory(propertyType, connectionCategory);
     }
 
 }
