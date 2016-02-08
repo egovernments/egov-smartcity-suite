@@ -39,6 +39,8 @@
  */
 package org.egov.tl.web.actions.search;
 
+import java.util.List;
+
 
 /**
  * @author satyam
@@ -54,7 +56,7 @@ public class SearchForm {
     private String tradeOwnerName;
     private String propertyAssessmentNo;
     private String mobileNo;
-    private String status;
+    private List<String> actions;
     
     public String getApplicationNumber() {
         return applicationNumber;
@@ -116,10 +118,10 @@ public class SearchForm {
     public void setLicenseId(Long licenseId) {
         this.licenseId = licenseId;
     }
-    public String getStatus() {
-        return status;
-    } 
-    public void setStatus(String status) {
-        this.status = status;
+    public List<String> getActions() {
+        return actions;
+    }
+    public void setActions(List<String> actions) {
+        this.actions = actions;
     }
 }

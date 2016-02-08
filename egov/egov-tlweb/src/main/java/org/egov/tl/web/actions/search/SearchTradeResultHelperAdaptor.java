@@ -40,7 +40,9 @@
 package org.egov.tl.web.actions.search;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -63,9 +65,17 @@ public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm
             jsonObject.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
             jsonObject.addProperty("mobileNumber", searchFormObj.getMobileNo());
             jsonObject.addProperty("propertyAssmntNo", searchFormObj.getPropertyAssessmentNo());
-            jsonObject.addProperty("status", searchFormObj.getStatus());
+            // To add set of actions for search results 
+            Gson gson = new Gson();
+            ArrayList<JsonObject> list = new ArrayList<>();
+            JsonObject objectInList = new JsonObject();
+            for(int i=0; i<searchFormObj.getActions().size(); i++){
+                objectInList = new JsonObject();
+                objectInList.addProperty("key", searchFormObj.getActions().get(i));
+                list.add(objectInList);
+            }
+            jsonObject.addProperty("actions",gson.toJson(list));
         }
         return jsonObject;
     }
-
 }

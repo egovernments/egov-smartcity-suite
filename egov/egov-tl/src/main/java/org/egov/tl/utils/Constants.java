@@ -758,7 +758,4 @@ public class Constants {
         public static final String SEARCH_BY_TRADEOWNERNAME = "TradeOwnerName";
         public static final String SEARCH_BY_PROPERTYASSESSMENTNO = "PropertyAssessmentNo";
         public static final String SEARCH_BY_MOBILENO = "MobileNo";
-        
-        public static final String LICENSE_WF_APPROVED_STATUS="APPROVED";
-        public static final String LICENSE_WF_CERTIFICATEGENERATED_STATUS="CERTIFICATEGENERATED";
 }

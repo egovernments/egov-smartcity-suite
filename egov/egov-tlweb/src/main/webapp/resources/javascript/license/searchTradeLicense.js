@@ -193,17 +193,14 @@ function goToView(obj) {
 function goToAction(obj){
 	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
 	.val(jQuery(obj).data('eleval')); 
-	if(obj.value=='Collect Fees')
+	if(obj.options[obj.selectedIndex].innerHTML=='View Trade')
+		window.open("../viewtradelicense/viewTradeLicense-view.action?id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+	else if(obj.options[obj.selectedIndex].innerHTML=='Modify Legacy License')
+		window.open("../entertradelicense/update-form.action?model.id="+jQuery('#licenseId').val(),"_self");
+	else if(obj.options[obj.selectedIndex].innerHTML=='Collect Fees')
 		window.open("/tl/integration/licenseBillCollect.action?licenseId="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
-	
-	if(obj.value=='View Trade')
-		window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
-	else if(obj.value=='Print Certificate')
+	else if(obj.options[obj.selectedIndex].innerHTML=='Print Certificate')
 		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
-	
-	
-	else
-		alert("Need to add Link.. In Progress...");
 }
 
 
@@ -280,16 +277,14 @@ function callAjaxForSearchTrade() {
 						}, {
 							"sTitle" : "Actions",
 				        	  "render" : function(data,type,row) {
-				        		  if (row.status==wf_approved_status) {
-		        					   return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
-												+ row.licenseId + '" onChange="goToAction(this);" ><option>Select from Below</option><option value="View Trade">View Trade</option><option value="Collect Fees">Collect Fees</option></select>');
-		        				   } else if (row.status==wf_certificateGenerate_status) {
-		        					   return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
-												+ row.licenseId + '" onChange="goToAction(this);" ><option>Select from Below</option><option value="View ">View Trade</option><option value="Print Certificate">Print Certificate</option></select>');
-		        				   } else {
-		        					   return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
-												+ row.licenseId + '" onChange="goToAction(this);" ><option>Select from Below</option><option value="View Trade">View Trade</option></select>');
-		        				   }
+				        		  var showActions = row.actions; 
+				        		  var option = "<option>Select from Below</option>";
+				        		  jQuery.each(JSON.parse(row.actions),function(key,value){
+	        			             option+= "<option>"+value.key+"</option>";
+	        			         });
+				        		  console.log("Option Text"+option); 
+				        		  return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
+											+ row.licenseId + '" onChange="goToAction(this);" >'+option+'</select>');
 				        	   }
 						}]				
 			});

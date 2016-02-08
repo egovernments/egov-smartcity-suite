@@ -176,6 +176,7 @@ public class SearchTradeAction extends BaseFormAction {
     private List<SearchForm> prepareOutput(final List<License> licenseList) {
         final List<SearchForm> finalList = new LinkedList<SearchForm>();
         SearchForm searchFormInfo;
+        List<String> licenseActions;
         for (final License license : licenseList){
             searchFormInfo = new SearchForm();
             searchFormInfo.setLicenseId(license.getId());
@@ -188,7 +189,17 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setTradeOwnerName(license.getLicensee().getApplicantName());
             searchFormInfo.setPropertyAssessmentNo(license.getPropertyNo());
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
-            searchFormInfo.setStatus(license.getEgwStatus()!=null?license.getEgwStatus().getCode():"");
+            licenseActions= new ArrayList<String>();
+            licenseActions.add("View Trade");
+            if(license.getEgwStatus()!=null){
+                if(license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_APPROVED_CODE))
+                    licenseActions.add("Collect Fees");
+                else if(license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+                    licenseActions.add("Print Certificate");
+            }
+            else if(license.isLegacy() && license.isPaid() != true)
+                licenseActions.add("Modify Legacy License");
+            searchFormInfo.setActions(licenseActions); 
             finalList.add(searchFormInfo);
             }
         return finalList;

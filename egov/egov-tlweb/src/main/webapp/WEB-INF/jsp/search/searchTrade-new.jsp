@@ -122,7 +122,7 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 							    </div>
 							    <label class="col-sm-2 control-label text-right"><s:text name='search.licensee.mobileNo' /></label>
 							    <div class="col-sm-3 add-margin">
-							      	<s:textfield name="mobileNo" id="mobileNo" value="%{mobileNo}" cssClass="form-control"/>
+							      	<s:textfield name="mobileNo" id="mobileNo" value="%{mobileNo}" onKeyPress="return numbersonly(this, event)" onBlur="checkMinLength(this,10)" maxlength="10" cssClass="form-control patternvalidation" data-pattern="number"/>
 							    </div>
 							</div>
 						</div>
