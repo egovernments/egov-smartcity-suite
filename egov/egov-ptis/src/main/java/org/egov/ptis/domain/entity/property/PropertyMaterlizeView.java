@@ -78,6 +78,7 @@ public class PropertyMaterlizeView implements Serializable {
     private Character source;
     private Set<FloorDetailsView> floorDetails;
     private String mobileNumber;
+    private boolean isActive;
 
     public Integer getBasicPropertyID() {
         return basicPropertyID;
@@ -306,7 +307,13 @@ public class PropertyMaterlizeView implements Serializable {
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
-    
-    
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
     
 }

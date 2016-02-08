@@ -68,12 +68,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.FloorDetailsView;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -344,6 +346,24 @@ public class ReportService {
         }
 
         return dailyCollectionReportList;
+    }
+
+    public List<CurrentInstDCBReportResult> getCurrentInstallmentDCB(String ward) {
+        final StringBuilder queryStr = new StringBuilder(500);
+
+        queryStr.append("select ward.name as \"wardName\", cast(count(*) as integer) as \"noOfProperties\", cast(sum(pi.aggregate_current_demand) as numeric) as \"currDemand\", cast(sum(pi.current_collection) as numeric) as \"currCollection\", cast(sum(pi.aggregate_arrear_demand) as numeric) as \"arrearDemand\",cast(sum(pi.arrearcollection) as numeric) as \"arrearCollection\" from egpt_mv_propertyinfo pi,"
+                + "eg_boundary ward where ward.id = pi.wardid and pi.isexempted = false ");
+
+        if (StringUtils.isNotBlank(ward))
+            queryStr.append(" and pi.wardid=:ward ");
+
+        queryStr.append("group by ward.name order by ward.name ");
+        final Query query = propPerServ.getSession().createSQLQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(ward))
+            query.setLong("ward", Long.valueOf(ward));
+
+        query.setResultTransformer(new AliasToBeanResultTransformer(CurrentInstDCBReportResult.class));
+        return query.list();
     }
 
     public List<User> getCollectionOperators() {

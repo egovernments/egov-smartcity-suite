@@ -39,14 +39,16 @@
  */
 package org.egov.ptis.domain.entity.property;
 
+import java.math.BigDecimal;
+
 public class CurrentInstDCBReportResult {
 
     private String wardName;
     private Integer noOfProperties;
-    private String currDemand;
-    private String currCollection;
-    private String arrearDemand;
-    private String arrearCollection;
+    private BigDecimal currDemand;
+    private BigDecimal currCollection;
+    private BigDecimal arrearDemand;
+    private BigDecimal arrearCollection;
 
     public String getWardName() {
         return wardName;
@@ -64,36 +66,37 @@ public class CurrentInstDCBReportResult {
         this.noOfProperties = noOfProperties;
     }
 
-    public String getCurrDemand() {
+    public BigDecimal getCurrDemand() {
         return currDemand;
     }
 
-    public void setCurrDemand(String currDemand) {
+    public void setCurrDemand(BigDecimal currDemand) {
         this.currDemand = currDemand;
     }
 
-    public String getCurrCollection() {
+    public BigDecimal getCurrCollection() {
         return currCollection;
     }
 
-    public void setCurrCollection(String currCollection) {
+    public void setCurrCollection(BigDecimal currCollection) {
         this.currCollection = currCollection;
     }
 
-    public String getArrearDemand() {
+    public BigDecimal getArrearDemand() {
         return arrearDemand;
     }
 
-    public void setArrearDemand(String arrearDemand) {
+    public void setArrearDemand(BigDecimal arrearDemand) {
         this.arrearDemand = arrearDemand;
     }
 
-    public String getArrearCollection() {
+    public BigDecimal getArrearCollection() {
         return arrearCollection;
     }
 
-    public void setArrearCollection(String arrearCollection) {
+    public void setArrearCollection(BigDecimal arrearCollection) {
         this.arrearCollection = arrearCollection;
     }
+
 
 }
