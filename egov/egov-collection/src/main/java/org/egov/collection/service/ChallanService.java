@@ -63,31 +63,42 @@ public class ChallanService extends PersistenceService<Challan, Long> {
     private CollectionsUtil collectionsUtil;
 
     /**
-     * This method performs the Challan workflow transition. The challan status is updated and transitioned to the next state. At
-     * the end of the transition the challan will be available in the inbox of the user of the position specified.
+     * This method performs the Challan workflow transition. The challan status
+     * is updated and transitioned to the next state. At the end of the
+     * transition the challan will be available in the inbox of the user of the
+     * position specified.
      *
-     * @param challan the <code>Challan</code> instance which has to under go the workflow transition
-     * @param nextPosition the position of the user to whom the challan must next be assigned to.
-     * @param actionName a <code>String</code> representing the state to which the challan has to transition.
-     * @param remarks a <code>String</code> representing the remarks for the current action
+     * @param challan
+     *            the <code>Challan</code> instance which has to under go the
+     *            workflow transition
+     * @param nextPosition
+     *            the position of the user to whom the challan must next be
+     *            assigned to.
+     * @param actionName
+     *            a <code>String</code> representing the state to which the
+     *            challan has to transition.
+     * @param remarks
+     *            a <code>String</code> representing the remarks for the current
+     *            action
      * @throws ApplicationRuntimeException
      */
     public void workflowtransition(final Challan challan, final Position position, final String actionName,
             final String remarks) throws ApplicationRuntimeException {
         // to initiate the workflow
 
-        if (challan.getState() == null && CollectionConstants.WF_ACTION_NAME_NEW_CHALLAN.equals(actionName))
-                {
+        if (challan.getState() == null && CollectionConstants.WF_ACTION_NAME_NEW_CHALLAN.equals(actionName)) {
             challan.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
                     CollectionConstants.CHALLAN_STATUS_CODE_CREATED));
             challan.transition().start().withComments(CollectionConstants.CHALLAN_CREATION_REMARKS)
-                    .withStateValue(CollectionConstants.WF_STATE_CREATE_CHALLAN).withOwner(position)
-                    .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName()).withDateInfo(new Date());
+            .withStateValue(CollectionConstants.WF_STATE_CREATE_CHALLAN).withOwner(position)
+            .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
+                    .withDateInfo(new Date());
         }
         if (CollectionConstants.WF_ACTION_NAME_MODIFY_CHALLAN.equals(actionName)) {
             challan.transition(true).withComments(CollectionConstants.CHALLAN_CREATION_REMARKS)
-            .withStateValue(CollectionConstants.WF_STATE_CREATE_CHALLAN).withOwner(position)
-            .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName()).withDateInfo(new Date());
+                    .withStateValue(CollectionConstants.WF_STATE_CREATE_CHALLAN).withOwner(position)
+                    .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
+                    .withDateInfo(new Date());
             LOGGER.debug("Challan Workflow Started.");
 
         }
@@ -95,28 +106,36 @@ public class ChallanService extends PersistenceService<Challan, Long> {
         if (CollectionConstants.WF_ACTION_NAME_APPROVE_CHALLAN.equals(actionName)) {
             challan.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
                     CollectionConstants.CHALLAN_STATUS_CODE_APPROVED));
-            challan.transition(true).withComments(remarks).withStateValue(CollectionConstants.WF_STATE_APPROVE_CHALLAN).withOwner(position)
-                    .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName()).withDateInfo(new Date());
+            challan.transition(true).withComments(remarks).withStateValue(CollectionConstants.WF_STATE_APPROVE_CHALLAN)
+                    .withOwner(position)
+            .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
+                    .withDateInfo(new Date());
         }
+        if (CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName))
+            challan.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
+                    CollectionConstants.CHALLAN_STATUS_CODE_VALIDATED));
 
         // on reject, the challan has to go to inbox of the creator
         if (CollectionConstants.WF_ACTION_NAME_REJECT_CHALLAN.equals(actionName)) {
-            
+
             challan.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
                     CollectionConstants.CHALLAN_STATUS_CODE_REJECTED));
             // the next action can be modify or cancel challan
             challan.transition(true).withComments(remarks)
-                    .withStateValue(CollectionConstants.WF_STATE_REJECTED_CHALLAN).withOwner(collectionsUtil.getPositionOfUser(challan.getCreatedBy()))
-                    .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName()).withDateInfo(new Date());
+            .withStateValue(CollectionConstants.WF_STATE_REJECTED_CHALLAN)
+                    .withOwner(collectionsUtil.getPositionOfUser(challan.getCreatedBy()))
+            .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
+                    .withDateInfo(new Date());
         }
 
         if (CollectionConstants.WF_ACTION_NAME_CANCEL_CHALLAN.equals(actionName)) {
             challan.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
                     CollectionConstants.CHALLAN_STATUS_CODE_CANCELLED));
             challan.transition().withComments(remarks).withStateValue(CollectionConstants.WF_STATE_CANCEL_CHALLAN)
-                    .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName()).withDateInfo(new Date()).end();
+            .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
+                    .withDateInfo(new Date()).end();
         }
-      //  persist(challan);
+        // persist(challan);
 
         LOGGER.debug("Challan workflow transition completed. Challan transitioned to : "
                 + challan.getCurrentState().getValue());
@@ -124,8 +143,9 @@ public class ChallanService extends PersistenceService<Challan, Long> {
         if (CollectionConstants.WF_ACTION_NAME_CANCEL_CHALLAN.equals(actionName)
                 || CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName)) {
             challan.transition().withComments("End of challan worklow")
-                    .withStateValue(CollectionConstants.WF_STATE_END).withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
-                    .withDateInfo(new Date()).end();
+            .withStateValue(CollectionConstants.WF_STATE_END)
+                    .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
+            .withDateInfo(new Date()).end();
             LOGGER.debug("End of Challan Workflow.");
         }
         persist(challan);
