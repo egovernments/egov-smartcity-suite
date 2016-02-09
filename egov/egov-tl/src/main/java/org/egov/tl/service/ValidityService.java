@@ -39,8 +39,14 @@
 
 package org.egov.tl.service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.Validity;
 import org.egov.tl.repository.ValidityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,12 +59,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class ValidityService {
 
     private final ValidityRepository validityRepository;
+   
+    @Autowired
+    private  FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Autowired
     public ValidityService(final ValidityRepository validityRepository) {
         this.validityRepository = validityRepository;
     }
-
+ 
     @Transactional
     public Validity create(final Validity validity) {
         return validityRepository.save(validity);
@@ -87,4 +96,50 @@ public class ValidityService {
         else
             return validityRepository.findAll();
     }
+    /**
+     * 
+     * @param license
+     * if the renewal is happening in the previous financial year ie,before expire this code needs to be updated.
+     */
+    public void applyLicenseValidity(License license)
+    {
+    	Validity validity=null;
+    	List<Validity> validityList = validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(license.getBuildingType().getId(), license.getTradeName().getCategory().getId());
+    	
+    	if(validityList!=null && !validityList.isEmpty())
+    	{
+    		validity=validityList.get(0);
+    	}else
+    	{
+    		validityList=	validityRepository.findByNatureOfBusinessId(license.getBuildingType().getId());
+    	}
+    	if(validityList!=null && !validityList.isEmpty())
+    	{
+    		validity=validityList.get(0);
+    	}else 
+    	{
+    		throw new ApplicationRuntimeException("Validity is not defined for the application type");
+    	}
+    	
+    		if(validity.isBasedOnFinancialYear())
+    		{
+    			CFinancialYear financialYearByDate = financialYearHibernateDAO.getFinancialYearByDate(new Date());
+    			license.setDateOfExpiry(financialYearByDate.getEndingDate());
+    		}else
+    		{
+    			Calendar cal=Calendar.getInstance();
+    			cal.setTime(new Date());
+    			if(validity.getYear()!=null && validity.getYear().compareTo(0)>1)
+    			cal.add(Calendar.YEAR,   validity.getYear());
+    			if(validity.getMonth()!=null && validity.getMonth().compareTo(0)>1)
+        			cal.add(Calendar.MONTH,   validity.getMonth());
+    			if(validity.getWeek()!=null && validity.getWeek().compareTo(0)>1)
+        			cal.add(Calendar.DATE,   validity.getWeek()*7);
+    			if(validity.getDay()!=null && validity.getDay().compareTo(0)>1)
+        			cal.add(Calendar.DATE,   validity.getDay());
+    			license.setDateOfExpiry(cal.getTime());
+    		}
+    		
+    	}
+    
 }
