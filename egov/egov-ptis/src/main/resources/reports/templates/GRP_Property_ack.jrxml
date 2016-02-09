@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-02-09T14:58:34 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="modifyProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f03713ef-53ed-45c0-b461-665772a871b1">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="loggedInUsername" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<field name="ownerName" class="java.lang.String"/>
+	<field name="ownerAddress" class="java.lang.String"/>
+	<field name="approvedDate" class="java.lang.String"/>
+	<field name="noticeDueDate" class="java.util.Date"/>
+	<field name="applicationDate" class="java.lang.String"/>
+	<field name="applicationNo" class="java.lang.String"/>
+	<field name="creationReason" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="325" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="29" y="172" width="278" height="20" uuid="cef5fce6-d30f-4c1a-83b8-792f33ab6d83"/>
+				<textElement markup="none">
+					<font size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Application Number: "+$F{applicationNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="348" y="172" width="182" height="20" uuid="8059dcec-7361-4dfc-8c5d-012591fcd0d9"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Application Date: "+$F{applicationDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="31" y="220" width="495" height="103" isPrintWhenDetailOverflows="true" uuid="2a6e61ac-efd7-496e-8f46-536043856e7f"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font size="12" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["	This is to acknowledge that an application for General Revision Petition has been received from Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{approvedDate}+"</style>."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="96" y="38" width="430" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="16" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="29" y="192" width="500" height="27" uuid="d34b284c-8f40-42ad-8692-da9ec9cf0f20"/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<image onErrorType="Blank">
+				<reportElement x="31" y="38" width="65" height="67" uuid="d0f2e83e-3e6c-49c5-9a5a-0f1ad6a64fdc"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="31" y="123" width="498" height="20" uuid="61df35e9-fc4b-4adf-8836-1c34c559d52b"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="14" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Acknowledgement of General Revision Petition"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<summary>
+		<band height="254" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="35" width="143" height="20" uuid="d31d7dee-5624-433f-8c3e-6d2f46e453f9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Signature]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="55" width="143" height="20" uuid="e0d7c3e8-041b-46a6-96d6-6926a518bb3e"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{loggedInUsername}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="268" y="75" width="256" height="20" uuid="9a1701d1-8007-420b-b784-12c7c88862ca"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="31" y="0" width="495" height="29" uuid="6800bad8-eb65-4af3-962a-f4eae21d90d0"/>
+				<textElement>
+					<font isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="35" width="147" height="20" uuid="00cdaa6f-00a4-4718-8094-ae88dc30377f"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Signature of receiver]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

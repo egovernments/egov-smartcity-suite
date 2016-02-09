@@ -175,7 +175,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
         if (zoneId != null && zoneId != -1)
             try {
                 final StringBuilder queryStr = new StringBuilder();
-                queryStr.append("from PropertyMaterlizeView pmv where pmv.zone.id=:ZoneID");
+                queryStr.append("from PropertyMaterlizeView pmv where pmv.zone.id=:ZoneID and pmv.isActive = true");
                 if (wardId != null && wardId != -1)
                     queryStr.append(" and pmv.ward.id=:WardID");
                 if (areaId != null && areaId != -1)
@@ -246,7 +246,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
         if (zoneId != null && zoneId != -1)
             try {
                 final StringBuilder queryStr = new StringBuilder();
-                queryStr.append("from PropertyMaterlizeView pmv where pmv.zone.id=:ZoneID");
+                queryStr.append("from PropertyMaterlizeView pmv where pmv.zone.id=:ZoneID and pmv.isActive = true");
                 if (wardId != null && wardId != -1)
                     queryStr.append(" and pmv.ward.id=:WardID");
                 if (areaId != null && areaId != -1)
@@ -315,7 +315,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
         if (zoneId != null && zoneId != -1)
             try {
                 final StringBuilder queryStr = new StringBuilder();
-                queryStr.append("from PropertyMaterlizeView pmv where pmv.zone.id=:ZoneID");
+                queryStr.append("from PropertyMaterlizeView pmv where pmv.zone.id=:ZoneID and pmv.isActive = true");
                 if (wardId != null && wardId != -1)
                     queryStr.append(" and pmv.ward.id=:WardID");
                 if (areaId != null && areaId != -1)
@@ -391,7 +391,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
         if (zoneId != null && zoneId != -1)
             try {
                 final StringBuilder queryStr = new StringBuilder();
-                queryStr.append("from PropertyMaterlizeView pmv where pmv.zone.id=:ZoneID");
+                queryStr.append("from PropertyMaterlizeView pmv where pmv.zone.id=:ZoneID and pmv.isActive = true");
                 if (wardId != null && wardId != -1)
                     queryStr.append(" and pmv.ward.id=:WardID");
                 if (areaId != null && areaId != -1)

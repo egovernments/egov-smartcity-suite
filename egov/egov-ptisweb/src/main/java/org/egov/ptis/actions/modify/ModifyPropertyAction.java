@@ -212,6 +212,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String RESULT_ERROR = "error";
     protected static final String VIEW = "view";
     private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
+    private static final String GRP_ACK_TEMPLATE = "GRP_Property_ack";
     public static final String PRINT_ACK = "printAck";
     private PersistenceService<Property, Long> propertyImplService;
     private PersistenceService<Floor, Long> floorService;
@@ -1388,7 +1389,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         reportParams.put("logoPath", imagePath);
         reportParams.put("cityName", cityName);
         reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
-        final ReportRequest reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, ackBean, reportParams);
+        ReportRequest reportInput = null;
+        if (modifyRsn.equals(PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION))
+            reportInput = new ReportRequest(GRP_ACK_TEMPLATE, ackBean, reportParams);
+        else
+            reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, ackBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
