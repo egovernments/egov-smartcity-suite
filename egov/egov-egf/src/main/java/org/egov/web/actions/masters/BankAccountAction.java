@@ -39,7 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +53,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CGeneralLedger;
 import org.egov.commons.Fund;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -126,31 +126,35 @@ public class BankAccountAction extends JQueryGridActionSupport {
         AccountCodePurpose purpose = null;
         if (COA == null)
             throw new ApplicationRuntimeException("Given glcode does not exist");
-        else if (COA != null) {
+        if (glCode != null) {
+            CGeneralLedger glList = (CGeneralLedger) persistenceService
+                    .find("select gl from CGeneralLedger gl where gl.glcodeId.glcode=? and gl.voucherHeaderId.status not in (4) ",
+                            glCode);
+            if (glList != null )
+                throw new ApplicationRuntimeException("Transaction already exist for given glcode");
+
+        }
+        if (COA != null) {
             account = bankAccountService.find("select ba from Bankaccount ba where ba.chartofaccounts.glcode = ?", glCode);
             if (account != null)
                 throw new ApplicationRuntimeException("Given glcode is already mapped to another bank account - "
                         + account.getAccountnumber());
-        } else if (!COA.getIsActiveForPosting())
+        }
+        if (!COA.getIsActiveForPosting())
             throw new ApplicationRuntimeException("Given glcode is not active for posting");
-        else if (COA.getChartOfAccountDetails() != null && !COA.getChartOfAccountDetails().isEmpty())
+        if (COA.getChartOfAccountDetails() != null && !COA.getChartOfAccountDetails().isEmpty())
             throw new ApplicationRuntimeException("Given glcode should not be a control code");
-        else if (COA.getType() != null && !COA.getType().equals('A')) {
+        if (COA.getType() != null && !COA.getType().equals('A')) {
             throw new ApplicationRuntimeException("Given glcode should be of type Assets");
-        } else if (COA.getPurposeId() == null) {
+        }
+        if (COA.getPurposeId() == null) {
             throw new ApplicationRuntimeException("Given glcode is not mapped with any purpose ");
-        } else if (COA.getPurposeId() != null) {
+        }
+        if (COA.getPurposeId() != null) {
             purpose = (AccountCodePurpose) persistenceService.find(
                     "select purpose from AccountCodePurpose purpose where purpose.id = ?", COA.getPurposeId());
             if (purpose != null && !purpose.getName().contains("Bank Account Codes"))
                 throw new ApplicationRuntimeException("Given glcode should be of purpose Bank Account Codes");
-        } else {
-            List glList = (List) persistenceService
-                    .find("select gl from CGeneralLedger gl where gl.glcodeId.glcode=? and gl.voucherHeaderId.status not in (4) ",
-                            glCode);
-            if (glList != null && glList.isEmpty())
-                throw new ApplicationRuntimeException("Transaction already exist for given glcode");
-
         }
 
     }
@@ -172,8 +176,8 @@ public class BankAccountAction extends JQueryGridActionSupport {
     private void populateBankAccountDetail(final Bankaccount bankAccount) {
         final HttpServletRequest request = ServletActionContext.getRequest();
         bankAccount.setAccountnumber(request.getParameter("accountnumber"));
-        bankAccount.setAccounttype(request.getParameter("accounttype").equalsIgnoreCase("") ? null : request.getParameter(
-                "accounttype").split("#")[1]);
+        /*bankAccount.setAccounttype(request.getParameter("accounttype").equalsIgnoreCase("") ? null : request.getParameter(
+                "accounttype").split("#")[1]);*/
         if (org.apache.commons.lang.StringUtils.isNotBlank(request.getParameter("fundname"))) {
             final Fund fund = (Fund) persistenceService.getSession().load(Fund.class,
                     Integer.valueOf(request.getParameter("fundname")));

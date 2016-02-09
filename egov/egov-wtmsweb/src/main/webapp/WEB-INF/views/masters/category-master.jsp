@@ -70,7 +70,7 @@
 				</div>
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.category.type" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin"  id="categorydiv">
-					<form:input class="form-control" title="space is not allowed as the first letter" pattern="^[^-\s][a-zA-Z0-9_\s-]+$"  maxlength="24" id="categoryName"
+					<form:input class="form-control patternvalidation"   data-pattern="alphabetwithspace"  maxlength="24" id="categoryName"
 						path="connectionCategory.name" required="required" />
 					<form:errors path="connectionCategory.name"
 						cssClass="add-margin error-msg" />
@@ -96,4 +96,5 @@
 	            type="text/javascript"></script>
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	            type="text/javascript"></script>
+	            <script src="<c:url value='/resources/js/app/category-master.js?rnd=${app_release_no}'/>"></script>
 

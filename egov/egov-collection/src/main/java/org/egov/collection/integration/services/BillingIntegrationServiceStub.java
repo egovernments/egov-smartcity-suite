@@ -48,6 +48,7 @@ import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.xml.converter.BillReceiptInfoConverter;
 import org.egov.collection.xml.converter.ReceiptAccountInfoConverter;
 import org.egov.collection.xml.converter.ReceiptInstrumentInfoConverter;
@@ -109,5 +110,10 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
     @Override
     public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
         return null;
+    }
+    
+    @Override
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+        return new ReceiptAmountInfo();
     }
 }

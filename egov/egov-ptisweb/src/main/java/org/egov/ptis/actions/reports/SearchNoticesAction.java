@@ -108,10 +108,10 @@ import com.lowagie.text.pdf.PdfWriter;
 @Namespace("/reports")
 @ResultPath("/WEB-INF/jsp/")
 @Results({
-    @Result(name = SearchNoticesAction.SUCCESS, type = "stream", params = { "contentType", "${contentType}", "inputName",
-            "fileStream", "contentDisposition", "attachment; filename=${fileName}" }),
-            @Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp"),
-            @Result(name = SearchNoticesAction.INDEX, location = "reports/searchNotices.jsp") })
+        @Result(name = SearchNoticesAction.SUCCESS, type = "stream", params = { "contentType", "${contentType}",
+                "inputName", "fileStream", "contentDisposition", "attachment; filename=${fileName}" }),
+        @Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp"),
+        @Result(name = SearchNoticesAction.INDEX, location = "reports/searchNotices.jsp") })
 public class SearchNoticesAction extends SearchFormAction {
     private static final Logger LOGGER = Logger.getLogger(SearchNoticesAction.class);
     private static final long serialVersionUID = 1L;
@@ -308,7 +308,8 @@ public class SearchNoticesAction extends SearchFormAction {
     }
 
     /**
-     * This method only to show Bills as Bills(file stream) saved into PT system in eg_filestoremap table column.
+     * This method only to show Bills as Bills(file stream) saved into PT system
+     * in eg_filestoremap table column.
      *
      * @throws IOException
      */
@@ -328,7 +329,8 @@ public class SearchNoticesAction extends SearchFormAction {
             final byte[] bFile = FileUtils.readFileToByteArray(file);
             final InputStream myInputStream = new ByteArrayInputStream(bFile);
             fileStream = myInputStream;
-            fileName = file.getName();
+            fileName = new StringBuffer(ptNotice.getBasicProperty().getUpicNo()).append("-")
+                    .append(ptNotice.getNoticeType()).toString();
             contentType = "application/pdf";
             contentLength = Long.valueOf(file.length());
         }
@@ -337,16 +339,17 @@ public class SearchNoticesAction extends SearchFormAction {
 
     /**
      * reset all the values
+     * 
      * @return
      */
     @SkipValidation
     @Action(value = "/searchNotices-reset")
     public String reset() {
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : " + zoneId + " wardId : "
-                    + wardId + " propertyType : " + propertyType + " noticeType : " + noticeType + " noticeNumber : "
-                    + noticeNumber + " noticeFromDate : " + noticeFromDate + " noticeToDate : " + noticeToDate
-                    + " indexNumber : " + indexNumber + " houseNumber : " + houseNumber);
+            LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : " + zoneId
+                    + " wardId : " + wardId + " propertyType : " + propertyType + " noticeType : " + noticeType
+                    + " noticeNumber : " + noticeNumber + " noticeFromDate : " + noticeFromDate + " noticeToDate : "
+                    + noticeToDate + " indexNumber : " + indexNumber + " houseNumber : " + houseNumber);
         ownerName = "";
         zoneId = -1l;
         wardId = -1l;
@@ -368,8 +371,7 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Entered into prepare method");
         super.prepare();
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                ZONE.toUpperCase(),
-                REVENUE_HIERARCHY_TYPE);
+                ZONE.toUpperCase(), REVENUE_HIERARCHY_TYPE);
         final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
                 REVENUE_HIERARCHY_TYPE);
         final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAll();
@@ -377,7 +379,7 @@ public class SearchNoticesAction extends SearchFormAction {
         addDropdownData("wardList", wardList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
-        //prepareWardDropDownData(zoneId != null, wardId != null);
+        // prepareWardDropDownData(zoneId != null, wardId != null);
 
         addDropdownData("PropTypeMaster", propTypeList);
         setNoticeTypeMap(CommonServices.getNoticeTypeMstr());
@@ -433,8 +435,7 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Entered into getPropType method");
             LOGGER.debug("Property type id : " + propertyType);
         }
-        final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO
-                .findById(Integer.valueOf(propertyType), false);
+        final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Integer.valueOf(propertyType), false);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Property type : " + propTypeMstr);
             LOGGER.debug("Exit from getPropType method");
@@ -443,13 +444,15 @@ public class SearchNoticesAction extends SearchFormAction {
     }
 
     /**
-     * @param noticeList This method removes the notices from the list which do not match the selected Owner Name and Property
-     * Type
+     * @param noticeList
+     *            This method removes the notices from the list which do not
+     *            match the selected Owner Name and Property Type
      */
     private void searchOwnerNamePropType() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into searchOwnerNamePropType method");
-            LOGGER.debug("searchOwnerNamePropType : Owner Name : " + ownerName + ", " + "Property Type : " + propertyType);
+            LOGGER.debug("searchOwnerNamePropType : Owner Name : " + ownerName + ", " + "Property Type : "
+                    + propertyType);
             LOGGER.debug("searchOwnerNamePropType : Number of notices before removal: "
                     + (noticeList != null ? noticeList.size() : ZERO));
         }
@@ -505,7 +508,9 @@ public class SearchNoticesAction extends SearchFormAction {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infra.web.struts.actions.SearchFormAction#prepareQuery(java.lang.String, java.lang.String)
+     * @see
+     * org.egov.infra.web.struts.actions.SearchFormAction#prepareQuery(java.
+     * lang.String, java.lang.String)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -527,10 +532,10 @@ public class SearchNoticesAction extends SearchFormAction {
     private Map<String, Object> getCriteriaString() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into getCriteriaString method");
-            LOGGER.debug("Notice Type : " + noticeType + ", " + "Zone Id : " + zoneId + ", " + "Ward Id : " + wardId + ", "
-                    + "Notice Number : " + noticeNumber + ", " + "Notice FromDate : " + noticeFromDate + ", "
-                    + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", " + "House Number : "
-                    + houseNumber);
+            LOGGER.debug("Notice Type : " + noticeType + ", " + "Zone Id : " + zoneId + ", " + "Ward Id : " + wardId
+                    + ", " + "Notice Number : " + noticeNumber + ", " + "Notice FromDate : " + noticeFromDate + ", "
+                    + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", "
+                    + "House Number : " + houseNumber);
         }
         final Map<String, Object> map = new HashMap<String, Object>();
         final ArrayList<Object> params = new ArrayList<Object>();
@@ -688,7 +693,8 @@ public class SearchNoticesAction extends SearchFormAction {
             final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 
             document.open();
-            final PdfContentByte cb = writer.getDirectContent(); // Holds the PDF
+            final PdfContentByte cb = writer.getDirectContent(); // Holds the
+                                                                 // PDF
             // data
 
             PdfImportedPage page;
@@ -741,7 +747,8 @@ public class SearchNoticesAction extends SearchFormAction {
      * @param out
      * @return zip output stream file
      */
-    private ZipOutputStream addFilesToZip(final InputStream inputStream, final String noticeNo, final ZipOutputStream out) {
+    private ZipOutputStream addFilesToZip(final InputStream inputStream, final String noticeNo,
+            final ZipOutputStream out) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into addFilesToZip method");
         final byte[] buffer = new byte[1024];

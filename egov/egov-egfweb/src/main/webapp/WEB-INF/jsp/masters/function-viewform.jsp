@@ -41,13 +41,13 @@
 	<tr>
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox" width="20%"><strong><s:text
-					name="function.code" /><span class="mandatory">*</span></strong></td>
+					name="function.code" /><span class="mandatory1">*</span></strong></td>
 		<td class="bluebox"><s:textfield id="code" name="code"
 				value="%{code}" /></td>
 		<td class="bluebox" width="20%"><strong><s:text
-					name="function.funcname" /><span class="mandatory">*</span></strong></td>
+					name="function.funcname" /><span class="mandatory1">*</span></strong></td>
 		<td class="bluebox"><s:textfield id="funcNameActual"
-				name="funcNameActual" value="%{funcNameActual}" /></td>
+				name="funcNameActual" value="%{name}" /></td>
 	</tr>
 	<tr>
 		<td class="greybox">&nbsp;</td>
@@ -56,7 +56,7 @@
 		<td class="greybox"><s:select list="dropdownData.functionList"
 				id="function.function.id" listKey="id" listValue="name"
 				name="function.function.id" headerKey=""
-				headerValue="---- Choose ----" value="function.id"></s:select></td>
+				headerValue="---- Choose ----" value="%{parentId}"></s:select></td>
 		<td class="greybox" width="20%"><strong><s:text
 					name="function.active" /></strong></td>
 		<td class="greybox"><s:checkbox name="isActive" id="isActive" />

@@ -73,4 +73,11 @@ public interface ChartOfAccountsDAO extends GenericDAO{
 	public List<CChartOfAccounts> getAccountCodeByListOfPurposeId(Integer[] purposeId) throws ValidationException;
 	public List<CChartOfAccounts> getListOfDetailCode(final String glCode) throws ValidationException;
 	public List<CChartOfAccounts> getBankChartofAccountCodeList();
+	public List<CChartOfAccounts> findByType(Character type);
+	public List<CChartOfAccounts> findByMajorCodeAndClassification(
+			String majorCode, Long classification);
+	public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassificationAndMajorCode(
+			String string, Long classification, String majorCode);
+	public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassification(
+			String string, Long classification);
 	}

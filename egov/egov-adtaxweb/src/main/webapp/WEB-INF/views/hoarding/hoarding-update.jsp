@@ -52,7 +52,7 @@
 		<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 		<form:hidden path="" id="statuscode" value="${advertisementPermitDetail.status.code}"/>
 		<form:hidden path="" id="wfstate" value="${advertisementPermitDetail.state.id}"/> 
-		<div class="panel panel-primary" data-collapsed="0">
+		<div class="panel panel-primary" data-collapsed="0" id="adtaxdetailsbody">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">
 					<li class="active"><a data-toggle="tab"
@@ -338,12 +338,30 @@ var subcategory = '${advertisementPermitDetail.advertisement.subCategory.id}';
 var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
 var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
 var statuscode = '${advertisementPermitDetail.status.code}';
-$("#advertisementform input, #advertisementform textarea, #hoardingdetails select").prop("disabled", true);
+$("#locationDiv input, #locationDiv textarea, #locationDiv select").prop("disabled", true);
 if(statuscode=='APPROVED' || statuscode=='ADTAXAMTPAYMENTPAID' || statuscode=='ADTAXAMTPAYMENTPENDING'){
-	$("#advertisementform input, #advertisementform textarea, #advertisementform select").prop("readonly", true);
+	$("#adtaxdetailsbody input, #adtaxdetailsbody textarea, #adtaxdetailsbody select").prop("disabled", true);
 }
-	
 
+$( ".workflow-submit" ).click(function( e ) {
+	if($('#advertisementform').valid()){
+		if(DateValidation($('#permissionstartdate').val() , $('#permissionenddate').val())){
+			if(parseInt($('#measurement').val()) <= 0){
+				bootbox.alert('Please enter valid measurement');
+				e.preventDefault();
+				return false;
+			}else{ 
+				document.forms['advertisementform'].submit();
+			}
+		}else{
+			e.preventDefault();
+		}
+	}else {
+		e.preventDefault();
+		return false;
+	}
+});
+	
 
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>

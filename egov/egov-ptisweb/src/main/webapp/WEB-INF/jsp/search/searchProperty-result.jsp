@@ -70,6 +70,8 @@
 					window.location = "/ptis/exemption/form/" + assessmentNum;
 				} else if(selectedValue == 'addArrears'){
 					window.location = "/ptis/addarrears/form/" + assessmentNum;
+				} else if(selectedValue == 'GeneralRevisionPetition'){
+					window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=GRP&indexNumber="+assessmentNum;
 				}
 			}
 
@@ -146,15 +148,16 @@
 											----Choose----
 										</option>
 								
-										<s:if test="%{#attr.currentRowObject.isDemandActive}">
+										<s:if test="%{#attr.currentRowObject.isDemandActive && #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 											<c:if test="${currentRowObject.isTaxExempted == true}">
 												<option value="TaxExemption">
 															<s:text name="TaxExemption"></s:text>
 												</option>
 											</c:if>
 										</s:if>
-										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
-										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+										<s:if test="%{(roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
+										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()))
+										&& #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 										<c:if test="${currentRowObject.isTaxExempted == false }">
 											<c:if test="${currentRowObject.source == 'D'}">
 												<option value="EDIT_DATAENTRY">
@@ -182,6 +185,9 @@
 												</option>
 												<option value="TaxExemption">
 													<s:text name="TaxExemption"></s:text>
+										        </option>
+										        <option value="GeneralRevisionPetition">
+													<s:text name="GeneralRevisionPetition"></s:text>
 										        </option>
 												<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.enableVacancyRemission == true}">
 													<s:if test="%{(#attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND || !#attr.currentRowObject.isTaxExempted)}">
@@ -216,7 +222,8 @@
 									   </c:if>
 									   
 									</s:if>
-									<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive}">
+									<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive
+									&& #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 										<c:if test="${currentRowObject.propType != 'VAC_LAND' && currentRowObject.isTaxExempted == false}">
 											<c:if test="${currentRowObject.enableMonthlyUpdate == true && currentRowObject.enableVRApproval == false}">
 												<option value="VacancyRemissionMonthlyUpdate">

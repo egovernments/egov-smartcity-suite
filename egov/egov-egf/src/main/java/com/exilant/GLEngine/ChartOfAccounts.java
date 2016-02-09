@@ -694,7 +694,7 @@ public class ChartOfAccounts {
             if (txnObj.getBillId() != null)
                 paramMap.put("bill", txnObj.getBillId());
             if (!budgetDetailsDAO.budgetaryCheck(paramMap))
-                throw new Exception("Budgetary check is failed for " + txnObj.getGlCode());
+                throw new ValidationException("Budgetary check  failed for " + txnObj.getGlCode(),"Budgetary check is failed for " + txnObj.getGlCode());
         }
         return true;
     }

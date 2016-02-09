@@ -39,7 +39,6 @@
  */
 package org.egov.tl.web.actions.newtradelicense;
 
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
@@ -63,7 +62,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDocumentType;
-import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -85,11 +83,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
 
-    private TradeLicense tradeLicense = new TradeLicense();
+    private TradeLicense tradeLicense = new TradeLicense(); 
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
-
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -118,36 +115,23 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
             throw new ValidationException(Arrays.asList(vr));
         }
-        if (BUTTONAPPROVE.equals(workFlowAction)) {
-            license().setCreationAndExpiryDate();
-            if (license().getTempLicenseNumber() == null) {
-                String nextRunningLicenseNumber = tradeLicenseService.getNextRunningLicenseNumber(
-                        "egtl_license_number").toString();
-                license().generateLicenseNumber(nextRunningLicenseNumber);
-              
-             }
-            
-        }
-        if(BUTTONAPPROVE.equals(workFlowAction) || ((Constants.BUTTONFORWARD.equals(workFlowAction) && tradeLicense.getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING) )))
-        {
-          LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                    .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
-            license().setStatus(activeStatus);
-        }
-        if(Constants.GENERATECERTIFICATE.equals(workFlowAction)){
-            LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                    .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-            license().setStatus(activeStatus);
-            }
+          tradeLicenseService.updateStatusInWorkFlowProgress(tradeLicense,workFlowAction);
         return super.approve();
     }
+
+   
 
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
-        return super.create(tradeLicense);
+        try {
+            return super.create(tradeLicense);
+        } catch (RuntimeException e) {
+            ValidationError vr=new ValidationError(e.getMessage(), e.getMessage());
+            throw new ValidationException(Arrays.asList(vr) ); 
+        }
     }
-
+    
     @Override
     public void prepareNewForm() {
         super.prepareNewForm();
@@ -165,6 +149,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
                 licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+        if(license() != null && license().getAgreementDate()!=null){
+            setShowAgreementDtl(true);
+        }
     }
 
     @Override
@@ -186,10 +173,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
-        tradeLicense = this.tradeLicenseService.getLicenseById(tradeLicense.getId());
-        License license = tradeLicense;
-        if (!license.getState().getValue().isEmpty()) {
-            license.transition(true).withStateValue("");
+        this.prepareNewForm();
+        if (tradeLicense.getState() != null && !tradeLicense.getState().getValue().isEmpty()) {
+            tradeLicense.transition(true).withStateValue("");
         }
         return super.beforeRenew();
     }
@@ -203,6 +189,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         if(license().getStatus().getName().equals(Constants.LICENSE_STATUS_ACKNOWLEDGED)
                 ||license().getStatus().getName().equals(Constants.LICENSE_STATUS_UNDERWORKFLOW)){
         mode = VIEW;
+        }
+        if(license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)){
+        mode = "editForReject";
         }
         return super.showForApproval();
     }

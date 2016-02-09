@@ -39,6 +39,11 @@
  */
 package org.egov.infra.persistence.validator;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
@@ -48,11 +53,6 @@ import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 public class CompositeUniqueCheckValidator implements ConstraintValidator<CompositeUnique, Object> {
 
     private CompositeUnique unique;
@@ -61,35 +61,39 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
     private EntityManager entityManager;
 
     @Override
-    public void initialize(CompositeUnique unique) {
+    public void initialize(final CompositeUnique unique) {
         this.unique = unique;
     }
 
     @Override
-    public boolean isValid(Object arg0, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
         try {
-            Long id = (Long)FieldUtils.readField(arg0, unique.id(), true);
-            boolean isValid = checkCompositeUniqueKey(arg0, id);
-            if ((!isValid) && unique.enableDfltMsg()) {
-                for (String fieldName : unique.fields()) {
+            final Number id = (Number) FieldUtils.readField(arg0, unique.id(), true);
+            final boolean isValid = checkCompositeUniqueKey(arg0, id);
+            if (!isValid && unique.enableDfltMsg())
+                for (final String fieldName : unique.fields())
                     constraintValidatorContext.buildConstraintViolationWithTemplate(unique.message()).addPropertyNode(fieldName)
                             .addConstraintViolation();
-                }
-            }
             return isValid;
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new ApplicationRuntimeException("Error while validating composite unique key", e);
         }
 
     }
 
-    private boolean checkCompositeUniqueKey(Object arg0, Long id) throws IllegalAccessException {
-        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass());
-        Conjunction conjunction = Restrictions.conjunction();
-        for (String fieldName : unique.fields())
-            conjunction.add(Restrictions.eq(fieldName, FieldUtils.readField(arg0, fieldName, true)));
+    private boolean checkCompositeUniqueKey(final Object arg0, final Number id) throws IllegalAccessException {
+        final Criteria criteria = entityManager.unwrap(Session.class)
+                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass());
+        final Conjunction conjunction = Restrictions.conjunction();
+        for (final String fieldName : unique.fields()) {
+            final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
+            if (unique.checkForNull() && fieldValue == null)
+                conjunction.add(Restrictions.isNull(fieldName));
+            else
+                conjunction.add(Restrictions.eq(fieldName, fieldValue));
+        }
         if (id != null)
-            conjunction.add(Restrictions.ne(this.unique.id(),id));
+            conjunction.add(Restrictions.ne(unique.id(), id));
         return criteria.add(conjunction).setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
     }
 

@@ -39,6 +39,11 @@
 package org.egov.ptis.domain.entity.property;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_FATHER;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_MOTHER;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_HUSBAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_OTHERS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,6 +52,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.workflow.entity.StateAware;
 
 public class PropertyMutation extends StateAware {
@@ -265,6 +271,10 @@ public class PropertyMutation extends StateAware {
         return buildGuarianName(getTransfereeInfos());
     }
 
+    public String getTransfereeGuardianRelation(){
+    	return buildOwnerGuardianRelation(getTransfereeInfos());
+    }
+    
     private String buildGuarianName(final List<User> userInfo) {
         final StringBuilder guardianName = new StringBuilder();
         for (final User owner : userInfo)
@@ -284,6 +294,32 @@ public class PropertyMutation extends StateAware {
         return ownerName.toString();
     }
 
+    private String buildOwnerGuardianRelation(final List<User> userInfo) {
+        final StringBuilder ownerGuardianRelation = new StringBuilder();
+        String relation = "";
+        for (final User owner : userInfo){
+            if (StringUtils.isNotBlank(owner.getGuardian())){
+            	ownerGuardianRelation.append(owner.getName());
+            	if(owner.getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_FATHER) || owner.getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_MOTHER)){
+            		if(owner.getGender().equals(Gender.FEMALE))
+            			relation = " D/O ";
+            		else if(owner.getGender().equals(Gender.MALE))
+                		relation = " S/O ";
+            	}
+            	else if(owner.getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_HUSBAND))
+            		relation = " W/O ";
+            	else if(owner.getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_WIFE))
+            		relation = " H/O ";
+            	else
+            		relation = " C/O ";
+            	ownerGuardianRelation.append(relation).append(owner.getGuardian()).append(", ");
+            }
+        }    	
+        if (ownerGuardianRelation.length() > 0)
+        	ownerGuardianRelation.deleteCharAt(ownerGuardianRelation.length() - 2);
+        return ownerGuardianRelation.toString();
+    }
+    
     public User getPrimaryTransferee() {
         User user = new User();
         for (final User transferee : getTransfereeInfos()) {

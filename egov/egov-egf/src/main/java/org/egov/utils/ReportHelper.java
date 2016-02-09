@@ -65,6 +65,7 @@ import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Fund;
@@ -111,16 +112,54 @@ public class ReportHelper {
     public InputStream exportXls(InputStream inputStream, final String jasperPath, final Map<String, Object> paramMap,
             final List<Object> dataSource)
             throws JRException, IOException {
-        JasperExportManager.exportReportToXmlStream(setUpAndGetJasperPrint(jasperPath, paramMap, dataSource), outputBytes);
-        inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
+    	
+    	  JasperPrint jasperPrint = setUpAndGetJasperPrint(jasperPath, paramMap, dataSource);
+    	 ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
+         JRXlsExporter exporter = new JRXlsExporter();
+         //exporter.setExporterInput(jasperPrint);
+         exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+         exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, xlsReport);
+         exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET,
+                 Boolean.FALSE);
+         exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE,
+                 Boolean.TRUE);
+         exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND,
+                 Boolean.FALSE);
+         exporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS,
+                 Boolean.FALSE);
+         exporter.exportReport();
+        // return xlsReport;
+         
+         inputStream = new ByteArrayInputStream(xlsReport.toByteArray());
+    	
+        //JasperExportManager.exportReportToXmlStream(setUpAndGetJasperPrint(jasperPath, paramMap, dataSource), outputBytes);
+       // inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
         closeStream(reportStream);
         return inputStream;
     }
 
     public InputStream exportXls(InputStream inputStream, final JasperPrint jasperPrint) throws JRException, IOException {
         outputBytes = new ByteArrayOutputStream(1 * MB);
-        JasperExportManager.exportReportToXmlStream(jasperPrint, outputBytes);
-        inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
+        //JasperExportManager.exportReportToXmlStream(jasperPrint, outputBytes);
+        
+        
+        ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
+        JRXlsExporter exporter = new JRXlsExporter();
+        //exporter.setExporterInput(jasperPrint);
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, xlsReport);
+        exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET,
+                Boolean.FALSE);
+        exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE,
+                Boolean.TRUE);
+        exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND,
+                Boolean.FALSE);
+        exporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS,
+                Boolean.FALSE);
+        exporter.exportReport();
+       // return xlsReport;
+        
+        inputStream = new ByteArrayInputStream(xlsReport.toByteArray());
         closeStream(reportStream);
         return inputStream;
     }
@@ -684,7 +723,7 @@ public class ReportHelper {
     private Style getHeaderStyle() {
         final Style headerStyle = new Style("header");
         headerStyle.setFont(Font.ARIAL_MEDIUM_BOLD);
-        headerStyle.setBorder(Border.THIN);
+        headerStyle.setBorder(Border.THIN());
         headerStyle.setBackgroundColor(new Color(204, 204, 204));
         headerStyle.setTextColor(Color.blue);
         headerStyle.setHorizontalAlign(HorizontalAlign.CENTER);
@@ -698,7 +737,7 @@ public class ReportHelper {
     private Style getHeaderBudgetStyle() {
         final Style headerStyle = new Style("header");
         headerStyle.setFont(Font.ARIAL_MEDIUM_BOLD);
-        headerStyle.setBorder(Border.THIN);
+        headerStyle.setBorder(Border.THIN());
         headerStyle.setBackgroundColor(new Color(204, 204, 204));
         headerStyle.setTextColor(Color.black);
         headerStyle.setHorizontalAlign(HorizontalAlign.CENTER);
@@ -711,40 +750,40 @@ public class ReportHelper {
 
     private Style getDetailAmountStyle() {
         final Style detailAmountStyle = new Style("detailAmount");
-        detailAmountStyle.setBorderLeft(Border.THIN);
-        detailAmountStyle.setBorderRight(Border.THIN);
+        detailAmountStyle.setBorderLeft(Border.THIN());
+        detailAmountStyle.setBorderRight(Border.THIN());
         detailAmountStyle.setTextColor(Color.blue);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
         detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
         detailAmountStyle.setPaddingRight(2);
         detailAmountStyle.setTransparency(Transparency.OPAQUE);
-        detailAmountStyle.setBorderBottom(Border.THIN);
+        detailAmountStyle.setBorderBottom(Border.THIN());
         return detailAmountStyle;
     }
 
     private Style getConcurrenceAmountStyle() {
         final Style detailAmountStyle = new Style("detailAmount");
-        detailAmountStyle.setBorderLeft(Border.THIN);
-        detailAmountStyle.setBorderRight(Border.THIN);
+        detailAmountStyle.setBorderLeft(Border.THIN());
+        detailAmountStyle.setBorderRight(Border.THIN());
         detailAmountStyle.setTextColor(Color.BLACK);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
         detailAmountStyle.setFont(new Font(6, Font._FONT_ARIAL, true));
         detailAmountStyle.setPaddingRight(2);
         detailAmountStyle.setTransparency(Transparency.OPAQUE);
-        detailAmountStyle.setBorderBottom(Border.THIN);
+        detailAmountStyle.setBorderBottom(Border.THIN());
         return detailAmountStyle;
     }
 
     private Style getColumnStyle() {
         final Style columnStyle = new Style("ColumnCss");
-        columnStyle.setBorderLeft(Border.THIN);
-        columnStyle.setBorderRight(Border.THIN);
+        columnStyle.setBorderLeft(Border.THIN());
+        columnStyle.setBorderRight(Border.THIN());
 
         columnStyle.setTextColor(Color.blue);
         columnStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         columnStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
         columnStyle.setTransparency(Transparency.OPAQUE);
-        columnStyle.setBorderBottom(Border.THIN);
+        columnStyle.setBorderBottom(Border.THIN());
         // detailAmountStyle.s
         return columnStyle;
     }
@@ -767,37 +806,37 @@ public class ReportHelper {
 
     private Style getBudgetColumnStyle() {
         final Style columnStyle = new Style("ColumnCss");
-        columnStyle.setBorderLeft(Border.THIN);
-        columnStyle.setBorderRight(Border.THIN);
+        columnStyle.setBorderLeft(Border.THIN());
+        columnStyle.setBorderRight(Border.THIN());
         columnStyle.setTextColor(Color.black);
         columnStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         columnStyle.setFont(new Font(11, Font._FONT_ARIAL, false));
         columnStyle.setTransparency(Transparency.OPAQUE);
-        columnStyle.setBorderBottom(Border.THIN);
+        columnStyle.setBorderBottom(Border.THIN());
         // detailAmountStyle.s
         return columnStyle;
     }
 
     private Style getConcurrenceColumnStyle() {
         final Style columnStyle = new Style("ColumnCss");
-        columnStyle.setBorderLeft(Border.THIN);
-        columnStyle.setBorderRight(Border.THIN);
+        columnStyle.setBorderLeft(Border.THIN());
+        columnStyle.setBorderRight(Border.THIN());
         columnStyle.setTextColor(Color.black);
         // columnStyle.
         columnStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         columnStyle.setFont(new Font(5, Font._FONT_ARIAL, false));
         columnStyle.setTransparency(Transparency.OPAQUE);
-        columnStyle.setBorderBottom(Border.THIN);
+        columnStyle.setBorderBottom(Border.THIN());
         // detailAmountStyle.s
         return columnStyle;
     }
 
     private Style getBudgetReportDetailAmountStyle() {
         final Style detailAmountStyle = new Style("detailAmount");
-        detailAmountStyle.setBorderLeft(Border.THIN);
-        detailAmountStyle.setBorderRight(Border.THIN);
-        detailAmountStyle.setBorderTop(Border.THIN);
-        detailAmountStyle.setBorderBottom(Border.THIN);
+        detailAmountStyle.setBorderLeft(Border.THIN());
+        detailAmountStyle.setBorderRight(Border.THIN());
+        detailAmountStyle.setBorderTop(Border.THIN());
+        detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
         detailAmountStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
@@ -808,7 +847,7 @@ public class ReportHelper {
     private Style getFIEHeaderStyle() {
         final Style headerStyle = new Style("header");
         headerStyle.setFont(Font.ARIAL_MEDIUM_BOLD);
-        headerStyle.setBorder(Border.THIN);
+        headerStyle.setBorder(Border.THIN());
         headerStyle.setBackgroundColor(new Color(204, 204, 204));
         headerStyle.setTextColor(Color.blue);
         headerStyle.setHorizontalAlign(HorizontalAlign.CENTER);
@@ -820,10 +859,10 @@ public class ReportHelper {
 
     private Style getFIEAmountStyle() {
         final Style detailAmountStyle = new Style("detailAmount");
-        detailAmountStyle.setBorderLeft(Border.THIN);
-        detailAmountStyle.setBorderRight(Border.THIN);
-        detailAmountStyle.setBorderTop(Border.THIN);
-        detailAmountStyle.setBorderBottom(Border.THIN);
+        detailAmountStyle.setBorderLeft(Border.THIN());
+        detailAmountStyle.setBorderRight(Border.THIN());
+        detailAmountStyle.setBorderTop(Border.THIN());
+        detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
         detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
@@ -836,10 +875,10 @@ public class ReportHelper {
 
     private Style getFIECOAStyle() {
         final Style detailAmountStyle = new Style("detailCOA");
-        detailAmountStyle.setBorderLeft(Border.THIN);
-        detailAmountStyle.setBorderRight(Border.THIN);
-        detailAmountStyle.setBorderTop(Border.THIN);
-        detailAmountStyle.setBorderBottom(Border.THIN);
+        detailAmountStyle.setBorderLeft(Border.THIN());
+        detailAmountStyle.setBorderRight(Border.THIN());
+        detailAmountStyle.setBorderTop(Border.THIN());
+        detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
@@ -851,10 +890,10 @@ public class ReportHelper {
 
     private Style getTBAmountStyle() {
         final Style detailAmountStyle = new Style("detailAmount");
-        detailAmountStyle.setBorderLeft(Border.THIN);
-        detailAmountStyle.setBorderRight(Border.THIN);
-        detailAmountStyle.setBorderTop(Border.THIN);
-        detailAmountStyle.setBorderBottom(Border.THIN);
+        detailAmountStyle.setBorderLeft(Border.THIN());
+        detailAmountStyle.setBorderRight(Border.THIN());
+        detailAmountStyle.setBorderTop(Border.THIN());
+        detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
         detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
@@ -866,10 +905,10 @@ public class ReportHelper {
 
     private Style getCOAStyle() {
         final Style detailAmountStyle = new Style("detailCOA");
-        detailAmountStyle.setBorderLeft(Border.THIN);
-        detailAmountStyle.setBorderRight(Border.THIN);
-        detailAmountStyle.setBorderTop(Border.THIN);
-        detailAmountStyle.setBorderBottom(Border.THIN);
+        detailAmountStyle.setBorderLeft(Border.THIN());
+        detailAmountStyle.setBorderRight(Border.THIN());
+        detailAmountStyle.setBorderTop(Border.THIN());
+        detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, false));
@@ -881,8 +920,8 @@ public class ReportHelper {
 
     private Style getDetailStyle() {
         final Style detailStyle = new Style("detail");
-        detailStyle.setBorderLeft(Border.THIN);
-        detailStyle.setBorderRight(Border.THIN);
+        detailStyle.setBorderLeft(Border.THIN());
+        detailStyle.setBorderRight(Border.THIN());
         detailStyle.setTextColor(Color.blue);
         detailStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
         detailStyle.setTransparency(Transparency.OPAQUE);
@@ -891,8 +930,8 @@ public class ReportHelper {
 
     private Style getDetailBudgetStyle() {
         final Style detailStyle = new Style("detail");
-        detailStyle.setBorderLeft(Border.THIN);
-        detailStyle.setBorderRight(Border.THIN);
+        detailStyle.setBorderLeft(Border.THIN());
+        detailStyle.setBorderRight(Border.THIN());
         detailStyle.setTextColor(Color.black);
         detailStyle.setFont(new Font(11, Font._FONT_ARIAL, false));
         detailStyle.setTransparency(Transparency.OPAQUE);
@@ -901,10 +940,10 @@ public class ReportHelper {
 
     private Style getBudgetReportDetailStyle() {
         final Style detailStyle = new Style("detail");
-        detailStyle.setBorderLeft(Border.THIN);
-        detailStyle.setBorderRight(Border.THIN);
-        detailStyle.setBorderTop(Border.THIN);
-        detailStyle.setBorderBottom(Border.THIN);
+        detailStyle.setBorderLeft(Border.THIN());
+        detailStyle.setBorderRight(Border.THIN());
+        detailStyle.setBorderTop(Border.THIN());
+        detailStyle.setBorderBottom(Border.THIN());
         detailStyle.setTextColor(Color.black);
         detailStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
         detailStyle.setTransparency(Transparency.OPAQUE);
@@ -1041,12 +1080,17 @@ public class ReportHelper {
                                     .setSubtitleStyle(getAmountSubTitleStyle())
                                     .setPageSizeAndOrientation(Page.Page_A4_Landscape())
                                     .setSubtitleHeight(30).setUseFullPageWidth(true);
-            // if(expType!=null && expType.equals("xls"))
-            // drb.setIgnorePagination(true);
+             if(expType!=null && expType.equals("xls"))
+             drb.setIgnorePagination(true);
+             
             dr = drb.build();
+            
+          // JRXlsExporter exporter = new JRXlsExporter();
             ds = new JRBeanCollectionDataSource(al);
             return DynamicJasperHelper.generateJasperPrint(dr,
                     new ClassicLayoutManager(), ds);
+            
+            
         } catch (final ColumnBuilderException e) {
             LOGGER.error(e, e);
         } catch (final ClassNotFoundException e) {

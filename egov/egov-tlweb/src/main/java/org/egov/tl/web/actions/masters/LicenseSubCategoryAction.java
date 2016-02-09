@@ -42,11 +42,8 @@ package org.egov.tl.web.actions.masters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
@@ -131,9 +128,9 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
 		// In Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
-			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAllBy("from org.egov.tl.entity.LicenseSubCategory order by id")));
+			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAll()));
 		if (getId() != null){
-			subCategory = licenseSubCategoryService.find("from org.egov.tl.entity.LicenseSubCategory where id=?", getId());
+			subCategory = licenseSubCategoryService.findById(getId());
 			setCategoryId(subCategory.getCategory().getId());
 			// To check whether fee is defined for the subcategory
 			if(userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT))){
@@ -217,7 +214,7 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 			}
 			subCategory.getLicenseSubCategoryDetails().clear();
 			populateSubCategoryDetails();
-			subCategory = licenseSubCategoryService.persist(subCategory);
+			subCategory = licenseSubCategoryService.create(subCategory);
 		} catch (final ValidationException valEx) {
 			LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
 			throw new ValidationException(valEx.getErrors());

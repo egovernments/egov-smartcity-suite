@@ -94,22 +94,31 @@
 					showMessage('newLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
 					window.scroll(0, 0);
 					return false;
-				}	else if (document.getElementById("uom").value == '-1'){
+				}	else if (document.getElementById("uom").value == ""){
 					showMessage('newLicense_error', '<s:text name="newlicense.uom.null" />');
 					window.scroll(0, 0); 
 					return false;
-				}	else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
-						 document.getElementById("workersCapacity").value == 0) {
-					/* showMessage('newLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
-					window.scroll(0, 0); 
-					return false; */
-				}
+				}	else if (document.getElementById("startDate").value == '' || document.getElementById("startDate").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.startDate.null" />');
+					window.scroll(0, 0);  
+					return false;
+				}	else if(document.getElementById("showAgreementDtl").checked){
+					 if (document.getElementById("agreementDate").value == '' || document.getElementById("agreementDate").value == null){
+							showMessage('newLicense_error', '<s:text name="newlicense.agreementDate.null" />');
+							window.scroll(0, 0);  
+							return false;
+					 } else if(document.getElementById("agreementDocNo").value == '' || document.getElementById("agreementDocNo").value == null){
+						 	showMessage('newLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
+							window.scroll(0, 0);  
+							return false;
+					}
+				} 
 				if(!verifyDocAttachment()){
 					return false;
 				}
-    			if(validateForm_newTradeLicense()==false) { 
+    			/* if(validateForm_newTradeLicense()==false) { 
     				return false;
-    			} else { 
+    			}  */else { 
 					return true;    	              
     			 } 
   			}
@@ -132,12 +141,8 @@
   	  		}
 
 			function onBodyLoad(){
-  				if (document.getElementById("motorInstalled").checked==true) { 
-					document.getElementById("hpheader").style.display='';
-				} else {
-					document.getElementById("hpheader").style.display='none';
-				}
   				var currentState=document.getElementById("currentWfstate").value;
+  				showHideAgreement();
 				if(currentState=='Create License:Commissioner Approved')	
 					{
 					toggleFields(true,['Submit','Reject','button2','Approve','approverComments']); 
@@ -163,186 +168,7 @@
 					</s:if>
 				} 
 			}
-
-			var motorcnt = 0;
-			var rowcnt = 1; // special counter to keep track of the number of Rows for id & name values
-			var labelCnt = 1; // special counter to keep track of the number of Rows for id & name values
-					
-			function findtotalHP() { 
-				var tot = 0;
-				for( var i=0; i<=motorcnt ;i++) {			  		
-			  		if(document.getElementById('installedMotorList['+i+'].hp')!=null && document.getElementById('installedMotorList['+i+'].noOfMachines')) {
-			 			chkDecimal(document.getElementById('installedMotorList['+i+'].hp'));
-			  			chkNum(document.getElementById('installedMotorList['+i+'].noOfMachines'));
-			  			if(document.getElementById('installedMotorList['+i+'].hp') && document.getElementById('installedMotorList['+i+'].hp').value != '' && document.getElementById('installedMotorList['+i+'].noOfMachines') && document.getElementById('installedMotorList['+i+'].noOfMachines').value != '') {
-			  				tot +=parseFloat(document.getElementById('installedMotorList['+i+'].hp').value)*parseInt(document.getElementById('installedMotorList['+i+'].noOfMachines').value);
-			  	 		}
-			  		}
-			  	}
-			  	document.getElementById("totalHP").value = tot;
-			}
-	
-			function showhide(id) {
-				if (document.getElementById("motorInstalled").checked) {
-					if(motorcnt<1){
-						addMotorRowToTable(false);
-					}
-					document.getElementById('tb2Create').style.display='';
-					document.getElementById("addmoremotor").style.display='';
-					document.getElementById("hpheader").style.display='';
-					document.getElementById('totalHP').value=0;
-				} else {
-					var table = document.getElementById('tb2Create');
-					var rowCount = table.rows.length;
-					if(rowCount>2){  // to skip table header
-						for (var i=rowCount-1; i >= 2; i--) {
-							table.deleteRow(i);
-						}
-						motorcnt=0;
-					}
-					addMotorRowToTable(false);
-					document.getElementById('totalHP').value=0;
-					document.getElementById('tb2Create').style.display='none';
-					document.getElementById("totalHP").value="";
-					document.getElementById("addmoremotor").style.display='none';
-					document.getElementById("hpheader").style.display='none';
-				}
-			}
-
-			function detailchange(){
-				document.getElementById("detailChanged").value = 'true';
-			}
-	
-			function addMotorRowToTable(populateslab,key,motorhpvalue,machines){
-				if(!populateslab){
-					detailchange();
-				}
-	
-				if (document.getElementById('tb2Create').style.display=='none') {
-				  	document.getElementById('tb2Create').style.display='';
-				}
-				  
-			  	var browser=navigator.appName;
-			  	var tbl = document.getElementById('tb2Create');
-			  	var lastRow = tbl.rows.length;
-			  	// if there's no header row in the table, then iteration = lastRow + 1
-				if (lastRow==1) {
-				  	var row = tbl.insertRow(lastRow);
-					var labelnoofmac;
-					var cellRight = row.insertCell(0);
-					cellRight.setAttribute("align","left");
-					labelnoofmac = document.createElement('label');
-					labelnoofmac.appendChild(document.createTextNode('No. of Machines'))
-					cellRight.appendChild(labelnoofmac);
-					var hspower;
-					var cellRight = row.insertCell(1);
-					cellRight.setAttribute("align","left");
-					hspower = document.createElement('label');
-					hspower.appendChild(document.createTextNode('Horse Power'))
-					cellRight.appendChild(hspower);
-					
-				  	<s:if test="%{!sControlDisabled}">
-						var adddel;
-						var cellRight = row.insertCell(2);
-						cellRight.setAttribute("align","left");
-						adddel = document.createElement('label');
-						adddel.appendChild(document.createTextNode('Actions'))
-						cellRight.appendChild(adddel);
-					</s:if>
-				}
-				 			  
-				var lastRow = tbl.rows.length;
-				var iteration = lastRow;
-				var row = tbl.insertRow(lastRow);
-				//1st column
-				var noOfMachines;  
-				var cellRight = row.insertCell(0);
-				cellRight.setAttribute("align","left");
-				noOfMachines = document.createElement('input');
-				noOfMachines.type = 'number';
-				noOfMachines.size = '10';
-				noOfMachines.onBlur= 'checkLength(this,3)'; 
-				noOfMachines.className = "form-control";
-				<s:if test="%{sControlDisabled}">
-				  noOfMachines.disabled="<s:property value='%{sControlDisabled}' />";
-				</s:if>
-				noOfMachines.name = 'installedMotorList['+motorcnt+'].noOfMachines' ;
-				noOfMachines.id = 'installedMotorList['+motorcnt+'].noOfMachines' ;
-				if(machines!=null && machines!='') {
-				  	noOfMachines.value = machines;
-				}
-				
-				if(browser=='Microsoft Internet Explorer'){
-				    noOfMachines.onblur=totalHP;
-				} else {
-				    noOfMachines.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
-				    noOfMachines.setAttribute('onKeyPress', 'return numbersonly(this, event);' );
-				}
-				cellRight.appendChild(noOfMachines);
-				    
-				//2nd column
-				var cellRight = row.insertCell(1);
-				cellRight.setAttribute("align","left");
-				horsepower = document.createElement('input');
-				horsepower.type = 'number';
-				horsepower.size = '10';
-				horsepower.onBlur = 'checkLength(this,3)';
-				horsepower.className = "form-control";
-				<s:if test="%{sControlDisabled}">
-				  	horsepower.disabled="<s:property value='%{sControlDisabled}' />";
-				</s:if>
-				  
-				horsepower.name = 'installedMotorList['+motorcnt+'].hp' ;
-				horsepower.id = 'installedMotorList['+motorcnt+'].hp' ;
-				
-				if(motorhpvalue!=null && motorhpvalue!=''){	
-				  	horsepower.value = motorhpvalue;
-				}
-				
-				if(browser=='Microsoft Internet Explorer'){
-				    horsepower.onblur=totalHP;
-				} else{
-				    horsepower.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
-				    horsepower.setAttribute('onKeyPress', 'return numbersonly(this, event);' );
-				}
-				  
-				 cellRight.appendChild(horsepower);
-				
-				  //3rd column
-				<s:if test="%{!sControlDisabled}">  
-					var oCell = row.insertCell(2);
-					oCell.innerHTML = "<span class='add-padding' style='cursor:pointer;' id='addImg"+motorcnt+"' onclick='addMotorRowToTable(false);'><i class='fa fa-plus'></i></span><span class='add-padding' style='cursor:pointer;' id='delImg"+motorcnt+"'  onclick='removeRow1(this);'><i class='fa fa-trash'></i></span>";
-				</s:if>
-				 motorcnt++;  
-
-			}
 			
-			function removeRow1(src){  
-				var tbl = document.getElementById('tb2Create');
-				var lastRow = tbl.rows.length;
-				if(lastRow>=3) {
- 					var oRow = src.parentNode.parentNode;
- 					if (oRow.rowIndex == 2) 
- 					{
- 						bootbox.alert("Cannot delete the first row!");
- 						return;
- 					} 
- 					else
- 					{
- 					document.all('tb2Create').deleteRow(oRow.rowIndex);
- 					}
- 					findtotalHP();  
-				 	detailchange();
-				}
-			}
-			
-			function checkLength(obj,val){
-				if(obj.value.length>val) {
-					bootbox.alert('Max '+val+' digits allowed')
-					obj.value = obj.value.substring(0,val);
-				}
-			}	
-	
 			function formatCurrency(obj) {
        			if(obj.value=="") {
         			return;
@@ -356,12 +182,18 @@
         	}
 
     		function onSubmit() {
-    			<s:if test="%{mode!=null && mode=='view'}">
+    			<s:if test="%{mode!=null && (mode=='view' && mode!='editForReject')}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
 					document.newTradeLicense.submit();
 				</s:if>
+				<s:elseif  test="%{mode!=null && mode=='editForReject'}">
+				clearMessage('newLicense_error');
+				toggleFields(false,"");
+				document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
+				document.newTradeLicense.submit();
+			</s:elseif>
 				<s:elseif test="%{mode!=null && mode=='edit'}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
@@ -394,6 +226,7 @@
 									jQuery("#boundary").val(data.boundaryDetails.localityId)
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
+									jQuery('#parentBoundary').val(data.boundaryDetails.wardId); 
 									jQuery("#address").val(data.propertyAddress);
 								}
 							}
@@ -425,6 +258,16 @@
             	document.getElementById("wardName").value="";
             	document.getElementById("address").value="";
             }
+
+            function showHideAgreement(){
+				if(document.getElementById("showAgreementDtl").checked){
+					document.getElementById("agreementSec").style.display="";
+				} else {
+					document.getElementById("agreementSec").style.display="none";
+					document.getElementById("agreementDate").value="";
+					document.getElementById("agreementDocNo").value="";
+				}
+            } 
         	
  		</script>
  		
@@ -459,6 +302,7 @@
 							<s:hidden id="mode" name="mode" value="%{mode}" />
 							<s:hidden id="currentWfstate" name="currentWfstate" value="%{state.value}" />
 							<s:hidden name="id" id="id" />
+							<s:hidden name="feeTypeId" id="feeTypeId" />
 							
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
@@ -485,54 +329,6 @@
 	                                         <%@ include file='../common/licensee.jsp'%>
 	                                          <%@ include file='../common/address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
-	                                         
-	                                         
-	                                         <div class="panel-heading custom_form_panel_heading">
-											    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
-											</div>
-											
-											<div class="form-group">
-											    <label class="col-sm-3 control-label text-right"><s:text name="license.motor.installed" /></label>
-											    <div class="col-sm-3 add-margin text-left">
-											         	<s:checkbox theme="simple" key="motorInstalled" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
-											    </div>
-											</div>
-											<div class="form-group">
-											    <table class="table table-bordered" style="width:80%;margin:10px auto" id="tb2Create">
-															<th id="hpheader" style="display: none;" colspan="3" class="bluebgheadtd" align="center">
-																<b><s:text name="license.horsepower" /></b>
-															</th>
-												</table>			
-											</div>
-											<script>
-												<s:iterator var="p" value="installedMotorList">
-													addMotorRowToTable(true,'<s:property value="key"/>',  '<s:property value="#p.hp"/>', '<s:property value="#p.noOfMachines"/>');
-												</s:iterator>
-											</script>
-											
-											<div class="form-group" id="addmoremotor">
-											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.horsepower" /></label>
-											    <div class="col-sm-3 add-margin">	
-											    	<s:textfield name="totalHP" readonly="true" disabled="%{sDisabled}"  onBlur="trimAll(this.value);" id="totalHP" cssClass="form-control" />
-											    </div>		
-											</div>
-											
-											
-											<div class="form-group">
-											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.workersCapacity" /><span class="mandatory"></span></label>
-											    <div class="col-sm-3 add-margin">	
-											    	<s:textfield name="workersCapacity" size="8" maxlength="8" onBlur="trimAll(this.value);" id="workersCapacity" cssClass="form-control patternvalidation" data-pattern="number" />
-											    </div>		
-											</div>
-											
-											<script>
-														 if(document.getElementById("motorInstalled").checked){															
-															document.getElementById("addmoremotor").style.display='';
-														}else{
-															document.getElementById("addmoremotor").style.display='none';
-														} 														
-														findtotalHP();
-												</script>
 												
 											<div>
 												<%@include file="../common/documentUpload.jsp" %>
@@ -549,6 +345,7 @@
                     </s:form> 
                     </div>
                 </div>
+        <script	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>        
         <script src="../resources/app/js/newtrade.js"></script>
         <script src="../resources/javascript/license/searchTrade.js"></script>
     </body>

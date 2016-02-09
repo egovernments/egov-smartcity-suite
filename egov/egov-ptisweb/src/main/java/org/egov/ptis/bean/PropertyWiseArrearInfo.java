@@ -46,7 +46,7 @@ public class PropertyWiseArrearInfo {
     private String indexNumber;
     private String ownerName;
     private String houseNo;
-    private String arrearInstallmentYear;
+    private String arrearInstallmentDesc;
     private BigDecimal arrearLibraryCess;
     private BigDecimal arrearPropertyTax;
     private BigDecimal arrearPenalty;
@@ -74,14 +74,6 @@ public class PropertyWiseArrearInfo {
 
     public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
-    }
-
-    public String getArrearInstallmentYear() {
-        return arrearInstallmentYear;
-    }
-
-    public void setArrearInstallmentYear(final String arrearInstallmentYear) {
-        this.arrearInstallmentYear = arrearInstallmentYear;
     }
 
     public BigDecimal getArrearLibraryCess() {
@@ -123,4 +115,13 @@ public class PropertyWiseArrearInfo {
     public void setBasicPropId(final Long basicPropId) {
         this.basicPropId = basicPropId;
     }
+
+	public String getArrearInstallmentDesc() {
+		return arrearInstallmentDesc;
+	}
+
+	public void setArrearInstallmentDesc(String arrearInstallmentDesc) {
+		this.arrearInstallmentDesc = arrearInstallmentDesc;
+	}
+
 }

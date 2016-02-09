@@ -54,12 +54,7 @@
 				style="text-align: center; width: 100%;">
 				<s:property value="%{heading}" />
 			</div>
-			<div align="left" style="text-align: left; width: 100%;">
-				<s:property value="%{generalLedgerReportBean.isConfirmedCount}" />
-				in
-				<s:property value="%{generalLedgerReportBean.totalCount}" />
-				are unconfirmed
-			</div>
+			
 			<table width="100%" border="1" cellspacing="0" cellpadding="0">
 				<tr>
 					<th class="bluebgheadtd" ><s:text

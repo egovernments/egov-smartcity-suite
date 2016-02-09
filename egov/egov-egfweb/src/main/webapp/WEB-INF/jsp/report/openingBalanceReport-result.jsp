@@ -60,6 +60,10 @@
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="GL Code" style="width:6%;text-align:center" property="accCode" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Department" style="width:3%;text-align:center" property="deptcode" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Function" style="width:3%;text-align:center" property="functioncode" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Account Head" style="width:8%;text-align:left"
 			property="accName" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"

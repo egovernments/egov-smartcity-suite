@@ -39,8 +39,11 @@
  */
 package org.egov.tl.web.actions.objection;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -60,10 +63,8 @@ import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @Results({
         @Result(name = Constants.NEW, location = "objection-" + Constants.NEW + ".jsp"),
@@ -206,9 +207,7 @@ public class ObjectionAction extends GenericWorkFlowAction {
      */
     public void prepareShowForApproval() {
         prepareNewForm();
-        final Long userId = securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            setRoleName(licenseUtils.getRolesForUserId(userId));
+        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
         activityTypeList = new ArrayList<String>();
         activityTypeList.add(Constants.ACTIVITY_INSPECTION);
         activityTypeList.add(Constants.ACTIVITY_RESPONSE);

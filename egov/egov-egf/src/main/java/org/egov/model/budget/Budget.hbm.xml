@@ -64,6 +64,9 @@
 		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all" fetch="join">
             <column name="STATE_ID"/>
         </many-to-one>
+         <many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
+            <column name="STATUS" precision="22" scale="0" />
+         </many-to-one>
 		<many-to-one name="parent" class="org.egov.model.budget.Budget" column="parent"  fetch="join"/>
 		<many-to-one name="referenceBudget" class="org.egov.model.budget.Budget" column="reference_budget"  />
 	</class>

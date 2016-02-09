@@ -68,12 +68,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.FloorDetailsView;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,19 +100,19 @@ public class ReportService {
     public List<BaseRegisterResult> getPropertyByWardAndBlock(final String ward, final String block) {
 
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
 
         if (StringUtils.isNotBlank(ward))
-            queryStr.append(" where pmv.ward.id=:ward ");
+            queryStr.append(" and pmv.ward.id=:ward ");
         if (StringUtils.isNotBlank(block))
             queryStr.append(" and pmv.block.id=:block ");
+        queryStr.append(" order by pmv.propertyId, pmv.ward");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(ward))
             query.setLong("ward", Long.valueOf(ward));
         if (StringUtils.isNotBlank(block))
             query.setLong("block", Long.valueOf(block));
 
-        queryStr.append(" order by pmv.basicPropertyID");
         List<PropertyMaterlizeView> properties = query.list();
         List<BaseRegisterResult> baseRegisterResultList = new LinkedList<BaseRegisterResult>();
 
@@ -136,7 +138,8 @@ public class ReportService {
             PropertyMaterlizeView propMatView) {
         baseRegisterResultObj.setAssessmentNo(propMatView.getPropertyId());
         baseRegisterResultObj.setDoorNO(propMatView.getHouseNo());
-        baseRegisterResultObj.setOwnerName(propMatView.getOwnerName());
+        baseRegisterResultObj.setOwnerName(propMatView.getOwnerName().contains(",") ? propMatView.getOwnerName().replace(",",
+                " & ") : propMatView.getOwnerName());
         baseRegisterResultObj.setIsExempted(propMatView.getIsExempted() ? "Yes" : "No");
         baseRegisterResultObj.setCourtCase("No");
 
@@ -209,6 +212,11 @@ public class ReportService {
                 count++;
             } else {
                 baseRegisterResultObj = new BaseRegisterResult();
+                baseRegisterResultObj.setAssessmentNo("");
+                baseRegisterResultObj.setOwnerName("");
+                baseRegisterResultObj.setDoorNO("");
+                baseRegisterResultObj.setCourtCase("");
+                baseRegisterResultObj.setArrearPeriod("");
                 baseRegisterResultObj.setPlinthArea(floorview.getPlinthArea());
                 baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage());
                 baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());
@@ -339,6 +347,24 @@ public class ReportService {
         }
 
         return dailyCollectionReportList;
+    }
+
+    public List<CurrentInstDCBReportResult> getCurrentInstallmentDCB(String ward) {
+        final StringBuilder queryStr = new StringBuilder(500);
+
+        queryStr.append("select ward.name as \"wardName\", cast(count(*) as integer) as \"noOfProperties\", cast(sum(pi.aggregate_current_demand) as numeric) as \"currDemand\", cast(sum(pi.current_collection) as numeric) as \"currCollection\", cast(sum(pi.aggregate_arrear_demand) as numeric) as \"arrearDemand\",cast(sum(pi.arrearcollection) as numeric) as \"arrearCollection\" from egpt_mv_propertyinfo pi,"
+                + "eg_boundary ward where ward.id = pi.wardid and pi.isexempted = false and pi.isactive=true ");
+
+        if (StringUtils.isNotBlank(ward))
+            queryStr.append(" and pi.wardid=:ward ");
+
+        queryStr.append("group by ward.name order by ward.name ");
+        final Query query = propPerServ.getSession().createSQLQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(ward))
+            query.setLong("ward", Long.valueOf(ward));
+
+        query.setResultTransformer(new AliasToBeanResultTransformer(CurrentInstDCBReportResult.class));
+        return query.list();
     }
 
     public List<User> getCollectionOperators() {

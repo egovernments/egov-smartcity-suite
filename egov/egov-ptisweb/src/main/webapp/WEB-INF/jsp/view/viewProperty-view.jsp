@@ -122,11 +122,12 @@
 				</s:if>
 				
 				<br>	
-				<s:if test="%{property.getIsExemptedFromTax() && isDemandActive}">
+				<s:if test="%{property.getIsExemptedFromTax() && isDemandActive && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS.equals(propertyDetail.propertyTypeMaster.code)}">
 					<input type="button" class="buttonsubmit" name="taxExemption" id="taxExemption" value="Tax Exemption"
 							onclick="window.location='/ptis/exemption/form/<s:property value="%{basicProperty.upicNo}" />';" />
 				</s:if>
-				<s:elseif test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+				<s:elseif test="%{(roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()))
+				&& !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS.equals(propertyDetail.propertyTypeMaster.code)}">
 					<s:if test="%{isDemandActive}">
 						<input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Addition/Alteration of Assessment"
 							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
@@ -136,9 +137,12 @@
 							onclick="window.location='../property/transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
 						<input type="button" class="buttonsubmit" name="taxExemption" id="taxExemption" value="Tax Exemption"
 							onclick="window.location='/ptis/exemption/form/<s:property value="%{basicProperty.upicNo}" />';" />
+							<input type="button" class="buttonsubmit" name="btnGRPProperty" id="btnGRPProperty" value="General Revision Petition"
+							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=GRP&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 							
 						<s:if test="%{!property.getIsExemptedFromTax()
-							 && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code) && !basicProperty.underWorkflow}">
+							 && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code) && !basicProperty.underWorkflow
+							 && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS.equals(propertyDetail.propertyTypeMaster.code)}">
 							<s:if test="%{viewMap.enableVacancyRemission}" >		
 								<input type="button" class="buttonsubmit" name="vacancyremissionbtn"
 									id="vacancyremissionbtn" value="Vacancy Remission" 
@@ -157,7 +161,8 @@
 				</s:elseif>	
 				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase())}">
 					<s:if test="%{isDemandActive && !property.getIsExemptedFromTax() && !basicProperty.underWorkflow
-							 && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code)}">
+							 && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code)
+							 && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS.equals(propertyDetail.propertyTypeMaster.code)}">
 							<input type="button" class="buttonsubmit" name="monthlyupdatebtn"
 									id="monthlyupdatebtn" value="Vacancy Remission Monthly Update" 
 									onclick="window.location='/ptis/vacancyremission/monthlyupdate/<s:property value="%{basicProperty.upicNo}" />'" />
@@ -168,7 +173,7 @@
 						onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 				</s:if>
 				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && isNagarPanchayat 
-					&& !basicProperty.underWorkflow && basicProperty.source=='M'}">
+					&& !basicProperty.underWorkflow && basicProperty.source=='M' && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS.equals(propertyDetail.propertyTypeMaster.code)}">
 					<input type="button" class="buttonsubmit" name="addArrearsButton"
 									id="addArrearsButton" value="Add Arrears" 
 									onclick="window.location='/ptis/addarrears/form/<s:property value="%{basicProperty.upicNo}" />'" />

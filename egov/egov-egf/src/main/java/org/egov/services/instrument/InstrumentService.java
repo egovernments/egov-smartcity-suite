@@ -66,7 +66,9 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.jboss.logging.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class InstrumentService {
 
     public static final String STATUS_ID = "Status id";
@@ -386,6 +388,7 @@ public class InstrumentService {
      * @param paramList
      * @return List<InstrumentVoucher>
      */
+    @Transactional
     public List<InstrumentVoucher> updateInstrumentVoucherReference(final List<Map<String, Object>> paramList) {
         final List<InstrumentVoucher> iVouherList = new ArrayList<InstrumentVoucher>();
         for (final Map<String, Object> iVoucherMap : paramList) {

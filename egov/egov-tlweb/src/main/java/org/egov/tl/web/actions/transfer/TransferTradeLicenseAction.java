@@ -39,6 +39,11 @@
  */
 package org.egov.tl.web.actions.transfer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -46,10 +51,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -63,11 +65,6 @@ import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @ParentPackage("egov")
 @Results({
@@ -117,9 +114,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     @Override
     public void prepareNewForm() {
         this.setupWorkflowDetails();
-        Long userId = this.securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            this.setRoleName(this.licenseUtils.getRolesForUserId(userId));
+        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
         this.addDropdownData(Constants.DROPDOWN_ZONE_LIST, this.licenseUtils.getAllZone());
         this.addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSEE, new ArrayList<Boundary>());
     }
@@ -274,9 +269,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
         System.out.println(this.tl.getLicenseTransfer().getBoundary().getId());
         System.out.println(this.tl.getLicenseTransfer().getBoundary().getName());
         this.loadAjaxedDropDowns();
-        Long userId = this.securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            this.setRoleName(this.licenseUtils.getRolesForUserId(userId));
+        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
         TransferTradeLicenseAction.LOGGER.debug("Exiting from the showForApproval method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return "approve";
     }

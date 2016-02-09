@@ -125,39 +125,12 @@ public class FeeMatrixController {
 		}
 		model.addAttribute("feeMatrix", new FeeMatrix());
 		model.addAttribute("subCategorys", Collections.EMPTY_LIST);
+		model.addAttribute("feeTypes", Collections.EMPTY_LIST);
+		model.addAttribute("unitOfMeasurements", Collections.EMPTY_LIST);
 		model.addAttribute(
 				"licenseAppTypes",
 				persistenceService
 						.findAllBy("select a from LicenseAppType a order by name asc"));
-		if (fee != null) {
-			feeTypeList.add(feeTypeService.findByName(fee));
-			model.addAttribute("feeTypes", feeTypeList);
-			switch (fee) {
-			case "License Fee":
-				uomList.addAll(persistenceService
-						.findAllBy("select u from UnitOfMeasurement  u order by name asc"));
-				model.addAttribute("unitOfMeasurements", uomList);
-				break;
-			case "Motor Fee":
-				uomList.add((UnitOfMeasurement) persistenceService
-						.find("select u from UnitOfMeasurement u   where u.name='HP'"));
-				model.addAttribute("unitOfMeasurements", uomList);
-				break;
-			case "Workforce Fee":
-				uomList.add((UnitOfMeasurement) persistenceService
-						.find("select u from UnitOfMeasurement u   where u.name='Person'"));
-				model.addAttribute("unitOfMeasurements", uomList);
-				break;
-			}
-		} else {
-
-			model.addAttribute("feeTypes", feeTypeService.findAll());
-			model.addAttribute(
-					"unitOfMeasurements",
-					persistenceService
-							.findAllBy("select u from UnitOfMeasurement  u order by name asc"));
-		}
-
 	}
 
 	@RequestMapping(value = "create", method = RequestMethod.GET)

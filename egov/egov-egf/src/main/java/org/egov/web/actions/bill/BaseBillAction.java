@@ -52,7 +52,6 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.commons.utils.EntityType;
-import org.egov.egf.bills.model.Cbill;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -63,7 +62,6 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.infstr.workflow.Action;
 import org.egov.model.bills.EgBillregister;
@@ -72,6 +70,7 @@ import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.bills.BillsService;
+import org.egov.services.bills.EgBillRegisterService; 
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
@@ -98,9 +97,8 @@ public class BaseBillAction extends BaseVoucherAction {
     protected List<VoucherDetails> billDetailsTableNetFinal;
     protected List<VoucherDetails> billDetailsTableCreditFinal;
     protected List<CheckListHelper> checkListsTable;
-    protected SimpleWorkflowService<Cbill> billRegisterWorkflowService;
-    protected PersistenceService<EgBillregister, Long> billRegisterService;
-    protected PersistenceService<Cbill, Long> cbillService;
+    protected SimpleWorkflowService<EgBillregister> billRegisterWorkflowService;
+    protected EgBillRegisterService egBillRegisterService;
     protected EgovCommon egovCommon;
     protected @Autowired AppConfigValueService appConfigValuesService;
     protected CChartOfAccounts defaultNetPayCode;
@@ -314,14 +312,6 @@ public class BaseBillAction extends BaseVoucherAction {
                 FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
     }
 
-    public PersistenceService<EgBillregister, Long> getBillRegisterService() {
-        return billRegisterService;
-    }
-
-    public void setBillRegisterService(final PersistenceService<EgBillregister, Long> billRegisterService) {
-        this.billRegisterService = billRegisterService;
-    }
-
     public Long getBillRegisterId() {
         return billRegisterId;
     }
@@ -338,20 +328,21 @@ public class BaseBillAction extends BaseVoucherAction {
         this.detailTypeIdandName = detailTypeIdandName;
     }
 
-    public SimpleWorkflowService<Cbill> getBillRegisterWorkflowService() {
+    public SimpleWorkflowService<EgBillregister> getBillRegisterWorkflowService() {
         return billRegisterWorkflowService;
     }
 
-    public void setBillRegisterWorkflowService(final SimpleWorkflowService<Cbill> billRegisterWorkflowService) {
+    public void setBillRegisterWorkflowService(final SimpleWorkflowService<EgBillregister> billRegisterWorkflowService) {
         this.billRegisterWorkflowService = billRegisterWorkflowService;
     }
 
-    public PersistenceService<Cbill, Long> getCbillService() {
-        return cbillService;
+
+    public EgBillRegisterService getEgBillRegisterService() {
+        return egBillRegisterService;
     }
 
-    public void setCbillService(final PersistenceService<Cbill, Long> cbillService) {
-        this.cbillService = cbillService;
+    public void setEgBillRegisterService(EgBillRegisterService egBillRegisterService) {
+        this.egBillRegisterService = egBillRegisterService;
     }
 
     public String getButton() {

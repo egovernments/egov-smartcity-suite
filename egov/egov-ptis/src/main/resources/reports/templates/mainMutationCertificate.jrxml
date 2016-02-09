@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-01-21T12:59:49 -->
+<!-- 2016-02-02T13:24:55 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainMutationCertificate" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" whenResourceMissingType="Empty" uuid="9cf367da-f255-4a18-8dcb-ffe982b88e97">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -13,7 +13,7 @@
 	<field name="localityName" class="java.lang.String"/>
 	<field name="newOwnerName" class="java.lang.String"/>
 	<field name="oldOwnerName" class="java.lang.String"/>
-	<field name="newOwnerParentName" class="java.lang.String"/>
+	<field name="newOwnerGuardianRelation" class="java.lang.String"/>
 	<field name="oldOwnerParentName" class="java.lang.String"/>
 	<field name="regDocNo" class="java.lang.String"/>
 	<field name="regDocDate" class="java.lang.String"/>
@@ -53,8 +53,8 @@
 				<subreportParameter name="oldOwnerName">
 					<subreportParameterExpression><![CDATA[$F{oldOwnerName}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="newOwnerParentName">
-					<subreportParameterExpression><![CDATA[$F{newOwnerParentName}]]></subreportParameterExpression>
+				<subreportParameter name="newOwnerGuardianRelation">
+					<subreportParameterExpression><![CDATA[$F{newOwnerGuardianRelation}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="oldOwnerParentName">
 					<subreportParameterExpression><![CDATA[$F{oldOwnerParentName}]]></subreportParameterExpression>
@@ -105,8 +105,8 @@
 				<subreportParameter name="oldOwnerName">
 					<subreportParameterExpression><![CDATA[$F{oldOwnerName}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="newOwnerParentName">
-					<subreportParameterExpression><![CDATA[$F{newOwnerParentName}]]></subreportParameterExpression>
+				<subreportParameter name="newOwnerGuardianRelation">
+					<subreportParameterExpression><![CDATA[$F{newOwnerGuardianRelation}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="oldOwnerParentName">
 					<subreportParameterExpression><![CDATA[$F{oldOwnerParentName}]]></subreportParameterExpression>

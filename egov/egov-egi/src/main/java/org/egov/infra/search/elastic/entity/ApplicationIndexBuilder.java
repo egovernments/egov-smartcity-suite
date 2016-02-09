@@ -42,6 +42,8 @@ package org.egov.infra.search.elastic.entity;
 import java.util.Date;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
+import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
 
 /**
  * Builder class for Application Index
@@ -94,6 +96,21 @@ public class ApplicationIndexBuilder {
 
     public ApplicationIndexBuilder elapsedDays(final Integer numberOfDays) {
         applicationIndex.setElapsedDays(numberOfDays);
+        return this;
+    }
+
+    public ApplicationIndexBuilder closed(final ClosureStatus closed) {
+        applicationIndex.setClosed(closed);
+        return this;
+    }
+
+    public ApplicationIndexBuilder approved(final ApprovalStatus approved) {
+        applicationIndex.setApproved(approved);
+        return this;
+    }
+
+    public ApplicationIndexBuilder channel(final String channel) {
+        applicationIndex.setChannel(channel);
         return this;
     }
 

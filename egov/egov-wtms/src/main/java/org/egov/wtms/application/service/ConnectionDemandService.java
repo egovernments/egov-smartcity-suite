@@ -69,6 +69,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.DemandDetail;
 import org.egov.wtms.application.entity.FieldInspectionDetails;
@@ -388,9 +389,9 @@ public class ConnectionDemandService {
                     currCollection = currCollection.add(new BigDecimal((Double) listObj[3]));
                 currDmd = currDmd.add((BigDecimal) listObj[2]);
             } else {
-                arrDmd = arrDmd.add((BigDecimal) listObj[2]);
-                if (listObj[3] != null && !listObj[3].equals(BigDecimal.ZERO))
-                    arrColelection = arrColelection.add((BigDecimal) listObj[2]);
+                arrDmd = arrDmd.add(new BigDecimal((Double)listObj[2]));
+                if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO))
+                    arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
             }
         }
         retMap.put(WaterTaxConstants.CURR_DMD_STR, currDmd);
@@ -435,7 +436,7 @@ public class ConnectionDemandService {
                     WaterTaxConstants.MONTHLY, new Date()).getInstallmentYear());
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());
@@ -505,7 +506,7 @@ public class ConnectionDemandService {
      */
     @Transactional
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
-            final WaterConnectionDetails waterConnectionDetails) {
+            final WaterConnectionDetails waterConnectionDetails,final String sourceChannel) {
         EgDemand demandObj = null;
         if (waterConnectionDetails.getDemand() == null)
             demandObj = new EgDemand();
@@ -534,7 +535,7 @@ public class ConnectionDemandService {
         if (demandObj.getCreateDate() == null)
             demandObj.setCreateDate(new Date());
         waterConnectionDetails.setDemand(demandObj);
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails,sourceChannel);
         return waterConnectionDetails;
     }
 
@@ -591,7 +592,7 @@ public class ConnectionDemandService {
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());

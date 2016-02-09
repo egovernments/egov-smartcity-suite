@@ -89,6 +89,12 @@ public class PropertyTypeMasterHibernateDAO implements PropertyTypeMasterDAO {
     public List<PropertyTypeMaster> findAll() {
         return getCurrentSession().createQuery("from PropertyTypeMaster").list();
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PropertyTypeMaster> findAllExcludeEWSHS() {
+        return getCurrentSession().createQuery("from PropertyTypeMaster where type != 'EWSHS' ").list();
+    }
 
     @Override
     public PropertyTypeMaster create(final PropertyTypeMaster propertyTypeMaster) {

@@ -362,9 +362,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
                  */
                 if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
                     currCollection = currCollection.add(new BigDecimal((Double) listObj[3]));
-                currDmd = currDmd.add((BigDecimal) listObj[1]);
+                currDmd = currDmd.add(new BigDecimal((Double) listObj[1]));
             } else {
-                arrDmd = arrDmd.add((BigDecimal) listObj[1]);
+                arrDmd = arrDmd.add(new BigDecimal((Double) listObj[1]));
                 if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
                     arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
                 /*

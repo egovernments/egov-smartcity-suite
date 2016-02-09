@@ -47,12 +47,14 @@ import org.egov.commons.utils.EntityType;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
+import org.springframework.stereotype.Service;
 
 /**
  * 
  * @author mani
  * Service class for Relation Object
  */
+@Service
 public class RelationService extends PersistenceService<Relation, Integer> implements EntityTypeService {
 	/**
 	 * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter

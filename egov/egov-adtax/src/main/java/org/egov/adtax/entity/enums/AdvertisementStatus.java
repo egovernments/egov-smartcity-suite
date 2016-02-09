@@ -39,5 +39,5 @@
 package org.egov.adtax.entity.enums;
 
 public enum AdvertisementStatus {
-    ACTIVE, INACTIVE, CANCELLED;
+    ACTIVE, INACTIVE, CANCELLED, WORKFLOW_IN_PROGRESS;
 }

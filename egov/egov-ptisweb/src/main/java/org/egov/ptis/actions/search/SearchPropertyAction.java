@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTE
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COLLECT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMAND_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
@@ -115,6 +116,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
         @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER" }),
+        @Result(name = APPLICATION_TYPE_GRP, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
+                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "GRP" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE" }),
         @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
@@ -265,6 +268,14 @@ public class SearchPropertyAction extends BaseFormAction {
             return COMMON_FORM;
         }
         checkIsDemandActive(basicProperty.getProperty());
+        if (!applicationType.equalsIgnoreCase(APPLICATION_TYPE_COLLECT_TAX)
+                && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_DEMAND_BILL)) {
+            if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
+                    .equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS)) {
+                addActionError(getText("EWSHS.transaction.error"));
+                return COMMON_FORM;
+            }
+        }
         boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(assessmentNum);
         if (hasChildPropertyUnderWorkflow) {
             addActionError(getText("error.msg.child.underworkflow"));
@@ -278,7 +289,8 @@ public class SearchPropertyAction extends BaseFormAction {
             }
         } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)
                 || APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)
-                || APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
+                || APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)
+                || APPLICATION_TYPE_GRP.equals(applicationType)) {
             if (!isDemandActive) {
                 addActionError(getText("error.msg.demandInactive"));
                 return COMMON_FORM;

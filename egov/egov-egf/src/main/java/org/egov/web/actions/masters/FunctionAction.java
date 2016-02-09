@@ -52,6 +52,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFunction;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -63,7 +64,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation()
-@Transactional(readOnly = true)
 @Results({
     @Result(name = FunctionAction.NEW, location = "function-" + FunctionAction.NEW + ".jsp"),
     @Result(name = "search", location = "function-search.jsp"),
@@ -234,7 +234,7 @@ public class FunctionAction extends BaseFormAction {
             if (!function.getName().isEmpty())
                 query.append(" where upper(name) like upper('%" + function.getName() + "%')");
         }
-        final List<CFunction> fuList = persistenceService.findAllBy(query.toString());
+        final List<CFunction> fuList = persistenceService.findAllBy(query.toString()+" order by id");
         for (final CFunction fu : fuList)
             funcSearchList.add(fu);
 
@@ -270,7 +270,7 @@ public class FunctionAction extends BaseFormAction {
 
     @SkipValidation
     private String getLoggedInUser() {
-        final Integer userId = (Integer) getSession().get("com.egov.user.LoginUserId");
+        final Long userId = EgovThreadLocals.getUserId();
         return userId.toString();
     }
 

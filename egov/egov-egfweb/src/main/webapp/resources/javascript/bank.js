@@ -165,11 +165,11 @@ function initializeGrid() {
 												caption : "Account Details",
 												url : 'bankAccount.action?mode=LIST_BRANCH_ACC&q=2&bankBranchId='+ row_id,
 												editurl : 'bankAccount.action?mode=CRUD&bankBranchId='+ row_id,
-												colNames : [ 'ID', 'Account No', 'Fund', 'Account Type', 'Description', 'Pay To', 'Usage Type', 'Active' , 'GlCode'],
+												colNames : [ 'ID', 'Account No', 'Fund',  'Description', 'Pay To', 'Usage Type', 'Active' , 'GlCode'],
 												colModel : [{name : 'id', index : 'id', key : true, hidden : true, width : 55, editable : true, editoptions : {readonly : true, size : 10}},
 												            {name : 'accountnumber', index : 'accountnumber', width : 80, key : true, editable : true,searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] }, editoptions : {size : 25}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
 												            {name : 'fundname', index : 'fundname', width : 130, editable : true, edittype : "select", editoptions : {value : fundJson}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
-												            {name : 'accounttype', index : 'accounttype', width : 70, editable :true, edittype : "select", editoptions : {value : accTypeJson}},
+												            /*{name : 'accounttype', index : 'accounttype', width : 70, editable :true, edittype : "select", editoptions : {value : accTypeJson}},*/
 												            {name : 'narration', index : 'narration', width : 70, editable : true, edittype : "textarea", editoptions : { rows : "2", cols : "20" } },
 												            {name : 'payto', index : 'payto', width : 70, editable : true, editoptions : {size : 25}},
 												            {name : 'typename', index : 'typename', width : 70, editable : true, edittype : "select", editoptions : {value : bankAccTypeJson}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
@@ -187,14 +187,14 @@ function initializeGrid() {
 												height : '100%'
 											});
 							jQuery("#" + subgrid_table_id).jqGrid('navGrid',"#" + pager_id, 
-									{edit : true, add : true, del : true},
+									{edit : true, add : true, del : false},
 									{
 										closeAfterEdit:true,
 										resize : true,
 										editCaption: "Edit Bank Account",
 										bSubmit: "Save Bank Account",
 										beforeShowForm:function(response,data){
-											jQuery("#accounttype").prop('disabled',true);
+											/*jQuery("#accounttype").prop('disabled',true);*/
 											jQuery("#glcode").prop('disabled',true);
 										},
 										afterSubmit: function(response,data){
@@ -207,7 +207,7 @@ function initializeGrid() {
 										addCaption: "Add Bank Account",
 										bSubmit: "Save Bank Account",
 										beforeShowForm:function(response,data){
-											jQuery("#accounttype").prop('disabled',false);
+											/*jQuery("#accounttype").prop('disabled',false);*/
 											jQuery("#glcode").prop('disabled',false);
 										},
 										errorTextFormat: function (response) {
@@ -230,7 +230,7 @@ function initializeGrid() {
 						}
 					});
 		jQuery("#listsg11").jqGrid('navGrid', '#pagersg11', 
-				{add : true,edit : true, del : true},
+				{add : true,edit : true, del : false},
 				{
 					closeAfterEdit:true,
 					checkOnUpdate:true,

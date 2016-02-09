@@ -78,7 +78,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Results({
     @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "generalLedgerReport-"
             + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp"),
-            @Result(name = "results", location = "generalLedgerReport-results.jsp")
+            @Result(name = "results", location = "generalLedgerReport-results.jsp"),
+            @Result(name = "searchResult", location = "generalLedgerReport-searchDrilldown.jsp")
 })
 public class GeneralLedgerReportAction extends BaseFormAction {
 
@@ -172,6 +173,25 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         return "results";
     }
 
+    @Action(value = "/report/generalLedgerReport-searchDrilldown")
+    public String searchDrilldown()
+    {
+    	HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
+    HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+    if (LOGGER.isDebugEnabled())
+        LOGGER.debug("GeneralLedgerAction | Search | start");
+    try {
+        generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
+    } catch (final Exception e) {
+        e.printStackTrace();
+    }
+    if (LOGGER.isDebugEnabled())
+        LOGGER.debug("GeneralLedgerAction | list | End");
+    heading = getGLHeading();
+    generalLedgerReportBean.setHeading(getGLHeading());
+    prepareNewForm();
+    	return "searchResult";
+    }
     private String getGLHeading() {
 
         String heading = "";
@@ -180,15 +200,26 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         if (checkNullandEmpty(generalLedgerReportBean.getGlCode1()) && checkNullandEmpty(generalLedgerReportBean.getGlCode1())) {
             glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?",
                     generalLedgerReportBean.getGlCode1());
+            if(generalLedgerReportBean.getFund_id().isEmpty())
+            {
+            	fund = (Fund) persistenceService.find("from Fund where id = ?", 0);
+            }
+            else
             fund = (Fund) persistenceService.find("from Fund where id = ?", Integer.parseInt(generalLedgerReportBean.getFund_id()));
         }
+        if(fund==null)
+        {
+        	heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() 
+                    + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
+        }
+        else
         heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() + " for " + fund.getName()
                 + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
         if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId()))
         {
             final Department dept = (Department) persistenceService.find("from Department where id = ?",
                     Long.parseLong(generalLedgerReportBean.getDepartmentId()));
-            heading = heading + " under " + dept.getName() + " ";
+            heading = heading + " under " + dept.getName() + " Department ";
         }
         if (checkNullandEmpty(generalLedgerReportBean.getFunctionCode()))
         {

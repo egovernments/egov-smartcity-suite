@@ -42,7 +42,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
@@ -84,18 +83,29 @@ public class UpdateHoardingController extends HoardingControllerSupport {
     }
 
     @RequestMapping(value = "update/{id}", method = POST)
-    public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
+    public String updateHoarding(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request,
             final Model model,
             @RequestParam String workFlowAction) {
 
         validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib);
 
-        if (resultBinder.hasErrors())
+        if (resultBinder.hasErrors()) {
+            prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
+            model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
+            model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
             return "hoarding-update";
+        }
         try {
             Long approvalPosition = 0l;
             String approvalComment = "";
+            String approverName = "";
+            String nextDesignation = "";
+            if (request.getParameter("approverName") != null)
+                approverName = request.getParameter("approverName");
+            if (request.getParameter("nextDesignation") != null)
+                nextDesignation = request.getParameter("nextDesignation");
             if (request.getParameter("approvalComent") != null)
                 approvalComment = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
@@ -121,7 +131,11 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                     }
                 } else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction))
                     return "redirect:/advertisement/permitOrder?pathVar=" + advertisementPermitDetail.getId();
-
+                else {
+                    redirAttrib.addFlashAttribute("message", "msg.success.forward.on.reject");
+                    redirAttrib.addFlashAttribute("approverName", approverName);
+                    redirAttrib.addFlashAttribute("nextDesign", nextDesignation);
+                }
                 return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
             }
         } catch (final HoardingValidationError e) {

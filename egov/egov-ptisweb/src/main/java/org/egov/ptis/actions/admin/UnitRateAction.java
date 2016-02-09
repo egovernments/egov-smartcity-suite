@@ -40,11 +40,11 @@
 package org.egov.ptis.actions.admin;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
 
-import java.util.Collections;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -129,7 +129,7 @@ public class UnitRateAction extends BaseFormAction {
     @Action(value = "/unitRate-newForm")
     public String newForm() {
         if (roleName.contains(ROLE_PTADMINISTRATOR.toUpperCase())) {
-            if (mode.equals(EDIT)) {
+            if (mode.equals(EDIT) || mode.equals("deactivate")) {
                 if (categoryId != null && categoryId != -1) {
                     category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
                     setUsageId(category.getPropUsage().getId());
@@ -156,26 +156,36 @@ public class UnitRateAction extends BaseFormAction {
     public String create() {
         Category existingCategory = (Category) getPersistenceService()
                 .find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? ",
+                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.isActive = true ",
                         zoneId, usageId, structureClassId, category.getFromDate());
 
         // If category exists for the combination of zone, usage,structure and
         // from date, update the existing category's rate
         if (existingCategory != null) {
-            existingCategory.setCategoryName(existingCategory.getPropUsage().getUsageCode().concat("-")
-                    .concat(existingCategory.getStructureClass().getConstrTypeCode()).concat("-")
-                    .concat(category.getCategoryAmount().toString()));
-            existingCategory.setCategoryAmount(category.getCategoryAmount());
-            getPersistenceService().update(existingCategory);
+            addActionError(getText("unit.rate.exists.for.combination"));
+            mode = NEW;
+            return RESULT_NEW;
         } else {
             PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ",
                     usageId);
             StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
                     "from StructureClassification where id = ? ", structureClassId);
             Boundary zone = boundaryService.getBoundaryById(zoneId);
+            
             category.setPropUsage(usage);
             category.setStructureClass(structureClass);
             category.setIsHistory('N');
+            category.setIsActive(true);
+            
+            Calendar category_toDate = Calendar.getInstance();
+            category_toDate.set(Calendar.DATE, 31);
+            category_toDate.set(Calendar.MONTH, 3);
+            category_toDate.set(Calendar.YEAR, 2099);
+            category_toDate.set(Calendar.HOUR_OF_DAY, 0);
+            category_toDate.set(Calendar.MINUTE, 0);
+            category_toDate.set(Calendar.SECOND, 0); 
+            
+            category.setToDate(category_toDate.getTime());
             category.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
                     .concat("-").concat(category.getCategoryAmount().toString()));
 
@@ -197,6 +207,7 @@ public class UnitRateAction extends BaseFormAction {
             boundaryCategory.setCategory(category);
             boundaryCategory.setBndry(zone);
             boundaryCategory.setFromDate(category.getFromDate());
+            boundaryCategory.setToDate(category.getToDate());
             Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
             boundaryCategorySet.add(boundaryCategory);
 
@@ -223,7 +234,7 @@ public class UnitRateAction extends BaseFormAction {
             if (structureClassId != null && structureClassId != -1) {
                 mainStr.append(" and bndryCat.category.structureClass.id=:stucture");
             }
-            mainStr.append(" and bndryCat.category.IsHistory = 'N'");
+            mainStr.append(" and bndryCat.category.IsHistory = 'N' and bndryCat.category.isActive = true ");
             final Query query = getPersistenceService().getSession().createQuery(mainStr.toString());
             query.setLong("zone", zoneId);
             if (usageId != null && usageId != -1) {
@@ -262,19 +273,11 @@ public class UnitRateAction extends BaseFormAction {
                         zoneId, usageId, structureClassId, category.getFromDate(), category.getCategoryAmount());
         if (existingCategory != null) {
             addActionError(getText("unit.rate.exists.for.combination"));
-            mode = EDIT;
+            mode = EDIT; 
             return RESULT_NEW;
         } else {
             if (category != null && category.getId() != null && category.getId() != -1) {
                 catFromDb = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
-            }
-            if (catFromDb != null) {
-                catFromDb.setIsHistory('Y');
-                Date toDate = catFromDb.getToDate();
-                if (toDate == null || (toDate != null && toDate.after(catFromDb.getFromDate()))) {
-                    Date newToDate = DateUtils.addDays(category.getFromDate(), -1);
-                    catFromDb.setToDate(newToDate);
-                }
             }
             Category categoryObj = new Category();
             categoryObj.setCategoryAmount(category.getCategoryAmount());
@@ -288,6 +291,7 @@ public class UnitRateAction extends BaseFormAction {
             categoryObj.setStructureClass(structureClass);
             categoryObj.setIsHistory('N');
             categoryObj.setToDate(catFromDb.getToDate());
+            categoryObj.setIsActive(true);
             categoryObj.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
                     .concat("-").concat(categoryObj.getCategoryAmount().toString()));
 
@@ -295,7 +299,17 @@ public class UnitRateAction extends BaseFormAction {
             boundaryCategory.setCategory(categoryObj);
             boundaryCategory.setBndry(zone);
             boundaryCategory.setFromDate(categoryObj.getFromDate());
-            boundaryCategory.setToDate(categoryObj.getFromDate());
+            boundaryCategory.setToDate(categoryObj.getToDate());
+            
+            
+            if (catFromDb != null) {
+                catFromDb.setIsHistory('Y');
+                Date toDate = catFromDb.getToDate();
+                if (toDate == null || (toDate != null && toDate.after(catFromDb.getFromDate()))) {
+                    Date newToDate = DateUtils.addDays(category.getFromDate(), -1);
+                    catFromDb.setToDate(newToDate);
+                }
+            }
 
             Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
             boundaryCategorySet.add(boundaryCategory);
@@ -306,6 +320,18 @@ public class UnitRateAction extends BaseFormAction {
             setAckMessage("Unit Rate is updated successfully!");
             return RESULT_ACK;
         }
+    }
+
+    @SkipValidation
+    @Action(value = "/unitRate-deactivate")
+    public String deactivate() {
+        if (categoryId != null && categoryId != -1) {
+            category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
+            category.setIsActive(false);
+            setAckMessage("Unit Rate deactivated successfully!");
+            getPersistenceService().update(category);
+        }
+        return RESULT_ACK;
     }
 
     @Override

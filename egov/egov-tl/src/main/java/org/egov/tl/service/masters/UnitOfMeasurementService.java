@@ -65,7 +65,7 @@ public class UnitOfMeasurementService{
      * @return
      */
     public UnitOfMeasurement findUOMByName(final String name) {
-        return  unitOfMeasurementRepository.findByNameContainingIgnoreCase(name);
+        return  unitOfMeasurementRepository.findByNameIgnoreCase(name);
     }
 
     /**
@@ -74,7 +74,7 @@ public class UnitOfMeasurementService{
      * @return
      */
     public UnitOfMeasurement findUOMByCode(final String code) {
-        return  unitOfMeasurementRepository.findByCodeContainingIgnoreCase(code);
+        return  unitOfMeasurementRepository.findByCodeIgnoreCase(code);
     }
 
     /**

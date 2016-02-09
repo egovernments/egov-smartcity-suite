@@ -96,7 +96,7 @@ public class VoucherHelper {
     @Autowired
     private EGovernCommon eGovernCommon;
     @Autowired
-    private FiscalPeriodHibernateDAO fiscalDAO;
+    private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
     @Autowired
     private CommonsServiceImpl commonsService;
 
@@ -286,7 +286,9 @@ public class VoucherHelper {
             LOGGER.debug("voucherDate | in getGeneratedVoucherNumber :" + voucherDate);
         final String vDate = Constants.DDMMYYYYFORMAT2.format(voucherDate);
         final String vDateTemp = Constants.DDMMYYYYFORMAT1.format(voucherDate);
-        final CFiscalPeriod fiscalPeriod = fiscalDAO.getFiscalPeriodByDate(voucherDate);
+        final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO.getFiscalPeriodByDate(voucherDate);
+        if(fiscalPeriod==null)
+            throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
         final Fund vFund = fundDAO.fundById(fundId);
         final String fundIdentifier = vFund.getIdentifier().toString();
         final String sequenceName = sequenceNameFor(fundIdentifier + "/" + voucherType, fiscalPeriod.getName());
@@ -508,6 +510,14 @@ public class VoucherHelper {
 
     public void seteGovernCommon(final EGovernCommon eGovernCommon) {
         this.eGovernCommon = eGovernCommon;
+    }
+
+    public FiscalPeriodHibernateDAO getFiscalPeriodHibernateDAO() {
+        return fiscalPeriodHibernateDAO;
+    }
+
+    public void setFiscalPeriodHibernateDAO(FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO) {
+        this.fiscalPeriodHibernateDAO = fiscalPeriodHibernateDAO;
     }
 
 }

@@ -239,17 +239,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 																		name="comments" id="comments" cols="100" rows="3"
 																		onblur="checkLength(this)" value="%{getComments()}" /></td>
 															</tr>
-														</table> <s:if test="%{paymentheader.state.value != 'NEW'}">
-															<s:if test="%{paymentheader.state.id!=null}">
-																<div id="labelAD" align="center">
-																	<h5>
-																		<a href="#"
-																			onclick="showHistory(<s:property value='paymentheader.state.id'/>); ">Show
-																			History</a>
-																	</h5>
-																</div>
-															</s:if>
-														</s:if>
+														</table> 
 
 													</span>
 
@@ -428,10 +418,16 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 				<s:hidden name="actionname" id="actionName" value="%{action}" />
 				<s:if test="%{mode!='view'}">
 					<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
-					<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
+					<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
+					<s:submit cssClass="button" id="printPreview" value="Print Preview"
+						onclick="printVoucher()" />
 				</s:if>
-				<s:submit cssClass="button" id="printPreview" value="Print Preview"
-					onclick="printVoucher()" />
+				<s:else>
+					<s:submit cssClass="button" id="printPreview" value="Print Preview"
+						onclick="printVoucher()" />
+					<input type="button" name="button2" id="button2" value="Close"
+						class="button" onclick="window.close();" />
+				</s:else>
 			</div>
 
 			<script>

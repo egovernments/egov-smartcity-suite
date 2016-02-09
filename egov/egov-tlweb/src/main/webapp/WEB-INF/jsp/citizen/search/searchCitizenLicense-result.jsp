@@ -67,11 +67,11 @@ function onlinePaymentMode(appNumber)
 <s:if test="pagedResults != null && pagedResults.getList() != null && !pagedResults.getList().isEmpty()">
 	<br/>
 	<fieldset>
-		<legend align="center"><b>Search Result</b></legend>
-		<display:table name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" export="false" requestURI="searchCitizenLicense-search.action?reportSize=${reportSize}"  excludedParams="reportSize" cellpadding="0" cellspacing="0"  >
+		<legend align="center"><b>Search Result</b></legend>  
+		<display:table name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin-top:10px;" pagesize="20" export="false" requestURI="searchCitizenLicense-search.action?reportSize=${reportSize}"  excludedParams="reportSize" cellpadding="0" cellspacing="0"  >
 			
 			<display:column class="blueborderfortd" title="License Number" media="html">
-				<c:if test="${license.licenseNumber == null || license.licenseNumber == ''}">
+				<c:if test="${license.licenseNumber == null || license.licenseNumber == ''}"> 
 					&nbsp;
 				</c:if>
 				<c:choose>				

@@ -149,13 +149,12 @@
 						<td class="greybox"><s:select name="fund_id" id="fund_id"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="" headerValue="----Choose----" /></td>
-						<td class="greybox"><s:text
-								name="generalLedger.financingSource" /></td>
-						<td class="greybox"><s:select name="fundSource_id"
-								id="fundSource_id" list="dropdownData.fundsourceList"
-								listKey="id" listValue="name" headerKey=""
+								<td class="greybox"><s:text name="generalLedger.department" /></td>
+						<td class="greybox"><s:select name="departmentId"
+								id="departmentId" list="dropdownData.departmentList"
+								listKey="id" listValue="name" headerKey=""   
 								headerValue="----Choose----" /></td>
-
+						
 					</tr>
 					<tr>
 						<td class="bluebox"><s:text name="generalLedger.startDate" /><span
@@ -176,29 +175,31 @@
 								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 					</tr>
 					<tr>
-						<td class="greybox"><s:text name="generalLedger.department" /></td>
-						<td class="greybox"><s:select name="departmentId"
-								id="departmentId" list="dropdownData.departmentList"
-								listKey="id" listValue="name" headerKey=""   
-								headerValue="----Choose----" /></td>
-						<td class="greybox"><s:text name="generalLedger.functionary" /></td>
-						<td class="greybox"><s:select name="functionaryId"
-								id="functionaryId" list="dropdownData.functionaryList"
-								listKey="id" listValue="name" headerKey=""
-								headerValue="----Choose----" /></td>
-
-					</tr>
-					<tr>
 						<td class="bluebox"><s:text name="generalLedger.function" /></td>
 						<td class="bluebox"><s:textfield id="functionCode"
 								name="functionCode" value="%{functionCode}" autocomplete="off"
 								onfocus='autocompleteFunction(this);'
 								onblur='splitFunction(this);' /></td>
-						<td class="bluebox"><s:text name="generalLedger.field" /></td>
+						<%-- <td class="greybox"><s:text name="generalLedger.functionary" /></td>
+						<td class="greybox"><s:select name="functionaryId"
+								id="functionaryId" list="dropdownData.functionaryList"
+								listKey="id" listValue="name" headerKey=""
+								headerValue="----Choose----" /></td> --%>
+
+					</tr>
+					<tr>
+						<%-- <td class="greybox"><s:text
+								name="generalLedger.financingSource" /></td>
+						<td class="greybox"><s:select name="fundSource_id"
+								id="fundSource_id" list="dropdownData.fundsourceList"
+								listKey="id" listValue="name" headerKey=""
+								headerValue="----Choose----" /></td> --%>
+						
+						<%-- <td class="bluebox"><s:text name="generalLedger.field" /></td>
 						<td class="bluebox"><s:select name="fieldId" id="fieldId"
 								list="dropdownData.fieldList" listKey="id" listValue="name"
 								headerKey="" headerValue="----Choose----" /></td>
-
+ --%>
 					</tr>
 
 				</table>

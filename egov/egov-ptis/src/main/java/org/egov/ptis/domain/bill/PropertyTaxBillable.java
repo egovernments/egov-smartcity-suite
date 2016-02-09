@@ -272,7 +272,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             final List instVsAmt = propertyDAO.getDmdCollAmtInstWise(currentDemand);
             for (final Object object : instVsAmt) {
                 final Object[] ddObject = (Object[]) object;
-                final BigDecimal dmdAmt = (BigDecimal) ddObject[1];
+                final BigDecimal dmdAmt = (new BigDecimal((Double) ddObject[1]));
                 BigDecimal collAmt = BigDecimal.ZERO;
                 if (ddObject[2] != null)
                     collAmt = new BigDecimal((Double) ddObject[2]);

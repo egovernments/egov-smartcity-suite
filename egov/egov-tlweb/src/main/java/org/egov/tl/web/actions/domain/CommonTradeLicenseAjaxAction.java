@@ -61,10 +61,13 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
+import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -73,7 +76,8 @@ import org.springframework.http.MediaType;
     @Result(name = "AJAX_RESULT", type = "redirectAction", location = "returnStream", params = { "contentType", "text/plain" }),
     @Result(name = "ward", location = "commonAjax-ward.jsp"),
     @Result(name = "success", type = "redirectAction", location = "CommonTradeLicenseAjaxAction.action"),
-    @Result(name = CommonTradeLicenseAjaxAction.SUBCATEGORY, location = "commonTradeLicenseAjax-subCategory.jsp")
+    @Result(name = CommonTradeLicenseAjaxAction.SUBCATEGORY, location = "commonTradeLicenseAjax-subCategory.jsp"),
+    @Result(name = "populateData", location = "commonTradeLicenseAjax-autoComplete.jsp")
 })
 @ParentPackage("egov")
 public class CommonTradeLicenseAjaxAction extends BaseFormAction implements ServletResponseAware {
@@ -86,12 +90,17 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     private List<LicenseSubCategory> subCategoryList = new LinkedList<LicenseSubCategory>();
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private TradeLicenseService tradeLicenseService;
     private LicenseSubCategoryService licenseSubCategoryService;
     public static final String SUBCATEGORY = "subCategory";
     private Long locality;
     private HttpServletResponse response;
     private Long subCategoryId; 
     private Long feeTypeId;
+    private String searchParamValue;
+    private String searchParamType;
+    private List<License> licenseList = new ArrayList<License>();
 
     /**
      * Populate wards.
@@ -138,16 +147,16 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     public void blockByLocality() throws IOException, NoSuchObjectException {
         LOGGER.debug("Entered into blockByLocality, locality: " + locality);
 
-        final Boundary blockBoundary = (Boundary) getPersistenceService().find(
-                "select CH.parent from CrossHierarchy CH where CH.child.id = ? ", getLocality());
-        final Boundary wardBoundary = blockBoundary.getParent();
-        final Boundary zoneBoundary = wardBoundary.getParent();
+        final Boundary wardBoundary = (Boundary) getPersistenceService().find(
+                "select CH.parent from CrossHierarchy CH where CH.child.id = ? and CH.parentType.hierarchyType.name= ? and CH.parentType.name=?", getLocality(),Constants.REVENUE_HIERARCHYTYPE,Constants.DIVISION);
+        final Boundary zoneBoundary = wardBoundary.getParent();  
 
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("zoneName", zoneBoundary.getName());
         jsonObject.put("wardName", wardBoundary.getName());
+        jsonObject.put("wardId", wardBoundary.getId());
 
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE); 
         IOUtils.write(jsonObject.toString(), response.getWriter());
     }
     
@@ -158,7 +167,7 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
      */
     @Action(value="/domain/commonTradeLicenseAjax-ajaxLoadUomName")   
     public void ajaxLoadUomName() throws IOException, NoSuchObjectException { 
-        LicenseSubCategory subCategory = licenseSubCategoryService.find("select s from org.egov.tl.entity.LicenseSubCategory s  where s.id ="+subCategoryId);
+        LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
         List<UnitOfMeasurement> uomList = new ArrayList<UnitOfMeasurement>();
         if(subCategory!=null){
             if(!subCategory.getLicenseSubCategoryDetails().isEmpty()){
@@ -169,13 +178,24 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
                 }
             }
         }
-
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("uom", uomList.get(0).getName());
-
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(jsonObject.toString(), response.getWriter());
     }
+    
+    @Action(value = "/domain/commonTradeLicenseAjax-populateData")
+    public String populateData() {
+        try {
+            if (searchParamValue != null)
+                licenseList = tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
+        } catch (final Exception e) {
+            LOGGER.error("populateData() - Error while loading Data ." + e.getMessage());
+            throw new ApplicationRuntimeException("Unable to load Data", e);
+        }
+        return "populateData";
+    }
+
 
     @Override
     public Object getModel() {
@@ -268,6 +288,30 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
 
     public void setFeeTypeId(Long feeTypeId) {
         this.feeTypeId = feeTypeId;
+    }
+
+    public List<License> getLicenseList() {
+        return licenseList;
+    }
+
+    public void setLicenseList(List<License> licenseList) {
+        this.licenseList = licenseList;
+    }
+
+    public String getSearchParamType() {
+        return searchParamType;
+    }
+
+    public void setSearchParamType(String searchParamType) {
+        this.searchParamType = searchParamType;
+    }
+
+    public String getSearchParamValue() {
+        return searchParamValue;
+    }
+
+    public void setSearchParamValue(String searchParamValue) {
+        this.searchParamValue = searchParamValue;
     }
 
 }

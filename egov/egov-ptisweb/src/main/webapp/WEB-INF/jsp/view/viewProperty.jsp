@@ -491,6 +491,8 @@
 					<s:param value="viewMap.currTax" />
 				</s:text>
 			</div>
+			<s:if
+				test="%{!viewMap.propertyType.equals(@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND)}">
 			<div class="col-xs-3 add-margin">Education Tax</div>
 			<div class="col-xs-3 add-margin view-content">
 				Rs.
@@ -498,6 +500,16 @@
 					<s:param value="viewMap.eduCess" />
 				</s:text>
 			</div>
+			</s:if>
+			<s:else>
+			<div class="col-xs-3 add-margin">Library Cess</div>
+			<div class="col-xs-3 add-margin view-content">
+				Rs.
+				<s:text name="format.money">
+					<s:param value="viewMap.libraryCess" />
+				</s:text>
+			</div>
+			</s:else>
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
@@ -509,6 +521,8 @@
 					<s:param value="viewMap.currTaxDue" />
 				</s:text>
 			</div>
+			<s:if
+				test="%{!viewMap.propertyType.equals(@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND)}">
 			<div class="col-xs-3 add-margin">Library Cess</div>
 			<div class="col-xs-3 add-margin view-content">
 				Rs.
@@ -516,6 +530,14 @@
 					<s:param value="viewMap.libraryCess" />
 				</s:text>
 			</div>
+			</s:if>
+			<s:else><div class="col-xs-3 add-margin">Property Tax</div>
+			<div class="col-xs-3 add-margin view-content">
+					Rs.
+					<s:text name="format.money">
+						<s:param value="viewMap.vacantLandTax" />
+					</s:text>
+				</div></s:else>
 		</div>
 
 		<div class="row add-border">
@@ -528,9 +550,10 @@
 					<s:param value="viewMap.totalArrDue" />
 				</s:text>
 			</div>
-			<div class="col-xs-3 add-margin">Property Tax</div>
+			
 			<s:if
 				test="%{!viewMap.propertyType.equals(@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND)}">
+				<div class="col-xs-3 add-margin">Property Tax</div>
 				<div class="col-xs-3 add-margin view-content">
 					Rs.
 					<s:text name="format.money">
@@ -539,13 +562,14 @@
 				</div>
 			</s:if>
 			<s:else>
-				<div class="col-xs-3 add-margin view-content">
-					Rs.
-					<s:text name="format.money">
-						<s:param value="viewMap.vacantLandTax" />
-					</s:text>
-				</div>
-			</s:else>
+				<div class="col-xs-3 add-margin">Total Property Tax</div>
+			<div class="col-xs-3 add-margin view-content">
+				Rs.
+				<s:text name="format.money">
+					<s:param value="viewMap.totalTax" />
+				</s:text>
+			</div>
+			</s:else> 
 		</div>
 		<s:if test='%{viewMap.unauthorisedPenalty != null}'>
 			<div class="row add-border">
@@ -560,6 +584,8 @@
 			</div>
 		</s:if>
 		<div class="row add-border">
+		<s:if
+				test="%{!viewMap.propertyType.equals(@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND)}">
 			<div class="col-xs-6 add-margin"></div>
 			<div class="col-xs-3 add-margin">Total Property Tax</div>
 			<div class="col-xs-3 add-margin view-content">
@@ -568,6 +594,7 @@
 					<s:param value="viewMap.totalTax" />
 				</s:text>
 			</div>
+			</s:if>
 		</div>
 	</div>
 </div>

@@ -82,5 +82,80 @@
 	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-result.jsp"/>
 </definition>
 
+<definition name="accountdetailtype-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-new.jsp"/>
+</definition>
+
+<definition name="accountdetailtype-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-view.jsp"/>
+</definition>
+
+<definition name="accountdetailtype-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-edit.jsp"/>
+</definition>
+
+<definition name="accountdetailtype-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-result.jsp"/>
+</definition>
+
+<definition name="accountdetailtype-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-search.jsp"/>
+</definition>
+
+<definition name="relation-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-new.jsp"/>
+</definition>
+
+<definition name="relation-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-view.jsp"/>
+</definition>
+
+<definition name="relation-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-edit.jsp"/>
+</definition>
+
+<definition name="relation-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-result.jsp"/>
+</definition>
+
+<definition name="relation-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-search.jsp"/>
+</definition>
+
+<definition name="accountentity-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-new.jsp"/>
+</definition>
+
+<definition name="accountentity-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-view.jsp"/>
+</definition>
+
+<definition name="accountentity-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-edit.jsp"/>
+</definition>
+
+<definition name="accountentity-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-result.jsp"/>
+</definition>
+
+<definition name="accountentity-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-search.jsp"/>
+</definition>
+
 
 </tiles-definitions>

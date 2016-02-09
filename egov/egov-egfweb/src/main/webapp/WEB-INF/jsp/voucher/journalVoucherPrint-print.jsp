@@ -85,23 +85,23 @@
 </style>
 <script>
 function exportXls(){
-	window.open('/EGF/voucher/journalVoucherPrint!exportXls.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	window.open('/EGF/voucher/journalVoucherPrint-exportXls.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
 function exportPdf(){
-	window.open('/EGF/voucher/journalVoucherPrint!exportPdf.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	window.open('/EGF/voucher/journalVoucherPrint-exportPdf.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 </script>
 <body>
 	<div id="container">
 		<iframe id="report" name="report"
-			src='/EGF/voucher/journalVoucherPrint!ajaxPrint.action?id=<s:property value="id"/>'></iframe>
+			src='/EGF/voucher/journalVoucherPrint-ajaxPrint.action?id=<s:property value="id"/>'></iframe>
 	</div>
 
 	<s:form name="journalVoucherPrint" action="journalVoucherPrint"
 		theme="simple">
 		<input type="hidden" name="id" value='<s:property value="id"/>' />
-		<div id="buttons">
+		<div id="buttons" class="buttonbottom">
 			<input type="button" id="btnPrint"
 				onclick="javascript:parent.report.print();" value="Print"
 				class="button" /> <input type="button" id="printPDF"

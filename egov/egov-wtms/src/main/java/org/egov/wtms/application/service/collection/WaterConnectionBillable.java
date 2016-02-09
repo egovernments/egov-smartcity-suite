@@ -60,6 +60,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
@@ -114,7 +115,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public String getBillAddress() {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                getWaterConnectionDetails().getConnection().getPropertyIdentifier(), PropertyExternalService.FLAG_FULL_DETAILS);
+                getWaterConnectionDetails().getConnection().getPropertyIdentifier(), PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
         return buildAddressDetails(assessmentDetails);
     }
 
@@ -223,7 +224,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
         BigDecimal balance = BigDecimal.ZERO;
         for (final Object object : instVsAmt) {
             final Object[] ddObject = (Object[]) object;
-            final BigDecimal dmdAmt = (BigDecimal) ddObject[2];
+            final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
             BigDecimal collAmt = BigDecimal.ZERO;
             if (ddObject[2] != null)
                 collAmt = new BigDecimal((Double) ddObject[3]);

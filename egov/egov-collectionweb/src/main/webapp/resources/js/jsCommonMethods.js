@@ -15,8 +15,8 @@ function topmenu(){
 	document.write("<span class='style5'><div name='title' id='title'></span></td>");
 	document.write("<td width='60%'  height=52 valign='bottom' align='left' class='normaltext'><span><div name='username' id='username'>User:&nbsp;</span></td>");
 	document.write("<td width='30%' height=52 valign='bottom' nowrap class='banner'><a class='footerlocallink'  onClick='gotoHomePage()' href='#'>Home</a>&nbsp;&nbsp;");
-	<!--document.write("<a  class='footerlocallink' href='#'>My Preferences</a>&nbsp; <a class='footerlocallink' href='#'>Administration</a>&nbsp;<span class='footerlocalseperator'>|</span>");-->
-	document.write("<a class='footerlocallink' href='#'>Help</a>&nbsp; <a class='footerlocallink' onClick='changePassword()' href='#'>ChangePassword</a>&nbsp;<a class='footerlocallink' onClick='logOut()' href='#'>Logout</a>");
+/*	document.write("<a  class='footerlocallink' href='#'>My Preferences</a>&nbsp; <a class='footerlocallink' href='#'>Administration</a>&nbsp;<span class='footerlocalseperator'>|</span>");
+*/	document.write("<a class='footerlocallink' href='#'>Help</a>&nbsp; <a class='footerlocallink' onClick='changePassword()' href='#'>ChangePassword</a>&nbsp;<a class='footerlocallink' onClick='logOut()' href='#'>Logout</a>");
 	document.write("<td width='9%'><div align='right'><input name='imageField2' type='image' src='../images/eGovLogo.jpg' align='top' width='80' height='60' border='0'></div></td></tr>");
 	document.write("</table>");
 	
@@ -443,7 +443,6 @@ function addNewRowFromButton(TableID, checkFields1)
 	PageManager.DataService.getControlInBranch(table.rows[rowLength],checkFields[0]).focus();
 	return true;
 	
-	return false;
 }
 
 //This function will recalculate the debit and credit amount on Deleting a row  

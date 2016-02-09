@@ -7,7 +7,7 @@ org.egov.infstr.utils.EGovConfig,org.egov.infra.admin.master.service.DepartmentS
 org.egov.commons.Bankaccount,org.springframework.beans.factory.annotation.Autowired" %>
 
 <%
-//System.out.println("process");
+System.out.println("process");
 
 List<Object[]> rs=null;
 StringBuffer accCode=new StringBuffer();
@@ -37,13 +37,13 @@ String query="SELECT glcode ||'`-`'||NAME ||'`~`'||ID AS \"code\" FROM chartofac
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllAssetCodes")){
-String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'A' order by glcode ";
+String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true and type = 'A' order by glcode ";
 //String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'A' order by glcode ";
 //System.out.println("query :"+query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllLiabCodes")){
-String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'L' order by glcode ";
+String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true and type = 'L' order by glcode ";
 //String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'L' order by glcode ";
 //System.out.println("query :"+query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
@@ -51,7 +51,7 @@ rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 else if(request.getParameter("type").equalsIgnoreCase("coaDetailCode")){
 
 String accountCode=request.getParameter("glCode");
-String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and glcode like '"+accountCode+"'|| '%' order by glcode ";
+String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true and glcode like '"+accountCode+"'|| '%' order by glcode ";
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllBankName")){

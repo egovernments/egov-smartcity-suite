@@ -42,19 +42,31 @@ package org.egov.tl.service;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 
+import java.math.BigDecimal;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.LicenseStatusValues;
 import org.egov.tl.entity.MotorMaster;
 import org.egov.tl.entity.NatureOfBusiness;
@@ -63,11 +75,19 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
+import org.hibernate.Query;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
+    @Autowired
+    protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    
+    @Autowired
+    private TradeLicenseUpdateIndexService updateIndexService;
+    
     public TradeLicenseService(final PersistenceService<TradeLicense, Long> licensePersitenceService) {
         super(licensePersitenceService);
     }
@@ -94,6 +114,97 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         tl.additionalDemandDetails(egDemandReasonMasters, installment);
         return tl;
     }
+    
+    @Override
+    protected void sendEmailAndSMS(TradeLicense license, String currentAction) {
+        tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, currentAction);
+    }
+    public void updateTradeLicense(TradeLicense license,WorkflowBean workflowBean) {
+        
+        if(license.getEgwStatus()!=null && license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+        {
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_GENECERT_CODE);
+            license.setEgwStatus(statusChange);
+        }
+        licensePersitenceService().persist(license);
+        this.tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
+       this.updateIndexService.updateTradeLicenseIndexes(license);
+    }
+ 
+ public ReportRequest prepareReportInputData(License license) {
+     String LICENSECERTIFICATE = "licenseCertificate";
+     Map<String, Object> reportParams = new HashMap<String, Object>();
+      SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+      Format formatterYear = new SimpleDateFormat("YYYY");
+      reportParams.put("applicationnumber", license.getApplicationNumber());
+      reportParams.put("applicantName", license.getLicensee().getApplicantName());
+      reportParams.put("licencenumber", license.getLicenseNumber());
+      reportParams.put("wardName", license.getBoundary().getName());
+      reportParams.put("cscNumber", "");
+      reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
+      reportParams.put("licenceAddress", license.getAddress());
+      reportParams.put("subCategory", (license.getTradeName()!=null ?license.getTradeName().getName():null));
+      reportParams.put("appType", (license.getLicenseAppType() !=null ?license.getLicenseAppType().getName():"New"));
+      if(EgovThreadLocals.getMunicipalityName().contains("Corporation"))
+      {
+          reportParams.put("carporationulbType", Boolean.TRUE);
+      }
+      reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
+      List<LicenseDemand> licDemandList = new ArrayList<LicenseDemand>(license.getDemandSet());
+      String startYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getFromDate());
+      String EndYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getToDate());
+      String installMentYear = startYear + "-" + EndYear;
+      reportParams.put("installMentYear", installMentYear);
+      reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
+      reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
+      BigDecimal demandamt = BigDecimal.ZERO;
+
+      for (EgDemandDetails deDet : license.getCurrentDemand().getEgDemandDetails()) {
+          if (deDet.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+              demandamt = demandamt.add(deDet.getAmount());
+          }
+
+      }
+      reportParams.put("demandTotalamt", demandamt);
+      return new ReportRequest(LICENSECERTIFICATE, license, reportParams);
+  }
+ 
+ public void updateStatusInWorkFlowProgress(TradeLicense license, String workFlowAction) {
+     if (BUTTONAPPROVE.equals(workFlowAction)) {
+         license.setCreationAndExpiryDate();
+         if (license.getTempLicenseNumber() == null) {
+             license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
+           
+          }
+         EgwStatus statusChange = (EgwStatus) persistenceService
+                 .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_APPROVED_CODE);
+         license.setEgwStatus(statusChange);
+         
+     }
+     if(BUTTONAPPROVE.equals(workFlowAction) || ((Constants.BUTTONFORWARD.equals(workFlowAction) && license.getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING) )))
+     {
+       LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                 .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
+         license.setStatus(activeStatus);
+         if(Constants.BUTTONFORWARD.equals(workFlowAction) && license.getEgwStatus()!=null && license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE) ){
+             EgwStatus statusChange = (EgwStatus) persistenceService
+                     .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_INSPE_CODE);
+             license.setEgwStatus(statusChange);
+         }
+     }
+     if(Constants.GENERATECERTIFICATE.equals(workFlowAction)){
+         LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                 .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
+         license.setStatus(activeStatus);
+         }
+     if (BUTTONREJECT.equals(workFlowAction) && license.getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
+     {
+         LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                 .find("from org.egov.tl.entity.LicenseStatus where code='CAN'");
+         license.setStatus(activeStatus);
+    }
+ }
 
     @Transactional
     public void transferLicense(final TradeLicense tl, final LicenseTransfer licenseTransfer) {
@@ -251,5 +362,77 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 .findAllBy("select id from org.egov.tl.entity.LicenseSubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tl.entity.LicenseType where name='TradeLicense')");
         return subCategory;
     }
+    
+    /**
+     * @param paramValue
+     * @param paramType
+     * @return
+     */
+    public List<License> getTradeLicenseForGivenParam(String paramValue, String paramType) {
+        List<License> licenseList = new ArrayList<License>();
+        if (paramType.equals(Constants.SEARCH_BY_APPNO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where upper(applicationNumber) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_LICENSENO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(licenseNumber) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_OLDLICENSENO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(oldLicenseNumber) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_TRADETITLE)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(nameOfEstablishment) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_TRADEOWNERNAME)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(licensee.applicantName) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_PROPERTYASSESSMENTNO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(propertyNo) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_MOBILENO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  licensee.mobilePhoneNumber like ?", "%" + paramValue + "%");
+        }
+        return licenseList;
+    }
 
+    /**
+     * @param applicationNumber
+     * @param licenseNumber
+     * @param oldLicenseNumber
+     * @param categoryId
+     * @param subCategoryId
+     * @param tradeTitle
+     * @param tradeOwnerName
+     * @param propertyAssessmentNo
+     * @param mobileNo
+     * @return
+     */
+    public Query prepareQueryforSearchTrade(final String applicationNumber, final String licenseNumber,
+            final String oldLicenseNumber, final Long categoryId,
+            final Long subCategoryId, final String tradeTitle, final String tradeOwnerName, final String propertyAssessmentNo,
+            final String mobileNo) {
+        final StringBuffer query = new StringBuffer(300);
+        query.append("select tl from License tl where tl.applicationNumber is not null ");
+        if (applicationNumber != null && !applicationNumber.isEmpty())
+            query.append(" and upper(tl.applicationNumber) = '" + applicationNumber.toUpperCase() + "'");
+        if (licenseNumber != null && !licenseNumber.isEmpty())
+            query.append(" and upper(tl.licenseNumber) = '" + licenseNumber.toUpperCase() + "'");
+        if (oldLicenseNumber != null && !oldLicenseNumber.isEmpty())
+            query.append(" and upper(tl.oldLicenseNumber) = '" + oldLicenseNumber.toUpperCase() + "'");
+        if (categoryId != null && categoryId != -1)
+            query.append(" and tl.category.id = " + categoryId);
+        if (subCategoryId != null && subCategoryId != -1)
+            query.append(" and tl.tradeName.id = " + subCategoryId);
+        if (tradeTitle != null && !tradeTitle.isEmpty())
+            query.append(" and upper(tl.nameOfEstablishment) = '" + tradeTitle.toUpperCase() + "'");
+        if (tradeOwnerName != null && !tradeOwnerName.isEmpty())
+            query.append(" and upper(tl.licensee.applicantName) = '" + tradeOwnerName.toUpperCase() + "'");
+        if (propertyAssessmentNo != null && !propertyAssessmentNo.isEmpty())
+            query.append(" and upper(tl.propertyNo) = '" + propertyAssessmentNo.toUpperCase() + "'");
+        if (mobileNo != null && !mobileNo.isEmpty())
+            query.append(" and tl.licensee.mobilePhoneNumber = " + mobileNo);
+        query.append(" order by tl.id");
+        final Query qry = persistenceService.getSession().createQuery(query.toString());
+        return qry;
+    }
 }

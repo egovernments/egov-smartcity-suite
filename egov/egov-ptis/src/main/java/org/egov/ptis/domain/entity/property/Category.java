@@ -56,9 +56,8 @@ import org.egov.infstr.models.BaseModel;
  * the base demand Normally for the boundary, the ULB specifies the category to
  * which it belongs and the rate of tax for per unit of Measurement. eg: Ashok
  * Nagar Ward may belong to Category A. The amount per sq. feet for the ward
- * might be specified as 500 Rs. per sq. Feet.
- * 
- * The Category class encapsulates the above information.
+ * might be specified as 500 Rs. per sq. Feet. The Category class encapsulates
+ * the above information.
  * 
  * @author Manu Srivastava
  * @version 1.00
@@ -68,94 +67,96 @@ import org.egov.infstr.models.BaseModel;
  */
 public class Category extends BaseModel {
 
-	private String categoryName;
+    private String categoryName;
+    private Double categoryAmount;
+    private Set<BoundaryCategory> catBoundaries;
+    private Character isHistory;
+    private PropertyUsage propUsage;
+    private Date fromDate;
+    private Date toDate;
+    private StructureClassification structureClass;
+    private boolean isActive;
 
-	private Double categoryAmount;
+    public String getCategoryName() {
+        return categoryName;
+    }
 
-	private Set<BoundaryCategory> catBoundaries;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 
-	private Character isHistory;
+    public Double getCategoryAmount() {
+        return categoryAmount;
+    }
 
-	private PropertyUsage propUsage;
+    public void setCategoryAmount(Double categoryAmount) {
+        this.categoryAmount = categoryAmount;
+    }
 
-	private Date fromDate;
+    public Set<BoundaryCategory> getCatBoundaries() {
+        return catBoundaries;
+    }
 
-	private Date toDate;
+    public void setCatBoundaries(Set<BoundaryCategory> catBoundaries) {
+        this.catBoundaries = catBoundaries;
+    }
 
-	private StructureClassification structureClass;
+    public Character getIsHistory() {
+        return isHistory;
+    }
 
-	public String getCategoryName() {
-		return categoryName;
-	}
+    public void setIsHistory(Character isHistory) {
+        this.isHistory = isHistory;
+    }
 
-	public void setCategoryName(String categoryName) {
-		this.categoryName = categoryName;
-	}
+    public PropertyUsage getPropUsage() {
+        return propUsage;
+    }
 
-	public Double getCategoryAmount() {
-		return categoryAmount;
-	}
+    public void setPropUsage(PropertyUsage propUsage) {
+        this.propUsage = propUsage;
+    }
 
-	public void setCategoryAmount(Double categoryAmount) {
-		this.categoryAmount = categoryAmount;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public Set<BoundaryCategory> getCatBoundaries() {
-		return catBoundaries;
-	}
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public void setCatBoundaries(Set<BoundaryCategory> catBoundaries) {
-		this.catBoundaries = catBoundaries;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public Character getIsHistory() {
-		return isHistory;
-	}
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
 
-	public void setIsHistory(Character isHistory) {
-		this.isHistory = isHistory;
-	}
+    public StructureClassification getStructureClass() {
+        return structureClass;
+    }
 
-	public PropertyUsage getPropUsage() {
-		return propUsage;
-	}
+    public void setStructureClass(StructureClassification structureClass) {
+        this.structureClass = structureClass;
+    }
 
-	public void setPropUsage(PropertyUsage propUsage) {
-		this.propUsage = propUsage;
-	}
+    public boolean getIsActive() {
+        return isActive;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    @Override
+    public String toString() {
+        StringBuilder objStr = new StringBuilder();
 
-	public Date getToDate() {
-		return toDate;
-	}
+        objStr.append("Id: ").append(getId()).append("|");
+        objStr.append("Category: ").append(getCategoryName()).append("|Amount: ").append(getCategoryAmount())
+                .append("|Usage: ").append(getPropUsage()).append("|Classification: ").append(getStructureClass());
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	public StructureClassification getStructureClass() {
-		return structureClass;
-	}
-
-	public void setStructureClass(StructureClassification structureClass) {
-		this.structureClass = structureClass;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder objStr = new StringBuilder();
-
-		objStr.append("Id: ").append(getId()).append("|");
-		objStr.append("Category: ").append(getCategoryName()).append("|Amount: ").append(getCategoryAmount()).append(
-				"|Usage: ").append(getPropUsage()).append("|Classification: ").append(getStructureClass());
-
-		return objStr.toString();
-	}
+        return objStr.toString();
+    }
 }

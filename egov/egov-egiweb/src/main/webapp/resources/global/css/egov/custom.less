@@ -169,9 +169,13 @@ b, label, strong{
 	display:none;
 }
 
-.error-msg {
+.error-msg, label.error {
     color: rgb(255, 0, 0);
     .font-size(13px);
+}
+
+.form-control.error{
+	border-color: rgb(255, 0, 0);
 }
 
 .modal {
@@ -232,6 +236,7 @@ b, label, strong{
         height: 30px;
         border-radius: 3px;
         border:1px solid @basecolor;
+        margin-right: 5px;
     }
 
     input.buttonsubmit.normal, input.button
@@ -1674,6 +1679,7 @@ b, label, strong{
     cursor: pointer;
     background: @basecolor;
     border: 1px solid @basecolor;
+    color:@whitecolor;
     
     i {
         color: @basecolor;

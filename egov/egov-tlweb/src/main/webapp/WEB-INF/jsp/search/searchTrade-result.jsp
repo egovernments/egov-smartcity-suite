@@ -50,7 +50,7 @@ String path = request.getContextPath();
 		</legend>
 		
 		<s:if test="(noticeNumber==null && docNumber==null && noticeType=='-1' && noticeFromDate==null && noticeToDate==null) || (noticeNumber=='' && docNumber=='' && noticeType=='-1' && noticeFromDate==null && noticeToDate==null)">
-			<display:table class="its" name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" export="true" requestURI="searchTrade!search.action?reportSize=${reportSize}" excludedParams="reportSize" cellpadding="0" cellspacing="0">
+			<display:table class="its" name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" export="true" requestURI="searchTrade-search.action?reportSize=${reportSize}" excludedParams="reportSize" cellpadding="0" cellspacing="0">
 				<display:column class="blueborderfortd" title="S.No" style="border-left:1px solid #E9E9E9">
 					<s:property value="%{#attr.license_rowNum+(page == 0  ? 0: (page-1))*10}" />
 				</display:column>
@@ -117,22 +117,13 @@ String path = request.getContextPath();
 					<c:out value="${license.address}" />
 				</display:column>
 				<display:column class="blueborderfortd" title="Zone">
-					<s:if test="%{#attr.license.boundary.boundaryType.name!='Ward'}">
-						<c:out value="${license.boundary.name}" />
+					<s:if test="%{#attr.license.parentBoundary.boundaryType.name!='Zone'}">
+						<c:out value="${license.parentBoundary.parent.name}" />
 					</s:if>
-					<s:elseif test="%{#attr.license.boundary.parent.name == null || #attr.license.boundary.parent.name ==''}">
-						&nbsp;
-					</s:elseif>
-					<s:else>
-						<c:out value="${license.boundary.parent.name}" />
-				   </s:else>
 				</display:column>
 				<display:column class="blueborderfortd" title="Ward">
-					<c:if test="${license.boundary.name == null || license.boundary.name ==''}">
-						&nbsp;
-					</c:if>
-					<c:if test="${license.boundary.boundaryType.name =='Ward'  }">
-					<c:out value="${license.boundary.name}" />
+					<c:if test="${license.parentBoundary.boundaryType.name =='Ward'  }">
+					<c:out value="${license.parentBoundary.name}" />
 					</c:if>
 				</display:column>
 				<display:column class="blueborderfortd" title="Trade Name">
@@ -150,7 +141,7 @@ String path = request.getContextPath();
 							<s:text name="license.default.select" />
 						</option>
 						 <s:if test="%{roleName.contains('ULB OPERATOR') || roleName.contains('CSC OPERATOR')}">
-									<s:if test="%{#attr.license.isPaid() != true && (#attr.license.status.statusCode=='ACK' || #attr.license.status.statusCode=='UWF') && #attr.license.isWorkFlowStateRejected() != true}">
+									<s:if test="%{#attr.license.isPaid() != true && (#attr.license.egwStatus.code=='APPROVED' &&  #attr.license.status.statusCode=='UWF') && #attr.license.isWorkFlowStateRejected() != true}">
 									 	<option value="/integration/licenseBillCollect.action?licenseId=">
 											<s:text name="Collect Fee" />
 										</option>
@@ -222,6 +213,12 @@ String path = request.getContextPath();
 			                    <option value="/viewtradelicense/viewTradeLicense-duplicateNoc.action?model.id=">
 									<s:text name="Reprint NOC" />
 								</option>
+		                    </s:if>
+		                    <s:if test="%{#attr.license.isLegacy() && #attr.license.isPaid() != true}">
+			                    	<option value="/entertradelicense/update-form.action?model.id=">
+										<s:text name="Modify Legacy License" />
+									</option>
+							
 		                    </s:if>
 	                    </s:if>
 					</select>

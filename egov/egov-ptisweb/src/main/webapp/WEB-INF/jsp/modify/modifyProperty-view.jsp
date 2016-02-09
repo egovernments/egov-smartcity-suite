@@ -50,6 +50,9 @@
 			<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
 				<s:text name='BifurProp.title' />
 			</s:elseif>
+			<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)}">
+		                <s:text name='GenRevPetition.title' />
+	         </s:elseif>
 		</title>
 		<sx:head />
 		<link
@@ -256,6 +259,9 @@
 						<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
 							<s:text name='BifurProp.title' />
 						</s:elseif>
+						<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)}">
+		                    <s:text name='GenRevPetition.title' />
+	                    </s:elseif> 
 					</div>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<s:if test="%{(model.state.nextAction!=null && 

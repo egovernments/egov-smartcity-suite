@@ -56,6 +56,7 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
@@ -337,7 +338,8 @@ public class WaterTaxCollection extends TaxCollection {
     private void updateWaterTaxIndexes(final EgDemand demand) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
+        String sourceChannel =null;
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails,sourceChannel );
     }
 
     @Override
@@ -432,4 +434,29 @@ public class WaterTaxCollection extends TaxCollection {
 
         return additionalInfo;
     }
+    
+    @Override
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+        BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
+        BigDecimal arrearAmount = BigDecimal.ZERO;
+        
+        for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()) {
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                    && !rcptAccInfo.getIsRevenueAccount()) {
+                final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                final String[] installsplit = desc[1].split("#");
+                if(installsplit[0].trim().equals(installsplit[1].trim())) {
+                    currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+                }else {
+                    arrearAmount.add(rcptAccInfo.getCrAmount());
+                }
+                
+            }
+        }
+        receiptAmountInfo.setArrearsAmount(arrearAmount);
+        receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
+        return receiptAmountInfo;
+    }
+
 }

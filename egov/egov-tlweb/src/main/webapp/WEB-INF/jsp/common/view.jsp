@@ -83,9 +83,9 @@
 	
 	<div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.zone' /></div>
-		<div class="col-xs-3 add-margin view-content"><s:property value="%{zoneName}" /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{parentBoundary.parent.name}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.division' /></div>
-		<div class="col-xs-3 add-margin view-content"><s:property value="%{wardName}" /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{parentBoundary.name}" /></div>
 	</div>
 	
 	<div class="row">
@@ -106,7 +106,6 @@
 		<div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
 		<div class="col-xs-3 add-margin view-content">
 		<s:date  name="startDate" id="startdate" format="dd-MMM-yyyy" /><s:property value="%{startdate}" /></div>
-		
 	</div>
 
 	<div class="row add-border">
@@ -130,6 +129,43 @@
 	
 </div>
 
+<s:if test="%{agreementDate!=null}">
+<div class="panel-heading  custom_form_panel_heading subheadnew">
+    <div class="panel-title"><s:text name='license.AgreementDetails.lbl' /></div>
+</div>
+<div class="panel-body">
+<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.agreementDate.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content">
+		<s:date  name="agreementDate" id="agreementdate" format="dd-MMM-yyyy" /><s:property value="%{agreementdate}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.agreementDocNo.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{agreementDocNo}" /></div>
+	</div>
+</div>
+</s:if>
+
+
+<div class="panel-heading  custom_form_panel_heading subheadnew">
+    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
+</div>
+<table class="table table-bordered" style="width:97%;margin:0 auto;">
+	<thead>
+		<tr>
+			<th>Fee Type</th>
+			<th>Current</th>
+			<th>Arrear</th>
+		</tr>
+	</thead>
+	<tbody>
+		<s:iterator value="outstandingFee" var="fee" status="status">
+			<tr>
+				<td>${fee.key}</td>
+				<td>${fee.value['current']}</td>
+				<td>${fee.value['arrear']}</td>
+			</tr>
+		</s:iterator>
+	</tbody>
+</table>
 <div class="panel-heading  custom_form_panel_heading subheadnew">
     <div class="panel-title"><s:text name='license.title.documentDetails' /></div>
 </div>

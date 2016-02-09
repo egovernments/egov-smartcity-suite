@@ -79,6 +79,7 @@ import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -116,7 +117,7 @@ public class AssessmentService {
 	public String getAssessmentDetails(@PathParam("assessmentNumber") String assessmentNumber)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		AssessmentDetails assessmentDetail = propertyExternalService.loadAssessmentDetails(assessmentNumber,
-				PropertyExternalService.FLAG_FULL_DETAILS);
+				PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
 
 		return getJSONResponse(assessmentDetail);
 	}

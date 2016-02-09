@@ -39,26 +39,62 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<div class="main-content"><div class="row"><div class="col-md-12"><div class="panel panel-primary" data-collapsed="0"><div class="panel-heading"><div class="panel-title">Validity</div></div><div class="panel-body custom"><div class="row add-border"><div class="col-xs-3 add-margin"><spring:message code="lbl.natureofbusiness" />
-</div><div class="col-sm-3 add-margin view-content">
-${validity.natureOfBusiness.name}
-</div><div class="col-xs-3 add-margin"><spring:message code="lbl.licensecategory" />
-</div><div class="col-sm-3 add-margin view-content">
-${validity.licenseCategory.name}
-</div></div>
-<div class="row add-border"><div class="col-xs-3 add-margin"><spring:message code="lbl.day" />
-</div><div class="col-sm-3 add-margin view-content">
-${validity.day}
-</div><div class="col-xs-3 add-margin"><spring:message code="lbl.week" />
-</div><div class="col-sm-3 add-margin view-content">
-${validity.week}
-</div></div>
-<div class="row add-border"><div class="col-xs-3 add-margin"><spring:message code="lbl.month" />
-</div><div class="col-sm-3 add-margin view-content">
-${validity.month}
-</div><div class="col-xs-3 add-margin"><spring:message code="lbl.year" />
-</div><div class="col-sm-3 add-margin view-content">
-${validity.year}
-</div></div>
-</div></div></div></div><div class="row text-center"><div class="add-margin"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a></div></div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-primary" data-collapsed="0">
+        <div class="panel-heading">
+          <div class="panel-title"><spring:message code="title.validity"/></div>
+        </div>
+        <div class="panel-body custom">
+          <div class="row add-border">
+            <div class="col-xs-3 add-margin">
+              <spring:message code="lbl.natureofbusiness" />
+            </div>
+            <div class="col-sm-3 add-margin view-content">${validity.natureOfBusiness.name}</div>
+            <div class="col-xs-3 add-margin">
+              <spring:message code="lbl.licensecategory" />
+            </div>
+            <div class="col-sm-3 add-margin view-content">${validity.licenseCategory.name}</div>
+          </div>
+          <div class="row add-border">
+            <label class="col-sm-3 add-margin"><spring:message code="lbl.basedon.finyear" /></label>
+            <div class="col-sm-3 add-margin view-content">
+              <c:if test="${validity.basedOnFinancialYear == true}">
+              	Yes
+              </c:if>
+              <c:if test="${validity.basedOnFinancialYear == false}">
+              No
+              </c:if>
+            </div>
+          </div>
+          <c:if test="${validity.basedOnFinancialYear == false}">
+          <div class="row add-border">
+            <div class="col-xs-3 add-margin">
+              <spring:message code="lbl.day" />
+            </div>
+            <div class="col-sm-3 add-margin view-content">${validity.day}</div>
+            <div class="col-xs-3 add-margin">
+              <spring:message code="lbl.week" />
+            </div>
+            <div class="col-sm-3 add-margin view-content">${validity.week}</div>
+          </div>
+          <div class="row add-border">
+            <div class="col-xs-3 add-margin">
+              <spring:message code="lbl.month" />
+            </div>
+            <div class="col-sm-3 add-margin view-content">${validity.month}</div>
+            <div class="col-xs-3 add-margin">
+              <spring:message code="lbl.year" />
+            </div>
+            <div class="col-sm-3 add-margin view-content">${validity.year}</div>
+          </div>
+          </c:if>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row text-center">
+    <div class="add-margin">
+      <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
+    </div>
+  </div>

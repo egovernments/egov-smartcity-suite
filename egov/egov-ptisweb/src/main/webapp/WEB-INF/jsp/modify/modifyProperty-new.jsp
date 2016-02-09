@@ -50,6 +50,9 @@
 	<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
 		<s:text name='BifurProp.title' />
 	</s:elseif>
+	<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)}">
+		<s:text name='GenRevPetition.title' />
+	</s:elseif>
 </title>
 <sx:head />
 
@@ -148,6 +151,9 @@
 					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY.equals(modifyRsn)}">
 						<s:text name='editdataentry.title' />
 					</s:elseif>
+					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)}">
+		                <s:text name='GenRevPetition.title' />
+	                </s:elseif>
 				</div>
 				<%@ include file="modifyPropertyForm.jsp"%>
 				<s:hidden name="modelId" id="modelId" value="%{modelId}" />

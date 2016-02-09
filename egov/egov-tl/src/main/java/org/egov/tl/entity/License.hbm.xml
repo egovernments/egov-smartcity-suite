@@ -81,7 +81,7 @@
 			</key>
 			<one-to-many class="org.egov.tl.entity.objection.LicenseObjection" />
 		</bag>
-
+		<many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" column="egwStatusId" fetch="select" />		
 		<property name="createdDate" type="java.util.Date">
 			<column name="CREATEDDATE" not-null="true" />
 		</property>
@@ -106,7 +106,8 @@
 
 		<property name="tinNumber" column="TIN_NUM" />
 		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.Boundary" column="ID_ADM_BNDRY" unique="true" />
-		<many-to-one name="tradeName" class="org.egov.tl.entity.LicenseSubCategory" fetch="select" unique="true">
+		<many-to-one name="parentBoundary" class="org.egov.infra.admin.master.entity.Boundary" column="ID_PARENT_BNDRY"  unique="true" />
+		<many-to-one name="tradeName" class="org.egov.tl.entity.LicenseSubCategory" fetch="select" unique="true" not-null="true">
 			<column name="ID_SUB_CATEGORY" precision="22" scale="0" />
 		</many-to-one>
 		<many-to-one name="licenseTransfer" class="org.egov.tl.entity.transfer.LicenseTransfer" fetch="select"
@@ -130,6 +131,9 @@
 
 		<property name="rentPaid" column="RENT_PAID" />
 		<property name="feeTypeStr" column="FEETYPETEXT" />
+		<property name="agreementDocNo" column="AGREEMENT_DOCUMENT_NO" type="java.lang.String"/>
+		<property name="agreementDate" column="AGREEMENT_DATE" type="java.util.Date"/>
+		
 		<set name="demandSet" cascade="all,delete,delete-orphan" inverse="true" fetch="select">
 			<key>
 				<column name="ID_LICENSE" precision="22" scale="0" />
@@ -145,13 +149,6 @@
 					cascade="all" />
 
 		<subclass name="org.egov.tl.entity.TradeLicense" discriminator-value="tradelicense">
-			<bag name="installedMotorList" inverse="true" table="EGTL_MOTOR_DETAILS" cascade="all,delete-orphan" fetch="select">
-				<key>
-					<column name="ID_LICENSE"></column>
-				</key>
-				<one-to-many class="org.egov.tl.entity.MotorDetails" />
-			</bag>
-			
 			<bag name="documents" table="egtl_tradelicense_docs" cascade="all" order-by="document">
 				<key column="license" not-null="true"/>			
 				<many-to-many class="org.egov.tl.entity.LicenseDocument" column="document"/>
@@ -159,8 +156,6 @@
 
 			<join table="EGTL_TRADE_LICENSE">
 				<key column="ID" />
-				<property name="motorInstalled" column="ISMOTORINSTALLED" type="boolean" />
-				<property name="totalHP" column="TOTAL_HP" type="java.math.BigDecimal" />
 				<property name="hotelGrade" column="HOTEL_GRADE" type="java.lang.String" />
 				<property name="sandBuckets" column="SAND_BUCKETS"  />
 				<property name="waterBuckets" column="WATER_BUCKETS"  />

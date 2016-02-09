@@ -84,6 +84,13 @@
 		display: none;
 	}
 }
+
+@media print {
+	div.sourceIcon {
+		display: none;
+	}
+}
+
 </style>
 <script>
 	function openSource(){
@@ -118,18 +125,18 @@
 			<div class="subheadnew">Voucher View</div>
 			<table border="0" width="100%" cellspacing="0">
 				<tr>
-					<td width="25%" class="greybox"><b>Voucher Number:</b></td>
+					<td width="10%" class="greybox"><b>Voucher Number :  </b></td>
 					<td width="25%" class="greybox"><s:property
 							value="%{voucherHeader.voucherNumber}" /></td>
-					<td width="25%" class="greybox"><b>Date:</b></td>
+					<td width="10%" class="greybox"><b>  Date :</b></td>
 					<td width="25%" class="greybox"><s:date
 							name="voucherHeader.voucherDate" format="dd/MM/yyyy" /></td>
 				</tr>
 			</table>
 			<jsp:include page="voucherViewHeader.jsp" />
-			<table align="center">
+			<table align="center" id="sourceIcon">
 				<tr>
-					<td class="bluebox"><a href="#"
+					<td class="bluebox"><a href="#" id="sourceLink"
 						onclick=" return openSource();">Source</a></td>
 
 				</tr>
@@ -156,9 +163,9 @@
 
 				<s:iterator var="p" value="%{billDetails.tempList}" status="s">
 					<tr>
-						<td width="18%" class="bluebox setborder"><s:property
+						<td width="18%" class="bluebox setborder" style="text-align: center"><s:property
 								value="function" /></td>
-						<td width="17%" class="bluebox setborder"><s:property
+						<td width="17%" class="bluebox setborder" style="text-align: center"><s:property
 								value="glcode" /></td>
 						<td width="19%" class="bluebox setborder"><s:property
 								value="accounthead" /></td>
@@ -205,9 +212,9 @@
 					</tr>
 					<s:iterator var="p" value="%{billDetails.subLedgerlist}" status="s">
 						<tr>
-							<td width="17%" class="bluebox setborder"><s:property
+							<td width="17%" class="bluebox setborder" style="text-align: center"><s:property
 									value="functionDetail" /></td>
-							<td width="17%" class="bluebox setborder"><s:property
+							<td width="17%"  class="bluebox setborder" style="text-align: center"><s:property 
 									value="glcode.glcode" /></td>
 							<td width="19%" class="bluebox setborder"><s:property
 									value="detailType.description" /></td>

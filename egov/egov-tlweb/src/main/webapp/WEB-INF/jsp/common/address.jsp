@@ -64,11 +64,13 @@ function getZoneWard(){
 		success: function (response) {
 			jQuery('#zoneName').val(response.zoneName);
 			jQuery('#wardName').val(response.wardName);
+			jQuery('#parentBoundary').val(response.wardId);
 		}, 
 		error: function (response) {
 			console.log("failed");
 			jQuery('#zoneName').val('');
 			jQuery('#wardName').val('');
+			jQuery('#parentBoundary').val('');
 			bootbox.alert("No boundary details mapped for locality")
 		}
 	});
@@ -96,11 +98,12 @@ function getZoneWard(){
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.zone.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="zoneName" id="zoneName" value="%{zoneName}"  readOnly="true" class="form-control"/>
+        <s:textfield name="zone" id="zoneName" value="%{parentBoundary.parent.name}"  readOnly="true" class="form-control"/>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.ward.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="wardName" id="wardName" value="%{wardName}"  readOnly="true" class="form-control"/>
+        <s:textfield name="ward" id="wardName" value="%{parentBoundary.name}"  readOnly="true" class="form-control"/>
+        <s:hidden name="parentBoundary" id="parentBoundary" value="%{parentBoundary.id}"/>
     </div>
 </div>
 <div class="form-group">

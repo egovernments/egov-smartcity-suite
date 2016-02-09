@@ -153,7 +153,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         voucherHeader = (CVoucherHeader) vhInfoMap.get(Constants.VOUCHERHEADER);
         try {
             if (voucherHeader != null && voucherHeader.getState() != null)
-                if (voucherHeader.getState().getValue().contains("REJECTED")) {
+                if (voucherHeader.getState().getValue().contains("Rejected")) {
                     positionsForUser = eisService.getPositionsForUser(EgovThreadLocals.getUserId(), new Date());
                     if (positionsForUser.contains(voucherHeader.getState().getOwnerPosition()))
                     {
@@ -166,7 +166,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                         throw new ApplicationRuntimeException("Invalid Aceess");
                     }
                 }
-                else if (voucherHeader.getState().getValue().contains("END")) {
+                else if (voucherHeader.getState().getValue().contains("Closed")) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Valid Owner :return true");
                 } else if (parameters.get("showMode")[0].equalsIgnoreCase("view")) {
@@ -186,10 +186,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         loadSchemeSubscheme();
         loadFundSource();
         loadApproverUser("default");
-        if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view"))
-            return "view";
 
-        return "editVoucher";
+        return "view";
     }
 
     @ValidationErrorPage(value = "editVoucher")

@@ -40,8 +40,6 @@
 package org.egov.adtax.service;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -54,12 +52,14 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.log4j.Logger;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -76,12 +76,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class AdvertisementDemandService {
-
+    private static final Logger LOGGER = Logger.getLogger(AdvertisementDemandService.class);
     @Autowired
     private InstallmentDao installmentDao;
 
     @Autowired
     private DemandGenericDao demandGenericDao;
+
+    @Autowired
+    private EgDemandDao egDemandDao;
 
      @Autowired
     private ModuleService moduleService;
@@ -248,13 +251,21 @@ public class AdvertisementDemandService {
 
     }
  
-    
- public Installment getNextInstallment(final Date curentInstalmentEndate) {
-        return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
-                moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME), curentInstalmentEndate,
-                AdvertisementTaxConstants.YEARLY);
+    @Transactional
+ public Installment getInsatllmentByModuleForGivenDate(final Date installmentDate) {
+        return installmentDao.getInsatllmentByModuleForGivenDate(
+                moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME), installmentDate
+                 );
 
     }
+    
+ @Transactional
+    public List<Installment > getPreviousInstallment(final Date curentInstalmentEndate) {
+           return installmentDao.fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
+                   moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME), curentInstalmentEndate,1);
+
+       }
+    
 /**
  * 
  * @param dmdAmount
@@ -736,85 +747,91 @@ public class AdvertisementDemandService {
         return demand;
 
     }
-    //TODO: CODE REVEIEW PENDING.
-    public EgDemand generateNextYearDemandForAdvertisement(final AdvertisementPermitDetail advertisementPermitDetail) {
-        final Installment installment = getCurrentInstallment();
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        final String nextStartDate = "01/04/" + installment.getToDate();
-        final String[] ddd = nextStartDate.split("-");
-        Date nextDate = null;
-        try {
-            nextDate = formatter.parse(ddd[0]);
-        } catch (final ParseException e) {
-            throw new RuntimeException(e.getMessage());
+
+@Transactional
+public int generateDemandForNextInstallment(final List<Advertisement> advertisements,
+            List<Installment> previousInstallment, Installment advDmdGenerationInstallment) {
+        int totalRecordsProcessed = 0;
+
+        LOGGER.info("*************************************** total records " + advertisements.size());
+
+        if (advertisements.size() > 0) {
+            EgDemandReason encroachmentFeeReasonOldInstallment = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE, previousInstallment.get(0));
+            EgDemandReason taxReasonOldInstallment = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX, previousInstallment.get(0));
+
+            EgDemandReason encroachmentFeeReasonNewInstallment = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE, advDmdGenerationInstallment);
+            EgDemandReason taxReasonNewInstallment = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX, advDmdGenerationInstallment);
+
+            for (Advertisement advertisement : advertisements) {
+                LOGGER.info("*************************************** demand id " + advertisement.getDemandId().getId());
+                totalRecordsProcessed++;
+                // get last year demand and add as current year.
+                generateNextYearDemandForAdvertisement(advertisement, encroachmentFeeReasonOldInstallment,
+                        taxReasonOldInstallment, encroachmentFeeReasonNewInstallment, taxReasonNewInstallment);
+            }
         }
-        final Installment nextInstallment = getNextInstallment(nextDate);
+        return totalRecordsProcessed;
+    }
+    /*
+     * Copy last year tax and encroachment fee details into next financial year
+     * data.
+     */
+  
+    private EgDemand generateNextYearDemandForAdvertisement(Advertisement advertisement,
+            EgDemandReason oldencroachmentFeeReasonInstallment, EgDemandReason oldtaxReasonInstallment,
+            EgDemandReason newencroachmentFeeReasonInstallment, EgDemandReason newtaxReasonInstallment) {
+
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
-        BigDecimal taxAmount = BigDecimal.ZERO;
-        Boolean taxFullyPaidForCurrentYear = false;
-        EgDemand demand = advertisementPermitDetail.getAdvertisement().getDemandId();
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() != null
-                && advertisementPermitDetail.getAdvertisement().getLegacy()
-                && advertisementPermitDetail.getAdvertisement().getTaxPaidForCurrentYear())
-            taxFullyPaidForCurrentYear = true;
+        EgDemand demand = advertisement.getDemandId();
 
-        // Boolean calculateTax=true;
-        final Boolean enchroachmentFeeAlreadyExistInDemand = false;
-        final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
-        // EgDemand demand = advertisement.getDemandId();
-        if (demand == null)
-            demand = createDemand(advertisementPermitDetail);
-        else {
-            if (!demand.getEgInstallmentMaster().getDescription().equals(nextInstallment.getDescription())) {
-                getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX,
-                        nextInstallment);
-                getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
-                        nextInstallment);
-                demandDetailSet.addAll(demand.getEgDemandDetails());
-                if (advertisementPermitDetail.getTaxAmount() != null
-                        || advertisementPermitDetail.getAdvertisement().getPendingTax() != null) {
+        Boolean enchroachmentFeeAlreadyExistInDemand = false;
+        Boolean taxFeeAlreadyExistInDemand = false;
 
-                    if (advertisementPermitDetail.getAdvertisement().getPendingTax() != null)
-                        taxAmount = taxAmount.add(advertisementPermitDetail.getAdvertisement().getPendingTax());
-                    if (advertisementPermitDetail.getTaxAmount() != null)
-                        taxAmount = taxAmount.add(advertisementPermitDetail.getTaxAmount());
+        EgDemandDetails oldEncroachmentDetail = null;
+        EgDemandDetails oldTaxDemandDetail = null;
+        Set<EgDemandDetails> dmadDtl = demand.getEgDemandDetails();
 
-                }
+        LOGGER.info("Demand Detail size" + dmadDtl.size());
 
-                if (advertisementPermitDetail.getTaxAmount() != null)
-                    taxAmount = taxAmount.add(advertisementPermitDetail.getTaxAmount());
-
-                demandDetailSet.add(createDemandDetails(
-                        taxAmount,
-                        getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX,
-                                nextInstallment), taxFullyPaidForCurrentYear ? advertisementPermitDetail.getTaxAmount()
-                                : BigDecimal.ZERO));
-                totalDemandAmount = totalDemandAmount.add(taxAmount);
-           
-            if (advertisementPermitDetail.getEncroachmentFee() != null) {
-                demandDetailSet.add(createDemandDetails(
-                        advertisementPermitDetail.getEncroachmentFee(),
-                        getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
-                                nextInstallment),
-                        taxFullyPaidForCurrentYear ? advertisementPermitDetail.getEncroachmentFee() : BigDecimal.ZERO));
-                totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee());
+        for (EgDemandDetails dmdDtl : dmadDtl) {
+            // Assumption: tax amount is mandatory.
+            if (dmdDtl.getEgDemandReason().getId() == oldtaxReasonInstallment.getId()) {
+                oldTaxDemandDetail = dmdDtl;
             }
-
-            if (!enchroachmentFeeAlreadyExistInDemand && advertisementPermitDetail.getEncroachmentFee() != null
-                    && advertisementPermitDetail.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
-                demand.addEgDemandDetails(createDemandDetails(
-                        advertisementPermitDetail.getEncroachmentFee(),
-                        getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
-                                nextInstallment), BigDecimal.ZERO));
-                totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee());
+            if (dmdDtl.getEgDemandReason().getId() == oldencroachmentFeeReasonInstallment.getId()) {
+                oldEncroachmentDetail = dmdDtl;
             }
-            demand.getEgDemandDetails().addAll(demandDetailSet);
-            demand.setEgInstallmentMaster(nextInstallment);
-            demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+            if (dmdDtl.getEgDemandReason().getId() == newtaxReasonInstallment.getId()) {
+                enchroachmentFeeAlreadyExistInDemand = true;
+            }
+            if (dmdDtl.getEgDemandReason().getId() == newencroachmentFeeReasonInstallment.getId()) {
+                taxFeeAlreadyExistInDemand = true;
+            }
+        }
+        // Copy last financial year tax and encroachment details to new
+        // installment
+        // if tax and encroachment fee already present in new installment, then
+        // we are not updating.
 
+        if (!enchroachmentFeeAlreadyExistInDemand && oldEncroachmentDetail != null) {
+            demand.addEgDemandDetails(createDemandDetails((oldEncroachmentDetail.getAmount()),
+                    newencroachmentFeeReasonInstallment, BigDecimal.ZERO));
+            totalDemandAmount = totalDemandAmount.add(oldEncroachmentDetail.getAmount());
+            demand.setEgInstallmentMaster(newencroachmentFeeReasonInstallment.getEgInstallmentMaster());
         }
+        if (!taxFeeAlreadyExistInDemand && oldTaxDemandDetail != null) {
+            demand.addEgDemandDetails(createDemandDetails((oldTaxDemandDetail.getAmount()), newtaxReasonInstallment,
+                    BigDecimal.ZERO));
+            totalDemandAmount = totalDemandAmount.add(oldTaxDemandDetail.getAmount());
+            demand.setEgInstallmentMaster(newencroachmentFeeReasonInstallment.getEgInstallmentMaster());
         }
+
+        demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+
         return demand;
-
     }
   }

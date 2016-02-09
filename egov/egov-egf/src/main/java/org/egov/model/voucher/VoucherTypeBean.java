@@ -51,7 +51,7 @@ public class VoucherTypeBean {
     private String voucherNumTo;
     private String voucherDateFrom;
     private String voucherSubType;
-
+    private String totalAmount;
     /**
      * @description - added properties for the contractor,supplier,salary and fixed asset JV manual creation screen.
      *
@@ -175,6 +175,14 @@ public class VoucherTypeBean {
 
     public void setCgnType(final String cgnType) {
         this.cgnType = cgnType;
+    }
+
+    public String getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
 }

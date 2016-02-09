@@ -57,6 +57,8 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 @MappedSuperclass
 @Searchable
@@ -82,6 +84,7 @@ public abstract class StateAware extends AbstractAuditable {
         return getId().toString();
     }
 
+    @Audited( targetAuditMode = RelationTargetAuditMode.NOT_AUDITED )
     public State getState() {
         return state;
     }

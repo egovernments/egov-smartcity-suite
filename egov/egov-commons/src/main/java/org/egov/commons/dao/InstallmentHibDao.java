@@ -143,4 +143,31 @@ public class InstallmentHibDao<T, id extends Serializable> extends GenericHibern
         qry.setString("installmentType", installmentType);
         return (Installment) qry.uniqueResult();
     }
+    
+    @Override
+    public List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallmentToFetch) {
+        final Query qry = getCurrentSession()
+                .createQuery("from Installment I where I.module=:module and I.installmentYear<=:installmentYear order by installmentNumber asc");
+        qry.setEntity("module", module);
+        qry.setDate("installmentYear", toInstallmentDate);
+        qry.setMaxResults(noOfInstallmentToFetch);
+        return qry.list();
+    }
+    
+    @Override
+    public List<Installment> fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(final Module module, final Date installmentDate, final int noOfInstallmentToFetch) {
+        final Query qry = getCurrentSession()
+                .createQuery("from Installment I where I.module=:module and I.toDate< :installmentDate order by fromDate desc");
+        qry.setEntity("module", module);
+        qry.setDate("installmentDate", installmentDate);
+        qry.setMaxResults(noOfInstallmentToFetch);
+        return qry.list();
+    }
+    
+    @Override
+    public Installment fetchInstallmentByModuleAndInstallmentNumber(final Module module, final Integer installmentNumber) {
+        return (Installment)getCurrentSession()
+                .createQuery("from Installment I where I.module=:module and I.installmentNumber =:installmentNumber").
+                setEntity("module", module).setInteger("installmentNumber", installmentNumber).uniqueResult();
+    }
 }

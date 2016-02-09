@@ -41,6 +41,7 @@
 package org.egov.tl.service.integration;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -55,8 +56,10 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
@@ -82,7 +85,9 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -111,8 +116,13 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     private SimpleWorkflowService<License> transferWorkflowService;
+    
+    
     @Autowired
     protected SecurityUtils securityUtils;
+    
+    @Autowired
+    private MessagingService messagingService;
 
     @Autowired
     private EgBillReceiptDao egBillReceiptDao;
@@ -130,6 +140,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+    
 
     private LicenseUtils licenseUtils;
 
@@ -276,13 +287,24 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                 }
                     }
                 }
+                StringBuilder smsMsg=new StringBuilder();
+                StringBuilder  emailSubject=new StringBuilder(); 
                 demand.setAmtCollected(amtCollected);
                 persistenceService.update(demand);
                 final TradeLicense tradeLicense = (TradeLicense) persistenceService.find(
                         "from TradeLicense where id=?", ld.getLicense().getId());
                 // update only if it is new License
                 updateWorkflowState(tradeLicense);
-
+                smsMsg.append(Constants.STR_WITH_APPLICANT_NAME).append(tradeLicense.getLicensee().getApplicantName()).append(Constants.STR_WITH_LICENCE_NUMBER)
+                .append(tradeLicense.getLicenseNumber()).append(Constants.STR_FOR_SUBMISSION).append(demand.getAmtCollected()).append(Constants.STR_FOR_SUBMISSION_DATE).
+                append(new SimpleDateFormat("dd/MM/yyyy").format(billReceipt.getReceiptDate()))
+                .append(Constants.STR_FOR_CITYMSG).append(EgovThreadLocals.getMunicipalityName());
+                 emailSubject.append(Constants.STR_FOR_EMAILSUBJECT).append(tradeLicense.getLicenseNumber());
+                if (tradeLicense.getLicensee().getMobilePhoneNumber() != null && smsMsg != null)
+                    messagingService.sendSMS(tradeLicense.getLicensee().getMobilePhoneNumber(), smsMsg.toString());
+                if (tradeLicense.getLicensee().getEmailId() != null && smsMsg != null)
+                    messagingService.sendEmail(tradeLicense.getLicensee().getEmailId(), emailSubject.toString(),smsMsg.toString());
+                
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 reconcileCollForRcptCancel(demand, billReceipt);
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
@@ -445,29 +467,27 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      * TODO -- Fix this while implementing work flow
      */
     @Transactional
-    protected void updateWorkflowState(final TradeLicense license2) {
-        if (license2.getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE))
+    protected void updateWorkflowState(final TradeLicense licenseObj) {
+        if (licenseObj.getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE))
             // license2.changeState(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE +
             // Constants.WORKFLOW_STATE_COLLECTED,
             // license2.getState().getow(), "Amount Collected ");
-            license2.updateExpiryDate(new Date());
+            licenseObj.updateExpiryDate(new Date());
         else {
-            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license2.getCreatedBy()
+            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(licenseObj.getCreatedBy()
                     .getId());
             final DateTime currentDate = new DateTime();
             final User user = securityUtils.getCurrentUser();
-            /*
-             * LicenseStatus activeStatus = (LicenseStatus) persistenceService
-             * .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-             * license2.setStatus(activeStatus);
-             */
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_COLLECTION_CODE);
+            licenseObj.setEgwStatus(statusChange);
             final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                     Constants.WF_STATE_COLLECTION_PENDING, null);
            
-            license2.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
+            licenseObj.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
             .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction());
-
+          
         }
 
     }
@@ -736,6 +756,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+        return new ReceiptAmountInfo();
     }
 
 }

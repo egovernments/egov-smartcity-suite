@@ -92,10 +92,10 @@
 		<s:form name="funcForm" action="function" theme="simple">
 			<%@include file="function-form.jsp"%>
 			<div class="buttonbottom">
-				<s:submit name="create" value="Save & New" method="create"
-					cssClass="buttonsubmit" onclick="javascript: return validate();" />
-				<s:submit name="create" value="Save & Close" method="create"
-					cssClass="buttonsubmit" onclick="validate();setClose();" />
+				<s:submit name="create" value="Save & New" cssClass="buttonsubmit"
+					onclick="javascript: return validate();return submitForm();" />
+				<s:submit name="create" value="Save & Close" cssClass="buttonsubmit"
+					onclick="return submitForm();validate();setClose();" />
 				<s:hidden name="close" id="close" />
 				<input type="button" id="Close" value="Close"
 					onclick="javascript:window.close()" class="button" />
@@ -111,6 +111,10 @@
 			document.getElementById('function.function.id').value = "";
 			document.forms[0].isActive.checked=false;
 		</s:if>
+		function submitForm() {
+			document.forms[0].action = '${pageContext.request.contextPath}/masters/function-create.action';
+			document.forms[0].submit();
+		}
 	</script>
 </body>
 </html>

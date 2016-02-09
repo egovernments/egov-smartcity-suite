@@ -50,7 +50,8 @@ public class AdvertisementTaxConstants {
     public static final String SERVICE_CODE = "ADTAX";
     public static final String COLL_RECEIPTDETAIL_DESC_PREFIX = "Collection";
     public static final String PENALTYCALCULATIONREQUIRED = "Penalty Calculation required";
-    public static final String CALCULATESORBYUNIT="Calculate SOR By Unit";
+    public static final String TOTALRESULTTOBEFETCH = "Number of Records used in next year demand generation";
+    public static final String CALCULATESORBYUNIT = "Calculate SOR By Unit";
     public static final String DEMANDREASON_PENALTY = "Penalty";
     public static final String PENALTYAMOUNT = "PENALTYAMOUNT";
     public static final String PENDINGDEMANDAMOUNT = "PENDINGDEMANDAMOUNT";
@@ -90,10 +91,16 @@ public class AdvertisementTaxConstants {
     public static final String ADDRESSTYPEASOWNER = "OWNER";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
     public static final String WF_PERMITORDER_BUTTON = "GENERATE PERMIT ORDER";
-    public static final String WORKFLOW_ACTION ="workFlowAction";
+    public static final String WORKFLOW_ACTION = "workFlowAction";
     public static final String PERMITORDER = "permitOrder";
     public static final String WF_DEMANDNOTICE_BUTTON = "GENERATE DEMAND NOTICE";
     public static final String COLLECTION_REMARKS = "Collection done";
     public static final String DEMANDNOTICE = "demandNotice";
-    
+
+    public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
+    public static final String IMAGE_CONTEXT_PATH = "/egi";
+    public static final String ADVERTISEMENTPERMITODERTITLE = "Advertisement Permit Order";
+    public static final String ADVERTISEMENTDEMANDNOTICETITLE = "Advertisement Demand Notice";
+    public static final String RENEWAL_ADDITIONAL_RULE = "RENEWADVERTISEMENT";
+
 }

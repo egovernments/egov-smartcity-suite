@@ -56,8 +56,6 @@
 	content="text/html; charset=windows-1252">
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
-<script type="text/javascript"
-	src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <title>Journal voucher Create</title>
 </head>
 
@@ -66,15 +64,6 @@
 
 	<s:form action="journalVoucher" theme="simple" name="jvcreateform">
 		<s:token />
-		<div id="loading"
-			style="position: absolute; left: 25%; top: 70%; padding: 2px; z-index: 20001; height: auto; width: 500px; display: none;">
-			<div class="loading-indicator"
-				style="background: white; color: #444; font: bold 13px tohoma, arial, helvetica; padding: 10px; margin: 0; height: auto;">
-				<img src="/egi/resources/erp2/images/loading.gif" width="32"
-					height="32" style="margin-right: 8px; vertical-align: top;" />
-				Loading...
-			</div>
-		</div>
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Journal voucher Create" />
 		</jsp:include>
@@ -235,8 +224,8 @@
 	function onSubmit()
 	{
 		if(validateJV()){
-				document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucher-create.action';
-	    		document.forms[0].submit();
+				document.jvcreateform.action='/EGF/voucher/journalVoucher-create.action';
+	    		document.jvcreateform.submit();
 				
 			}else{
 				return false;

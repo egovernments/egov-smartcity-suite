@@ -48,6 +48,7 @@ import java.util.List;
 
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
@@ -110,4 +111,10 @@ public class MutationFeeCollection extends TaxCollection {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    @Override
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+        return new ReceiptAmountInfo();
+    }
+
 }

@@ -112,7 +112,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     private static final Logger LOGGER = Logger.getLogger(BaseVoucherAction.class);
     // sub class should add getter and setter this workflowBean
-    protected WorkflowBean workflowBean = new WorkflowBean();
+    public WorkflowBean workflowBean = new WorkflowBean();
     public CVoucherHeader voucherHeader = new CVoucherHeader();
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
@@ -120,8 +120,6 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected UserService userMngr;
     protected EisUtilService eisService;
     protected AssignmentService assignmentService;
-    @Autowired
-    private SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService;
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;
     protected SecurityUtils securityUtils;
@@ -212,62 +210,12 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         mandatoryFields.add("voucherdate");
     }
 
-    protected void populateWorkflowBean() {
+    public void populateWorkflowBean() {
         workflowBean.setApproverPositionId(approverPositionId);
         workflowBean.setApproverComments(approverComments);
         workflowBean.setWorkFlowAction(workFlowAction);
         workflowBean.setCurrentState(currentState);
     }
-    public void transitionWorkFlow(final CVoucherHeader voucherHeader, WorkflowBean workflowBean) {
-        final DateTime currentDate = new DateTime();
-        final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-        Position pos = null;
-        Assignment wfInitiator = null;
-
-        if (null != voucherHeader.getId())
-                wfInitiator = getWorkflowInitiator(voucherHeader);
-
-        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-                if (wfInitiator.equals(userAssignment)) {
-                    voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                        .withDateInfo(currentDate.toDate());
-                } else {
-                        final String stateValue =  FinancialConstants.WORKFLOW_STATE_REJECTED;
-                        voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
-                }
-
-        } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                .withDateInfo(currentDate.toDate());
-        } else {
-                if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-                        pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
-                if (null == voucherHeader.getState()) {
-                        final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
-                                        null, null, workflowBean.getCurrentState(), null);
-                        voucherHeader.transition().start().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-                } else if (voucherHeader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                    voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                        .withDateInfo(currentDate.toDate());
-                else {
-                        final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
-                                        null, null, voucherHeader.getCurrentState().getValue(), null);
-                        voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-                }
-        }
-}
-
-protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
-        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(voucherHeader.getCreatedBy().getId());
-        return wfInitiator;
-}
 
     public boolean isOneFunctionCenter() {
         setOneFunctionCenterValue();
@@ -423,21 +371,21 @@ protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
                 subledgertDetailMap = new HashMap<String, Object>();
                 final String amountType = glcodeMap.get(voucherDetail.getSubledgerCode()) != null ? glcodeMap.get(
                         voucherDetail.getSubledgerCode()).toString() : null; // Debit or Credit.
-                        if (voucherDetail.getFunctionDetail() != null && !voucherDetail.getFunctionDetail().equalsIgnoreCase("")
-                                && !voucherDetail.getFunctionDetail().equalsIgnoreCase("0")) {
-                            final CFunction function = (CFunction) persistenceService.find("from CFunction where id = ?",
-                                    Long.parseLong(voucherDetail.getFunctionDetail()));
-                            subledgertDetailMap.put(VoucherConstant.FUNCTIONCODE, function != null ? function.getCode() : "");
-                        }
-                        if (null != amountType && amountType.equalsIgnoreCase(VoucherConstant.DEBIT))
-                            subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT, voucherDetail.getAmount());
-                        else if (null != amountType)
-                            subledgertDetailMap.put(VoucherConstant.CREDITAMOUNT, voucherDetail.getAmount());
-                        subledgertDetailMap.put(VoucherConstant.DETAILTYPEID, voucherDetail.getDetailType().getId());
-                        subledgertDetailMap.put(VoucherConstant.DETAILKEYID, voucherDetail.getDetailKeyId());
-                        subledgertDetailMap.put(VoucherConstant.GLCODE, voucherDetail.getSubledgerCode());
+                if (voucherDetail.getFunctionDetail() != null && !voucherDetail.getFunctionDetail().equalsIgnoreCase("")
+                        && !voucherDetail.getFunctionDetail().equalsIgnoreCase("0")) {
+                    final CFunction function = (CFunction) persistenceService.find("from CFunction where id = ?",
+                            Long.parseLong(voucherDetail.getFunctionDetail()));
+                    subledgertDetailMap.put(VoucherConstant.FUNCTIONCODE, function != null ? function.getCode() : "");
+                }
+                if (null != amountType && amountType.equalsIgnoreCase(VoucherConstant.DEBIT))
+                    subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT, voucherDetail.getAmount());
+                else if (null != amountType)
+                    subledgertDetailMap.put(VoucherConstant.CREDITAMOUNT, voucherDetail.getAmount());
+                subledgertDetailMap.put(VoucherConstant.DETAILTYPEID, voucherDetail.getDetailType().getId());
+                subledgertDetailMap.put(VoucherConstant.DETAILKEYID, voucherDetail.getDetailKeyId());
+                subledgertDetailMap.put(VoucherConstant.GLCODE, voucherDetail.getSubledgerCode());
 
-                        subledgerDetails.add(subledgertDetailMap);
+                subledgerDetails.add(subledgertDetailMap);
             }
 
             voucherHeader = createVoucher.createPreApprovedVoucher(headerDetails, accountdetails, subledgerDetails);
@@ -592,39 +540,45 @@ protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
 
         final Map<String, BigDecimal> subledAmtmap = new HashMap<String, BigDecimal>();
         final Map<String, String> subLedgerMap = new HashMap<String, String>();
-        for (final VoucherDetails voucherDetails : subLedgerlist)
+        for (final VoucherDetails voucherDetails : subLedgerlist) {
+            if (voucherDetails.getGlcode() == null) {
+                addActionError(getText("journalvoucher.acccode.missing",
+                        new String[] { voucherDetails.getSubledgerCode() }));
+                return true;
+            }
             if (voucherDetails.getGlcode().getId() != 0) {
                 final String function = repeatedglCodes.contains(voucherDetails.getGlcode().getId().toString()) ? voucherDetails
                         .getFunctionDetail() : "0";
-                        // above is used to check if this account code is used multiple times in the account grid or not, if it used
-                        // multiple times
-                        // then take the function into consideration while calculating the total sl amount , else igone the function by
-                        // paasing function value=0
-                        if (null != subledAmtmap.get(voucherDetails.getGlcode().getId() + "-" + function)) {
-                            final BigDecimal debitTotalAmount = subledAmtmap.get(voucherDetails.getGlcode().getId() + "-" + function)
-                                    .add(voucherDetails.getAmount());
-                            subledAmtmap.put(voucherDetails.getGlcode().getId() + "-" + function, debitTotalAmount);
-                        } else
-                            subledAmtmap.put(voucherDetails.getGlcode().getId() + "-" + function
-                                    , voucherDetails.getAmount());
-                        final StringBuffer subledgerDetailRow = new StringBuffer();
-                        if (voucherDetails.getDetailType().getId() == 0 || null == voucherDetails.getDetailKeyId()) {
-                            addActionError(getText("journalvoucher.subledger.entrymissing",
-                                    new String[] { voucherDetails.getSubledgerCode() }));
-                            return true;
-                        } else
-                            subledgerDetailRow.append(voucherDetails.getGlcode().getId().toString()).
+                // above is used to check if this account code is used multiple times in the account grid or not, if it used
+                // multiple times
+                // then take the function into consideration while calculating the total sl amount , else igone the function by
+                // paasing function value=0
+                if (null != subledAmtmap.get(voucherDetails.getGlcode().getId() + "-" + function)) {
+                    final BigDecimal debitTotalAmount = subledAmtmap.get(voucherDetails.getGlcode().getId() + "-" + function)
+                            .add(voucherDetails.getAmount());
+                    subledAmtmap.put(voucherDetails.getGlcode().getId() + "-" + function, debitTotalAmount);
+                } else
+                    subledAmtmap.put(voucherDetails.getGlcode().getId() + "-" + function
+                            , voucherDetails.getAmount());
+                final StringBuffer subledgerDetailRow = new StringBuffer();
+                if (voucherDetails.getDetailType().getId() == 0 || null == voucherDetails.getDetailKeyId()) {
+                    addActionError(getText("journalvoucher.subledger.entrymissing",
+                            new String[] { voucherDetails.getSubledgerCode() }));
+                    return true;
+                } else
+                    subledgerDetailRow.append(voucherDetails.getGlcode().getId().toString()).
                             append(voucherDetails.getDetailType().getId().toString()).
                             append(voucherDetails.getDetailKeyId().toString()).
                             append(voucherDetails.getFunctionDetail());
-                        if (null == subLedgerMap.get(subledgerDetailRow.toString()))
-                            subLedgerMap.put(subledgerDetailRow.toString(), subledgerDetailRow.toString());
-                        else {
-                            addActionError(getText("journalvoucher.samesubledger.repeated"));
-                            return true;
-                        }
+                if (null == subLedgerMap.get(subledgerDetailRow.toString()))
+                    subLedgerMap.put(subledgerDetailRow.toString(), subledgerDetailRow.toString());
+                else {
+                    addActionError(getText("journalvoucher.samesubledger.repeated"));
+                    return true;
+                }
 
             }
+        }
         if (subLegAccMap.size() > 0)
             for (final Map<String, Object> map : subLegAccMap) {
                 final String glcodeIdAndFuncId = map.get("glcodeId-funcId").toString();
@@ -657,8 +611,8 @@ protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
 
         final StringBuffer fyQuery = new StringBuffer();
         fyQuery.append("from CFinancialYear where isActiveForPosting=1 and startingDate <= '").
-        append(Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate())).append("' AND endingDate >='")
-        .append(Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate())).append("'");
+                append(Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate())).append("' AND endingDate >='")
+                .append(Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate())).append("'");
         final List<CFinancialYear> list = persistenceService.findAllBy(fyQuery.toString());
         if (list.size() == 0) {
             addActionError(getText("journalvoucher.fYear.notActive"));
@@ -960,26 +914,8 @@ protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
         this.assignmentService = assignmentService;
     }
 
-    public SimpleWorkflowService<CVoucherHeader> getVoucherHeaderWorkflowService() {
-        return voucherHeaderWorkflowService;
-    }
-
-    public void setVoucherHeaderWorkflowService(SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService) {
-        this.voucherHeaderWorkflowService = voucherHeaderWorkflowService;
-    }
-
-    public SecurityUtils getSecurityUtils() {
-        return securityUtils;
-    }
-
-    public void setSecurityUtils(SecurityUtils securityUtils) {
-        this.securityUtils = securityUtils;
-    }
-
     public FinancingSourceService getFinancingSourceService() {
         return financingSourceService;
     }
-
-
 
 }

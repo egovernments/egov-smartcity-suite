@@ -111,8 +111,6 @@
 </definition>
 <definition name="feematrix-result" template= "/WEB-INF/views/feematrix/feematrix-result.jsp" />
 	
-
-
 <definition name="validity-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.validity.new" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/validity/validity-new.jsp"/>
@@ -133,6 +131,12 @@
 </definition>
 
 
-
-
+<definition name="validity-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.validity.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/validity/validity-search.jsp"/>
+</definition>
+ <definition name="dCBReport-search" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.dcbreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/dcb/dCBReport-search.jsp"/>
+    </definition>
 </tiles-definitions>

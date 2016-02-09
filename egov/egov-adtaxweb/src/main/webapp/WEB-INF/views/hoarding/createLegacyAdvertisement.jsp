@@ -162,7 +162,7 @@
 									<spring:message code="lbl.advertisement.no"/></label>
 									<div class="col-sm-3 add-margin">
 										<form:input type="text" cssClass="form-control patternvalidation" 
-	                        	      data-pattern="username" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
+	                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
 	                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
 									</div>
 								</c:when>
@@ -171,7 +171,7 @@
 									<spring:message code="lbl.advertisement.no"/></label>
 									<div class="col-sm-3 add-margin">
 										<form:input type="text" cssClass="form-control patternvalidation" 
-	                        	      data-pattern="username" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
+	                        	      data-pattern="alphanumericwithhyphen" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
 	                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
 									</div>
 								</c:otherwise>

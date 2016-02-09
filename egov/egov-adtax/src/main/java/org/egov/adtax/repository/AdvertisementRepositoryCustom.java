@@ -42,6 +42,7 @@ import java.util.List;
 
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.search.contract.HoardingSearch;
+import org.egov.commons.Installment;
 
 public interface AdvertisementRepositoryCustom {
 
@@ -49,4 +50,6 @@ public interface AdvertisementRepositoryCustom {
 
     List<Object[]> fetchAdvertisementBySearchType(Advertisement hoarding, String searchType);
     List<Advertisement> fetchAdvertisementBySearchParams(Advertisement hoarding);
+    int findActivePermanentAdvertisementsByCurrentInstallment(Installment installment);
+    List<Advertisement> findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(Installment installment,int noOfResultToFetch);
 }

@@ -823,7 +823,7 @@ public class FileUploadAction extends BaseFormAction {
          * ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
          * receiptPayee.addReceiptHeader(receiptHeader); receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);
          */
-        receiptHeaderService.persistChallan(receiptHeader);
+        //receiptHeaderService.persistChallan(receiptHeader);
         receiptHeaderService.getSession().flush();
         LOGGER.info("Persisted Challan and Created Receipt In Pending State For the Challan");
 
@@ -904,7 +904,7 @@ public class FileUploadAction extends BaseFormAction {
         // Start work flow for all newly created receipts This might internally
         // create vouchers also based on configuration
 
-        receiptHeaderService.startWorkflow(receiptHeader, Boolean.TRUE);
+        receiptHeaderService.startWorkflow(receiptHeader);
         LOGGER.info("Workflow started for newly created receipts");
 
         // transition the receipt header workflow to Approved state
@@ -1307,7 +1307,7 @@ public class FileUploadAction extends BaseFormAction {
             if (receiptHeader.getReceiptVoucher().isEmpty()) {
 
                 try {
-                    receiptHeaderService.createVoucherForReceipt(receiptHeader, Boolean.TRUE);
+                    receiptHeaderService.createVoucherForReceipt(receiptHeader);
                     // If vouchers are created during work flow step, add them to
                     // the list
 

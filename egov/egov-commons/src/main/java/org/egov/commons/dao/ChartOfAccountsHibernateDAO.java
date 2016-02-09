@@ -380,5 +380,40 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
 	public List<CChartOfAccounts> getBankChartofAccountCodeList() {
         return HibernateUtil.getCurrentSession().createQuery("select chartofaccounts from Bankaccount").setCacheable(true).list();
     }
+
+	@Override
+	public List<CChartOfAccounts> findByType(Character type) {
+		
+		
+		 final Query query = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts where  " +
+	        		"type =:type and classification=1");
+	        query.setCharacter("type", type);
+	       // query.setCacheable(true);
+	        return query.list();
+	}
+
+	@Override
+	public List<CChartOfAccounts> findByMajorCodeAndClassification(
+			String majorCode, Long classification) {
+		 final Query query = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts where  " +
+	        		"majorcode =:majorcode and classification=2");
+	        query.setString("majorcode", majorCode);
+	       // query.setCacheable(true);
+	        return query.list();
+	}
+
+	@Override
+	public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassificationAndMajorCode(
+			String string, Long classification, String majorCode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassification(
+			String string, Long classification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 

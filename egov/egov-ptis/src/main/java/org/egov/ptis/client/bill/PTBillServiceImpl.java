@@ -151,7 +151,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
-            if (balance.compareTo(BigDecimal.ZERO) == 1 || !balance.equals(BigDecimal.valueOf(0.0))) {
+            if (!(balance.equals(BigDecimal.ZERO) || balance.equals(BigDecimal.valueOf(0.0)))) {
 
                 reason = demandDetail.getEgDemandReason();
                 installment = reason.getEgInstallmentMaster();
@@ -244,7 +244,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
      */
     EgBillDetails createBillDet(final BillDetailBean billDetailBean) {
         LOGGER.debug("Entered into createBillDet, billDetailBean=" + billDetailBean);
-
+        
         if (billDetailBean.invalidData())
             throw new ApplicationRuntimeException("Invalid bill details...");
 

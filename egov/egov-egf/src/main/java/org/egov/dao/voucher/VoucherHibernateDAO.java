@@ -40,7 +40,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
@@ -61,8 +60,6 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * @author Manoranjan
@@ -75,6 +72,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    private PersistenceService persistenceService;
 
     public List<CVoucherHeader> getVoucherList(final CVoucherHeader voucherHeader,
             final Map<String, Object> searchFilterMap) throws ApplicationException, ParseException {
@@ -171,21 +169,15 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
             final Class<?> service = Class.forName(accountdetailtype.getFullQualifiedName());
             // getting the entity type service.
             final String detailTypeName = service.getSimpleName();
-            final String detailTypeService = detailTypeName.substring(0, 1).toLowerCase() + detailTypeName.substring(1)
-                    + "Service";
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("VoucherHibernateDAO | detailtype service name = " + detailTypeService);
-            final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
-                    .getServletContext());
-            final PersistenceService entityPersistenceService = (PersistenceService) wac.getBean(detailTypeService);
             String dataType = "";
-            // required to know data type of the id of the detail type object.
             final java.lang.reflect.Method method = service.getMethod("getId");
             dataType = method.getReturnType().getSimpleName();
             if (dataType.equals("Long"))
-                entity = (EntityType) entityPersistenceService.findById(Long.valueOf(detailKeyId.toString()), false);
+                entity = (EntityType) persistenceService.find(
+                        "from " + detailTypeName + " where id=? order by name", detailKeyId.longValue());
             else
-                entity = (EntityType) entityPersistenceService.findById(detailKeyId, false);
+                entity = (EntityType) persistenceService.find(
+                        "from " + detailTypeName + " where id=? order by name", detailKeyId);
         } catch (final Exception e) {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
@@ -244,6 +236,14 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
             throw new ApplicationRuntimeException("exception in voucherHibDao while deleting from general ledger" + e);
         }
 
+    }
+
+    public PersistenceService getPersistenceService() {
+        return persistenceService;
+    }
+
+    public void setPersistenceService(PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
     }
 
 }

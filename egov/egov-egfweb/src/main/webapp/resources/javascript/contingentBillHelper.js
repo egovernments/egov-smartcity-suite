@@ -38,11 +38,10 @@
 # In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 
-function validate(name,value)
+function validate()
 {
 
 	
-	document.getElementById("actionName").value= name;
 	if(!validateForm_contingentBill())
 	{
 		document.getElementById("tabber0").tabber.tabShow(0);
@@ -50,12 +49,6 @@ function validate(name,value)
 		return false;
 	}
 	
-	/*if(document.getElementById("nextLevel").value != "END"){
-		if(!validateUser(name,value)){
-			undoLoadingMask() ;
-			return false;
-		}
-	}*/
 
 	var len=billDetailsTableFinal.getRecordSet().getLength();
 	if( len!=undefined && len>=1)
@@ -71,16 +64,6 @@ function validate(name,value)
 		undoLoadingMask() ;
 		return false;
 	}
-	/*if(document.getElementById("billDetailsTableSubledger") && document.getElementById("billDetailsTableSubledger").rows.length>1)
-		return;
-	else
-	{
-		var payto=document.getElementById("commonBean.payto").value;
-		if(payto.trim()=="")
-			bootbox.alert(enterpayto);
-		else
-			return true;
-	}*/
 	
 return true;
 }

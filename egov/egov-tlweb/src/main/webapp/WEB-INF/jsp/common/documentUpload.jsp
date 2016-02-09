@@ -82,7 +82,7 @@
 </div>
 <table class="table" id="docAttachmentTab">  
 <s:iterator value="documentTypes" status="status" var="documentType">
-	<div class="form-group">
+	<div class="row">
     	<div class="col-sm-1 text-center"><s:property value="#status.index + 1"/></div>
         <div class="col-sm-5 text-center">
         	<s:property value="name" /><s:if test="mandatory"><span class="mandatory"></span></s:if>

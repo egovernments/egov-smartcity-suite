@@ -62,20 +62,24 @@ import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentService;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Utility class for interfacing with financials. This class should be used for calling any financials APIs from erp collections.
+ * Utility class for interfacing with financials. This class should be used for
+ * calling any financials APIs from erp collections.
  */
 public class FinancialsUtil {
     private InstrumentService instrumentService;
     public PersistenceService<InstrumentHeader, Long> instrumentHeaderService;
     private ContraService contraService;
-    private CreateVoucher voucherCreator;
+    @Autowired
+    private CreateVoucher createVoucher;
     private CollectionsUtil collectionsUtil;
     private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
 
     /**
-     * @param instrumentService the Instrument Service to set
+     * @param instrumentService
+     *            the Instrument Service to set
      */
     public void setInstrumentService(final InstrumentService instrumentService) {
         this.instrumentService = instrumentService;
@@ -84,7 +88,8 @@ public class FinancialsUtil {
     /**
      * Fetches instrument type object for given instrument type as string
      *
-     * @param type Instrument type as string e.g. cash/cheque
+     * @param type
+     *            Instrument type as string e.g. cash/cheque
      * @return Instrument type object for given instrument type as string
      */
     public InstrumentType getInstrumentTypeByType(final String type) {
@@ -116,19 +121,20 @@ public class FinancialsUtil {
 
     public CVoucherHeader createVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails,
-            final List<HashMap<String, Object>> subledgerdetails, final Boolean receiptBulkUpload,
-            final Boolean isVoucherApproved) {
+            final List<HashMap<String, Object>> subledgerdetails, final Boolean isVoucherApproved) {
         CVoucherHeader voucherHeader = null;
 
         LOGGER.debug("Logs For HandHeldDevice Permance Test : Voucher Creation Started....");
 
-        if (!receiptBulkUpload) {
-            if (isVoucherApproved != null && isVoucherApproved)
-                voucherHeader = createApprovedVoucher(headerdetails, accountcodedetails, subledgerdetails);
-            else
-                voucherHeader = createPreApprovalVoucher(headerdetails, accountcodedetails, subledgerdetails);
-        } else
+        /* if (!receiptBulkUpload) { */
+        if (isVoucherApproved != null && isVoucherApproved)
             voucherHeader = createApprovedVoucher(headerdetails, accountcodedetails, subledgerdetails);
+        else
+            voucherHeader = createPreApprovalVoucher(headerdetails, accountcodedetails, subledgerdetails);
+        /*
+         * } else voucherHeader = createApprovedVoucher(headerdetails,
+         * accountcodedetails, subledgerdetails);
+         */
         LOGGER.info("Logs For HandHeldDevice Permance Test : Voucher Creation Ended...");
         return voucherHeader;
 
@@ -149,7 +155,7 @@ public class FinancialsUtil {
         CVoucherHeader voucherHeaders = null;
         try {
             if (headerdetails instanceof HashMap)
-                voucherHeaders = voucherCreator.createPreApprovedVoucher((HashMap<String, Object>) headerdetails,
+                voucherHeaders = createVoucher.createPreApprovedVoucher((HashMap<String, Object>) headerdetails,
                         accountcodedetails, subledgerdetails);
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error("Exception while creating voucher!", e);
@@ -167,7 +173,7 @@ public class FinancialsUtil {
 
                 // fetch from eg_modules once have master data in place
                 headerdetails.put(VoucherConstant.MODULEID, "10");
-                voucherHeaders = voucherCreator.createVoucher((HashMap<String, Object>) headerdetails,
+                voucherHeaders = createVoucher.createVoucher((HashMap<String, Object>) headerdetails,
                         accountcodedetails, subledgerdetails);
             }
         } catch (final ApplicationRuntimeException e) {
@@ -187,7 +193,7 @@ public class FinancialsUtil {
     public CVoucherHeader getReversalVoucher(final List<HashMap<String, Object>> paramList) {
         CVoucherHeader voucherHeaders = null;
         try {
-            voucherHeaders = voucherCreator.reverseVoucher(paramList);
+            voucherHeaders = createVoucher.reverseVoucher(paramList);
         } catch (final ApplicationRuntimeException re) {
             LOGGER.error("Runtime Exception while creating reversal voucher!", re);
             throw re;
@@ -212,7 +218,8 @@ public class FinancialsUtil {
     }
 
     /**
-     * Create Instrument Header for list of HashMap of instrument header properties
+     * Create Instrument Header for list of HashMap of instrument header
+     * properties
      *
      * @param paramList
      * @return List of InstrumentHeader
@@ -223,8 +230,8 @@ public class FinancialsUtil {
     }
 
     /**
-     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
-     * Contra)
+     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
+     * Voucher(if the Bank Remittance voucher type is Contra)
      *
      * @param payInId
      * @param toBankaccountGlcode
@@ -237,8 +244,8 @@ public class FinancialsUtil {
     }
 
     /**
-     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
-     * Receipt)
+     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
+     * Voucher(if the Bank Remittance voucher type is Receipt)
      *
      * @param receiptId
      * @param toBankaccountGlcode
@@ -265,30 +272,18 @@ public class FinancialsUtil {
     }
 
     /**
-     * @return the contraService
-     */
-    public ContraService getContraService() {
-        return contraService;
-    }
-
-    /**
-     * @param contraService the contraService to set
+     * @param contraService
+     *            the contraService to set
      */
     public void setContraService(final ContraService contraService) {
         this.contraService = contraService;
     }
 
     /**
-     * @param voucherCreator the Voucher Creator to set
-     */
-    public void setVoucherCreator(final CreateVoucher voucherCreator) {
-        this.voucherCreator = voucherCreator;
-    }
-
-    /**
      * Checks whether given account is a revenue account (cash/cheque in hand)
      *
-     * @param coa the account object
+     * @param coa
+     *            the account object
      * @return true if the account is a revenue account, else false
      */
     @SuppressWarnings("unchecked")

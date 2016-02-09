@@ -65,7 +65,8 @@
 			</table>
 
 			<div class="buttonbottom">
-				<s:submit method="search" value="Search" cssClass="buttonsubmit" />
+				<s:submit value="Search" onclick="return submitForm();"
+					cssClass="buttonsubmit" />
 				<input type="submit" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
@@ -125,13 +126,21 @@
 
 	</s:form>
 	<script type="text/javascript">
-	function urlLoad(id,showMode) {
-		if(showMode=='edit')
-			 url = "../masters/function!beforeModify.action?id="+id+"&showMode=edit";
-		else
-			 url = "../masters/function!beforeModify.action?id="+id+"&showMode=view"; 
-		window.open(url,'FunctionView','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
-	}
+		function urlLoad(id, showMode) {
+			if (showMode == 'edit')
+				url = "../masters/function-beforeModify.action?id=" + id
+						+ "&showMode=edit";
+			else
+				url = "../masters/function-beforeModify.action?id=" + id
+						+ "&showMode=view";
+			window
+					.open(url, 'FunctionView',
+							'resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
+		}
+		function submitForm() {
+			document.forms[0].action = '${pageContext.request.contextPath}/masters/function-search.action';
+			document.forms[0].submit();
+		}
 	</script>
 </body>
 </html>
