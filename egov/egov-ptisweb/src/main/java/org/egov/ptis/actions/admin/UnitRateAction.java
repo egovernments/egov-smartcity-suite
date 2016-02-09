@@ -40,11 +40,11 @@
 package org.egov.ptis.actions.admin;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
 
-import java.util.Collections;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -171,10 +171,21 @@ public class UnitRateAction extends BaseFormAction {
             StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
                     "from StructureClassification where id = ? ", structureClassId);
             Boundary zone = boundaryService.getBoundaryById(zoneId);
+            
             category.setPropUsage(usage);
             category.setStructureClass(structureClass);
             category.setIsHistory('N');
             category.setIsActive(true);
+            
+            Calendar category_toDate = Calendar.getInstance();
+            category_toDate.set(Calendar.DATE, 31);
+            category_toDate.set(Calendar.MONTH, 3);
+            category_toDate.set(Calendar.YEAR, 2099);
+            category_toDate.set(Calendar.HOUR_OF_DAY, 0);
+            category_toDate.set(Calendar.MINUTE, 0);
+            category_toDate.set(Calendar.SECOND, 0); 
+            
+            category.setToDate(category_toDate.getTime());
             category.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
                     .concat("-").concat(category.getCategoryAmount().toString()));
 
@@ -196,6 +207,7 @@ public class UnitRateAction extends BaseFormAction {
             boundaryCategory.setCategory(category);
             boundaryCategory.setBndry(zone);
             boundaryCategory.setFromDate(category.getFromDate());
+            boundaryCategory.setToDate(category.getToDate());
             Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
             boundaryCategorySet.add(boundaryCategory);
 
@@ -261,19 +273,11 @@ public class UnitRateAction extends BaseFormAction {
                         zoneId, usageId, structureClassId, category.getFromDate(), category.getCategoryAmount());
         if (existingCategory != null) {
             addActionError(getText("unit.rate.exists.for.combination"));
-            mode = EDIT;
+            mode = EDIT; 
             return RESULT_NEW;
         } else {
             if (category != null && category.getId() != null && category.getId() != -1) {
                 catFromDb = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
-            }
-            if (catFromDb != null) {
-                catFromDb.setIsHistory('Y');
-                Date toDate = catFromDb.getToDate();
-                if (toDate == null || (toDate != null && toDate.after(catFromDb.getFromDate()))) {
-                    Date newToDate = DateUtils.addDays(category.getFromDate(), -1);
-                    catFromDb.setToDate(newToDate);
-                }
             }
             Category categoryObj = new Category();
             categoryObj.setCategoryAmount(category.getCategoryAmount());
@@ -295,7 +299,17 @@ public class UnitRateAction extends BaseFormAction {
             boundaryCategory.setCategory(categoryObj);
             boundaryCategory.setBndry(zone);
             boundaryCategory.setFromDate(categoryObj.getFromDate());
-            boundaryCategory.setToDate(categoryObj.getFromDate());
+            boundaryCategory.setToDate(categoryObj.getToDate());
+            
+            
+            if (catFromDb != null) {
+                catFromDb.setIsHistory('Y');
+                Date toDate = catFromDb.getToDate();
+                if (toDate == null || (toDate != null && toDate.after(catFromDb.getFromDate()))) {
+                    Date newToDate = DateUtils.addDays(category.getFromDate(), -1);
+                    catFromDb.setToDate(newToDate);
+                }
+            }
 
             Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
             boundaryCategorySet.add(boundaryCategory);

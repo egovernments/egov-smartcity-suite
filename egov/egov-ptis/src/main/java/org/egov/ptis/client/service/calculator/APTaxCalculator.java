@@ -59,6 +59,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGE_RESIDENTIAL;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -371,9 +372,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
             final Long usageId, final Date occupancyDate, final Long classification) throws TaxCalculatorExeption {
         List<BoundaryCategory> categories = new ArrayList<BoundaryCategory>();
-
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(), usageId,
-                classification, occupancyDate, installment.getToDate());
+                    classification, sdf.format(occupancyDate),  sdf.format(installment.getToDate()));
 
         LOGGER.debug("baseRentOfUnit - Installment : " + installment);
         
