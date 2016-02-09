@@ -437,7 +437,26 @@ public class WaterTaxCollection extends TaxCollection {
     
     @Override
     public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
-        return new ReceiptAmountInfo();
+        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+        BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
+        BigDecimal arrearAmount = BigDecimal.ZERO;
+        
+        for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()) {
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                    && !rcptAccInfo.getIsRevenueAccount()) {
+                final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                final String[] installsplit = desc[1].split("#");
+                if(installsplit[0].trim().equals(installsplit[1].trim())) {
+                    currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+                }else {
+                    arrearAmount.add(rcptAccInfo.getCrAmount());
+                }
+                
+            }
+        }
+        receiptAmountInfo.setArrearsAmount(arrearAmount);
+        receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
+        return receiptAmountInfo;
     }
 
 }
