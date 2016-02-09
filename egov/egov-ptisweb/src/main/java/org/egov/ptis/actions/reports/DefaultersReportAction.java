@@ -182,7 +182,8 @@ public class DefaultersReportAction extends BaseFormAction {
             defaultersInfo.setCurrentDue(propView.getAggrCurrDmd().subtract(propView.getAggrCurrColl()));
             totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue());
             defaultersInfo.setTotalDue(totalDue);
-            defaultersList.add(defaultersInfo);
+            if(!(totalDue.compareTo(BigDecimal.ZERO)==0))
+                defaultersList.add(defaultersInfo);  
         }
 
         return defaultersList;
