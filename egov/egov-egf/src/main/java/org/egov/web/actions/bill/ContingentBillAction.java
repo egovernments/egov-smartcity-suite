@@ -124,6 +124,7 @@ public class ContingentBillAction extends BaseBillAction {
         }
 
     }
+
     private final static String FORWARD = "Forward";
     private static final String ACCOUNT_DETAIL_TYPE_LIST = "accountDetailTypeList";
     private static final String BILL_SUB_TYPE_LIST = "billSubTypeList";
@@ -332,12 +333,14 @@ public class ContingentBillAction extends BaseBillAction {
             validateLedgerAndSubledger();
             bill = checkBudgetandGenerateNumber(bill);
             // this code should be removed when we enable single function centre change
-            /*
-             * if(commonBean.getFunctionId()!=null){ //CFunction function=(CFunction)
-             * getPersistenceService().find(" from CFunction where id=?", commonBean.getFunctionId().longValue()); CFunction
-             * function = commonsService.getCFunctionById(commonBean.getFunctionId().longValue());
-             * voucherHeader.getVouchermis().setFunction(function); }
-             */
+
+            if (commonBean.getFunctionId() != null) {
+                CFunction function = (CFunction) getPersistenceService().find(" from CFunction where id=?",
+                        commonBean.getFunctionId().longValue());
+                // CFunction function = commonsService.getCFunctionById(commonBean.getFunctionId().longValue());
+                voucherHeader.getVouchermis().setFunction(function);
+            }
+
             validateFields();
             if (!isBillNumberGenerationAuto())
                 if (!isBillNumUnique(commonBean.getBillNumber()))
@@ -708,14 +711,15 @@ public class ContingentBillAction extends BaseBillAction {
                 String tableName = service.getSimpleName();
                 EntityType entity = null;
                 String dataType = "";
-                
+
                 try {
                     final java.lang.reflect.Method method = service.getMethod("getId");
 
                     dataType = method.getReturnType().getSimpleName();
                     if (dataType.equals("Long"))
                         entity = (EntityType) persistenceService.find(
-                                "from " + tableName + " where id=? order by name", payeedetail.getAccountDetailKeyId().longValue());
+                                "from " + tableName + " where id=? order by name", payeedetail.getAccountDetailKeyId()
+                                        .longValue());
                     else
                         entity = (EntityType) persistenceService.find(
                                 "from " + tableName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
@@ -723,7 +727,7 @@ public class ContingentBillAction extends BaseBillAction {
                     LOGGER.error("prepareForViewModifyReverse" + e.getMessage(), e);
                     throw new ApplicationRuntimeException(e.getMessage());
                 }
-                
+
                 subVd.setDetailName(entity.getName());
                 subVd.setDetailCode(entity.getCode());
                 if (detail.getCreditamount() != null && !detail.getCreditamount().equals(BigDecimal.ZERO))
