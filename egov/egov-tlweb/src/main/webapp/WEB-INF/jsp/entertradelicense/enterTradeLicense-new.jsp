@@ -77,15 +77,9 @@
 								<div class="panel-title" style="text-align:center"> 
 										<s:text name='page.title.entertrade' /> 
 								</div>
-                                <ul class="nav nav-tabs" id="settingstab">
-                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
-                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
-                                </ul>
                             </div>
-                            
                              <div class="panel-body custom-form">
                                 <div class="tab-content">
-                                    <div class="tab-pane fade active in" id="tradedetails">
 													
 											<div class="form-group">
 											    <label class="col-sm-3 control-label text-right"><s:text name='license.old.license.number' /><span class="mandatory"></span></label>
@@ -138,13 +132,9 @@
 												</tfoot>
 											</table>
 											</div>
-											
-                                    </div>
-                                    <div class="tab-pane fade" id="tradeattachments"> 
                                         <div>
 											<%@include file="../common/documentUpload.jsp" %>
 										</div>
-                                    </div>
                             	</div>
                             </div>
                         </div> 

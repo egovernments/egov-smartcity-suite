@@ -39,6 +39,16 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />	
+
+<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script> 
+<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
+
+<script type="text/javascript" src="<c:url value='/resources/js/helper.js'/>"></script>
 
 <script src="<c:url value='/resources/app/js/feematrix.js' context='/tl'/>"></script>
 <script src="<c:url value='/resources/js/helper.js' context='/tl'/>"></script>
@@ -64,7 +74,7 @@
                   <form:options items="${natureOfBusinesss}" itemValue="id" itemLabel="name" />
                 </form:select>
               </div>
-               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.licenseapptype" /> <span
+               <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licenseapptype" /> <span
 	              class="mandatory"></span> </label>
 	            <div class="col-sm-3 add-margin">
 	              <form:select path="licenseAppType" id="licenseAppType" cssClass="form-control"   required="required"
@@ -89,7 +99,7 @@
 	                <form:options items="${licenseCategorys}" itemValue="id" itemLabel="name" />
 	              </form:select>
 	            </div>
-	            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.subcategory" /> <span
+	            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.subcategory" /> <span
 	                class="mandatory"></span> </label>
 	              <div class="col-sm-3 add-margin">
 	                <form:select path="subCategory" id="subCategory" cssClass="form-control"   required="required"
@@ -114,7 +124,7 @@
 	                  <form:options items="${feeTypes}" itemValue="id" itemLabel="name" />
 	                </form:select>
 	              </div>
-	              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.unitofmeasurement" /> <span
+	              <label class="col-sm-2 control-label text-right"><spring:message code="lbl.unitofmeasurement" /> <span
 	              class="mandatory"></span> </label>
 		            <div class="col-sm-3 add-margin">
 		              <form:select path="unitOfMeasurement" id="unitOfMeasurement" cssClass="form-control"   required="required"
@@ -129,11 +139,11 @@
             
             <div class="form-group">
               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.rateType" /> </label>
-		            <div class="col-sm-3 add-margin">
-		            	<form:input id="rateType" path="" class="form-control text-left" maxlength="32" readonly="true"/>
-		            </div>
+	            <div class="col-sm-3 add-margin">
+	            	<form:input id="rateType" path="" class="form-control text-left" maxlength="32" readonly="true"/>
+	            </div>
             
-              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.financialyear" /> <span
+              <label class="col-sm-2 control-label text-right"><spring:message code="lbl.financialyear" /> <span
 	                class="mandatory"></span> </label>
 	                <div class="col-sm-3 add-margin">
 	                <form:select path="financialYear" id="financialYear" cssClass="form-control"   required="required"
