@@ -243,6 +243,7 @@ public class ContingentBillAction extends BaseBillAction {
         return NEW;
     }
 
+    @ValidationErrorPage(VIEW)
     @Transactional
     @SkipValidation
     @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-update")

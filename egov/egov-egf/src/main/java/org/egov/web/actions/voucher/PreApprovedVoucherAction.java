@@ -72,6 +72,7 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -107,8 +108,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @Results({
-        @Result(name = "editVoucher", type = "redirectAction", location = "journalVoucherModify", params = { "namespace",
-                "/voucher", "method", "beforeModify" }),
+        @Result(name = "editVoucher", type = "redirectAction", location = "journalVoucherModify-beforeModify", params = { "namespace",
+                "/voucher"}),
         @Result(name = "view", location = "preApprovedVoucher-view.jsp"),
         @Result(name = PreApprovedVoucherAction.VOUCHEREDIT, location = "preApprovedVoucher-voucheredit.jsp"),
         @Result(name = "billview", location = "preApprovedVoucher-billview.jsp"),
@@ -506,7 +507,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         getMasterDataForBillVoucher();
         return "view";
     }
-
+    @ValidationErrorPage("billview")
+    @SkipValidation
     @Action(value = "/voucher/preApprovedVoucher-save")
     public String save() throws ValidationException
     {
@@ -542,29 +544,36 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         {
             LOGGER.error(e.getErrors());
             voucher();
+            mode = "";
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final ApplicationRuntimeException e)
         {
             voucher();
+            mode = "";
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e)
         {
-
+            voucher();
+            mode = "";
             if (e.getCause().getClass().equals(ValidationException.class))
             {
+                
                 final ValidationException s = (ValidationException) e;
-                throw new ValidationException(s.getErrors());
+                final List<ValidationError> errors = new ArrayList<ValidationError>();
+                errors.add(new ValidationError("exp",s.getErrors().get(0).getMessage()));
+                throw new ValidationException(errors);
             }
             LOGGER.error(e.getMessage());
             final List<ValidationError> errors = new ArrayList<ValidationError>();
-            errors.add(new ValidationError("exception", e.getCause().getMessage()));
-            // loadApproverUser(type);
+            final ValidationException s = (ValidationException) e;
+            errors.add(new ValidationError("exception", s.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         }
+        getHeaderMandateFields();
         displayVoucherNumber = false;
         return "billview";
     }
