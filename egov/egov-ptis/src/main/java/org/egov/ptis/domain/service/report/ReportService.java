@@ -100,10 +100,10 @@ public class ReportService {
     public List<BaseRegisterResult> getPropertyByWardAndBlock(final String ward, final String block) {
 
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
 
         if (StringUtils.isNotBlank(ward))
-            queryStr.append(" where pmv.ward.id=:ward ");
+            queryStr.append(" and pmv.ward.id=:ward ");
         if (StringUtils.isNotBlank(block))
             queryStr.append(" and pmv.block.id=:block ");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
@@ -138,7 +138,8 @@ public class ReportService {
             PropertyMaterlizeView propMatView) {
         baseRegisterResultObj.setAssessmentNo(propMatView.getPropertyId());
         baseRegisterResultObj.setDoorNO(propMatView.getHouseNo());
-        baseRegisterResultObj.setOwnerName(propMatView.getOwnerName());
+        baseRegisterResultObj.setOwnerName(propMatView.getOwnerName().contains(",") ? propMatView.getOwnerName().replace(",",
+                " & ") : propMatView.getOwnerName());
         baseRegisterResultObj.setIsExempted(propMatView.getIsExempted() ? "Yes" : "No");
         baseRegisterResultObj.setCourtCase("No");
 

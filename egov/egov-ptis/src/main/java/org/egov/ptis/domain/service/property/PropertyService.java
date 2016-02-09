@@ -2671,7 +2671,7 @@ public class PropertyService {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrDmd is not null and pmv.aggrCurrDmd>=:fromDemand ")
-                .append("and pmv.aggrCurrDmd<=:toDemand ");
+                .append("and pmv.aggrCurrDmd<=:toDemand and pmv.isActive = true ");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setBigDecimal("fromDemand", new BigDecimal(fromDemand));
         query.setBigDecimal("toDemand", new BigDecimal(toDemand));
@@ -2690,7 +2690,7 @@ public class PropertyService {
             final String ownerName) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(
-                " where pmv.locality.id=:locationId ");
+                " where pmv.locality.id=:locationId and pmv.isActive = true ");
         if (houseNo != null && !houseNo.trim().isEmpty())
             queryStr.append("and pmv.houseNo like :HouseNo ");
         if (ownerName != null && !ownerName.trim().isEmpty())
@@ -2745,9 +2745,9 @@ public class PropertyService {
 
     public List<PropertyMaterlizeView> getPropertyByDoorNo(final String doorNo) {
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
         if (StringUtils.isNotBlank(doorNo)) {
-            queryStr.append("where pmv.houseNo like :doorNo ");
+            queryStr.append("and pmv.houseNo like :doorNo ");
         }
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(doorNo)) {
@@ -2759,9 +2759,9 @@ public class PropertyService {
 
     public List<PropertyMaterlizeView> getPropertyByMobileNumber(final String MobileNo) {
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
         if (StringUtils.isNotBlank(MobileNo)) {
-            queryStr.append("where pmv.mobileNumber =:MobileNo ");
+            queryStr.append("and pmv.mobileNumber =:MobileNo ");
         }
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(MobileNo)) {

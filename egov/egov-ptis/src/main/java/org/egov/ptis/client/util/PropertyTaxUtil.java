@@ -2182,7 +2182,7 @@ public class PropertyTaxUtil {
 
         // Query that retrieves all the properties that has arrears.
         query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
-                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and idc.installment.fromDate not between  ('"
+                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and pmv.isActive = true and idc.installment.fromDate not between  ('"
                 + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
 
         if (localityId != null && localityId != -1)
@@ -2445,7 +2445,7 @@ public class PropertyTaxUtil {
             final String toDemand, final Integer limit) {
         final StringBuffer query = new StringBuffer(300);
         
-        query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null ");
+        query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true ");
         String arrearBalanceCond = " (pmv.aggrArrDmd - pmv.aggrArrColl) ";
         String orderByClause = " order by ";
         if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
