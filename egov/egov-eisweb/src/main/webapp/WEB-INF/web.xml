@@ -89,12 +89,8 @@
 	</filter>
 	
 	<filter>
-		<filter-name>struts2Prepare</filter-name>
-		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareFilter</filter-class>
-	</filter>
-	<filter>
-		<filter-name>struts2Execute</filter-name>
-		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsExecuteFilter</filter-class>
+		<filter-name>struts2PrepareAndExecute</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
 	</filter>
 	
 	<filter-mapping>
@@ -128,11 +124,7 @@
 	</filter-mapping>
 	
 	<filter-mapping>
-		<filter-name>struts2Prepare</filter-name>
-		<url-pattern>*.action</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>struts2Execute</filter-name>
+		<filter-name>struts2PrepareAndExecute</filter-name>
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<listener>
