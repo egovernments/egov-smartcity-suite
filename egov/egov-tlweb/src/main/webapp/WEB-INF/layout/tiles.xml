@@ -135,6 +135,8 @@
 	<put-attribute name="page-title" value="title.validity.search" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/validity/validity-search.jsp"/>
 </definition>
-
-
+ <definition name="dCBReport-search" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.dcbreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/dcb/dCBReport-search.jsp"/>
+    </definition>
 </tiles-definitions>

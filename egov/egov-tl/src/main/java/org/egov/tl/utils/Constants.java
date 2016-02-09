@@ -761,4 +761,9 @@ public class Constants {
         
         public static final String TL_APPROVER_ROLENAME = "TLApprover";
         public static final String TL_CREATOR_ROLENAME = "TLCreator";
+        public static final String ELECTION_HIERARCHY_TYPE = "ELECTION";
+        public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
+        public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+        public static final String BLOCK = "Block";
 }
+
