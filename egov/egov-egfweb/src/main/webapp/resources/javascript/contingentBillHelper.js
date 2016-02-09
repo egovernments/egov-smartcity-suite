@@ -48,8 +48,13 @@ function validate()
 		undoLoadingMask() ;
 		return false;
 	}
-	
-
+	if(document.getElementById("contingentBill_commonBean_billNumber")){
+		var billNumber = document.getElementById("contingentBill_commonBean_billNumber").value;
+		if(billNumber== null || billNumber == ""){
+			bootbox.alert("Please select bill number");
+			return false;
+		}
+	}
 	var len=billDetailsTableFinal.getRecordSet().getLength();
 	if( len!=undefined && len>=1)
 	{

@@ -52,7 +52,7 @@
 							</form:select>
 							<form:errors path="financialyear" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-3 control-label text-right"><spring:message
+						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.departmentid" /><span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="departmentid.id" id="departmentid.id"
@@ -81,7 +81,7 @@
 							</form:select>
 							<form:errors path="fund" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-3 control-label text-right"><spring:message
+						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.functionid" /><span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="functionid.id" id="functionid.id"
@@ -98,7 +98,6 @@
 							<form:errors path="functionid" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group"></div>
 					<div class="form-group">
 
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -121,7 +120,7 @@
 							<select name="major" id="major" class="form-control">
 							</select>
 						</div>
-						<label class="col-sm-3 control-label text-right"><spring:message
+						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.minor" /></label>
 						<div class="col-sm-3 add-margin">
 							<select name="minor" id="minor" class="form-control">

@@ -1833,7 +1833,7 @@ function fillNeibrAfterSplitFunctionHeader(obj)
 	temp = temp.split("`~`");
 	if(temp.length>1)
 	{ 
-		obj.value=temp[0];
+		obj.value=temp[0].split("`-`")[0];
 		document.getElementById("commonBean.functionId").value=temp[1];
 	}
 }

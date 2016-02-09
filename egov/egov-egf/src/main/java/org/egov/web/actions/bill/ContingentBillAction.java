@@ -309,7 +309,7 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     @Validations(requiredFields = { @RequiredFieldValidator(fieldName = "fundId", message = "", key = REQUIRED),
-            @RequiredFieldValidator(fieldName = "commonBean.billNumber", message = "", key = REQUIRED),
+            /*@RequiredFieldValidator(fieldName = "commonBean.billNumber", message = "", key = REQUIRED),*/
             @RequiredFieldValidator(fieldName = "commonBean.billDate", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "commonBean.billSubType", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "commonBean.payto", message = "", key = REQUIRED)
@@ -1191,13 +1191,13 @@ public class ContingentBillAction extends BaseBillAction {
         String billNumber = null;
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(bill.getBilldate());
         final String year = financialYear != null ? financialYear.getFinYearRange() : "";
-        final Script billNumberScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,
+        /*final Script billNumberScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,
                 "egf.bill.number.generator")
-                .get(0);
+                .get(0);*/
         final ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator", sequenceGenerator, "sItem", bill,
                 "year",
                 year);
-        billNumber = (String) scriptService.executeScript(billNumberScript.getName(), scriptContext);
+        billNumber = (String) scriptService.executeScript("egf.bill.number.generator", scriptContext);
         if (billNumber == null)
             throw new ValidationException(Arrays.asList(new ValidationError("unable.to.generate.bill.number",
                     "No Financial Year for bill date" + sdf.format(bill.getBilldate()))));
