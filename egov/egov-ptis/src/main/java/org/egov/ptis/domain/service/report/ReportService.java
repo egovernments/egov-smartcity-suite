@@ -106,13 +106,13 @@ public class ReportService {
             queryStr.append(" and pmv.ward.id=:ward ");
         if (StringUtils.isNotBlank(block))
             queryStr.append(" and pmv.block.id=:block ");
+        queryStr.append(" order by pmv.propertyId, pmv.ward");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(ward))
             query.setLong("ward", Long.valueOf(ward));
         if (StringUtils.isNotBlank(block))
             query.setLong("block", Long.valueOf(block));
 
-        queryStr.append(" order by pmv.basicPropertyID");
         List<PropertyMaterlizeView> properties = query.list();
         List<BaseRegisterResult> baseRegisterResultList = new LinkedList<BaseRegisterResult>();
 
