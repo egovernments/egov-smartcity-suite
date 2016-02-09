@@ -1147,8 +1147,9 @@ public class CreateVoucher {
 
         catch (final ValidationException ve)
         {
-            LOGGER.error(ERR, ve);
-            throw ve;
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", ve.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e) {
             LOGGER.error(ERR, e);
             throw new ApplicationRuntimeException(e.getMessage());

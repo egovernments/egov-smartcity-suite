@@ -73,10 +73,17 @@ public class PreApprovedActionHelper {
     @Transactional
     public CVoucherHeader createVoucherFromBill(CVoucherHeader voucherHeader, WorkflowBean workflowBean, Long billId,
             String voucherNumber, Date voucherDate) throws ApplicationRuntimeException, SQLException, TaskFailedException {
-        Long voucherHeaderId = createVoucher.createVoucherFromBill(billId.intValue(), null,
-                voucherNumber, voucherDate);
-        voucherHeader = voucherService.findById(voucherHeaderId, false);
-        voucherHeader = sendForApproval(voucherHeader,workflowBean);
+        try {
+            Long voucherHeaderId = createVoucher.createVoucherFromBill(billId.intValue(), null,
+                    voucherNumber, voucherDate);
+            voucherHeader = voucherService.findById(voucherHeaderId, false);
+            voucherHeader = sendForApproval(voucherHeader, workflowBean);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
+        }
         return voucherHeader;
     }
 
@@ -88,6 +95,11 @@ public class PreApprovedActionHelper {
             voucherService.applyAuditing(voucherHeader.getState());
             voucherService.persist(voucherHeader);
 
+        } catch (final ValidationException e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e) {
             e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
