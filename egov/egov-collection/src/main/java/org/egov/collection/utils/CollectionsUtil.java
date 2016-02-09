@@ -858,7 +858,7 @@ public class CollectionsUtil {
         collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment().getService().getName() : "");
         
         if(receiptHeader.getReceipttype()==CollectionConstants.RECEIPT_TYPE_BILL) {
-            final BillingIntegrationService billingServiceBean = this.getBillingService(billingService.getCode()
+            final BillingIntegrationService billingServiceBean = (BillingIntegrationService)this.getBean(billingService.getCode()
                     + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
                 receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader));
