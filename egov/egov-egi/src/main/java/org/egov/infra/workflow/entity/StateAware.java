@@ -177,6 +177,15 @@ public abstract class StateAware extends AbstractAuditable {
         return this;
     }
 
+    public final StateAware reinitiateTransition() {
+        state = new State();
+        state.setType(getStateType());
+        state.setStatus(StateStatus.STARTED);
+        state.setValue(State.DEFAULT_STATE_VALUE_CREATED);
+        state.setComments(State.DEFAULT_STATE_VALUE_CREATED);
+        return this;
+    }
+    
     public final StateAware withOwner(final User owner) {
         state.setOwnerUser(owner);
         return this;
