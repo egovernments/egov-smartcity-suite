@@ -152,7 +152,7 @@ function getUom(){
 	    <label class="col-sm-3 control-label text-right"><s:text name='license.agreementDate.lbl' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
 		<s:date name="agreementDate" id="formattedAgreementDate" format="dd/MM/yyyy" />
-		<s:textfield name="agreementDate" cssClass="form-control datepicker" required="true" data-date-end-date="0d" id="agreementDate"  maxlength="10" value="%{formattedAgreementDate}"/>
+		<s:textfield name="agreementDate" cssClass="form-control datepicker" data-date-end-date="0d" id="agreementDate"  maxlength="10" value="%{formattedAgreementDate}"/>
 	    </div>
 	    
 	    <label class="col-sm-2 control-label text-right"><s:text name='license.agreementDocNo.lbl' /><span class="mandatory"></span></label>
