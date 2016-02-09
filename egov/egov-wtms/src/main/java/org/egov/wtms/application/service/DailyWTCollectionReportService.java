@@ -130,7 +130,7 @@ public class DailyWTCollectionReportService {
         final Query query = getCurrentSession().createQuery(queryStr.toString());
         query.setString("service", WaterTaxConstants.EGMODULES_NAME);
         query.setDate("fromDate", new DateTime(fromDate).withTimeAtStartOfDay().toDate());
-        query.setDate("toDate", new DateTime(toDate).withTime(23, 59, 59, 59).toDate());
+        query.setDate("toDate", new DateTime(toDate).plusDays(1).toDate());
         if (StringUtils.isNotBlank(collectionMode))
             query.setLong("mode", Long.valueOf(collectionMode));
         if (StringUtils.isNotBlank(collectionOperator))
