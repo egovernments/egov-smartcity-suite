@@ -78,7 +78,7 @@ ${id}SuccessHandler=function(req,res){
   <%}%>
 }
 ${id}FailureHandler=function(){
-  alert('Unable to load ${dropdownId}');
+  bootbox.alert('Unable to load ${dropdownId}');
 }
 
 function populate${dropdownId}(params){

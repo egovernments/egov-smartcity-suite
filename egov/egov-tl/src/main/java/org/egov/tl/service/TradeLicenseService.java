@@ -68,7 +68,6 @@ import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.LicenseStatusValues;
-import org.egov.tl.entity.MotorMaster;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -108,11 +107,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Override
     public License additionalOperations(final TradeLicense license, final Set<EgDemandReasonMaster> egDemandReasonMasters, final Installment installment) {
-        final TradeLicense tl = (TradeLicense) license;
-        final List<MotorMaster> motorMasterList = persistenceService.findAllBy("from org.egov.tl.entity.MotorMaster");
-        tl.setMotorMasterList(motorMasterList);
-        tl.additionalDemandDetails(egDemandReasonMasters, installment);
-        return tl;
+        return license;
     }
     
     @Override
@@ -172,11 +167,12 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
  
  public void updateStatusInWorkFlowProgress(TradeLicense license, String workFlowAction) {
      if (BUTTONAPPROVE.equals(workFlowAction)) {
-         license.setCreationAndExpiryDate();
+         validityService.applyLicenseValidity(license);
          if (license.getTempLicenseNumber() == null) {
              license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
            
           }
+         license.setActive(true);
          EgwStatus statusChange = (EgwStatus) persistenceService
                  .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_APPROVED_CODE);
          license.setEgwStatus(statusChange);
@@ -368,28 +364,28 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
      * @param paramType
      * @return
      */
-    public List<License> getTradeLicenseForGivenParam(String paramValue, String paramType) {
-        List<License> licenseList = new ArrayList<License>();
+    public List<TradeLicense> getTradeLicenseForGivenParam(String paramValue, String paramType) {
+        List<TradeLicense> licenseList = new ArrayList<>();
         if (paramType.equals(Constants.SEARCH_BY_APPNO)) {
-            licenseList = persistenceService
+            licenseList = licensePersitenceService
                     .findAllBy("from License where upper(applicationNumber) like ?", "%" + paramValue.toUpperCase() + "%");
         } else if (paramType.equals(Constants.SEARCH_BY_LICENSENO)) {
-            licenseList = persistenceService
+            licenseList = licensePersitenceService
                     .findAllBy("from License where  upper(licenseNumber) like ?", "%" + paramValue.toUpperCase() + "%");
         } else if (paramType.equals(Constants.SEARCH_BY_OLDLICENSENO)) {
-            licenseList = persistenceService
+            licenseList = licensePersitenceService
                     .findAllBy("from License where  upper(oldLicenseNumber) like ?", "%" + paramValue.toUpperCase() + "%");
         } else if (paramType.equals(Constants.SEARCH_BY_TRADETITLE)) {
-            licenseList = persistenceService
+            licenseList = licensePersitenceService
                     .findAllBy("from License where  upper(nameOfEstablishment) like ?", "%" + paramValue.toUpperCase() + "%");
         } else if (paramType.equals(Constants.SEARCH_BY_TRADEOWNERNAME)) {
-            licenseList = persistenceService
+            licenseList = licensePersitenceService
                     .findAllBy("from License where  upper(licensee.applicantName) like ?", "%" + paramValue.toUpperCase() + "%");
         } else if (paramType.equals(Constants.SEARCH_BY_PROPERTYASSESSMENTNO)) {
-            licenseList = persistenceService
+            licenseList = licensePersitenceService
                     .findAllBy("from License where  upper(propertyNo) like ?", "%" + paramValue.toUpperCase() + "%");
         } else if (paramType.equals(Constants.SEARCH_BY_MOBILENO)) {
-            licenseList = persistenceService
+            licenseList = licensePersitenceService
                     .findAllBy("from License where  licensee.mobilePhoneNumber like ?", "%" + paramValue + "%");
         }
         return licenseList;

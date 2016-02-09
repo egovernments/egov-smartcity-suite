@@ -141,12 +141,6 @@ public abstract class License extends StateAware {
 
     public abstract String generateLicenseNumber(Serializable runningNumber);
 
-    public abstract void setCreationAndExpiryDate();
-
-    public abstract void setCreationAndExpiryDateForEnterLicense();
-
-    public abstract void updateExpiryDate(Date renewalDate);
-
     public abstract List<LicenseDocument> getDocuments();
 
     public abstract void setDocuments(List<LicenseDocument> documents);

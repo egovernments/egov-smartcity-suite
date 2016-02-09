@@ -147,6 +147,9 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected DemandGenericHibDao demandGenericDao;
+    
+    @Autowired
+    ValidityService validityService;
 
     protected SimpleWorkflowService<T> licenseWorkflowService;
 
@@ -325,6 +328,7 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setLegacy(true);
         license.setActive(true);
         license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
+        validityService.applyLicenseValidity(license);
         this.licensePersitenceService.persist(license);
     }
 
@@ -553,7 +557,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 cal.add(Calendar.MONTH, 1);
                 installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), cal.getTime());
             } else if (isExpired == true && noOfMonths <= 6)
-                installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), renewalDate);
+                installment=  installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), renewalDate);
             else
                 throw new ApplicationRuntimeException("License already Expired Cant renew");
 
@@ -568,27 +572,13 @@ public abstract class AbstractLicenseService<T extends License> {
             license.getClass().getSimpleName().toUpperCase();
         license = (T) license.renew(feeList, appType, nature, installment, egDemandReasonMasters, totalAmount,
                 applicationNumberGenerator.generate(), license.getFeeTypeStr(), getModuleName(), renewalDate);
-        /*
-         * HibernateUtil.getCurrentSession().flush(); HibernateUtil.getCurrentSession().refresh(license);
-         */
-        license = (T) additionalOperations(license, egDemandReasonMasters, installment);
-        persistenceService.update(license);
-
         final LicenseStatus status = (LicenseStatus) persistenceService.find(
                 "from org.egov.tl.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
+        licensePersitenceService.persist(license);
     }
 
-    @Transactional
-    public T updateLicenseForFinalApproval(final T license) {
-        final LicenseStatus status = (LicenseStatus) persistenceService
-                .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-        license.setStatus(status);
-        license.setCreationAndExpiryDateForEnterLicense();
-        license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
-        return license;
-    }
-
+   
     @Transactional
     public T createDemandForViolationFee(T license) {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());

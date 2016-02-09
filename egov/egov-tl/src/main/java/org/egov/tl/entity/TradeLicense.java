@@ -149,45 +149,6 @@ public class TradeLicense extends License {
         return details.toString();
     }
     
-    @Override
-    public void setCreationAndExpiryDate() {
-        setDateOfCreation(new Date());
-        updateExpiryDate(new Date());
-    }
-
-    @Override
-    public void setCreationAndExpiryDateForEnterLicense() {
-        setDateOfCreation(getDateOfCreation());
-        updateExpiryDate(getDateOfCreation());
-    }
-
-    @Override
-    public void updateExpiryDate(final Date renewalDate) {
-        // this.setDateOfCreation(new Date());
-        final Calendar instance = Calendar.getInstance();
-        if ("PFA".equalsIgnoreCase(getFeeTypeStr())) {
-            final Date dateOfExpiry = renewalDate;
-            instance.setTime(dateOfExpiry);
-            final int month = instance.get(Calendar.MONTH);
-            int year = instance.get(Calendar.YEAR);
-            year = year + 5;
-            if (month == Calendar.JANUARY || month == Calendar.FEBRUARY || month == Calendar.MARCH)
-                year = year - 1;
-            instance.set(year, 2, 31);
-            setDateOfExpiry(instance.getTime());
-        } else if ("CNC".equalsIgnoreCase(getFeeTypeStr())) {
-            final Date dateOfExpiry = renewalDate;
-            instance.setTime(dateOfExpiry);
-            final int month = instance.get(Calendar.MONTH);
-            int year = instance.get(Calendar.YEAR);
-            year = year + 1;
-            if (month == Calendar.JANUARY || month == Calendar.FEBRUARY || month == Calendar.MARCH)
-                year = year - 1;
-            instance.set(year, 2, 31);
-            setDateOfExpiry(instance.getTime());
-        }
-    }
-
     public List<String> populateHotelGradeList() {
         hotelGradeList = new ArrayList<String>();
         for (final String element : HOTELGRADE)
