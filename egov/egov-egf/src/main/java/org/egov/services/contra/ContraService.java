@@ -314,8 +314,6 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 (EgwStatus) valuesMap.get("instrumentDepositedStatus"));
         final ContraJournalVoucher cjv = addToContra(payIn, (Bankaccount) valuesMap.get("depositedBankAccount"), instrumentHeader);
         addToBankRecon(payIn, instrumentHeader, (EgwStatus) valuesMap.get("instrumentReconciledStatus"));
-        if (cjv.getVoucherHeaderId().getModuleId() != null && payIn.getStatus() == preapprovalStatus)
-            new CreateVoucher().startWorkflow(cjv);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" updateCheque_DD_Card_Deposit | End");
     }
@@ -405,11 +403,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 (EgwStatus) valuesMap.get("instrumentReconciledStatus"));
         final ContraJournalVoucher cjv = addToContra(payIn, (Bankaccount) valuesMap.get("depositedBankAccount"), instrumentHeader);
         addToBankRecon(payIn, instrumentHeader, (EgwStatus) valuesMap.get("instrumentReconciledStatus"));
-        if (cjv.getVoucherHeaderId().getModuleId() != null && payIn.getStatus() == preapprovalStatus)
-        {
-            LOGGER.error("Caaling StartWorkflow...................................................................................................");
-            new CreateVoucher().startWorkflow(cjv);
-        }
+        
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Contra Service | updateCashDeposit | End");
     }
@@ -549,7 +543,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     /**
      * @see public void updateCheque_DD_Card_Deposit_Receipt(Map isntrumentDetailsMap) fordetails
-     * @param isntrumentDetailsMap Workflow will be called seperatly in createvoucher--startWorkflowForCashUpdate
+     * @param isntrumentDetailsMap  
      */
     public void updateCashDeposit(final Map instrumentDetailsMap)
     {

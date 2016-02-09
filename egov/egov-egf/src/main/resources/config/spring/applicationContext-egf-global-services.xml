@@ -32,8 +32,7 @@
 		base-package="org.egov.billsaccounting.* , org.egov.dao.* , org.egov.deduction.* , org.egov.egf.* , org.egov.masters.* , org.egov.model.* , org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*" />
 
 
-	<bean id="instrumentTypeService" parent="persistenceService"
-		scope="prototype">
+	<bean id="instrumentTypeService" parent="persistenceService" >
 		<property name="type" value="org.egov.model.instrument.InstrumentType" />
 	</bean>
 
@@ -42,27 +41,19 @@
 		<property name="type" value="org.egov.commons.Bank" />
 	</bean>
 
-	<bean id="instrumentVouherService" class="org.egov.infstr.services.PersistenceService"
-		scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
+	<bean id="instrumentVouherService" class="org.egov.infstr.services.PersistenceService" >
 		<property name="type" value="org.egov.model.instrument.InstrumentVoucher" />
 	</bean>
 
-	<bean id="bankreconciliationService" class="org.egov.infstr.services.PersistenceService"
-		scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
+	<bean id="bankreconciliationService" class="org.egov.infstr.services.PersistenceService">
 		<property name="type" value="org.egov.commons.Bankreconciliation" />
 	</bean>
 
-	<bean id="instrumentOtherDetailsService" class="org.egov.infstr.services.PersistenceService"
-		scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="type"
-			value="org.egov.model.instrument.InstrumentOtherDetails" />
+	<bean id="instrumentOtherDetailsService" class="org.egov.infstr.services.PersistenceService" >
+		<property name="type"  	value="org.egov.model.instrument.InstrumentOtherDetails" />
 	</bean>
 
-	<bean id="instrumentHeaderService" parent="persistenceService"
-		scope="prototype">
+	<bean id="instrumentHeaderService" parent="persistenceService" >
 		<property name="type" value="org.egov.model.instrument.InstrumentHeader" />
 	</bean>
 
@@ -74,7 +65,7 @@
 		<property name="bankreconciliationService" ref="bankreconciliationService" />
 		<property name="instrumentOtherDetailsService" ref="instrumentOtherDetailsService" />
 		<property name="instrumentHeaderService" ref="instrumentHeaderService" />
-	</bean>
+	</bean>  
 
 
 	<bean id="contrajournalService" class="org.egov.infstr.services.PersistenceService"
@@ -95,7 +86,6 @@
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="contrajournalService" ref="contrajournalService" />
 		<property name="bankReconService" ref="bankReconService" />
-		<!-- <property name="vdPersitSer" ref="vdPersitSer"/> -->
 		<property name="instrumentService" ref="instrumentService" />
 		<property name="employeeServiceOld" ref="employeeServiceOld" />
 	</bean>
