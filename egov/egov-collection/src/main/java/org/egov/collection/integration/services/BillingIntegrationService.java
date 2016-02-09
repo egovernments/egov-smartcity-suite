@@ -46,6 +46,7 @@ import java.util.Set;
 
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
@@ -117,4 +118,12 @@ public interface BillingIntegrationService {
      * @return Message to be printed in receipt
      */
     public String constructAdditionalInfoForReceipt(BillReceiptInfo billReceiptInfo);
+    
+    /**
+     * Collection system invokes billing system to get the amount bifurcation information from <BillReceiptInfo>
+     * object passed as parameter. 
+     * @param billReceiptInfo
+     * @return
+     */
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo);
 }

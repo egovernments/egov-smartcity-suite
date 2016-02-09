@@ -53,6 +53,8 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -80,8 +82,11 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.entity.Script;
+import org.egov.infra.search.elastic.entity.CollectionIndex;
+import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraJournalVoucher;
@@ -836,6 +841,38 @@ public class CollectionsUtil {
 
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
+    }
+    
+    public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
+        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+        ServiceDetails billingService = receiptHeader.getService();
+        
+        CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(receiptHeader.getReceiptdate(),
+                receiptHeader.getReceiptnumber(), billingService.getName(), receiptHeader.getReceiptInstrument()
+                        .iterator().next().getInstrumentType().getType(), receiptHeader.getTotalAmount(),
+                receiptHeader.getSource(),
+                receiptHeader.getConsumerCode(), receiptHeader.getStatus().getDescription()
+                );
+
+        collectionIndexBuilder.billNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() :  "");
+        collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment().getService().getName() : "");
+        
+        if(receiptHeader.getReceipttype()==CollectionConstants.RECEIPT_TYPE_BILL) {
+            final BillingIntegrationService billingServiceBean = this.getBillingService(billingService.getCode()
+                    + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+            try {
+                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader));
+            } catch (final Exception e) {
+                final String errMsg = "Exception while constructing additional info for receipt [" + billingService.getCode() + "]!";
+                LOGGER.error(errMsg, e);
+                throw new ApplicationRuntimeException(errMsg, e);
+            }
+        }        
+        collectionIndexBuilder.arrearAmount(receiptAmountInfo.getArrearsAmount());
+        collectionIndexBuilder.advanceAmount(receiptAmountInfo.getAdvanceAmount());
+        collectionIndexBuilder.currentAmount(receiptAmountInfo.getCurrentInstallmentAmount());
+        collectionIndexBuilder.penaltyAmount(receiptAmountInfo.getPenaltyAmount());
+        return collectionIndexBuilder.build();
     }
 
 }

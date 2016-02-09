@@ -56,6 +56,7 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.EgwStatus;
@@ -97,7 +98,6 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.search.bridge.builtin.StringBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -756,6 +756,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+        return new ReceiptAmountInfo();
     }
 
 }

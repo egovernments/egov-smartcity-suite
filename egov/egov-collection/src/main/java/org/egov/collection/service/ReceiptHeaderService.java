@@ -82,6 +82,8 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.search.elastic.entity.CollectionIndex;
+import org.egov.infra.search.elastic.service.CollectionIndexService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
@@ -115,6 +117,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     private DepartmentService departmentService;
     
     private ChallanService challanService;
+    
+    @Autowired
+    private CollectionIndexService collectionIndexService;
 
     /**
      * @param statusCode
@@ -1310,8 +1315,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public ReceiptHeader persist(final ReceiptHeader receiptHeader) throws ApplicationRuntimeException {
         if (receiptHeader.getReceipttype() != CollectionConstants.RECEIPT_TYPE_CHALLAN
                 && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())
-                && receiptHeader.getReceiptnumber() == null)
+                && receiptHeader.getReceiptnumber() == null) {
             setReceiptNumber(receiptHeader);
+        }    
 
         if (receiptHeader.getChallan() != null) {
             final Challan challan = receiptHeader.getChallan();
@@ -1397,6 +1403,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     public void setReceiptNumber(final ReceiptHeader entity) {
         entity.setReceiptnumber(collectionsNumberGenerator.generateReceiptNumber(entity));
+        CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(entity);
+        collectionIndexService.createCollectionIndex(collectionIndex);
     }
 
     private void setChallanNumber(final Challan challan) {

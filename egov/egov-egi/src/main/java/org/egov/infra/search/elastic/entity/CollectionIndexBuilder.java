@@ -92,7 +92,7 @@ public class CollectionIndexBuilder {
         return this;
     }
 
-    public CollectionIndexBuilder billNumber(final Long billNumber) {
+    public CollectionIndexBuilder billNumber(final String billNumber) {
         collectionIndex.setBillNumber(billNumber);
         return this;
     }

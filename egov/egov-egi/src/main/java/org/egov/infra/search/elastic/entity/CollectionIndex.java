@@ -119,7 +119,7 @@ public class CollectionIndex extends AbstractAuditable {
     private String paymentGateway;
 
     @Searchable(name = "billnumber", group = Searchable.Group.CLAUSES)
-    private Long billNumber;
+    private String billNumber;
 
     @NotNull
     @Length(max = 50)
@@ -244,11 +244,11 @@ public class CollectionIndex extends AbstractAuditable {
         this.paymentGateway = paymentGateway;
     }
 
-    public Long getBillNumber() {
+    public String getBillNumber() {
         return billNumber;
     }
 
-    public void setBillNumber(final Long billNumber) {
+    public void setBillNumber(final String billNumber) {
         this.billNumber = billNumber;
     }
 

@@ -75,6 +75,7 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.DemandGenericDao;
@@ -814,4 +815,10 @@ public class PropertyTaxCollection extends TaxCollection {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    @Override
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+        return new ReceiptAmountInfo();
+    }
+
 }
