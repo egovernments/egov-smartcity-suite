@@ -964,7 +964,7 @@ public class PropertyTaxUtil {
                 currentRebate = currentRebate.add(new BigDecimal(listObj[3].toString()));
                 currDmd = currDmd.add(new BigDecimal(listObj[1].toString()));
             } else {
-                arrDmd = arrDmd.add((BigDecimal) listObj[1]);
+                arrDmd = arrDmd.add(new BigDecimal((Double) listObj[1]));
                 if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO))
                     arrColelection = arrColelection.add(new BigDecimal(listObj[2].toString()));
                 arrearRebate = arrearRebate.add(new BigDecimal(listObj[3].toString()));
