@@ -214,7 +214,7 @@ public class SearchTradeAction extends BaseFormAction {
                 }
             } 
             if(roleName.contains(Constants.TL_APPROVER_ROLENAME)){
-                if(checkForRenewalNotice(license.getDateOfExpiry())){
+                if(license.getDateOfExpiry() !=null && checkForRenewalNotice(license.getDateOfExpiry())){
                     licenseActions.add("Renewal Notice");
                 }
             } 
