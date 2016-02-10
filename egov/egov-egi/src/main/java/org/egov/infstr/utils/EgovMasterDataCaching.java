@@ -50,17 +50,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.infinispan.configuration.cache.Configuration;
-import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.infinispan.eviction.EvictionStrategy;
-import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
-import org.infinispan.transaction.lookup.GenericTransactionManagerLookup;
-import org.infinispan.util.concurrent.IsolationLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,21 +79,13 @@ public class EgovMasterDataCaching {
 	}
 	
 	private EgovMasterDataCaching() {
-		
-		if(CACHE_MANAGER==null){
-		    Configuration config = new ConfigurationBuilder().eviction()
-		             .maxEntries(20000).strategy(EvictionStrategy.LIRS).expiration()
-		             .wakeUpInterval(1000*60*60L) //1hr
-		             .maxIdle(1000*60*60*24L)     //24hr
-		            .locking()
-		              .concurrencyLevel(10000).isolationLevel(IsolationLevel.REPEATABLE_READ)
-		              .lockAcquisitionTimeout(12000L).useLockStriping(false)
-		            .transaction()
-		              .transactionManagerLookup(new GenericTransactionManagerLookup()).recovery()
-		            .build();
-		    CACHE_MANAGER = new DefaultCacheManager(config);
-		}
-	}
+            try {
+                    final Context context = new InitialContext();
+                    CACHE_MANAGER = (EmbeddedCacheManager) context.lookup("java:jboss/infinispan/container/master-data");
+            } catch (NamingException e) {
+                    throw new ApplicationRuntimeException("Error occurred while getting Cache Manager",e);
+            }
+    }
 	
 	/**
 	 * Gets the single instance of EgovMasterDataCaching.
