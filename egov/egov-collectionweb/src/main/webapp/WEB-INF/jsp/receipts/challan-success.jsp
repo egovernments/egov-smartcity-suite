@@ -82,13 +82,13 @@
 		<s:elseif test="%{challan.state.value=='APPROVED'}">
 			<s:text name="challan.approvesucces.message" />
 		</s:elseif>
-		<s:elseif test="%{challan.state.value=='Closed' && sourcePage!='cancelReceipt'}">
+		<s:elseif test="%{challan.state.value=='END' && sourcePage!='cancelReceipt'}">
 			<s:text name="challan.validatesuccess.message" />
 		</s:elseif> 
 		<s:elseif test="%{challan.state.value=='REJECTED'}">
 			<s:text name="challan.rejectsuccess.message" />
 		</s:elseif>
-		<s:elseif test="%{challan.state.value=='Closed' && challan.state.previous.value=='CANCELLED'}">
+		<s:elseif test="%{challan.state.value=='END' && challan.state.previous.value=='CANCELLED'}">
 			<s:text name="challan.cancelsuccess.message" />
 		</s:elseif>
 		</s:if>

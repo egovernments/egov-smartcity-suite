@@ -1425,7 +1425,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * This method looks up the bean to communicate with the billing system and
      * updates the billing system.
      */
-    @Transactional
     public Boolean updateBillingSystem(final String serviceCode, final Set<BillReceiptInfo> billReceipts)
             throws ApplicationRuntimeException {
         final BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
