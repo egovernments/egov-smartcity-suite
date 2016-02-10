@@ -309,7 +309,7 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     @Validations(requiredFields = { @RequiredFieldValidator(fieldName = "fundId", message = "", key = REQUIRED),
-            /*@RequiredFieldValidator(fieldName = "commonBean.billNumber", message = "", key = REQUIRED),*/
+            /* @RequiredFieldValidator(fieldName = "commonBean.billNumber", message = "", key = REQUIRED), */
             @RequiredFieldValidator(fieldName = "commonBean.billDate", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "commonBean.billSubType", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "commonBean.payto", message = "", key = REQUIRED)
@@ -590,8 +590,19 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     private EgBillregister checkBudgetandGenerateNumber(final EgBillregister bill) {
-        final ScriptContext scriptContext = ScriptService.createContext("voucherService", voucherService, "bill", bill);
-        scriptService.executeScript("egf.bill.budgetcheck", scriptContext);
+        try {
+            final ScriptContext scriptContext = ScriptService.createContext("voucherService", voucherService, "bill", bill);
+            scriptService.executeScript("egf.bill.budgetcheck", scriptContext);
+        } catch (final ValidationException e) {
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
+        }
+        catch (final Exception e) {
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
+        }
         return bill;
     }
 
@@ -1191,9 +1202,10 @@ public class ContingentBillAction extends BaseBillAction {
         String billNumber = null;
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(bill.getBilldate());
         final String year = financialYear != null ? financialYear.getFinYearRange() : "";
-        /*final Script billNumberScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,
-                "egf.bill.number.generator")
-                .get(0);*/
+        /*
+         * final Script billNumberScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,
+         * "egf.bill.number.generator") .get(0);
+         */
         final ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator", sequenceGenerator, "sItem", bill,
                 "year",
                 year);
