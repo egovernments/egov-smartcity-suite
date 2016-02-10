@@ -55,7 +55,7 @@ public class DefaultersReportHelperAdaptor implements JsonSerializer<DefaultersI
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (defaultersInfoObj != null) {
-        	jsonObject.addProperty("slNo", defaultersInfoObj.getSlNo());
+            jsonObject.addProperty("slNo", defaultersInfoObj.getSlNo());
             jsonObject.addProperty("assessmentNo", defaultersInfoObj.getAssessmentNo());
             jsonObject.addProperty("ownerName", defaultersInfoObj.getOwnerName());
             jsonObject.addProperty("wardName", defaultersInfoObj.getWardName());
@@ -64,6 +64,9 @@ public class DefaultersReportHelperAdaptor implements JsonSerializer<DefaultersI
             jsonObject.addProperty("locality", defaultersInfoObj.getLocality());
             jsonObject.addProperty("mobileNumber", defaultersInfoObj.getMobileNumber());
 
+            jsonObject.addProperty("arrearsFrmInstallment", defaultersInfoObj.getArrearsFrmInstallment());
+            jsonObject.addProperty("arrearsToInstallment", defaultersInfoObj.getArrearsToInstallment());
+            
             jsonObject.addProperty("arrearsDue", defaultersInfoObj.getArrearsDue());
             jsonObject.addProperty("currentDue", defaultersInfoObj.getCurrentDue());
             jsonObject.addProperty("totalDue", defaultersInfoObj.getTotalDue());

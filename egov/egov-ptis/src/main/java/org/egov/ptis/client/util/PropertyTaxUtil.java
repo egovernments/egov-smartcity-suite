@@ -2428,7 +2428,7 @@ public class PropertyTaxUtil {
      */
     public boolean checkIsNagarPanchayat() {
         HttpServletRequest request = ServletActionContext.getRequest();
-    	String grade=(request.getSession().getAttribute("cityGrade")!=null?
+        String grade=(request.getSession().getAttribute("cityGrade")!=null?
                 request.getSession().getAttribute("cityGrade").toString():null);
         return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
     }
@@ -2447,21 +2447,24 @@ public class PropertyTaxUtil {
         
         query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true ");
         String arrearBalanceCond = " (pmv.aggrArrDmd - pmv.aggrArrColl) ";
+        String arrearBalanceNotZeroCond = " and (pmv.aggrArrDmd - pmv.aggrArrColl)!=0 ";
         String orderByClause = " order by ";
-        if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
-        	query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
-        	query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
+        query.append(arrearBalanceNotZeroCond);
+        if(StringUtils.isNotBlank(fromDemand) && StringUtils.isBlank(toDemand)){
+            query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
+        } else if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
+                query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
+                query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
         }
         if(wardId != null && wardId != -1){
-        	query.append(" and pmv.ward.id = ").append(wardId);
+                query.append(" and pmv.ward.id = ").append(wardId); 
         }
-        	
         orderByClause = orderByClause.concat(" pmv.ward.id asc, "+arrearBalanceCond+" desc ");
         query.append(orderByClause);
 
         final Query qry = persistenceService.getSession().createQuery(query.toString());
         if(limit != null && limit != -1)
-        	qry.setMaxResults(limit);
+                qry.setMaxResults(limit);
         return qry;
     }
 }

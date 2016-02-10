@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -58,11 +59,13 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.bean.DefaultersInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,6 +168,7 @@ public class DefaultersReportAction extends BaseFormAction {
         DefaultersInfo defaultersInfo = null;
         BigDecimal totalDue = BigDecimal.ZERO;
         int count = 0;
+        Installment curInstallment = propertyTaxUtil.getCurrentInstallment();
         for (final PropertyMaterlizeView propView : propertyViewList) {
             defaultersInfo = new DefaultersInfo();
             totalDue = BigDecimal.ZERO;
@@ -182,9 +186,21 @@ public class DefaultersReportAction extends BaseFormAction {
             defaultersInfo.setCurrentDue(propView.getAggrCurrDmd().subtract(propView.getAggrCurrColl()));
             totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue());
             defaultersInfo.setTotalDue(totalDue);
-            if(!(totalDue.compareTo(BigDecimal.ZERO)==0))
-                defaultersList.add(defaultersInfo);  
-        }
+            if(propView.getInstDmdColl().size()!=0 && !propView.getInstDmdColl().isEmpty()){
+                defaultersInfo.setArrearsFrmInstallment(propView.getInstDmdColl().iterator().next().getInstallment().getDescription());
+                final Iterator itr = propView.getInstDmdColl().iterator();
+                InstDmdCollMaterializeView idc = new InstDmdCollMaterializeView();
+                InstDmdCollMaterializeView lastElement = new InstDmdCollMaterializeView(); 
+                while(itr.hasNext()) {
+                    idc =(InstDmdCollMaterializeView) itr.next();
+                    if(!idc.getInstallment().equals(curInstallment))
+                        lastElement = idc;
+                }
+                if(lastElement!=null && lastElement.getInstallment()!=null)  
+                    defaultersInfo.setArrearsToInstallment(lastElement.getInstallment().getDescription());
+            }
+           defaultersList.add(defaultersInfo);   
+        } 
 
         return defaultersList;
 

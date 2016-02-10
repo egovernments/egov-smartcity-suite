@@ -53,6 +53,8 @@ public class DefaultersInfo {
 	private BigDecimal arrearsDue;
 	private BigDecimal currentDue;
 	private BigDecimal totalDue;
+	private String arrearsFrmInstallment;
+	private String arrearsToInstallment;
 	
 	public Integer getSlNo() {
 		return slNo;
@@ -114,5 +116,17 @@ public class DefaultersInfo {
 	public void setTotalDue(BigDecimal totalDue) {
 		this.totalDue = totalDue;
 	}
+        public String getArrearsFrmInstallment() {
+            return arrearsFrmInstallment;
+        }
+        public void setArrearsFrmInstallment(String arrearsFrmInstallment) {
+            this.arrearsFrmInstallment = arrearsFrmInstallment; 
+        }
+        public String getArrearsToInstallment() {
+            return arrearsToInstallment;
+        }
+        public void setArrearsToInstallment(String arrearsToInstallment) {
+            this.arrearsToInstallment = arrearsToInstallment;
+        }
 	
 }

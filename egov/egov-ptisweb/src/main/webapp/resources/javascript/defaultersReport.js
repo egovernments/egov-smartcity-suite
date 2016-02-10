@@ -145,6 +145,12 @@ function callAjaxForDefaultersReport() {
 							"data" : "mobileNumber",
 							"sTitle" : "Mobile Number"
 						}, {
+							"data" : "arrearsFrmInstallment",
+							"sTitle" : "Arrears From Installment" 
+						}, {
+							"data" : "arrearsToInstallment",
+							"sTitle" : "Arrears To Installment"
+						}, {
 							"data" : "arrearsDue",
 							"sTitle" : "Arrears Amount"
 						},  {
