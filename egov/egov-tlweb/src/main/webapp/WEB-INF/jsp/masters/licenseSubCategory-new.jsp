@@ -150,16 +150,6 @@
 	
 
 	</script>
-	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
-	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />	
-	
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script> 
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
-	
-	<script type="text/javascript" src="<c:url value='/resources/js/helper.js'/>"></script>
 </head>
 <body onload="bodyOnLoad();">
 	<div id="subcategory_error" class="error-msg" style="display:none;"></div> 

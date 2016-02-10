@@ -46,14 +46,45 @@
         <title>eGov  - <decorator:title/> </title>
         
         <link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
-		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
-		<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+        
+     	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
+		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />	
 		
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script> 
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/dragdrop/dragdrop-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/animation/animation-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/container/container_core-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/menu/menu-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/button/button-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/editor/editor-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/autocomplete/autocomplete-min.js" ></script>
+		        
+		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+		<link href="<c:url value='/resources/css/modalbox.css'/>" rel="stylesheet" type="text/css"/>
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+	    <script type="text/javascript" src="<c:url value='/commonjs/calender.js' context='/egi'/>" ></script> 
+		<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/SASvalidation.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/license-common.js'/>"></script>
+		
+		<script type="text/javascript" src="<c:url value='/resources/js/helper.js'/>"></script>
+		<%-- <script type="text/javascript" src="<c:url value='/resources/js/prototype.js'/>"></script>  --%>
+   		<script type="text/javascript" src="<c:url value='/resources/js/scriptaculous.js?load=effects'/>"></script>
+   		<script type="text/javascript" src="<c:url value='/resources/js/modalbox.js'/>"></script> 
+   		<script type="text/javascript" src="<c:url value='/resources/js/pt.js'/>"></script> 
+   		
+	    <script type="text/javascript" src="<c:url value='/resources/js/ajax-script.js'/>"></script>
 	    <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	    <script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
         <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
         <script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
         

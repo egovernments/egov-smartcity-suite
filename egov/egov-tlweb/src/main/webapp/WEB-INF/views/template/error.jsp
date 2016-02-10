@@ -66,16 +66,18 @@
 		
 	</head>
 	<body  class="page-body">
-		<div class="page-container">
-			<tiles:insertAttribute name="header"/>	
+		<div class="page-container">	
 			<div class="main-content">
 				<div class="page-error-404">
+					<div class="error-symbol">
+						<i class="entypo-attention"></i>
+					</div>
+					
 					<div class="error-text">
 						<tiles:insertAttribute name="body" />
 					</div>
-				</div>
 			</div>
-			<tiles:insertAttribute name="footer"/>
 		</div>
-	</body>
+	</div>
+</body>
 </html>

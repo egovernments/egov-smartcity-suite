@@ -61,7 +61,7 @@
                 <form:options items="${natureOfBusinesss}" itemValue="id" itemLabel="name" required="required" />
               </form:select>
             </div>
-            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
+            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
             <div class="col-sm-3 add-margin">
               <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control"
                 cssErrorClass="form-control error">
@@ -84,7 +84,7 @@
               <form:input path="day" id="day" class="form-control text-right patternvalidation" data-pattern="number" />
               <form:errors path="day" cssClass="error-msg" />
             </div>
-            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.week" /> </label>
+            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.week" /> </label>
             <div class="col-sm-3 add-margin">
               <form:input path="week" id="week" class="form-control text-right patternvalidation" data-pattern="number" />
               <form:errors path="week" cssClass="error-msg" />
@@ -96,7 +96,7 @@
               <form:input path="month" id="month" class="form-control text-right patternvalidation" data-pattern="number" />
               <form:errors path="month" cssClass="error-msg" />
             </div>
-            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.year" /> </label>
+            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.year" /> </label>
             <div class="col-sm-3 add-margin">
               <form:input path="year" id="year" class="form-control text-right patternvalidation" data-pattern="number" />
               <form:errors path="year" cssClass="error-msg" />
