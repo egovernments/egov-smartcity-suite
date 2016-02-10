@@ -148,6 +148,7 @@
 		<one-to-one name="licensee" lazy="proxy" class="org.egov.tl.entity.Licensee" property-ref="license"
 					cascade="all" />
 
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all" column="STATE_ID" />
 		<subclass name="org.egov.tl.entity.TradeLicense" discriminator-value="tradelicense">
 			<bag name="documents" table="egtl_tradelicense_docs" cascade="all" order-by="document">
 				<key column="license" not-null="true"/>			
@@ -162,10 +163,6 @@
 				<property name="dcpExtinguisher" column="DCP_EXTINGUISHER"  />
 				<property name="nocNumber" column="NOC_NUMBER"/>
 				<property name="isCertificateGenerated" column="ISCERTIFICATEGENERATED" type="boolean"/>
-				<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
-					<column name="STATE_ID" />
-				</many-to-one>
-
 			</join>
 		</subclass>
 	</class>

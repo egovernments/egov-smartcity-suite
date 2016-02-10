@@ -58,7 +58,6 @@ import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
-import org.joda.time.LocalDate;
 
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class TradeLicense extends License {
@@ -144,7 +143,7 @@ public class TradeLicense extends License {
     public String getStateDetails() {
         final StringBuffer details = new StringBuffer();
         if (getLicenseNumber() != null && !getLicenseNumber().isEmpty())
-            details.append(getLicenseNumber()).append("/");
+            details.append(getLicenseNumber()).append(" / ");
         details.append(getApplicationNumber());
         return details.toString();
     }
