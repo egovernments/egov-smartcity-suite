@@ -859,7 +859,7 @@ public class ChartOfAccounts {
                                         {
                                             egRemitGldtl = new EgRemittanceGldtl();
                                             egRemitGldtl.setGldtlId(String.valueOf(gLedgerDet.getId()));
-                                            egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt());
+                                            egRemitGldtl.setGldtlAmt(new Double(gLedgerDet.getDetailAmt()));
                                             if (tParam.getTdsId() != null)
                                                 egRemitGldtl.setTdsId(tParam.getTdsId());
                                             egRemitGldtl.insert();
@@ -982,7 +982,7 @@ public class ChartOfAccounts {
                                             egRemitGldtl = new EgRemittanceGldtl();
                                             // if(LOGGER.isInfoEnabled()) LOGGER.info("----------"+gLedger.getGlCodeId());
                                             egRemitGldtl.setGldtlId(String.valueOf(gLedgerDet.getId()));
-                                            egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt());
+                                            egRemitGldtl.setGldtlAmt(new Double(gLedgerDet.getDetailAmt()));
                                             if (tParam.getTdsId() != null)
                                                 egRemitGldtl.setTdsId(tParam.getTdsId());
                                             egRemitGldtl.insert();
@@ -1132,7 +1132,7 @@ public class ChartOfAccounts {
                                     {
                                         egRemitGldtl = new EgRemittanceGldtl();
                                         egRemitGldtl.setGldtlId(String.valueOf(gLedgerDet.getId()));
-                                        egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt());
+                                        egRemitGldtl.setGldtlAmt(new Double(gLedgerDet.getDetailAmt()));
                                         if (tParam.getTdsId() != null)
                                             egRemitGldtl.setTdsId(tParam.getTdsId());
                                         egRemitGldtl.insert();
