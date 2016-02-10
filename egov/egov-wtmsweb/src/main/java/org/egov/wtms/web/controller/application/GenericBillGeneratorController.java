@@ -120,7 +120,7 @@ public class GenericBillGeneratorController {
     public String payTax(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
             @RequestParam final String applicationTypeCode, final Model model) throws ValidationException {
-        WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
+        WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
@@ -135,7 +135,7 @@ public class GenericBillGeneratorController {
     public String payTaxOnline(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
             @RequestParam final String applicationTypeCode, final Model model) throws ValidationException {
-        WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
+        WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);

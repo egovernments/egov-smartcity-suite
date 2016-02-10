@@ -361,6 +361,7 @@ function submitButton()
 	        		   }	
 	        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 	        				   full.resource.clauses.applicationcode == 'CHANGEOFUSE') {
+	        			   if (full.resource.clauses.status == 'ACTIVE') {
 	        			   if ( citizenRole== 'true'   ) { 
         					   if(full.resource.clauses.waterTaxDue > 0)
         					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
@@ -410,6 +411,7 @@ function submitButton()
 	        			   }
 	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector==""))) && full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType=='T' ) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">ReConnectionn</option></select>');
+	        			   }
 	        			   }
 	        		   } 
 	        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&

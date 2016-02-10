@@ -100,12 +100,7 @@ public class CommonWaterTaxSearchController {
             return COMMON_FORM_SEARCH;
         }
         if (applicationType != null && applicationType.equals(WaterTaxConstants.ADDNLCONNECTION))
-            if (waterConnectionDetails.getConnection().getPropertyIdentifier() != null) {
-                model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "invalid.property");
-                // model.addAttribute("validMessage", "InValid Number");
-                return COMMON_FORM_SEARCH;
-            } else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+            if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
                 return "redirect:/application/addconnection/"
                 + waterConnectionDetails.getConnection().getConsumerCode();
