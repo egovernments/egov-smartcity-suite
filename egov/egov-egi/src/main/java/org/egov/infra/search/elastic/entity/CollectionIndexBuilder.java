@@ -53,8 +53,7 @@ public class CollectionIndexBuilder {
     private final CollectionIndex collectionIndex;
 
     public CollectionIndexBuilder(final Date receiptDate, final String receiptNumber, final String billingService,
-            final String paymentMode, final BigDecimal totalAmount, final String channel, final String consumerCode,
-            final String status) {
+            final String paymentMode, final BigDecimal totalAmount, final String channel,             final String status) {
 
         collectionIndex = new CollectionIndex();
         collectionIndex.setReceiptDate(receiptDate);
@@ -63,10 +62,14 @@ public class CollectionIndexBuilder {
         collectionIndex.setPaymentMode(paymentMode);
         collectionIndex.setTotalAmount(totalAmount);
         collectionIndex.setChannel(channel);
-        collectionIndex.setConsumerCode(consumerCode);
         collectionIndex.setStatus(status);
     }
 
+    public CollectionIndexBuilder consumerCode(final String consumerCode) {
+        collectionIndex.setConsumerCode(consumerCode);
+        return this;
+    }
+    
     public CollectionIndexBuilder arrearAmount(final BigDecimal arrearAmount) {
         collectionIndex.setArrearAmount(arrearAmount);
         return this;
@@ -113,8 +116,6 @@ public class CollectionIndexBuilder {
             throw new ApplicationRuntimeException("Total Amount is mandatory");
         if (collectionIndex.getChannel() == null)
             throw new ApplicationRuntimeException("Channel is mandatory");
-        if (collectionIndex.getConsumerCode() == null)
-            throw new ApplicationRuntimeException("Consumer Code is mandatory");
         if (collectionIndex.getStatus() == null)
             throw new ApplicationRuntimeException("Receipt Status is mandatory");
     }

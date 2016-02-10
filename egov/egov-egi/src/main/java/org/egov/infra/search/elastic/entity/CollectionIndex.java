@@ -121,7 +121,6 @@ public class CollectionIndex extends AbstractAuditable {
     @Searchable(name = "billnumber", group = Searchable.Group.CLAUSES)
     private String billNumber;
 
-    @NotNull
     @Length(max = 50)
     @Searchable(name = "consumercode", group = Searchable.Group.CLAUSES)
     private String consumerCode;

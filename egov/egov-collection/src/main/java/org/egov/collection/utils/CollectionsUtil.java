@@ -851,9 +851,10 @@ public class CollectionsUtil {
                 receiptHeader.getReceiptnumber(), billingService.getName(), receiptHeader.getReceiptInstrument()
                         .iterator().next().getInstrumentType().getType(), receiptHeader.getTotalAmount(),
                 receiptHeader.getSource(),
-                receiptHeader.getConsumerCode(), receiptHeader.getStatus().getDescription()
+                receiptHeader.getStatus().getDescription()
                 );
-
+        
+        collectionIndexBuilder.consumerCode(receiptHeader.getConsumerCode() != null ?  receiptHeader.getConsumerCode() : "");
         collectionIndexBuilder.billNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() :  "");
         collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment().getService().getName() : "");
         
@@ -863,7 +864,7 @@ public class CollectionsUtil {
             try {
                 receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader));
             } catch (final Exception e) {
-                final String errMsg = "Exception while constructing additional info for receipt [" + billingService.getCode() + "]!";
+                final String errMsg = "Exception while constructing collection index for receipt number [" + receiptHeader.getReceiptnumber() + "]!";
                 LOGGER.error(errMsg, e);
                 throw new ApplicationRuntimeException(errMsg, e);
             }
