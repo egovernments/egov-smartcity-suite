@@ -412,6 +412,7 @@ public class ReportService {
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));    
     
         listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
+        
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             if (bcResult.getTarget_arrears_demand() == null)
@@ -436,18 +437,23 @@ public class ReportService {
                bcResult.setCummulative_currentyear_collection(0.0);
            bcResult.setCummulative_total_Collection(bcResult.getCummulative_arrears_collection() + bcResult.getCummulative_currentyear_collection());
            if(bcResult.getCummulative_total_Collection()>0)
-           bcResult.setCummulative_currentYear_Percentage(BigDecimal.valueOf(bcResult.getTarget_total_demand()).divide(BigDecimal.valueOf(bcResult.getCummulative_total_Collection()),2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP));
+            bcResult.setCummulative_currentYear_Percentage(((BigDecimal.valueOf(bcResult.getCummulative_total_Collection ()).divide(BigDecimal.valueOf(bcResult.getTarget_total_demand()),4, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(100))).setScale(2, RoundingMode.HALF_UP));
            
            if (bcResult.getLastyear_collection() == null)
                bcResult.setLastyear_collection(0.0);
+           else
+               bcResult.setLastyear_collection((double) Math.round(bcResult.getLastyear_collection()));
+           
            if (bcResult.getLastyear_cummulative_collection() == null)
                bcResult.setLastyear_cummulative_collection(0.0);
+           else
+               bcResult.setLastyear_cummulative_collection((double) Math.round(bcResult.getLastyear_cummulative_collection()));
            bcResult.setPercentage_compareWithLastYear(bcResult.getCummulative_total_Collection() -  bcResult.getLastyear_cummulative_collection());
           
            if(bcResult.getLastyear_cummulative_collection()>0)
            bcResult.setGrowth((BigDecimal.valueOf(
                    bcResult.getCummulative_total_Collection() - bcResult.getLastyear_cummulative_collection()).divide(
-                   BigDecimal.valueOf(bcResult.getLastyear_cummulative_collection()),2, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
+                   BigDecimal.valueOf(bcResult.getLastyear_cummulative_collection()),4, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
            else
                bcResult.setGrowth((BigDecimal.ZERO));
        }

@@ -81,7 +81,7 @@ $(document)
 									"sTitle" : " Total"
 								},
 								{
-									"data" : "Percentage_compareWithLastYear",
+									"data" : "cummulative_currentYear_Percentage",
 									"sTitle" : "%"
 								},
 								{
@@ -116,11 +116,11 @@ $(document)
 											updateTotalFooter(11, api);
 											updateTotalFooter(12, api);
 											updateTotalFooter(13, api);
-											updateTotalFooter(14, api);
+											 
 											updateTotalFooter(15, api);
 											updateTotalFooter(16, api);
 											updateTotalFooter(17, api);
-											updateTotalFooter(18, api);
+											
 
 										}
 									},
