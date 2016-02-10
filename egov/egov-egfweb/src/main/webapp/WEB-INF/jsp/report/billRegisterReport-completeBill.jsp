@@ -53,11 +53,6 @@
 <title><s:text name="bill.register.report" /></title>
 
 </head>
-<script>
-	function doAfterSubmit(){
-		document.getElementById('loading').style.display ='block';
-	}
-</script>
 <body>
 	<s:form action="billRegisterReport" name="billRegisterReport"
 		theme="simple" method="post" onsubmit="javascript:doAfterSubmit()">
@@ -129,11 +124,6 @@
 			<input type="button" value="Close"
 				onclick="javascript:window.close()" class="button" />
 
-		</div>
-		<div id="loading" class="loading"
-			style="width: 700; height: 700; display: none" align="center">
-			<blink style="color: red">Searching processing, Please
-				wait...</blink>
 		</div>
 		<br>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
