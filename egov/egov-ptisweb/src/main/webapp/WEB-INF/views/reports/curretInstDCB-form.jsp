@@ -83,7 +83,16 @@
         		</div>
 		</form:form>
 		<div></div>
-		<table class="table table-bordered datatable dt-responsive table-hover" id="currInstDCBReport-table">
+		<table class="table table-bordered table-hover multiheadertbl" id="currInstDCBReport-table">
+		
+		<tfoot id="report-footer">
+							<tr>
+								<td>Total</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
 		</table>
 	</div>
 </div>

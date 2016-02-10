@@ -353,7 +353,7 @@ public class ReportService {
         final StringBuilder queryStr = new StringBuilder(500);
 
         queryStr.append("select ward.name as \"wardName\", cast(count(*) as integer) as \"noOfProperties\", cast(sum(pi.aggregate_current_demand) as numeric) as \"currDemand\", cast(sum(pi.current_collection) as numeric) as \"currCollection\", cast(sum(pi.aggregate_arrear_demand) as numeric) as \"arrearDemand\",cast(sum(pi.arrearcollection) as numeric) as \"arrearCollection\" from egpt_mv_propertyinfo pi,"
-                + "eg_boundary ward where ward.id = pi.wardid and pi.isexempted = false and pi.isactive=true ");
+                + " eg_boundary ward where ward.id = pi.wardid and pi.isexempted = false and pi.isactive=true and ward.boundarytype = (select id from eg_boundary_type where name='Ward' and hierarchytype = (select id from eg_hierarchy_type where name= 'REVENUE')) ");
 
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and pi.wardid=:ward ");

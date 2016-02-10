@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------*/
 
 jQuery(document).ready(function() {
-	
+	jQuery('#report-footer').hide();
 	$('#currInstDCBReportSearch').click(function(e){
 		var ward = $("#ward").val();
 		
@@ -83,10 +83,78 @@ jQuery(document).ready(function() {
 						  { "data" : "arrearCollection", "title": "Arrear collection"},
 						  
 						  ],
-						  "aaSorting": [] 
+						  "footerCallback" : function(row, data, start, end, display) {
+								var api = this.api(), data;
+								if (data.length == 0) {
+									jQuery('#report-footer').hide();
+								} else {
+									jQuery('#report-footer').show();
+								}
+								if (data.length > 0) {
+									for(var i=1;i<=5;i++)
+									{
+									  updateTotalFooter(i, api);	
+									}
+								}
+							},
+							"aoColumnDefs" : [ {
+								"aTargets" : [2,3,4,5],
+								"mRender" : function(data, type, full) {
+									return formatNumberInr(data);    
+								}
+							} ]
+					
 				});
 		e.stopPropagation();
 		
 	});
 	
 });
+
+
+
+function updateTotalFooter(colidx, api) {
+	// Remove the formatting to get integer data for summation
+	var intVal = function(i) {
+		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+				: typeof i === 'number' ? i : 0;
+	};
+
+	// Total over all pages
+	total = api.column(colidx).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	});
+
+	// Total over this page
+	pageTotal = api.column(colidx, {
+		page : 'current'
+	}).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	}, 0);
+
+	// Update footer
+	jQuery(api.column(colidx).footer()).html(
+			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
+					+ ')');
+}
+
+
+//inr formatting number
+function formatNumberInr(x) {
+	if (x) {
+		x = x.toString();
+		var afterPoint = '';
+		if (x.indexOf('.') > 0)
+			afterPoint = x.substring(x.indexOf('.'), x.length);
+		x = Math.floor(x);
+		x = x.toString();
+		var lastThree = x.substring(x.length - 3);
+		var otherNumbers = x.substring(0, x.length - 3);
+		if (otherNumbers != '')
+			lastThree = ',' + lastThree;
+		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
+				+ lastThree + afterPoint;
+		return res;
+	}
+	return x;
+}

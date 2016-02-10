@@ -99,7 +99,7 @@ public class CurrentInstDCBReportController {
     
     private Object toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(BaseRegisterResult.class, new BaseRegisterResultAdaptor())
+        final Gson gson = gsonBuilder.registerTypeAdapter(CurrentInstDCBReportResult.class, new CurrentInstDCBResultAdaptor())
                 .create();
         final String json = gson.toJson(object);
         return json;
