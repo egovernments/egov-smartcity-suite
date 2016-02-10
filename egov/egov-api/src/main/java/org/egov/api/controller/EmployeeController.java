@@ -10,7 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
@@ -79,6 +81,8 @@ public class EmployeeController extends ApiController {
         {
         	List<Long> ownerpostitions=new ArrayList<Long>();
         	ownerpostitions.add(posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()).getId());
+        	
+        	
         	return res.setDataAdapter(new UserAdapter()).success(getWorkflowTypesWithCount(securityUtils.getCurrentUser().getId(), ownerpostitions));
         }
         catch(Exception ex)
@@ -189,18 +193,23 @@ public class EmployeeController extends ApiController {
 			                .list();
 		
    }
-    
-   public List<HashMap<String, Object>> getWorkflowTypesWithCount(final Long userId, final List<Long> ownerpostitions) {
+   
+   public List<HashMap<String, Object>> getWorkflowTypesWithCount(final Long userId, final List<Long> ownerPostitions) {
         
         	List<HashMap<String, Object>> workFlowTypesWithItemsCount=new ArrayList<HashMap<String,Object>>();
-        	Query query = this.workflowTypePersistenceService.getSession().createQuery("select type, count(type) from State  where ownerPosition.id in (:ownerPositions) group by type");
-        	query.setParameterList("ownerPositions", ownerpostitions);
+        	Query query = this.workflowTypePersistenceService.getSession().createQuery("select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status <> :statusEnded and NOT (status <> :statusStarted and createdBy.id <> :userId) group by type, id order by id asc");
+        	query.setParameterList("ownerPositions", ownerPostitions);
+            query.setParameter("statusEnded", StateStatus.ENDED);
+            query.setParameter("statusStarted", StateStatus.STARTED);
+            query.setParameter("userId", userId);
+        	
             List<Object[]> result=query.list();
             for(Object[] rowObj:result)
             {
             	HashMap<String, Object> workFlowType=new HashMap<String, Object>();
-            	workFlowType.put("workflowtype", String.valueOf(rowObj[0]));
+            	workFlowType.put("workflowtype", rowObj[0]);
             	workFlowType.put("inboxlistcount", rowObj[1]);
+            	workFlowType.put("workflowtypename", getWorkflowType(String.valueOf(rowObj[0])).getDisplayName());
             	workFlowTypesWithItemsCount.add(workFlowType);
             }
             return workFlowTypesWithItemsCount;
