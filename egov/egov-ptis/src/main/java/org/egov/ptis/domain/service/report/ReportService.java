@@ -478,14 +478,11 @@ public class ReportService {
 
    }
     
-    public BigDecimal formatAmt(double amt)
- {
-        BigDecimal ammt = new BigDecimal(0.000);
-        NumberFormat formatter = new DecimalFormat("##############0.00");
+    public BigDecimal formatAmt(double amt) {
+        BigDecimal result = new BigDecimal(0.000);
+        result = BigDecimal.valueOf(amt / 100000).setScale(2, BigDecimal.ROUND_HALF_UP);
 
-        ammt = BigDecimal.valueOf(amt / 100000).setScale(2, BigDecimal.ROUND_HALF_UP);
-
-        return ammt;
+        return result;
     }
 
 }

@@ -164,7 +164,6 @@ function averageTotalFooter(colidx, api,totalsize) {
 	}).data().reduce(function(a, b) {
 		return intVal(a) + intVal(b);
 	}, 0);
-alert(totalsize); 
 	// Update footer
 	$(api.column(colidx).footer()).html(
 			formatNumberInr(pageTotal/totalsize) + ' (' + formatNumberInr(total/totalsize) + ')');
