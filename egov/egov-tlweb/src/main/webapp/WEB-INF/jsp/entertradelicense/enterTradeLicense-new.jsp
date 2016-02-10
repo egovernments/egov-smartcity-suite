@@ -107,7 +107,7 @@
 											</div>
 											
 											<div class="col-md-12">
-											<table class="table table-bordered">
+											<table class="table table-bordered feedetails">
 												<thead>
 													<tr>
 														<th><s:text name='license.fin.year'/></th>
@@ -122,8 +122,8 @@
 														<s:if test="#stat.index == 0">
 															<c:set value="${finyear}" var="startfinyear"/>
 														</s:if>
-														<td><input type="text"  name="" class="form-control" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
-														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
+														<td><input type="text"  name="" class="form-control feeyear" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
+														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
 													</tr>
 												</s:iterator>
 												</tbody>
@@ -249,13 +249,48 @@
 							return false;
 					}
 				} else{
-					clearMessage('enterLicense_error');
-					toggleFields(false,"");
-					document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
-					document.registrationForm.submit();
 
+					/*validate fee details*/
+					if(validate_feedetails()){
+						/*submit the form*/
+						clearMessage('enterLicense_error');
+						toggleFields(false,"");
+						document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
+						document.registrationForm.submit();
+					}else{
+						return false;
 					}
+
+				}
   			}
+
+			function validate_feedetails(){
+				
+				var validated = false;
+				var globalindex;
+				
+				jQuery("table.feedetails tbody tr").each(function (index) {
+					var rowval = jQuery(this).find("input.feeamount").val();
+					console.log(index+'-->'+rowval);
+					if(parseFloat(rowval) > 0){
+						globalindex = index;
+						validated = true;
+					}else{
+						if(!jQuery(this).is(":last-child")){
+							if(index == (globalindex+1)){
+								bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details is missing!');
+								validated = false;
+								return false;
+							}
+						}else{
+							validated = true;
+						}
+						
+					}
+				});
+				return validated;
+			}
+  			
 
 			// Calls propertytax REST api to retrieve property details for an assessment no
 			// url : contextpath/ptis/rest/property/assessmentno (ex: contextpath/ptis/rest/property/1085000001)
