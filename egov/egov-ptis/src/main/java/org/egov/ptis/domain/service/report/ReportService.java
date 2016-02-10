@@ -52,6 +52,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.FloorDetailsView;
@@ -380,5 +382,63 @@ public class ReportService {
     public void setPropPerServ(PersistenceService propPerServ) {
         this.propPerServ = propPerServ;
     }
+    public List<BillCollectorDailyCollectionReportResult>  getBillCollectorWiseDailyCollection(Date date) {
 
+        List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(0);
+
+        final StringBuilder queryBuilder = new StringBuilder(
+                " select bcreport.district,bcreport.ulbname  \"ulbName\" ,bcreport.ulbcode \"ulbCode\" ,billcoll.collectorname,billcoll.mobilenumber,target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection, "
+                        + " cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
+                        + " from EGPT_BILLCOLLECTORWISE_REPORT bcreport, "
+                        + " EGPT_BILLCOLLCTOR_DETAIL billcoll left outer join EGPT_BCREPORT_COLLECTION colln on billcoll.id=colln.billcollector and colln.date=:collDate " // and
+                                                                                                                                                                           // colln.date::date=:collDate
+                        + " where bcreport.id=billcoll.bcreportid   order by district,ulbname,collectorname ");
+       
+        final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
+        query.setDate("collDate", date);
+        query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));    
+    
+        listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
+        for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
+
+            if (bcResult.getTarget_arrears_demand() == null)
+                bcResult.setTarget_arrears_demand(0.0);
+            if (bcResult.getTarget_current_demand() == null)
+                bcResult.setTarget_current_demand(0.0);
+
+            bcResult.setTarget_total_demand(bcResult.getTarget_arrears_demand() + bcResult.getTarget_current_demand());
+            bcResult.setDay_target(BigDecimal.valueOf(bcResult.getTarget_total_demand())
+                    .divide(BigDecimal.valueOf(365), 2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP));
+      
+           if (bcResult.getToday_arrears_collection() == null)
+               bcResult.setToday_arrears_collection(0.0);
+           if (bcResult.getToday_currentyear_collection() == null)
+               bcResult.setToday_currentyear_collection(0.0);
+           
+           bcResult.setToday_total_collection(bcResult.getToday_arrears_collection() + bcResult.getToday_currentyear_collection());
+           
+           if (bcResult.getCummulative_arrears_collection() == null)
+               bcResult.setCummulative_arrears_collection(0.0);
+           if (bcResult.getCummulative_currentyear_collection() == null)
+               bcResult.setCummulative_currentyear_collection(0.0);
+           bcResult.setCummulative_total_Collection(bcResult.getCummulative_arrears_collection() + bcResult.getCummulative_currentyear_collection());
+           if(bcResult.getCummulative_total_Collection()>0)
+           bcResult.setCummulative_currentYear_Percentage(BigDecimal.valueOf(bcResult.getTarget_total_demand()).divide(BigDecimal.valueOf(bcResult.getCummulative_total_Collection()),2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP));
+           
+           if (bcResult.getLastyear_collection() == null)
+               bcResult.setLastyear_collection(0.0);
+           if (bcResult.getLastyear_cummulative_collection() == null)
+               bcResult.setLastyear_cummulative_collection(0.0);
+           bcResult.setPercentage_compareWithLastYear(bcResult.getCummulative_total_Collection() -  bcResult.getLastyear_cummulative_collection());
+          
+           if(bcResult.getLastyear_cummulative_collection()>0)
+           bcResult.setGrowth((BigDecimal.valueOf(
+                   bcResult.getCummulative_total_Collection() - bcResult.getLastyear_cummulative_collection()).divide(
+                   BigDecimal.valueOf(bcResult.getLastyear_cummulative_collection()),2, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
+           else
+               bcResult.setGrowth((BigDecimal.ZERO));
+       }
+       return listBcPayment; 
+
+   }
 }
