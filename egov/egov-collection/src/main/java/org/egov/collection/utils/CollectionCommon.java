@@ -180,7 +180,7 @@ public class CollectionCommon {
         switch (receiptType) {
         case CollectionConstants.RECEIPT_TYPE_BILL:
             templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
+            + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
             if (!reportService.isValidTemplate(templateName)) {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
@@ -203,7 +203,7 @@ public class CollectionCommon {
             break;
         case CollectionConstants.RECEIPT_TYPE_ADHOC:
             templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;
+            + CollectionConstants.RECEIPT_TEMPLATE_NAME;
             if (!reportService.isValidTemplate(templateName)) {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
@@ -247,14 +247,14 @@ public class CollectionCommon {
                 && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
             if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
                 newReceiptDetail
-                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                                CollectionConstants.INSTRUMENTTYPE_CASH));
+                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                        CollectionConstants.INSTRUMENTTYPE_CASH));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD))
                 newReceiptDetail
-                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                                CollectionConstants.INSTRUMENTTYPE_CARD));
+                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                        CollectionConstants.INSTRUMENTTYPE_CARD));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK))
                 newReceiptDetail.setAccounthead(receiptHeader.getReceiptInstrument().iterator().next()
                         .getBankAccountId().getChartofaccounts());
@@ -425,8 +425,10 @@ public class CollectionCommon {
             }
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
-                final String additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
-                        new BillReceiptInfoImpl(receiptHeader));
+                String additionalMessage = null;
+                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL)
+                    additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
+                            new BillReceiptInfoImpl(receiptHeader));
                 if (additionalMessage != null)
                     receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage));
                 else
@@ -615,7 +617,7 @@ public class CollectionCommon {
 
         final ReceiptMisc receiptMisc = new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(),
                 oldReceiptHeader.getReceiptMisc().getFund(), null, null, oldReceiptHeader.getReceiptMisc()
-                        .getDepartment(), newReceiptHeader, null, null, null);
+                .getDepartment(), newReceiptHeader, null, null, null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
 
         final List<CChartOfAccounts> bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
@@ -802,7 +804,7 @@ public class CollectionCommon {
             invalidBankPaytMsg += "Missing Bank Transaction Date \n";
         if (new Date().compareTo(paytInfoBank.getTransactionDate()) == -1)
             invalidBankPaytMsg += "Bank Transaction Date[" + paytInfoBank.getTransactionDate()
-                    + "] cannot be a future date \n";
+            + "] cannot be a future date \n";
         Bankaccount account = null;
         if (paytInfoBank.getBankAccountId() == null)
             invalidBankPaytMsg += "Missing Bank Account Id \n";
@@ -811,7 +813,7 @@ public class CollectionCommon {
 
             if (account == null)
                 invalidBankPaytMsg += "No account found for bank account id[" + paytInfoBank.getBankAccountId()
-                        + "] \n";
+                + "] \n";
         }
 
         if (!CollectionConstants.BLANK.equals(invalidBankPaytMsg))
@@ -847,18 +849,18 @@ public class CollectionCommon {
         if (paytInfoChequeDD.getInstrumentAmount() == null
                 || paytInfoChequeDD.getInstrumentAmount().compareTo(BigDecimal.ZERO) <= 0)
             invalidChequeDDPaytMsg += "Invalid cheque/DD Instrument Amount[" + paytInfoChequeDD.getInstrumentAmount()
-                    + "] \n";
+            + "] \n";
         if (paytInfoChequeDD.getInstrumentNumber() == null
                 || CollectionConstants.BLANK.equals(paytInfoChequeDD.getInstrumentNumber())
                 || !MoneyUtils.isInteger(paytInfoChequeDD.getInstrumentNumber())
                 || paytInfoChequeDD.getInstrumentNumber().length() != 6)
             invalidChequeDDPaytMsg += "Invalid Cheque/DD Instrument Number[" + paytInfoChequeDD.getInstrumentNumber()
-                    + "]. \n";
+            + "]. \n";
         if (paytInfoChequeDD.getInstrumentDate() == null)
             invalidChequeDDPaytMsg += "Missing Cheque/DD Transaction Date \n";
         if (new Date().compareTo(paytInfoChequeDD.getInstrumentDate()) == -1)
             invalidChequeDDPaytMsg += "Cheque/DD Transaction Date[" + paytInfoChequeDD.getInstrumentDate()
-                    + "] cannot be a future date \n";
+            + "] cannot be a future date \n";
         Bank bank = null;
         if (paytInfoChequeDD.getBankId() != null) {
             bank = (Bank) bankDAO.findById(paytInfoChequeDD.getBankId().intValue(), false);

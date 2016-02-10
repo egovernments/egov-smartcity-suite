@@ -38,7 +38,7 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
   function  populateService(serviceCategory){
-        
+		    dom.get('fundId').value="-1";
         	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
         }
         

@@ -59,7 +59,6 @@
 		<property name="sequenceGenerator" ref="sequenceNumberGenerator" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 	</bean>
-	<bean class="org.egov.collection.repository.ServiceCategoryRepository" id="serviceCategoryRepository" />
 
 	<bean class="org.egov.collection.service.ReceiptHeaderService"
 		id="receiptHeaderService" parent="persistenceService" scope="prototype">
