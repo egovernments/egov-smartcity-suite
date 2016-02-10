@@ -75,8 +75,10 @@ public class CollectionIndexService {
     public CollectionIndex createCollectionIndex(final CollectionIndex collectionIndex) {
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
         collectionIndex.setUlbName(cityWebsite.getName());
-        collectionIndex.setDistrictName(cityWebsite.getDistrictName());
-        collectionIndex.setRegionName(cityWebsite.getRegionName());
+        if (cityWebsite.getDistrictName() != null)
+            collectionIndex.setDistrictName(cityWebsite.getDistrictName());
+        if (cityWebsite.getRegionName() != null)
+            collectionIndex.setRegionName(cityWebsite.getRegionName());
         collectionIndexRepository.save(collectionIndex);
         return collectionIndex;
     }
