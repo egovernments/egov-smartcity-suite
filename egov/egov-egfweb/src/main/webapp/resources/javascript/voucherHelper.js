@@ -617,7 +617,7 @@ function autocompleteEntitiesBy20()
 		   return sQuery+"&accountDetailType="+document.getElementById("commonBean.subledgerType").value;
 	   } 
 	   oAutoComp1.queryDelay = 0.5;
-	   oAutoComp1.minQueryLength = 3;
+	   oAutoComp1.minQueryLength = 1;
 	   oAutoComp1.prehighlightClassName = "yui-ac-prehighlight";
 	   oAutoComp1.useShadow = true;
 	   oAutoComp1.forceSelection = true;
