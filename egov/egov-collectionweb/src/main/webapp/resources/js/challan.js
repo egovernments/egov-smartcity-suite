@@ -458,7 +458,7 @@ function createLongTextFieldFormatter(prefix,suffix,table){
     return function(el, oRecord, oColumn, oData) {
      var rec=billDetailTableIndex;
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"'  style='width:350px;' onfocus='autocompletecode(this,event)' onblur='fillNeibrAfterSplitGlcode(this)' />";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"'  style='width:350px;' onfocus='autocompletecode(this,event)' autocomplete='off'/>";
 	}
 }
 
@@ -1270,6 +1270,14 @@ var src = obj;
 				codeObj.applyLocalFilter = true;
 				codeObj.queryMatchContains = true;
 				oAutoComp.minQueryLength = 0;
+				console.log(oAutoComp);
+				/*var textboxChangeEvent=function(sType, args)
+				{
+					console.log('called!');
+					fillNeibrAfterSplitGlcode(coaCodeObj);
+				};
+				
+				oAutoComp.textboxChangeEvent.subscribe(textboxChangeEvent);*/
 			}
 		}
 		yuiflag[currRow] = 1;
@@ -1473,6 +1481,7 @@ function onElementFocused(e)
 
 
 function  populateService(serviceCategory){
+	dom.get('receiptMisc.fund.id').value="-1";
 	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
 }
 
@@ -1504,15 +1513,13 @@ success: function(o) {
 var result = o.responseText;
 
 if(null != result && result.length !=0){
-
 	 miscArray = result.split('~');
-		if(null != dom.get('fundId') ) {	
-				 dom.get('fundId').value = parseInt(miscArray[0]);		
-				 //setFundId();
+		if(null != dom.get('receiptMisc.fund.id') ) {	
+				 dom.get('receiptMisc.fund.id').value = parseInt(miscArray[0]);		
 		}
 		if(null != dom.get('schemeId') ){
 				var url= "/EGF/voucher/common-ajaxLoadSchemes.action";
-				var fundId = dom.get('fundId').value;
+				var fundId = dom.get('receiptMisc.fund.id').value;
 				makeJSONCall(["Text","Value"],url,{fundId:miscArray[0]},schemeDropDownSuccessHandler,schemeDropDownFailureHandler);
 		}
 		if(null != dom.get('subschemeId')  ){
