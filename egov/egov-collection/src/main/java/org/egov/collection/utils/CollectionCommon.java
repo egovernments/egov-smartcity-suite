@@ -273,7 +273,6 @@ public class CollectionCommon {
     /**
      * Updates the billing system with receipt information
      */
-    @Transactional
     public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader)
             throws ApplicationRuntimeException {
 
