@@ -186,26 +186,28 @@
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
-					document.newTradeLicense.submit();
+					//document.newTradeLicense.submit();
 				</s:if>
 				<s:elseif  test="%{mode!=null && mode=='editForReject'}">
 				clearMessage('newLicense_error');
 				toggleFields(false,"");
 				document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
-				document.newTradeLicense.submit();
+				//document.newTradeLicense.submit();
 			</s:elseif>
 				<s:elseif test="%{mode!=null && mode=='edit'}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action = '${pageContext.request.contextPath}//newtradelicense/editTradeLicense-edit.action';
-					document.newTradeLicense.submit;
+					//document.newTradeLicense.submit();
 				</s:elseif>
 				<s:else>   
 					clearMessage('newLicense_error'); 
 					toggleFields(false,"");
 	    			document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
-			    	document.newTradeLicense.submit();
+			    	//document.newTradeLicense.submit();
 				</s:else>
+
+				return true;
         	} 
 
 			// Calls propertytax REST api to retrieve property details for an assessment no
