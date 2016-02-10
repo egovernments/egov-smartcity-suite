@@ -2077,7 +2077,7 @@ public class PropertyTaxUtil {
             param = boundaryId;
         // To retreive Arrear Demand and Collection Details
         arrear_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
-                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment "
+                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true "
                 + "and im.start_date not between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
                 + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 
@@ -2093,7 +2093,7 @@ public class PropertyTaxUtil {
 
         // To retreive Current Demand and Collection Details
         current_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
-                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment "
+                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true "
                 + "and im.start_date between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
                 + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 

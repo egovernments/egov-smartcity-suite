@@ -69,6 +69,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
@@ -209,7 +210,8 @@ public class ReportService {
                 baseRegisterResultObj = new BaseRegisterResult();
                 baseRegisterResultObj = addSingleFloor(baseRegisterResultObj, propMatView);
                 baseRegisterResultObj.setPlinthArea(floorview.getPlinthArea());
-                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage());
+                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage().contains(",") ? floorview.getPropertyUsage().replace(",",
+                        " & ") : floorview.getPropertyUsage());
                 baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());
                 count++;
             } else {
@@ -220,7 +222,8 @@ public class ReportService {
                 baseRegisterResultObj.setCourtCase("");
                 baseRegisterResultObj.setArrearPeriod("");
                 baseRegisterResultObj.setPlinthArea(floorview.getPlinthArea());
-                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage());
+                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage().contains(",") ? floorview.getPropertyUsage().replace(",",
+                        " & ") : floorview.getPropertyUsage());
                 baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());
             }
             baseRegisterResultList.add(baseRegisterResultObj);
@@ -229,11 +232,11 @@ public class ReportService {
     }
 
     public List<DailyCollectionReportResult> getCollectionDetails(Date fromDate, Date toDate, String collectionMode,
-            String collectionOperator, String status) throws ParseException {
+            String collectionOperator, String status, String ward) throws ParseException {
         final StringBuilder queryStr = new StringBuilder(500);
         final SimpleDateFormat fromDateFormatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
         final SimpleDateFormat toDateFormatter = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
-        queryStr.append("select distinct receiptheader from ReceiptHeader receiptheader where receiptheader.service.name =:service and "
+        queryStr.append(" from ReceiptHeader receiptheader,BasicPropertyImpl basicproperty where receiptheader.service.name =:service and receiptheader.consumerCode = basicproperty.upicNo and "
                 + " (receiptheader.receiptdate between to_timestamp('"
                 + fromDateFormatter.format(fromDate)
                 + "', 'YYYY-MM-DD HH24:MI:SS') and "
@@ -249,6 +252,9 @@ public class ReportService {
         if (StringUtils.isNotBlank(status)) {
             queryStr.append(" and receiptheader.status.id =:status ");
         }
+        if(StringUtils.isNotBlank(ward)) {
+            queryStr.append(" and basicproperty.propertyID.ward.id =:ward");
+        }
         queryStr.append(" order by receiptheader.receiptdate ");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setString("service", PTMODULENAME);
@@ -261,7 +267,10 @@ public class ReportService {
         if (StringUtils.isNotBlank(status)) {
             query.setLong("status", Long.valueOf(status));
         }
-        List<ReceiptHeader> receiptHeaderList = query.list();
+        if(StringUtils.isNotBlank(ward)) {
+            query.setLong("ward", Long.valueOf(ward));
+        }
+        List<Object> objectList = query.list();
         List<DailyCollectionReportResult> dailyCollectionReportList = new ArrayList<DailyCollectionReportResult>();
         DailyCollectionReportResult result = null;
         BigDecimal currCollection = null;
@@ -270,7 +279,10 @@ public class ReportService {
         BigDecimal arrLibCess = null;
         BigDecimal currLibCess = null;
 
-        for (ReceiptHeader receiptHeader : receiptHeaderList) {
+        for (Object objects : objectList) {
+            final Object[] object = (Object[]) objects; 
+            ReceiptHeader receiptHeader = (ReceiptHeader) object[0];
+            BasicPropertyImpl basicProperty = (BasicPropertyImpl) object[1];
             currCollection = BigDecimal.ZERO;
             arrCollection = BigDecimal.ZERO;
             totalPenalty = BigDecimal.ZERO;
@@ -282,6 +294,7 @@ public class ReportService {
             result.setAssessmentNumber(receiptHeader.getConsumerCode());
             result.setOwnerName(receiptHeader.getPayeeName());
             result.setPaidAt(receiptHeader.getSource());
+            result.setWard(basicProperty.getPropertyID().getWard().getName());
 
             String[] address = receiptHeader.getPayeeAddress().split(",");
             result.setTotalCollection(receiptHeader.getTotalAmount());
