@@ -40,6 +40,24 @@
 
 jQuery(document).ready(function() {
 	jQuery('#report-footer').hide();
+	
+	function reCalculateTotalFooterWhenExport()
+	{
+		$("#currInstDCBReport-table tfoot td").each(function( index ) {
+	   		 if(index!==0)
+	   		 {
+	   			 var totals=$(this).html().split("(");
+		    		 var str=""+totals[1];
+		    		 str=str.slice(0,-1);
+		    		 $(this).html(str);
+	   		 }
+	   	 });
+   	 
+	     setTimeout(function(){ $('select[name="currInstDCBReport-table_length"]').trigger('change'); }, 10);
+	     
+	}
+	
+	
 	$('#currInstDCBReportSearch').click(function(e){
 		var ward = $("#ward").val();
 		
@@ -61,7 +79,11 @@ jQuery(document).ready(function() {
 				                },
 				                {
 						             "sExtends": "xls",
-	                                 "sTitle": "Current Installment DCB Report"
+	                                 "sTitle": "Current Installment DCB Report",
+                            	     "fnClick": function ( nButton, oConfig, oFlash ) {
+                            	    	 reCalculateTotalFooterWhenExport();
+                            		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
+                            		 }
 					             },{
 						             "sExtends": "print",
 	                                 "sTitle": "Current Installment DCB Report"
