@@ -198,7 +198,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @ValidationErrorPage(Constants.NEW)
     public String enterExisting(final T license, final Map<Integer, Double> legacyInstallmentwiseFees) {
         this.setCheckList();
-        licenseService().enterExistingLicense(license, legacyInstallmentwiseFees);
+        licenseService().createLegacyLicense(license, legacyInstallmentwiseFees);
         addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());
 
         return "viewlicense";

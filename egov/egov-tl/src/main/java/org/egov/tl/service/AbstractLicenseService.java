@@ -114,7 +114,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected FeeService feeService;
 
     @Autowired
-    @Qualifier("persistenceService")
+    @Qualifier("entityQueryService")
     protected PersistenceService persistenceService;
 
     @Autowired
@@ -286,34 +286,8 @@ public abstract class AbstractLicenseService<T extends License> {
 
     }
 
-    public String getFeeTypeForElectricalLicense(final T license) {
-        final String feeType = null;
-        // commented as licenseSubType is removed from License
-        /*
-         * if (license != null && license.getLicenseSubType() != null) if
-         * (license.getLicenseSubType().getCode().equals(Constants.MAINTENANCE_CONTRACTORS)) feeType =
-         * license.getLicenseSubType().getCode(); else if
-         * (license.getLicenseSubType().getCode().equals(Constants.LIFT_CONTRACTORS)) feeType =
-         * license.getLicenseSubType().getCode(); else if (license.getLicenseSubType().getCode().equals(Constants.BRAND_OWNER))
-         * feeType = license.getLicenseSubType().getCode(); else if
-         * (license.getLicenseSubType().getCode().equals(Constants.CONSULTANTS)) feeType = license.getLicenseSubType().getCode();
-         * else if (license.getLicenseSubType().getCode().equals(Constants.CONTRACTORS)) feeType =
-         * license.getLicenseSubType().getCode(); else if (license.getLicenseSubType().getCode().equals(Constants.DISTRIBUTOR))
-         * feeType = license.getLicenseSubType().getCode(); else if
-         * (license.getLicenseSubType().getCode().equals(Constants.POLE_SUPPLIER_CONTRACTORS)) feeType =
-         * license.getLicenseSubType().getCode(); else if
-         * (license.getLicenseSubType().getCode().equals(Constants.PUMP_MAINTENANCE)) feeType =
-         * license.getLicenseSubType().getCode(); else if
-         * (license.getLicenseSubType().getCode().equals(Constants.BOT_CONTRACTORS)) feeType =
-         * license.getLicenseSubType().getCode(); else if
-         * (license.getLicenseSubType().getCode().equals(Constants.FIRE_CONTRACTORS)) feeType =
-         * license.getLicenseSubType().getCode();
-         */
-        return feeType;
-    }
-
     @Transactional
-    public void enterExistingLicense(final T license, final Map<Integer, Double> legacyInstallmentwiseFees) {
+    public void createLegacyLicense(final T license, final Map<Integer, Double> legacyInstallmentwiseFees) {
         if (!this.licensePersitenceService.findAllBy("from License where oldLicenseNumber = ?", license.getOldLicenseNumber())
                 .isEmpty())
             throw new ApplicationRuntimeException("license.number.exist");
@@ -537,8 +511,7 @@ public abstract class AbstractLicenseService<T extends License> {
         final LicenseAppType appType = getLicenseApplicationTypeForRenew();
         final NatureOfBusiness nature = getNatureOfBusiness();
         // commented need to be completed after fee matrix
-        final List<FeeMatrix> feeList = new ArrayList<FeeMatrix>();// feeService.getFeeList(license.getTradeName(), appType,
-                                                                   // nature);
+        final List<FeeMatrix> feeList = feeService.getFeeList(license.getTradeName(), appType, nature);
         final BigDecimal totalAmount = BigDecimal.ZERO;
         // feeService.calculateFee(license, license.getTradeName(), getLicenseApplicationTypeForRenew(),
         // getNatureOfBusiness(), BigDecimal.ZERO, BigDecimal.ZERO);
@@ -551,12 +524,12 @@ public abstract class AbstractLicenseService<T extends License> {
             isExpired = split[0].equalsIgnoreCase("false") ? false : true;
             final int noOfMonths = Integer.parseInt(split[1]);
 
-            if (isExpired == false && noOfMonths <= 1) {
+            if (!isExpired && noOfMonths <= 1) {
                 final Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
                 cal.add(Calendar.MONTH, 1);
                 installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), cal.getTime());
-            } else if (isExpired == true && noOfMonths <= 6)
+            } else if (isExpired && noOfMonths <= 6)
                 installment=  installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), renewalDate);
             else
                 throw new ApplicationRuntimeException("License already Expired Cant renew");
@@ -566,10 +539,6 @@ public abstract class AbstractLicenseService<T extends License> {
         final EgReasonCategory reasonCategory = (EgReasonCategory) persistenceService
                 .find("from org.egov.demand.model.EgReasonCategory where name='Fee'");
         final Set<EgDemandReasonMaster> egDemandReasonMasters = reasonCategory.getEgDemandReasonMasters();
-        if (getModuleName().getName().equals(Constants.ELECTRICALLICENSE_MODULENAME))
-            getFeeTypeForElectricalLicense(license);
-        else
-            license.getClass().getSimpleName().toUpperCase();
         license = (T) license.renew(feeList, appType, nature, installment, egDemandReasonMasters, totalAmount,
                 applicationNumberGenerator.generate(), license.getFeeTypeStr(), getModuleName(), renewalDate);
         final LicenseStatus status = (LicenseStatus) persistenceService.find(
