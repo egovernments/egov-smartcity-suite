@@ -255,11 +255,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     @SkipValidation
     public String renew() {
-
-        getSession().put("model.id", license().getId());
         try {
             licenseService().renew(license());
-            // initiateWorkFlowForRenewLicense();
             addActionMessage(this.getText("license.renew.submission.succesful") + license().getLicenseNumber());
         } catch (final RuntimeException e) {
             loadAjaxedDropDowns();

@@ -43,7 +43,6 @@ import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,17 +72,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
-@Results({@Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
+@Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
         @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT + ".jsp"),
-        @Result(name = Constants.PFACERTIFICATE, location = "/WEB-INF/jsp/viewtradelicense/viewTradeLicense-" + Constants.PFACERTIFICATE + ".jsp"),
+        @Result(name = Constants.PFACERTIFICATE, location = "/WEB-INF/jsp/viewtradelicense/viewTradeLicense-"
+                + Constants.PFACERTIFICATE + ".jsp"),
         @Result(name = Constants.MESSAGE, location = "newTradeLicense-" + Constants.MESSAGE + ".jsp"),
         @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-" + Constants.BEFORE_RENEWAL + ".jsp"),
-        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT_RENEW + ".jsp")})
-public class NewTradeLicenseAction extends BaseLicenseAction {
+        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT_RENEW
+                + ".jsp") })
+public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     private static final long serialVersionUID = 1L;
 
-    private TradeLicense tradeLicense = new TradeLicense(); 
+    private TradeLicense tradeLicense = new TradeLicense();
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
@@ -103,97 +104,87 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return super.newForm();
     }
 
-    @Override
-    @ValidationErrorPage(Constants.NEW)
-    @Action(value = "/newtradelicense/newTradeLicense-approve")
-    public String approve() {
-
-        tradeLicense = this.tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
-      if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW) &&  tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING) && tradeLicense != null && !tradeLicense.isPaid() &&
-                !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
-            prepareNewForm();
-            ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
-            throw new ValidationException(Arrays.asList(vr));
-        }
-          tradeLicenseService.updateStatusInWorkFlowProgress(tradeLicense,workFlowAction);
-        return super.approve();
-    }
-
-   
-
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
         try {
             return super.create(tradeLicense);
-        } catch (RuntimeException e) {
-            ValidationError vr=new ValidationError(e.getMessage(), e.getMessage());
-            throw new ValidationException(Arrays.asList(vr) ); 
-        }
-    }
-    
-    @Override
-    public void prepareNewForm() {
-        super.prepareNewForm();
-        if (license() != null && license().getId() != null)
-            tradeLicense = this.tradeLicenseService.getLicenseById(license().getId());
-        setDocumentTypes(tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
-        tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
-        tradeLicense.setHotelSubCatList(tradeLicenseService.getHotelCategoriesForTrade());
-        setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
-        List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                LOCALITY, LOCATION_HIERARCHY_TYPE);
-        addDropdownData("localityList", localityList);
-        addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
-        addDropdownData("categoryList", licenseCategoryService.findAll());
-        addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
-        addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
-                licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
-        if(license() != null && license().getAgreementDate()!=null){
-            setShowAgreementDtl(true);
+        } catch (final RuntimeException e) {
+            final ValidationError vr = new ValidationError(e.getMessage(), e.getMessage());
+            throw new ValidationException(Arrays.asList(vr));
         }
     }
 
     @Override
-    @ValidationErrorPage(Constants.BEFORE_RENEWAL)
+    @Action(value = "/newtradelicense/newTradeLicense-showForApproval")
     @SkipValidation
-    @Action(value = "/newtradelicense/newTradeLicense-renewal")
-    public String renew() {
-        BigDecimal deduction = tradeLicense.getDeduction();
-        BigDecimal otherCharges = tradeLicense.getOtherCharges();
-        BigDecimal swmFee = tradeLicense.getSwmFee();
-        tradeLicense = this.tradeLicenseService.getLicenseById(tradeLicense.getId());
-        tradeLicense.setOtherCharges(otherCharges);
-        tradeLicense.setDeduction(deduction);
-        tradeLicense.setSwmFee(swmFee);
-        return super.renew();
+    public String showForApproval() {
+        if (license().getStatus().getName().equals(Constants.LICENSE_STATUS_ACKNOWLEDGED)
+                || license().getStatus().getName().equals(Constants.LICENSE_STATUS_UNDERWORKFLOW))
+            mode = VIEW;
+        if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
+            mode = "editForReject";
+        return super.showForApproval();
+    }
+
+    @Override
+    @ValidationErrorPage(Constants.NEW)
+    @Action(value = "/newtradelicense/newTradeLicense-approve")
+    public String approve() {
+
+        tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
+        if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
+                && tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING) && tradeLicense != null
+                && !tradeLicense.isPaid() &&
+                !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
+            prepareNewForm();
+            final ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
+            throw new ValidationException(Arrays.asList(vr));
+        }
+        tradeLicenseService.updateStatusInWorkFlowProgress(tradeLicense, workFlowAction);
+        return super.approve();
     }
 
     @Override
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
-        this.prepareNewForm();
-        if (tradeLicense.getState() != null && !tradeLicense.getState().getValue().isEmpty()) {
+        prepareNewForm();
+        if (tradeLicense.getState() != null && !tradeLicense.getState().getValue().isEmpty())
             tradeLicense.transition(true).withStateValue("");
-        }
         return super.beforeRenew();
     }
 
-    /*
-     * Invoked from Workflow users Inbox
-     */
     @Override
-    @Action(value = "/newtradelicense/newTradeLicense-showForApproval")
-    public String showForApproval() {
-        if(license().getStatus().getName().equals(Constants.LICENSE_STATUS_ACKNOWLEDGED)
-                ||license().getStatus().getName().equals(Constants.LICENSE_STATUS_UNDERWORKFLOW)){
-        mode = VIEW;
-        }
-        if(license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)){
-        mode = "editForReject";
-        }
-        return super.showForApproval();
+    @ValidationErrorPage(Constants.BEFORE_RENEWAL)
+    @Action(value = "/newtradelicense/newTradeLicense-renewal")
+    public String renew() {
+        return super.renew();
+    }
+
+    public void prepareRenew() {
+        prepareNewForm();
+    }
+
+    @Override
+    public void prepareNewForm() {
+        super.prepareNewForm();
+        if (license() != null && license().getId() != null)
+            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        setDocumentTypes(tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
+        tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
+        tradeLicense.setHotelSubCatList(tradeLicenseService.getHotelCategoriesForTrade());
+        setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
+        final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                LOCALITY, LOCATION_HIERARCHY_TYPE);
+        addDropdownData("localityList", localityList);
+        addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
+        addDropdownData("categoryList", licenseCategoryService.findAll());
+        addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
+        addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
+                : licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+        if (license() != null && license().getAgreementDate() != null)
+            setShowAgreementDtl(true);
     }
 
     @Override
@@ -205,7 +196,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return workflowBean;
     }
 
-    public void setWorkflowBean(WorkflowBean workflowBean) {
+    public void setWorkflowBean(final WorkflowBean workflowBean) {
         this.workflowBean = workflowBean;
     }
 
@@ -215,7 +206,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     }
 
     @Override
-    protected AbstractLicenseService licenseService() {
+    protected AbstractLicenseService<TradeLicense> licenseService() {
         return tradeLicenseService;
     }
 
@@ -223,7 +214,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return documentTypes;
     }
 
-    public void setDocumentTypes(List<LicenseDocumentType> documentTypes) {
+    public void setDocumentTypes(final List<LicenseDocumentType> documentTypes) {
         this.documentTypes = documentTypes;
     }
 
@@ -231,7 +222,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return ownerShipTypeMap;
     }
 
-    public void setOwnerShipTypeMap(Map<String, String> ownerShipTypeMap) {
+    public void setOwnerShipTypeMap(final Map<String, String> ownerShipTypeMap) {
         this.ownerShipTypeMap = ownerShipTypeMap;
     }
 
@@ -239,7 +230,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(final String mode) {
         this.mode = mode;
     }
 }

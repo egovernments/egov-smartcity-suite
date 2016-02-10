@@ -44,12 +44,14 @@ import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE;
 
 import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -508,16 +510,9 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public void renew(T license) {
-        final LicenseAppType appType = getLicenseApplicationTypeForRenew();
-        final NatureOfBusiness nature = getNatureOfBusiness();
-        // commented need to be completed after fee matrix
-        final List<FeeMatrix> feeList = feeService.getFeeList(license.getTradeName(), appType, nature);
-        final BigDecimal totalAmount = BigDecimal.ZERO;
-        // feeService.calculateFee(license, license.getTradeName(), getLicenseApplicationTypeForRenew(),
-        // getNatureOfBusiness(), BigDecimal.ZERO, BigDecimal.ZERO);
         Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
         final Date renewalDate = new Date();
-        final String dateDiffToExpiryDate = license.getDateDiffToExpiryDate(renewalDate);
+        /*final String dateDiffToExpiryDate = license.getDateDiffToExpiryDate(renewalDate);
         if (dateDiffToExpiryDate != null) {
             boolean isExpired;
             final String[] split = dateDiffToExpiryDate.split("/");
@@ -535,7 +530,15 @@ public abstract class AbstractLicenseService<T extends License> {
                 throw new ApplicationRuntimeException("License already Expired Cant renew");
 
         }
-
+         */
+        final LicenseAppType appType = getLicenseApplicationTypeForRenew();
+        final NatureOfBusiness nature = getNatureOfBusiness();
+        // commented need to be completed after fee matrix
+        final List<FeeMatrix> feeList = Collections.emptyList();//feeService.getFeeList(license.getTradeName(), appType, nature);
+        final BigDecimal totalAmount = BigDecimal.ZERO;
+        // feeService.calculateFee(license, license.getTradeName(), getLicenseApplicationTypeForRenew(),
+        // getNatureOfBusiness(), BigDecimal.ZERO, BigDecimal.ZERO);
+        
         final EgReasonCategory reasonCategory = (EgReasonCategory) persistenceService
                 .find("from org.egov.demand.model.EgReasonCategory where name='Fee'");
         final Set<EgDemandReasonMaster> egDemandReasonMasters = reasonCategory.getEgDemandReasonMasters();
@@ -544,6 +547,14 @@ public abstract class AbstractLicenseService<T extends License> {
         final LicenseStatus status = (LicenseStatus) persistenceService.find(
                 "from org.egov.tl.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
+        
+        //TODO workflow logic comes here
+        User currentUser = securityUtils.getCurrentUser();
+        license.reinitiateTransition().start().
+        withOwner(assignmentService.getPrimaryAssignmentForUser(currentUser.getId()).getPosition()).
+        withNatureOfTask("Renew License").withSenderName(currentUser.getName())
+        .withStateValue(WORKFLOW_STATE_TYPE_RENEWLICENSE);
+        
         licensePersitenceService.persist(license);
     }
 
