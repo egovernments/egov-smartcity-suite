@@ -48,63 +48,80 @@
 		<form:form class="form-horizontal form-groups-bordered" action=""
 			id="bcDailyCollectionReportForm" modelAttribute="bcDailyCollectionReportResult"
 			method="get">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-								
-						<strong><spring:message
-								code="lbl.bcCollectorDaily.report.title" /> <c:out value="${currentFinancialYear.finYearRange}" /></strong>
-									
-					</div>
-				</div>
-			
-			</div>
-	
+		
+		<div class="col-md-8 table-header text-left"><spring:message code="lbl.bcCollectorDaily.report.title" /> <c:out value="${currentFinancialYear.finYearRange}" /></div>
+		<div class="col-md-4 text-right">Date : <%= new java.util.Date() %></div>
+		<div class="col-md-4 text-right">Amount in Rupees</div>
 		</form:form>
 		<div >
 				<div class="col-md-12 form-group report-table-container">
-				<table class="table table-bordered datatable" id="tblbcDailycollection">
+				<table class="table table-bordered datatable multiheadertbl" id="tblbcDailycollection">
 				
-				 <thead>
+				<thead>
+					<tr>
+					<th colspan="6"></th>
+					<th colspan="9">Present Fianacial Year <c:out value="${currentFinancialYear.finYearRange}" /> </th>
+					<th colspan="2">Previous Financial Year <c:out value="${previousFinancialYear.finYearRange}" /></th>
+					<th colspan="2"></th>
+					
+				</tr>
+				<tr>
+					<th colspan="4">City Detail</th>
+					<th colspan="2">Bill Collector</th>
+					<th colspan="3">Target Demand</th>
+					<th colspan="2">Daily Target</th>
+					<th colspan="4">Cumulative Collection</th>
+					<th colspan="2">Collection</th>
+					<th colspan="2">Comparision With Last Year <c:out value="${previousFinancialYear.finYearRange}" /></th>
+				</tr>
 
-						<!-- <tr>
-							<th></th>
-							<th></th>
-						
-						<tr>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th colspan="9" style="font-family: verdana; font-size: 14px;">Present
-								Fianacial Year 2015-16</th>
+				<tr>
+					<th>Sl.no</th>
+					<th>District</th>
+					<th>Ulb Name</th>
+					<th>Ulb Code</th>
+					<th>Name</th>
+					<th>Mobile Number</th>
+					<th>Arrears</th>
+					<th>Current</th>
+					<th>Total</th>
+					<th>Day Target</th>
+					<th>Day Collection</th>
+					<th>Arrears</th>
+					<th>Current</th>
+					<th>Total</th>
+					<th>%</th>
+					<th>Today</th>
+						<th>Cummulative</th>
+					<th>Increase of collection</th>
+					<th>% of growth</th>
+							
 
-							<th colspan="2" style="font-family: verdana; font-size: 14px;">Previous
-								Financial Year 2014-15</th>
-							<th colspan="2" style="font-family: verdana; font-size: 14px;">&nbsp;</th>
-						</tr>
-						<th></th>
-						<th></th>
-						<th colspan="2" style="font-family: verdana; font-size: 14px;">Commissioner</th>
-						<th colspan="3" style="font-family: verdana; font-size: 14px;">Target
-							Demand</th>
-						<th colspan="2" style="font-family: verdana; font-size: 14px;">Daily
-							Target</th>
-						<th colspan="4" style="font-family: verdana; font-size: 14px;">Cumulative
-							Collection</th>
-						<th colspan="2" style="font-family: verdana; font-size: 14px;">Collection</th>
-						<th colspan="2" style="font-family: verdana; font-size: 14px;">Comparision
-							With Last Year 2014-15</th>
-						</tr>
-					 -->
-					</thead>
+				</tr>
+			</thead>
+				<tfoot id="report-footer">
+				<tr>
+					<td colspan="6" align="center">Total</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tfoot>
 				</table>
 			</div>
 		</div>
 				
-		<div class="row">
+		<div class="col-md-12">
 	
 				<div class="text-center">
 						<button type="button" class="btn btn-default" data-dismiss="modal"
