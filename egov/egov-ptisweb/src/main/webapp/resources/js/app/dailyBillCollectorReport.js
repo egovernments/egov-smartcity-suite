@@ -116,11 +116,11 @@ $(document)
 											updateTotalFooter(11, api);
 											updateTotalFooter(12, api);
 											updateTotalFooter(13, api);
-											 
+											averageTotalFooter(14, api,data.length); 
 											updateTotalFooter(15, api);
 											updateTotalFooter(16, api);
 											updateTotalFooter(17, api);
-											
+											averageTotalFooter(18, api,data.length);
 
 										}
 									},
@@ -146,6 +146,29 @@ $(document)
 									});*/
 				});
 
+function averageTotalFooter(colidx, api,totalsize) { 
+	// Remove the formatting to get integer data for summation
+	var intVal = function(i) {
+		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+				: typeof i === 'number' ? i : 0;
+	};
+
+	// Total over all pages
+	total = api.column(colidx).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	});
+
+	// Total over this page
+	pageTotal = api.column(colidx, {
+		page : 'current'
+	}).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	}, 0);
+alert(totalsize); 
+	// Update footer
+	$(api.column(colidx).footer()).html(
+			formatNumberInr(pageTotal/totalsize) + ' (' + formatNumberInr(total/totalsize) + ')');
+}
 
 function updateTotalFooter(colidx, api) {
 	// Remove the formatting to get integer data for summation

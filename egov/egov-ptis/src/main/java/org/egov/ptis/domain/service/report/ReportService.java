@@ -53,6 +53,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -457,7 +459,33 @@ public class ReportService {
            else
                bcResult.setGrowth((BigDecimal.ZERO));
        }
+        
+        for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
+            
+            bcResult.setTarget_arrears_demand( formatAmt(bcResult.getTarget_arrears_demand()).doubleValue());
+            bcResult.setTarget_current_demand( formatAmt(bcResult.getTarget_current_demand()).doubleValue());
+            bcResult.setTarget_total_demand( formatAmt(bcResult.getTarget_total_demand()).doubleValue());
+            bcResult.setDay_target(formatAmt(bcResult.getDay_target().doubleValue()));
+            bcResult.setToday_total_collection(formatAmt(bcResult.getToday_total_collection()).doubleValue());
+            bcResult.setCummulative_arrears_collection(formatAmt(bcResult.getCummulative_arrears_collection()).doubleValue());
+            bcResult.setCummulative_currentyear_collection(formatAmt(bcResult.getCummulative_currentyear_collection()).doubleValue());
+            bcResult.setCummulative_total_Collection(formatAmt(bcResult.getCummulative_total_Collection()).doubleValue());
+            bcResult.setPercentage_compareWithLastYear(formatAmt(  bcResult.getPercentage_compareWithLastYear()).doubleValue());
+            bcResult.setLastyear_collection(formatAmt(bcResult.getLastyear_collection()).doubleValue());
+            bcResult.setLastyear_cummulative_collection(formatAmt(bcResult.getLastyear_cummulative_collection()).doubleValue());
+         }
        return listBcPayment; 
 
    }
+    
+    public BigDecimal formatAmt(double amt)
+ {
+        BigDecimal ammt = new BigDecimal(0.000);
+        NumberFormat formatter = new DecimalFormat("##############0.00");
+
+        ammt = BigDecimal.valueOf(amt / 100000).setScale(2, BigDecimal.ROUND_HALF_UP);
+
+        return ammt;
+    }
+
 }
