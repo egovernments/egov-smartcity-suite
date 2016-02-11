@@ -132,9 +132,9 @@ function createTextFieldFormatter(size, maxlength, columnName,onBlur){
 }
 function validateNumberInTableCell(table,elem,recordId){
      record=table.getRecord(recordId);
-      dom.get('error'+elem.id).style.display='none';
+      document.getElementById('error'+elem.id).style.display='none';
       if(isNaN(elem.value) || getNumber(elem.value)<0){
-      	dom.get('error'+elem.id).style.display='';
+      	document.getElementById('error'+elem.id).style.display='';
       	return false;
       }
       return true;

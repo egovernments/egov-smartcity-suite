@@ -48,7 +48,7 @@
 	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 	function validateFormAndSubmit(){
-			var categoryId= dom.get("categoryId").value;
+			var categoryId= document.getElementById("categoryId").value;
 			 if (categoryId == "-1"){
 				showMessage('category_error', '<s:text name="licenseCategory.category.null" />');
 				return false;

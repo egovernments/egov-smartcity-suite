@@ -59,37 +59,37 @@
 	<script>
 
 	function bodyOnLoad(){
-		if(dom.get("userMode").value=='view' || dom.get("userMode").value=='success'){
-			 dom.get("code").readOnly=true;
-			 dom.get("name").readOnly=true;
-			 dom.get("active").disabled=true;
+		if(document.getElementById("userMode").value=='view' || document.getElementById("userMode").value=='success'){
+			 document.getElementById("code").readOnly=true;
+			 document.getElementById("name").readOnly=true;
+			 document.getElementById("active").disabled=true;
 			 jQuery("span").remove(".mandatory");
 		}
-		if(dom.get("userMode").value=='new'){
-			 dom.get("active").checked=true;
+		if(document.getElementById("userMode").value=='new'){
+			 document.getElementById("active").checked=true;
 		}
 	}
 
 	function reload(){
-		dom.get("code").value="";
-		dom.get("name").value="";
+		document.getElementById("code").value="";
+		document.getElementById("name").value="";
 		document.uomForm.action='${pageContext.request.contextPath}/masters/unitOfMeasurement-newform.action';
     	document.uomForm.submit();
 	}
 
 	function checkOrUncheck(){
-		if(dom.get('active').checked==true){
-			dom.get('uomActive').value=true;
-			dom.get('uomActive').checked=true;
+		if(document.getElementById('active').checked==true){
+			document.getElementById('uomActive').value=true;
+			document.getElementById('uomActive').checked=true;
 		} else {
-			dom.get('uomActive').value=false;
-			dom.get('uomActive').checked=false;
+			document.getElementById('uomActive').value=false;
+			document.getElementById('uomActive').checked=false;
 		}
 	}
 	
 	function validateFormAndSubmit(){
-		var code= dom.get("code").value;
-		var name= dom.get("name").value;
+		var code= document.getElementById("code").value;
+		var name= document.getElementById("name").value;
 		if (name == '' || name == null){
 			showMessage('uom_error', '<s:text name="tradelic.uommaster.name.null" />');
 			return false;
@@ -128,9 +128,9 @@
 		    if(!(results[0].errorMsg=="" || results[0].errorMsg==null)){
 		    	showMessage('uom_error',results[0].errorMsg);
 		    	if(results[0].paramType=="name")
-			    	dom.get("name").value="";
+			    	document.getElementById("name").value="";
 		    	else if(results[0].paramType=="code")
-			    	dom.get("code").value="";
+			    	document.getElementById("code").value="";
 	 			return false;
 	     	} 
 	    }

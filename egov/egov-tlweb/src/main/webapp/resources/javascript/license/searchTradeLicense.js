@@ -157,8 +157,8 @@ jQuery(document).ready(function() {
 	jQuery(':input').inputmask();
 	drillDowntableContainer = jQuery("#tblSearchTrade");
 	jQuery('#btnsearch').click(function(e) {
-		dom.get("tradeSearchError").style.display='none';
-        dom.get("tradeSearchError").innerHTML='';
+		document.getElementById("tradeSearchError").style.display='none';
+        document.getElementById("tradeSearchError").innerHTML='';
         var applicationNumber = jQuery('#applicationNumber').val();
     	var licenseNumber = jQuery('#licenseNumber').val();
     	var oldLicenseNumber=jQuery('#oldLicenseNumber').val();
@@ -174,8 +174,8 @@ jQuery(document).ready(function() {
 				(category == '-1') && (subCategory == '-1') &&
 				(tradeTitle == null || tradeTitle == "") && (tradeOwnerName == null || tradeOwnerName == "") &&
 				(propertyAssessmentNo == null || propertyAssessmentNo == "") && (mobileNo == null || mobileNo == "")) {
-			dom.get("tradeSearchError").style.display='';
-	        dom.get("tradeSearchError").innerHTML='Cannot Search. Atleast One Search Criteria is Mandatory.';
+			document.getElementById("tradeSearchError").style.display='';
+	        document.getElementById("tradeSearchError").innerHTML='Cannot Search. Atleast One Search Criteria is Mandatory.';
 			return false;
 		}
 		

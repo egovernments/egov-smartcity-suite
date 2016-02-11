@@ -77,11 +77,11 @@ function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValu
 }
 
 function loadDesignationFromMatrix() {
-	var e = dom.get('approverDepartment');
+	var e = document.getElementById('approverDepartment');
 	var dept = e.options[e.selectedIndex].text;
-	var currentState = dom.get('currentState').value;
-	var amountRule = dom.get('amountRule').value;
-	var additionalRule = dom.get('additionalRule').value;
+	var currentState = document.getElementById('currentState').value;
+	var amountRule = document.getElementById('amountRule').value;
+	var additionalRule = document.getElementById('additionalRule').value;
 	var pendingAction = document.getElementById('pendingActions').value;
 	var stateType = '<s:property value="%{stateType}"/>';
 	loadDesignationByDeptAndType(stateType,dept,currentState,amountRule,additionalRule,pendingAction); 

@@ -154,7 +154,7 @@
 					jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
 					}	
 				
-				if(dom.get("mode").value=='view'){
+				if(document.getElementById("mode").value=='view'){
 					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
 					                     'Forward','Reject','button2','Approve']); 
 	                  //remove onclick event for propertyno search button
@@ -167,7 +167,7 @@
 					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
 					</s:if>
 				} 
-				if(dom.get("mode").value=='editForApproval'){
+				if(document.getElementById("mode").value=='editForApproval'){
 					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
 					                     'Forward','Reject','button2','Approve']); 
 	                  //remove onclick event for propertyno search button

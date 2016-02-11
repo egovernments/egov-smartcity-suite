@@ -43,7 +43,7 @@
 	<head>
 		<script type="text/javascript">
 			function onSubmit(){
-			   var licenseNumber= dom.get("licenseNumber").value;
+			   var licenseNumber= document.getElementById("licenseNumber").value;
 				 if (licenseNumber == ""){
 					showMessage('search_error', '<s:text name="searchLicense.licenseNumber.null" />');
 					return false;
