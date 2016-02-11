@@ -53,8 +53,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,8 +63,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -93,7 +94,8 @@ public class ReportService {
     private PropertyTaxUtil propertyTaxUtil;
 
     private DesignationService designationService;
-
+    
+    private @Autowired FinancialYearDAO financialYearDAO;
     /**
      * Method gives List of properties with current and arrear individual demand
      * details
@@ -397,24 +399,32 @@ public class ReportService {
     public void setPropPerServ(PersistenceService propPerServ) {
         this.propPerServ = propPerServ;
     }
-    public List<BillCollectorDailyCollectionReportResult>  getBillCollectorWiseDailyCollection(Date date) {
 
-        List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(0);
+    public List<BillCollectorDailyCollectionReportResult> getBillCollectorWiseDailyCollection(Date date) {
 
+        List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(
+                0);
+        int noofDays = 0;
         final StringBuilder queryBuilder = new StringBuilder(
-                " select bcreport.district,bcreport.ulbname  \"ulbName\" ,bcreport.ulbcode \"ulbCode\" ,billcoll.collectorname,billcoll.mobilenumber,target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection, "
+                " select distinct bcreport.district,bcreport.ulbname  \"ulbName\" ,bcreport.ulbcode \"ulbCode\" ,billcoll.collectorname,billcoll.mobilenumber,target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection, "
                         + " cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
                         + " from EGPT_BILLCOLLECTORWISE_REPORT bcreport, "
-                        + " EGPT_BILLCOLLCTOR_DETAIL billcoll left outer join EGPT_BCREPORT_COLLECTION colln on billcoll.id=colln.billcollector and colln.date=:collDate " // and
+                        + " EGPT_BILLCOLLCTOR_DETAIL billcoll left outer join EGPT_BCREPORT_COLLECTION colln on billcoll.id=colln.billcollector and colln.date<=:collDate " // and
                                                                                                                                                                            // colln.date::date=:collDate
                         + " where bcreport.id=billcoll.bcreportid   order by district,ulbname,collectorname ");
-       
+
         final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
         query.setDate("collDate", date);
-        query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));    
-    
+        query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
+
         listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
-        
+
+        if (financialYearDAO != null && listBcPayment.size() > 0) {
+
+            CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
+            if (currentFinancialYear != null)
+                noofDays = DateUtils.noOfDays(new Date(), currentFinancialYear.getEndingDate());
+        }
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             if (bcResult.getTarget_arrears_demand() == null)
@@ -423,60 +433,81 @@ public class ReportService {
                 bcResult.setTarget_current_demand(0.0);
 
             bcResult.setTarget_total_demand(bcResult.getTarget_arrears_demand() + bcResult.getTarget_current_demand());
-            bcResult.setDay_target(BigDecimal.valueOf(bcResult.getTarget_total_demand())
-                    .divide(BigDecimal.valueOf(365), 2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP));
-      
-           if (bcResult.getToday_arrears_collection() == null)
-               bcResult.setToday_arrears_collection(0.0);
-           if (bcResult.getToday_currentyear_collection() == null)
-               bcResult.setToday_currentyear_collection(0.0);
-           
-           bcResult.setToday_total_collection(bcResult.getToday_arrears_collection() + bcResult.getToday_currentyear_collection());
-           
-           if (bcResult.getCummulative_arrears_collection() == null)
-               bcResult.setCummulative_arrears_collection(0.0);
-           if (bcResult.getCummulative_currentyear_collection() == null)
-               bcResult.setCummulative_currentyear_collection(0.0);
-           bcResult.setCummulative_total_Collection(bcResult.getCummulative_arrears_collection() + bcResult.getCummulative_currentyear_collection());
-           if(bcResult.getCummulative_total_Collection()>0)
-            bcResult.setCummulative_currentYear_Percentage(((BigDecimal.valueOf(bcResult.getCummulative_total_Collection ()).divide(BigDecimal.valueOf(bcResult.getTarget_total_demand()),4, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(100))).setScale(2, RoundingMode.HALF_UP));
-           
-           if (bcResult.getLastyear_collection() == null)
-               bcResult.setLastyear_collection(0.0);
-           else
-               bcResult.setLastyear_collection((double) Math.round(bcResult.getLastyear_collection()));
-           
-           if (bcResult.getLastyear_cummulative_collection() == null)
-               bcResult.setLastyear_cummulative_collection(0.0);
-           else
-               bcResult.setLastyear_cummulative_collection((double) Math.round(bcResult.getLastyear_cummulative_collection()));
-           bcResult.setPercentage_compareWithLastYear(bcResult.getCummulative_total_Collection() -  bcResult.getLastyear_cummulative_collection());
-          
-           if(bcResult.getLastyear_cummulative_collection()>0)
-           bcResult.setGrowth((BigDecimal.valueOf(
-                   bcResult.getCummulative_total_Collection() - bcResult.getLastyear_cummulative_collection()).divide(
-                   BigDecimal.valueOf(bcResult.getLastyear_cummulative_collection()),4, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
-           else
-               bcResult.setGrowth((BigDecimal.ZERO));
-       }
-        
+
+            if (bcResult.getToday_arrears_collection() == null)
+                bcResult.setToday_arrears_collection(0.0);
+            if (bcResult.getToday_currentyear_collection() == null)
+                bcResult.setToday_currentyear_collection(0.0);
+
+            bcResult.setToday_total_collection(bcResult.getToday_arrears_collection()
+                    + bcResult.getToday_currentyear_collection());
+
+            if (bcResult.getCummulative_arrears_collection() == null)
+                bcResult.setCummulative_arrears_collection(0.0);
+            if (bcResult.getCummulative_currentyear_collection() == null)
+                bcResult.setCummulative_currentyear_collection(0.0);
+
+            bcResult.setCummulative_total_Collection(bcResult.getCummulative_arrears_collection()
+                    + bcResult.getCummulative_currentyear_collection());
+
+            if (noofDays > 0) {
+                bcResult.setDay_target(BigDecimal
+                        .valueOf(bcResult.getTarget_total_demand() - bcResult.getCummulative_total_Collection())
+                        .divide(BigDecimal.valueOf(noofDays), 4, RoundingMode.HALF_UP)
+                        .setScale(2, RoundingMode.HALF_UP));
+            } else
+                bcResult.setDay_target(BigDecimal.ZERO);
+
+            if (bcResult.getCummulative_total_Collection() > 0)
+                bcResult.setCummulative_currentYear_Percentage(((BigDecimal.valueOf(bcResult
+                        .getCummulative_total_Collection()).divide(
+                        BigDecimal.valueOf(bcResult.getTarget_total_demand()), 4, RoundingMode.HALF_UP))
+                        .multiply(BigDecimal.valueOf(100))).setScale(2, RoundingMode.HALF_UP));
+
+            if (bcResult.getLastyear_collection() == null)
+                bcResult.setLastyear_collection(0.0);
+            else
+                bcResult.setLastyear_collection((double) Math.round(bcResult.getLastyear_collection()));
+
+            if (bcResult.getLastyear_cummulative_collection() == null)
+                bcResult.setLastyear_cummulative_collection(0.0);
+            else
+                bcResult.setLastyear_cummulative_collection((double) Math.round(bcResult
+                        .getLastyear_cummulative_collection()));
+            bcResult.setPercentage_compareWithLastYear(bcResult.getCummulative_total_Collection()
+                    - bcResult.getLastyear_cummulative_collection());
+
+            if (bcResult.getLastyear_cummulative_collection() > 0)
+                bcResult.setGrowth((BigDecimal.valueOf(bcResult.getCummulative_total_Collection()
+                        - bcResult.getLastyear_cummulative_collection()).divide(
+                        BigDecimal.valueOf(bcResult.getLastyear_cummulative_collection()), 4, RoundingMode.HALF_UP))
+                        .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
+            else
+                bcResult.setGrowth((BigDecimal.ZERO));
+        }
+
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
-            
-            bcResult.setTarget_arrears_demand( formatAmt(bcResult.getTarget_arrears_demand()).doubleValue());
-            bcResult.setTarget_current_demand( formatAmt(bcResult.getTarget_current_demand()).doubleValue());
-            bcResult.setTarget_total_demand( formatAmt(bcResult.getTarget_total_demand()).doubleValue());
+
+            bcResult.setTarget_arrears_demand(formatAmt(bcResult.getTarget_arrears_demand()).doubleValue());
+            bcResult.setTarget_current_demand(formatAmt(bcResult.getTarget_current_demand()).doubleValue());
+            bcResult.setTarget_total_demand(formatAmt(bcResult.getTarget_total_demand()).doubleValue());
             bcResult.setDay_target(formatAmt(bcResult.getDay_target().doubleValue()));
             bcResult.setToday_total_collection(formatAmt(bcResult.getToday_total_collection()).doubleValue());
-            bcResult.setCummulative_arrears_collection(formatAmt(bcResult.getCummulative_arrears_collection()).doubleValue());
-            bcResult.setCummulative_currentyear_collection(formatAmt(bcResult.getCummulative_currentyear_collection()).doubleValue());
-            bcResult.setCummulative_total_Collection(formatAmt(bcResult.getCummulative_total_Collection()).doubleValue());
-            bcResult.setPercentage_compareWithLastYear(formatAmt(  bcResult.getPercentage_compareWithLastYear()).doubleValue());
+            bcResult.setCummulative_arrears_collection(formatAmt(bcResult.getCummulative_arrears_collection())
+                    .doubleValue());
+            bcResult.setCummulative_currentyear_collection(formatAmt(bcResult.getCummulative_currentyear_collection())
+                    .doubleValue());
+            bcResult.setCummulative_total_Collection(formatAmt(bcResult.getCummulative_total_Collection())
+                    .doubleValue());
+            bcResult.setPercentage_compareWithLastYear(formatAmt(bcResult.getPercentage_compareWithLastYear())
+                    .doubleValue());
             bcResult.setLastyear_collection(formatAmt(bcResult.getLastyear_collection()).doubleValue());
-            bcResult.setLastyear_cummulative_collection(formatAmt(bcResult.getLastyear_cummulative_collection()).doubleValue());
-         }
-       return listBcPayment; 
+            bcResult.setLastyear_cummulative_collection(formatAmt(bcResult.getLastyear_cummulative_collection())
+                    .doubleValue());
+        }
+        return listBcPayment;
 
-   }
+    }
     
     public BigDecimal formatAmt(double amt) {
         BigDecimal result = new BigDecimal(0.000);

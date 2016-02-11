@@ -122,11 +122,10 @@
 		</div>
 				
 		<div class="col-md-12">
-	
-				<div class="text-center">
-						<button type="button" class="btn btn-default" data-dismiss="modal"
+		<div class="text-center">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" data-dismiss="modal"
 						onclick="window.close();">
-						<spring:message code="lbl.close" />
+						&nbsp;&nbsp;&nbsp;<spring:message code="lbl.close" />&nbsp;&nbsp;&nbsp;
 					</button>
 				</div>
 			</div>
