@@ -220,7 +220,7 @@ public class DayBookList
                         + ",vh.name ||' - '|| vh.TYPE AS "
                         + "type"
                         + ", "
-                      +  " CASE WHEN vh.description = null THEN ' ' ELSE vh.description END AS narration, " 
+                      +  " CASE WHEN vh.description is null THEN ' ' ELSE vh.description END AS narration, " 
 +" CASE  WHEN status=0 THEN ( 'Approved') "
 +" ELSE ( case WHEN status=1 THEN 'Reversed' else (case WHEN status=2 THEN 'Reversal' else ' ' END) END ) END as \"status\" , debitamount  , "
                         +
