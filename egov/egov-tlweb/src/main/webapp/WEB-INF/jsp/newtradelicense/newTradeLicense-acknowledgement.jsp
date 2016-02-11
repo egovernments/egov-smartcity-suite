@@ -54,7 +54,6 @@
 </script>
 </head>
 <body onload="refreshInbox()">
-	<center>
 	<div id="main">
 		<div class="row">
 			<div class="col-md-12">
@@ -150,6 +149,5 @@
 				type="button" id="close" value="Close" class="button"
 				onclick="javascript:window.close();" />
 		</div>
-	</center>
 </body>
 </html>

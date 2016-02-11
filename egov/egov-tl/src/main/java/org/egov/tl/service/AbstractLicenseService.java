@@ -533,7 +533,7 @@ public abstract class AbstractLicenseService<T extends License> {
          */
         final LicenseAppType appType = getLicenseApplicationTypeForRenew();
         final NatureOfBusiness nature = getNatureOfBusiness();
-        // commented need to be completed after fee matrix
+        //TODO Fee calculations
         final List<FeeMatrix> feeList = Collections.emptyList();//feeService.getFeeList(license.getTradeName(), appType, nature);
         final BigDecimal totalAmount = BigDecimal.ZERO;
         // feeService.calculateFee(license, license.getTradeName(), getLicenseApplicationTypeForRenew(),
@@ -563,7 +563,7 @@ public abstract class AbstractLicenseService<T extends License> {
     public T createDemandForViolationFee(T license) {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
         license = (T) license.raiseDemandForViolationFee(installment, license);
-        persistenceService.update(license);
+        licensePersitenceService().update(license);
         return license;
     }
 
@@ -664,12 +664,6 @@ public abstract class AbstractLicenseService<T extends License> {
         return blockBoundary;
 
     }
-
-    /*
-     * public TradeLicenseSmsAndEmailService getTradeLicenseSmsAndEmailService() { return tradeLicenseSmsAndEmailService; } public
-     * void setTradeLicenseSmsAndEmailService(TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
-     * this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService; }
-     */
 
     public List<Installment> getLastFiveYearInstallmentsForLicense() {
         return installmentDao.fetchInstallments(getModuleName(), new Date(), 6);

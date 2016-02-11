@@ -152,8 +152,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
         prepareNewForm();
-        if (tradeLicense.getState() != null && !tradeLicense.getState().getValue().isEmpty())
-            tradeLicense.transition(true).withStateValue("");
         return super.beforeRenew();
     }
 
