@@ -167,6 +167,28 @@
 			}catch(e){
 			console.warn("No Date Picker");
 		}
+
+		/*Restrict back button*/
+		history.pushState({ page: 1 }, "Title 1", "#no-back");
+		window.onhashchange = function (event) {
+		  window.location.hash = "no-back";
+		};
+
+		/*Restrict page refresh*/
+		window.document.onkeydown = function(event) { 
+		   	 switch (event.keyCode) { 
+		        case 116 : //F5 button
+		            event.returnValue = false;
+		            event.keyCode = 0;
+		            return false; 
+		        case 82 : //R button
+		            if (event.ctrlKey) { //Ctrl button
+		                event.returnValue = false; 
+		                event.keyCode = 0;  
+		                return false; 
+		            } 
+		    }
+		}
 	  </script>
 	  
 	   
