@@ -51,9 +51,10 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
@@ -66,18 +67,16 @@
 		
 	</head>
 	<body  class="page-body">
-		<div class="page-container">	
+		<div class="page-container">
+			<tiles:insertAttribute name="header"/>	
 			<div class="main-content">
 				<div class="page-error-404">
-					<div class="error-symbol">
-						<i class="entypo-attention"></i>
-					</div>
-					
 					<div class="error-text">
 						<tiles:insertAttribute name="body" />
 					</div>
+				</div>
 			</div>
+			<tiles:insertAttribute name="footer"/>
 		</div>
-	</div>
-</body>
+	</body>
 </html>
