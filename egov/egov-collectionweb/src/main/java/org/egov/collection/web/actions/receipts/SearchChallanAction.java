@@ -52,7 +52,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -97,7 +96,9 @@ public class SearchChallanAction extends BaseFormAction {
         super();
     }
 
+    @Action(value = "/receipts/searchChallan-reset")
     public String reset() {
+        departmentId = (long) -1;
         results = null;
         serviceId = (long) -1;
         serviceCategoryId = (long) -1;

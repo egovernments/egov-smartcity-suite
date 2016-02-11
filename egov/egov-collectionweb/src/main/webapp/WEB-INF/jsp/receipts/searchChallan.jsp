@@ -151,7 +151,7 @@
 	 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
     <div class="buttonbottom">
       <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search"  onclick="document.searchChallanForm.action='searchChallan-search.action'; return validate();"/></label>&nbsp;
-      <label><s:submit type="submit" cssClass="button" value="Reset" method="reset"/></label>&nbsp;
+      <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchChallanForm.action='searchChallan-reset.action';"/></label>&nbsp;
       <input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
 </div>
 <logic:notEmpty name="results">
