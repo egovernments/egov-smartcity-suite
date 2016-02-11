@@ -795,6 +795,7 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
                 applicationIndex.setApproved(ApprovalStatus.UNKNOWN);
                 applicationIndex.setClosed(ClosureStatus.NO);
+                applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
                 else
@@ -831,7 +832,7 @@ public class WaterConnectionDetailsService {
                         .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED))
                 {
                     applicationIndex.setApproved(ApprovalStatus.REJECTED);
-                    applicationIndex.setClosed(ClosureStatus.NO);
+                    applicationIndex.setClosed(ClosureStatus.YES);
                 }
                 if (waterConnectionDetails.getConnection().getConsumerCode() != null)
                     applicationIndex.setConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
