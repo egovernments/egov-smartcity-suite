@@ -457,7 +457,7 @@ function createLongTextFieldFormatter(prefix,suffix,table){
     return function(el, oRecord, oColumn, oData) {
      var rec=billDetailTableIndex;
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"'  style='width:350px;' onfocus='autocompletecode(this,event)' autocomplete='off'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"'  style='width:350px;' onfocus='autocompletecode(this,event)' autocomplete='off'  onblur='fillNeibrAfterSplitGlcode(this)'/>";
 	}
 }
 
@@ -958,19 +958,20 @@ function fillNeibrAfterSplitFunction(obj)
 		temp1=temp1.split("`~`");
 		obj.value=temp1[0];
 		document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value=temp[1];
-	}else if(temp == ''){
+	} else if(temp == '') 
+	{
 		obj.value='';
 		document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value='';
 	}
-	
-	
 }
+
 function fillNeibrAfterSplitGlcode(obj)
 {
 
 	var temp = obj.value;
 	temp = temp.split("`-`");
 	var currRow=getRowIndex(obj);
+	var glcodeId = document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value;
 	if(temp.length>1)
 	{ 
 		obj.value=temp[0];
@@ -978,7 +979,8 @@ function fillNeibrAfterSplitGlcode(obj)
 		document.getElementById('billDetailslist['+currRow+'].glcodeDetail').value=temp[1];
 		check();
 	}
-	else{
+	else if(glcodeId==null || glcodeId=="")
+	{
 		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
 		document.getElementById('billDetailslist['+currRow+'].glcodeDetail').value="";
 		document.getElementById('billDetailslist['+currRow+'].accounthead').value="";
@@ -1269,14 +1271,6 @@ var src = obj;
 				codeObj.applyLocalFilter = true;
 				codeObj.queryMatchContains = true;
 				oAutoComp.minQueryLength = 0;
-				console.log(oAutoComp);
-				/*var textboxChangeEvent=function(sType, args)
-				{
-					console.log('called!');
-					fillNeibrAfterSplitGlcode(coaCodeObj);
-				};
-				
-				oAutoComp.textboxChangeEvent.subscribe(textboxChangeEvent);*/
 			}
 		}
 		yuiflag[currRow] = 1;
