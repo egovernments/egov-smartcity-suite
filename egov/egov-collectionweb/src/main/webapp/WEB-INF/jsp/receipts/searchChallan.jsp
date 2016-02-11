@@ -60,6 +60,10 @@
 	var leftPos=document.body.clientWidth;
 	window.open ("${pageContext.request.contextPath}"+"/receipts/challan-viewChallan.action?sourcePage=search&receiptId="+receiptId,"ViewChallan","resizable=yes,scrollbars=yes,left="+leftPos+",top=40, width=900, height=650"); 
 	}
+
+   function  populateService(serviceCategory){
+    	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
+    }
 	
 	function validate()
 {
@@ -164,7 +168,7 @@
 </div>
 </display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="challan.challanDate" title="Challan Date" format="{0,date,dd/MM/yyyy}" style="width:10%;text-align: center" />
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Type" style="width:20%" ><div align="center"><s:hidden name="currentRow.challan.service.name" value="%{currentRow.challan.service.name}"/>  <c:if test="${not empty currentRow.challan.service.name}">   <c:out value="${currentRow.challan.service.name}"/></c:if>&nbsp;</div></display:column>
+<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Type" style="width:20%" ><div align="center"><s:hidden name="currentRow.service.name" value="%{currentRow.service.name}"/>  <c:if test="${not empty currentRow.service.name}">   <c:out value="${currentRow.service.name}"/></c:if>&nbsp;</div></display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptMisc.fund.name" title="Fund" style="width:20%;text-align: center" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptMisc.department.name" title="Department" style="width:20%;text-align: center" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="totalAmount" title="Amount (Rs.)" format="{0, number, #,##0.00}" style="width:20%;text-align: center" />

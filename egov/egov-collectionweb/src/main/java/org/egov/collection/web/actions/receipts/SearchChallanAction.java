@@ -42,6 +42,7 @@ package org.egov.collection.web.actions.receipts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class SearchChallanAction extends BaseFormAction {
     private Long serviceCategoryId = (long) -1;
     private Date fromDate;
     private Date toDate;
-    private Integer status =-1;
+    private Integer status = -1;
     private Long departmentId = (long) -1;
     private String challanNumber;
     private List<ReceiptHeader> results = new ArrayList<ReceiptHeader>(0);
@@ -85,8 +86,11 @@ public class SearchChallanAction extends BaseFormAction {
         addDropdownData("departmentList",
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
         addDropdownData("serviceCategoryList", getPersistenceService().findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
-        addDropdownData("serviceList",getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CHALLAN_SERVICES,
-                        CollectionConstants.SERVICE_TYPE_COLLECTION));
+        if (null != serviceCategoryId && serviceCategoryId != -1)
+            addDropdownData("serviceList",  getPersistenceService().findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",serviceCategoryId,
+                    CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+        else
+            addDropdownData("serviceList",Collections.EMPTY_LIST);
     }
 
     public SearchChallanAction() {
@@ -105,7 +109,8 @@ public class SearchChallanAction extends BaseFormAction {
     }
 
     public List getChallanStatuses() {
-        return persistenceService.findAllBy("select distinct s from ReceiptHeader receipt inner join receipt.challan.status s");
+        return persistenceService
+                .findAllBy("select distinct s from ReceiptHeader receipt inner join receipt.challan.status s");
     }
 
     @Action(value = "/receipts/searchChallan-search")
