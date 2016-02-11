@@ -325,6 +325,12 @@ public class ContingentBillAction extends BaseBillAction {
         try {
             voucherHeader.setVoucherDate(commonBean.getBillDate());
             voucherHeader.setVoucherNumber(commonBean.getBillNumber());
+            if (commonBean.getFunctionId() != null) {
+                CFunction function1 = (CFunction) getPersistenceService().find(" from CFunction where id=?",
+                        commonBean.getFunctionId().longValue());
+                
+                voucherHeader.getVouchermis().setFunction(function1);
+            }
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
             // update DirectBankPayment source path
             headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill-beforeView.action?billRegisterId=");
@@ -335,12 +341,7 @@ public class ContingentBillAction extends BaseBillAction {
             bill = checkBudgetandGenerateNumber(bill);
             // this code should be removed when we enable single function centre change
 
-            if (commonBean.getFunctionId() != null) {
-                CFunction function = (CFunction) getPersistenceService().find(" from CFunction where id=?",
-                        commonBean.getFunctionId().longValue());
-                // CFunction function = commonsService.getCFunctionById(commonBean.getFunctionId().longValue());
-                voucherHeader.getVouchermis().setFunction(function);
-            }
+            
 
             validateFields();
             if (!isBillNumberGenerationAuto())
