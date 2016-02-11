@@ -167,6 +167,20 @@
 					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
 					</s:if>
 				} 
+				if(dom.get("mode").value=='editForApproval'){
+					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
+					                     'Forward','Reject','button2','Approve']); 
+	                  //remove onclick event for propertyno search button
+	                  document.getElementById("tradeArea_weight").disabled=false;
+					  jQuery("#searchImg").removeAttr("onclick");
+					  // remove onclick event for add and delete button having class = add-padding
+					  jQuery('.add-padding').attr('onclick','').unbind('click');
+					  // renaming approver remarks label for second level of workflow
+					  <s:if test="%{getNextAction()!='END'}">
+					 	 jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+					</s:if>
+				} 
 			}
 			
 			function formatCurrency(obj) {
@@ -182,7 +196,8 @@
         	}
 
     		function onSubmit() {
-    			<s:if test="%{mode!=null && (mode=='view' && mode!='editForReject')}">
+        		var mode=document.getElementById("mode").value;
+    			<s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval') &&  mode!='editForReject' )}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';

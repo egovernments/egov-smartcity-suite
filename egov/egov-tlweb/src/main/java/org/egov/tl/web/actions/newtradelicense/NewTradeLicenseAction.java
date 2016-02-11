@@ -124,6 +124,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             mode = VIEW;
         if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
             mode = "editForReject";
+        if (license().getState().getValue().contains(Constants.WF_STATE_INSPECTION_PENDING))
+            mode = "editForApproval";
         return super.showForApproval();
     }
 
