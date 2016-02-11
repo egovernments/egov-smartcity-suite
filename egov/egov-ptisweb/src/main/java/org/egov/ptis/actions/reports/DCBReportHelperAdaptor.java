@@ -19,23 +19,23 @@ public class DCBReportHelperAdaptor implements JsonSerializer<DCBReportResult> {
             jsonObject.addProperty("houseNo", dCBReportObj.getHouseNo());
 
             jsonObject.addProperty("dmnd_arrearPT", dCBReportObj.getDmnd_arrearPT());
-            jsonObject.addProperty("dmnd_arrearLC", dCBReportObj.getDmnd_arrearLC());
+            //jsonObject.addProperty("dmnd_arrearLC", dCBReportObj.getDmnd_arrearLC());
             jsonObject.addProperty("dmnd_arrearTotal", dCBReportObj.getDmnd_arrearTotal());
 
             jsonObject.addProperty("dmnd_currentPT", dCBReportObj.getDmnd_currentPT());
-            jsonObject.addProperty("dmnd_currentLC", dCBReportObj.getDmnd_currentLC());
+           // jsonObject.addProperty("dmnd_currentLC", dCBReportObj.getDmnd_currentLC());
             jsonObject.addProperty("dmnd_currentTotal", dCBReportObj.getDmnd_currentTotal());
             jsonObject.addProperty("totalDemand", dCBReportObj.getTotalDemand());
 
             jsonObject.addProperty("clctn_arrearPT", dCBReportObj.getClctn_arrearPT());
-            jsonObject.addProperty("clctn_arrearLC", dCBReportObj.getClctn_arrearLC());
+           // jsonObject.addProperty("clctn_arrearLC", dCBReportObj.getClctn_arrearLC());
             jsonObject.addProperty("clctn_arrearPFT", dCBReportObj.getClctn_arrearPFT());
             jsonObject.addProperty("clctn_arrearTotal", dCBReportObj.getClctn_arrearTotal());
 
             jsonObject.addProperty("clctn_currentPT", dCBReportObj.getClctn_currentPT());
-            jsonObject.addProperty("clctn_currentLC", dCBReportObj.getClctn_currentLC());
-            jsonObject.addProperty("clctn_currentPFT", dCBReportObj.getClctn_currentPFT());
-            jsonObject.addProperty("clctn_currentTotal", dCBReportObj.getClctn_currentTotal());
+           // jsonObject.addProperty("clctn_currentLC", dCBReportObj.getClctn_currentLC());
+            jsonObject.addProperty("clctn_currentPFT", dCBReportObj.getClctn_currentPFT()); 
+            jsonObject.addProperty("clctn_currentTotal", dCBReportObj.getClctn_currentTotal()); 
             jsonObject.addProperty("totalCollection", dCBReportObj.getTotalCollection());
 
             jsonObject.addProperty("bal_arrearPT", dCBReportObj.getBal_arrearPT());
@@ -44,5 +44,4 @@ public class DCBReportHelperAdaptor implements JsonSerializer<DCBReportResult> {
         }
         return jsonObject;
     }
-
 }

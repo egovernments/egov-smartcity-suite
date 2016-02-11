@@ -55,11 +55,10 @@ jQuery(document).ready(function() {
 	jQuery('#btnsearch').click(function(e) {
 		dom.get("dcbError").style.display='none';
         dom.get("dcbError").innerHTML='';
-        jQuery('#mode').val("ward");
 		if(jQuery('#wardId').val()=="-1"){
 			dom.get("dcbError").style.display='';
-	        dom.get("dcbError").innerHTML='Please select ward';
-	        dom.get('wardId').focus();
+	        dom.get("dcbError").innerHTML='Please select ward'; 
+	        dom.get('wardId').focus(); 
 			return false;
 		}
 		callAjaxByBoundary();
@@ -70,23 +69,25 @@ jQuery(document).ready(function() {
 		var valArray=temp.split('-');
 		if(jQuery('#mode').val()=='property'){
 			if(valArray.length>0){
-				var propVal=valArray[2].split('~');
+				var propVal=valArray[1].split('~');
 				if(propVal.length>0){
 					jQuery('#mode').val(propVal[0]);
 					jQuery('#boundaryId').val(propVal[1]);
 				}
-				jQuery('#selectedModeBndry').val(valArray[0]+"-"+valArray[1]);
+				jQuery('#selectedModeBndry').val(valArray[0]);
 			}
 		} else if(jQuery('#mode').val()=='block'){
 			if(valArray.length>0){
-				var blockVal=valArray[1].split('~');
+				var blockVal=valArray[0].split('~');
 				if(blockVal.length>0){
 					jQuery('#mode').val(blockVal[0]);
 					jQuery('#boundaryId').val(blockVal[1]);
 				}
-				jQuery('#selectedModeBndry').val(valArray[0]);
+				jQuery('#selectedModeBndry').val('');
 			}
-		} else if(jQuery('#mode').val()=='ward'){
+		} 
+		//Commented as part of PHOENIX-2373 fix and for WardWise DCB
+		/*else if(jQuery('#mode').val()=='ward'){
 			if(valArray.length>0){
 				var wardVal=valArray[0].split('~');
 				if(wardVal.length>0){
@@ -95,7 +96,7 @@ jQuery(document).ready(function() {
 				}
 				jQuery('#selectedModeBndry').val('');
 			}
-		} 
+		} */
 		callAjaxByBoundary(); 
 	});
 
@@ -135,6 +136,7 @@ function callAjaxByBoundary() {
 	}
 	jQuery('.report-section').removeClass('display-hide');
 	jQuery('#report-footer').show();
+
 	
 	reportdatatable = drillDowntableContainer
 			.dataTable({
@@ -175,19 +177,19 @@ function callAjaxByBoundary() {
 						{
 							"data" : "dmnd_arrearPT",
 							"sTitle" : "Arrear Property Tax"
-						}, {
+						}, /*{
 							"data" : "dmnd_arrearLC",
 							"sTitle" : "Arrear LibraryCess"
-						}, {
+						},*/ {
 							"data" : "dmnd_arrearTotal",
 							"sTitle" : "Arrear Total"
 						}, {
 							"data" : "dmnd_currentPT",
 							"sTitle" : "Current Property Tax"
-						}, {
+						}, /*{
 							"data" : "dmnd_currentLC",
 							"sTitle" : "Current LibraryCess"
-						}, {
+						},*/ {
 							"data" : "dmnd_currentTotal",
 							"sTitle" : "Current Total"
 						}, {
@@ -196,10 +198,10 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "clctn_arrearPT",
 							"sTitle" : "Arrear Property Tax"
-						}, {
+						}, /*{
 							"data" : "clctn_arrearLC",
 							"sTitle" : "Arrear LibraryCess"
-						}, {
+						},*/ {
 							"data" : "clctn_arrearPFT",
 							"sTitle" : "Penalty On Arrear"
 						}, {
@@ -208,10 +210,10 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "clctn_currentPT",
 							"sTitle" : "Current Property Tax"
-						}, {
+						}, /*{
 							"data" : "clctn_currentLC",
 							"sTitle" : "Current LibraryCess"
-						}, {
+						},*/ {
 							"data" : "clctn_currentPFT",
 							"sTitle" : "Penalty On Current"
 						}, {
@@ -238,14 +240,14 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						for(var i=2;i<=20;i++)
+						for(var i=2;i<=16;i++)
 						{
 						  updateTotalFooter(i, api);	
 						}
 					}
-				},
+				}, 
 				"aoColumnDefs" : [ {
-					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16], 
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}

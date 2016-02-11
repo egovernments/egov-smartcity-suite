@@ -92,38 +92,38 @@
 						<thead>
                             <tr>
                              <th rowspan="2">Name</th>
-                             <th colspan="7">Demand</th>
-                             <th colspan="9">Collection</th>
-                             <th colspan="3">Balance</th>
+                             <th colspan="5">Demand</th>
+                             <th colspan="7">Collection</th>
+                             <th colspan="4">Balance</th>
                             </tr>
 
 							<tr>
 							    <th>Door No</th>
 								<th>Arrear
 									Property Tax</th>
-								<th>Arrear
-									LibraryCess</th>
+								<!-- <th>Arrear
+									LibraryCess</th> -->
 								<th>Arrear
 									Total</th>
 								<th>Current
 									Property Tax</th>
-								<th>Current
-									LibraryCess</th>
+								<!-- <th>Current
+									LibraryCess</th> -->
 								<th>Current Total</th>
 								<th>Total
 									Demand</th>
 								<th>Arrear
 									Property Tax</th>
-								<th>Arrear
-									LibraryCess</th>
+								<!-- <th>Arrear
+									LibraryCess</th> -->
 								<th>Penalty
 									On Arrear</th>
 								<th>Arrear
 									Total</th>
 								<th>Current
 									Property Tax</th>
-								<th>Current
-									LibraryCess</th>
+								<!-- <th>Current
+									LibraryCess</th> -->
 								<th>Position</th>
 								<th>Current
 									Total</th>
@@ -154,10 +154,10 @@
 								<td></td>
 								<td></td>
 								<td></td>
+							<!-- 	<td></td>
 								<td></td>
 								<td></td>
-								<td></td>
-								<td></td>
+								<td></td> -->
 							</tr>
 						</tfoot> 
 					</table>
