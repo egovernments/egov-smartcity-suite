@@ -271,7 +271,6 @@
 				
 				jQuery("table.feedetails tbody tr").each(function (index) {
 					var rowval = jQuery(this).find("input.feeamount").val();
-					console.log(index+'-->'+rowval);
 					if(parseFloat(rowval) > 0){
 						globalindex = index;
 						validated = true;

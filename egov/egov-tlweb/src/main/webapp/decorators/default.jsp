@@ -67,7 +67,6 @@
 		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
-		<link href="<c:url value='/resources/css/modalbox.css'/>" rel="stylesheet" type="text/css"/>
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 	    <script type="text/javascript" src="<c:url value='/commonjs/calender.js' context='/egi'/>" ></script> 
 		<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
@@ -76,9 +75,7 @@
 		<script type="text/javascript" src="<c:url value='/resources/javascript/license-common.js'/>"></script>
 		
 		<script type="text/javascript" src="<c:url value='/resources/js/helper.js'/>"></script>
-		<%-- <script type="text/javascript" src="<c:url value='/resources/js/prototype.js'/>"></script>  --%>
-   		<script type="text/javascript" src="<c:url value='/resources/js/scriptaculous.js?load=effects'/>"></script>
-   		<script type="text/javascript" src="<c:url value='/resources/js/modalbox.js'/>"></script> 
+		
    		<script type="text/javascript" src="<c:url value='/resources/js/pt.js'/>"></script> 
    		
 	    <script type="text/javascript" src="<c:url value='/resources/js/ajax-script.js'/>"></script>
