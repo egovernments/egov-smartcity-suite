@@ -1500,7 +1500,7 @@ var  currRow=getRowIndex(obj);
 
 			if(onElementFocused(obj)){
 				ShowImage(obj);//To start loading image
-				var url =   path+ "/receipts/ajaxReceiptCreate!getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
+				var url =   path+ "/receipts/ajaxReceiptCreate-getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
 				var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackAutoCompleteEntities, null);
 			}
 		}

@@ -240,12 +240,11 @@ function validateSubLedgerDetail(){
 						var subledgerid = document.getElementById('subLedgerlist['+j+'].glcode.id');
 						var detailtypeid = document.getElementById('subLedgerlist['+j+'].detailType.id');
 						var detailKeyid = document.getElementById('subLedgerlist['+j+'].detailKeyId').value
-					
-							var subledgerAccCode =0;
+						var subledgerAccCode =0;
 						if(subledgerid!='null')
 							subledgerAccCode= subledgerid.options[subledgerid.selectedIndex].value;
 						
-						if( ( subledgerAccCode !=0) && (detailtypeid.value == "" || detailKeyid ==""))
+						if( ( subledgerAccCode !=0) && (detailtypeid.value == "" || detailtypeid.value == 0 || detailKeyid ==""))
 						{
 								document.getElementById('challan_error_area').innerHTML += "Please enter subledger details correctly<br>";
 								return false;
@@ -1180,7 +1179,7 @@ function validateDetailCode(obj)
 	var index = getRowIndex(obj);
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
-	var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
+	var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackCode, null);
 }
 var callbackCode = {
