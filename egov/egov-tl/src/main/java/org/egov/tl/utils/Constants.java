@@ -765,5 +765,7 @@ public class Constants {
         public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
         public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
         public static final String BLOCK = "Block";
+        
+        public static final String PENALTY_DMD_REASON_CODE = "Penalty";
 }
 

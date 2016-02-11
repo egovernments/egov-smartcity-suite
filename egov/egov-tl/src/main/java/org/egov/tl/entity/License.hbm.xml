@@ -133,7 +133,9 @@
 		<property name="feeTypeStr" column="FEETYPETEXT" />
 		<property name="agreementDocNo" column="AGREEMENT_DOCUMENT_NO" type="java.lang.String"/>
 		<property name="agreementDate" column="AGREEMENT_DATE" type="java.util.Date"/>
-		
+		<many-to-one name="licenseAppType" class="org.egov.tl.entity.LicenseAppType" fetch="select" not-null="true" >
+			<column name="licenseAppType" precision="22" scale="0" />
+		</many-to-one>
 		<set name="demandSet" cascade="all,delete,delete-orphan" inverse="true" fetch="select">
 			<key>
 				<column name="ID_LICENSE" precision="22" scale="0" />

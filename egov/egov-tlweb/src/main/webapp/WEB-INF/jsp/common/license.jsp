@@ -122,8 +122,8 @@ function getUom(){
     
 	<label class="col-sm-2 control-label text-right"><s:text name='license.startdate' /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-	<s:date name="startDate" id="formattedStartDate" format="dd/MM/yyyy" />
-	<s:textfield name="startDate" cssClass="form-control datepicker" required="true" data-date-end-date="0d" id="startDate"  maxlength="10" value="%{formattedStartDate}"/>
+	<s:date name="dateOfCreation" id="formattedStartDate" format="dd/MM/yyyy" />
+	<s:textfield name="dateOfCreation" cssClass="form-control datepicker" required="true" data-date-end-date="0d" id="startDate"  maxlength="10" value="%{formattedStartDate}"/>
     </div>
 </div>
 <s:if test="%{feeAmount != 0}">
