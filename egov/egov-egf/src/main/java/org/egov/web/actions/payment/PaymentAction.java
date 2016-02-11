@@ -539,20 +539,18 @@ public class PaymentAction extends BasePaymentAction {
                     " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
 
             egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for financial expense bills
-            final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for external
-            // systems
-            final String cBillSql = cBillmainquery + " and bill.status in (?,?) " + sql.toString()
+            final String cBillSql = cBillmainquery + " and bill.status in (?) " + sql.toString()
                     + " order by bill.billdate desc";
-            final String cBillSql1 = cBillmainquery1 + " and bill.status in (?,?) " + sql.toString()
+            final String cBillSql1 = cBillmainquery1 + " and bill.status in (?) " + sql.toString()
                     + " order by bill.billdate desc";
             contingentBillList = getPersistenceService().findPageBy(cBillSql, 1, 500,
-                    FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList();
+                    FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList();
             if (contingentBillList != null)
                 contingentBillList.addAll(getPersistenceService().findPageBy(cBillSql1, 1, 500,
-                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList());
+                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList());
             else
                 contingentBillList = getPersistenceService().findPageBy(cBillSql1, 1, 500,
-                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList();
+                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList();
             final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(contingentBillList);
             contingentBillList.clear();
             contingentBillList.addAll(tempBillList);
