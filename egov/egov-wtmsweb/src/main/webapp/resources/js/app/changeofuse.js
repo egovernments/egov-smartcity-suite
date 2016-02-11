@@ -223,7 +223,7 @@ $(document).ready(function(){
 	var propertyType = $('#propertyType').val();
 	var pipeSize = $('#pipeSize').val();
 	
-	$(".btn-primary").click(function (){
+	$(".workAction").click(function (){
 		if(($('#connectionType').val()==connectionType) && ($('#usageType').val()==usageType) 
 				&&($('#propertyType').val()==propertyType)
 				&& ($('#pipeSize').val()==pipeSize)) {
