@@ -195,7 +195,7 @@ public class SearchTradeAction extends BaseFormAction {
             licenseActions= new ArrayList<String>();
             licenseActions.add("View Trade");
             if(license.getEgwStatus()!=null){
-                if(license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_APPROVED_CODE))
+                if(!license.isPaid() && !license.isWorkFlowStateRejected() && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_APPROVED_CODE))
                     licenseActions.add("Collect Fees");
                 else if(license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Print Certificate");
