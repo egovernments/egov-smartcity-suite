@@ -419,7 +419,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             final List<String> msgParams = new ArrayList<String>();
             if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn))
                 msgParams.add(PROPERTY_BIFURCATION);
-            else if (PROPERTY_MODIFY_REASON_MODIFY.equalsIgnoreCase(modifyRsn))
+            else if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equalsIgnoreCase(modifyRsn))
                 msgParams.add(PROPERTY_ALTER_ADDITION);
             else
                 msgParams.add(PROPERTY_GENERAL_REVISION_PETITION);
