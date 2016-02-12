@@ -122,14 +122,13 @@ public class EmployeeController extends ApiController {
     public ResponseEntity<String> logout(HttpServletRequest request, OAuth2Authentication authentication) {
     	try
     	{
-    		return ApiResponse.newInstance().error(getMessage("server.error"));
-	        /*OAuth2AccessToken token = tokenStore.getAccessToken(authentication);
+	        OAuth2AccessToken token = tokenStore.getAccessToken(authentication);
 	        if (token == null) {
 	            return ApiResponse.newInstance().error(getMessage("msg.logout.unknown"));
 	        }
 	
 	        tokenStore.removeAccessToken(token);
-	        return ApiResponse.newInstance().success("",getMessage("msg.logout.success"));*/
+	        return ApiResponse.newInstance().success("",getMessage("msg.logout.success"));
     	}
         catch(Exception ex)
         {
@@ -229,14 +228,6 @@ public class EmployeeController extends ApiController {
             	workFlowTypesWithItemsCount.add(workFlowType);
             }
             return workFlowTypesWithItemsCount;
-            
-			/*Number count = (Number) this.workflowTypePersistenceService.getSession().createCriteria(State.class)
-			        .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
-			        .setProjection(Projections.rowCount())
-			        .add(Restrictions.in("ownerPosition.id", owners))
-			        .add(Restrictions.ne("status", StateStatus.ENDED))
-			        .add(Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("status", StateStatus.STARTED))
-			                .add(Restrictions.eq("createdBy.id", userId)))).addOrder(Order.desc("createdDate")).setProjection(Projections.groupProperty("type")).uniqueResult();*/
     }
     
     @Transactional(readOnly=true)
