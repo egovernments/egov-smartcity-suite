@@ -221,11 +221,15 @@ public class EmployeeController extends ApiController {
             List<Object[]> result=query.list();
             for(Object[] rowObj:result)
             {
-            	HashMap<String, Object> workFlowType=new HashMap<String, Object>();
-            	workFlowType.put("workflowtype", rowObj[0]);
-            	workFlowType.put("inboxlistcount", getWorkflowItemsCountByWFType(userId, ownerPostitions, String.valueOf(rowObj[0])));
-            	workFlowType.put("workflowtypename", getWorkflowType(String.valueOf(rowObj[0])).getDisplayName());
-            	workFlowTypesWithItemsCount.add(workFlowType);
+            	Long wftitemscount=(Long)getWorkflowItemsCountByWFType(userId, ownerPostitions, String.valueOf(rowObj[0]));
+            	if(wftitemscount>0)
+            	{
+            		HashMap<String, Object> workFlowType=new HashMap<String, Object>();
+	            	workFlowType.put("workflowtype", rowObj[0]);
+	            	workFlowType.put("inboxlistcount", wftitemscount);
+	            	workFlowType.put("workflowtypename", getWorkflowType(String.valueOf(rowObj[0])).getDisplayName());
+	            	workFlowTypesWithItemsCount.add(workFlowType);
+            	}
             }
             return workFlowTypesWithItemsCount;
     }
