@@ -358,7 +358,7 @@ function autocompletecodeFunctionCredit(obj,myEvent)
 	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]-40+"px";
 	target.style.width=650;	
 		
 	var fObj=obj;
@@ -398,7 +398,7 @@ function autocompletecodeFunctionRebate(obj,myEvent)
 	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]-40+"px";
 	target.style.width=650;	
 		
 	var fObj=obj;
@@ -519,7 +519,7 @@ function autocompletecodeRebate(obj,myEvent)
 	var target = document.getElementById('rebatecodescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0];	
-	target.style.top=posSrc[1]+22;
+	target.style.top=posSrc[1]-40;
 	target.style.width=450;	
 		
 	
@@ -1523,7 +1523,7 @@ var callbackAutoCompleteEntities = {
 	var posSrc=findPos(src); 
 	
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]-40+"px";
 	target.style.width=650;	
 	      		
 	

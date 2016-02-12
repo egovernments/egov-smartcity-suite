@@ -90,6 +90,7 @@ var currDate = "${currDate}";
 function onBodyLoad(){
 	if(document.getElementById('challanDate').value==""){
 		document.getElementById("challanDate").value=currDate;
+		document.getElementById("challanDate").disabled=true;
 	}
 	
 	if('<s:property value="designationId"/>'!=null && '<s:property value="designationId"/>'!="")
@@ -157,7 +158,7 @@ function setAsViewPage(){
 			}
 		}
 	</s:if>
-	document.getElementById('calendarLink').style.display="none";
+	//document.getElementById('calendarLink').style.display="none";
 	document.getElementById('receiptId').disabled=false;
 	document.getElementById('actionName').disabled=false;
 	document.getElementById('sourcePage').disabled=false;
@@ -619,9 +620,7 @@ function populatepositionuseronload()
 	      		  <s:date name="challan.challanDate" var="cdFormat" format="dd/MM/yyyy"/>
 	      <td width="24%" class="bluebox">
 	      		<s:textfield id="challanDate" name="challan.challanDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-	      		<a  id="calendarLink" href="javascript:show_calendar('forms[0].challanDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
-	      		<img src="/../../egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
-	      		</a><div class="highlight2" style="width:80px">DD/MM/YYYY</div>				
+	      		<div class="highlight2" style="width:80px">DD/MM/YYYY</div>				
 	      </td>
 	        
    		<s:if test="%{shouldShowHeaderField('billNumber')}">

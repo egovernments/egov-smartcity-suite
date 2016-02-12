@@ -74,12 +74,15 @@ jQuery(document).ready(function() {
     	 format: 'dd/mm/yyyy',
     	 autoclose:true,
          onRender: function(date) {
-             console.log(date);
       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
       	  }
 	  }).on('changeDate', function(ev) {
-		  isDatepickerOpened=false; 
-       	  checkForCurrentDate(this);
+		  var string=jQuery(this).val();
+		  if(!(string.indexOf("_") > -1)){
+			  isDatepickerOpened=false; 
+	       	  checkForCurrentDate(this);
+		  }
+		  
 	  }).data('datepicker');
 
      jQuery( "#manualReceiptDate" ).datepicker({ 
@@ -89,9 +92,12 @@ jQuery(document).ready(function() {
        	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
        	  }
 	  }).on('changeDate', function(ev) {
-		  isDatepickerOpened=false; 
-       	  checkForCurrentDate(this);
-		  validateManualReceiptDate(this);
+		  var string=jQuery(this).val();
+		  if(!(string.indexOf("_") > -1)){
+			  isDatepickerOpened=false; 
+	       	  checkForCurrentDate(this);
+			  validateManualReceiptDate(this);
+		  }
 	  }).data('datepicker');
  });
 
@@ -1490,7 +1496,6 @@ function checkandcalculatecredittotal(index,elem){
 function validateChallanDate(obj)
 {
 	if(validateDateFormat(obj)){
-		trim(obj,obj.value);
 		document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   	if(obj.value!="");
@@ -1572,8 +1577,8 @@ function validateManualReceiptDate(obj)
 function checkForCurrentDate(obj)
 {
 	var receiptDate;
-	if(validateDateFormat(obj))
-	   {
+	/* if(validateDateFormat(obj))
+	   { */
 	   document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   //trim(obj,obj.value);
@@ -1629,7 +1634,7 @@ function checkForCurrentDate(obj)
 		   scrolltop();
 	       return false;
 		   }
-	   }
+	   /* } */
 	   }
 }
 
@@ -1986,7 +1991,7 @@ function showHideMandataryMark(obj){
 					    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 					    <td class="bluebox" ><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');"  data-inputmask="'mask': 'd/m/y'" /><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');" onblur="checkForCurrentDate(this);"  data-inputmask="'mask': 'd/m/y'" /></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">

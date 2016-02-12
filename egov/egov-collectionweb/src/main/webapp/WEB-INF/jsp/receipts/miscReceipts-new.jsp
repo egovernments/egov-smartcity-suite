@@ -92,6 +92,72 @@ function validateMiscReceipt()
     return true;
 }
 
+jQuery(document).ready(function(){
+	jQuery( "#voucherDate" ).datepicker({ 
+   	 format: 'dd/mm/yyyy',
+   	 autoclose:true,
+   	 onRender: function(date) {
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+	  }).on('changeDate', function(ev) {
+		  var string=jQuery(this).val();
+		  if(!(string.indexOf("_") > -1)){
+			  isDatepickerOpened=false; 
+	      	  validateVoucherDate(this);
+		  }
+	  }).data('datepicker');
+});
+
+function validateVoucherDate(obj)
+{
+      document.getElementById("receipt_dateerror_area").style.display="none";
+	  document.getElementById("receipt_dateerror_area").innerHTML="";
+	  if(jQuery(obj).val())
+	  {
+		  var dmy=jQuery(obj).val().split('/');
+
+		  if(dmy.length === 3)
+		  {
+			  var seldate=new Date(dmy[2],(dmy[1]-1), dmy[0]);
+			  if(seldate>new Date())
+			  {
+				  document.getElementById("receipt_dateerror_area").style.display="block";
+			      document.getElementById("receipt_dateerror_area").innerHTML+=
+							'<s:text name="billreceipt.receipt.futuredate.errormessage" />'+'<br/>';
+				  jQuery(obj).val('');
+				  scrolltop();
+				  return false;
+			  }
+		  }
+		 
+	  }
+	
+		/*trim(obj,obj.value);
+		document.getElementById("receipt_dateerror_area").style.display="none";
+		document.getElementById("receipt_dateerror_area").innerHTML="";
+	   	if(obj.value!="");
+		if(!validateNotFutureDate(obj.value,currDate)){
+		   document.getElementById("receipt_dateerror_area").style.display="block";
+	       document.getElementById("receipt_dateerror_area").innerHTML+=
+					'<s:text name="billreceipt.manualreceipt.futuredate.errormessage" />'+ '<br>';
+	       obj.value = "";
+	       // obj.focus();
+	       obj.tabIndex="-1";
+	       var keyCode = document.all? window.event.keyCode:event.which;
+		   if(keyCode==9) {
+	       window.scroll(0,0);
+	       }
+	       window.scroll(0,0);
+	       return false;
+		}*/
+
+		
+	  return true;
+	
+	
+}
+
+
 function resetMisc(){
     document.getElementById("voucherDate").value=currDate;
     if(document.getElementById("schemeId")!=null){
@@ -646,10 +712,8 @@ var totaldbamt=0,totalcramt=0;
          <td width="21%" class="bluebox2"><s:text name="viewReceipt.receiptdate"/><span class="mandatory"/></td>
                   <s:date name="voucherDate" var="cdFormat" format="dd/MM/yyyy"/>
           <td width="24%" class="bluebox2">
-                <s:textfield id="voucherDate" name="voucherDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-                <a href="javascript:show_calendar('forms[0].voucherDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
-                <img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
-                </a><div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
+                <s:textfield id="voucherDate" name="voucherDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="validateVoucherDate(this)" data-inputmask="'mask': 'd/m/y'"/>
+                <div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
           </td>
                
            <s:if test="%{shouldShowHeaderField('field')}">

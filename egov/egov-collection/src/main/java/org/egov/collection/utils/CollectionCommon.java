@@ -468,7 +468,7 @@ public class CollectionCommon {
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
         reportInput.setPrintDialogOnOpenReport(flag);
-
+        session.remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         return ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), session);
     }
 
