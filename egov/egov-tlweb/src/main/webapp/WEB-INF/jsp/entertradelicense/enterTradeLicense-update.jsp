@@ -238,14 +238,58 @@
 						 	showMessage('enterLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
 							window.scroll(0, 0);  
 							return false;
+					}else{
+						/*validate fee details*/
+						if(validate_feedetails()){
+							formsubmit();
+						}else{
+							return false;
+						}
 					}
 				} else{
-					clearMessage('enterLicense_error');
-					toggleFields(false,"");
-					document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/update.action';
-					document.registrationForm.submit();
-
+					
+					/*validate fee details*/
+					if(validate_feedetails()){
+						formsubmit();
+					}else{
+						return false;
 					}
+
+				}
+  			}
+
+			function validate_feedetails(){
+				
+				var validated = false;
+				var globalindex;
+				
+				jQuery("table.feedetails tbody tr").each(function (index) {
+					var rowval = jQuery(this).find("input.feeamount").val();
+					if(parseFloat(rowval) > 0){
+						globalindex = index;
+						validated = true;
+					}else{
+						if(!jQuery(this).is(":last-child")){
+							if(index == (globalindex+1)){
+								bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details is missing!');
+								validated = false;
+								return false;
+							}
+						}else{
+							validated = true;
+						}
+						
+					}
+				});
+				return validated;
+			}
+
+  			function formsubmit(){
+  				/*submit the form*/
+				clearMessage('enterLicense_error');
+				toggleFields(false,"");
+				document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
+				document.registrationForm.submit();
   			}
 
 			// Calls propertytax REST api to retrieve property details for an assessment no

@@ -78,7 +78,7 @@
             data-pattern="number" onchange="return checkValue(this);"/></td>
         <td><input type="text"  name="feeMatrixDetail[0].amount" id="amount"   class="form-control text-right patternvalidation"
             data-pattern="number"  /></td>
-         <td><span class="add-padding"><i class="fa fa-trash">
+         <td><span class="add-padding">
          	<button type="button" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)">Delete Row</button></i></span></td>  
          </tr> 
          <tbody>

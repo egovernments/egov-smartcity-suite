@@ -230,7 +230,6 @@
     		function callPropertyTaxRest(){
                	var propertyNo = jQuery("#propertyNo").val();
             	if(propertyNo!="" && propertyNo!=null){
-					console.log(propertyNo); 
 					jQuery.ajax({
 						url: "/ptis/rest/property/" + propertyNo,
 						type:"GET",
@@ -238,18 +237,19 @@
 						success:function(data){
 							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
 								bootbox.alert(data.errorDetails.errorMessage);
+								jQuery('#propertyNo').val('');
+								jQuery('#boundary, #address').prop("disabled", false);
 							} else{
 								if(data.boundaryDetails!=null){
-									jQuery("#boundary").val(data.boundaryDetails.localityId)
+									jQuery("#boundary").val(data.boundaryDetails.localityId);
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
-									jQuery('#parentBoundary').val(data.boundaryDetails.wardId); 
+									jQuery('#parentBoundary').val(data.boundaryDetails.wardId);
 									jQuery("#address").val(data.propertyAddress);
 								}
 							}
 						},
 						error:function(e){
-							console.log('error:'+e.message);
 							document.getElementById("propertyNo").value="";
 							resetOnPropertyNumChange();
 							bootbox.alert("Error getting property details");
@@ -257,7 +257,6 @@
 					});
             	} else{
 					showMessage('newLicense_error', '<s:text name="newlicense.propertyNo.null" />');
-            		document.getElementById("propertyNo").focus();
                 }
             }
 

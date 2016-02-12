@@ -247,20 +247,21 @@
 						 	showMessage('enterLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
 							window.scroll(0, 0);  
 							return false;
+					}else{
+						/*validate fee details*/
+						if(validate_feedetails()){
+							formsubmit();
+						}else{
+							return false;
+						}
 					}
 				} else{
-
 					/*validate fee details*/
 					if(validate_feedetails()){
-						/*submit the form*/
-						clearMessage('enterLicense_error');
-						toggleFields(false,"");
-						document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
-						document.registrationForm.submit();
+						formsubmit();
 					}else{
 						return false;
 					}
-
 				}
   			}
 
@@ -289,20 +290,25 @@
 				});
 				return validated;
 			}
-  			
+
+  			function formsubmit(){
+  				/*submit the form*/
+				clearMessage('enterLicense_error');
+				toggleFields(false,"");
+				document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
+				document.registrationForm.submit();
+  			}
 
 			// Calls propertytax REST api to retrieve property details for an assessment no
 			// url : contextpath/ptis/rest/property/assessmentno (ex: contextpath/ptis/rest/property/1085000001)
     		function callPropertyTaxRest(){
                	var propertyNo = jQuery("#propertyNo").val();
             	if(propertyNo!="" && propertyNo!=null){
-					console.log(propertyNo); 
 					jQuery.ajax({
 						url: "/ptis/rest/property/" + propertyNo,
 						type:"GET",
 						contentType:"application/x-www-form-urlencoded",
 						success:function(data){
-							console.log(JSON.stringify(data));
 							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
 								bootbox.alert(data.errorDetails.errorMessage);
 								jQuery('#propertyNo').val('');
