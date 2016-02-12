@@ -43,6 +43,7 @@ import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -134,7 +135,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
 
+        BigDecimal newTradeAreWt=tradeLicense.getTradeArea_weight();
         tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
+        tradeLicense.setTradeArea_weight(newTradeAreWt);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
                 && tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING) && tradeLicense != null
                 && !tradeLicense.isPaid() &&
@@ -152,6 +155,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
         prepareNewForm();
+        //workflowBean.setAdditionaRule("RENEWALTRADE");
         return super.beforeRenew();
     }
 
