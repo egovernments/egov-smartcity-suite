@@ -107,7 +107,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class LicenseBillService extends BillServiceInterface implements BillingIntegrationService {
     private static final Logger LOG = LoggerFactory.getLogger(LicenseBillService.class);
 
@@ -143,6 +143,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private PersistenceService persistenceService;
 
     private LicenseUtils licenseUtils;
+    
+    @Autowired
+    @Qualifier("tradeLicensePersistenceService")
+    private PersistenceService<TradeLicense, Long> licensePersitenceService;
 
     public void setLicense(final License license) {
         this.license = license;
@@ -371,7 +375,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 final StringBuilder smsMsg = new StringBuilder();
                 final StringBuilder emailSubject = new StringBuilder();
                 demand.setAmtCollected(amtCollected);
-                persistenceService.update(demand);
+                //persistenceService.update(demand);
                 final TradeLicense tradeLicense = (TradeLicense) persistenceService.find(
                         "from TradeLicense where id=?", ld.getLicense().getId());
                 updateWorkflowState(tradeLicense);
@@ -423,7 +427,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         licenseObj.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                 .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction());
-
+        //TODO: updating License with workFlow Entry
+        licensePersitenceService.getSession().flush();
     }
 
     /**
