@@ -119,6 +119,8 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/entertradelicense/update-form")
     public String showLegacyUpdateForm() {
         prepareUpdate();
+        for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense())
+            legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0d);
         if (license().getDemandSet() != null && !license().getDemandSet().isEmpty())
             for (final LicenseDemand licenseDemand : license().getDemandSet())
                 legacyInstallmentwiseFees.put(licenseDemand.getEgInstallmentMaster().getInstallmentNumber(),

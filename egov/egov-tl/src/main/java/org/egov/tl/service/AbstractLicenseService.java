@@ -316,7 +316,9 @@ public abstract class AbstractLicenseService<T extends License> {
                 demand.setBaseDemand(BigDecimal.valueOf(updatedFee));
                 demand.getEgDemandDetails().iterator().next().setAmount(BigDecimal.valueOf(updatedFee));
             }
+            updatedInstallmentFees.put(demand.getEgInstallmentMaster().getInstallmentNumber(), 0d);
         }
+        addLegacyDemand(updatedInstallmentFees, license);
         this.processAndStoreDocument(license.getDocuments());
         setAuditEntries(license);
         this.licensePersitenceService.persist(license);
@@ -324,7 +326,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     private void addLegacyDemand(final Map<Integer, Double> legacyInstallmentwiseFees, final T license) {
         final Module module = getModuleName();
-        license.setDemandSet(new HashSet<>());
         for (final Map.Entry<Integer, Double> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
             if (legacyInstallmentwiseFee.getValue() != null && legacyInstallmentwiseFee.getValue() > 0) {
                 final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,

@@ -43,6 +43,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -104,7 +105,7 @@ public abstract class License extends StateAware {
     protected LicenseTransfer licenseTransfer;
     protected String licenseCheckList;
     protected BigDecimal deduction;
-    protected Set<LicenseDemand> demandSet;
+    protected Set<LicenseDemand> demandSet = new HashSet<>();
     protected BigDecimal swmFee;
     // PWD
     protected String servicetaxNumber;
