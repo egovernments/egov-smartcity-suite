@@ -1055,9 +1055,9 @@ public class EgovCommon {
 
         opBalncQuery
         .append(
-                "SELECT case when sum(openingdebitbalance) = null then  0  else sum(openingdebitbalance) end -")
+                "SELECT case when sum(openingdebitbalance) is null then  0  else sum(openingdebitbalance) end -")
                 .append(
-                        "  case when sum(openingcreditbalance) = null then 0 else sum(openingcreditbalance) end  as openingBalance from TransactionSummary")
+                        "  case when sum(openingcreditbalance) is null then 0 else sum(openingcreditbalance) end  as openingBalance from TransactionSummary")
                         .append(
                                 " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
                                 .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
@@ -1070,7 +1070,7 @@ public class EgovCommon {
             opBalncQuery.append(" and accountdetailkey=").append(
                     accountdetailkey);
         final List<Object> tsummarylist = getPersistenceService().findAllBy(opBalncQuery.toString(), glcode);
-        opBalAsonDate = BigDecimal.valueOf((Double) tsummarylist.get(0));
+        opBalAsonDate = BigDecimal.valueOf((Integer) tsummarylist.get(0));
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Opening balance :" + opBalAsonDate);
@@ -1170,12 +1170,12 @@ public class EgovCommon {
             deptCond = " and mis.voucherheaderid.id=vh.id and mis.departmentid.id=" + deptId;
         }
 
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("finance",
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "statusexcludeReport");
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
             glCodeBalQry
-            .append("SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end)")
+            .append("SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  is null then 0 else sum(gl.creditAmount) end)")
             .append(" as amount FROM  CGeneralLedger gl , CVoucherHeader vh  ").append(misTab)
             .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=?")
             .append(fundCond + deptCond)
@@ -1186,7 +1186,7 @@ public class EgovCommon {
                             .append(")");
 
             final List<Object> list = getPersistenceService().findAllBy(glCodeBalQry.toString(), glcode);
-            glCodeBalance = BigDecimal.valueOf((Double) list.get(0));
+            glCodeBalance = BigDecimal.valueOf((Integer) list.get(0));
         } else {
             // Getting the debit balance.
             glCodeDbtBalQry
@@ -1262,7 +1262,7 @@ public class EgovCommon {
             deptCond = " and mis.voucherheaderid.id=vh.id and mis.departmentid.id=" + deptId;
         }
 
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("finance",
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "statusexcludeReport");
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
@@ -1342,7 +1342,7 @@ public class EgovCommon {
                         "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname "
                                 + " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
                                 + " where  bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
-                                + " and bankaccount.isactive=? ", true);
+                                + " and bankaccount.isactive=? ", 1);
         // Ordering Starts
         final List<String> bankBranchStrings = new ArrayList<String>();
         int i, j;
@@ -1843,7 +1843,7 @@ public class EgovCommon {
         BigDecimal subledgerCrdBalance = BigDecimal.ZERO;
 
         final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                "finance", "statusexcludeReport");
+                "EGF", "statusexcludeReport");
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
             glCodeBalQry
