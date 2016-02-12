@@ -145,7 +145,7 @@ public class RemitRecoveryService {
                         .append(voucherHeader.getFundId().getId())
                         .append(" AND egr.GLDTLAMT-"
                                 +
-                                " (select  case when sum(egd.remittedamt) = null then 0 else sum(egd.remittedamt) end from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh"
+                                " (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh"
                                 +
                                 " where vh.status not in (1,2,4) and  eg.PAYMENTVHID=vh.id and egd.remittanceid=eg.id and egr1.id=egd.remittancegldtlid and egr1.id=egr.id)"
                                 +

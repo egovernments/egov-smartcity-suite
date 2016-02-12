@@ -53,8 +53,10 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Expense Bill -Approval" />
 		</jsp:include>
-		<span class="mandatory"> <s:actionmessage />
+		<div align="center">
+		<span class="mandatory1"> <s:actionmessage />
 		</span>
+		</div>
 		<br />
 		<div class="buttonbottom" align="center">
 		<input type="submit" value="Close" onclick="javascript:window.close()"

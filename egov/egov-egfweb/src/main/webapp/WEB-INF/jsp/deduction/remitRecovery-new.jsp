@@ -158,7 +158,7 @@ function loadBank(obj)
 				<script>
 		
 		populateRecoveryDetails();
-		document.getElementById('recoveryDetailsTable').getElementsByTagName('table')[0].width="80%"
+		document.getElementById('recoveryDetailsTable').getElementsByTagName('table')[0].width="90%"
 	 </script>
 				<br>
 				<table align="center" id="totalAmtTable">

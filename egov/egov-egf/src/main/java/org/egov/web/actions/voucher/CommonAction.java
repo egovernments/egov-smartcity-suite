@@ -819,12 +819,12 @@ public class CommonAction extends BaseFormAction {
                         accNumList = getPersistenceService()
                                 .findAllBy(
                                         "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=1 and type in (?, ?) order by ba.chartofaccounts.glcode",
-                                        branchId, fundId, bankId, strArray[0], strArray[1]);
+                                        branchId, fundId, bankId, BankAccountType.valueOf(strArray[0].toUpperCase()),BankAccountType.valueOf( strArray[1].toUpperCase()));
                     else
                         accNumList = getPersistenceService()
                                 .findAllBy(
                                         "from Bankaccount ba where ba.bankbranch.id=? and  ba.bankbranch.bank.id=? and isactive=1 and type in (?, ?) order by ba.chartofaccounts.glcode",
-                                        branchId, bankId, strArray[0], strArray[1]);
+                                        branchId, bankId, BankAccountType.valueOf(strArray[0]), BankAccountType.valueOf(strArray[1]));
                 } else if (fundId != null)
                     accNumList = getPersistenceService()
                             .findAllBy(

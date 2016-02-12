@@ -284,8 +284,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         final Map<String, Object> map = new HashMap<String, Object>();
         Designation designation = null;
         final Double grossAmount = getJVsGrassAmount(paymentheader);
-        final Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName).get(0);
-        final List<String> list = (List<String>) scriptService.executeScript(validScript,
+       // final Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName).get(0);
+        final List<String> list = (List<String>) scriptService.executeScript(scriptName,
                 ScriptService.createContext("eisCommonServiceBean", eisCommonService, "grossAmount", grossAmount, "userId",
                         EgovThreadLocals.getUserId().intValue(), "DATE", new Date(), "type", type, "vouDate", vouDate.getTime(),
                         "paymentheader", paymentheader));
