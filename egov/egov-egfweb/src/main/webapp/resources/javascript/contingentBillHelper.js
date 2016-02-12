@@ -655,6 +655,7 @@ function splitEntities(obj)
 {
 	
 var entity=obj.value;
+var detailKey  = document.getElementById("detailKey").value;
 if(entity.trim()!="")
 {
 var entity_array=entity.split("`~`");
@@ -667,7 +668,7 @@ document.getElementById("detailName").value=entity_array[0].split("`-`")[1];
 document.getElementById("commonBean.payto").value=entity_array[0].split("`-`")[1];
 //bootbox.alert(document.getElementById("commonBean.payto").value);
 }
-else
+else if(detailKey == null || detailKey== "")
 {
 //bootbox.alert(invalidEntityselected);
 obj.value="";

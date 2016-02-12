@@ -620,7 +620,7 @@ function autocompleteEntitiesBy20()
 	   oAutoComp1.minQueryLength = 1;
 	   oAutoComp1.prehighlightClassName = "yui-ac-prehighlight";
 	   oAutoComp1.useShadow = true;
-	   oAutoComp1.forceSelection = true;
+	   //oAutoComp1.forceSelection = true;
 	   oAutoComp1.maxResultsDisplayed = 20;
 	   oAutoComp1.useIFrame = true;
 	   oAutoComp1.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
@@ -722,7 +722,7 @@ function autocompleteEntities1By20(obj)
 	   oAutoCompEntityForJV.minQueryLength = 1;
 	   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 	   oAutoCompEntityForJV.useShadow = true;
-	   oAutoCompEntityForJV.forceSelection = true;
+	   //oAutoCompEntityForJV.forceSelection = true;
 	   oAutoCompEntityForJV.maxResultsDisplayed = 10;
 	   oAutoCompEntityForJV.useIFrame = true;
 	   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
@@ -746,10 +746,9 @@ function autocompletecode(obj,myEvent)
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
-	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px"; 
-	target.style.width="650px";	
-	      		
+	target.style.left=posSrc[0];	
+	target.style.top=posSrc[1]-40;
+	target.style.width=450;	
 	
 	var coaCodeObj=obj;
 	var  currRow=getRowIndex(obj);
@@ -770,14 +769,14 @@ function autocompletecode(obj,myEvent)
 				codeObj.applyLocalFilter = true;
 				codeObj.queryMatchContains = true;
 				oAutoComp.minQueryLength = 0;
-				oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
+				/*oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
 					 var pos = YAHOO.util.Dom.getXY(oTextbox);
 					 pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
 					 oContainer.style.width=300;
 					 YAHOO.util.Dom.setXY(oContainer,pos);
 					 return true;
 
-				 };  
+				 };*/  
 			}
 		}
 		yuiflag[currRow] = 1;
@@ -857,16 +856,16 @@ function autocompletecodeFunction(obj,myEvent)
 	var target = document.getElementById('codescontainer');	
 	
 	var posSrc=findPos(src); 
-	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
-	target.style.width=650;	
+	target.style.left=posSrc[0];	
+	target.style.top=posSrc[1]-40;
+	target.style.width=450;	
 		
 	var coaCodeObj=obj;
-	//var  currRow=getRowIndex(obj);
+	var  currRow=getRowIndex(obj);
 
 	//40 --> Down arrow, 38 --> Up arrow
-	//if(yuiflagFunc[currRow] == undefined)
-	//{
+	if(yuiflagFunc[currRow] == undefined)
+	{
 		var key = window.event ? window.event.keyCode : myEvent.charCode;  
 		if(key != 40 )
 		{
@@ -878,18 +877,21 @@ function autocompletecodeFunction(obj,myEvent)
 				oAutoComp.useShadow = true;
 				oAutoComp.maxResultsDisplayed = 15;
 				oAutoComp.useIFrame = true;
-				oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
+				funcObj.applyLocalFilter = true;
+				funcObj.queryMatchContains = true;
+				oAutoComp.minQueryLength = 0;
+				/*oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
 					 var pos = YAHOO.util.Dom.getXY(oTextbox);
 					 pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
 					 oContainer.style.width=300;
 					 YAHOO.util.Dom.setXY(oContainer,pos);
 					 return true;
 
-				 };  
+				 };  */
 			}
 		}
-		//yuiflagFunc[currRow] = 1;
-	//}	
+		yuiflagFunc[currRow] = 1;
+	}	
 }
 
 
@@ -1009,8 +1011,8 @@ function fillNeibrAfterSplitGlcode(obj)
 		}
 		check();
 	}else if (temp!="" &&(accCodeid==null || accCodeid=="")){
-		bootbox.alert("Invalid Account Code selected .Please select code from auto complete.");
-		obj.value="";
+		/*bootbox.alert("Invalid Account Code selected .Please select code from auto complete.");
+		obj.value="";*/
 		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
 	}
 	var currRow=getRowIndex(obj);
