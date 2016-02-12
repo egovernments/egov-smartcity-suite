@@ -406,7 +406,8 @@ function onLoadTask_new()
 		disableForNonBillPayment();	
 		disableYUIAddDeleteButtons(true);
 		}
-		
+		if(document.getElementById('approverDepartment'))
+			document.getElementById('approverDepartment').value = "-1";
 }
 
 function populateAccNum(branch){

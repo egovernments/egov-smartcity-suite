@@ -166,6 +166,8 @@ function onLoad(){
 	jQuery(fundsource).attr('disabled', 'disabled');
 	jQuery(department).attr('disabled', 'disabled');
 	jQuery(functionid).attr('disabled', 'disabled');
+	if(document.getElementById('approverDepartment'))
+		document.getElementById('approverDepartment').value = "-1";
 }
 function onSubmit()
 {

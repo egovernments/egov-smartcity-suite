@@ -258,8 +258,8 @@ public class TransactionSummaryController {
                 .searchTransactionsForNonSubledger(finYear, fund, functn, department, glcodeId);
         for (TransactionSummary ts : transactionSummaries) {
             amountsMap.put("tsid", ts.getId().toString());
-            amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance().toString());
-            amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance().toString());
+            amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             amountsMap.put("narration", ts.getNarration());
             result.add(amountsMap);
 
@@ -282,8 +282,8 @@ public class TransactionSummaryController {
                         accountDetailKeyId);
         for (TransactionSummary ts : transactionSummaries) {
             amountsMap.put("tsid", ts.getId().toString());
-            amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance().toString());
-            amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance().toString());
+            amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             amountsMap.put("narration", ts.getNarration());
             result.add(amountsMap);
 

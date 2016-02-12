@@ -51,7 +51,7 @@
 
 </script>
 </head>
-<body>
+<body onload="onLoadTask();">
 	<br>
 	<s:form action="payment" theme="simple">
 		<s:token />
@@ -59,7 +59,8 @@
 			<jsp:param name="heading" value="Bill Payment" />
 		</jsp:include>
 
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="subheadnew">Bill Payment</div>
 		<div id="budgetSearchGrid" style="display: block; width: 100%;">
@@ -86,8 +87,8 @@
 																	name="billregister.id" /></td>
 															<s:if test="%{shouldShowHeaderField('fund')}">
 																<td width="12%" class="bluebox"><strong><s:text
-																			name="voucher.fund" /></strong>
-																<s:if test="%{isFieldMandatory('fund')}">
+																			name="voucher.fund" /></strong> <s:if
+																		test="%{isFieldMandatory('fund')}">
 																		<span class="bluebox"><span class="mandatory1">*</span></span>
 																	</s:if></td>
 																<td width="20%" class="bluebox"><s:property
@@ -95,8 +96,8 @@
 															</s:if>
 															<s:if test="%{shouldShowHeaderField('fundsource')}">
 																<td width="17%" class="bluebox"><strong><s:text
-																			name="voucher.fundsource" /></strong>
-																<s:if test="%{isFieldMandatory('fundsource')}">
+																			name="voucher.fundsource" /></strong> <s:if
+																		test="%{isFieldMandatory('fundsource')}">
 																		<span class="bluebox"><span class="mandatory1">*</span></span>
 																	</s:if></td>
 																<td width="33%" class="bluebox"><s:property
@@ -107,8 +108,8 @@
 															<td class="greybox">&nbsp;</td>
 															<s:if test="%{shouldShowHeaderField('department')}">
 																<td class="greybox"><strong><s:text
-																			name="voucher.department" /></strong>
-																<s:if test="%{isFieldMandatory('department')}">
+																			name="voucher.department" /></strong> <s:if
+																		test="%{isFieldMandatory('department')}">
 																		<span class="bluebox"><span class="mandatory1">*</span></span>
 																	</s:if></td>
 																<td class="greybox"><s:property
@@ -116,8 +117,8 @@
 															</s:if>
 															<s:if test="%{shouldShowHeaderField('functionary')}">
 																<td class="greybox"><strong><s:text
-																			name="voucher.functionary" /></strong>
-																<s:if test="%{isFieldMandatory('functionary')}">
+																			name="voucher.functionary" /></strong> <s:if
+																		test="%{isFieldMandatory('functionary')}">
 																		<span class="bluebox"><span class="mandatory1">*</span></span>
 																	</s:if></td>
 																<td class="greybox" colspan="4"><s:property
@@ -128,8 +129,8 @@
 															<td class="bluebox">&nbsp;</td>
 															<s:if test="%{shouldShowHeaderField('scheme')}">
 																<td class="bluebox"><strong><s:text
-																			name="voucher.scheme" /></strong>
-																<s:if test="%{isFieldMandatory('scheme')}">
+																			name="voucher.scheme" /></strong> <s:if
+																		test="%{isFieldMandatory('scheme')}">
 																		<span class="mandatory1">*</span>
 																	</s:if></td>
 																<td class="bluebox"><s:property
@@ -137,8 +138,8 @@
 															</s:if>
 															<s:if test="%{shouldShowHeaderField('subscheme')}">
 																<td class="bluebox"><strong><s:text
-																			name="voucher.subscheme" /></strong>
-																<s:if test="%{isFieldMandatory('subscheme')}">
+																			name="voucher.subscheme" /></strong> <s:if
+																		test="%{isFieldMandatory('subscheme')}">
 																		<span class="mandatory1">*</span>
 																	</s:if></td>
 																<td class="bluebox"><s:property
@@ -149,8 +150,8 @@
 															<td class="greybox">&nbsp;</td>
 															<s:if test="%{shouldShowHeaderField('function')}">
 																<td class="greybox"><strong><s:text
-																			name="voucher.function" /></strong>
-																<s:if test="%{isFieldMandatory('function')}">
+																			name="voucher.function" /></strong> <s:if
+																		test="%{isFieldMandatory('function')}">
 																		<span class="mandatory1">*</span>
 																	</s:if></td>
 																<td class="greybox"><s:property
@@ -160,8 +161,8 @@
 															<td class="greybox">&nbsp;</td>
 															<s:if test="%{shouldShowHeaderField('field')}">
 																<td class="greybox"><strong><s:text
-																			name="voucher.field" /></strong>
-																<s:if test="%{isFieldMandatory('field')}">
+																			name="voucher.field" /></strong> <s:if
+																		test="%{isFieldMandatory('field')}">
 																		<span class="mandatory1">*</span>
 																	</s:if></td>
 																<td class="greybox" colspan="4"><s:property
@@ -329,8 +330,8 @@
 																							name="billList[%{#s.index}].csBillId"
 																							id="csBillId%{#s.index}" value="%{csBillId}" />
 																						<s:hidden name="billList[%{#s.index}].billNumber"
-																							id="billNumber" value="%{billNumber}" />
-																						<s:property value="%{billNumber}" /></td>
+																							id="billNumber" value="%{billNumber}" /> <s:property
+																							value="%{billNumber}" /></td>
 																					<td style="text-align: center"
 																						class="blueborderfortdnew"><s:hidden
 																							name="billList[%{#s.index}].billDate"
@@ -339,23 +340,23 @@
 																					<td style="text-align: center"
 																						class="blueborderfortdnew"><s:hidden
 																							name="billList[%{#s.index}].expType"
-																							id="expType%{#s.index}" value="%{expType}" />
-																						<s:hidden name="billList[%{#s.index}].payTo"
-																							id="payTo%{#s.index}" value="%{payTo}" />
-																						<s:property value="%{payTo}" /></td>
+																							id="expType%{#s.index}" value="%{expType}" /> <s:hidden
+																							name="billList[%{#s.index}].payTo"
+																							id="payTo%{#s.index}" value="%{payTo}" /> <s:property
+																							value="%{payTo}" /></td>
 																					<td style="text-align: right"
 																						class="blueborderfortdnew"><s:hidden
 																							name="billList[%{#s.index}].netAmt"
-																							id="netAmt%{#s.index}" value="%{netAmt}" />
-																						<s:text name="payment.format.number">
+																							id="netAmt%{#s.index}" value="%{netAmt}" /> <s:text
+																							name="payment.format.number">
 																							<s:param value="%{netAmt}" />
 																						</s:text></td>
 																					<td style="text-align: right"
 																						class="blueborderfortdnew"><s:hidden
 																							name="billList[%{#s.index}].earlierPaymentAmt"
 																							id="earlierPaymentAmt%{#s.index}"
-																							value="%{earlierPaymentAmt}" />
-																						<s:text name="payment.format.number">
+																							value="%{earlierPaymentAmt}" /> <s:text
+																							name="payment.format.number">
 																							<s:param value="%{earlierPaymentAmt}" />
 																						</s:text></td>
 																					<td style="text-align: right"
@@ -470,7 +471,11 @@
 			else
 				document.getElementById('hiddenText').value=obj.value;
 		}
-		
+		function onLoadTask()
+		{
+			if(document.getElementById('approverDepartment'))
+				document.getElementById('approverDepartment').value = "-1";
+			}
 		function calcGrandTotal(obj)
 		{
 			var vBillListSize = document.getElementById('billListSize').value;

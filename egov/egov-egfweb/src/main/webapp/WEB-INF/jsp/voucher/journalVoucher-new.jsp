@@ -373,7 +373,9 @@ function onloadtask(){
 		document.getElementById('voucherTypeBean.voucherSubType').value = "JVGeneral";
 	</s:if>
 	if(message == null || message == '')
-		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.	
+		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.
+	if(document.getElementById('approverDepartment'))
+		document.getElementById('approverDepartment').value = "-1";
   }
 function showMessage(message){
 	var buttonValue = '<s:property value="buttonValue"/>';

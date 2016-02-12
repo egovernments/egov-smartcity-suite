@@ -59,6 +59,8 @@
 		}else{
 			document.getElementById('print').disabled=false;
 		}
+		if(document.getElementById('approverDepartment'))
+			document.getElementById('approverDepartment').value = "-1";
 	}
 	
 	function checkLength(obj){
