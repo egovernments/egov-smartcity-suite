@@ -378,6 +378,9 @@ function printVoucher(){
 
 
 
+
+
+
 																					
 																					</td>
 																					<th class="bluebgheadtdnew">Cheque Status
@@ -468,11 +471,19 @@ function printVoucher(){
 			</div>
 			<div class="buttonbottom" id="buttondiv">
 				<s:hidden name="paymentid" value="%{paymentheader.id}" />
-				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
-				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 				<s:hidden name="actionname" id="actionName" value="%{action}" />
-				<s:submit cssClass="button" id="printPreview" value="Print Preview"
-					onclick="printVoucher()" />
+				<s:if test="%{showMode!='view'}">
+					<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
+					<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
+					<s:submit cssClass="button" id="printPreview" value="Print Preview"
+						onclick="printVoucher()" />
+				</s:if>
+				<s:else>
+					<s:submit cssClass="button" id="printPreview" value="Print Preview"
+						onclick="printVoucher()" />
+					<input type="button" name="button2" id="button2" value="Close"
+						class="button" onclick="window.close();" />
+				</s:else>
 			</div>
 			<script type="text/javascript">
 	//bootbox.alert('<s:property value="fund.id"/>');                               

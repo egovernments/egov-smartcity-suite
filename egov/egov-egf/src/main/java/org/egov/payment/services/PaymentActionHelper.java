@@ -149,7 +149,7 @@ public class PaymentActionHelper {
     @Transactional
     private CVoucherHeader createVoucherAndLedger(CVoucherHeader voucherHeader, RemittanceBean remittanceBean, Recovery recovery,
             CommonBean commonBean, HashMap<String, Object> headerDetails, List<RemittanceBean> listRemitBean) {
-        headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/deduction/remitRecovery!beforeView.action?voucherHeader.id=");
+        headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/deduction/remitRecovery-beforeView.action?voucherHeader.id=");
         HashMap<String, Object> detailMap = null;
         final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
         List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
