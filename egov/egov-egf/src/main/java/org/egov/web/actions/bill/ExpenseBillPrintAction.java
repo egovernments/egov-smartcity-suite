@@ -66,10 +66,12 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -110,8 +112,12 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     private static final String PRINT = "print";
     String functionName;
     private @Autowired AppConfigValueService appConfigValuesService;
+    @Autowired
+    private EisCommonService eisCommonService; 
 
-    private BudgetDetailsHibernateDAO budgetDetailsDAO;
+    
+
+	private BudgetDetailsHibernateDAO budgetDetailsDAO;
     @Autowired
     private FinancialYearDAO financialYearDAO;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -212,6 +218,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         return "";
     }
 
+    @Action(value = "/bill/expenseBillPrint-exportPdf")
     public String exportPdf() throws JRException, IOException {
         populateBill();
         inputStream = reportHelper.exportPdf(inputStream, jasperpath, getParamMap(), billReportList);
@@ -224,6 +231,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         return "HTML";
     }
 
+    @Action(value = "/bill/expenseBillPrint-exportXls")
     public String exportXls() throws JRException, IOException {
         populateBill();
         inputStream = reportHelper.exportXls(inputStream, jasperpath, getParamMap(), billReportList);
@@ -266,7 +274,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
             // String amountInWords = billamount==null?" ":NumberToWord.convertToWord(billamount.toPlainString());
             // paramMap.put("certificate", getText("ejv.report.text", new String[]{amountInFigures,amountInWords}));
         }
-        paramMap.put("ulbName", getUlbName());
+        paramMap.put("ulbName", ReportUtil.getCityName());
         return paramMap;
     }
 
@@ -366,8 +374,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
      */
     private void getRequiredDataForBudget(final EgBillregister cbill) {
         final String financialYearId = null;// commonsService.getFinancialYearId(cbill.getBilldate().getTime());
-        budgetDataMap.put("financialyearid", Long.valueOf(financialYearId));
-        budgetDataMap.put(Constants.DEPTID, cbill.getEgBillregistermis().getEgDepartment().getId());
+        if(cbill.getEgBillregistermis().getFinancialyear()!=null)
+        {
+        	budgetDataMap.put("financialyearid", cbill.getEgBillregistermis().getFinancialyear().getId());
+        }
+            budgetDataMap.put(Constants.DEPTID, cbill.getEgBillregistermis().getEgDepartment().getId());
         if (cbill.getEgBillregistermis().getFunctionaryid() != null)
             budgetDataMap.put(Constants.FUNCTIONARYID, cbill.getEgBillregistermis().getFunctionaryid().getId());
         if (cbill.getEgBillregistermis().getScheme() != null)
@@ -414,6 +425,10 @@ public class ExpenseBillPrintAction extends BaseFormAction {
             paramMap.put("workFlow_" + i, history.get(i));
             paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
         }
+        /*if(cbill.getState()!=null && cbill.getState().getValue().equalsIgnoreCase("Closed")){
+        	paramMap.put("workFlow_approver" ,eisCommonService.getUserForPosition(cbill.getState().getOwnerPosition().getId(), cbill.getCreatedDate()));
+            paramMap.put("workFlowDate_approval_date" , cbill.getState().getLastModifiedDate() );
+        }*/
     }
 
     private void prepareForPrint() {
@@ -585,4 +600,21 @@ public class ExpenseBillPrintAction extends BaseFormAction {
 
     }
 
+    public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
+
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
+	}
+
+	public EisCommonService getEisCommonService() {
+		return eisCommonService;
+	}
+
+	public void setEisCommonService(EisCommonService eisCommonService) {
+		this.eisCommonService = eisCommonService;
+	}
+	
 }
