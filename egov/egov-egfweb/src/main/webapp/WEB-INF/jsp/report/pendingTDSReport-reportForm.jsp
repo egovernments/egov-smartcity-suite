@@ -171,7 +171,7 @@ function getData(){
 	isValid = validateData();
 	if(isValid == false)
 		return false;
-	var url = '/EGF/report/pendingTDSReport!ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+
+	var url = '/EGF/report/pendingTDSReport-ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+
 							department+'&fund.id='+fund+'&partyName='+partyName+'&recovery.id='+recovery+'&detailKey='+detailKey+'&showRemittedEntries='+showRemittedEntries;
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 	//loadWaitingImage();
@@ -195,7 +195,7 @@ function exportXls(){
 		showRemittedEntries = true;
 	else
 		showRemittedEntries = false;
-	window.open('/EGF/report/pendingTDSReport!exportXls.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+department+'&fund.id='+fund+
+	window.open('/EGF/report/pendingTDSReport-exportXls.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+department+'&fund.id='+fund+
 	'&recovery.id='+recovery+'&detailKey='+detailKey+'&showRemittedEntries='+showRemittedEntries+'&partyName='+partyName,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
@@ -216,7 +216,7 @@ function exportPdf(){
 		showRemittedEntries = true;
 	else
 		showRemittedEntries = false;
-	window.open('/EGF/report/pendingTDSReport!exportPdf.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+department+'&fund.id='+
+	window.open('/EGF/report/pendingTDSReport-exportPdf.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+department+'&fund.id='+
 	fund+'&recovery.id='+recovery+'&detailKey='+detailKey+'&showRemittedEntries='+showRemittedEntries+'&partyName='+partyName,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 </script>

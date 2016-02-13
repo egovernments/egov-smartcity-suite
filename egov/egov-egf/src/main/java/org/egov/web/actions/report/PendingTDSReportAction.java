@@ -80,18 +80,24 @@ import org.egov.model.recoveries.Recovery;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
+import org.egov.web.actions.voucher.JournalVoucherAction;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=PendingTDSReport.pdf" }),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=PendingTDSReport.xls" }),
-                        @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=TdsSummaryReport.pdf" }),
-                                @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                                        "contentType", "application/xls", "contentDisposition", "no-cache;filename=TdsSummaryReport.xls" })
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=PendingTDSReport.xls" }),
+        @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=TdsSummaryReport.pdf" }),
+        @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/xls", "contentDisposition", "no-cache;filename=TdsSummaryReport.xls" }),
+        @Result(name = "results", location = "pendingTDSReport-results.jsp"),
+        @Result(name = "entities", location = "pendingTDSReport-entities.jsp"),
+        @Result(name = "summaryForm", location = "pendingTDSReport-summaryForm.jsp"),
+        @Result(name = "reportForm", location = "pendingTDSReport-reportForm.jsp"),
+        @Result(name = "summaryResults", location = "pendingTDSReport-summaryResults.jsp")
 })
 @Transactional(readOnly = true)
 @ParentPackage("egov")
@@ -144,7 +150,7 @@ public class PendingTDSReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
-        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
         addDropdownData("recoveryList",
                 persistenceService.findAllBy(" from Recovery where isactive=1 order by chartofaccounts.glcode"));

@@ -38,7 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<span class="mandatory"> <font
+<span class="mandatory1"> <font
 	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
 		<s:actionmessage /></font>
 </span>
@@ -62,7 +62,7 @@
 			</s:else>
 		</tr>
 		<tr>
-			<td class="blueborderfortd">
+			<td style ="border-right-width:1px ;border-left-style : solid;padding-left:5px;border-left-color:#E9E9E9" class="blueborderfortd">
 				<div>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0"
 						class="tablebottom">

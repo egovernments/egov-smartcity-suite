@@ -48,11 +48,11 @@
 		<table width="100%" cellpadding="0" cellspacing="0" border="0">
 			<tr>
 				<td class="greybox" width="10%">Recovery Code:<span
-					class="mandatory">*</span></td>
+					class="mandatory1">*</span></td>
 				<td class="greybox"><s:select name="recovery" id="recovery"
 						list="dropdownData.recoveryList" listKey="id" listValue="type"
 						headerKey="-1" headerValue="----Choose----" /></td>
-				<td class="greybox" width="10%">Fund:<span class="mandatory">*</span></td>
+				<td class="greybox" width="10%">Fund:<span class="mandatory1">*</span></td>
 				<td class="greybox"><s:select name="fund" id="fund"
 						list="dropdownData.fundList" listKey="id" listValue="name"
 						headerKey="-1" headerValue="----Choose----" /></td>
@@ -60,7 +60,7 @@
 			</tr>
 			<tr>
 				<td class="bluebox" width="10%"><s:text name="from.date" /><span
-					class="mandatory"></span></td>
+					class="mandatory1"></span></td>
 				<td class="bluebox"><s:textfield name="fromDate" id="fromDate"
 						cssStyle="width:100px" value='%{getFormattedDate(fromDate)}'
 						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -70,7 +70,7 @@
 				</td>
 
 				<td class="bluebox" width="10%">As On Date:<span
-					class="mandatory">*</span></td>
+					class="mandatory1">*</span></td>
 				<td class="bluebox"><s:textfield name="asOnDate" id="asOnDate"
 						cssStyle="width:100px" value='%{getFormattedDate(asOnDate)}'
 						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
