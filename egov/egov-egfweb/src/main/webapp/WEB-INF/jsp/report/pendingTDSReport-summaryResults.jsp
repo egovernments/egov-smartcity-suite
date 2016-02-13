@@ -53,7 +53,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="blueborderfortd">
+			<td style ="border-right-width:1px ;border-left-style : solid;padding-left:5px;border-left-color:#E9E9E9" class="blueborderfortd">
 				<div>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0"
 						class="tablebottom">
@@ -66,15 +66,15 @@
 						</tr>
 						<s:iterator value="remittedTDS" status="stat" var="p">
 							<tr>
-								<td class="blueborderfortd"><div align="left">
+								<td class="blueborderfortd"><div align="center">
 										<s:property value="#stat.index+1" />
 										&nbsp;
 									</div></td>
-								<td class="blueborderfortd"><div align="left">
+								<td class="blueborderfortd"><div align="center">
 										<s:property value="natureOfDeduction" />
 										&nbsp;
 									</div></td>
-								<td class="blueborderfortd"><div align="left">
+								<td class="blueborderfortd"><div align="center">
 										<s:property value="month" />
 										&nbsp;
 									</div></td>
