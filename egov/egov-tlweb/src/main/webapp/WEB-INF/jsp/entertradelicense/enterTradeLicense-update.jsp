@@ -106,7 +106,7 @@
 											</div>
 											
 											<div class="col-md-12">
-											<table class="table table-bordered">
+											<table class="table table-bordered feedetails">
 												<thead>
 													<tr>
 														<th><s:text name='license.fin.year'/></th>
@@ -121,8 +121,8 @@
 														<s:if test="#stat.index == 0">
 															<c:set value="${finyear}" var="startfinyear"/>
 														</s:if>
-														<td><input type="text"  name="" class="form-control" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
-														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
+														<td><input type="text"  name="" class="form-control feeyear" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
+														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
 													</tr>
 												</s:iterator>
 												</tbody>
