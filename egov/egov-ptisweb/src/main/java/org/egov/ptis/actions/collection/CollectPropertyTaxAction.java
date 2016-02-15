@@ -146,11 +146,12 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		final SQLQuery qry = entityQueryService
 				.getSession()
 				.createSQLQuery(
-						"select i_asmtno, ts_dttm, (coalesce(d_crnpt,0) + coalesce(d_crned,0) + coalesce(d_crnlcs,0) + coalesce(d_crnuauthcnstplty,0)) from pt_extnasmtbal_tbl where i_asmtno =:propertyid");
+						"select i_asmtno, ts_dttm, (coalesce(d_crnpt,0) + coalesce(d_crned,0) + coalesce(d_crnlcs,0) + coalesce(d_crnuauthcnstplty,0)) from pt_extnasmtbal_tbl where (coalesce(d_crnpt,0)>0 or coalesce(d_crned,0)>0 or coalesce(d_crnlcs,0)>0 or coalesce(d_crnuauthcnstplty,0)>0) and i_asmtno =:propertyid");
         qry.setInteger("propertyid", Integer.valueOf(propertyId));
-        final Object[] alters = (Object[]) qry.uniqueResult();
+        final List<Object[]> list = (List<Object[]>) qry.list();
         
-		if (alters!=null && alters.length > 0) {
+		if (list!=null && list.size() > 0) {
+			final Object[] alters = (Object[]) list.get(0);
 			infoMessage = "This property undergone Adition/Alteration on " + dateFormat.format((Date) alters[1])
 					+ " and the excess amount " + (BigDecimal) alters[2]
 					+ " was pending so, there might be difference in tax due compared to demand notice.";
