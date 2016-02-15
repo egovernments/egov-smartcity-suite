@@ -62,7 +62,7 @@
 
 function showHistory(stateId)
 {
-var url="../voucher/common!showHistory.action?stateId="+stateId;
+var url="../voucher/common-showHistory.action?stateId="+stateId;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 
@@ -239,7 +239,7 @@ function printVoucher(){
 																		class="greybox"><span class="mandatory1">*</span></span></td>
 																	<egov:ajaxdropdown id="bankId"
 																		fields="['Text','Value']" dropdownId="bankId"
-																		url="/voucher/common!ajaxLoadBanksByFundAndType.action" />
+																		url="/voucher/common-ajaxLoadBanksByFundAndType.action" />
 																	<td class="greybox"><s:select
 																			name="commonBean.bankId" id="bankId"
 																			list="dropdownData.bankList" listKey="bankBranchId"
@@ -248,7 +248,7 @@ function printVoucher(){
 																			onChange="populateAccNum(this);" /></td>
 																	<egov:ajaxdropdown id="accountNumber"
 																		fields="['Text','Value']" dropdownId="accountNumber"
-																		url="voucher/common!ajaxLoadBankAccounts.action" />
+																		url="voucher/common-ajaxLoadBankAccounts.action" />
 																	<td class="greybox" width="22%"><s:text
 																			name="account.number" /><span class="bluebox"><span
 																			class="mandatory1">*</span></span></td>
@@ -268,7 +268,7 @@ function printVoucher(){
 																		id="remitAmount" /></td>
 																	<egov:updatevalues id="availableBalance"
 																		fields="['Text']"
-																		url="/payment/payment!ajaxGetAccountBalance.action" />
+																		url="/payment/payment-ajaxGetAccountBalance.action" />
 																	<td class="bluebox" id="balanceText"
 																		style="display: none" width="18%"><s:text
 																			name="balance.available" /></td>
