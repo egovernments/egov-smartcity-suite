@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -37,29 +36,28 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.repository;
+package org.egov.tl.web.adaptor;
 
-import java.util.List;
+import java.lang.reflect.Type;
 
-import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface PenaltyRatesRepository extends JpaRepository<PenaltyRates, Long> {
-    @Query("select pr from PenaltyRates pr where :days between pr.fromRange and pr.toRange and pr.licenseAppType = :licenseAppType ")
-    PenaltyRates findByDaysAndLicenseAppType(@Param("days") Long days, @Param("licenseAppType") LicenseAppType licenseAppType);
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    @Query("select pr from PenaltyRates pr where :fromRange between pr.fromRange and pr.toRange or :toRange between pr.fromRange and pr.toRange and pr.licenseAppType = :licenseAppType ")
-    PenaltyRates findByDaysAndLicenseAppTypeBetweenRange(@Param("fromRange") Long fromRange, @Param("toRange") Long toRange,
-            @Param("licenseAppType") LicenseAppType licenseAppType);
-
-    @Query("select pr from PenaltyRates pr where :fromRange between pr.fromRange and pr.toRange or :toRange between pr.fromRange and pr.toRange and pr.licenseAppType = :licenseAppType and pr.rate = :rate")
-    PenaltyRates findByDaysAndLicenseAppTypeAndRate(@Param("fromRange") Long fromRange, @Param("toRange") Long toRange,
-            @Param("licenseAppType") LicenseAppType licenseAppType, @Param("rate") Double rate);
-
-    List<PenaltyRates> findByLicenseAppTypeId(Long licenseAppTypeId);
+public class PenaltyRatesAdaptor implements JsonSerializer<PenaltyRates> {
+    @Override
+    public JsonElement serialize(final PenaltyRates penaltyRates, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (penaltyRates != null) {
+            jsonObject.addProperty("id", penaltyRates.getId());
+            jsonObject.addProperty("licenseAppType", penaltyRates.getLicenseAppType().getName());
+            jsonObject.addProperty("fromRange", penaltyRates.getFromRange());
+            jsonObject.addProperty("toRange", penaltyRates.getToRange());
+            jsonObject.addProperty("rate", penaltyRates.getRate());
+        }
+        return jsonObject;
+    }
 }
