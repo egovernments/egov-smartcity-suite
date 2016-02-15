@@ -68,10 +68,10 @@
 		<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/SASvalidation.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/license-common.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/js/app/validations.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/js/app/SASvalidation.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/js/app/dateValidation.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/js/app/license-common.js'/>"></script>
 		
 		<script type="text/javascript" src="<c:url value='/resources/js/app/helper.js'/>"></script>
 		

@@ -120,4 +120,4 @@
     </div>
   </div>
 </form:form>
-<script type="text/javascript" src="<c:url value='/resources/app/js/validityHelper.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/validityHelper.js'/>"></script>

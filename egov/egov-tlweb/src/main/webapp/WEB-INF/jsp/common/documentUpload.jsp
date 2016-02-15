@@ -129,4 +129,4 @@
 </s:iterator>
 </table>
 
-<script src="<c:url value='/resources/app/js/documentupload.js'/>"></script> 
+<script src="<c:url value='/resources/js/app/documentupload.js'/>"></script> 

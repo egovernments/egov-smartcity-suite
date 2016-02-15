@@ -110,7 +110,7 @@
 			</s:form>
 		</div>
 	</div>
-	<script src="../resources/app/js/newtrade.js"></script>
+	<script src="../resources/js/app/newtrade.js"></script>
 	<script>
 	jQuery('#subCategory').change(function(){
 		jQuery.ajax({

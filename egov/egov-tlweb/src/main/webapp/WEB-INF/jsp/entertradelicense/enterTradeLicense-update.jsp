@@ -165,7 +165,7 @@
 						autoclose: true 
 					}); 
 				</script>
-        <script src="../resources/app/js/newtrade.js"></script>
+        <script src="../resources/js/app/newtrade.js"></script>
         <script>
 	
 			function validateForm() {

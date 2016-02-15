@@ -362,7 +362,7 @@
                     </div>
                 </div>
         <script	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>        
-        <script src="../resources/app/js/newtrade.js"></script>
-        <script src="../resources/javascript/license/searchTrade.js"></script>
+        <script src="../resources/js/app/newtrade.js"></script>
+        <script src="../resources/js/app/searchTrade.js"></script>
     </body>
 </html>
