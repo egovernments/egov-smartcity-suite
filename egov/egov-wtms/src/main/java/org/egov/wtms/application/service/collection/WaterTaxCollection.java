@@ -447,9 +447,9 @@ public class WaterTaxCollection extends TaxCollection {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String[] installsplit = desc[1].split("#");
                 if(installsplit[0].trim().equals(installsplit[1].trim())) {
-                    currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+                    currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
                 }else {
-                    arrearAmount.add(rcptAccInfo.getCrAmount());
+                    arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
                 }
                 
             }
