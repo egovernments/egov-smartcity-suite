@@ -41,7 +41,7 @@
   --%>
 
 <script src="<c:url value='/resources/app/js/feematrix.js' context='/tl'/>"></script>
-<script src="<c:url value='/resources/js/helper.js' context='/tl'/>"></script>
+<script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
 
 <div class="row">
     <div class="col-md-12">
