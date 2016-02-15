@@ -94,6 +94,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.elasticsearch.common.joda.time.DateTime;
@@ -371,7 +372,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 final StringBuilder emailSubject = new StringBuilder();
                 demand.setAmtCollected(amtCollected);
                 // persistenceService.update(demand);
-                final License license = ld.getLicense();
+                //FIXME ld.getLicense(); will be sufficient to get the license back
+                //Since collection is not working, we re query to get License object
+                //replace the below with ld.getLicense(); once collection fixed
+                final TradeLicense license = (TradeLicense)persistenceService.find("from TradeLicense where id=?", ld.getLicense().getId());
                 updateWorkflowState(license);
                 smsMsg.append(Constants.STR_WITH_APPLICANT_NAME).append(license.getLicensee().getApplicantName())
                         .append(Constants.STR_WITH_LICENCE_NUMBER)

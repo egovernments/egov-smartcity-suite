@@ -51,7 +51,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -69,7 +68,6 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
-import org.egov.demand.model.EgReasonCategory;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -85,7 +83,6 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
-import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
@@ -149,7 +146,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected DemandGenericHibDao demandGenericDao;
-    
+
     @Autowired
     ValidityService validityService;
 
@@ -262,19 +259,18 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public BigDecimal recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
-
-        LOGGER.debug("Re calculating FEE          ...............................................");
-
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
         final EgDemand licenseDemand = license.getCurrentDemand();
         BigDecimal totalAmount = BigDecimal.ZERO;
         final Set<EgDemandDetails> egDemandDetails = licenseDemand.getEgDemandDetails();
         for (final EgDemandDetails dmd : egDemandDetails)
             for (final FeeMatrixDetail fm : feeList)
-                if (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
-                    dmd.setAmount(fm.getAmount());
-                    totalAmount = totalAmount.add(fm.getAmount());
-                }
+                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()))
+                    if (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                            .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
+                        dmd.setAmount(fm.getAmount());
+                        totalAmount = totalAmount.add(fm.getAmount());
+                    }
         return totalAmount;
     }
 
@@ -510,56 +506,22 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void renew(T license) {
-        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
-        final Date renewalDate = new Date();
-        /*final String dateDiffToExpiryDate = license.getDateDiffToExpiryDate(renewalDate);
-        if (dateDiffToExpiryDate != null) {
-            boolean isExpired;
-            final String[] split = dateDiffToExpiryDate.split("/");
-            isExpired = split[0].equalsIgnoreCase("false") ? false : true;
-            final int noOfMonths = Integer.parseInt(split[1]);
+    public void renew(final T license) {
+        license.setApplicationNumber(applicationNumberGenerator.generate());
+        this.recalculateDemand(feeMatrixService.findFeeList(license), license);
 
-            if (!isExpired && noOfMonths <= 1) {
-                final Calendar cal = Calendar.getInstance();
-                cal.setTime(new Date());
-                cal.add(Calendar.MONTH, 1);
-                installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), cal.getTime());
-            } else if (isExpired && noOfMonths <= 6)
-                installment=  installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), renewalDate);
-            else
-                throw new ApplicationRuntimeException("License already Expired Cant renew");
-
-        }
-         */
-        final LicenseAppType appType = getLicenseApplicationTypeForRenew();
-        final NatureOfBusiness nature = getNatureOfBusiness();
-        //TODO Fee calculations
-        final List<FeeMatrix> feeList = Collections.emptyList();//feeService.getFeeList(license.getTradeName(), appType, nature);
-        final BigDecimal totalAmount = BigDecimal.ZERO;
-        // feeService.calculateFee(license, license.getTradeName(), getLicenseApplicationTypeForRenew(),
-        // getNatureOfBusiness(), BigDecimal.ZERO, BigDecimal.ZERO);
-        
-        final EgReasonCategory reasonCategory = (EgReasonCategory) persistenceService
-                .find("from org.egov.demand.model.EgReasonCategory where name='Fee'");
-        final Set<EgDemandReasonMaster> egDemandReasonMasters = reasonCategory.getEgDemandReasonMasters();
-        license = (T) license.renew(feeList, appType, nature, installment, egDemandReasonMasters, totalAmount,
-                applicationNumberGenerator.generate(), license.getFeeTypeStr(), getModuleName(), renewalDate);
         final LicenseStatus status = (LicenseStatus) persistenceService.find(
                 "from org.egov.tl.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
-        
-        //TODO workflow logic comes here
-        User currentUser = securityUtils.getCurrentUser();
-        license.reinitiateTransition().start().
-        withOwner(assignmentService.getPrimaryAssignmentForUser(currentUser.getId()).getPosition()).
-        withNatureOfTask("Renew License").withSenderName(currentUser.getName())
-        .withStateValue(WORKFLOW_STATE_TYPE_RENEWLICENSE);
-        
+        final User currentUser = securityUtils.getCurrentUser();
+        license.reinitiateTransition().start()
+                .withOwner(assignmentService.getPrimaryAssignmentForUser(currentUser.getId()).getPosition())
+                .withNatureOfTask("Renew License").withSenderName(currentUser.getName())
+                .withStateValue(WORKFLOW_STATE_TYPE_RENEWLICENSE);
+
         licensePersitenceService.persist(license);
     }
 
-   
     @Transactional
     public T createDemandForViolationFee(T license) {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
