@@ -215,7 +215,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getServiceCode() {
-        if (getWaterConnectionDetails().getStatus().getDescription().equalsIgnoreCase(WaterTaxConstants.EST_NOTICE_GEN))
+        if (getWaterConnectionDetails().getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
             return EST_STRING_SERVICE_CODE;
         else
         return STRING_SERVICE_CODE;

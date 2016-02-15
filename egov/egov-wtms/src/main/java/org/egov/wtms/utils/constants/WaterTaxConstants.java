@@ -97,7 +97,6 @@ public class WaterTaxConstants {
 
     public static final String CATEGORY_BPL = "BPL";
     public static final String WATERTAX_FIELDINSPECTION_CHARGE = "WTAXFIELDINSPEC";
-    public static final String EST_NOTICE_GEN= "Estimation Notice Generated";
     // User Roles
     public static final String ROLE_CSCOPERTAOR = "CSC Operator";
     public static final String ROLE_ULBOPERATOR = "ULB Operator";
