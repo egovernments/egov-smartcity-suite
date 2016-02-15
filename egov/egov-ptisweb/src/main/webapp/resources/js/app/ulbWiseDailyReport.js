@@ -3,7 +3,7 @@ var reportdatatable;
 $(document)
 		.ready(
 				function() {
-					usagetableContainer = $("#tblbcDailycollection");
+					usagetableContainer = $("#tblUlbDailycollection");
 					
 					var reportdatatable =  usagetableContainer
 					.dataTable({
@@ -21,7 +21,7 @@ $(document)
 							"aButtons" : [ "print" ]
 						},
 						ajax : {
-							url : "/ptis/reports/billcollectorDailyCollectionReportList"
+							url : "/ptis/reports/ulbWiseCollectionList"
 						
 						},
 						columns : [
