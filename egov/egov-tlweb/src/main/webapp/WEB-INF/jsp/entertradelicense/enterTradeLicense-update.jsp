@@ -276,7 +276,12 @@
 								return false;
 							}
 						}else{
-							validated = true;
+							if(globalindex == undefined){
+								bootbox.alert('Atleast one financial year fee details is required!');
+								validated = false;
+							}else{
+								validated = true;
+							}
 						}
 						
 					}
