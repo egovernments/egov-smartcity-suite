@@ -288,7 +288,7 @@
   				/*submit the form*/
 				clearMessage('enterLicense_error');
 				toggleFields(false,"");
-				document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
+				document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/update.action'
 				document.registrationForm.submit();
   			}
 
