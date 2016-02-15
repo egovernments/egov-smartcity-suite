@@ -142,6 +142,9 @@ public class CollectionIndex extends AbstractAuditable {
     @Length(max = 50)
     @Searchable(group = Searchable.Group.CLAUSES)
     private String status;
+    
+    @Searchable(name = "latepaymentcharges", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal latePaymentCharges;
 
     @Override
     public Long getId() {
@@ -287,6 +290,14 @@ public class CollectionIndex extends AbstractAuditable {
 
     public void setStatus(final String status) {
         this.status = status;
+    }
+
+    public BigDecimal getLatePaymentCharges() {
+        return latePaymentCharges;
+    }
+
+    public void setLatePaymentCharges(BigDecimal latePaymentCharges) {
+        this.latePaymentCharges = latePaymentCharges;
     }
 
 }

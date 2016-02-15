@@ -99,6 +99,11 @@ public class CollectionIndexBuilder {
         collectionIndex.setBillNumber(billNumber);
         return this;
     }
+    
+    public CollectionIndexBuilder latePaymentChargesAmount(final BigDecimal latePaymentCharges) {
+        collectionIndex.setLatePaymentCharges(latePaymentCharges);
+        return this;
+    }
 
     public CollectionIndex build() throws ApplicationRuntimeException {
         validate();
