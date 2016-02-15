@@ -84,7 +84,7 @@ public abstract class StateAware extends AbstractAuditable {
         return getId().toString();
     }
 
-    @Audited( targetAuditMode = RelationTargetAuditMode.NOT_AUDITED )
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public State getState() {
         return state;
     }
@@ -114,7 +114,8 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final boolean stateInProgress() {
-        return hasState() && getState().getStatus().equals(StateStatus.STARTED) || getState().getStatus().equals(StateStatus.INPROGRESS);
+        return hasState() && getState().getStatus().equals(StateStatus.STARTED)
+                || getState().getStatus().equals(StateStatus.INPROGRESS);
     }
 
     public final boolean hasState() {
@@ -178,10 +179,13 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final StateAware reinitiateTransition() {
-        state = null;
+        if (stateIsEnded())
+            state = null;
+        else
+            throw new ApplicationRuntimeException("Could not reinitiate Workflow, existing workflow not ended.");
         return this;
     }
-    
+
     public final StateAware withOwner(final User owner) {
         state.setOwnerUser(owner);
         return this;
