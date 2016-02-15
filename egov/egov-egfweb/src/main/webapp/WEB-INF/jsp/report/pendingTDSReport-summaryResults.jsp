@@ -47,7 +47,7 @@
 		<tr>
 			<td colspan="7">
 				<div class="subheadsmallnew">
-					<strong>TDS Summary Report as on <s:property
+					<strong>Deductions remittance summary as on <s:property
 							value="%{getFormattedDate(asOnDate)}" /></strong>
 				</div>
 			</td>
@@ -59,7 +59,7 @@
 						class="tablebottom">
 						<tr>
 							<th class="bluebgheadtd">Sl No</th>
-							<th class="bluebgheadtd">Nature Of deduction</th>
+							<th class="bluebgheadtd">Voucher Type</th>
 							<th class="bluebgheadtd">Month</th>
 							<th class="bluebgheadtd">Total Deduction(Rs)</th>
 							<th class="bluebgheadtd">Total Remitted(Rs)</th>

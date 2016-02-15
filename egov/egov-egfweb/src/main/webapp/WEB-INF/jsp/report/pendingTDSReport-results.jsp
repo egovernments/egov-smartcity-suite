@@ -49,26 +49,28 @@
 		<tr>
 			<td colspan="7"><s:if test="%{fromDate!=null}">
 					<div class="subheadsmallnew">
-						<strong>Pending TDS Report from <s:property
+						<strong>Deduction detailed report from <s:property
 								value="fromDate" /> to <s:property value="asOnDate" /></strong>
 					</div></td>
 			</s:if>
 			<s:else>
 				<div class="subheadsmallnew">
-					<strong>Pending TDS Report as on <s:property
+					<strong>Deduction detailed report as on <s:property
 							value="asOnDate" /></strong>
 				</div>
 				</td>
 			</s:else>
 		</tr>
 		<tr>
-			<td style ="border-right-width:1px ;border-left-style : solid;padding-left:5px;border-left-color:#E9E9E9" class="blueborderfortd">
+			<td
+				style="border-right-width: 1px; border-left-style: solid; padding-left: 5px; border-left-color: #E9E9E9"
+				class="blueborderfortd">
 				<div>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0"
 						class="tablebottom">
 						<tr>
 							<th class="bluebgheadtd">Sl No</th>
-							<th class="bluebgheadtd">Nature Of deduction</th>
+							<th class="bluebgheadtd">Voucher Type</th>
 							<th class="bluebgheadtd">Reference Number</th>
 							<th class="bluebgheadtd">Voucher Date</th>
 							<th class="bluebgheadtd">Party Name</th>
@@ -129,8 +131,7 @@
 	</tr>
 	</table>
 </s:if>
-<s:else>No Pending TDS found</s:else>
-<s:if test="%{showRemittedEntries==true && remittedTDS.size()>0}">
+<s:elseif test="%{showRemittedEntries==true && remittedTDS.size()>0}">
 	<br />
 	<br />
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
@@ -148,7 +149,7 @@
 						class="tablebottom">
 						<tr>
 							<th class="bluebgheadtd">Sl No</th>
-							<th class="bluebgheadtd">Nature Of deduction</th>
+							<th class="bluebgheadtd">Voucher Type</th>
 							<th class="bluebgheadtd">Reference Number</th>
 							<th class="bluebgheadtd">Voucher Date</th>
 							<th class="bluebgheadtd">Party Name</th>
@@ -226,7 +227,8 @@
 	</td>
 	</tr>
 	</table>
-</s:if>
+</s:elseif>
+<s:else>No pending deduction found</s:else>
 <s:if
 	test="%{pendingTDS.size()>0 || showRemittedEntries==true && remittedTDS.size()>0}">
 	<div class="buttonbottom" align="center">

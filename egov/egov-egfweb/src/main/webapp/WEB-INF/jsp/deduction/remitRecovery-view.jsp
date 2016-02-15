@@ -328,7 +328,7 @@ function printVoucher(){
 
 																			<table align="center" id="totalAmtTable">
 																				<tr>
-																					<td width="514"></td>
+																					<td width="800"></td>
 																					<td>Total Amount</td>
 																					<td><s:textfield
 																							name="remittanceBean.totalAmount"
@@ -375,12 +375,6 @@ function printVoucher(){
 																					<th class="bluebgheadtdnew">Party Code
 																					</td>
 																					<th class="bluebgheadtdnew">Cheque Amount(Rs)
-
-
-
-
-
-
 																					
 																					</td>
 																					<th class="bluebgheadtdnew">Cheque Status
@@ -444,30 +438,6 @@ function printVoucher(){
 					</table>
 				</div>
 
-				<table>
-					<tr>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox">Comments</td>
-						<td class="bluebox" colspan="4"><s:textarea name="comments"
-								id="comments" cols="100" rows="3" onblur="checkLength(this)"
-								value="%{getComments()}" /></td>
-					</tr>
-				</table>
-
-				<s:if test="%{showApprove}">
-					<s:if test="%{paymentheader.state.value != 'NEW'}">
-						<s:if test="%{paymentheader.state.id!=null}">
-							<div id="labelAD" align="center">
-								<h5>
-									<a href="#"
-										onclick="showHistory(<s:property value='paymentheader.state.id'/>); ">Show
-										History</a>
-								</h5>
-							</div>
-						</s:if>
-					</s:if>
-				</s:if>
-
 			</div>
 			<div class="buttonbottom" id="buttondiv">
 				<s:hidden name="paymentid" value="%{paymentheader.id}" />
@@ -509,12 +479,13 @@ function printVoucher(){
 		if(document.getElementById("printPreview"))
 			document.getElementById("printPreview").disabled=false;
 		if(document.getElementById("cancelPayment"))
-			document.getElementById("cancelPayment").disabled=false;		
+			document.getElementById("cancelPayment").disabled=false;	
+		if(document.getElementById("approverComments"))
+			document.getElementById("approverComments").disabled=false;	
 		if(null != document.getElementById("approverDepartment") ){
 			document.getElementById("approverDepartment").disabled=false;    
 			document.getElementById("approverDesignation").disabled=false;
 			document.getElementById("approverPositionId").disabled=false;
-			document.getElementById("approverComments").disabled=false;
 			
 		}
 		if(document.getElementById("currentState"))

@@ -41,7 +41,12 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <div class="formmainbox">
 	<div class="formheading"></div>
-	<div class="subheadnew">TDS Report</div>
+	<s:if test="%{mode == 'deduction' }">
+	<div class="subheadnew">Deduction detailed report</div>
+	</s:if>
+	<s:else>
+	<div class="subheadnew">Deductions remittance summary</div>
+	</s:else>
 
 	<s:form action="pendingTDSReport" theme="simple"
 		name="pendingTDSReport">
@@ -94,7 +99,7 @@
 			</tr>
 			<tr>
 				<td class="bluebox" width="10%"><span
-					id="showRemittedEntrieslabel">Include Remittance Info:</span></td>
+					id="showRemittedEntrieslabel">Show already remitted records:</span></td>
 				<td class="bluebox"><s:checkbox name="showRemittedEntries"
 						id="showRemittedEntries" /></td>
 				<td class="bluebox">&nbsp;</td>

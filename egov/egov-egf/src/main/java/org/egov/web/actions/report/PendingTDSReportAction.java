@@ -80,7 +80,6 @@ import org.egov.model.recoveries.Recovery;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.actions.voucher.JournalVoucherAction;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -125,6 +124,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     private RemitRecoveryService remitRecoveryService;
     private FinancialYearHibernateDAO financialYearDAO;
     private String message = "";
+    private String mode = "";
     private static Logger LOGGER = Logger.getLogger(PendingTDSReportAction.class);
 
     public void setFinancialYearDAO(final FinancialYearHibernateDAO financialYearDAO) {
@@ -137,6 +137,7 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     @Override
     public String execute() throws Exception {
+        mode = "deduction";
         return "reportForm";
     }
 
@@ -579,6 +580,14 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
 }
