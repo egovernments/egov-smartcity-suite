@@ -334,9 +334,7 @@
 							bootbox.alert("Error getting property details");
 						}
 					});
-            	} else{
-					showMessage('enterLicense_error', '<s:text name="newlicense.propertyNo.null" />');
-                }
+            	}
             }
 
     		function showHideAgreement(){

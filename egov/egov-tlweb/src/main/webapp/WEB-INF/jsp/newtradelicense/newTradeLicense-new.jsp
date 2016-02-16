@@ -255,9 +255,7 @@
 							bootbox.alert("Error getting property details");
 						}
 					});
-            	} else{
-					showMessage('newLicense_error', '<s:text name="newlicense.propertyNo.null" />');
-                }
+            	}
             }
 
             function resetOnPropertyNumChange(){
@@ -333,26 +331,25 @@
 								</div>
 							</s:else>
                             
-                                <!-- <ul class="nav nav-tabs" id="settingstab">
+                                 <ul class="nav nav-tabs" id="settingstab">
                                     <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
                                     <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
-                                </ul> -->
+                                </ul>
                             </div>
                             
-                             <div class="panel-body custom-form">
-                                <div class="">
-                                    <div class="" id="">
+                             <div class="panel-body">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="tradedetails">
 	                                         <%@ include file='../common/licensee.jsp'%>
 	                                          <%@ include file='../common/address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
 												
-											<div>
-												<%@include file="../common/documentUpload.jsp" %>
-											</div>
 											<%@ include file='../common/commonWorkflowMatrix.jsp'%>
 											<%@ include file='../common/commonWorkflowMatrix-button.jsp'%> 
                                     </div>
-                                    
+                                    <div class="tab-pane fade" id="tradeattachments"> 
+                                    	<%@include file="../common/documentUpload.jsp" %>
+                                    </div>
                             	</div>
                             </div>
                         </div> 

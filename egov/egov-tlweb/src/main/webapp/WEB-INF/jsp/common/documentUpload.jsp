@@ -82,7 +82,7 @@
 </div>
 <table class="table" id="docAttachmentTab">  
 <s:iterator value="documentTypes" status="status" var="documentType">
-	<div class="row">
+	<div class="form-group">
     	<div class="col-sm-1 text-center"><s:property value="#status.index + 1"/></div>
         <div class="col-sm-5 text-center">
         	<s:property value="name" /><s:if test="mandatory"><span class="mandatory"></span></s:if>
@@ -123,7 +123,7 @@
 				</s:iterator>	
 			</s:else>
 			<form:errors path="documents[%{#status.index}].files" cssClass="add-margin error-msg" />
-			<div class="add-margin error-msg text-left" ><font size="2"><s:text name="lbl.mesg.document"/></font></div>
+			<%-- <div class="add-margin error-msg text-left" ><font size="2"><s:text name="lbl.mesg.document"/></font></div> --%>
        	</div>
    	</div>
 </s:iterator>
