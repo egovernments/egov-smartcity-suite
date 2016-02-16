@@ -408,11 +408,10 @@ public class ReportService {
         final StringBuilder queryBuilder = new StringBuilder(
                 " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\" ,collectorname,mobilenumber,target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection, "
                         + " cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
-                        + " from public.billColl_DialyCollection_view ");
-                      
+                        + " from public.billColl_DialyCollection_view  order by district,ulbname,collectorname ");
 
         final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
-    //    query.setDate("collDate", date);
+        // query.setDate("collDate", date);
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
 
         listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
