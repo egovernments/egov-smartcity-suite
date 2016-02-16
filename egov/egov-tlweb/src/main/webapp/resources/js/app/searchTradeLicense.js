@@ -154,7 +154,6 @@ jQuery(document).ready(function() {
 		 }
 	});
 	
-	jQuery(':input').inputmask();
 	drillDowntableContainer = jQuery("#tblSearchTrade");
 	jQuery('#btnsearch').click(function(e) {
 		document.getElementById("tradeSearchError").style.display='none';
@@ -196,17 +195,17 @@ function goToAction(obj){
 	if(obj.options[obj.selectedIndex].innerHTML=='View Trade')
 		window.open("../viewtradelicense/viewTradeLicense-view.action?id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Modify Legacy License')
-		window.open("../entertradelicense/update-form.action?model.id="+jQuery('#licenseId').val(),"_self");
+		window.open("../entertradelicense/update-form.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Collect Fees')
 		window.open("/tl/integration/licenseBillCollect.action?licenseId="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Print Certificate')
 		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renewal Notice')
-		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(),"_self");
+		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renew License')
-		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+jQuery('#licenseId').val(),"_self");
+		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Modify License')
-		window.open("../newtradelicense/editTradeLicense-beforeEdit.action?model.id="+jQuery('#licenseId').val(),"_self");
+		window.open("../newtradelicense/editTradeLicense-beforeEdit.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
   
