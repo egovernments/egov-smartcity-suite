@@ -221,7 +221,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     @SkipValidation
     public String approveRenew() {
-        processWorkflow("Renew");
+        processWorkflow(Constants.RENEWAL_LIC_APPTYPE);
         return "message";
     }
 
@@ -230,6 +230,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         workflowBean.setApproverComments(approverComments);
         workflowBean.setWorkFlowAction(workFlowAction);
         workflowBean.setCurrentState(currentState);
+        workflowBean.setAdditionaRule(additionalRule);
     }
 
     public String createDraftItems() {
@@ -256,7 +257,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @SkipValidation
     public String renew() {
         try {
-            licenseService().renew(license());
+            populateWorkflowBean();
+            licenseService().renew(license(),workflowBean);
             addActionMessage(this.getText("license.renew.submission.succesful") + license().getLicenseNumber());
         } catch (final RuntimeException e) {
             loadAjaxedDropDowns();
@@ -377,7 +379,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         if (processType.equalsIgnoreCase(NEW)) {
             if (!Constants.BUTTONSUBMIT.equals(workFlowAction))
                 licenseService().transitionWorkFlow(license(), workflowBean);
-        } else if (processType.equalsIgnoreCase("Renew"))
+        } else if (processType.equalsIgnoreCase(Constants.RENEWAL_LIC_APPTYPE))
             if (!Constants.BUTTONSUBMIT.equals(workFlowAction))
                 licenseService().processWorkflowForRenewLicense(license(), workflowBean);
         User user = null;

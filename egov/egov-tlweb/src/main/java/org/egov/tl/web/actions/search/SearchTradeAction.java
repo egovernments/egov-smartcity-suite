@@ -209,7 +209,7 @@ public class SearchTradeAction extends BaseFormAction {
                 }
             }
             if(roleName.contains(Constants.TL_CREATOR_ROLENAME) || roleName.contains(Constants.TL_APPROVER_ROLENAME)){
-                if(license.getStatus()!=null && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)){
+                if(!license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE) && license.getStatus()!=null && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)){
                     licenseActions.add("Renew License");
                 }
             } 
@@ -218,6 +218,7 @@ public class SearchTradeAction extends BaseFormAction {
                     licenseActions.add("Renewal Notice");
                 }
             } 
+            licenseActions.add("Renew License");
             searchFormInfo.setActions(licenseActions); 
             finalList.add(searchFormInfo);
             }

@@ -61,7 +61,9 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocumentType;
+import org.egov.tl.entity.LicenseType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -139,7 +141,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
         tradeLicense.setTradeArea_weight(newTradeAreWt);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
-                && tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING) && tradeLicense != null
+                && (tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING)|| tradeLicense.getState().getValue().equals(Constants.WF_STATE_RENEWAL_COMM_APPROVED))&& tradeLicense != null
                 && !tradeLicense.isPaid() &&
                 !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
             prepareNewForm();
@@ -154,8 +156,16 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
+        
         prepareNewForm();
-        //workflowBean.setAdditionaRule("RENEWALTRADE");
+        if(tradeLicense.getCurrentState().getValue()
+                .equals("Closed"))
+        {
+            currentState="";
+        };
+        tradeLicense.setLicenseAppType((LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='Renew' "));
+        System.out.println(additionalRule + " ds " + (tradeLicense.getLicenseAppType() !=null ?tradeLicense.getLicenseAppType().getName() :null));
+        
         return super.beforeRenew();
     }
 
@@ -236,5 +246,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void setMode(final String mode) {
         this.mode = mode;
+    }
+    @Override
+    public String getAdditionalRule() {
+        if(tradeLicense !=null && tradeLicense.getLicenseAppType() !=null && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)){
+        return "RENEWALTRADE";
+        }
+        else
+            return "";
     }
 }

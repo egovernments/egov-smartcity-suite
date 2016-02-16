@@ -168,10 +168,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Transactional
     public void updateStatusInWorkFlowProgress(final TradeLicense license, final String workFlowAction) {
         if (BUTTONAPPROVE.equals(workFlowAction)) {
-            validityService.applyLicenseValidity(license);
+            
+            if(license.getLicenseAppType() !=null && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)){
+                validityService.applyLicenseValidity(license);
             if (license.getTempLicenseNumber() == null)
                 license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
+            }
             license.setActive(true);
+            
             final EgwStatus statusChange = (EgwStatus) persistenceService
                     .find("from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
                             Constants.APPLICATION_STATUS_APPROVED_CODE);
@@ -179,7 +183,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
         }
         if (BUTTONAPPROVE.equals(workFlowAction) || Constants.BUTTONFORWARD.equals(workFlowAction)
-                && license.getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING)) {
+                && (license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING))) {
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
                     .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
             license.setStatus(activeStatus);

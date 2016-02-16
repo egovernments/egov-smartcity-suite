@@ -61,6 +61,7 @@
 				<s:token />
 				<s:push value="model">
 					<s:hidden name="docNumber" />
+					<s:hidden name="actionName" value="renew" />
 					<s:hidden name="model.id" />
 					<s:hidden id="detailChanged" name="detailChanged"></s:hidden>
 					<s:hidden name="feeTypeId" id="feeTypeId" />
@@ -131,7 +132,15 @@
 				bootbox.alert("No UOM mapped for SubCategory")
 			}
 		})});
-	
+	function onSubmitValidations() {
+		return true;
+	}
+	function onSubmit() {
+			//toggleFields(false,"");
+			document.renewForm.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-renewal.action';
+			//document.newTradeLicense.submit();
+		return true;
+	}
 	</script>
 </body>
 </html>

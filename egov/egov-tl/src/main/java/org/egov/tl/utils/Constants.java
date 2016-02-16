@@ -93,9 +93,12 @@ public class Constants {
         public static final String WF_STATE_ZO_Approval_Pending = "ZO Approval Pending";
         public static final String WF_STATE_COLLECTION_PENDING = "Create License:Commissioner Approved";
         public static final String WF_STATE_INSPECTION_PENDING="Create License:Sanitary inspector Approve pending";
+       // public static final String WF_STATE_INSPECTION_PENDING_TEST="Sanitary inspector Approve pending";
+
         public static final String WF_STATE_GENERATE_CERTIFICATE="Create License:generate Certificate";
         public static final String WF_STATE_LICENSE_NOT_APPROVED = "License Not Approved";
         public static final String WF_STATE_RENEWAL_PRINT_PENDING = "Renewal Print Pending";
+        public static final String WF_STATE_RENEWAL_COMM_APPROVED="Renewal License:Commissioner Approved";
         public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
 
         // JSP Pages
@@ -743,6 +746,7 @@ public class Constants {
         public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNUPDATED";
         public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
         public static final String STR_WITH_APPLICANT_NAME = " Dear ";
+        public static final String RENEWAL_LIC_APPTYPE ="Renew";
         
         public static final String STR_WITH_LICENCE_NUMBER=" Trade License with TIN No.";
         public static final String STR_FOR_SUBMISSION = "/- and the Amount is Collected  @ Rs. ";

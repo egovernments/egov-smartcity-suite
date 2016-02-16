@@ -49,14 +49,25 @@ public class TradeLicenseSmsAndEmailService
         final Locale locale = LocaleContextHolder.getLocale();
         String [] strarr=getMunicipalityName().split(" ");
         String cityname=strarr[0];
-        if (license.getState().getHistory().isEmpty()
-                && Constants.STATUS_ACKNOLEDGED.equalsIgnoreCase(license.getStatus().getStatusCode())) {
+        String smsCode="";
+        String emailCode="";
+        if ((license.getState().getHistory().isEmpty()
+                && Constants.STATUS_ACKNOLEDGED.equalsIgnoreCase(license.getStatus().getStatusCode())) ||(license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING))) {
+            if(license.getLicenseAppType()!=null && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+            {
+                smsCode="msg.renewTradeLicensecreator.sms"; 
+                emailCode="msg.renewTradeLicensecreate.email.body";
+            }
+            else{
+                smsCode="msg.newTradeLicensecreator.sms"; 
+                emailCode="msg.newTradeLicensecreate.email.body";
+            }
             smsMsg =  messageSource.getMessage(
-                    "msg.newTradeLicensecreator.sms",
+                    smsCode,
                     new String[] { license.getLicensee().getApplicantName(), license.getApplicationNumber(),
                            getMunicipalityName() }, null); 
             emailBody = messageSource.getMessage(
-                    "msg.newTradeLicensecreate.email.body",
+                    emailCode,
                     new String[] { license.getLicensee().getApplicantName(), license.getApplicationNumber(),
                            getMunicipalityName() }, null);
             emailSubject= messageSource.getMessage("msg.newTradeLicensecreate.email.subject", new String[] { license.getApplicationNumber() }, locale);
@@ -65,12 +76,18 @@ public class TradeLicenseSmsAndEmailService
                 .getStatusCode())) {
             BigDecimal demAmt=(license.getCurrentDemand()!=null ?license.getCurrentDemand().getBaseDemand():BigDecimal.ZERO);
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            if(license.getLicenseAppType()!=null && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+            {
+                emailCode="msg.renewTradeLicenseapproval.email.body";
+            }else{
+                emailCode="msg.newTradeLicenseapproval.email.body";
+            }
             smsMsg =  messageSource.getMessage(
                     "msg.newTradeLicenseapproval.sms",
                     new String[] { license.getLicensee().getApplicantName(), license.getLicenseNumber(),
                             demAmt.toString(), formatter.format(license.getApplicationDate()),cityname,getMunicipalityName() }, null);
             emailBody = messageSource.getMessage(
-                    "msg.newTradeLicenseapproval.email.body",
+                    emailCode,
                     new String[] { license.getLicensee().getApplicantName(), license.getLicenseNumber(),
                             demAmt.toString(), formatter.format(license.getApplicationDate()),cityname,getMunicipalityName() }, null);
             emailSubject= messageSource.getMessage("msg.newTradeLicenseApproval.email.subject", new String[] { license.getLicenseNumber()}, locale);

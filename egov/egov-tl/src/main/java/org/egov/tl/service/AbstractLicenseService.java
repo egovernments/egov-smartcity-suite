@@ -529,21 +529,29 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void renew(final T license) {
+    public void renew(final T license,final  WorkflowBean workflowBean) {
         license.setApplicationNumber(applicationNumberGenerator.generate());
         this.recalculateDemand(feeMatrixService.findFeeList(license), license);
-
         final LicenseStatus status = (LicenseStatus) persistenceService.find(
                 "from org.egov.tl.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
+        final EgwStatus statusChange = (EgwStatus) persistenceService.find(
+                "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
+                Constants.APPLICATION_STATUS_CREATED_CODE);
+        license.setEgwStatus(statusChange);
+        Position  pos=null;
+        license.setLicenseAppType(getLicenseApplicationTypeForRenew());
         final User currentUser = securityUtils.getCurrentUser();
-        license.reinitiateTransition().start()
-                .withOwner(assignmentService.getPrimaryAssignmentForUser(currentUser.getId()).getPosition())
-                .withNatureOfTask("Renew License").withSenderName(currentUser.getName())
-                .withStateValue(WORKFLOW_STATE_TYPE_RENEWLICENSE);
-
+        if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+             pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+        final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                null,workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
+        license.reinitiateTransition().start().withSenderName(currentUser.getName()).withComments(workflowBean.getApproverComments())
+        .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
+        .withNextAction(wfmatrix.getNextAction());
         licensePersitenceService.persist(license);
-    }
+        this.sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
+        this.updateIndexService.updateTradeLicenseIndexes(license);}
 
     @Transactional
     public T createDemandForViolationFee(T license) {
@@ -565,9 +573,13 @@ public abstract class AbstractLicenseService<T extends License> {
             wfInitiator = getWorkflowInitiator(license);
 
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if (wfInitiator.equals(userAssignment))
+            if (wfInitiator.equals(userAssignment)){
                 license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
+            if(license.getLicenseAppType()!=null && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+            license.setLicenseAppType(getLicenseApplicationType());  
+            
+            }
             else {
                 final String stateValue = license.getCurrentState().getValue().split(":")[0] + ":" + WORKFLOW_STATE_REJECTED;
                 license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
@@ -596,7 +608,7 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withDateInfo(currentDate.toDate());
             else {
                 final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                        null, null, license.getCurrentState().getValue(), null);
+                        null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
                 license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
