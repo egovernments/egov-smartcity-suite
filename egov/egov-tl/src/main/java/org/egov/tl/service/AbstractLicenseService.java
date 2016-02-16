@@ -44,7 +44,6 @@ import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE;
 
 import java.io.File;
 import java.io.Serializable;
@@ -551,7 +550,8 @@ public abstract class AbstractLicenseService<T extends License> {
         .withNextAction(wfmatrix.getNextAction());
         licensePersitenceService.persist(license);
         this.sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        this.updateIndexService.updateTradeLicenseIndexes(license);}
+        this.updateIndexService.updateTradeLicenseIndexes(license);
+        }
 
     @Transactional
     public T createDemandForViolationFee(T license) {

@@ -156,7 +156,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
-        
         prepareNewForm();
         if(tradeLicense.getCurrentState().getValue()
                 .equals("Closed"))
@@ -164,8 +163,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             currentState="";
         };
         tradeLicense.setLicenseAppType((LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='Renew' "));
-        System.out.println(additionalRule + " ds " + (tradeLicense.getLicenseAppType() !=null ?tradeLicense.getLicenseAppType().getName() :null));
-        
         return super.beforeRenew();
     }
 

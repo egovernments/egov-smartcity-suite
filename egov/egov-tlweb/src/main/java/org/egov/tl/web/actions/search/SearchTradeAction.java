@@ -218,7 +218,6 @@ public class SearchTradeAction extends BaseFormAction {
                     licenseActions.add("Renewal Notice");
                 }
             } 
-            licenseActions.add("Renew License");
             searchFormInfo.setActions(licenseActions); 
             finalList.add(searchFormInfo);
             }
