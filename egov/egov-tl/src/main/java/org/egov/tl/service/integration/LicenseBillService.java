@@ -187,8 +187,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 else {
                     penaltyDemandDetail = insertPenaltyAndBillDetails(billDetails, billable, penalty.getValue(),
                             penalty.getKey());
-                    if (penaltyDemandDetail != null)
+                    if (penaltyDemandDetail != null){
                         demand.getEgDemandDetails().add(penaltyDemandDetail);
+                        demand.addBaseDemand(penaltyDemandDetail.getAmount());
+                    }
                 }
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
