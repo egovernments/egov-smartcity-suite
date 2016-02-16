@@ -172,8 +172,12 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
         EgDemandDetails penaltyDemandDetail = null;
         Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
-        installmentPenalty = billable.getCalculatedPenalty(license.getDateOfCreation(), new Date(),
-                license.getCurrentDemand().getBaseDemand());
+        if ("New".equals(license.getLicenseAppType().getName()))
+            installmentPenalty = billable.getCalculatedPenalty(license.getDateOfCreation(), new Date(),
+                    license.getCurrentDemand().getBaseDemand());
+        else if ("Renew".equals(license.getLicenseAppType().getName()))
+            installmentPenalty = billable.getCalculatedPenalty(license.getDateOfExpiry(), new Date(),
+                    license.getCurrentDemand().getBaseDemand());
         installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license, license.getCurrentDemand());
         penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(getCurrentInstallment(module));
         for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet())
@@ -372,12 +376,14 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 final StringBuilder emailSubject = new StringBuilder();
                 demand.setAmtCollected(amtCollected);
                 // persistenceService.update(demand);
-                //FIXME ld.getLicense(); will be sufficient to get the license back
-                //Since collection is not working, we re query to get License object
-                //replace the below with ld.getLicense(); once collection fixed
-                final TradeLicense license = (TradeLicense)persistenceService.find("from TradeLicense where id=?", ld.getLicense().getId());
+                // FIXME ld.getLicense(); will be sufficient to get the license back
+                // Since collection is not working, we re query to get License object
+                // replace the below with ld.getLicense(); once collection fixed
+                final TradeLicense license = (TradeLicense) persistenceService.find("from TradeLicense where id=?",
+                        ld.getLicense().getId());
                 updateWorkflowState(license);
-                smsMsg.append(Constants.STR_WITH_APPLICANT_NAME).append(",").append("\n\n").append(license.getLicensee().getApplicantName())
+                smsMsg.append(Constants.STR_WITH_APPLICANT_NAME).append(",").append("\n\n")
+                        .append(license.getLicensee().getApplicantName())
                         .append(Constants.STR_WITH_LICENCE_NUMBER)
                         .append(license.getLicenseNumber()).append(Constants.STR_FOR_SUBMISSION)
                         .append(demand.getAmtCollected()).append(Constants.STR_FOR_SUBMISSION_DATE)
@@ -413,19 +419,18 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 .getId());
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-         WorkFlowMatrix wfmatrix=null;
+        WorkFlowMatrix wfmatrix = null;
         final EgwStatus statusChange = (EgwStatus) persistenceService
                 .find("from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
                         Constants.APPLICATION_STATUS_COLLECTION_CODE);
         licenseObj.setEgwStatus(statusChange);
-        if(licenseObj.getLicenseAppType()!=null && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)){
-              wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
-                    Constants.WF_STATE_RENEWAL_COMM_APPROVED, null); 
-        }
-        else{
+        if (licenseObj.getLicenseAppType() != null
+                && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+            wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
+                    Constants.WF_STATE_RENEWAL_COMM_APPROVED, null);
+        else
             wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
-                Constants.WF_STATE_COLLECTION_PENDING, null);
-        }
+                    Constants.WF_STATE_COLLECTION_PENDING, null);
         licenseObj.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                 .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction());

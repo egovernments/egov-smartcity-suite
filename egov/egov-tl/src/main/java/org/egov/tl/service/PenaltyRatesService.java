@@ -103,7 +103,7 @@ public class PenaltyRatesService {
         final PenaltyRates existingPenalty = penaltyRatesRepository.findByDaysAndLicenseAppTypeAndRate(
                 penaltyRates.getFromRange(), penaltyRates.getToRange(),
                 penaltyRates.getLicenseAppType(), penaltyRates.getRate());
-        return existingPenalty != null && existingPenalty.equals(penaltyRates) ? false : existingPenalty != null ? true : false;
+        return existingPenalty != null && existingPenalty.getId().equals(penaltyRates.getId()) ? false : existingPenalty != null ? true : false;
     }
 
 }
