@@ -41,29 +41,21 @@ package org.egov.tl.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
-import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.entity.objection.LicenseObjection;
 import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
@@ -105,9 +97,7 @@ public abstract class License extends StateAware {
     protected LicenseTransfer licenseTransfer;
     protected String licenseCheckList;
     protected BigDecimal deduction;
-    protected Set<LicenseDemand> demandSet = new HashSet<>();
     protected BigDecimal swmFee;
-    // PWD
     protected String servicetaxNumber;
     @OptionalPattern(regex = Constants.alphaNumericwithspecialchar, message = "license.tin.number.alphaNumeric")
     protected String tinNumber;
@@ -121,8 +111,6 @@ public abstract class License extends StateAware {
     protected String feeExemption;
     protected BigDecimal violationFee;
     private String docImageNumber;
-    // this field is not received from application
-    // this is identified by the screen like is it "New" Apllication or Renewal of Application
     private LicenseAppType licenseAppType;
     private String officeEmailId;
     private String propertyNo;
@@ -210,14 +198,6 @@ public abstract class License extends StateAware {
 
     public void setDeduction(final BigDecimal deduction) {
         this.deduction = deduction;
-    }
-
-    public Set<LicenseDemand> getDemandSet() {
-        return demandSet;
-    }
-
-    public void setDemandSet(final Set<LicenseDemand> demandSet) {
-        this.demandSet = demandSet;
     }
 
     public String getFeeTypeStr() {
@@ -366,7 +346,7 @@ public abstract class License extends StateAware {
         this.tinNumber = tinNumber;
     }
 
-    @Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public LicenseSubCategory getTradeName() {
         return tradeName;
     }
@@ -528,7 +508,7 @@ public abstract class License extends StateAware {
         this.address = address;
     }
 
-    @Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public LicenseCategory getCategory() {
         return category;
     }
@@ -588,238 +568,6 @@ public abstract class License extends StateAware {
         this.startDate = startDate;
     }
 
-    public License create(final List<FeeMatrix> feeList, final LicenseAppType appType, final NatureOfBusiness nature,
-            final Installment installment, final Set<EgDemandReasonMaster> egDemandReasonMasters, final BigDecimal totalAmount,
-            final String runningNumber, final String feeType, final Module module) {
-        raiseNewDemand(feeList, nature, appType, installment, egDemandReasonMasters, totalAmount, module);
-        generateApplicationNumber(runningNumber);
-        return this;
-    }
-
-    public License renew(final List<FeeMatrix> feeList, final LicenseAppType appType, final NatureOfBusiness nature,
-            final Installment installment, final Set<EgDemandReasonMaster> egDemandReasonMasters, final BigDecimal totalAmount,
-            final String runningNumber, final String feeType, final Module module, final Date renewalDate) {
-        raiseDemandForRenewal(feeList, nature, appType, installment, egDemandReasonMasters, totalAmount, module, renewalDate);
-        return this;
-    }
-
-    public void raiseNewDemand(final List<FeeMatrix> feeMatrixList, final NatureOfBusiness nature, final LicenseAppType applType,
-            final Installment installment, final Set<EgDemandReasonMaster> egDemandReasonMasters, final BigDecimal totalAmount,
-            final Module module) {
-        demandSet = new LinkedHashSet<LicenseDemand>();
-        final LicenseDemand licenseDemand = new LicenseDemand();
-        demandSet.add(licenseDemand.createDemand(feeMatrixList, nature, applType, installment, this, egDemandReasonMasters,
-                totalAmount, module));
-        setDemandSet(demandSet);
-    }
-
-    public License raiseDemandForRenewal(final List<FeeMatrix> feeMatrixList, final NatureOfBusiness nature,
-            final LicenseAppType applType, final Installment installment, final Set<EgDemandReasonMaster> egDemandReasonMasters,
-            final BigDecimal totalAmount, final Module module, final Date renewalDate) {
-        List<EgDemandDetails> oldDetails = new ArrayList<EgDemandDetails>();
-        for (final LicenseDemand demand : getDemandSet()) {
-            if (demand.getIsHistory().equalsIgnoreCase("N"))
-                oldDetails = addOldDemandDetailsToCurrent(demand);
-            demand.setIsHistory("Y");
-        }
-        getDemandSet().add(
-                new LicenseDemand().renewDemand(feeMatrixList, nature, applType, installment, this, egDemandReasonMasters,
-                        totalAmount, module, renewalDate, oldDetails));
-        return this;
-    }
-
-    public License raiseDemandForViolationFee(final Installment installment, final License license) {
-        for (final LicenseDemand demand : getDemandSet())
-            if (demand.getIsHistory().equalsIgnoreCase("N"))
-                getDemandSet()
-                        .add(demand.setViolationFeeForHawker(installment, license, license.getTradeName().getLicenseType()
-                                .getModule()));
-        return this;
-    }
-
-    public List<EgDemandDetails> addOldDemandDetailsToCurrent(final LicenseDemand demand) {
-        final List<EgDemandDetails> oldDetails = new ArrayList<EgDemandDetails>();
-        if (demand.getIsHistory().equalsIgnoreCase("N"))
-            for (final EgDemandDetails dd : demand.getEgDemandDetails())
-                oldDetails.add((EgDemandDetails) dd.clone());
-        return oldDetails;
-    }
-
-    /**
-     * will give the difference to expiry date if date is passed expiry date then it will give no of months passed with isExpired
-     * set to true if date is prioror to the date of expiry then it will give no of months to expire and isExpired set to false
-     *
-     * @param date
-     * @return
-     */
-    public String getDateDiffToExpiryDate(final Date date) {
-        boolean isExpired = false;
-        int monthDiff;
-        if (date.after(dateOfExpiry)) {
-            isExpired = true;
-            monthDiff = LicenseUtils.getNumberOfMonths(dateOfExpiry, date);
-        } else {
-            isExpired = false;
-            monthDiff = LicenseUtils.getNumberOfMonths(date, dateOfExpiry);
-        }
-        return isExpired + "/" + monthDiff;
-    }
-
-    public void updateStatus(final LicenseStatus currentStatus) {
-        setStatus(currentStatus);
-        final LicenseStatusValues statusValues = new LicenseStatusValues();
-        statusValues.setLicenseStatus(currentStatus);
-    }
-
-    public License acceptTransfer() {
-        final String tempApplicationNumber = getApplicationNumber();
-        setApplicationNumber(getLicenseTransfer().getOldApplicationNumber());
-        getLicenseTransfer().setOldApplicationNumber(tempApplicationNumber);
-
-        final String tempApplicantName = licensee.getApplicantName();
-        getLicensee().setApplicantName(getLicenseTransfer().getOldApplicantName());
-        getLicenseTransfer().setOldApplicantName(tempApplicantName);
-
-        final String tempNameOfEstalishment = getNameOfEstablishment();
-        setNameOfEstablishment(getLicenseTransfer().getOldNameOfEstablishment());
-        getLicenseTransfer().setOldNameOfEstablishment(tempNameOfEstalishment);
-
-        // TODO -- Commented for Phoenix migration
-        /*
-         * final Address tempAddress = licensee.getAddress(); //TODO -- Commented for Phoenix migration
-         * //getLicensee().setAddress(getLicenseTransfer().getOldAddress()); getLicenseTransfer().setOldAddress(tempAddress);
-         */
-        final Boundary tempBoundary = getLicensee().getBoundary();
-        getLicensee().setBoundary(getLicenseTransfer().getBoundary());
-        getLicenseTransfer().setBoundary(tempBoundary);
-
-        final String tempPhoneNumber = getPhoneNumber();
-        setPhoneNumber(getLicenseTransfer().getOldPhoneNumber());
-        getLicenseTransfer().setOldPhoneNumber(tempPhoneNumber);
-
-        final String tempHomePhoneNumber = getLicensee().getPhoneNumber();
-        getLicensee().setPhoneNumber(getLicenseTransfer().getOldHomePhoneNumber());
-        getLicenseTransfer().setOldHomePhoneNumber(tempHomePhoneNumber);
-
-        final String tempMobilePhoneNumber = getLicensee().getMobilePhoneNumber();
-        getLicensee().setMobilePhoneNumber(getLicenseTransfer().getOldMobileNumber());
-        getLicenseTransfer().setOldMobileNumber(tempMobilePhoneNumber);
-
-        final String tempEmailId = getLicensee().getEmailId();
-        getLicensee().setEmailId(getLicenseTransfer().getOldEmailId());
-        getLicenseTransfer().setOldEmailId(tempEmailId);
-
-        final String tempUniqueId = getLicensee().getUid();
-        getLicensee().setUid(getLicenseTransfer().getOldUid());
-        getLicenseTransfer().setOldUid(tempUniqueId);
-        return this;
-    }
-
-    public String getWorkflowIdentityForTransfer() {
-        final StringBuilder workflowIdentity = new StringBuilder();
-        workflowIdentity.append("ApplNo:").append(getLicenseTransfer().getOldApplicationNumber());
-        workflowIdentity.append(",LicenseNo:").append(getLicenseNumber());
-        workflowIdentity.append(",LicenseId:").append(getId());
-        workflowIdentity.append(",LicenseTransferId:").append(getLicenseTransfer().getId());
-        return workflowIdentity.toString();
-    }
-
-    public String getWorkflowIdentityForCreate() {
-        final StringBuilder workflowIdentity = new StringBuilder();
-        workflowIdentity.append("ApplNo:").append(getLicenseTransfer().getOldApplicationNumber());
-        workflowIdentity.append(",LicenseId:").append(getId());
-        return workflowIdentity.toString();
-    }
-
-    public String getWorkflowIdentityForModify() {
-        final StringBuilder workflowIdentity = new StringBuilder();
-        workflowIdentity.append("ApplNo:").append(getLicenseTransfer().getOldApplicationNumber());
-        workflowIdentity.append(",LicenseNo:").append(getLicenseNumber());
-        workflowIdentity.append(",LicenseId:").append(getId());
-        return workflowIdentity.toString();
-    }
-
-    public License updateCollectedForExisting(final License license) {
-
-        final EgDemand licenseDemand = license.getCurrentDemand();
-        // Installment licIntallment=licenseDemand.getEgInstallmentMaster();
-        if (licenseDemand != null) {
-            final Set<EgDemandDetails> demanddetails = licenseDemand.getEgDemandDetails();
-            BigDecimal tot_amt = BigDecimal.ZERO;
-            for (final EgDemandDetails dd : demanddetails) {
-                final BigDecimal demandAmount = dd.getAmount().subtract(dd.getAmtRebate());
-                tot_amt = tot_amt.add(demandAmount);
-                dd.setAmtCollected(demandAmount);
-            }
-            licenseDemand.setAmtCollected(tot_amt);
-        }
-
-        return this;
-    }
-
-    public LicenseDemand getCurrentDemand() {
-        LicenseDemand currentDemand = null;
-        for (final LicenseDemand demand : demandSet)
-            if (demand.getIsHistory().equalsIgnoreCase("N")) {
-                currentDemand = demand;
-                break;
-            }
-        return currentDemand;
-    }
-
-    public boolean isPaid() {
-        return getTotalBalance().equals(BigDecimal.ZERO);
-    }
-    public boolean isViolationFeePending() {
-        boolean paid = false;
-        BigDecimal totBal = BigDecimal.ZERO;
-        for (final EgDemand demand : demandSet)
-            if (demand.getIsHistory().equals("N"))
-                for (final EgDemandDetails dd : demand.getEgDemandDetails())
-                    if (dd.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equals(Constants.VIOLATION_FEE_DEMAND_REASON)) {
-                        if (!dd.getAmount().subtract(dd.getAmtCollected()).equals(BigDecimal.ZERO))
-                            totBal = totBal.add(dd.getAmount().subtract(dd.getAmtCollected()));
-                        if (!totBal.equals(BigDecimal.ZERO))
-                            paid = true;
-                    }
-        return paid;
-    }
-
-    public boolean isWorkFlowStateRejected() {
-        boolean workFlowStateRejected = false;
-        if (getState() != null && getState().getValue().contains("Rejected"))
-            workFlowStateRejected = getState().getValue().contains("Rejected");
-        return workFlowStateRejected;
-    }
-
-    public BigDecimal getTotalBalance() {
-        BigDecimal totBal = BigDecimal.ZERO;
-
-        for (final EgDemand demand : demandSet)
-            if (demand.getIsHistory().equals("N"))
-                for (final EgDemandDetails dd : demand.getEgDemandDetails()) {
-                    if (!dd.getAmount().subtract(dd.getAmtCollected()).equals(BigDecimal.ZERO))
-                        totBal = totBal.add(dd.getAmount().subtract(dd.getAmtCollected()));
-                    if (!dd.getAmtRebate().equals(BigDecimal.ZERO))
-                        totBal = totBal.subtract(dd.getAmtRebate());
-                }
-        return totBal;
-    }
-
-    public BigDecimal getFeeAmount() {
-        BigDecimal totBal = BigDecimal.ZERO;
-        for (final EgDemand demand : demandSet)
-            if (demand.getIsHistory().equals("N"))
-                for (final EgDemandDetails dd : demand.getEgDemandDetails()) {
-                    if (!dd.getAmount().equals(BigDecimal.ZERO))
-                        totBal = totBal.add(dd.getAmount());
-                    if (!dd.getAmtRebate().equals(BigDecimal.ZERO))
-                        totBal = totBal.subtract(dd.getAmtRebate());
-                }
-        return totBal;
-    }
-
     public EgwStatus getEgwStatus() {
         return egwStatus;
     }
@@ -852,6 +600,46 @@ public abstract class License extends StateAware {
 
     public void setAgreementDocNo(final String agreementDocNo) {
         this.agreementDocNo = agreementDocNo;
+    }
+    
+    public void updateStatus(final LicenseStatus currentStatus) {
+        setStatus(currentStatus);
+        final LicenseStatusValues statusValues = new LicenseStatusValues();
+        statusValues.setLicenseStatus(currentStatus);
+    }
+
+    public LicenseDemand getCurrentDemand() {
+        return licenseDemand;
+    }
+
+    public boolean isPaid() {
+        return getTotalBalance().equals(BigDecimal.ZERO);
+    }
+
+    public BigDecimal getTotalBalance() {
+        BigDecimal totBal = BigDecimal.ZERO;
+        for (final EgDemandDetails dd : licenseDemand.getEgDemandDetails()) {
+            if (!dd.getAmount().subtract(dd.getAmtCollected()).equals(BigDecimal.ZERO))
+                totBal = totBal.add(dd.getAmount().subtract(dd.getAmtCollected()));
+            if (!dd.getAmtRebate().equals(BigDecimal.ZERO))
+                totBal = totBal.subtract(dd.getAmtRebate());
+        }
+        return totBal;
+    }
+
+    public BigDecimal getFeeAmount() {
+        BigDecimal totBal = BigDecimal.ZERO;
+        for (final EgDemandDetails dd : licenseDemand.getEgDemandDetails()) {
+            if (!dd.getAmount().equals(BigDecimal.ZERO))
+                totBal = totBal.add(dd.getAmount());
+            if (!dd.getAmtRebate().equals(BigDecimal.ZERO))
+                totBal = totBal.subtract(dd.getAmtRebate());
+        }
+        return totBal;
+    }
+    
+    public boolean isStateRejected() {
+        return getState() != null && getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED);
     }
 
 }

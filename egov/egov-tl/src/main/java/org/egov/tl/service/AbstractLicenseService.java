@@ -52,7 +52,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -250,9 +249,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
         ld.setEgDemandDetails(demandDetails);
         ld.setBaseDemand(totalAmount);
-        final HashSet<LicenseDemand> demandSet = new HashSet<LicenseDemand>();
-        demandSet.add(ld);
-        license.setDemandSet(demandSet);
+        license.setLicenseDemand(ld);
         return totalAmount;
     }
 
@@ -317,7 +314,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     licenseDemand.setLicense(license);
                     licenseDemand.setIsLateRenewal('0');
                     licenseDemand.setEgInstallmentMaster(installment);
-                    license.getDemandSet().add(licenseDemand);
+                    license.setLicenseDemand(licenseDemand);
                 }
                 final BigDecimal demandAmount = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue());
                 licenseDemand.getEgDemandDetails().add(
@@ -392,8 +389,6 @@ public abstract class AbstractLicenseService<T extends License> {
         return installmentList;
     }
 
-
-
     public Serializable getNextRunningLicenseNumber(final String sequenceName) {
         return sequenceNumberGenerator.getNextSequence(sequenceName);
     }
@@ -415,7 +410,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void renew(final T license,final  WorkflowBean workflowBean) {
+    public void renew(final T license, final WorkflowBean workflowBean) {
         license.setApplicationNumber(applicationNumberGenerator.generate());
         this.recalculateDemand(feeMatrixService.findFeeList(license), license);
         final LicenseStatus status = (LicenseStatus) persistenceService.find(
@@ -425,27 +420,20 @@ public abstract class AbstractLicenseService<T extends License> {
                 "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
                 Constants.APPLICATION_STATUS_CREATED_CODE);
         license.setEgwStatus(statusChange);
-        Position  pos=null;
+        Position pos = null;
         license.setLicenseAppType(getLicenseApplicationTypeForRenew());
         final User currentUser = securityUtils.getCurrentUser();
         if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-             pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
         final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                null,workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-        license.reinitiateTransition().start().withSenderName(currentUser.getName()).withComments(workflowBean.getApproverComments())
-        .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
-        .withNextAction(wfmatrix.getNextAction());
+                null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
+        license.reinitiateTransition().start().withSenderName(currentUser.getName())
+                .withComments(workflowBean.getApproverComments())
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction());
         licensePersitenceService.persist(license);
         this.sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         this.updateIndexService.updateTradeLicenseIndexes(license);
-        }
-
-    @Transactional
-    public T createDemandForViolationFee(T license) {
-        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
-        license = (T) license.raiseDemandForViolationFee(installment, license);
-        licensePersitenceService().update(license);
-        return license;
     }
 
     @Transactional
@@ -460,14 +448,14 @@ public abstract class AbstractLicenseService<T extends License> {
             wfInitiator = getWorkflowInitiator(license);
 
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if (wfInitiator.equals(userAssignment)){
+            if (wfInitiator.equals(userAssignment)) {
                 license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
-            if(license.getLicenseAppType()!=null && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
-            license.setLicenseAppType(getLicenseApplicationType());  
-            
-            }
-            else {
+                if (license.getLicenseAppType() != null
+                        && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+                    license.setLicenseAppType(getLicenseApplicationType());
+
+            } else {
                 final String stateValue = license.getCurrentState().getValue().split(":")[0] + ":" + WORKFLOW_STATE_REJECTED;
                 license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())

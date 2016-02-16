@@ -149,9 +149,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         if (EgovThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
         reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
-        final List<LicenseDemand> licDemandList = new ArrayList<LicenseDemand>(license.getDemandSet());
-        final String startYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getFromDate());
-        final String EndYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getToDate());
+        final LicenseDemand licenseDemand = license.getLicenseDemand();
+        final String startYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getFromDate());
+        final String EndYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getToDate());
         final String installMentYear = startYear + "-" + EndYear;
         reportParams.put("installMentYear", installMentYear);
         reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));

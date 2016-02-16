@@ -50,7 +50,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -59,25 +58,13 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.displaytag.pagination.PaginatedList;
-import org.displaytag.tags.TableTagParameters;
-import org.displaytag.util.ParamEncoder;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.web.utils.EgovPaginatedList;
-import org.egov.infstr.services.Page;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseUtils;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -94,17 +81,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Results({ @Result(name = NEW, location = "searchTrade-new.jsp") })
 public class SearchTradeAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
-    private PaginatedList pagedResults;
-    private int page;
-    private int reportSize;
     private final SearchForm searchForm = new SearchForm();
     private String roleName;
-    @Autowired
-    private SecurityUtils securityUtils; 
-    @Autowired
-    @Qualifier("licenseCategoryService")
-    protected LicenseCategoryService licenseCategoryService;
-    
     private String applicationNumber;
     private String licenseNumber;
     private String oldLicenseNumber;
@@ -114,51 +92,52 @@ public class SearchTradeAction extends BaseFormAction {
     private String tradeOwnerName;
     private String propertyAssessmentNo;
     private String mobileNo;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    @Qualifier("licenseCategoryService")
+    protected LicenseCategoryService licenseCategoryService;
+
     @Autowired
     private TradeLicenseService tradeLicenseService;
-    @Autowired
-    private LicenseUtils licenseUtils;
-    
+
     @Override
     public Object getModel() {
         return searchForm;
     }
-    
+
     @Override
     public void prepare() {
         super.prepare();
         addDropdownData("categoryList", licenseCategoryService.findAll());
         addDropdownData("subCategoryList", Collections.emptyList());
-        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
+        setRoleName(securityUtils.getCurrentUser().getRoles().toString());
     }
 
-    @Action(value="/search/searchTrade-newForm")
+    @Action(value = "/search/searchTrade-newForm")
     public String newForm() {
         return BaseFormAction.NEW;
     }
-    
+
     @SuppressWarnings("unchecked")
-    @Action(value="/search/searchTrade-search")
-    public void search() {
+    @Action(value = "/search/searchTrade-search")
+    public void search() throws IOException {
         List<SearchForm> resultList = new ArrayList<SearchForm>();
         String result = null;
         final Query query = tradeLicenseService
                 .prepareQueryforSearchTrade(applicationNumber, licenseNumber, oldLicenseNumber, categoryId, subCategoryId,
-                        tradeTitle,  tradeOwnerName, propertyAssessmentNo, mobileNo);
+                        tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo);
         resultList = prepareOutput(query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
         result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
         final HttpServletResponse response = ServletActionContext.getResponse();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        try {
-            IOUtils.write(result, response.getWriter());
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        IOUtils.write(result, response.getWriter());
     }
-    
+
     /**
      * @param object
      * @return
@@ -170,8 +149,7 @@ public class SearchTradeAction extends BaseFormAction {
         final String json = gson.toJson(object);
         return json;
     }
-    
-    
+
     /**
      * @param licenseList
      * @return
@@ -180,7 +158,7 @@ public class SearchTradeAction extends BaseFormAction {
         final List<SearchForm> finalList = new LinkedList<SearchForm>();
         SearchForm searchFormInfo;
         List<String> licenseActions;
-        for (final License license : licenseList){
+        for (final License license : licenseList) {
             searchFormInfo = new SearchForm();
             searchFormInfo.setLicenseId(license.getId());
             searchFormInfo.setApplicationNumber(license.getApplicationNumber());
@@ -192,62 +170,32 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setTradeOwnerName(license.getLicensee().getApplicantName());
             searchFormInfo.setPropertyAssessmentNo(license.getPropertyNo());
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
-            licenseActions= new ArrayList<String>();
+            licenseActions = new ArrayList<String>();
             licenseActions.add("View Trade");
-            if(license.getEgwStatus()!=null){
-                if(!license.isPaid() && !license.isWorkFlowStateRejected() && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_APPROVED_CODE))
+            if (license.getEgwStatus() != null) {
+                if (!license.isPaid() && !license.isStateRejected()
+                        && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_APPROVED_CODE))
                     licenseActions.add("Collect Fees");
-                else if(license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+                else if (license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Print Certificate");
-            }
-            else if(license.isLegacy() && !license.isPaid())
+            } else if (license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");
-            
-            if(roleName.contains(Constants.TL_CREATOR_ROLENAME)){
-                if(license.getOldLicenseNumber()!=null && !license.getOldLicenseNumber().isEmpty()){
+
+            if (roleName.contains(Constants.TL_CREATOR_ROLENAME))
+                if (license.getOldLicenseNumber() != null && !license.getOldLicenseNumber().isEmpty())
                     licenseActions.add("Modify License");
-                }
-            }
-            if(roleName.contains(Constants.TL_CREATOR_ROLENAME) || roleName.contains(Constants.TL_APPROVER_ROLENAME)){
-                if(!license.isPaid() && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE) && license.getStatus()!=null && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)){
+            if (roleName.contains(Constants.TL_CREATOR_ROLENAME) || roleName.contains(Constants.TL_APPROVER_ROLENAME))
+                if (!license.isPaid() && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
+                        && license.getStatus() != null
+                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE))
                     licenseActions.add("Renew License");
-                }
-            } 
-            if(roleName.contains(Constants.TL_APPROVER_ROLENAME)){
-                if(license.getDateOfExpiry() !=null && checkForRenewalNotice(license.getDateOfExpiry())){
+            if (roleName.contains(Constants.TL_APPROVER_ROLENAME))
+                if (license.getDateOfExpiry() != null && checkForRenewalNotice(license.getDateOfExpiry()))
                     licenseActions.add("Renewal Notice");
-                }
-            } 
-            searchFormInfo.setActions(licenseActions); 
+            searchFormInfo.setActions(licenseActions);
             finalList.add(searchFormInfo);
-            }
-        return finalList;
-    }
-
-    @SkipValidation
-    @Action(value="/search/searchTrade-searchPortal")
-    public String searchPortal() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        final Criteria criteria = createSearchQueryPortal();
-        if (page == 0) {
-            criteria.setProjection(Projections.rowCount());
-            reportSize = (Integer) criteria.uniqueResult();
         }
-
-        final ParamEncoder paramEncoder = new ParamEncoder("license");
-        final boolean isReport = parameters.get(paramEncoder.encodeParameterName(TableTagParameters.PARAMETER_EXPORTTYPE)) != null;
-        final Page page = new Page(createSearchQueryPortal(), isReport ? 1 : this.page, isReport ? null : 20);
-        pagedResults = new EgovPaginatedList(page, reportSize, null, null);
-        request.setAttribute("hasResult", !page.getList().isEmpty());
-        return "portal";
-    }
-
-    private Criteria createSearchQueryPortal() {
-        final Criteria criteria = getPersistenceService().getSession().createCriteria(TradeLicense.class);
-        criteria.add(Restrictions.isNull("licenseNumber"));
-        criteria.add(Restrictions.isNull("state"));
-        criteria.addOrder(Order.desc("createdDate"));
-        return criteria;
+        return finalList;
     }
 
     @Override
@@ -269,49 +217,6 @@ public class SearchTradeAction extends BaseFormAction {
         return readyForRenewal;
     }
 
-    // need to fix for Repeating
-    public boolean isRenewable(final Long licenseId)
-    {
-        final License license = (License) persistenceService.find("from License where id=?", licenseId);
-        boolean isRenewable = false;
-        final String dateDiffToExpiryDate = license.getDateDiffToExpiryDate(new Date());
-        if (dateDiffToExpiryDate != null)
-        {
-            boolean isExpired;
-            final String[] split = dateDiffToExpiryDate.split("/");
-            isExpired = split[0].equalsIgnoreCase("false") ? false : true;
-            final int noOfMonths = Integer.parseInt(split[1]);
-
-            if (isExpired == false && noOfMonths >= -1 && noOfMonths <= 1)
-                isRenewable = true;
-            else if (isExpired == true && noOfMonths <= 6)
-                isRenewable = true;
-            else
-                isRenewable = false;
-        }
-        return isRenewable;
-    }
-
-    public boolean isNocApplicable(final Long licenseId)
-    {
-        final License license = (License) persistenceService.find("from License where id=?", licenseId);
-        boolean isNocApplicable = false;
-        isNocApplicable = license.getTradeName().isNocApplicable();
-        return isNocApplicable;
-    }
-
-    public void setPage(final int page) {
-        this.page = page;
-    }
-
-    public void setPagedResults(final PaginatedList pagedResults) {
-        this.pagedResults = pagedResults;
-    }
-
-    public void setReportSize(final int reportSize) {
-        this.reportSize = reportSize;
-    }
-
     public String getRoleName() {
         return roleName;
     }
@@ -324,7 +229,7 @@ public class SearchTradeAction extends BaseFormAction {
         return applicationNumber;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
@@ -332,7 +237,7 @@ public class SearchTradeAction extends BaseFormAction {
         return licenseNumber;
     }
 
-    public void setLicenseNumber(String licenseNumber) {
+    public void setLicenseNumber(final String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 
@@ -340,7 +245,7 @@ public class SearchTradeAction extends BaseFormAction {
         return oldLicenseNumber;
     }
 
-    public void setOldLicenseNumber(String oldLicenseNumber) {
+    public void setOldLicenseNumber(final String oldLicenseNumber) {
         this.oldLicenseNumber = oldLicenseNumber;
     }
 
@@ -348,7 +253,7 @@ public class SearchTradeAction extends BaseFormAction {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(final Long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -356,7 +261,7 @@ public class SearchTradeAction extends BaseFormAction {
         return subCategoryId;
     }
 
-    public void setSubCategoryId(Long subCategoryId) {
+    public void setSubCategoryId(final Long subCategoryId) {
         this.subCategoryId = subCategoryId;
     }
 
@@ -364,7 +269,7 @@ public class SearchTradeAction extends BaseFormAction {
         return tradeTitle;
     }
 
-    public void setTradeTitle(String tradeTitle) {
+    public void setTradeTitle(final String tradeTitle) {
         this.tradeTitle = tradeTitle;
     }
 
@@ -372,7 +277,7 @@ public class SearchTradeAction extends BaseFormAction {
         return tradeOwnerName;
     }
 
-    public void setTradeOwnerName(String tradeOwnerName) {
+    public void setTradeOwnerName(final String tradeOwnerName) {
         this.tradeOwnerName = tradeOwnerName;
     }
 
@@ -380,7 +285,7 @@ public class SearchTradeAction extends BaseFormAction {
         return propertyAssessmentNo;
     }
 
-    public void setPropertyAssessmentNo(String propertyAssessmentNo) {
+    public void setPropertyAssessmentNo(final String propertyAssessmentNo) {
         this.propertyAssessmentNo = propertyAssessmentNo;
     }
 
@@ -388,7 +293,7 @@ public class SearchTradeAction extends BaseFormAction {
         return mobileNo;
     }
 
-    public void setMobileNo(String mobileNo) {
+    public void setMobileNo(final String mobileNo) {
         this.mobileNo = mobileNo;
     }
 }

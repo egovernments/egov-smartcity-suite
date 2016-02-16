@@ -267,19 +267,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         return Constants.ACKNOWLEDGEMENT_RENEW;
     }
 
-    public String createViolationFee() {
-        getSession().put("model.id", license().getId());
-        try {
-            licenseService().createDemandForViolationFee(license());
-            addActionMessage(this.getText("license.violation.fee.save") + license().getLicenseNumber());
-        } catch (final RuntimeException e) {
-            loadAjaxedDropDowns();
-            throw e;
-        }
-
-        return "message";
-    }
-
     public void setCheckList() {
         String str = "";
         if (selectedCheckList != null)

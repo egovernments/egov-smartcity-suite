@@ -163,7 +163,7 @@ public class FinancialYearHibernateDAO extends GenericHibernateDAO implements Fi
         return (CFinancialYear)query.uniqueResult();
     }
 	public List<CFinancialYear> getAllActiveFinancialYearList() {
-		Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=1 order by id desc");       
+		Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=1 order by finYearRange desc");       
         return query.list();
 	}
    public List<CFinancialYear> getAllActivePostingFinancialYear(){

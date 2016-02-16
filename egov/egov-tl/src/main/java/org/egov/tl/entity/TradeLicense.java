@@ -44,15 +44,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.utils.DateUtils;
 import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
@@ -81,38 +75,6 @@ public class TradeLicense extends License {
     
     private List<LicenseDocument> documents = new ArrayList<>();
 
-    public Set<EgDemandDetails> additionalDemandDetails(final Set<EgDemandReasonMaster> egDemandReasonMasters,
-            final Installment installment) {
-        LOGGER.debug("Adding additinal Demand Details...");
-        final Set<EgDemandDetails> addtionalDemandDetails = new LinkedHashSet<EgDemandDetails>();
-        BigDecimal baseMotorFee = null;
-        BigDecimal actualMotorFee = null;
-        BigDecimal amountToaddBaseDemand = BigDecimal.ZERO;
-        for (final MotorMaster mm : getMotorMasterList()) {
-            if (mm.getMotorHpFrom().compareTo(BigDecimal.ZERO) == 0 && mm.getMotorHpTo().compareTo(BigDecimal.ZERO) == 0)
-                baseMotorFee = mm.getUsingFee();
-                actualMotorFee = mm.getUsingFee();
-        }
-        LOGGER.debug("Adding Motor Fee Details...");
-        for (final EgDemandReasonMaster dm : egDemandReasonMasters)
-            if (dm.getReasonMaster().equalsIgnoreCase("Motor Fee"))
-                for (final EgDemandReason reason : dm.getEgDemandReasons())
-                    if (reason.getEgInstallmentMaster().getId().equals(installment.getId()))
-                        // check for current year installment only
-                            addtionalDemandDetails.add(EgDemandDetails
-                                    .fromReasonAndAmounts(baseMotorFee, reason, BigDecimal.ZERO));
-                            amountToaddBaseDemand = baseMotorFee;
-        LOGGER.debug("Adding Motor Fee completed.");
-        LOGGER.debug("Addtional Demand Details size." + addtionalDemandDetails.size());
-        LOGGER.debug("Adding additinal Demand Details done.");
-        for (final LicenseDemand ld : getDemandSet())
-            if (ld.getEgInstallmentMaster().getId() == installment.getId()) {
-                ld.getEgDemandDetails().addAll(addtionalDemandDetails);
-                ld.addBaseDemand(amountToaddBaseDemand);
-                break;
-            }
-        return addtionalDemandDetails;
-    }
 
     @Override
     public String generateApplicationNumber(final String runningNumber) {
@@ -155,7 +117,6 @@ public class TradeLicense extends License {
         return hotelGradeList;
     }
     
-    // TODO: Reviewed by Satyam, suggested to rename the variable name, committing after changes
     public Boolean disablePrintCertificate() {
         Boolean disablePrintCert = false;
         if (getTradeName().isNocApplicable() != null && getTradeName().isNocApplicable()) {

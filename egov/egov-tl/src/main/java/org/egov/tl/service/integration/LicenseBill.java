@@ -49,8 +49,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.LatePayPenaltyCalculator;
@@ -60,7 +60,6 @@ import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.utils.LicenseUtils;
@@ -111,22 +110,20 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getBillAddress() {
-        return license.getLicensee().getAddress().toString() + "\nPh : "
-                + defaultString(license.getLicensee().getPhoneNumber());
+        return license.getLicensee().getAddress() + (StringUtils.isNotBlank(license.getLicensee().getPhoneNumber())
+                ? "\nPh : " + license.getLicensee().getPhoneNumber() : "");
     }
 
     @Override
     public EgDemand getCurrentDemand() {
-        final Set<LicenseDemand> demands = license.getDemandSet();
-        for (final EgDemand demand : demands)
-            if (demand.getIsHistory().equals("N"))
-                return demand;
-        return null;
+        return license.getCurrentDemand();
     }
 
     @Override
     public List<EgDemand> getAllDemands() {
-        return new ArrayList<EgDemand>(license.getDemandSet());
+        final List<EgDemand> demands = new ArrayList<>();
+        demands.add(license.getLicenseDemand());
+        return demands;
 
     }
 
@@ -275,11 +272,15 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public BigDecimal calculatePenalty(final Date dateOfCreation, final Date collectionDate, final BigDecimal amount) {
-        final int days = Days.daysBetween(new LocalDate(dateOfCreation.getTime()), new LocalDate(collectionDate.getTime()))
-                .getDays();
-        final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(days),
-                license.getLicenseAppType());
-        return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
+        // FIXME check dateOfCreation/startDate or what ever to be used to calculate penality
+        if (dateOfCreation != null) {
+            final int days = Days.daysBetween(new LocalDate(dateOfCreation.getTime()), new LocalDate(collectionDate.getTime()))
+                    .getDays();
+            final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(days),
+                    license.getLicenseAppType());
+            return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
+        }
+        return BigDecimal.ZERO;
     }
 
     @Override

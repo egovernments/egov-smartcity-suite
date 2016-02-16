@@ -359,29 +359,6 @@ public class SearchTradeAction extends BaseFormAction {
         return readyForRenewal;
     }
 
-    // need to fix for Repeating
-    public boolean isRenewable(final Long licenseId)
-    {
-        final License license = (License) persistenceService.find("from License where id=?", licenseId);
-        boolean isRenewable = false;
-        final String dateDiffToExpiryDate = license.getDateDiffToExpiryDate(new Date());
-        if (dateDiffToExpiryDate != null)
-        {
-            boolean isExpired;
-            final String[] split = dateDiffToExpiryDate.split("/");
-            isExpired = split[0].equalsIgnoreCase("false") ? false : true;
-            final int noOfMonths = Integer.parseInt(split[1]);
-
-            if (isExpired == false && noOfMonths >= -1 && noOfMonths <= 1)
-                isRenewable = true;
-            else if (isExpired == true && noOfMonths <= 6)
-                isRenewable = true;
-            else
-                isRenewable = false;
-        }
-        return isRenewable;
-    }
-
     public boolean isNocApplicable(final Long licenseId)
     {
         final License license = (License) persistenceService.find("from License where id=?", licenseId);
