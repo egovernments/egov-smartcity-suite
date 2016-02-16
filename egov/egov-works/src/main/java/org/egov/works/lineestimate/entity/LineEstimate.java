@@ -53,7 +53,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -137,8 +136,7 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "executingdepartment", nullable = false)
     private Department executingDepartment;
 
-    @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id DESC ")
+    @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true, targetEntity=LineEstimateDetails.class)
     private List<LineEstimateDetails> lineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
 
     //TODO : Need to look for multiple document details support

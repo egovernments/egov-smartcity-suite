@@ -60,7 +60,6 @@
 						<tr id="estimateRow">
 							<td>
 								<span class="spansno">1</span>
-								<form:hidden path="lineEstimateDetails[0].estimateNumber" name="lineEstimateDetails[0].estimateNumber" value="" class="form-control table-input hidden-input"/>
 								<form:hidden path="lineEstimateDetails[0].id" name="lineEstimateDetails[0].id" value="${lineEstimateDetails[0].id}" class="form-control table-input hidden-input"/>
 							</td>
 							<td>
@@ -79,7 +78,6 @@
 							<tr id="estimateRow">
 								<td> 
 									<span class="spansno"><c:out value="${item.index + 1}" /></span>
-									<form:hidden path="lineEstimateDetails[${item.index}].estimateNumber" name="lineEstimateDetails[${item.index}].estimateNumber" value="" class="form-control table-input hidden-input"/>
 									<form:hidden path="lineEstimateDetails[${item.index}].id" name="lineEstimateDetails[${item.index}].id" value="${lineEstimateDtls.id}" class="form-control table-input hidden-input"/>
 								</td>
 								<td>

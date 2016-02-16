@@ -39,7 +39,8 @@
  */
 package org.egov.works.lineestimate.service;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,7 +52,9 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
+import org.egov.works.models.estimate.EstimateNumberGenerator;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +69,9 @@ public class LineEstimateService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    protected LineEstimateRepository lineEstimateRepository;
+    private final LineEstimateRepository lineEstimateRepository;
+    
+    private final LineEstimateDetailsRepository lineEstimateDetailsRepository;
 
     @Autowired
     private LineEstimateNumberGenerator lineEstimateNumberGenerator;
@@ -81,28 +86,34 @@ public class LineEstimateService {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
+    @Autowired
+    private EstimateNumberGenerator estimateNumberGenerator;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Autowired
-    public LineEstimateService(final LineEstimateRepository lineEstimateRepository) {
+    public LineEstimateService(final LineEstimateRepository lineEstimateRepository, final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
         this.lineEstimateRepository = lineEstimateRepository;
+        this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
     }
 
     public LineEstimate getLineEstimateById(final Long id) {
-        return lineEstimateRepository.findOne(id);
+        return lineEstimateRepository.findById(id);
     }
 
     @Transactional
     public LineEstimate create(final LineEstimate lineEstimate) {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULE_NAME_LINEESTIMATE,
                 WorksConstants.WF_STATE_CREATED_LINEESTIMATE));
-        lineEstimate.setLineEstimateDetails(lineEstimate.getLineEstimateDetails().parallelStream().collect(Collectors.toList()));
-        for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails())
+        final CFinancialYear cFinancialYear = financialYearDAO.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
+        for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails()) {
+            final String estimateNumber = estimateNumberGenerator.generateEstimateNumber(lineEstimate, cFinancialYear);
+            lineEstimateDetail.setEstimateNumber(estimateNumber);
             lineEstimateDetail.setLineEstimate(lineEstimate);
+        }
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
-            final CFinancialYear cFinancialYear = financialYearDAO.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
             final String lineEstimateNumber = lineEstimateNumberGenerator.generateLineEstimateNumber(lineEstimate,
                     cFinancialYear);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
@@ -112,13 +123,48 @@ public class LineEstimateService {
     }
 
     @Transactional
-    public void update(final LineEstimate lineEstimate) {
-        for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
+    public LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds) {
+        final List<LineEstimateDetails> list = new ArrayList<LineEstimateDetails>(getLineEstimateDetials(lineEstimate, removedLineEstimateDetailsIds));
+        final LineEstimate lineEstimate1 = removeDeletedLineEstimateDetails(lineEstimate, removedLineEstimateDetailsIds);
+        if (null != removedLineEstimateDetailsIds) {
+            lineEstimate1.getLineEstimateDetails().addAll(list);
+        }
+        final CFinancialYear cFinancialYear = financialYearDAO.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
+        for (final LineEstimateDetails lineEstimateDetails : lineEstimate1.getLineEstimateDetails()) {
             if (lineEstimateDetails.getLineEstimate() == null) {
-                lineEstimateDetails.setLineEstimate(lineEstimate);
-                lineEstimateDetails.setNameOfWork(lineEstimateDetails.getNameOfWork());
-                lineEstimateDetails.setEstimateAmount(lineEstimateDetails.getEstimateAmount());
+                lineEstimateDetails.setLineEstimate(lineEstimate1);
+                lineEstimateDetails.setEstimateNumber(estimateNumberGenerator.generateEstimateNumber(lineEstimate1, cFinancialYear));
             }
-        lineEstimateRepository.save(lineEstimate);
+        }
+        return lineEstimateRepository.saveAndFlush(lineEstimate1);
+    }
+
+    public LineEstimate getLineEstimateByLineEstimateNumber(final String lineEstimateNumber) {
+        return lineEstimateRepository.findByLineEstimateNumber(lineEstimateNumber);
+    }
+    
+    private List<LineEstimateDetails> getLineEstimateDetials(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds) {
+        List<LineEstimateDetails> lineEstimateDetailsList = new ArrayList<LineEstimateDetails>();
+        for(LineEstimateDetails lineEstimateDetials : lineEstimate.getLineEstimateDetails()) {
+            LineEstimateDetails lineEstimateDetial = new LineEstimateDetails();
+            if(lineEstimateDetials.getId() == null) {
+                lineEstimateDetial.setId(lineEstimateDetials.getId());
+                lineEstimateDetial.setEstimateAmount(lineEstimateDetials.getEstimateAmount());
+                lineEstimateDetial.setNameOfWork(lineEstimateDetials.getNameOfWork());
+                lineEstimateDetial.setEstimateNumber(lineEstimateDetials.getEstimateNumber());
+                lineEstimateDetailsList.add(lineEstimateDetial);
+            }
+        }
+        return lineEstimateDetailsList;
+    }
+    
+    @Transactional
+    public LineEstimate removeDeletedLineEstimateDetails(final LineEstimate lineEstimate,
+            final String removedLineEstimateDetailsIds) {
+        if (null != removedLineEstimateDetailsIds)
+            for (final String id : removedLineEstimateDetailsIds.split(","))
+                lineEstimate.getLineEstimateDetails().remove(lineEstimateDetailsRepository.findOne(Long.valueOf(id)));
+
+        return lineEstimate;
     }
 }

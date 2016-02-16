@@ -38,7 +38,6 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
-	generateEstimateNumber();
 	getLineEstimateDate();
 });
 
@@ -133,10 +132,6 @@ function addLineEstimate() {
 								}
 							}
 							
-							if (($(this).attr('type') === "hidden") && ($(this).attr('name').match(/estimateNumber$/))) {
-								$(this).val((new Date()).valueOf());
-							}
-							
 							$(this).attr('readonly', false);
 							$(this).removeAttr('disabled');
 							$(this).prop('checked', false);
@@ -184,7 +179,7 @@ function deleteLineEstimate(obj) {
 		
 		//regenerate index existing inputs in table row
 		$("#tblestimate tbody tr").each(function() {
-			$(this).find("input, span").each(function() {
+			$(this).find("input, span, errors, textarea").each(function() {
 				if ($(this).is('span')) {
 					if($(this).hasClass('spansno'))
 					$(this).html((idx+1));
@@ -218,12 +213,6 @@ function calculateEstimatedAmountTotal(){
 		estimateTotal = estimateTotal + parseFloat(($(this).val()?$(this).val():"0"));
 	});
 	$('#estimateTotal').html(estimateTotal);
-}
-
-function generateEstimateNumber() {
-	if($('[name="lineEstimateDetails[0].estimateNumber"]').val() == "") {
-		$('[name="lineEstimateDetails[0].estimateNumber"]').val((new Date()).valueOf());
-	}
 }
 
 function getLineEstimateDate() {

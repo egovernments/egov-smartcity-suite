@@ -55,6 +55,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -69,6 +70,7 @@ public class LineEstimateDetails extends AbstractAuditable {
 
     public static final String SEQ_EGW_LINEESTIMATE_DETAILS = "SEQ_EGW_LINEESTIMATE_DETAILS";
 
+    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_EGW_LINEESTIMATE_DETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;

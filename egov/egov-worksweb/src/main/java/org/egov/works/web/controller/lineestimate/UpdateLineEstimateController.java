@@ -49,7 +49,6 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
-import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +68,6 @@ public class UpdateLineEstimateController {
 
     @Autowired
     private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private LineEstimateDetailService lineEstimateDetailService;
 
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
@@ -105,19 +101,17 @@ public class UpdateLineEstimateController {
     }
 
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.POST)
-    public String updateLineEstimate(@Valid @ModelAttribute("lineEstimate") LineEstimate lineEstimate,
-            final BindingResult errors, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam final String removedLineEstimateDetailsIds)
+    public String updateLineEstimate(@Valid @ModelAttribute("lineEstimate") LineEstimate lineEstimate, final BindingResult errors,
+            final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
+            @RequestParam final String removedLineEstimateDetailsIds)
                     throws ApplicationException {
         setDropDownValues(model);
         if (errors.hasErrors())
             return loadViewData(model, request, lineEstimate);
         else {
-            lineEstimate = lineEstimateDetailService.removeDeletedLineEstimateDetails(lineEstimate,
-                    removedLineEstimateDetailsIds);
-            lineEstimateService.update(lineEstimate);
+            LineEstimate newLineEstimate = lineEstimateService.update(lineEstimate, removedLineEstimateDetailsIds);
             setDropDownValues(model);
-            redirectAttributes.addFlashAttribute("lineEstimate", lineEstimate);
+            redirectAttributes.addFlashAttribute("lineEstimate", newLineEstimate);
             redirectAttributes.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
             return "redirect:/lineestimate/update/" + lineEstimate.getId();
         }
@@ -134,7 +128,7 @@ public class UpdateLineEstimateController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final LineEstimate lineEstimate) {
         model.addAttribute("lineEstimate", lineEstimate);
-        if (request.getParameter("message") != null && request.getParameter("message").equals("update"))
+        if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
         return "newLineEstimate-edit";
     }

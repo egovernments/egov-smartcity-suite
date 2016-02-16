@@ -55,8 +55,10 @@
 				</c:otherwise>
 			</c:choose>
 		</div>
-		<form:form name="lineEstimateForm" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST">
+		<form:form name="lineEstimateForm" action="" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST">
 			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
+			<form:hidden path="" name="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
+			<input type="hidden" value="${mode}" id="mode"/>
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="lineEstimateHeader.jsp"/>

@@ -45,5 +45,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LineEstimateRepository extends JpaRepository<LineEstimate, Long> {
+    LineEstimate findById(final Long id);
 
+    LineEstimate findByLineEstimateNumber(final String lineEstimateNumber);
 }

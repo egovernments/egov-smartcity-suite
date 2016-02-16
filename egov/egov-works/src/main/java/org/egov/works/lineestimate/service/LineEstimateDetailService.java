@@ -39,13 +39,11 @@
  */
 package org.egov.works.lineestimate.service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.List;
 
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,15 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class LineEstimateDetailService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Autowired
     private final LineEstimateDetailsRepository lineEstimateDetailsRepository;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
 
     @Autowired
     public LineEstimateDetailService(final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
@@ -84,6 +74,11 @@ public class LineEstimateDetailService {
         lineEstimateDetailsRepository.delete(lineEstimateDetails);
     }
 
+    @Transactional
+    public void delete(final List<LineEstimateDetails> lineEstimateDetailsList) {
+        lineEstimateDetailsRepository.delete(lineEstimateDetailsList);
+    }
+
     public LineEstimateDetails getById(final Long id) {
         return lineEstimateDetailsRepository.findOne(id);
     }
@@ -94,6 +89,7 @@ public class LineEstimateDetailService {
         if (null != removedLineEstimateDetailsIds)
             for (final String id : removedLineEstimateDetailsIds.split(","))
                 lineEstimate.getLineEstimateDetails().remove(lineEstimateDetailsRepository.findOne(Long.valueOf(id)));
+
         return lineEstimate;
     }
 
