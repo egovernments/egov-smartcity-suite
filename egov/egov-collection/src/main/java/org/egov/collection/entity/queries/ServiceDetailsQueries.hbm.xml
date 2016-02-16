@@ -67,10 +67,10 @@
 	<![CDATA[select f from Functionary f where f.isactive=true order by f.name]]></query>
 	
 	<query name="getAllFund">
-	<![CDATA[select f from Fund f where f.isactive='1' and f.isnotleaf=0 order by f.name]]></query>
+	<![CDATA[select f from Fund f where f.isactive=true and f.isnotleaf=false order by f.name]]></query>
 	
 	<query name="getAllFundsource">
-	<![CDATA[select f  from Fundsource f where f.isactive=true and f.isnotleaf=0 order by name]]></query>
+	<![CDATA[select f  from Fundsource f where f.isactive=true and f.isnotleaf=false order by name]]></query>
 	
 	<query name="getAllField">
 	<![CDATA[select b  from Boundary b where lower(b.boundaryType.name)='zone']]></query>
@@ -82,13 +82,13 @@
     <![CDATA[from Scheme where fund.id=? and isActive=true order by name]]></query>
     
     <query name="getAllSubSchemeBySchemeId">
-    <![CDATA[from SubScheme where scheme.id=? and isActive='1' order by name]]></query>
+    <![CDATA[from SubScheme where scheme.id=? and isActive=true order by name]]></query>
     
     <query name="getServicesforChallan">
     <![CDATA[from ServiceDetails s where s.serviceType=? order by name]]></query>
     
     <query name="getActiveFinancialYear">
-    <![CDATA[from CFinancialYear f where f.isActive='1' order by finYearRange]]></query>
+    <![CDATA[from CFinancialYear f where f.isActive=true order by finYearRange]]></query>
     
     <!-- query name="getAllDesignationByDepartment"-->
     <!-- [CDATA[select distinct(dm) from DesignationMaster dm,Assignment a,AssignmentPrd ap 

@@ -93,7 +93,7 @@ public class CommnFunctions
         // fundCondition1="AND transactionsummary.fundId="+fundId+" ";
         try
         {
-            final String query = " select id,name from fund where isactive=1 and isnotleaf!=1 " + fundCondition + " order by id";
+            final String query = " select id,name from fund where isactive=true and isnotleaf!=true " + fundCondition + " order by id";
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("getFundList: " + query);
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
@@ -149,7 +149,7 @@ public class CommnFunctions
                 + " case when coa.type = ? then sum(ts.openingcreditbalance)-sum(ts.openingdebitbalance) else sum(ts.openingdebitbalance)-sum(ts.openingcreditbalance) end as \"amount\" "
                 + " FROM transactionsummary ts,  chartofaccounts coa,fund  f   WHERE (coa.TYPE = ? OR coa.TYPE = ?) and coa.id = ts.glcodeid "
                 + " AND financialyearid =(SELECT ID FROM financialyear WHERE startingdate <= ? AND endingdate >= ?)  "
-                + fundCondition + " and f.id=ts.fundid and f.isactive=1 and f.isnotleaf!=1 "
+                + fundCondition + " and f.id=ts.fundid and f.isactive=true and f.isnotleaf!=true "
                 + " GROUP BY substr(coa.glcode,0," + substringVal + "), fundid ,coa.type ";
         if (LOGGER.isInfoEnabled())
             LOGGER.info("query " + query);
@@ -295,7 +295,7 @@ public class CommnFunctions
                 + " sum(ts.openingcreditbalance) as \"amount\" "
                 + " FROM transactionsummary ts,  chartofaccounts coa,fund  f   WHERE " + type + " coa.id = ts.glcodeid "
                 + " AND financialyearid =(SELECT ID FROM financialyear WHERE startingdate <= ? AND endingdate >= ?)  "
-                + fundCondition + " and f.id=ts.fundid and f.isactive=1 and f.isnotleaf!=1 "
+                + fundCondition + " and f.id=ts.fundid and f.isactive=true and f.isnotleaf!=true "
                 + " GROUP BY substr(coa.glcode,0," + substringVal + "), fundid ,coa.type";
         if (LOGGER.isInfoEnabled())
             LOGGER.info("query " + query);
@@ -367,7 +367,7 @@ public class CommnFunctions
                 + " sum(ts.openingdebitbalance) as \"amount\" "
                 + " FROM transactionsummary ts,  chartofaccounts coa,fund  f   WHERE (coa.TYPE = ? OR coa.TYPE = ?) and coa.id = ts.glcodeid "
                 + " AND financialyearid =(SELECT ID FROM financialyear WHERE startingdate <= ? AND endingdate >= ?)  "
-                + fundCondition + " and f.id=ts.fundid and f.isactive=1 and f.isnotleaf!=1 "
+                + fundCondition + " and f.id=ts.fundid and f.isactive=true and f.isnotleaf!=true "
                 + " GROUP BY substr(coa.glcode,0," + substringVal + "), fundid ,coa.type";
         if (LOGGER.isInfoEnabled())
             LOGGER.info("query " + query);

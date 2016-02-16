@@ -154,9 +154,9 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         // HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("recoveryList",
-                persistenceService.findAllBy(" from Recovery where isactive=1 order by chartofaccounts.glcode"));
+                persistenceService.findAllBy(" from Recovery where isactive=true order by chartofaccounts.glcode"));
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("bankBranchList", Collections.EMPTY_LIST);
         addDropdownData("bankAccountList", Collections.EMPTY_LIST);

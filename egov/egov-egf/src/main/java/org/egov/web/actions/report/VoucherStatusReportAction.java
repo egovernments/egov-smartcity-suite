@@ -177,12 +177,12 @@ public class VoucherStatusReportAction extends BaseFormAction
         if (headerFields.contains("department"))
             addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));
+            addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+            addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         if (headerFields.contains("fundsource"))
             addDropdownData("fundsourceList",
-                    persistenceService.findAllBy(" from Fundsource where isactive=1 and isnotleaf=0 order by name"));
+                    persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
         if (headerFields.contains("field"))
             addDropdownData("fieldList",
                     persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
@@ -287,7 +287,7 @@ public class VoucherStatusReportAction extends BaseFormAction
         if (headerFields.contains("scheme"))
             if (voucherHeader.getFundId() != null && voucherHeader.getFundId().getId() != -1) {
                 final StringBuffer st = new StringBuffer();
-                st.append("from Scheme where isactive=1 and fund.id=");
+                st.append("from Scheme where isactive=true and fund.id=");
                 st.append(voucherHeader.getFundId().getId());
                 dropdownData.put("schemeList", persistenceService.findAllBy(st.toString()));
                 st.delete(0, st.length() - 1);
@@ -299,7 +299,7 @@ public class VoucherStatusReportAction extends BaseFormAction
                     && voucherHeader.getVouchermis().getSchemeid() != null
                     && voucherHeader.getVouchermis().getSchemeid().getId() != -1)
                 dropdownData.put("subSchemeList", persistenceService.findAllBy(
-                        "from SubScheme where isactive=1 and scheme.id=?",
+                        "from SubScheme where isactive=true and scheme.id=?",
                         voucherHeader.getVouchermis().getSchemeid().getId()));
             else
                 dropdownData.put("subSchemeList", Collections.emptyList());

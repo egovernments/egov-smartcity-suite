@@ -71,7 +71,7 @@ public class FunctionaryHibernateDAO extends FunctionaryDAO {
 
 	@Override
 	public List findAllActiveFunctionary() {
-		return getCurrentSession().createQuery("from Functionary f where isactive=1 order by code").list();
+		return getCurrentSession().createQuery("from Functionary f where isactive=true order by code").list();
 
 	}
 

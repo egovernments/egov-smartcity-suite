@@ -498,7 +498,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
              final Date startingDate = financialYear2.getStartingDate();
              final Date lastyear = subtractYear(startingDate);
              final CFinancialYear lastFinYear = (CFinancialYear) persistenceService.find(
-                     "from CFinancialYear where startingDate=? and isActive=1", lastyear);
+                     "from CFinancialYear where startingDate=? and isActive=true", lastyear);
              if (lastFinYear != null)
                  finyearId = lastFinYear.getId();
 

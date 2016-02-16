@@ -72,7 +72,7 @@ public class FunctionHibernateDAO extends GenericHibernateDAO implements Functio
 
 	@Override
 	public List getAllActiveFunctions() {
-		return getCurrentSession().createQuery("from CFunction where isactive = 1 and isnotleaf=0 order by name").list();
+		return getCurrentSession().createQuery("from CFunction where isactive = true and isnotleaf=false order by name").list();
 
 	}
 

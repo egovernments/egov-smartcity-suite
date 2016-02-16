@@ -68,7 +68,7 @@ public class BudgetGroup extends BaseModel {
     private BudgetAccountType accountType;
     @Enumerated(value = EnumType.STRING)
     private BudgetingType budgetingType;
-    private boolean isActive;
+    private Boolean isActive;
 
     public String getName() {
         return name;

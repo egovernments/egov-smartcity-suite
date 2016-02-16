@@ -226,7 +226,7 @@ public class BudgetReportAction extends BaseFormAction {
         addDropdownData("departmentList", masterCache.get("egi-department"));
         addDropdownData("functionList", masterCache.get("egi-function"));
         addDropdownData("financialYearList", getPersistenceService().findAllBy(
-                "from CFinancialYear where isActive=1  order by finYearRange desc "));
+                "from CFinancialYear where isActive=true  order by finYearRange desc "));
         setRelatedEntitesOn();
         majorCodeLength = Integer.valueOf(getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
     }

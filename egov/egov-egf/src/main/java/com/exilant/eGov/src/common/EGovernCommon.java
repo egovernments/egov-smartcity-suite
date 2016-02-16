@@ -261,7 +261,7 @@ public class EGovernCommon extends AbstractTask {
             final SimpleDateFormat sdf = sdfFormatddMMyyyy;
             final SimpleDateFormat formatter = dtFormat;// new SimpleDateFormat("dd-MMM-yyyy");
             final String vDate = formatter.format(sdf.parse(vdt));
-            final String qry = "select code,name from scheme where isactive=1 and  validFrom<=? and validTo>=? and id= ?";
+            final String qry = "select code,name from scheme where isactive=true and  validFrom<=? and validTo>=? and id= ?";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("validating scheme" + qry);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(qry);
@@ -1895,7 +1895,7 @@ public class EGovernCommon extends AbstractTask {
             fundCondition = " and branch.id in(select branchid from bankaccount where fundid=" + fundId + ")";
 
         query = "select branch.ID as \"bankBranchId\", concat(concat(ba.name, ' - '),branch.branchName) as \"bankBranchName\" "
-                + " FROM bank ba, bankBranch branch WHERE branch.bankId=ba.ID AND ba.isActive=1 AND branch.isActive = 1 "
+                + " FROM bank ba, bankBranch branch WHERE branch.bankId=ba.ID AND ba.isActive=true AND branch.isActive = 1 "
                 + fundCondition + " order by LOWER(ba.name) ";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query:" + query);

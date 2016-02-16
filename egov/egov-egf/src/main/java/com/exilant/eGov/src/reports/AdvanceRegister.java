@@ -199,7 +199,7 @@ public class AdvanceRegister {
                             + " AND adk.detailkey="
                             + paramdetailkeyid
                             + ") slname"
-                            + " FROM chartofaccounts coa,financialyear fy,accountdetailkey adk WHERE fy.isactiveforposting = 1"
+                            + " FROM chartofaccounts coa,financialyear fy,accountdetailkey adk WHERE fy.isactiveforposting = true"
                             + " AND fy.startingdate <= TO_DATE ('"
                             + startDate
                             + "') AND fy.endingdate >= TO_DATE ('"

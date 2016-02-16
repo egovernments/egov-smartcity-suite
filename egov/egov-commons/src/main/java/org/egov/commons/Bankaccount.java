@@ -89,7 +89,7 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
     private String accounttype;
     private String narration;
     @NotNull
-    private int isactive;
+    private Boolean isactive;
     private String payTo;
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
@@ -101,7 +101,7 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
         // For hibernate to work
     }
 
-    public Bankaccount(Bankbranch bankbranch, String accountnumber, String accounttype, int isactive, Date created,
+    public Bankaccount(Bankbranch bankbranch, String accountnumber, String accounttype, Boolean isactive, Date created,
             BigDecimal modifiedby, Date lastmodified, BigDecimal currentbalance, String payTo, BankAccountType type) {
         this.bankbranch = bankbranch;
         this.accountnumber = accountnumber;
@@ -112,7 +112,7 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
     }
 
     public Bankaccount(Bankbranch bankbranch, CChartOfAccounts chartofaccounts, Fund fund, String accountnumber,
-            String accounttype, String narration, int isactive, Date created, BigDecimal modifiedby, Date lastmodified,
+            String accounttype, String narration, Boolean isactive, Date created, BigDecimal modifiedby, Date lastmodified,
             BigDecimal currentbalance,
             String payTo, Set<EgSurrenderedCheques> egSurrenderedChequeses) {
         this.bankbranch = bankbranch;
@@ -206,11 +206,11 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
         this.payTo = payTo;
     }
 
-    public int getIsactive() {
+    public Boolean getIsactive() {
         return isactive;
     }
 
-    public void setIsactive(int isactive) {
+    public void setIsactive(Boolean isactive) {
         this.isactive = isactive;
     }
 

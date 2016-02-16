@@ -2051,7 +2051,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + miscQuery
                         + " and "
                         +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=1) and "
+                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
                         +
                         "((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
                         +
@@ -2061,7 +2061,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=1) and "
+                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
                         +
                         "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.billstatus != 'Cancelled' and bmis.voucherheaderid "
                         +
@@ -2154,7 +2154,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + miscQuery
                         + " and "
                         +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=1) and "
+                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
                         +
                         "((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
                         +
@@ -2174,7 +2174,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + miscQuery
                         + " and "
                         +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=1) and "
+                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
                         +
                         "((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
                         +
@@ -2184,7 +2184,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         "egf_budgetgroup bg,voucherheader vh where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=1) and "
+                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
                         +
                         "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
                         +
@@ -2204,7 +2204,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=1) and "
+                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
                         +
                         "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and bmis.voucherheaderid "
                         +
@@ -2244,7 +2244,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + miscQuery
                         + " and "
                         +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=1) and vh.id = vmis.voucherheaderid and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
+                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and vh.id = vmis.voucherheaderid and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
                         +
                         " and ((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
                         +
@@ -2254,7 +2254,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         "egf_budgetgroup bg,voucherheader vh, vouchermis vmis where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=1) and vh.id = vmis.voucherheaderid and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
+                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and vh.id = vmis.voucherheaderid and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
                         +
                         " and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
                         +

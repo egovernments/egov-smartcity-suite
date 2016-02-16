@@ -183,7 +183,7 @@ public class SubSchemeAction extends BaseFormAction {
     public String beforeEdit()
     {
         subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
-        if (subScheme!=null && subScheme.getIsactive().equalsIgnoreCase("1"))
+        if (subScheme!=null && subScheme.getIsactive())
             isActive = true;
         return NEW;
     }
@@ -193,7 +193,7 @@ public class SubSchemeAction extends BaseFormAction {
     public String beforeSearch() {
 
         dropdownData.put("fundList", persistenceService
-                .findAllBy("from Fund where isActive=1 order by name"));
+                .findAllBy("from Fund where isActive=true order by name"));
         dropdownData.put("schemeList", Collections.emptyList());
         dropdownData.put("subSchemeList", Collections.emptyList());
         fundId = 0;

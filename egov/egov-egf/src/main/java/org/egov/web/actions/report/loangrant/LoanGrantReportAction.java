@@ -108,7 +108,7 @@ public class LoanGrantReportAction extends LoanGrantBaseAction {
     public void prepare()
     {
         super.prepare();
-        final List<FundingAgency> agencyList = persistenceService.findAllBy("from FundingAgency where isActive=1 order by name ");
+        final List<FundingAgency> agencyList = persistenceService.findAllBy("from FundingAgency where isActive=true order by name ");
         addDropdownData("agencyList", agencyList);
     }
 

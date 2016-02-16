@@ -95,7 +95,7 @@
 			function onLoad()
 			{
 				PageValidator.addCalendars();
-				loadSelectData('../commonyui/egov/loadComboAjax.jsp', "fund", "id", "name", " isactive=1 and isnotleaf!=1", 'dummy', 'fund');
+				loadSelectData('../commonyui/egov/loadComboAjax.jsp', "fund", "id", "name", " isactive=true and isnotleaf!=true", 'dummy', 'fund');
 				var fromBean = '<%=request.getParameter("fromBean")%>';
 				PageManager.DataService.callDataService('companyDetailData'); 
 				if(fromBean==null || fromBean=='null')

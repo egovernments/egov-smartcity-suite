@@ -1341,7 +1341,7 @@ public class EgovCommon {
                 .findAllBy(
                         "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname "
                                 + " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
-                                + " where  bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
+                                + " where  bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
                                 + " and bankaccount.isactive=? ", true);
         // Ordering Starts
         final List<String> bankBranchStrings = new ArrayList<String>();
@@ -1373,7 +1373,7 @@ public class EgovCommon {
 
     @SuppressWarnings("unchecked")
     public List<Bankbranch> getActiveBankBranchForActiveBanks() {
-        return persistenceService.findAllBy("from Bankbranch bankBranch where  bank.isactive=1  and isactive=1");
+        return persistenceService.findAllBy("from Bankbranch bankBranch where  bank.isactive=true  and isactive=true");
     }
 
     @SuppressWarnings("unchecked")

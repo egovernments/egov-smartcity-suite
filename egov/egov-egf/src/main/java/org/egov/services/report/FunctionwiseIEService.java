@@ -209,7 +209,7 @@ public class FunctionwiseIEService
             sql = " select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId,0 as isMajor from Chartofaccounts coa"
                     +
                     " where  coa.type=:type and length(coa.glcode)=" + reportSearch.getMinorCodeLen() +
-                    " and coa.glcode like :glcode and classification=4 and isactiveforposting=1 order by 1 ";
+                    " and coa.glcode like :glcode and classification=4 and isActiveForPosting=true order by 1 ";
         else if (reportSearch.getByDepartment())
             sql = " select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId,0 as isMajor from Chartofaccounts coa,Schedulemapping mp"
                     +
@@ -261,7 +261,7 @@ public class FunctionwiseIEService
             sql = " select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId,0 as isMajor from Chartofaccounts coa"
                     +
                     " where  coa.type=:type and length(coa.glcode)=" + reportSearch.getMinorCodeLen() +
-                    " and coa.glcode like :glcode and classification=4 and isactiveforposting=1 order by 1 ";
+                    " and coa.glcode like :glcode and classification=4 and isActiveForPosting=true order by 1 ";
         else if (reportSearch.getByDepartment())
             sql = " select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId,0 as isMajor from Chartofaccounts coa,Schedulemapping mp"
                     +
@@ -308,7 +308,7 @@ public class FunctionwiseIEService
             sql = " select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId,0 as isMajor from Chartofaccounts coa"
                     +
                     " where  coa.type=:type and length(coa.glcode)=" + reportSearch.getMinorCodeLen() +
-                    " and coa.glcode like :glcode and classification=4 and isactiveforposting=1 order by 1 ";
+                    " and coa.glcode like :glcode and classification=4 and isActiveForPosting=true order by 1 ";
         else if (reportSearch.getByDepartment())
             sql = " select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId,0 as isMajor from Chartofaccounts coa,Schedulemapping mp"
                     +

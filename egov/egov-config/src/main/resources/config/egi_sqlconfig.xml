@@ -71,31 +71,31 @@
 	
 <egi-function>
 	<type>hql</type>
-	<query>from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)</query>
+	<query>from CFunction where isactive = true AND isnotleaf=false order by upper(name)</query>
 </egi-function> 
 
 <egi-fund>
 	<type>hql</type>
-	<query>from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)</query>
+	<query>from Fund where isactive = true and isNotLeaf!=true order by upper(name)</query>
 </egi-fund> 
 
 <egi-fundSource>
 	<type>hql</type>
-	<query>from Fundsource where isActive='1' order by upper(name)</query>
+	<query>from Fundsource where isActive=true order by upper(name)</query>
 </egi-fundSource>
 
 <egi-functionary>
 	<type>hql</type>
-	<query>from Functionary where isactive=1 order by upper(name) </query>
+	<query>from Functionary where isactive=true order by upper(name) </query>
 </egi-functionary> 
 <egi-chartOfAccounts>
 	<type>hql</type>
-	<query>select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting = 1 order by acc.glcode</query>
+	<query>select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true order by acc.glcode</query>
 </egi-chartOfAccounts>
 
 <egi-subscheme>
 	<type>hql</type>
-	<query>from SubScheme where isactive=1 order by upper(name)</query>
+	<query>from SubScheme where isactive=true order by upper(name)</query>
 </egi-subscheme>
 
 <egi-uom>
@@ -126,7 +126,7 @@
 </egi-suppliers>
 <egi-activesuppliers>
 	<type>hql</type>
-	<query>from Relation rel where relationtypeid = 1 and (statusid = 5 or isactive = 1)order by upper(name)</query>
+	<query>from Relation rel where relationtypeid = 1 and (statusid = 5 or isactive = true)order by upper(name)</query>
 </egi-activesuppliers>
 <egi-contractors>
 	<type>hql</type>
@@ -134,17 +134,17 @@
 </egi-contractors>
 <egi-coaCodes>
 	<type>sql</type>
-	<query>SELECT ID\,GLCODE FROM CHARTOFACCOUNTS WHERE CLASSIFICATION = 4 AND ISACTIVEFORPOSTING=1 ORDER BY GLCODE</query>
+	<query>SELECT ID\,GLCODE FROM CHARTOFACCOUNTS WHERE CLASSIFICATION = 4 AND ISACTIVEFORPOSTING=true ORDER BY GLCODE</query>
 </egi-coaCodes>
 <egi-activeCoaCodes>
 	<type>sql</type>
-	<query>select glcode||'`-`'||name||'`-`'||ID as "code" from chartofaccounts where classification=4 and isactiveforposting = 1  order by glcode </query>
+	<query>select glcode||'`-`'||name||'`-`'||ID as "code" from chartofaccounts where classification=4 and isActiveForPosting=true  order by glcode </query>
 </egi-activeCoaCodes>	
 
 <egi-coaCodesForLiability>
 	<type>sql</type>
 	<query>	select ca.id\, ca.glcode||'`-`'||ca.name as "code" from   chartofaccounts  ca   
-where ca.ID in(select cd.glcodeID  from  chartofaccountdetail cd ) and   ca.classification=4  and ca.type in('A'\,'L') and ca.isactiveforposting = 1    order by ca.glcode\,ca.type</query>
+where ca.ID in(select cd.glcodeID  from  chartofaccountdetail cd ) and   ca.classification=4  and ca.type in('A'\,'L') and ca.isactiveforposting = true   order by ca.glcode\,ca.type</query>
 </egi-coaCodesForLiability>	
 
 <!-- this is only for employee earnings it need not be control code -->
@@ -152,7 +152,7 @@ where ca.ID in(select cd.glcodeID  from  chartofaccountdetail cd ) and   ca.clas
 <egi-AllCoaCodesOfEarning>
 <type>sql</type>
 <query>select ca.id\, ca.glcode||'`-`'||ca.name as "code" from chartofaccounts  ca 
-where ca.classification=4  and ca.type in('E') and ca.isactiveforposting = 1   order by ca.glcode\,ca.type</query>
+where ca.classification=4  and ca.type in('E') and ca.isactiveforposting = true   order by ca.glcode\,ca.type</query>
 </egi-AllCoaCodesOfEarning>
 
 <egi-partyTypeMaster>
@@ -179,7 +179,7 @@ where ca.classification=4  and ca.type in('E') and ca.isactiveforposting = 1   o
 
 <egi-activeFunctions>
 	<type>sql</type>
-	<query>select name||'`-`'||id as "code" from function where  isactive = 1 AND isnotleaf=0 order by name </query>
+	<query>select name||'`-`'||id as "code" from function where  isactive = true AND isnotleaf=false order by name </query>
 </egi-activeFunctions>
 <egi-roles>
 	<type>hql</type>
@@ -201,12 +201,12 @@ where ca.classification=4  and ca.type in('E') and ca.isactiveforposting = 1   o
 </egi-dept>
 <egi-recovery>
 	<type>hql</type>
-	<query>from Tds tds where tds.isactive=1 order by upper(type)</query>
+	<query>from Tds tds where tds.isactive=true order by upper(type)</query>
 </egi-recovery>
 
 <egi-activeFinYr>
 	<type>hql</type>
-	<query>from CFinancialYear cfinancialyear where isActive=1 order by id desc</query>
+	<query>from CFinancialYear cfinancialyear where isActive=true order by id desc</query>
 </egi-activeFinYr>
 <egi-domain>
 	<type>sql</type>
@@ -245,7 +245,7 @@ where ca.classification=4  and ca.type in('E') and ca.isactiveforposting = 1   o
 
 <egi-liabilityCOACodes>
 	<type>sql</type>
-	<query>select ca.id\, ca.glcode||' : '||ca.name from chartofaccounts  ca where ca.classification=4  and ca.type in('L') and ca.isactiveforposting = 1 order by ca.glcode</query>
+	<query>select ca.id\, ca.glcode||' : '||ca.name from chartofaccounts  ca where ca.classification=4  and ca.type in('L') and ca.isActiveForPosting=true order by ca.glcode</query>
 </egi-liabilityCOACodes>	
 
 <egi-locationIP>

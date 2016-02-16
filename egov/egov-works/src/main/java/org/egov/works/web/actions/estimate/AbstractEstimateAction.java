@@ -331,7 +331,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                         && abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode().equals("NEW"))
             uomList = abstractEstimateService.prepareUomListByExcludingSpecialUoms(uomList);
         addDropdownData("uomList", uomList);
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1"));
+        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true"));
         addDropdownData("scheduleCategoryList",
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
 

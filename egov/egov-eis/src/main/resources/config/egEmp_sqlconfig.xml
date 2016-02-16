@@ -90,7 +90,7 @@
 
 <egEmp-fund>
 	<type>hql</type>
-	<query>from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)</query>
+	<query>from Fund where isactive = 1 and isNotLeaf!=true order by upper(name)</query>
 </egEmp-fund> 
 <egEmp-EmployeeStatusMaster>
 	<type>hql</type>

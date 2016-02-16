@@ -73,7 +73,7 @@ public class FundSourceHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List<Fundsource> findAllActiveIsLeafFundSources() {
-		return getCurrentSession().createQuery("from org.egov.commons.Fundsource where isactive = true and isnotleaf=0 order by name").list();
+		return getCurrentSession().createQuery("from org.egov.commons.Fundsource where isactive = true and isnotleaf=false order by name").list();
 	}
 
 	public Fundsource getFundSourceByCode(final String code) {

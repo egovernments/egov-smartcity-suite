@@ -146,13 +146,13 @@ public class ServiceDetailsAction extends BaseFormAction {
         }
         addDropdownData("departmentList", departmentService.getAllDepartments());
         addDropdownData("functionaryList",
-                getPersistenceService().findAllBy("from Functionary where isactive=1 order by upper(name)"));
+                getPersistenceService().findAllBy("from Functionary where isactive=true order by upper(name)"));
         addDropdownData("fundList",
-                getPersistenceService().findAllBy("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)"));
+                getPersistenceService().findAllBy("from Fund where isactive = true and isNotLeaf!=true order by upper(name)"));
         addDropdownData("fundsourceList",
                 getPersistenceService().findAllBy("from Fundsource where isActive='1' order by upper(name)"));
         addDropdownData("functionList",
-                getPersistenceService().findAllBy("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)"));
+                getPersistenceService().findAllBy("from CFunction where isactive = true AND isnotleaf=false order by upper(name)"));
         if (null != serviceDetails.getFund() && serviceDetails.getFund().getId() != -1)
             addDropdownData("schemeList",
                     getPersistenceService().findAllBy(" from Scheme where fund.id=?", serviceDetails.getFund().getId()));
