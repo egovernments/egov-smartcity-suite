@@ -101,14 +101,16 @@
 							    <th>Door No</th>
 								<th>Arrear
 									Property Tax</th>
-								<th>Arrear Penalty</th>
+								<th>Penalty
+									On Arrear</th>
 								<!-- <th>Arrear
 									LibraryCess</th> -->
 								<th>Arrear
 									Total</th>
 								<th>Current
 									Property Tax</th>
-								<th>Current Penalty</th>
+								<th>Penalty
+									On Current</th>
 								<!-- <th>Current
 									LibraryCess</th> -->
 								<th>Current Total</th>
@@ -126,16 +128,19 @@
 									Property Tax</th>
 								<!-- <th>Current
 									LibraryCess</th> -->
-								<th>Position</th>
+								<th>Penalty
+									On Current</th>
 								<th>Current
 									Total</th>
 								<th>Total
 									Collection</th>
 								<th>Arrear
 									Property Tax</th>
-								<th>Arrear Penalty</th>
+								<th>Penalty
+									On Arrear</th>
 								<th>Current Property Tax</th>
-								<th>Current Penalty</th>
+								<th>Penalty
+									On Current</th>
 								<th>Total PropertyTax Balance</th>
 							</tr>
 						</thead>

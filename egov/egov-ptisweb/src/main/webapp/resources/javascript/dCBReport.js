@@ -179,7 +179,7 @@ function callAjaxByBoundary() {
 							"sTitle" : "Arrear Property Tax"
 						}, {
 							"data" : "dmnd_arrearPFT",
-							"sTitle" : "Arrear Penalty"
+							"sTitle" : "Penalty On Arrear"
 						},/*{
 							"data" : "dmnd_arrearLC",
 							"sTitle" : "Arrear LibraryCess"
@@ -191,7 +191,7 @@ function callAjaxByBoundary() {
 							"sTitle" : "Current Property Tax"
 						}, {
 							"data" : "dmnd_currentPFT",
-							"sTitle" : "Current Penalty"
+							"sTitle" : "Penalty On Current"
 						},/*{
 							"data" : "dmnd_currentLC",
 							"sTitle" : "Current LibraryCess"
@@ -233,13 +233,13 @@ function callAjaxByBoundary() {
 							"sTitle" : "Arrear Property Tax"
 						}, {
 							"data" : "bal_arrearPFT",
-							"sTitle" : "Arrear Penalty"
+							"sTitle" : "Penalty On Arrear"
 						}, {
 							"data" : "bal_currentPT",
 							"sTitle" : "Current Property Tax"
 						}, {
 							"data" : "bal_currentPFT",
-							"sTitle" : "Current Penalty"
+							"sTitle" : "Penalty On Current"
 						}, {
 							"data" : "totalPTBalance",
 							"sTitle" : "Total PropertyTax Balance"
