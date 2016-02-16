@@ -209,7 +209,7 @@ public class SearchTradeAction extends BaseFormAction {
                 }
             }
             if(roleName.contains(Constants.TL_CREATOR_ROLENAME) || roleName.contains(Constants.TL_APPROVER_ROLENAME)){
-                if(!license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE) && license.getStatus()!=null && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)){
+                if(!license.isPaid() && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE) && license.getStatus()!=null && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)){
                     licenseActions.add("Renew License");
                 }
             } 

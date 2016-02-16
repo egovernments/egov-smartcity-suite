@@ -91,6 +91,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
+    private String renewAppType;
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -162,7 +163,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         {
             currentState="";
         };
-        tradeLicense.setLicenseAppType((LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='Renew' "));
+        renewAppType=Constants.RENEWAL_LIC_APPTYPE;
         return super.beforeRenew();
     }
 
@@ -246,7 +247,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
     @Override
     public String getAdditionalRule() {
-        if(tradeLicense !=null && tradeLicense.getLicenseAppType() !=null && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)){
+        if((renewAppType !=null && renewAppType.equals(Constants.RENEWAL_LIC_APPTYPE)) ||(tradeLicense !=null && tradeLicense.getLicenseAppType() !=null && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))){
         return "RENEWALTRADE";
         }
         else
