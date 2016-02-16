@@ -42,6 +42,7 @@ package org.egov.web.actions.report;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,16 +72,19 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.search.domain.resource.DateType;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -232,7 +236,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     +
                     " union "
                     +
-                    " select distinct bmis.budgetary_appnumber as bdgApprNumber, vh1.vouchernumber as VoucherNumber, vh1.voucherdate as voucherDate , "
+                    " select distinct bmis.budgetary_appnumber as bdgApprNumber, vh1.vouchernumber as VoucherNumber, vh1.voucherdate as  voucherDate , "
                     +
                     " br.narration as description, br.billnumber as billNumber, br.billdate as billDate,   bd.debitamount as debitAmount, bd.creditamount as creditAmount  "
                     +
@@ -253,7 +257,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     +
                     " union "
                     +
-                    " select distinct bmis1.budgetary_appnumber as bdgApprNumber, null as VoucherNumber,cast( null as date) as voucherDate , "
+                    " select distinct bmis1.budgetary_appnumber as bdgApprNumber, null as VoucherNumber,cast( null as date) voucherDate , "
                     +
                     " br.narration as description, br.billnumber as billNumber, br.billdate as billDate,   bd1.debitamount as debitAmount, bd1.creditamount as creditAmount from eg_billdetails bd1, eg_billregistermis bmis1, eg_billregister br  "
                     +
@@ -275,14 +279,14 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
             query = HibernateUtil.getCurrentSession().createSQLQuery(strQuery)
                     .addScalar("bdgApprNumber")
-                    .addScalar("voucherDate")
-                    .addScalar("billDate")
+                    .addScalar("voucherDate",StandardBasicTypes.DATE)
+                    .addScalar("billDate",StandardBasicTypes.DATE)
                     
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount")
-                    .addScalar("creditAmount")
+                    .addScalar("debitAmount",BigDecimalType.INSTANCE)
+                    .addScalar("creditAmount",BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
         }
         budgetAppropriationRegisterList = query.list();
@@ -317,14 +321,14 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
             query = HibernateUtil.getCurrentSession().createSQLQuery(strsubQuery)
                     .addScalar("bdgApprNumber")
-                    .addScalar("voucherDate")
-                    .addScalar("billDate")
-                    .addScalar("creditAmount")
+                    .addScalar("voucherDate",StandardBasicTypes.DATE)
+                    .addScalar("billDate",StandardBasicTypes.DATE)
+                    
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount")
-                    .addScalar("creditAmount")
+                    .addScalar("debitAmount",BigDecimalType.INSTANCE)
+                    .addScalar("creditAmount",BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
             budgetApprRegNewList = query.list();
             if (budgetApprRegNewList.size() > 0) {
