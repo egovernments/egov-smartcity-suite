@@ -757,9 +757,9 @@ public abstract class License extends StateAware {
         return this;
     }
 
-    public EgDemand getCurrentDemand() {
-        EgDemand currentDemand = null;
-        for (final EgDemand demand : demandSet)
+    public LicenseDemand getCurrentDemand() {
+        LicenseDemand currentDemand = null;
+        for (final LicenseDemand demand : demandSet)
             if (demand.getIsHistory().equalsIgnoreCase("N")) {
                 currentDemand = demand;
                 break;
@@ -770,7 +770,6 @@ public abstract class License extends StateAware {
     public boolean isPaid() {
         return getTotalBalance().equals(BigDecimal.ZERO);
     }
-
     public boolean isViolationFeePending() {
         boolean paid = false;
         BigDecimal totBal = BigDecimal.ZERO;
