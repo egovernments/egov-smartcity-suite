@@ -69,7 +69,7 @@ public class DCBReportResult {
 
     public BigDecimal getDmnd_arrearTotal() {
        // return getDmnd_arrearLC().add(getDmnd_arrearPT());
-        return getDmnd_arrearPT();
+        return getDmnd_arrearPT().add(getDmnd_arrearPFT());
     }
 
     public BigDecimal getDmnd_currentPT() {
@@ -91,7 +91,7 @@ public class DCBReportResult {
 
     public BigDecimal getDmnd_currentTotal() {
         //return getDmnd_currentLC().add(getDmnd_currentPT());
-        return getDmnd_currentPT();
+        return getDmnd_currentPT().add(getDmnd_currentPFT());
     }
 
     public BigDecimal getTotalDemand() {
@@ -149,13 +149,21 @@ public class DCBReportResult {
     public BigDecimal getBal_arrearPT() {
         return getDmnd_arrearPT().subtract(getClctn_arrearPT());
     }
+    
+    public BigDecimal getBal_arrearPFT() {
+        return getDmnd_arrearPFT().subtract(getClctn_arrearPFT());
+    }
 
     public BigDecimal getBal_currentPT() {
         return getDmnd_currentPT().subtract(getClctn_currentPT());
     }
+    
+    public BigDecimal getBal_currentPFT() {
+        return getDmnd_currentPFT().subtract(getClctn_currentPFT());
+    }
 
     public BigDecimal getTotalPTBalance() {
-        return getBal_arrearPT().add(getBal_currentPT());
+        return getBal_arrearPT().add(getBal_arrearPFT()).add(getBal_currentPT()).add(getBal_currentPFT());
     }
 
     public BigDecimal getDmnd_arrearEC() {

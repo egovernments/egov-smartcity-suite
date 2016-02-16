@@ -177,7 +177,10 @@ function callAjaxByBoundary() {
 						{
 							"data" : "dmnd_arrearPT",
 							"sTitle" : "Arrear Property Tax"
-						}, /*{
+						}, {
+							"data" : "dmnd_arrearPFT",
+							"sTitle" : "Arrear Penalty"
+						},/*{
 							"data" : "dmnd_arrearLC",
 							"sTitle" : "Arrear LibraryCess"
 						},*/ {
@@ -186,7 +189,10 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "dmnd_currentPT",
 							"sTitle" : "Current Property Tax"
-						}, /*{
+						}, {
+							"data" : "dmnd_currentPFT",
+							"sTitle" : "Current Penalty"
+						},/*{
 							"data" : "dmnd_currentLC",
 							"sTitle" : "Current LibraryCess"
 						},*/ {
@@ -226,8 +232,14 @@ function callAjaxByBoundary() {
 							"data" : "bal_arrearPT",
 							"sTitle" : "Arrear Property Tax"
 						}, {
+							"data" : "bal_arrearPFT",
+							"sTitle" : "Arrear Penalty"
+						}, {
 							"data" : "bal_currentPT",
 							"sTitle" : "Current Property Tax"
+						}, {
+							"data" : "bal_currentPFT",
+							"sTitle" : "Current Penalty"
 						}, {
 							"data" : "totalPTBalance",
 							"sTitle" : "Total PropertyTax Balance"
@@ -240,14 +252,14 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						for(var i=2;i<=16;i++)
+						for(var i=2;i<=20;i++)
 						{
 						  updateTotalFooter(i, api);	
 						}
 					}
 				}, 
 				"aoColumnDefs" : [ {
-					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16], 
+					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], 
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}

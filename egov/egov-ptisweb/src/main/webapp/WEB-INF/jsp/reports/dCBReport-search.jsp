@@ -92,21 +92,23 @@
 						<thead>
                             <tr>
                              <th rowspan="2">Name</th>
-                             <th colspan="5">Demand</th>
-                             <th colspan="7">Collection</th>
-                             <th colspan="4">Balance</th>
+                             <th colspan="8">Demand</th>
+                             <th colspan="8">Collection</th>
+                             <th colspan="5">Balance</th>
                             </tr>
 
 							<tr>
 							    <th>Door No</th>
 								<th>Arrear
 									Property Tax</th>
+								<th>Arrear Penalty</th>
 								<!-- <th>Arrear
 									LibraryCess</th> -->
 								<th>Arrear
 									Total</th>
 								<th>Current
 									Property Tax</th>
+								<th>Current Penalty</th>
 								<!-- <th>Current
 									LibraryCess</th> -->
 								<th>Current Total</th>
@@ -131,13 +133,19 @@
 									Collection</th>
 								<th>Arrear
 									Property Tax</th>
+								<th>Arrear Penalty</th>
 								<th>Current Property Tax</th>
+								<th>Current Penalty</th>
 								<th>Total PropertyTax Balance</th>
 							</tr>
 						</thead>
 						 <tfoot id="report-footer">
 							<tr>
 								<td>Total</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>
