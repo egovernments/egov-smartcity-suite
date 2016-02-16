@@ -158,11 +158,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
         prepareNewForm();
-        if(tradeLicense.getCurrentState().getValue()
-                .equals("Closed"))
-        {
+        if(!tradeLicense.hasState() || tradeLicense.getCurrentState().getValue().equals("Closed")) {
             currentState="";
-        };
+        }
         renewAppType=Constants.RENEWAL_LIC_APPTYPE;
         return super.beforeRenew();
     }

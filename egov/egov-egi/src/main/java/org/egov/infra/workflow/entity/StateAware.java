@@ -179,10 +179,10 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final StateAware reinitiateTransition() {
-        if (stateIsEnded())
-            state = null;
-        else
+        if (state != null && !stateIsEnded())
             throw new ApplicationRuntimeException("Could not reinitiate Workflow, existing workflow not ended.");
+        else
+            state = null; 
         return this;
     }
 
