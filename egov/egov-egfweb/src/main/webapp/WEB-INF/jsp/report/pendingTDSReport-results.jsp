@@ -131,7 +131,7 @@
 	</tr>
 	</table>
 </s:if>
-<s:elseif test="%{showRemittedEntries==true && remittedTDS.size()>0}">
+<s:if test="%{showRemittedEntries==true && remittedTDS.size()>0}">
 	<br />
 	<br />
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
@@ -227,8 +227,11 @@
 	</td>
 	</tr>
 	</table>
-</s:elseif>
-<s:else>No pending deduction found</s:else>
+</s:if>
+<s:if
+	test="%{pendingTDS.size()<=0  && remittedTDS.size()<=0}">
+No pending deduction found
+</s:if>
 <s:if
 	test="%{pendingTDS.size()>0 || showRemittedEntries==true && remittedTDS.size()>0}">
 	<div class="buttonbottom" align="center">
