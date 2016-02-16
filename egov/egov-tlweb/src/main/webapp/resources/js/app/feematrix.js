@@ -106,10 +106,6 @@ $( "#search" ).click(function( event ) {
 		bootbox.alert("Please fill mandatory fields");
 		return false;
 		}
-	var r = confirm("This will clear all data from search result and fetch the data for selected combination.Press OK to Continue. ");
-	if (r != true) {
-		return false;
-	} 
 	  var param="uniqueNo=";
 	  param=param+$('#natureOfBusiness').val()+"-";
 	  param=param+$('#licenseAppType').val()+"-";
@@ -123,9 +119,7 @@ $( "#search" ).click(function( event ) {
 			type: "GET",
 			//dataType: "json",
 			success: function (response) {
-				console.log("success"+response );
 				 $('#resultdiv').html(response);
-				 datepicker();
 			}, 
 			error: function (response) {
 				console.log("failed");
@@ -135,13 +129,13 @@ $( "#search" ).click(function( event ) {
 });
 });
 
-$( "#add-row" ).click(function( event ) {
+/*$( "#add-row" ).click(function( event ) {
 	bootbox.alert( "add-row event called." );
 	  $(this).closest("tr").remove(); // remove row
 	    return false;
-});
+});*/
 
-$('body').on('click', '#add-row', function() {
+$( "#add-row" ).click(function( event ) {
 	var rowCount = $('#result tr').length;
 	if(!checkforNonEmptyPrevRow())      
 		return false;
@@ -151,11 +145,11 @@ $('body').on('click', '#add-row', function() {
 	$(resultContent).find("input").val("");
 	$('#result > tbody:last').append("<tr>"+resultContent+"</tr>"); 
 	$('#result tr:last').find("input").val("");   
-	datepicker();   
-	intiUOMFromData(prevUOMFromVal);          
+	intiUOMFromData(prevUOMFromVal);  
+	patternvalidation(); 
 });    
-    
-$('body').on('click', '#save', function() {
+
+$( "#save" ).click(function( event ) {
 if(!validateDetailsBeforeSubmit()){
 	return false;
 } 
@@ -175,7 +169,6 @@ var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
 			success: function (response) {
 				console.log("success"+response );
 				 $('#resultdiv').html(response);
-				 datepicker();
 				 if(natureOfBusinessDisabled)
 					 $('#natureOfBusiness').attr("disabled", true); 
 				 if(licenseAppTypeDisabled)
@@ -183,7 +176,6 @@ var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
 				 if(unitOfMeasurementDisabled)
 					 $('#unitOfMeasurement').attr("disabled", true); 
 				 bootbox.alert("Details saved Successfully");
-					
 			}, 
 			error: function (response) {
 				console.log("failed");
@@ -194,60 +186,6 @@ var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
 				if(unitOfMeasurementDisabled)
 					 $('#unitOfMeasurement').attr("disabled", true); 
 				bootbox.alert("Failed to Save Details");
-
-				
 			}
 		});
 });
-
-//datepicker();
-
-function datepicker(){
-	
-	$(".datepicker").datepicker({
-		format: "dd/mm/yyyy",
-		autoclose: true 
-	}); 
-	patternvalidation(); 
-	$(".is_valid_number").on("input", function(){
-        var regexp = /[^0-9]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	$(".is_valid_alphabetWithsplchar").on("input", function(){
-		var regexp = /[^A-Z_-]*$/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	$(".is_valid_alphabet").on("input", function(){
-		var regexp = /[^a-zA-Z ]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	
-	$(".is_valid_alphaNumWithsplchar").on("input", function(){
-		var regexp =  /[^a-zA-Z0-9_@./#&+-]*$/;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	
-	$(".is_valid_alphanumeric").on("input", function(){
-		var regexp = /[^a-zA-Z _0-9]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	$(".is_valid_letters_space_hyphen_underscore").on("input", function(){
-        var regexp = /[^a-zA-Z _0-9_-]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	try { $('.twitter-typeahead').css('display','block'); } catch(e){}
-	
-	try { $(":input").inputmask(); }catch(e){}
-}

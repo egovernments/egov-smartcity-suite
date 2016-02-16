@@ -39,10 +39,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
 <div class="row">
   <div class="col-sm-12">
-    <div class="table-header">The Search result is</div>
+  <br>
     <input type="hidden"  name="feeMatrix"  value="${feeMatrix.id}"  />
     <table class="table table-bordered" id="result">
       <thead>
@@ -91,3 +90,5 @@
     <button type="button" id="save" class="btn btn-primary">Save</button>
   </div>
 </div>
+<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/feematrix.js' context='/tl'/>"></script>
