@@ -92,6 +92,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.TradeLicense;
@@ -149,6 +150,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+    
+    private LicenseUtils licenseUtils;
 
     public void setLicense(final License license) {
         this.license = license;
@@ -407,9 +410,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         ld.getLicense().getId());
                 if (license.getState() != null)
                     updateWorkflowState(license);
-                smsMsg.append(Constants.STR_WITH_APPLICANT_NAME).append(",").append("\n\n")
-                        .append(license.getLicensee().getApplicantName())
-                        .append(Constants.STR_WITH_LICENCE_NUMBER)
+                smsMsg.append(Constants.STR_WITH_APPLICANT_NAME).append(license.getLicensee().getApplicantName())
+                .append(",").append("\n").append(Constants.STR_WITH_LICENCE_NUMBER)
                         .append(license.getLicenseNumber()).append(Constants.STR_FOR_SUBMISSION)
                         .append(demand.getAmtCollected()).append(Constants.STR_FOR_SUBMISSION_DATE)
                         .append(new SimpleDateFormat("dd/MM/yyyy").format(billReceipt.getReceiptDate()))
@@ -440,25 +442,47 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      */
     @Transactional
     public void updateWorkflowState(final License licenseObj) {
-        final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(licenseObj.getCreatedBy()
-                .getId());
+        final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(licenseObj.getCreatedBy().getId());
+        Position pos = wfInitiator.getPosition();
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
+        Boolean digitalSignEnabled = licenseUtils.isDigitalSignEnabled();
         WorkFlowMatrix wfmatrix = null;
-        final EgwStatus statusChange = (EgwStatus) persistenceService
-                .find("from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
-                        Constants.APPLICATION_STATUS_COLLECTION_CODE);
+        final EgwStatus statusChange = (EgwStatus) persistenceService.find(
+                "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
+                Constants.APPLICATION_STATUS_COLLECTION_CODE);
         licenseObj.setEgwStatus(statusChange);
-        if (licenseObj.getLicenseAppType() != null
-                && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
-            wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
-                    Constants.WF_STATE_RENEWAL_COMM_APPROVED, null);
-        else
-            wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
-                    Constants.WF_STATE_COLLECTION_PENDING, null);
-        licenseObj.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction());
+        if (digitalSignEnabled) {
+            pos = licenseUtils.getCityLevelCommissioner();
+            if (licenseObj.getLicenseAppType() != null
+                    && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+                wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
+                        Constants.WF_STATE_DIGITAL_SIGN_RENEWAL, null);
+                licenseObj.transition(true).withSenderName(user.getName())
+                        .withComments(Constants.WORKFLOW_STATE_COLLECTED)
+                        .withStateValue(Constants.WF_STATE_DIGITAL_SIGN_RENEWAL).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+            } else {
+                wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
+                        Constants.WF_STATE_DIGITAL_SIGN_NEWTL, null);
+                licenseObj.transition(true).withSenderName(user.getName())
+                        .withComments(Constants.WORKFLOW_STATE_COLLECTED)
+                        .withStateValue(Constants.WF_STATE_DIGITAL_SIGN_NEWTL).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+            }
+        } else {
+            if (licenseObj.getLicenseAppType() != null
+                    && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+                wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
+                        Constants.WF_STATE_RENEWAL_COMM_APPROVED, null);
+            } else {
+                wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
+                        Constants.WF_STATE_COLLECTION_PENDING, null);
+            }
+            licenseObj.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction());
+        }
         // TODO: updating License with workFlow Entry
         // FIXME its a collection API issue to be discussed and rectified
         persistenceService.getSession().flush();
@@ -872,6 +896,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Override
     public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
         return new ReceiptAmountInfo();
+    }
+
+    public LicenseUtils getLicenseUtils() {
+        return licenseUtils;
     }
 
 }

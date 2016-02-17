@@ -66,6 +66,9 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -82,6 +85,8 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.LicenseStatusValues;
@@ -116,6 +121,8 @@ public class LicenseUtils {
 	@Autowired
 	private BoundaryService boundaryService;
 	@Autowired
+	private AssignmentService assignmentService;
+	@Autowired
 	private BoundaryTypeService boundaryTypeService;
 	@Autowired
 	private HierarchyTypeService hierarchyTypeService;
@@ -126,9 +133,13 @@ public class LicenseUtils {
 	@Autowired
 	private DepartmentService departmentService;
 	@Autowired
+	private DesignationService  designationService;
+	@Autowired
 	private InstallmentDao installmentDao;
 	@Autowired
 	private UserService userService;
+	@Autowired
+        private AppConfigValueService appConfigValuesService;
 
 	public void setCollectionIntegrationService(
 			final CollectionIntegrationService collectionIntegrationService) {
@@ -857,4 +868,22 @@ public class LicenseUtils {
 		}
 		return map;
 	}
+	 public Boolean isDigitalSignEnabled() {
+             final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                     Constants.TRADELICENSE_MODULENAME, Constants.DIGITALSIGNINCLUDEINWORKFLOW).get(0);
+             return "YES".equalsIgnoreCase(appConfigValue.getValue());
+         }
+	 
+	 public Position getCityLevelCommissioner()
+	 {
+	     Position pos=null;
+	     final Department deptObj = departmentService
+	                    .getDepartmentByName(Constants.ROLE_COMMISSIONERDEPARTEMNT);
+	        final Designation desgnObj = designationService.getDesignationByName("Commissioner");
+
+	            List<Assignment> assignlist=null;
+	            assignlist= assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),new Date());
+	     pos=(!assignlist.isEmpty() ? assignlist.get(0).getPosition(): null);
+	   return pos;  
+	 }
 }

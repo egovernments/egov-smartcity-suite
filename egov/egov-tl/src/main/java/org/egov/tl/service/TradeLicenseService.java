@@ -58,7 +58,9 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -87,6 +89,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private TradeLicenseUpdateIndexService updateIndexService;
+    
+    @Autowired
+    private ReportService reportService;
 
     public TradeLicenseService(final PersistenceService<TradeLicense, Long> licensePersitenceService) {
         super(licensePersitenceService);
@@ -132,38 +137,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         updateIndexService.updateTradeLicenseIndexes(license);
     }
 
-    public ReportRequest prepareReportInputData(final License license) {
-        final String LICENSECERTIFICATE = "licenseCertificate";
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        final Format formatterYear = new SimpleDateFormat("YYYY");
-        reportParams.put("applicationnumber", license.getApplicationNumber());
-        reportParams.put("applicantName", license.getLicensee().getApplicantName());
-        reportParams.put("licencenumber", license.getLicenseNumber());
-        reportParams.put("wardName", license.getBoundary().getName());
-        reportParams.put("cscNumber", "");
-        reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
-        reportParams.put("licenceAddress", license.getAddress());
-        reportParams.put("subCategory", license.getTradeName() != null ? license.getTradeName().getName() : null);
-        reportParams.put("appType", license.getLicenseAppType() != null ? license.getLicenseAppType().getName() : "New");
-        if (EgovThreadLocals.getMunicipalityName().contains("Corporation"))
-            reportParams.put("carporationulbType", Boolean.TRUE);
-        reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
-        final LicenseDemand licenseDemand = license.getLicenseDemand();
-        final String startYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getFromDate());
-        final String EndYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getToDate());
-        final String installMentYear = startYear + "-" + EndYear;
-        reportParams.put("installMentYear", installMentYear);
-        reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
-        reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
-        BigDecimal demandamt = BigDecimal.ZERO;
-
-        for (final EgDemandDetails deDet : license.getCurrentDemand().getEgDemandDetails())
-            if (deDet.getAmount().compareTo(BigDecimal.ZERO) > 0)
-                demandamt = demandamt.add(deDet.getAmount());
-        reportParams.put("demandTotalamt", demandamt);
-        return new ReportRequest(LICENSECERTIFICATE, license, reportParams);
-    }
+    
 
     @Transactional
     public void updateStatusInWorkFlowProgress(final TradeLicense license, final String workFlowAction) {
@@ -206,6 +180,56 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             license.setStatus(activeStatus);
         }
     }
+    public ReportRequest prepareReportInputData(final License license) {
+        final Map<String, Object> reportParams = getReportParamsForCertificate(license, null,
+                 null);
+         return new ReportRequest("licenseCertificate", license, reportParams);
+     }
+     public ReportOutput prepareReportInputDataForDig(final License license, String districtName ,String cityMunicipalityName) {
+         ReportRequest reportInput = null;
+         ReportOutput reportOutput = null;
+         final Map<String, Object> reportParams = getReportParamsForCertificate(license, districtName,
+                 cityMunicipalityName);
+         reportInput = new ReportRequest("licenseCertificate", license, reportParams);
+    
+     reportOutput = reportService.createReport(reportInput);
+     return reportOutput;
+     }
+
+     private Map<String, Object> getReportParamsForCertificate(final License license, String districtName,
+             String cityMunicipalityName) {
+         final Map<String, Object> reportParams = new HashMap<String, Object>();
+         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+         final Format formatterYear = new SimpleDateFormat("YYYY");
+         reportParams.put("applicationnumber", license.getApplicationNumber());
+         reportParams.put("applicantName", license.getLicensee().getApplicantName());
+         reportParams.put("licencenumber", license.getLicenseNumber());
+         reportParams.put("wardName", license.getBoundary().getName());
+         reportParams.put("cscNumber", "");
+         reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
+         reportParams.put("licenceAddress", license.getAddress());
+         reportParams.put("municipality", cityMunicipalityName);
+         reportParams.put("district", districtName);
+         reportParams.put("subCategory", license.getTradeName() != null ? license.getTradeName().getName() : null);
+         reportParams.put("appType", license.getLicenseAppType() != null ? license.getLicenseAppType().getName() : "New");
+         if (EgovThreadLocals.getMunicipalityName().contains("Corporation"))
+             reportParams.put("carporationulbType", Boolean.TRUE);
+         reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
+         final LicenseDemand licenseDemand = license.getLicenseDemand();
+         final String startYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getFromDate());
+         final String EndYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getToDate());
+         final String installMentYear = startYear + "-" + EndYear;
+         reportParams.put("installMentYear", installMentYear);
+         reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
+         reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
+         BigDecimal demandamt = BigDecimal.ZERO;
+
+         for (final EgDemandDetails deDet : license.getCurrentDemand().getEgDemandDetails())
+             if (deDet.getAmount().compareTo(BigDecimal.ZERO) > 0)
+                 demandamt = demandamt.add(deDet.getAmount());
+         reportParams.put("demandTotalamt", demandamt);
+         return reportParams;
+     }
 
     @Transactional
     public void transferLicense(final TradeLicense tl, final LicenseTransfer licenseTransfer) {

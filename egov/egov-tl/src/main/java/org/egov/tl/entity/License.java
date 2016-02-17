@@ -50,6 +50,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
@@ -125,6 +126,8 @@ public abstract class License extends StateAware {
     private Date startDate;
     private Date agreementDate;
     private String agreementDocNo;
+    private FileStoreMapper fileStore;
+
 
     public abstract String generateApplicationNumber(String runningNumber);
 
@@ -641,5 +644,14 @@ public abstract class License extends StateAware {
     public boolean isStateRejected() {
         return getState() != null && getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED);
     }
+
+    public FileStoreMapper getFileStore() {
+        return fileStore;
+    }
+
+    public void setFileStore(FileStoreMapper fileStore) {
+        this.fileStore = fileStore;
+    }
+    
 
 }

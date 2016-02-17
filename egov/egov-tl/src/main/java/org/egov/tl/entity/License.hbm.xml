@@ -74,6 +74,9 @@
 			<column name="ID_CATEGORY" precision="22" scale="0" />
 		</many-to-one>
 		<property name="tradeArea_weight" column="TRADE_AREA_WEIGHT"  not-null="true" type="java.math.BigDecimal" />
+		<many-to-one name="fileStore" class="org.egov.infra.filestore.entity.FileStoreMapper" cascade="all">
+                <column name="filestoreid" />
+        </many-to-one>
 		<property  name="address" column="address" type="java.lang.String"  length="250" not-null="true" />
 		<bag name="objections" inverse="true" table="EGTL_OBJECTION" fetch="select">
 			<key>

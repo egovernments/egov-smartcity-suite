@@ -45,11 +45,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Constants {
+        public static final String FILESTORE_MODULECODE = "TL";
         public static final String NEW = "new";
         public static final String EDIT = "edit";
         public static final String VIEW = "view";
         public static final String REQUIRED = "Required";
         public static final String UPGRADE = "upgrade";
+       
 
         public static final String TRADELICENSE_TRADECODE = "TRADELICENSE_TRADECODE";
         public static final String LICENSE_NUMBER = "LICENSE_NUMBER";
@@ -100,8 +102,10 @@ public class Constants {
         public static final String WF_STATE_RENEWAL_PRINT_PENDING = "Renewal Print Pending";
         public static final String WF_STATE_RENEWAL_COMM_APPROVED="Renewal License:Commissioner Approved";
         public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
-
+        public static final String WF_STATE_DIGITAL_SIGN_NEWTL="Create License:Collection Done";
+        public static final String WF_STATE_DIGITAL_SIGN_RENEWAL=" Renewal License:Collection Done";
         // JSP Pages
+       
         public static final String VIEW_RESULT_PAGE = "result";
         public static final String VIEW_LICENSE = "view";
         public static final String VIEW_ACK_NOTICE = "ack";
@@ -771,5 +775,14 @@ public class Constants {
         public static final String BLOCK = "Block";
         
         public static final String PENALTY_DMD_REASON_CODE = "Penalty";
+        
+        public static final String APPROVAL_COMMENT = "approvalComment";
+        public static final String SIGNWORKFLOWACTION = "Sign";
+        public static final String WF_PREVIEW_BUTTON = "Preview";
+        public static final String APPLICATION_NUMBER = "applicationNumber";
+        public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
+        public static final String DIGITALSIGNINCLUDEINWORKFLOW =  "DIGITALSIGNINCLUDEINWORKFLOW";
+        public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
+        public static final String ROLE_COMMISSIONERDEPARTEMNT ="Health";
 }
 
