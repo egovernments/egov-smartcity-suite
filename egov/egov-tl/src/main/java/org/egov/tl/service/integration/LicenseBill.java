@@ -302,11 +302,9 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     }
 
     public Map<Installment, BigDecimal> getCalculatedPenalty(final Date dateOfCreation, final Date collectionDate,
-            final BigDecimal amount) {
+            final BigDecimal amount, final Installment currentInstallment) {
         final Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
-        final EgDemand currentDemand = license.getCurrentDemand();
-        final Installment currentInstall = currentDemand.getEgInstallmentMaster();
-        installmentPenalty.put(currentInstall, calculatePenalty(dateOfCreation, collectionDate, amount));
+        installmentPenalty.put(currentInstallment, calculatePenalty(dateOfCreation, collectionDate, amount));
         return installmentPenalty;
     }
 }

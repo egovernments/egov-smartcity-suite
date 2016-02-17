@@ -150,8 +150,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
-    private LicenseUtils licenseUtils;
-
     public void setLicense(final License license) {
         this.license = license;
     }
@@ -168,16 +166,17 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final Set<Installment> sortedInstallmentSet = new TreeSet<Installment>();
         final DemandComparatorByOrderId demandComparatorByOrderId = new DemandComparatorByOrderId();
         final Module module = license.getTradeName().getLicenseType().getModule();
+        final Installment currInstallment = getCurrentInstallment(module);
         final List<EgDemandDetails> orderedDetailsList = new ArrayList<EgDemandDetails>();
         Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
         EgDemandDetails penaltyDemandDetail = null;
         Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
         if ("New".equals(license.getLicenseAppType().getName()))
-            installmentPenalty = billable.getCalculatedPenalty(license.getDateOfCreation(), new Date(),
-                    license.getCurrentDemand().getBaseDemand());
+            installmentPenalty = billable.getCalculatedPenalty(license.getStartDate(), new Date(),
+                    license.getCurrentDemand().getBaseDemand(), currInstallment);
         else if ("Renew".equals(license.getLicenseAppType().getName()))
             installmentPenalty = billable.getCalculatedPenalty(license.getDateOfExpiry(), new Date(),
-                    license.getCurrentDemand().getBaseDemand());
+                    license.getCurrentDemand().getBaseDemand(), currInstallment);
         installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license, license.getCurrentDemand());
         penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(getCurrentInstallment(module));
         for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet())
@@ -187,7 +186,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 else {
                     penaltyDemandDetail = insertPenaltyAndBillDetails(billDetails, billable, penalty.getValue(),
                             penalty.getKey());
-                    if (penaltyDemandDetail != null){
+                    if (penaltyDemandDetail != null) {
                         demand.getEgDemandDetails().add(penaltyDemandDetail);
                         demand.addBaseDemand(penaltyDemandDetail.getAmount());
                     }
@@ -313,7 +312,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
                     Constants.PENALTY_DMD_REASON_CODE,
                     module);
-
             if (egDemandReasonMaster == null)
                 throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
 
@@ -353,27 +351,51 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final EgBill bill = egBillDao.findById(Long.valueOf(billReceiptInfoImpl.getBillReferenceNum()), false);
             final EgDemand demand = bill.getEgDemand();
             if (billReceipt.getEvent().equals(EVENT_RECEIPT_CREATED)) {
-                BigDecimal amtCollected = BigDecimal.ZERO;
+                final BigDecimal amtCollected = BigDecimal.ZERO;
                 final LicenseDemand ld = (LicenseDemand) persistenceService.find("from LicenseDemand where id=?",
                         demand.getId());
-                final Module module = ld.getLicense().getTradeName().getLicenseType().getModule();
-                for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
-                    final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
-                    if (installment.getFromDate().compareTo(licenseUtils.getCurrInstallment(module).getFromDate()) <= 0) {
-                        final Set<ReceiptAccountInfo> accountDetails = billReceipt.getAccountDetails();
-                        for (final ReceiptAccountInfo rInfo : accountDetails)
-                            if (rInfo.getGlCode().equalsIgnoreCase(
-                                    demandDetail.getEgDemandReason().getGlcodeId().getGlcode()))
-                                if (rInfo.getCrAmount() != null && rInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
-                                    demandDetail.setAmtCollected(rInfo.getCrAmount());
+                ld.getLicense().getTradeName().getLicenseType().getModule();
 
-                                    amtCollected = amtCollected.add(rInfo.getCrAmount());
-                                    persistCollectedReceipts(demandDetail, billReceipt.getReceiptNum(),
-                                            billReceipt.getTotalAmount(), billReceipt.getReceiptDate(),
-                                            demandDetail.getAmtCollected());
-                                }
-                    }
-                }
+                final Map<String, Map<String, EgDemandDetails>> installmentWiseDemandDetailsByReason = new HashMap<String, Map<String, EgDemandDetails>>();
+                Map<String, EgDemandDetails> demandDetailByReason = null;
+
+                EgDemandReason dmdRsn = null;
+                String installmentDesc = null;
+
+                for (final EgDemandDetails dmdDtls : demand.getEgDemandDetails())
+                    if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                        dmdRsn = dmdDtls.getEgDemandReason();
+                        installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
+                        demandDetailByReason = new HashMap<String, EgDemandDetails>();
+                        if (installmentWiseDemandDetailsByReason.get(installmentDesc) == null) {
+                            demandDetailByReason.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
+                            installmentWiseDemandDetailsByReason.put(installmentDesc, demandDetailByReason);
+                        } else
+                            installmentWiseDemandDetailsByReason.get(installmentDesc).put(
+                                    dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
+                    } else if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
+
+                EgDemandDetails demandDetail = null;
+
+                for (final ReceiptAccountInfo rcptAccInfo : billReceipt.getAccountDetails())
+                    if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
+                        if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+                            final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                            final String reason = desc[0].trim();
+                            final String instDesc = desc[1].trim();
+                            demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
+                            demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
+                            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                                demand.addCollected(rcptAccInfo.getCrAmount());
+                            persistCollectedReceipts(demandDetail, billReceipt.getReceiptNum(), billReceipt.getTotalAmount(),
+                                    billReceipt.getReceiptDate(), demandDetail.getAmtCollected());
+                            if (LOGGER.isDebugEnabled())
+                                LOGGER.debug("Persisted demand and receipt details for tax : " + reason + " installment : "
+                                        + instDesc + " with receipt No : " + billReceipt.getReceiptNum() + " for Rs. "
+                                        + rcptAccInfo.getCrAmount());
+                        }
+
                 final StringBuilder smsMsg = new StringBuilder();
                 final StringBuilder emailSubject = new StringBuilder();
                 demand.setAmtCollected(amtCollected);
@@ -383,7 +405,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 // replace the below with ld.getLicense(); once collection fixed
                 final TradeLicense license = (TradeLicense) persistenceService.find("from TradeLicense where id=?",
                         ld.getLicense().getId());
-                updateWorkflowState(license);
+                if (license.getState() != null)
+                    updateWorkflowState(license);
                 smsMsg.append(Constants.STR_WITH_APPLICANT_NAME).append(",").append("\n\n")
                         .append(license.getLicensee().getApplicantName())
                         .append(Constants.STR_WITH_LICENCE_NUMBER)
@@ -838,7 +861,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     public void setLicenseUtils(final LicenseUtils licenseUtils) {
-        this.licenseUtils = licenseUtils;
     }
 
     @Override

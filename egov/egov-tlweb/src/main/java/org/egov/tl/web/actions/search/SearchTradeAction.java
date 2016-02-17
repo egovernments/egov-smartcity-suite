@@ -172,9 +172,10 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
             licenseActions = new ArrayList<String>();
             licenseActions.add("View Trade");
-            if (license.getEgwStatus() != null) {
+            if (license.getStatus() != null) {
                 if (!license.isPaid() && !license.isStateRejected()
-                        && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_APPROVED_CODE))
+                        && (license.getEgwStatus() != null && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_APPROVED_CODE) 
+                                || (license.isLegacy() && license.getStatus().getStatusCode().equals(Constants.STATUS_ACTIVE))))
                     licenseActions.add("Collect Fees");
                 else if (license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Print Certificate");
