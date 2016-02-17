@@ -2278,7 +2278,7 @@ public class PropertyTaxUtil {
         final Query qry = persistenceService.getSession().createSQLQuery(selectQuery)
                 .setLong("basicPropId", basicPropId);
         list = qry.list();
-        return (BigDecimal) list.get(0);
+        return (null != list && !list.contains(null)) ? new BigDecimal((Double) list.get(0)) : null;
     }
 
     public Map<String, BigDecimal> prepareDemandDetForWorkflowProperty(final Property property,

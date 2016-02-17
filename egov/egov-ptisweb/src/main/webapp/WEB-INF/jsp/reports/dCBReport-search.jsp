@@ -194,5 +194,5 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/javascript/dCBReport.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/dCBReport.js?rnd=${app_release_no}'/>"></script>
 </html>

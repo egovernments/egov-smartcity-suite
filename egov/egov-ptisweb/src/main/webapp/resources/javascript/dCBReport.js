@@ -150,10 +150,26 @@ function callAjaxByBoundary() {
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				//"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"aLengthMenu" : [ [ 2, 4, 6, -1 ], [ 2, 4, 6, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : [ 
+					               {
+						             "sExtends": "pdf",
+	                                 "sTitle": "DCB Report",
+					                },
+					                {
+							             "sExtends": "xls",
+		                                 "sTitle": "DCB Report",
+		                                 "fnClick": function ( nButton, oConfig, oFlash ) {
+	                            	    	 reCalculateTotalFooterWhenExport('tbldcbdrilldown');
+	                            		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
+	                            		 }
+						             },{
+							             "sExtends": "print",
+		                                 "sTitle": "DCB Report"
+						               }],
 				},
 				columns : [{
 							"data" : function(row, type, set, meta){
