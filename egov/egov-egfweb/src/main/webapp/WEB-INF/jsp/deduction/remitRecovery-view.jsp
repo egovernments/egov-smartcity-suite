@@ -62,7 +62,7 @@
 
 function showHistory(stateId)
 {
-var url="../voucher/common!showHistory.action?stateId="+stateId;
+var url="../voucher/common-showHistory.action?stateId="+stateId;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 
@@ -239,7 +239,7 @@ function printVoucher(){
 																		class="greybox"><span class="mandatory1">*</span></span></td>
 																	<egov:ajaxdropdown id="bankId"
 																		fields="['Text','Value']" dropdownId="bankId"
-																		url="/voucher/common!ajaxLoadBanksByFundAndType.action" />
+																		url="/voucher/common-ajaxLoadBanksByFundAndType.action" />
 																	<td class="greybox"><s:select
 																			name="commonBean.bankId" id="bankId"
 																			list="dropdownData.bankList" listKey="bankBranchId"
@@ -248,7 +248,7 @@ function printVoucher(){
 																			onChange="populateAccNum(this);" /></td>
 																	<egov:ajaxdropdown id="accountNumber"
 																		fields="['Text','Value']" dropdownId="accountNumber"
-																		url="voucher/common!ajaxLoadBankAccounts.action" />
+																		url="voucher/common-ajaxLoadBankAccounts.action" />
 																	<td class="greybox" width="22%"><s:text
 																			name="account.number" /><span class="bluebox"><span
 																			class="mandatory1">*</span></span></td>
@@ -268,7 +268,7 @@ function printVoucher(){
 																		id="remitAmount" /></td>
 																	<egov:updatevalues id="availableBalance"
 																		fields="['Text']"
-																		url="/payment/payment!ajaxGetAccountBalance.action" />
+																		url="/payment/payment-ajaxGetAccountBalance.action" />
 																	<td class="bluebox" id="balanceText"
 																		style="display: none" width="18%"><s:text
 																			name="balance.available" /></td>
@@ -328,7 +328,7 @@ function printVoucher(){
 
 																			<table align="center" id="totalAmtTable">
 																				<tr>
-																					<td width="514"></td>
+																					<td width="800"></td>
 																					<td>Total Amount</td>
 																					<td><s:textfield
 																							name="remittanceBean.totalAmount"
@@ -375,9 +375,6 @@ function printVoucher(){
 																					<th class="bluebgheadtdnew">Party Code
 																					</td>
 																					<th class="bluebgheadtdnew">Cheque Amount(Rs)
-
-
-
 																					
 																					</td>
 																					<th class="bluebgheadtdnew">Cheque Status
@@ -441,38 +438,22 @@ function printVoucher(){
 					</table>
 				</div>
 
-				<table>
-					<tr>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox">Comments</td>
-						<td class="bluebox" colspan="4"><s:textarea name="comments"
-								id="comments" cols="100" rows="3" onblur="checkLength(this)"
-								value="%{getComments()}" /></td>
-					</tr>
-				</table>
-
-				<s:if test="%{showApprove}">
-					<s:if test="%{paymentheader.state.value != 'NEW'}">
-						<s:if test="%{paymentheader.state.id!=null}">
-							<div id="labelAD" align="center">
-								<h5>
-									<a href="#"
-										onclick="showHistory(<s:property value='paymentheader.state.id'/>); ">Show
-										History</a>
-								</h5>
-							</div>
-						</s:if>
-					</s:if>
-				</s:if>
-
 			</div>
 			<div class="buttonbottom" id="buttondiv">
 				<s:hidden name="paymentid" value="%{paymentheader.id}" />
-				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
-				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 				<s:hidden name="actionname" id="actionName" value="%{action}" />
-				<s:submit cssClass="button" id="printPreview" value="Print Preview"
-					onclick="printVoucher()" />
+				<s:if test="%{showMode!='view'}">
+					<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
+					<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
+					<s:submit cssClass="button" id="printPreview" value="Print Preview"
+						onclick="printVoucher()" />
+				</s:if>
+				<s:else>
+					<s:submit cssClass="button" id="printPreview" value="Print Preview"
+						onclick="printVoucher()" />
+					<input type="button" name="button2" id="button2" value="Close"
+						class="button" onclick="window.close();" />
+				</s:else>
 			</div>
 			<script type="text/javascript">
 	//bootbox.alert('<s:property value="fund.id"/>');                               
@@ -498,12 +479,13 @@ function printVoucher(){
 		if(document.getElementById("printPreview"))
 			document.getElementById("printPreview").disabled=false;
 		if(document.getElementById("cancelPayment"))
-			document.getElementById("cancelPayment").disabled=false;		
+			document.getElementById("cancelPayment").disabled=false;	
+		if(document.getElementById("approverComments"))
+			document.getElementById("approverComments").disabled=false;	
 		if(null != document.getElementById("approverDepartment") ){
 			document.getElementById("approverDepartment").disabled=false;    
 			document.getElementById("approverDesignation").disabled=false;
 			document.getElementById("approverPositionId").disabled=false;
-			document.getElementById("approverComments").disabled=false;
 			
 		}
 		if(document.getElementById("currentState"))

@@ -33,6 +33,8 @@ import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -193,11 +195,24 @@ public class EmployeeController extends ApiController {
 			                .list();
 		
    }
+    
+   @SuppressWarnings("unchecked")
+   public Number getWorkflowItemsCountByWFType(final Long userId, final List<Long> owners, final String workFlowType) throws HibernateException, ClassNotFoundException {
+		return (Number) this.statePersistenceService.getSession().createCriteria(Class.forName(getWorkflowType(workFlowType).getTypeFQN()))
+		        .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
+		        .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+		        .setProjection(Projections.rowCount())
+		        .add(Restrictions.eq("state.type", workFlowType))
+		        .add(Restrictions.in("state.ownerPosition.id", owners))
+		        .add(Restrictions.ne("state.status", StateStatus.ENDED))
+		        .add(Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
+		                .add(Restrictions.eq("createdBy.id", userId)))).uniqueResult();
+   }
    
-   public List<HashMap<String, Object>> getWorkflowTypesWithCount(final Long userId, final List<Long> ownerPostitions) {
+   public List<HashMap<String, Object>> getWorkflowTypesWithCount(final Long userId, final List<Long> ownerPostitions) throws HibernateException, ClassNotFoundException {
         
         	List<HashMap<String, Object>> workFlowTypesWithItemsCount=new ArrayList<HashMap<String,Object>>();
-        	Query query = this.workflowTypePersistenceService.getSession().createQuery("select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status <> :statusEnded and NOT (status <> :statusStarted and createdBy.id <> :userId) group by type");
+        	Query query = this.workflowTypePersistenceService.getSession().createQuery("select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status != :statusEnded and NOT (status != :statusStarted and createdBy.id != :userId) group by type");
         	query.setParameterList("ownerPositions", ownerPostitions);
             query.setParameter("statusEnded", StateStatus.ENDED);
             query.setParameter("statusStarted", StateStatus.STARTED);
@@ -206,21 +221,17 @@ public class EmployeeController extends ApiController {
             List<Object[]> result=query.list();
             for(Object[] rowObj:result)
             {
-            	HashMap<String, Object> workFlowType=new HashMap<String, Object>();
-            	workFlowType.put("workflowtype", rowObj[0]);
-            	workFlowType.put("inboxlistcount", rowObj[1]);
-            	workFlowType.put("workflowtypename", getWorkflowType(String.valueOf(rowObj[0])).getDisplayName());
-            	workFlowTypesWithItemsCount.add(workFlowType);
+            	Long wftitemscount=(Long)getWorkflowItemsCountByWFType(userId, ownerPostitions, String.valueOf(rowObj[0]));
+            	if(wftitemscount>0)
+            	{
+            		HashMap<String, Object> workFlowType=new HashMap<String, Object>();
+	            	workFlowType.put("workflowtype", rowObj[0]);
+	            	workFlowType.put("inboxlistcount", wftitemscount);
+	            	workFlowType.put("workflowtypename", getWorkflowType(String.valueOf(rowObj[0])).getDisplayName());
+	            	workFlowTypesWithItemsCount.add(workFlowType);
+            	}
             }
             return workFlowTypesWithItemsCount;
-            
-			/*Number count = (Number) this.workflowTypePersistenceService.getSession().createCriteria(State.class)
-			        .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
-			        .setProjection(Projections.rowCount())
-			        .add(Restrictions.in("ownerPosition.id", owners))
-			        .add(Restrictions.ne("status", StateStatus.ENDED))
-			        .add(Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("status", StateStatus.STARTED))
-			                .add(Restrictions.eq("createdBy.id", userId)))).addOrder(Order.desc("createdDate")).setProjection(Projections.groupProperty("type")).uniqueResult();*/
     }
     
     @Transactional(readOnly=true)

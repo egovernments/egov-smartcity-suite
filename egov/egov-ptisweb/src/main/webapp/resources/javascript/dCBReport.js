@@ -150,10 +150,26 @@ function callAjaxByBoundary() {
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				//"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"aLengthMenu" : [ [ 2, 4, 6, -1 ], [ 2, 4, 6, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : [ 
+					               {
+						             "sExtends": "pdf",
+	                                 "sTitle": "DCB Report",
+					                },
+					                {
+							             "sExtends": "xls",
+		                                 "sTitle": "DCB Report",
+		                                 "fnClick": function ( nButton, oConfig, oFlash ) {
+	                            	    	 reCalculateTotalFooterWhenExport('tbldcbdrilldown');
+	                            		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
+	                            		 }
+						             },{
+							             "sExtends": "print",
+		                                 "sTitle": "DCB Report"
+						               }],
 				},
 				columns : [{
 							"data" : function(row, type, set, meta){
@@ -177,7 +193,10 @@ function callAjaxByBoundary() {
 						{
 							"data" : "dmnd_arrearPT",
 							"sTitle" : "Arrear Property Tax"
-						}, /*{
+						}, {
+							"data" : "dmnd_arrearPFT",
+							"sTitle" : "Penalty On Arrear"
+						},/*{
 							"data" : "dmnd_arrearLC",
 							"sTitle" : "Arrear LibraryCess"
 						},*/ {
@@ -186,7 +205,10 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "dmnd_currentPT",
 							"sTitle" : "Current Property Tax"
-						}, /*{
+						}, {
+							"data" : "dmnd_currentPFT",
+							"sTitle" : "Penalty On Current"
+						},/*{
 							"data" : "dmnd_currentLC",
 							"sTitle" : "Current LibraryCess"
 						},*/ {
@@ -226,8 +248,14 @@ function callAjaxByBoundary() {
 							"data" : "bal_arrearPT",
 							"sTitle" : "Arrear Property Tax"
 						}, {
+							"data" : "bal_arrearPFT",
+							"sTitle" : "Penalty On Arrear"
+						}, {
 							"data" : "bal_currentPT",
 							"sTitle" : "Current Property Tax"
+						}, {
+							"data" : "bal_currentPFT",
+							"sTitle" : "Penalty On Current"
 						}, {
 							"data" : "totalPTBalance",
 							"sTitle" : "Total PropertyTax Balance"
@@ -240,14 +268,14 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						for(var i=2;i<=16;i++)
+						for(var i=2;i<=20;i++)
 						{
 						  updateTotalFooter(i, api);	
 						}
 					}
 				}, 
 				"aoColumnDefs" : [ {
-					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16], 
+					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], 
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}

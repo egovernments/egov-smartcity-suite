@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
+import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 import java.io.IOException;
@@ -184,7 +185,13 @@ public class DefaultersReportAction extends BaseFormAction {
                     .getMobileNumber() : "NA"));
             defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
             defaultersInfo.setCurrentDue(propView.getAggrCurrDmd().subtract(propView.getAggrCurrColl()));
-            totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue());
+            defaultersInfo
+                    .setAggrArrearPenalyDue((propView.getAggrArrearPenaly() != null ? propView.getAggrArrearPenaly() : ZERO)
+                            .subtract(propView.getAggrArrearPenalyColl() != null ? propView.getAggrArrearPenalyColl() : ZERO));
+            defaultersInfo.setAggrCurrPenalyDue((propView.getAggrCurrPenaly() != null ? propView.getAggrCurrPenaly() : ZERO)
+                    .subtract((propView.getAggrCurrPenalyColl() != null ? propView.getAggrCurrPenalyColl() : ZERO)));
+            totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue())
+                    .add(defaultersInfo.getAggrArrearPenalyDue()).add(defaultersInfo.getAggrCurrPenalyDue());
             defaultersInfo.setTotalDue(totalDue);
             if(propView.getInstDmdColl().size()!=0 && !propView.getInstDmdColl().isEmpty()){
                 defaultersInfo.setArrearsFrmInstallment(propView.getInstDmdColl().iterator().next().getInstallment().getDescription());

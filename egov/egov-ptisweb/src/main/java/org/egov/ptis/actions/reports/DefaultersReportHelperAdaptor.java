@@ -68,7 +68,9 @@ public class DefaultersReportHelperAdaptor implements JsonSerializer<DefaultersI
             jsonObject.addProperty("arrearsToInstallment", defaultersInfoObj.getArrearsToInstallment());
             
             jsonObject.addProperty("arrearsDue", defaultersInfoObj.getArrearsDue());
+            jsonObject.addProperty("arrearsPenaltyDue", defaultersInfoObj.getAggrArrearPenalyDue());
             jsonObject.addProperty("currentDue", defaultersInfoObj.getCurrentDue());
+            jsonObject.addProperty("currentPenaltyDue", defaultersInfoObj.getAggrCurrPenalyDue());
             jsonObject.addProperty("totalDue", defaultersInfoObj.getTotalDue());
         }
         return jsonObject;

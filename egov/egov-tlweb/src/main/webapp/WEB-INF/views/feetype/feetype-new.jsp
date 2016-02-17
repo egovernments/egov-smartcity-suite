@@ -46,7 +46,7 @@
 </label><div class="col-sm-3 add-margin">
 <form:input  path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="32" required="required"/>
 </div></div>
-<label class="col-sm-3 control-label text-right"><spring:message code="lbl.code" />
+<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" />
 </label><div class="col-sm-3 add-margin">
 <form:input  path="code" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="12" />
 </div><div class="form-group">

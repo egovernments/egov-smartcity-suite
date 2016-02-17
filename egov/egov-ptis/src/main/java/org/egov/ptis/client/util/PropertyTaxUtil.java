@@ -44,6 +44,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ACTUAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ENCODED_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISCORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISSEASHORE_ULB;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_REBATE_STR;
@@ -1882,12 +1883,12 @@ public class PropertyTaxUtil {
     }
 
     public Boolean isSeaShoreULB() {
-        Boolean isCorporation = Boolean.FALSE;
+        Boolean isSeaShoreULB = Boolean.FALSE;
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
-                APPCONFIG_ISCORPORATION);
+                APPCONFIG_ISSEASHORE_ULB);
         if (appConfigValue != null && !appConfigValue.isEmpty())
-            isCorporation = Boolean.valueOf(appConfigValue.get(0).getValue());
-        return isCorporation;
+            isSeaShoreULB = Boolean.valueOf(appConfigValue.get(0).getValue());
+        return isSeaShoreULB;
     }
 
     public Boolean isPrimaryServiceApplicable() {
@@ -2277,7 +2278,7 @@ public class PropertyTaxUtil {
         final Query qry = persistenceService.getSession().createSQLQuery(selectQuery)
                 .setLong("basicPropId", basicPropId);
         list = qry.list();
-        return (BigDecimal) list.get(0);
+        return (null != list && !list.contains(null)) ? new BigDecimal((Double) list.get(0)) : null;
     }
 
     public Map<String, BigDecimal> prepareDemandDetForWorkflowProperty(final Property property,

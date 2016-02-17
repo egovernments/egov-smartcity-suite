@@ -39,10 +39,14 @@
  */
 package org.egov.tl.service;
 
+import java.util.List;
+
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
+import org.egov.tl.repository.LicenseAppTypeRepository;
 import org.egov.tl.repository.PenaltyRatesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,12 +56,45 @@ public class PenaltyRatesService {
 
     private final PenaltyRatesRepository penaltyRatesRepository;
 
+    private final LicenseAppTypeRepository licenseAppTypeRepository;
+
     @Autowired
-    public PenaltyRatesService(final PenaltyRatesRepository penaltyRatesRepository) {
+    public PenaltyRatesService(final PenaltyRatesRepository penaltyRatesRepository,
+            final LicenseAppTypeRepository licenseAppTypeRepository) {
         this.penaltyRatesRepository = penaltyRatesRepository;
+        this.licenseAppTypeRepository = licenseAppTypeRepository;
     }
 
     public PenaltyRates findByDaysAndLicenseAppType(final Long days, final LicenseAppType licenseAppType) {
         return penaltyRatesRepository.findByDaysAndLicenseAppType(days, licenseAppType);
+    }
+
+    public List<LicenseAppType> findAllLicenseAppType() {
+        return licenseAppTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
+
+    public PenaltyRates findOne(final Long id) {
+        return penaltyRatesRepository.findOne(id);
+    }
+
+    public LicenseAppType findByLicenseAppType(final Long licenseAppId) {
+        return licenseAppTypeRepository.findOne(licenseAppId);
+    }
+
+    @Transactional
+    public PenaltyRates create(final PenaltyRates penaltyRates) {
+        return penaltyRatesRepository.save(penaltyRates);
+    }
+
+    public List<PenaltyRates> search(final Long licenseAppType) {
+        if (licenseAppType != null)
+            return penaltyRatesRepository.findByLicenseAppTypeIdOrderByIdAsc(licenseAppType);
+        else
+            return penaltyRatesRepository.findAll();
+    }
+
+    @Transactional
+    public void delete(final PenaltyRates penaltyRates) {
+        penaltyRatesRepository.delete(penaltyRates);
     }
 }

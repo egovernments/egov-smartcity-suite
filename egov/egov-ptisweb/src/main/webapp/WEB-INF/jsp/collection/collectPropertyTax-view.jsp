@@ -47,7 +47,9 @@
 	 	jQuery(document).ready( function() {
 
 			var collectXML = '<s:property value="%{collectXML}" />';
-
+			var infoMessage = '<s:property value="%{infoMessage}" />';
+			if(infoMessage !=null && infoMessage.length>0) 
+				alert(infoMessage);
 			jQuery('<form>.').attr({
 				method: 'post',
 				action: '/collection/receipts/receipt-newform.action',

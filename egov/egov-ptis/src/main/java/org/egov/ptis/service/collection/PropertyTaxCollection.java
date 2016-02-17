@@ -60,6 +60,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CH
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -815,10 +816,38 @@ public class PropertyTaxCollection extends TaxCollection {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @Override
     public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
-        return new ReceiptAmountInfo();
+        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+        BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
+        BigDecimal arrearAmount = BigDecimal.ZERO;
+        BigDecimal latePaymentCharges = BigDecimal.ZERO;
+
+        for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()) {
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+                final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                final String installment = desc[1];
+                if (PropertyTaxUtil.getCurrentInstallment().getDescription().equals(installment)) {
+                    if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_PENALTY)) {
+                        latePaymentCharges = latePaymentCharges.add(rcptAccInfo.getCrAmount());
+                    } else {
+                        currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+                    }
+                } else {
+                    if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_PENALTY)) {
+                        latePaymentCharges = latePaymentCharges.add(rcptAccInfo.getCrAmount());
+                    } else {
+                        arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
+                    }
+                }
+            }
+        }
+
+        receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
+        receiptAmountInfo.setLatePaymentCharges(latePaymentCharges);
+        receiptAmountInfo.setArrearsAmount(arrearAmount);
+        return receiptAmountInfo;
     }
 
 }

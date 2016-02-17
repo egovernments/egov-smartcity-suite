@@ -64,38 +64,73 @@
    function  populateService(serviceCategory){
     	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
     }
+
+   <jsp:useBean id="now" class="java.util.Date" />
+
+   <fmt:formatDate var = "currDate" pattern="dd/MM/yyyy" value="${now}" />
+   	var currDate = "${currDate}";
 	
 	function validate()
-{
-	if(dom.get("actionErrorMessages")!=null){
-		dom.get("actionErrorMessages").style.display="none";}
-	if(dom.get("actionMessages")!=null){
-		dom.get("actionMessages").style.display="none";}
-	var fromdate=dom.get("fromDate").value;
-	var todate=dom.get("toDate").value;
-	var deptId=dom.get("departmentId").value;
-	var challanNo=dom.get("challanNumber").value;
-	var serviceId=dom.get("serviceId").value;
-	var serviceCategoryId = dom.get("serviceCategoryId").value;
-	var status=dom.get("status").value;
-	if((deptId=="-1")&& (challanNo=="")&& (fromdate=="")&& (todate=="")&&(serviceId=="-1")&&(status=="-1")&&(serviceCategoryId=="-1")){
-		dom.get("errorMessages").style.display="block";
-		document.getElementById("errorMessages").innerHTML='<s:text name="searchchallan.selectonecriteria" />'+ '<br>';
-		return false;
-	
-	}
-	if(fromdate!="" && todate!="" && fromdate!=todate)
 	{
-		if(!checkFdateTdate(fromdate,todate))
-		{
+		if(dom.get("actionErrorMessages")!=null){
+			dom.get("actionErrorMessages").style.display="none";}
+		if(dom.get("actionMessages")!=null){
+			dom.get("actionMessages").style.display="none";}
+		var fromdate=dom.get("fromDate").value;
+		var todate=dom.get("toDate").value;
+		var deptId=dom.get("departmentId").value;
+		var challanNo=dom.get("challanNumber").value;
+		var serviceId=dom.get("serviceId").value;
+		var serviceCategoryId = dom.get("serviceCategoryId").value;
+		var status=dom.get("status").value;
+		if((deptId=="-1")&& (challanNo=="")&& (fromdate=="")&& (todate=="")&&(serviceId=="-1")&&(status=="-1")&&(serviceCategoryId=="-1")){
 			dom.get("errorMessages").style.display="block";
-			document.getElementById("errorMessages").innerHTML='<s:text name="common.comparedate.errormessage" />'+ '<br>';
+			document.getElementById("errorMessages").innerHTML='<s:text name="searchchallan.selectonecriteria" />'+ '<br>';
 			return false;
+		
 		}
-	}
-
-	doLoadingMask('#loadingMask');
+		var valSuccess = true;
+		document.getElementById("errorMessages").
+		innerHTML = "";
 	
+			if (fromdate == "") {
+				document.getElementById("errorMessages").style.display = "block";
+				document.getElementById("errorMessages").innerHTML += '<s:text name="common.datemandatory.fromdate" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+	
+			if (todate == "") {
+				document.getElementById("errorMessages").style.display = "block";
+				document.getElementById("errorMessages").innerHTML += '<s:text name="common.datemandatory.todate" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+	
+			if (fromdate != "" && todate != "" && fromdate != todate) {
+				if (!checkFdateTdate(fromdate, todate)) {
+					document.getElementById("errorMessages").style.display = "block";
+					document.getElementById("errorMessages").innerHTML += '<s:text name="common.comparedate.errormessage" />'
+							+ '<br>';
+					valSuccess = false;
+				}
+				if (!validateNotFutureDate(fromdate, currDate)) {
+					document.getElementById("errorMessages").style.display = "block";
+					document.getElementById("errorMessages").innerHTML += '<s:text name="reports.fromdate.futuredate.message" />'
+							+ '<br>';
+					valSuccess = false;
+				}
+				if (!validateNotFutureDate(todate, currDate)) {
+					document.getElementById("errorMessages").style.display = "block";
+					document.getElementById("errorMessages").innerHTML += '<s:text name="reports.todate.futuredate.message" />'
+							+ '<br>';
+					valSuccess = false;
+				}
+			}
+	
+			return valSuccess;
+	
+		doLoadingMask('#loadingMask');
 }
 	</script>
 </head>

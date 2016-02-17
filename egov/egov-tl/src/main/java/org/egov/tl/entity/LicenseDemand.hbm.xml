@@ -44,7 +44,7 @@
 <hibernate-mapping package="org.egov.tl.entity">
 	<joined-subclass name="LicenseDemand" table="EGTL_LICENSE_DEMAND" extends="org.egov.demand.model.EgDemand">
 		<key column="ID_DEMAND"  />
-		<many-to-one name="license" column="ID_LICENSE" not-null="true" class="org.egov.tl.entity.License"/>
+		<one-to-one name="license" property-ref="licenseDemand" />
 		<many-to-one name="egInstallmentMaster" class="org.egov.commons.Installment" >
             <column name="ID_INSTALLMENT"  />
         </many-to-one> 

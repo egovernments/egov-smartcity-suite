@@ -59,6 +59,7 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.PropertyCategoryService;
 import org.egov.wtms.masters.service.PipeSizeService;
+import org.egov.wtms.masters.service.PropertyPipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterPropertyUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,9 @@ public class RestWaterConnectionValidationService {
  
     @Autowired
     private NewConnectionService newConnectionService;
+    
+    @Autowired
+    private PropertyPipeSizeService propertyPipeSizeService;
 
     public ErrorDetails validateCreateRequest(final WaterConnectionInfo connectionInfo) {
         ErrorDetails errorDetails = null;
@@ -112,7 +116,7 @@ public class RestWaterConnectionValidationService {
                 errorDetails.setErrorMessage(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID);
                 return errorDetails;
             }
-            final PropertyPipeSize pipeSizeList = pipeSizeService.getAllPipeSizesByPropertyTypeAnPipeSize(
+            final PropertyPipeSize pipeSizeList = propertyPipeSizeService.findByPropertyTypecodeAndPipeSizecode(
                     connectionInfo.getPropertyType(), connectionInfo.getPipeSize());
             if (pipeSizeList == null) {
                 errorDetails = new ErrorDetails();

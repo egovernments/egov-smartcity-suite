@@ -86,12 +86,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=PendingTDSReport.pdf" }),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=PendingTDSReport.xls" }),
-                        @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=TdsSummaryReport.pdf" }),
-                                @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                                        "contentType", "application/xls", "contentDisposition", "no-cache;filename=TdsSummaryReport.xls" })
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=PendingTDSReport.xls" }),
+        @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=TdsSummaryReport.pdf" }),
+        @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/xls", "contentDisposition", "no-cache;filename=TdsSummaryReport.xls" }),
+        @Result(name = "results", location = "pendingTDSReport-results.jsp"),
+        @Result(name = "entities", location = "pendingTDSReport-entities.jsp"),
+        @Result(name = "summaryForm", location = "pendingTDSReport-summaryForm.jsp"),
+        @Result(name = "reportForm", location = "pendingTDSReport-reportForm.jsp"),
+        @Result(name = "summaryResults", location = "pendingTDSReport-summaryResults.jsp")
 })
 @Transactional(readOnly = true)
 @ParentPackage("egov")
@@ -119,6 +124,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     private RemitRecoveryService remitRecoveryService;
     private FinancialYearHibernateDAO financialYearDAO;
     private String message = "";
+    private String mode = "";
     private static Logger LOGGER = Logger.getLogger(PendingTDSReportAction.class);
 
     public void setFinancialYearDAO(final FinancialYearHibernateDAO financialYearDAO) {
@@ -131,6 +137,7 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     @Override
     public String execute() throws Exception {
+        mode = "deduction";
         return "reportForm";
     }
 
@@ -144,8 +151,9 @@ public class PendingTDSReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
-        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
+        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
+        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));  
+
         addDropdownData("recoveryList",
                 persistenceService.findAllBy(" from Recovery where isactive=true order by chartofaccounts.glcode"));
     }
@@ -331,9 +339,9 @@ public class PendingTDSReportAction extends BaseFormAction {
                 LOGGER.debug(qry);
             result = HibernateUtil.getCurrentSession().createSQLQuery(qry).list();
             // Query to get total deduction
-            final String qryTolDeduction = "SELECT type,MONTH,SUM(gldtamt) FROM (SELECT DISTINCT er.month AS MONTH,ergl.gldtlamt           AS gldtamt,"
+            final String qryTolDeduction = "SELECT type,MONTH,SUM(gldtamt) FROM (SELECT DISTINCT er.month AS MONTH,ergl.gldtlamt AS gldtamt,"
                     +
-                    "ergl.gldtlid,vh.name AS type FROM eg_remittance_detail erd,voucherheader vh1 RIGHT OUTER JOIN eg_remittance er ON vh1.id=er.paymentvhid,"
+                    "ergl.gldtlid as gldtlid,vh.name AS type FROM eg_remittance_detail erd,voucherheader vh1 RIGHT OUTER JOIN eg_remittance er ON vh1.id=er.paymentvhid,"
                     +
                     "voucherheader vh,vouchermis mis,generalledger gl,generalledgerdetail gld,fund f, eg_remittance_gldtl ergl WHERE erd.remittancegldtlid= ergl.id"
                     +
@@ -350,7 +358,7 @@ public class PendingTDSReportAction extends BaseFormAction {
                     + "','dd/MM/yyyy') and "
                     + " vh.voucherDate >= to_date('"
                     + Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate())
-                    + "','dd/MM/yyyy') " + deptQuery + partyNameQuery + ")group by type,month";
+                    + "','dd/MM/yyyy') " + deptQuery + partyNameQuery + ") as temptable group by type,month";
             resultTolDeduction = HibernateUtil.getCurrentSession().createSQLQuery(qryTolDeduction).list();
         } catch (final ApplicationRuntimeException e) {
             message = e.getMessage();
@@ -573,6 +581,14 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
 }

@@ -144,7 +144,7 @@ function loadBank(obj)
 				</div>
 				<table align="center" id="totalAmtTable">
 					<tr>
-						<td width="900"></td>
+						<td width="1050"></td>
 						<td><s:text name="remit.SelectDeSelectAll" /></td>
 						<td><s:checkbox id="selectAll" name="selectAll"
 								onclick="selectAllORNone(this);"></s:checkbox></td>
@@ -163,7 +163,7 @@ function loadBank(obj)
 				<br>
 				<table align="center" id="totalAmtTable">
 					<tr>
-						<td width="773"></td>
+						<td width="850"></td>
 						<td>Total Amount</td>
 						<td><s:textfield name="remittanceBean.totalAmount"
 								id="totalAmount" style="width:90px;text-align:right"

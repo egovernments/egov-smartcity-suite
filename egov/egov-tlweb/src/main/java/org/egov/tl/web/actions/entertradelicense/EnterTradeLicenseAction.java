@@ -58,10 +58,10 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
@@ -121,10 +121,9 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         prepareUpdate();
         for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense())
             legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0d);
-        if (license().getDemandSet() != null && !license().getDemandSet().isEmpty())
-            for (final LicenseDemand licenseDemand : license().getDemandSet())
-                legacyInstallmentwiseFees.put(licenseDemand.getEgInstallmentMaster().getInstallmentNumber(),
-                        licenseDemand.getBaseDemand().doubleValue());
+        for (final EgDemandDetails demandDetail : license().getCurrentDemand().getEgDemandDetails())
+            legacyInstallmentwiseFees.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
+                    demandDetail.getAmount().doubleValue());
         return "update";
     }
 

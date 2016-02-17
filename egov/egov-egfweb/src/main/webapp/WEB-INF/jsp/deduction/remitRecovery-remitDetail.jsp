@@ -177,13 +177,17 @@ function onSubmit()
 		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
 		document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
 		document.remittanceForm.submit();
-	}
-	return true;
+	}else{
+		return false;
+		}
+		
+	
 }
 </script>
 </head>
 <body onload="return onLoad();">
-	<s:form action="remitRecovery" theme="simple" name="remittanceForm" id = "remittanceForm">
+	<s:form action="remitRecovery" theme="simple" name="remittanceForm"
+		id="remittanceForm">
 		<s:push value="model">
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="Remittance Recovery" />
@@ -353,7 +357,7 @@ function onSubmit()
 															</table>
 															<table align="center" id="totalAmtTable">
 																<tr>
-																	<td width="1033"></td>
+																	<td width="800"></td>
 																	<td>Total Amount</td>
 																	<td><s:textfield name="remittanceBean.totalAmount"
 																			id="totalAmount" style='width:90px;text-align:right'

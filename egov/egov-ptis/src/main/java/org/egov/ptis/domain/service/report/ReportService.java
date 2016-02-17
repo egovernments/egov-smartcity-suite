@@ -406,15 +406,12 @@ public class ReportService {
                 0);
         int noofDays = 0;
         final StringBuilder queryBuilder = new StringBuilder(
-                " select distinct bcreport.district,bcreport.ulbname  \"ulbName\" ,bcreport.ulbcode \"ulbCode\" ,billcoll.collectorname,billcoll.mobilenumber,target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection, "
+                " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\" ,collectorname,mobilenumber,target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection, "
                         + " cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
-                        + " from EGPT_BILLCOLLECTORWISE_REPORT bcreport, "
-                        + " EGPT_BILLCOLLCTOR_DETAIL billcoll left outer join EGPT_BCREPORT_COLLECTION colln on billcoll.id=colln.billcollector and colln.date<=:collDate " // and
-                                                                                                                                                                           // colln.date::date=:collDate
-                        + " where bcreport.id=billcoll.bcreportid   order by district,ulbname,collectorname ");
+                        + " from public.billColl_DialyCollection_view  order by district,ulbname,collectorname ");
 
         final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
-        query.setDate("collDate", date);
+        // query.setDate("collDate", date);
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
 
         listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
@@ -425,6 +422,39 @@ public class ReportService {
             if (currentFinancialYear != null)
                 noofDays = DateUtils.noOfDays(new Date(), currentFinancialYear.getEndingDate());
         }
+        buildCollectionReport(listBcPayment, noofDays);
+        return listBcPayment;
+
+    }
+
+    public List<BillCollectorDailyCollectionReportResult> getUlbWiseDailyCollection(Date date) {
+
+        List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(
+                0);
+        int noofDays = 0;
+        final StringBuilder queryBuilder = new StringBuilder(
+
+                " select distinct district,ulbname \"ulbName\" ,ulbcode \"ulbCode\"  ,  collectorname \"collectorname\" ,mobilenumber \"mobilenumber\",  "
+                        + "target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection,   "
+                        + "cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
+                        + "from  public.ulbWise_DialyCollection_view  order by district,ulbname ");
+        final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
+        query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
+
+        listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
+
+        if (financialYearDAO != null && listBcPayment.size() > 0) {
+
+            CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
+            if (currentFinancialYear != null)
+                noofDays = DateUtils.noOfDays(new Date(), currentFinancialYear.getEndingDate());
+        }
+        buildCollectionReport(listBcPayment, noofDays);
+        return listBcPayment;
+
+    }
+
+    private void buildCollectionReport(List<BillCollectorDailyCollectionReportResult> listBcPayment, int noofDays) {
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             if (bcResult.getTarget_arrears_demand() == null)
@@ -505,8 +535,6 @@ public class ReportService {
             bcResult.setLastyear_cummulative_collection(formatAmt(bcResult.getLastyear_cummulative_collection())
                     .doubleValue());
         }
-        return listBcPayment;
-
     }
     
     public BigDecimal formatAmt(double amt) {

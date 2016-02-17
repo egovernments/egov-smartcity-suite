@@ -55,6 +55,8 @@ public class DefaultersInfo {
 	private BigDecimal totalDue;
 	private String arrearsFrmInstallment;
 	private String arrearsToInstallment;
+	private BigDecimal aggrArrearPenalyDue;
+        private BigDecimal aggrCurrPenalyDue;
 	
 	public Integer getSlNo() {
 		return slNo;
@@ -127,6 +129,18 @@ public class DefaultersInfo {
         }
         public void setArrearsToInstallment(String arrearsToInstallment) {
             this.arrearsToInstallment = arrearsToInstallment;
+        }
+        public BigDecimal getAggrArrearPenalyDue() {
+            return aggrArrearPenalyDue;
+        }
+        public void setAggrArrearPenalyDue(BigDecimal aggrArrearPenalyDue) {
+            this.aggrArrearPenalyDue = aggrArrearPenalyDue;
+        }
+        public BigDecimal getAggrCurrPenalyDue() {
+            return aggrCurrPenalyDue;
+        }
+        public void setAggrCurrPenalyDue(BigDecimal aggrCurrPenalyDue) {
+            this.aggrCurrPenalyDue = aggrCurrPenalyDue;
         }
 	
 }

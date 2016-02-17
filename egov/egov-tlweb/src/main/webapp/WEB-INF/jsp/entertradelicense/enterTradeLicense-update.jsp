@@ -106,7 +106,7 @@
 											</div>
 											
 											<div class="col-md-12">
-											<table class="table table-bordered">
+											<table class="table table-bordered feedetails">
 												<thead>
 													<tr>
 														<th><s:text name='license.fin.year'/></th>
@@ -121,8 +121,8 @@
 														<s:if test="#stat.index == 0">
 															<c:set value="${finyear}" var="startfinyear"/>
 														</s:if>
-														<td><input type="text"  name="" class="form-control" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
-														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
+														<td><input type="text"  name="" class="form-control feeyear" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
+														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
 													</tr>
 												</s:iterator>
 												</tbody>
@@ -165,7 +165,7 @@
 						autoclose: true 
 					}); 
 				</script>
-        <script src="../resources/app/js/newtrade.js"></script>
+        <script src="../resources/js/app/newtrade.js"></script>
         <script>
 	
 			function validateForm() {
@@ -238,14 +238,63 @@
 						 	showMessage('enterLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
 							window.scroll(0, 0);  
 							return false;
+					}else{
+						/*validate fee details*/
+						if(validate_feedetails()){
+							formsubmit();
+						}else{
+							return false;
+						}
 					}
 				} else{
-					clearMessage('enterLicense_error');
-					toggleFields(false,"");
-					document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/update.action';
-					document.registrationForm.submit();
-
+					
+					/*validate fee details*/
+					if(validate_feedetails()){
+						formsubmit();
+					}else{
+						return false;
 					}
+
+				}
+  			}
+
+			function validate_feedetails(){
+				
+				var validated = false;
+				var globalindex;
+				
+				jQuery("table.feedetails tbody tr").each(function (index) {
+					var rowval = jQuery(this).find("input.feeamount").val();
+					if(parseFloat(rowval) > 0){
+						globalindex = index;
+						validated = true;
+					}else{
+						if(!jQuery(this).is(":last-child")){
+							if(index == (globalindex+1)){
+								bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details is missing!');
+								validated = false;
+								return false;
+							}
+						}else{
+							if(globalindex == undefined){
+								bootbox.alert('Atleast one financial year fee details is required!');
+								validated = false;
+							}else{
+								validated = true;
+							}
+						}
+						
+					}
+				});
+				return validated;
+			}
+
+  			function formsubmit(){
+  				/*submit the form*/
+				clearMessage('enterLicense_error');
+				toggleFields(false,"");
+				document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/update.action'
+				document.registrationForm.submit();
   			}
 
 			// Calls propertytax REST api to retrieve property details for an assessment no
@@ -279,9 +328,7 @@
 							bootbox.alert("Error getting property details");
 						}
 					});
-            	} else{
-					showMessage('enterLicense_error', '<s:text name="newlicense.propertyNo.null" />');
-                }
+            	}
             }
 
     		function showHideAgreement(){

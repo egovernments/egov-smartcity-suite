@@ -37,12 +37,12 @@ $(document)
 									"sTitle" : "Ulb Name"
 								},
 								{
-									"data" : "ulbName",
+									"data" : "ulbCode",
 									"sTitle" : "Ulb Code"
 								},
 								{
 									"data" : "collectorname",
-									"sTitle" : "Name"
+									"sTitle" : "Name" ,"sWidth": "180px"
 								},
 								{
 									"data" : "mobilenumber",
@@ -50,55 +50,55 @@ $(document)
 								},
 								{
 									"data" : "target_arrears_demand",
-									"sTitle" : "Arrears"
+									"sTitle" : "Arrears", "sClass": "text-right"
 								},
 								{
 									"data" : "target_current_demand",
-									"sTitle" : "Current"
+									"sTitle" : "Current", "sClass": "text-right"
 								},
 								{
 									"data" : "target_total_demand",
-									"sTitle" : "Total"
+									"sTitle" : "Total", "sClass": "text-right"
 								},
 								{
 									"data" : "day_target",
-									"sTitle" : "Day Target"
+									"sTitle" : "Day Target", "sClass": "text-right"
 								},
 								{
 									"data" : "today_total_collection",
-									"sTitle" : "Day Collection"
+									"sTitle" : "Day Collection", "sClass": "text-right"
 								},
 								{
 									"data" : "cummulative_arrears_collection",
-									"sTitle" : "Arrears"
+									"sTitle" : "Arrears", "sClass": "text-right"
 								},
 								{
 									"data" : "cummulative_currentyear_collection",
-									"sTitle" : "Current"
+									"sTitle" : "Current", "sClass": "text-right"
 								},
 								{
 									"data" : "cummulative_total_Collection",
-									"sTitle" : " Total"
+									"sTitle" : " Total", "sClass": "text-right"
 								},
 								{
 									"data" : "cummulative_currentYear_Percentage",
-									"sTitle" : "%"
+									"sTitle" : "%", "sClass": "text-center"
 								},
 								{
 									"data" : "lastyear_collection",
-									"sTitle" : "Today"
+									"sTitle" : "Today", "sClass": "text-right"
 								},
 								{
 									"data" : "lastyear_cummulative_collection",
-									"sTitle" : "Cummulative"
+									"sTitle" : "Cummulative", "sClass": "text-right"
 								},
 								{
 									"data" : "Percentage_compareWithLastYear",
-									"sTitle" : "Increase of collection"
+									"sTitle" : "Increase of collection", "sClass": "text-right"
 								},
 								{
 									"data" : "growth",
-									"sTitle" : "% of growth"
+									"sTitle" : "% of growth" , "sClass": "text-center" 
 								}
 								 ],"footerCallback" : function(row, data, start, end, display) {
 										var api = this.api(), data;
@@ -166,7 +166,7 @@ function averageTotalFooter(colidx, api,totalsize) {
 	}, 0);
 	// Update footer
 	$(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal/totalsize) + ' (' + formatNumberInr(total/totalsize) + ')');
+			formatNumberInr((pageTotal/totalsize).toFixed(2)) + ' (' + formatNumberInr((total/totalsize).toFixed(2)) + ')');
 }
 
 function updateTotalFooter(colidx, api) {
@@ -190,7 +190,7 @@ function updateTotalFooter(colidx, api) {
 
 	// Update footer
 	$(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total) + ')');
+			formatNumberInr(pageTotal.toFixed(2)) + ' (' + formatNumberInr(total.toFixed(2)) + ')');
 }
 function formatNumberInr(x) {
 	if (x) {

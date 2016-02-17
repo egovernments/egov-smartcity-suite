@@ -43,7 +43,7 @@
 <title><s:text name="page.title.edittrade" /></title>
 <sx:head />
 <script type="text/javascript"
-	src="../javascript/license/tradeLicense.js"></script>
+	src="../js/app/tradeLicense.js"></script>
 <script>
 	function validateForm(obj) {
 		if(validateForm_editTradeLicense()==false) {

@@ -112,6 +112,20 @@
 	                            e.preventDefault();
 	    	};
 	    	jQuery(document).on("keydown", disableRefresh);
+
+	    	function reCalculateTotalFooterWhenExport(tableIdWithOutPrefix)
+	    	{
+	    		$("#"+tableIdWithOutPrefix+" tfoot td").each(function( index ) {
+	    	   		 if(index!==0)
+	    	   		 {
+	    	   			 var totals=$(this).html().split("(");
+	    		    		 var str=""+totals[1];
+	    		    		 str=str.slice(0,-1);
+	    		    		 $(this).html(str);
+	    	   		 }
+	    	   	 });
+	    	     setTimeout(function(){ $('select[name="'+ tableIdWithOutPrefix +'_length"]').trigger('change'); }, 10);
+	    	}
 		</script>
     </body>
 </html>

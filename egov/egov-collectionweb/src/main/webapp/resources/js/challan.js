@@ -1375,7 +1375,7 @@ var callbackAutoCompleteEntities = {
 	var posSrc=findPos(src); 
 	
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]-40+"px";
 	target.style.width=650;	
 	      		
 	

@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
 <div class="row">
 	<div class="col-md-12">
 
@@ -160,13 +160,14 @@
 						<c:otherwise>
 						</c:otherwise>
 					</c:choose>
-				</div>
-		<div class="form-group">
+					<div class="form-group">
 								<label class="col-sm-3 control-label text-right"> License Number</label>
-    <div class="col-sm-6 add-margin">
-    <input type="text" name="licensenumber" id="licensenumber"  class="form-control patternvalidation"   maxlength="15" />
-    
-    </div></div>
+				    <div class="col-sm-6 add-margin">
+				    <input type="text" name="licensenumber" id="licensenumber"  class="form-control patternvalidation"   maxlength="15" />
+				    
+				    </div></div>
+				</div>
+		
 
 			<div class="row">
 				<div class="text-center">
@@ -249,7 +250,7 @@
 <script
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	type="text/javascript"></script>
-	<script type="text/javascript" src="/tl/resources/javascript/license/dCBReport.js?rnd=${app_release_no}'/>"></script>
+	<script type="text/javascript" src="/tl/resources/js/app/dCBReport.js?rnd=${app_release_no}'/>"></script>
 
 
 

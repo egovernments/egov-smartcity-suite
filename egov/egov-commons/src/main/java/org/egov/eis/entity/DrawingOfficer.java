@@ -51,6 +51,8 @@ import javax.persistence.Table;
 
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.utils.EntityType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
 import org.hibernate.search.annotations.DocumentId;
@@ -58,7 +60,7 @@ import org.hibernate.search.annotations.DocumentId;
 @Entity
 @Table(name = "eg_drawingofficer")
 @SequenceGenerator(name = DrawingOfficer.SEQ_DRAWINGOFFICER, sequenceName = DrawingOfficer.SEQ_DRAWINGOFFICER, allocationSize = 1)
-public class DrawingOfficer extends AbstractAuditable {
+public class DrawingOfficer extends AbstractAuditable implements EntityType {
     private static final long serialVersionUID = 1678672850806848215L;
     public static final String SEQ_DRAWINGOFFICER = "SEQ_EG_DRAWINGOFFICER";
 
@@ -143,6 +145,51 @@ public class DrawingOfficer extends AbstractAuditable {
 
     public void setPosition(final Position position) {
         this.position = position;
+    }
+
+    @Override
+    public String getBankname() {
+        return null;
+    }
+
+    @Override
+    public String getBankaccount() {
+        return null;
+    }
+
+    @Override
+    public String getPanno() {
+        return null;
+    }
+
+    @Override
+    public String getTinno() {
+        return null;
+    }
+
+    @Override
+    public String getIfsccode() {
+        return null;
+    }
+
+    @Override
+    public String getModeofpay() {
+        return null;
+    }
+
+    @Override
+    public Integer getEntityId() {
+        return null;
+    }
+
+    @Override
+    public String getEntityDescription() {
+        return getName();
+    }
+
+    @Override
+    public EgwStatus getEgwStatus() {
+        return null;
     }
 
 }

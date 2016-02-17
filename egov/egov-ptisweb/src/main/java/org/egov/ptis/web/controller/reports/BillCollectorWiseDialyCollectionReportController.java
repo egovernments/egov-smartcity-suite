@@ -70,6 +70,7 @@ import com.google.gson.GsonBuilder;
 public class BillCollectorWiseDialyCollectionReportController {
 
     private static final String BILL_COLLECTOR_COLL_REPORT_FORM = "bcDailyCollectionReport-form";
+    private static final String ULBWISE_COLL_REPORT_FORM = "ulbWiseCollectionReport-form";
 
     BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult = new BillCollectorDailyCollectionReportResult();
 
@@ -101,6 +102,21 @@ public class BillCollectorWiseDialyCollectionReportController {
         return BILL_COLLECTOR_COLL_REPORT_FORM;
     }
 
+    @RequestMapping(value = "/ulbWiseCollectionReport-form", method = RequestMethod.GET)
+    public String searchUlbWiseForm(final Model model) {
+        return ULBWISE_COLL_REPORT_FORM;
+    }
+    @RequestMapping(value = "/ulbWiseCollectionList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody void searchUlbWise(final HttpServletRequest request, final HttpServletResponse response,
+            final Model model) throws IOException {
+        IOUtils.write(
+                "{ \"data\":"
+                        + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+                                .toJson(reportService.getUlbWiseDailyCollection(new Date())) + "}",
+                response.getWriter());
+    }
+
+    
     @RequestMapping(value = "/billcollectorDailyCollectionReportList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void search(final HttpServletRequest request, final HttpServletResponse response,
             final Model model) throws IOException {

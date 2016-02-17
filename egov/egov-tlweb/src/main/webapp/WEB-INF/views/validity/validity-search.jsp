@@ -60,7 +60,7 @@
                   <form:options items="${natureOfBusinesss}" itemValue="id" itemLabel="name" />
                 </form:select>
               </div>
-              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
+              <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
               <div class="col-sm-3 add-margin">
                 <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control"
                   cssErrorClass="form-control error">
@@ -124,4 +124,4 @@
   src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
   type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/app/js/validityHelper.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/validityHelper.js'/>"></script>

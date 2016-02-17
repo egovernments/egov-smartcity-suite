@@ -43,14 +43,21 @@ import java.math.BigDecimal;
 
 public class ReceiptAmountInfo {
     private BigDecimal arrearsAmount =  BigDecimal.ZERO;
+    //In case of unauthorized construction, invalid usage etc. 
     private BigDecimal penaltyAmount =  BigDecimal.ZERO;
     private BigDecimal currentInstallmentAmount =  BigDecimal.ZERO;
     private BigDecimal advanceAmount =  BigDecimal.ZERO;
+    private BigDecimal latePaymentCharges =  BigDecimal.ZERO;
 
     public BigDecimal getArrearsAmount() {
         return arrearsAmount;
     }
 
+    /**
+     * To set Arrears(If any). 
+     * 
+     * @param arrearsAmount
+     */
     public void setArrearsAmount(final BigDecimal arrearsAmount) {
         this.arrearsAmount = arrearsAmount;
     }
@@ -59,6 +66,12 @@ public class ReceiptAmountInfo {
         return penaltyAmount;
     }
 
+    /**
+     * To set unauthorized construction penalty, 
+     * invalid usage etc. 
+     * 
+     * @param penaltyAmount
+     */
     public void setPenaltyAmount(final BigDecimal penaltyAmount) {
         this.penaltyAmount = penaltyAmount;
     }
@@ -67,6 +80,11 @@ public class ReceiptAmountInfo {
         return currentInstallmentAmount;
     }
 
+    /**
+     * To set current install amount
+     * 
+     * @param currentInstallmentAmount
+     */
     public void setCurrentInstallmentAmount(final BigDecimal currentInstallmentAmount) {
         this.currentInstallmentAmount = currentInstallmentAmount;
     }
@@ -77,6 +95,19 @@ public class ReceiptAmountInfo {
 
     public void setAdvanceAmount(final BigDecimal advanceAmount) {
         this.advanceAmount = advanceAmount;
+    }
+
+    public BigDecimal getLatePaymentCharges() {
+        return latePaymentCharges;
+    }
+    
+    /**
+     * To set late payment charges.
+     * 
+     * @param latePaymentCharges
+     */
+    public void setLatePaymentCharges(BigDecimal latePaymentCharges) {
+        this.latePaymentCharges = latePaymentCharges;
     }
 
 }

@@ -48,7 +48,7 @@
 <div class="form-group col-sm-12 view-content header-color hidden-xs">
 	<div class="col-sm-1 text-center"><s:text name="doctable.sno" /></div>
     <div class="col-sm-5 text-center"><s:text name="doctable.docname" /></div>
-    <div class="col-sm-3 text-center"><s:text name="doctable.checklist"/></div>
+    <div class="col-sm-3 text-center"><s:text name="doctable.docenclosed"/></div>
     <div class="col-sm-3 text-center"><s:text name="doctable.attach.doc" /></div>	
 </div>
 <s:iterator value="model.documents" status="status" var="document">
@@ -57,7 +57,7 @@
         <div class="col-sm-5 text-center">
         	<s:property value="%{type.name}" />
 		</div>
-       	<div class="col-sm-3 text-center"><s:property value="#document.enclosed"/></div>
+       	<div class="col-sm-3 text-center"><s:if test="#document.enclosed">Yes</s:if><s:else>No</s:else> </div>
        	<div class="col-sm-3 text-center">
        		<s:if test="#document.files.isEmpty()">
 				N/A

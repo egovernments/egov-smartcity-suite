@@ -43,6 +43,7 @@ import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,7 +61,9 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocumentType;
+import org.egov.tl.entity.LicenseType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -88,6 +91,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
+    private String renewAppType;
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -134,16 +138,17 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
 
+        BigDecimal newTradeAreWt=tradeLicense.getTradeArea_weight();
         tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
+        tradeLicense.setTradeArea_weight(newTradeAreWt);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
-                && tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING) && tradeLicense != null
+                && (tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING)|| tradeLicense.getState().getValue().equals(Constants.WF_STATE_RENEWAL_COMM_APPROVED))&& tradeLicense != null
                 && !tradeLicense.isPaid() &&
                 !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
             prepareNewForm();
             final ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
             throw new ValidationException(Arrays.asList(vr));
         }
-        tradeLicenseService.updateStatusInWorkFlowProgress(tradeLicense, workFlowAction);
         return super.approve();
     }
 
@@ -152,6 +157,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
         prepareNewForm();
+        if(!tradeLicense.hasState() || tradeLicense.getCurrentState().getValue().equals("Closed")) {
+            currentState="";
+        }
+        renewAppType=Constants.RENEWAL_LIC_APPTYPE;
         return super.beforeRenew();
     }
 
@@ -232,5 +241,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void setMode(final String mode) {
         this.mode = mode;
+    }
+    @Override
+    public String getAdditionalRule() {
+        if((renewAppType !=null && renewAppType.equals(Constants.RENEWAL_LIC_APPTYPE)) ||(tradeLicense !=null && tradeLicense.getLicenseAppType() !=null && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))){
+        return "RENEWALTRADE";
+        }
+        else
+            return "";
     }
 }

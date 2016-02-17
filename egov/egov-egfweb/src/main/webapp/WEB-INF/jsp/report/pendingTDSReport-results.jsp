@@ -38,7 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<span class="mandatory"> <font
+<span class="mandatory1"> <font
 	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
 		<s:actionmessage /></font>
 </span>
@@ -49,26 +49,28 @@
 		<tr>
 			<td colspan="7"><s:if test="%{fromDate!=null}">
 					<div class="subheadsmallnew">
-						<strong>Pending TDS Report from <s:property
+						<strong>Deduction detailed report from <s:property
 								value="fromDate" /> to <s:property value="asOnDate" /></strong>
 					</div></td>
 			</s:if>
 			<s:else>
 				<div class="subheadsmallnew">
-					<strong>Pending TDS Report as on <s:property
+					<strong>Deduction detailed report as on <s:property
 							value="asOnDate" /></strong>
 				</div>
 				</td>
 			</s:else>
 		</tr>
 		<tr>
-			<td class="blueborderfortd">
+			<td
+				style="border-right-width: 1px; border-left-style: solid; padding-left: 5px; border-left-color: #E9E9E9"
+				class="blueborderfortd">
 				<div>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0"
 						class="tablebottom">
 						<tr>
 							<th class="bluebgheadtd">Sl No</th>
-							<th class="bluebgheadtd">Nature Of deduction</th>
+							<th class="bluebgheadtd">Voucher Type</th>
 							<th class="bluebgheadtd">Reference Number</th>
 							<th class="bluebgheadtd">Voucher Date</th>
 							<th class="bluebgheadtd">Party Name</th>
@@ -129,7 +131,6 @@
 	</tr>
 	</table>
 </s:if>
-<s:else>No Pending TDS found</s:else>
 <s:if test="%{showRemittedEntries==true && remittedTDS.size()>0}">
 	<br />
 	<br />
@@ -148,7 +149,7 @@
 						class="tablebottom">
 						<tr>
 							<th class="bluebgheadtd">Sl No</th>
-							<th class="bluebgheadtd">Nature Of deduction</th>
+							<th class="bluebgheadtd">Voucher Type</th>
 							<th class="bluebgheadtd">Reference Number</th>
 							<th class="bluebgheadtd">Voucher Date</th>
 							<th class="bluebgheadtd">Party Name</th>
@@ -226,6 +227,10 @@
 	</td>
 	</tr>
 	</table>
+</s:if>
+<s:if
+	test="%{pendingTDS.size()<=0  && remittedTDS.size()<=0}">
+No pending deduction found
 </s:if>
 <s:if
 	test="%{pendingTDS.size()>0 || showRemittedEntries==true && remittedTDS.size()>0}">
