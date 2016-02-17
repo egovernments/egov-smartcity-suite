@@ -3403,7 +3403,7 @@ public class CommonAction extends BaseFormAction {
         else {
             String funCodeName = "%" + function.toLowerCase() + "%";
             functionCodesList = persistenceService.findAllBy("select f from CFunction f where" +
-                    " isActive = 1 and isNotLeaf = 0 and lower(name) like ? or lower(code) like ? ", funCodeName, funCodeName);
+                    " isActive = true and isNotLeaf = false and lower(name) like ? or lower(code) like ? ", funCodeName, funCodeName);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadFunctionCodes.");
