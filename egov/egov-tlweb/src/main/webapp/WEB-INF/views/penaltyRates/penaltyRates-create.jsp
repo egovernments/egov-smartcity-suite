@@ -41,8 +41,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
-<form:form role="form" action="" modelAttribute="penaltyRates" commandName="penaltyRates" id="penaltyform"  cssClass="form-horizontal form-groups-bordered">
+<form:form role="form" action="search" modelAttribute="penaltyForm" commandName="penaltyForm" id="penaltyform"  cssClass="form-horizontal form-groups-bordered">
 	<div class="row">
     	<div class="col-md-12">
       		<div class="panel panel-primary" data-collapsed="0">
@@ -55,8 +54,8 @@
 	            		<strong><spring:message code='${message}'/></strong>
 	          		</div>
 	          	</c:if>
-            		<div class="form-group">
-            			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.licenseAppType" />
+            		<div class="form-group" >
+            			<label class="col-sm-5 control-label text-right"><spring:message code="lbl.licenseAppType" />
             				<span class="mandatory"></span> </label>
             			<div class="col-sm-3 add-margin">
 			              <form:select path="licenseAppType" id="licenseAppType" cssClass="form-control"
@@ -68,34 +67,118 @@
 			              </form:select>
             			</div>
           			</div>
-		          	<div class="form-group">
-		            	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.from" /> </label>
-			            <div class="col-sm-3 add-margin">
-			              <form:input path="fromRange" id="fromRange" class="form-control daysvalidate" pattern="-?\d*" required ="required"/>
-			            </div>
-		            	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.to" /> </label>
-			            <div class="col-sm-3 add-margin">
-			              <form:input path="toRange" id="toRange" class="form-control text-right daysvalidate" pattern="-?\d*" required ="required" />
-			            </div>
-		          	</div>
-          			<div class="form-group nonfindata">
-            			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.rate" /> </label>
-			            <div class="col-sm-3 add-margin">
-			              <form:input path="rate" id="rate" class="form-control text-right patternvalidation is_valid_number" data-pattern="decimalValue" required ="required"/>
-			              <form:errors path="rate" cssClass="error-msg" />
-			            </div>
-          			</div>
         		</div>
   			</div>
  		</div>
   	</div>
    	<div class="form-group">
 	    <div class="text-center">
-	      <button type='submit' class='btn btn-primary' id="buttonSubmit">
-	        <spring:message code='lbl.create' />
+	      <button type='button' class='btn btn-primary' id="search">
+	        <spring:message code='lbl.search' />
 	      </button>
 	      <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
 	    </div>
   	</div>
+  	<div id="resultdiv"></div>
 </form:form>
+<script type="text/javascript">
+function checkforNonEmptyPrevRow(){
+	var tbl=document.getElementById("result");
+    var lastRow = (tbl.rows.length)-1;
+    var fromRange=getControlInBranch(tbl.rows[lastRow],'fromRange').value;
+    var toRange=getControlInBranch(tbl.rows[lastRow],'toRange').value;
+    var rate=getControlInBranch(tbl.rows[lastRow],'rate').value;
+    if(fromRange=='' || toRange=='' || rate==''){
+    	bootbox.alert("Enter all values for existing rows before adding.");
+		return false;       
+    } 
+    return true;
+}  
+function getPrevUOMFromData(){
+	var tbl=document.getElementById("result");
+    var lastRow = (tbl.rows.length)-1;
+    return getControlInBranch(tbl.rows[lastRow],'toRange').value;
+}
+
+function intiUOMFromData(obj){
+	var tbl=document.getElementById("result");
+    var lastRow = (tbl.rows.length)-1;
+    getControlInBranch(tbl.rows[lastRow],'fromRange').value=obj;
+} 
+
+function checkValue(obj){
+	var rowobj=getRow(obj);
+	var tbl = document.getElementById('result');
+	var toRange=getControlInBranch(tbl.rows[rowobj.rowIndex],'toRange').value;
+	var fromRange=getControlInBranch(tbl.rows[rowobj.rowIndex],'fromRange').value;
+	if(fromRange!='' && toRange!='' && (eval(fromRange)>=eval(toRange))){
+		bootbox.alert("\"To Range\" should be greater than \"From Range\".");
+		getControlInBranch(tbl.rows[rowobj.rowIndex],'toRange').value="";
+		return false;
+	} 
+  	var lastRow = (tbl.rows.length)-1;
+    var curRow=rowobj.rowIndex; 
+    if(curRow!=lastRow){
+		var uomFromVal1=getControlInBranch(tbl.rows[rowobj.rowIndex+1],'fromRange').value;
+		if(uomToval!=uomFromVal1)
+			getControlInBranch(tbl.rows[rowobj.rowIndex+1],'fromRange').value=uomToval; 
+    }
+}
+
+function deleteThisRow(obj){
+	var tbl=document.getElementById("result");
+    var lastRow = (tbl.rows.length)-1;
+    var curRow=getRow(obj).rowIndex; 
+    var counts = lastRow - 1;
+    if(curRow == 1)	{
+    	bootbox.alert('Cannot delete first row');
+  	     return false;
+    } else if(curRow != lastRow){
+    	bootbox.alert('Cannot delete in between. Delete from last.');
+ 	    return false;
+    } else	{
+        if(getControlInBranch(tbl.rows[lastRow],'penaltyId').value==''){
+	  	  	tbl.deleteRow(curRow);
+			return true;
+	    } else if(getControlInBranch(tbl.rows[lastRow],'penaltyId').value!=''){
+	    	var r = confirm("This will delete the row permanently. Press OK to Continue. ");
+			if (r != true) {
+				return false;
+			} else{
+					$.ajax({
+						url: "/tl/domain/commonAjax-deleteRow.action?penaltyRateId="+getControlInBranch(tbl.rows[lastRow],'penaltyId').value+"",
+						type: "GET",
+						dataType: "json",
+						success: function (response) {
+							tbl.deleteRow(curRow);
+						}, 
+						error: function (response) {
+							bootbox.alert("Unable to delete this row.");
+							console.log("failed");
+						}
+					});
+			}
+		}
+  	}
+}
+
+function validateDetailsBeforeSubmit(){
+	var tbl=document.getElementById("result");
+    var tabLength = (tbl.rows.length)-1;
+    var uomFromval,uomToval;
+    for(var i=1;i<=tabLength;i++){
+    	fromRange=getControlInBranch(tbl.rows[i],'fromRange').value;
+    	toRange=getControlInBranch(tbl.rows[i],'toRange').value;
+    	if(fromRange!='' && toRange!='' && (eval(fromRange)>=eval(toRange))){
+    		bootbox.alert("\"To Range\" should be greater than \"From Range\" for row "+(i)+".");
+    		getControlInBranch(tbl.rows[i],'toRange').value="";
+    		getControlInBranch(tbl.rows[i],'toRange').focus();
+    		return false;
+    	}  
+    }
+    return true;
+}
+</script>
+<script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/app/js/penaltyRates.js'/>"></script>

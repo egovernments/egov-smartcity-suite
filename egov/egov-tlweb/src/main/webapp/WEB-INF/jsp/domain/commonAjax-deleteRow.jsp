@@ -1,5 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
+<%@ page contentType="text/json" %>
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %> 
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -39,41 +39,10 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  <div class="row">
-    <div class="col-md-12">
-      <div class="panel panel-primary" data-collapsed="0">
-        <div class="panel-heading">
-          <div class="panel-title"><spring:message code="title.penaltyRate"/></div>
-        </div>
-        <div class="panel-body custom">
-          <div class="row add-border">
-            <div class="col-xs-3 add-margin">
-              <spring:message code="lbl.licenseAppType" />
-            </div>
-            <div class="col-sm-3 add-margin view-content">${penaltyRates.licenseAppType.name}</div>
-          </div>
-          <div class="row add-border">
-            <div class="col-xs-3 add-margin">
-              <spring:message code="lbl.from" />
-            </div>
-            <div class="col-sm-3 add-margin view-content">${penaltyRates.fromRange}</div>
-            <div class="col-xs-3 add-margin">
-              <spring:message code="lbl.to" />
-            </div>
-            <div class="col-sm-3 add-margin view-content">${penaltyRates.toRange}</div>
-          </div>
-          <div class="row add-border">
-            <div class="col-xs-3 add-margin">
-              <spring:message code="lbl.rate" />
-            </div>
-            <div class="col-sm-3 add-margin view-content">${penaltyRates.rate}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row text-center">
-    <div class="add-margin">
-      <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
-    </div>
-  </div>
+
+{
+"ResultSet": {
+    "Result":[
+    ]
+  }
+}

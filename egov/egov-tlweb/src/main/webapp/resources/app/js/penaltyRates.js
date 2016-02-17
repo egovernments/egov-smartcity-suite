@@ -37,99 +37,70 @@
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-jQuery('#btnsearch').click(function(e) {
 
-	callAjaxSearch();
-});
-
-function validateToValue()
+$(document).ready(function()
 {
-	var todays=parseFloat($('#toRange').val());
-	var fromdays=parseFloat($('#fromRange').val());
-	
-	if(todays && fromdays >= todays)
-	{
-		bootbox.alert('To(days) value should be greater than From(days) value ->'+ fromdays );
+$( "#search" ).click(function( event ) {
+	var valid = $('#penaltyform').validate().form();
+	if(!valid)
+		{
+		bootbox.alert("Please fill mandatory fields");
 		return false;
-	}
-	return true;
-}
-
-$('.daysvalidate').blur(function(){
-	validateToValue();
+		}
+	  var param="licenseAppType=";
+	  param=param+$('#licenseAppType').val();
+	   $.ajax({
+			url: "/tl/penaltyRates/search?"+param,
+			type: "GET",
+			//dataType: "json",
+			success: function (response) {
+				 $('#resultdiv').html(response);
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	 
 });
 
+$( "#add-row" ).click(function( event ) {
+	var rowCount = $('#result tr').length;
+	if(!checkforNonEmptyPrevRow())      
+		return false;
+	var prevUOMFromVal=getPrevUOMFromData();
+	var content= $('#resultrow0').html();
+	resultContent=   content.replace(/0/g,rowCount-1);   
+	$(resultContent).find("input").val("");
+	$('#result > tbody:last').append("<tr>"+resultContent+"</tr>"); 
+	$('#result tr:last').find("input").val("");   
+	intiUOMFromData(prevUOMFromVal);  
+	patternvalidation(); 
+});    
 
-$('#buttonSubmit').click(function(e){
-	if(validateToValue()){
-		
-	}else{
-		e.preventDefault();
-	}
-})
-
-function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");
-	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/tl/penaltyRates/ajaxsearch/" + $('#mode').val()+"?licenseAppType="+$('#licenseAppType').val(),
-					type : "POST"
-				},
-				"fnRowCallback" : function(row, data, index) {
-
-				},
-				"sPaginationType" : "bootstrap",
-				"bDestroy" : true,
-				"autoWidth": false,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
-				},
-				aaSorting : [],
-				columns : [ {
-					"data" : "licenseAppType",
-					"sClass" : "text-center"
-				}, {
-					"data" : "fromRange",
-					"sClass" : "text-center"
-				}, {
-					"data" : "toRange",
-					"sClass" : "text-center"
-				},
-				{
-					"data" : "rate",
-					"sClass" : "text-center"
-				},
-				{ "data" : null, "target":-1,
-					
-	                 sortable: false,
-	                 "render": function ( data, type, full, meta ) {
-	                     var mode = $('#mode').val();
-	                	 if(mode == 'edit')
-	                    	 return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
-	                     else
-	                    	return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
-	                 }
+$( "#save" ).click(function( event ) {
+	if(!validateDetailsBeforeSubmit()){
+		return false;
+	} 
+	var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
+		$('#licenseAppType').removeAttr("disabled");
+		var pr=$('#penaltyform').serialize();
+		  $.ajax({
+				url: "/tl/penaltyRates/create",
+				type: "POST",
+				data: pr,
+				success: function (response) {
+					console.log("success"+response );
+					 $('#resultdiv').html(response);
+					 if(licenseAppTypeDisabled)
+						 $('#licenseAppType').attr("disabled", true); 
+					 bootbox.alert("Details saved Successfully");
+				}, 
+				error: function (response) {
+					console.log("failed");
+					if(licenseAppTypeDisabled)
+						$('#licenseAppType').attr("disabled", true);
+					bootbox.alert("Failed to Save Details");
 				}
-				,
-				{ "data": "id", "visible":false }
-				]
 			});
-}
-
-$("#resultTable").on('click','tbody tr td .edit',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),5);
-	var url = '/tl/penaltyRates/edit/'+id ;
-	window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+	});
 });
-
-$("#resultTable").on('click','tbody tr td .view',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),5);
-	var url = '/tl/penaltyRates/view/'+id ;
-	window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
-});
-

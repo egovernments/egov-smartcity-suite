@@ -40,25 +40,17 @@ package org.egov.tl.web.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.service.PenaltyRatesService;
-import org.egov.tl.web.adaptor.PenaltyRatesAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/penaltyRates")
@@ -67,91 +59,45 @@ public class PenaltyRatesController {
     private PenaltyRatesService penaltyRatesService;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String penaltyRatesForm(@ModelAttribute final PenaltyRates penaltyRates, final Model model) {
+    public String penaltyRatesForm(@ModelAttribute final PenaltyForm penaltyForm, final Model model) {
         model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
         return "penaltyRates-create";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String penaltyRatesCreate(@Valid @ModelAttribute final PenaltyRates penaltyRates, final BindingResult bindingResult,
+    public String penaltyRatesCreate(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult bindingResult,
             final RedirectAttributes redirectAttributes, final Model model) {
-        if (penaltyRatesService.validatePenaltyWithRange(penaltyRates)) {
-            model.addAttribute("message", "penaltyrate.already.exist");
-            model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
-            return "penaltyRates-create";
-        }
+        LicenseAppType licenseAppType = null;
+        licenseAppType = penaltyRatesService.findByLicenseAppType(penaltyForm.getLicenseAppType().getId());
         if (bindingResult.hasErrors()) {
             model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
             return "penaltyRates-create";
         }
-        penaltyRatesService.create(penaltyRates);
+        if (licenseAppType != null && penaltyForm.getPenaltyRatesList() != null
+                && penaltyForm.getPenaltyRatesList().size() > 0)
+            for (final PenaltyRates penaltyRates : penaltyForm.getPenaltyRatesList()) {
+                penaltyRates.setLicenseAppType(licenseAppType);
+                penaltyRates.setFromRange(penaltyRates.getFromRange());
+                penaltyRates.setToRange(penaltyRates.getToRange());
+                penaltyRates.setRate(penaltyRates.getRate());
+                penaltyRatesService.create(penaltyRates);
+            }
         redirectAttributes.addFlashAttribute("message", "msg.penaltyRate.created");
-        return "redirect:/penaltyRates/success/" + penaltyRates.getId();
+        return "penaltyRates-result";
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String update(@PathVariable("id") final Long id, final Model model) {
-        final PenaltyRates penaltyRates = penaltyRatesService.findOne(id);
-        model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
-        model.addAttribute("penaltyRates", penaltyRates);
-        return "penaltyRates-edit";
-    }
-
-    @RequestMapping(value = "/success/{id}", method = RequestMethod.GET)
-    public String success(@PathVariable("id") final Long id, final Model model) {
-        final PenaltyRates penaltyRates = penaltyRatesService.findOne(id);
-        model.addAttribute("penaltyRates", penaltyRates);
-        return "penaltyRates-success";
-    }
-
-    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
-    public String search(@PathVariable("mode") final String mode, final Model model) {
-        final PenaltyRates penaltyRates = new PenaltyRates();
-        model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
-        model.addAttribute("penaltyRates", penaltyRates);
-        return "penaltyRates-search";
-
-    }
-
-    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode,
-            final Long licenseAppType) {
-        final List<PenaltyRates> searchResultList = penaltyRatesService.search(licenseAppType);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
-                .toString();
-        return result;
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final PenaltyRates penaltyRates, final BindingResult bindingResult,
-            final RedirectAttributes redirectAttrs, final Model model) {
-        if (penaltyRatesService.validatePenaltyWithRate(penaltyRates)) {
-            model.addAttribute("message", "penaltyrate.already.exist");
-            model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
-            return "penaltyRates-edit";
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String search(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult errors, final Model model) {
+        if (errors.hasErrors())
+            return "penaltyRates-result";
+        final List<PenaltyRates> searchResultList = penaltyRatesService.search(penaltyForm.getLicenseAppType().getId());
+        if (searchResultList.size() > 0)
+            penaltyForm.setPenaltyRatesList(searchResultList);
+        else {
+            penaltyForm.getPenaltyRatesList().clear();
         }
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
-            return "penaltyRates-edit";
-        }
-        penaltyRatesService.update(penaltyRates);
-        redirectAttrs.addFlashAttribute("message", "msg.penaltyrate.success");
-        return "redirect:/validity/result/" + penaltyRates.getId();
+        model.addAttribute("penaltyForm", penaltyForm);
+        return "penaltyRates-result";
     }
 
-    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String view(@PathVariable("id") final Long id, final Model model) {
-        final PenaltyRates penaltyRates = penaltyRatesService.findOne(id);
-        model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
-        model.addAttribute("penaltyRates", penaltyRates);
-        return "penaltyRates-view";
-    }
-
-    public Object toSearchResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(PenaltyRates.class, new PenaltyRatesAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
 }

@@ -61,5 +61,5 @@ public interface PenaltyRatesRepository extends JpaRepository<PenaltyRates, Long
     PenaltyRates findByDaysAndLicenseAppTypeAndRate(@Param("fromRange") Long fromRange, @Param("toRange") Long toRange,
             @Param("licenseAppType") LicenseAppType licenseAppType, @Param("rate") Double rate);
 
-    List<PenaltyRates> findByLicenseAppTypeId(Long licenseAppTypeId);
+    List<PenaltyRates> findByLicenseAppTypeIdOrderByIdAsc(Long licenseAppTypeId);
 }

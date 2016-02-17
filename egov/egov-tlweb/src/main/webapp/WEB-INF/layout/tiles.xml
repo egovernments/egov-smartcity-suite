@@ -130,27 +130,12 @@
 	</definition>
 	
 	<definition name="penaltyRates-create" extends="base_layout">
-		<put-attribute name="page-title" value="title.createpenaltyRate" cascade="true" />
+		<put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-create.jsp" />
 	</definition>
 	
-	<definition name="penaltyRates-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.editpenaltyRate" cascade="true" />
-		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-edit.jsp" />
-	</definition>
-	
-	<definition name="penaltyRates-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.penaltyRate" cascade="true" />
-		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-success.jsp" />
-	</definition>
-	
-	<definition name="penaltyRates-search" extends="base_layout">
+	<definition name="penaltyRates-result" extends="base_layout">
 		<put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true" />
-		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-search.jsp" />
-	</definition>
-	
-	<definition name="penaltyRates-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.viewpenaltyRate" cascade="true" />
-		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-view.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-result.jsp" />
 	</definition>
 </tiles-definitions>

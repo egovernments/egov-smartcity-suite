@@ -77,33 +77,24 @@ public class PenaltyRatesService {
         return penaltyRatesRepository.findOne(id);
     }
 
+    public LicenseAppType findByLicenseAppType(final Long licenseAppId) {
+        return licenseAppTypeRepository.findOne(licenseAppId);
+    }
+
     @Transactional
     public PenaltyRates create(final PenaltyRates penaltyRates) {
         return penaltyRatesRepository.save(penaltyRates);
     }
 
-    @Transactional
-    public PenaltyRates update(final PenaltyRates penaltyRates) {
-        return penaltyRatesRepository.save(penaltyRates);
-    }
-
-    public Boolean validatePenaltyWithRange(final PenaltyRates penaltyRates) {
-        return penaltyRatesRepository.findByDaysAndLicenseAppTypeBetweenRange(penaltyRates.getFromRange(),
-                penaltyRates.getToRange(), penaltyRates.getLicenseAppType()) != null ? true : false;
-    }
-
     public List<PenaltyRates> search(final Long licenseAppType) {
         if (licenseAppType != null)
-            return penaltyRatesRepository.findByLicenseAppTypeId(licenseAppType);
+            return penaltyRatesRepository.findByLicenseAppTypeIdOrderByIdAsc(licenseAppType);
         else
             return penaltyRatesRepository.findAll();
     }
 
-    public Boolean validatePenaltyWithRate(final PenaltyRates penaltyRates) {
-        final PenaltyRates existingPenalty = penaltyRatesRepository.findByDaysAndLicenseAppTypeAndRate(
-                penaltyRates.getFromRange(), penaltyRates.getToRange(),
-                penaltyRates.getLicenseAppType(), penaltyRates.getRate());
-        return existingPenalty != null && existingPenalty.getId().equals(penaltyRates.getId()) ? false : existingPenalty != null ? true : false;
+    @Transactional
+    public void delete(final PenaltyRates penaltyRates) {
+        penaltyRatesRepository.delete(penaltyRates);
     }
-
 }
