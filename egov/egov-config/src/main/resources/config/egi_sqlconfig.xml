@@ -71,17 +71,17 @@
 	
 <egi-function>
 	<type>hql</type>
-	<query>from CFunction where isactive = true AND isnotleaf=false order by upper(name)</query>
+	<query>from CFunction where isActive = true AND isNotLeaf=false order by upper(name)</query>
 </egi-function> 
 
 <egi-fund>
 	<type>hql</type>
-	<query>from Fund where isactive = true and isNotLeaf!=true order by upper(name)</query>
+	<query>from Fund where isactive = true and isnotleaf!=true order by upper(name)</query>
 </egi-fund> 
 
 <egi-fundSource>
 	<type>hql</type>
-	<query>from Fundsource where isActive=true order by upper(name)</query>
+	<query>from Fundsource where isactive=true order by upper(name)</query>
 </egi-fundSource>
 
 <egi-functionary>
