@@ -97,13 +97,13 @@ import org.egov.model.deduction.RemittanceBean;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.payment.Paymentheader;
 import org.egov.model.recoveries.Recovery;
+import org.egov.model.service.RecoveryService;
 import org.egov.model.voucher.CommonBean;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.payment.services.PaymentActionHelper;
 import org.egov.pims.commons.Designation;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.services.payment.PaymentService;
-import org.egov.services.recoveries.RecoveryService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.payment.BasePaymentAction;
@@ -206,7 +206,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         super.prepare();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside Prepare method");
-        final List<Recovery> listRecovery = recoveryService.getAllActiveTds();
+        final List<Recovery> listRecovery = recoveryService.getAllActiveRecoverys();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Tds list size : " + listRecovery.size());
         addDropdownData("recoveryList", listRecovery);

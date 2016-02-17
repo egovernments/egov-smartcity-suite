@@ -49,35 +49,59 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface ChartOfAccountsDAO extends GenericDAO{
-//	public Collection getAccountCodeList();
-	@Deprecated
-	public Collection getAccountCodeListForDetails();
-	@Deprecated
-	public CChartOfAccounts findCodeByPurposeId(int purposeId) throws Exception;
-	public CChartOfAccounts getCChartOfAccountsByGlCode(String glCode);
-	@Deprecated
-	public List getChartOfAccountsForTds();
-	@Deprecated
-	public int getDetailTypeId(String glCode,Connection connection) throws Exception;
-	@Deprecated
-	public int getDetailTypeIdByName(String glCode,Connection connection,String name) throws Exception;
-	public List getGlcode(String minGlcode,String maxGlcode,String majGlcode) throws Exception;
-	public List<CChartOfAccounts> getActiveAccountsForType(char c)throws ApplicationException;
-	public List<CChartOfAccounts> getAccountCodeByPurpose(Integer purposeId) throws ApplicationException;
-	public List<CChartOfAccounts> getNonControlCodeList() throws ApplicationException;
-	public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws ApplicationException;
-	public Accountdetailtype getAccountDetailTypeIdByName(String glCode,String name) throws Exception;
-	public List<CChartOfAccounts> getDetailedAccountCodeList()throws ApplicationException;
-	public List<CChartOfAccounts> getActiveAccountsForTypes(char[] type)throws ValidationException;
-	public List<CChartOfAccounts> getAccountCodeByListOfPurposeId(Integer[] purposeId) throws ValidationException;
-	public List<CChartOfAccounts> getListOfDetailCode(final String glCode) throws ValidationException;
-	public List<CChartOfAccounts> getBankChartofAccountCodeList();
-	public List<CChartOfAccounts> findByType(Character type);
-	public List<CChartOfAccounts> findByMajorCodeAndClassification(
-			String majorCode, Long classification);
-	public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassificationAndMajorCode(
-			String string, Long classification, String majorCode);
-	public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassification(
-			String string, Long classification);
-	}
+public interface ChartOfAccountsDAO extends GenericDAO {
+    // public Collection getAccountCodeList();
+    @Deprecated
+    public Collection getAccountCodeListForDetails();
+
+    @Deprecated
+    public CChartOfAccounts findCodeByPurposeId(int purposeId) throws Exception;
+
+    public CChartOfAccounts getCChartOfAccountsByGlCode(String glCode);
+
+    @Deprecated
+    public List getChartOfAccountsForTds();
+
+    @Deprecated
+    public int getDetailTypeId(String glCode, Connection connection) throws Exception;
+
+    @Deprecated
+    public int getDetailTypeIdByName(String glCode, Connection connection, String name) throws Exception;
+
+    public List getGlcode(String minGlcode, String maxGlcode, String majGlcode) throws Exception;
+
+    public List<CChartOfAccounts> getActiveAccountsForType(char c) throws ApplicationException;
+
+    public List<CChartOfAccounts> getAccountCodeByPurpose(Integer purposeId) throws ApplicationException;
+
+    public List<CChartOfAccounts> getNonControlCodeList() throws ApplicationException;
+
+    public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws ApplicationException;
+
+    public Accountdetailtype getAccountDetailTypeIdByName(String glCode, String name) throws Exception;
+
+    public List<CChartOfAccounts> getDetailedAccountCodeList() throws ApplicationException;
+
+    public List<CChartOfAccounts> getActiveAccountsForTypes(char[] type) throws ValidationException;
+
+    public List<CChartOfAccounts> getAccountCodeByListOfPurposeId(Integer[] purposeId) throws ValidationException;
+
+    public List<CChartOfAccounts> getListOfDetailCode(final String glCode) throws ValidationException;
+
+    public List<CChartOfAccounts> getBankChartofAccountCodeList();
+
+    public List<CChartOfAccounts> findByType(Character type);
+
+    public List<CChartOfAccounts> findByMajorCodeAndClassification(
+            String majorCode, Long classification);
+
+    public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassificationAndMajorCode(
+            String string, Long classification, String majorCode);
+
+    public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassification(
+            String string, Long classification);
+
+    public List<CChartOfAccounts> getBySubLedgerCode(String subLedgerCode);
+
+    public List<CChartOfAccounts> getForRecovery();
+}

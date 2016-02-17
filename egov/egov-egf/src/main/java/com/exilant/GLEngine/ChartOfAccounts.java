@@ -1287,7 +1287,7 @@ public class ChartOfAccounts {
 
     private boolean validRecoveryGlcode(final String glcodeId) throws TaskFailedException {
         try {
-            final String query = "select id from tds where glcodeid= ? and isactive=1";
+            final String query = "select id from tds where glcodeid= ? and isactive=true";
             final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pst.setLong(0, Long.valueOf(glcodeId));
             if (LOGGER.isInfoEnabled())

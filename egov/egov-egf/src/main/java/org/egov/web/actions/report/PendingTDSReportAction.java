@@ -154,7 +154,7 @@ public class PendingTDSReportAction extends BaseFormAction {
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
         addDropdownData("recoveryList",
-                persistenceService.findAllBy(" from Recovery where isactive=1 order by chartofaccounts.glcode"));
+                persistenceService.findAllBy(" from Recovery where isactive=true order by chartofaccounts.glcode"));
     }
 
     @Action(value = "/report/pendingTDSReport-ajaxLoadData")
