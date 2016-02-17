@@ -37,69 +37,29 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.entity;
+package org.egov.wtms.masters.repository;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
 
-@Entity
-@Table(name = "egwtr_property_pipe_size")
-@SequenceGenerator(name = PropertyPipeSize.SEQ_PROPERTY_PIPESIZE, sequenceName = PropertyPipeSize.SEQ_PROPERTY_PIPESIZE, allocationSize = 1)
-public class PropertyPipeSize extends AbstractPersistable<Long> {
+import org.egov.wtms.masters.entity.PipeSize;
 
-    private static final long serialVersionUID = 8604331107634946265L;
-    public static final String SEQ_PROPERTY_PIPESIZE = "SEQ_EGWTR_PROPERTY_PIPESIZE";
+import org.egov.wtms.masters.entity.PropertyPipeSize;
+import org.egov.wtms.masters.entity.PropertyType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-    @Id
-    @GeneratedValue(generator = SEQ_PROPERTY_PIPESIZE, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "pipesize")
-    private PipeSize pipeSize;
-
+@Repository
+public interface PropertyPipeSizeRepository extends JpaRepository<PropertyPipeSize, Long> {
     
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "propertytype")
-    private PropertyType propertyType;
-
-    public PropertyType getPropertyType() {
-        return propertyType;
-    }
-
-    public void setPropertyType(final PropertyType propertyType) {
-        this.propertyType = propertyType;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    protected void setId(final Long id) {
-        this.id = id;
-    }
+   
+    PropertyPipeSize findByPropertyType_codeAndPipeSize_code(String propertyType,String code);
     
-    public PipeSize getPipeSize() {
-        return pipeSize;
-    }
-
-    public void setPipeSize(PipeSize pipeSize) {
-        this.pipeSize = pipeSize;
-    }
+    PropertyPipeSize findByPropertyTypeAndPipeSize(PropertyType propertyType,PipeSize pipesize);
     
-
+    PropertyPipeSize findByPropertyTypeAndPipeSize_sizeInMilimeter(PropertyType propertyType,double  sizeInMilimeter);
+    
+    PropertyPipeSize findByPropertyTypeAndPipeSize_code(PropertyType propertyType,String code);
+    
 }
+
+
