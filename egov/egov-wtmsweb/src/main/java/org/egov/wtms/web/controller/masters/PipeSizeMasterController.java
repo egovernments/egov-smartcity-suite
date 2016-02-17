@@ -123,7 +123,7 @@ public class PipeSizeMasterController {
                 }
                 PipeSize pipeSizeObj = new PipeSize();
                 final double pipeSizeinmm = pipesize.getSizeInMilimeter();
-                pipeSizeObj = pipeSizeService.findBysizeInMilimeter(pipesize.getSizeInMilimeter());
+                pipeSizeObj = pipeSizeService.findBySizeInMilimeter(pipesize.getSizeInMilimeter());
                 if (pipeSizeObj == null)
                     pipesize.setSizeInMilimeter(pipeSizeinmm);
                 PipeSize pipesizeObj = new PipeSize();

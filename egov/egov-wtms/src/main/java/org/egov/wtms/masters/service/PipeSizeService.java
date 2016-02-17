@@ -95,8 +95,8 @@ public class PipeSizeService {
         return pipeSizeRepository.findByCode(code);
     }
     
-    public PipeSize findBysizeInMilimeter(final double sizeInMilimeter) {
-        return pipeSizeRepository.findBysizeInMilimeter(sizeInMilimeter);
+    public PipeSize findBySizeInMilimeter(final double sizeInMilimeter) {
+        return pipeSizeRepository.findBySizeInMilimeter(sizeInMilimeter);
     }
     
     public PipeSize findBySizeInInch(final double sizeInInch) {

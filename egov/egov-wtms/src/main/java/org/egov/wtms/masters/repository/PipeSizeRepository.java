@@ -54,7 +54,7 @@ public interface PipeSizeRepository extends JpaRepository<PipeSize, Long> {
     
     PipeSize findBySizeInInch(double sizeInInch);
     
-    PipeSize findBysizeInMilimeter(double sizeInMilimeter);
+    PipeSize findBySizeInMilimeter(double sizeInMilimeter);
 
     List<PipeSize> findByActiveTrueOrderBySizeInInchAsc();
 
