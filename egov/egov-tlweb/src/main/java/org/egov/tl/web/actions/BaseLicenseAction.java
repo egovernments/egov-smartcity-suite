@@ -232,13 +232,9 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         tradeLicenseService.updateStatusInWorkFlowProgress((TradeLicense) license(), workFlowAction);
         processWorkflow(NEW);
         tradeLicenseService.updateTradeLicense((TradeLicense) license(), workflowBean);
-        // Generate PFA Certificate on final approval
         if (Constants.GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            reportId = ReportViewerUtil.addReportToSession(
-                    reportService.createReport(tradeLicenseService.prepareReportInputData(license())), getSession());
-            return "report";
-            // return Constants.PFACERTIFICATE;
-        } else
+            return redirectToPrintCertificate();
+         } else
             return "message";
 
     }
@@ -256,9 +252,9 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
          final String districtName = (String) request.getSession().getAttribute("districtName");
          ReportOutput reportOutput=null;
          reportOutput = tradeLicenseService.prepareReportInputDataForDig(license(),districtName,cityMunicipalityName);
-        Assignment commissionerUsr = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        /*Assignment commissionerUsr = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = (Position) persistenceService.find("from Position where id=?", commissionerUsr.getPosition().getId());
-     
+         */
         // Setting FileStoreMap object while Commissioner Signs
         // the document
         if (reportOutput != null) {

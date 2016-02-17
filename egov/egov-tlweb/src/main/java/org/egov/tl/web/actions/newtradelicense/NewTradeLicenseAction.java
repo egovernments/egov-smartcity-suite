@@ -149,7 +149,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             final ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
             throw new ValidationException(Arrays.asList(vr));
         }
-        tradeLicenseService.updateStatusInWorkFlowProgress(tradeLicense, workFlowAction);
         return super.approve();
     }
 
