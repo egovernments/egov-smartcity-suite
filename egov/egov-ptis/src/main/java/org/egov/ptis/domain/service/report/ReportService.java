@@ -300,12 +300,12 @@ public class ReportService {
             result.setPaidAt(receiptHeader.getSource());
             result.setWard(basicProperty.getPropertyID().getWard().getName());
 
-            String[] address = receiptHeader.getPayeeAddress().split(",");
+            String doorNo = basicProperty.getAddress().getHouseNoBldgApt();
             result.setTotalCollection(receiptHeader.getTotalAmount());
-            if (address.length > 0)
-                result.setDoorNumber(address[0]);
+            if(doorNo!=null && !doorNo.isEmpty())
+                result.setDoorNumber(doorNo);
             else
-                result.setDoorNumber("N/A");
+                result.setDoorNumber("");
             result.setStatus(receiptHeader.getStatus().getDescription());
 
             StringBuilder paymentMode = new StringBuilder(30);
