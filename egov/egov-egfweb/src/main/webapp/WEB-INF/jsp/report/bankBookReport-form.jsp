@@ -150,11 +150,14 @@ function validateData(){
 		bootbox.alert("Please enter a valid start date")
 		return false;
 	}
-	var endDate =  Date.parse(document.getElementById('endDate').value);
-	if(isNaN(endDate)){
-		bootbox.alert("Please enter a valid end date")
+	
+	var endDate = document.getElementById('endDate').value;
+	if(endDate=='')
+		{ 
+		bootbox.alert("Please enter end date")
 		return false;
-	}
+		}
+	
 	return true;
 }
 
@@ -226,10 +229,12 @@ function showChequeDetails(voucherId){
 				<td style="width: 5%"></td>
 					<td class="greybox" width="10%">Start Date:<span
 						class="mandatory1">*</span></td>
+						<s:date name="startDate" format="dd/MM/yyyy" var="tempFromDate" />
 					<td class="greybox"><s:textfield name="startDate"
 							id="startDate" cssStyle="width:100px"
-							value='%{getFormattedDate(startDate)}'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+							
+							onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"
+							 /><a
 						href="javascript:show_calendar('bankBookReport.startDate');"
 						style="text-decoration: none">&nbsp;<img
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />

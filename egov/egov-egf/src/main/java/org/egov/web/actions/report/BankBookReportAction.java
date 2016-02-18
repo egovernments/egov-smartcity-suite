@@ -67,6 +67,7 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -142,13 +143,28 @@ public class BankBookReportAction extends BaseFormAction {
     private Map<Long, List<Object[]>> voucherIdAndInstrumentMap = new HashMap<Long, List<Object[]>>();
     private Map<Long, List<Object[]>> InstrumentHeaderIdsAndInstrumentVouchersMap = new HashMap<Long, List<Object[]>>();
 
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     public void setReportHelper(final ReportHelper reportHelper) {
         this.reportHelper = reportHelper;
     }
 
     @Override
     public String execute() throws Exception {
+    	finYearDate();
         return "form";
+    }
+    public void finYearDate() {
+
+        final String financialYearId = financialYearDAO.getCurrYearFiscalId();
+        if (financialYearId == null || financialYearId.equals(""))
+        	startDate = new Date();
+        else
+        	startDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?",
+                    Long.parseLong(financialYearId));
+        endDate = null;
+        
+
     }
 
     public BankBookReportAction() {
@@ -926,6 +942,12 @@ public class BankBookReportAction extends BaseFormAction {
 		this.function = function;
 	}
     
-    
+	 public FinancialYearDAO getFinancialYearDAO() {
+	        return financialYearDAO;
+	    }
+
+	    public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+	        this.financialYearDAO = financialYearDAO;
+	    }
 
 }
