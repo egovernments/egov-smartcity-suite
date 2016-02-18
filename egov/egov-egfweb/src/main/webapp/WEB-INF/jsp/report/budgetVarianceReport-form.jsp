@@ -59,13 +59,15 @@ function getData(){
 	var asOnDate =  document.getElementById('asOnDate').value;
 	var accountType =  document.getElementById('accountType').value;
 	var budgetGroup =  document.getElementById('budgetGroup').value;
-	isValid = validateData();
-	
-	if(isValid == false)
+	if(asOnDate ==''){
+		bootbox.alert("Please enter a valid date")
 		return false;
-	doLoadingMask();
-	var url = '/EGF/report/budgetVarianceReport!ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&accountType='+accountType+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData();
-	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
+	}
+	console.log(accountType);
+	document.budgetVarianceReport.action='/EGF/report/budgetVarianceReport-ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData();
+	document.budgetVarianceReport.submit();  
+	/* var url = '/EGF/report/budgetVarianceReport-ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&accountType='+accountType+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData();
+	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);  */
 }
 
 function getMiscData(){
@@ -100,7 +102,7 @@ function exportXls(){
 	var accountType =  document.getElementById('accountType').value;
 	var budgetGroup =  document.getElementById('budgetGroup').value;
 	var functionId =  document.getElementById('function').value;
-	window.open('/EGF/report/budgetVarianceReport!exportXls.action?skipPrepare=true&asOnDate='+asOnDate+'&accountType='+accountType+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	window.open('/EGF/report/budgetVarianceReport-exportXls.action?skipPrepare=true&asOnDate='+asOnDate+'&accountType='+accountType+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
 function exportPdf(){
@@ -109,7 +111,7 @@ function exportPdf(){
 	var accountType =  document.getElementById('accountType').value;
 	var budgetGroup =  document.getElementById('budgetGroup').value;
 	var functionId =  document.getElementById('function').value;
-	window.open('/EGF/report/budgetVarianceReport!exportPdf.action?skipPrepare=true&asOnDate='+asOnDate+'&accountType='+accountType+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	window.open('/EGF/report/budgetVarianceReport-exportPdf.action?skipPrepare=true&asOnDate='+asOnDate+'&accountType='+accountType+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
 function validateData(){
@@ -170,7 +172,7 @@ function checkMandatoryField(fieldName){
 				<tr>
 					<s:if test="%{shouldShowHeaderField('executingDepartment')}">
 						<td class="bluebox" width="10%">Department:<span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:select name="executingDepartment"
 								id="executingDepartment" list="dropdownData.departmentList"
 								listKey="id" listValue="name" headerKey="-1"
@@ -178,7 +180,7 @@ function checkMandatoryField(fieldName){
 					</s:if>
 					<s:if test="%{shouldShowHeaderField('function')}">
 						<td class="bluebox" width="10%">Function:<span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:select name="function" id="function"
 								list="dropdownData.functionList" listKey="id" listValue="name"
 								headerKey="-1" headerValue="----Choose----" /></td>
@@ -186,14 +188,14 @@ function checkMandatoryField(fieldName){
 				</tr>
 				<tr>
 					<s:if test="%{shouldShowHeaderField('fund')}">
-						<td class="greybox" width="10%">Fund:<span class="mandatory">*</span></td>
+						<td class="greybox" width="10%">Fund:<span class="mandatory1">*</span></td>
 						<td class="greybox"><s:select name="fund" id="fund"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="-1" headerValue="----Choose----" /></td>
 					</s:if>
 					<s:if test="%{shouldShowHeaderField('functionary')}">
 						<td class="greybox" width="10%">Functionary:<span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="greybox"><s:select name="functionary"
 								id="functionary" list="dropdownData.functionaryList"
 								listKey="id" listValue="name" headerKey="-1"
@@ -208,7 +210,7 @@ function checkMandatoryField(fieldName){
 					<s:if test="%{shouldShowHeaderField('scheme')}">
 						<td width="10%" class="bluebox">&nbsp;</td>
 						<td class="bluebox"><s:text name="scheme" />:<span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:select list="dropdownData.schemeList"
 								listKey="id" listValue="name" headerKey="0"
 								headerValue="--- Select ---" name="scheme"
@@ -218,10 +220,10 @@ function checkMandatoryField(fieldName){
 					<s:if test="%{shouldShowHeaderField('subScheme')}">
 						<egov:ajaxdropdown id="subScheme" fields="['Text','Value']"
 							dropdownId="budgetDetail_subScheme"
-							url="budget/budgetDetail!ajaxLoadSubSchemes.action"
+							url="budget/budgetDetail-ajaxLoadSubSchemes.action"
 							afterSuccess="onHeaderSubSchemePopulation" />
 						<td class="bluebox"><s:text name="subScheme" />:<span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:select
 								list="dropdownData.subschemeList" listKey="id" listValue="name"
 								headerKey="0" headerValue="--- Select ---" name="subScheme"
@@ -232,7 +234,7 @@ function checkMandatoryField(fieldName){
 				<tr>
 					<s:if test="%{shouldShowHeaderField('boundary')}">
 						<td class="greybox"><s:text name="field" />:<span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="greybox"><s:select list="dropdownData.fieldList"
 								listKey="id" listValue="name" headerKey="0"
 								headerValue="--- Select ---" name="boundary"
@@ -252,7 +254,7 @@ function checkMandatoryField(fieldName){
 				</tr>
 				<tr>
 					<td class="greybox" width="10%">As On Date:<span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield name="asOnDate" id="asOnDate"
 							cssStyle="width:100px" value='%{getFormattedDate(asOnDate)}'
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -264,11 +266,13 @@ function checkMandatoryField(fieldName){
 					<td class="greybox">&nbsp;</td>
 				</tr>
 			</table>
+			
+			
 			<br />
 			<br />
 			<div class="buttonbottom">
-				<input type="button" value="Search" class="buttonsubmit"
-					onclick="return getData()" /> &nbsp;
+				<input type="submit" value="Search" class="buttonsubmit"
+					onclick="return getData();"  /> &nbsp
 				<s:reset name="button" type="submit" cssClass="button" id="button"
 					value="Cancel" />
 				<input type="button" value="Close"

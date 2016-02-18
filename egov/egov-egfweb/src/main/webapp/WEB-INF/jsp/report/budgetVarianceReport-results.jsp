@@ -38,8 +38,17 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+
+
+<script type="text/javascript" src="/WEB-INF/jsp/report/budgetVarianceReport-form.jsp">
+
+
+</script>
 <s:if test="%{budgetVarianceEntries.size()>0}">
 	<br />
+	<table width="99%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="bluebox">
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td class="blueborderfortd">
@@ -121,10 +130,14 @@
 	</td>
 	</tr>
 	</table>
+	
 	<div class="buttonbottom" align="center">
 		Export Options: <label onclick="exportXls()"><a
 			href='javascript:void(0);'>Excel</a></label> | <label onclick="exportPdf()"><a
 			href="javascript:void(0);">PDF</a></label>
 	</div>
+	
 </s:if>
-<s:else>No data found</s:else>
+</br>
+</br>
+<s:else><center><h3 style="color: red"> No data found</h3></center></s:else>

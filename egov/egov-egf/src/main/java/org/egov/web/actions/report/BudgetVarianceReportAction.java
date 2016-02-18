@@ -57,6 +57,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
@@ -93,12 +94,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
+		@Result(name = "results", location = "budgetVarianceReport-results.jsp"),
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=BudgetVarianceReport.pdf" }),
                 @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                         "application/xls", "contentDisposition", "no-cache;filename=BudgetVarianceReport.xls" })
 })
-@Transactional(readOnly = true)
+ 
 @ParentPackage("egov")
 public class BudgetVarianceReportAction extends BaseFormAction {
     /**
@@ -130,7 +132,9 @@ public class BudgetVarianceReportAction extends BaseFormAction {
 
     @Override
     @ValidationErrorPage(value = "form")
+   
     public String execute() throws Exception {
+    	
         return "form";
     }
 
@@ -172,7 +176,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             addDropdownData("accountTypeList", accountTypeList);
             dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
             if (shouldShowHeaderField(Constants.EXECUTING_DEPARTMENT))
-                addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+                addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
             if (shouldShowHeaderField(Constants.FUNCTION))
                 addDropdownData("functionList",
                         persistenceService.findAllBy("from CFunction where isactive=1 and isnotleaf=0  order by name"));
@@ -193,6 +197,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     }
 
     @ValidationErrorPage(value = "form")
+    @SkipValidation
     @Action(value = "/report/budgetVarianceReport-ajaxLoadData")
     public String ajaxLoadData() {
         populateData();
@@ -357,7 +362,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         if (budgetDetail.getBoundary() != null && budgetDetail.getBoundary().getId() != null
                 && budgetDetail.getBoundary().getId() != -1)
             query.append(" and boundary.id=").append(budgetDetail.getBoundary().getId());
-        if (!"".equals(accountType) && !"-1".equals(accountType))
+        if (!"".equalsIgnoreCase(accountType) && !"-1".equalsIgnoreCase(accountType))
             query.append(" and budgetGroup.accountType='").append(accountType).append("'");
         return query.toString();
     }
