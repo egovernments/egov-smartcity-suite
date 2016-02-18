@@ -52,13 +52,15 @@
 	src="/EGF/resources/javascript/calendar.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/dateValidation.js"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"> </script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252" />
 <title>Journal voucher Modify</title>
 </head>
 
 <body
-	onload="loadDropDownCodes();loadDropDownCodesFunction();onloadtask()">
+	onload="loadDropDownCodes();loadDropDownCodesFunction();onLoadTask()">
 
 	<s:form theme="simple" name="jvmodifyform">
 		<s:push value="model">
@@ -195,32 +197,12 @@
 				</div>
 			</div>
 			<div id="codescontainer"></div>
+			<%@ include file='../workflow/commonWorkflowMatrix.jsp'%>
+			<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 			<div class="buttonbottom" id="buttondiv">
-				<s:iterator value="%{getValidActions('')}" var="p">
-					<s:submit type="submit" cssClass="buttonsubmit"
-						value="%{description}" id="%{name}" name="%{name}" method="update"
-						onclick="return validateJV('close','%{name}','%{description}')" />
-				</s:iterator>
-				<input type="submit" class="buttonsubmit" value="Send for Approval"
-					id="%{aa_approve}" name="%{aa_approve}"
-					onclick="return validateAndSubmitJV('close','%{aa_approve}','%{Send for Approval}');" />
 				<input type="button" class="button" id="print" value="Print Preview"
 					action="journalVoucherPrint" method="print" onclick="printJV()" />
-				<input type="button" value="Close"
-					onclick="javascript:window.close()" class="button" />
 			</div>
-			<!-- <div class="buttonbottom" style="padding-bottom:10px;" align="center">
-		<table border="0" width="100%"><tr></tr>
-			<tr>
-				<td/><td>
-				<s:submit type="submit" cssClass="buttonsubmit" value="Save & Close" id="save&close" name="save&close" method="updateVoucher" onclick="return validateJV('saveclose')"/>
-				<s:submit type="submit" cssClass="buttonsubmit" value="Save & View" id="save&view" name="save&view" method="updateVoucher" onclick="return validateJV('saveview')"/>
-				<s:submit type="submit" cssClass="buttonsubmit" value="Save & Print" id="save&Print" method="saveAndPrint" onclick="return validateJV('saveprint')"/>
-				<input type="reset" id="Reset" value="Cancel" class="button"/>
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-			</tr>
-		</table>
-	</div> -->
 			<s:hidden id="cgn" name="cgn"></s:hidden>
 			<s:hidden name="saveMode" id="saveMode" />
 			<s:hidden name="actionName" id="actionName" />
@@ -243,20 +225,25 @@ function validateApproverUser(name,value){
 		}
 	</s:if> return true;
 }
-function validateAndSubmitJV(btnval,name,value)
+function onSubmit()
 {
-	if(validateJV(btnval,name,value)){
-			document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucherModify-update.action';
-    		document.forms[0].submit();
+	if(validateAndSubmitJV())
+		document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucherModify-update.action';
+	document.forms[0].submit();
 			
+}
+function validateAndSubmitJV()
+{
+	if(validateJV()){
+		return true;
 		}else{
 			return false;
 			}
 }
-function validateJV(saveMode,name,value)
+function validateJV()
 {
 	document.getElementById('lblError').innerHTML ="";
-	document.getElementById('saveMode').value=saveMode;
+	//document.getElementById('saveMode').value=saveMode;
 	var cDate = new Date();
 	var currDate = cDate.getDate()+"/"+(parseInt(cDate.getMonth())+1)+"/"+cDate.getYear();
 	var vhDate=document.getElementById('voucherDate').value;
@@ -298,6 +285,8 @@ function validateJV(saveMode,name,value)
 }
 	function onLoadTask()
 	{
+		loadSlFunction();
+		getSlAccountCodes()
 		// code- JV subtype - starts
 		document.getElementById('vType').value='<s:property value="voucherTypeBean.voucherSubType"/>';
 		if('<s:property value="voucherTypeBean.voucherSubType"/>' == 'JVGeneral' ){
@@ -330,7 +319,7 @@ function validateJV(saveMode,name,value)
 				window.open('preApprovedVoucher!loadvoucherview.action?vhid=<s:property value='%{voucherHeader.id}'/>','Search','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
 			}else if(saveMode == 'saveprint'){
 				bootbox.alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
-				window.open('journalVoucherPrint!print.action?id=<s:property value='%{voucherHeader.id}'/>','','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
+				window.open('journalVoucherPrint-print.action?id=<s:property value='%{voucherHeader.id}'/>','','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
 			}
 		}
 		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
@@ -339,7 +328,9 @@ function validateJV(saveMode,name,value)
 			   document.getElementById('voucherNumberPrefix').value=tempVoucherNumber.substring(0,prefixLength);
 			   document.getElementById('voucherNumber').value=tempVoucherNumber.substring(prefixLength,tempVoucherNumber.length);
 		</s:if>
-		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.		
+		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.
+		if(document.getElementById('approverDepartment'))
+			document.getElementById('approverDepartment').value = "-1";
 	}
 
 	function loadBank(fund){
