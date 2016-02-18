@@ -39,15 +39,22 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.reports;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.RegionalHeirarchy;
+import org.egov.commons.RegionalHeirarchyType;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.service.RegionalHeirarchyService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
 import org.egov.ptis.domain.service.report.ReportService;
@@ -58,6 +65,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.GsonBuilder;
@@ -71,11 +79,15 @@ public class BillCollectorWiseDialyCollectionReportController {
 
     private static final String BILL_COLLECTOR_COLL_REPORT_FORM = "bcDailyCollectionReport-form";
     private static final String ULBWISE_COLL_REPORT_FORM = "ulbWiseCollectionReport-form";
-
-    BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult = new BillCollectorDailyCollectionReportResult();
+    private String DISTRICT = "DISTRICT";
+    private String CITY = "CITY";
+   private  BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult = new BillCollectorDailyCollectionReportResult();
 
     @Autowired
     private ApplicationProperties applicationProperties;
+
+    @Autowired
+    private RegionalHeirarchyService regionalHeirarchyService;
 
     @Autowired
     private ReportService reportService;
@@ -92,6 +104,28 @@ public class BillCollectorWiseDialyCollectionReportController {
         return financialYearDAO.getFinancialYearByDate(new Date());
     }
 
+    @ModelAttribute("regions")  
+    public List<RegionalHeirarchy> getRegions() {
+        return regionalHeirarchyService.getActiveRegionalHeirarchyByRegion(RegionalHeirarchyType.REGION);
+    }
+
+    @RequestMapping(value = "/getRegionHeirarchyByType", method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody List<RegionalHeirarchy> getRegionHeirarchyByType(@RequestParam final String regionName,
+            @RequestParam final String type) {
+     
+        if (type != null && type.equalsIgnoreCase(DISTRICT))
+            return regionalHeirarchyService.getActiveChildRegionHeirarchyByPassingParentNameAndType(
+                    RegionalHeirarchyType.DISTRICT, regionName);
+        else {
+          
+            if (type != null && type.equalsIgnoreCase(CITY))
+                return regionalHeirarchyService.getActiveChildRegionHeirarchyByPassingParentNameAndType(
+                        RegionalHeirarchyType.CITY, regionName);
+        }
+        return null;
+    }
+
+    
     @ModelAttribute("bcDailyCollectionReportResult")
     public BillCollectorDailyCollectionReportResult bcDailyCollectionReportResultModel() {
         return bcDailyCollectionReportResult;
@@ -118,12 +152,12 @@ public class BillCollectorWiseDialyCollectionReportController {
 
     
     @RequestMapping(value = "/billcollectorDailyCollectionReportList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void search(final HttpServletRequest request, final HttpServletResponse response,
+    public @ResponseBody void search(final HttpServletRequest request, final HttpServletResponse response,BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult,
             final Model model) throws IOException {
         IOUtils.write(
                 "{ \"data\":"
                         + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                                .toJson(reportService.getBillCollectorWiseDailyCollection(new Date())) + "}",
+                                .toJson(reportService.getBillCollectorWiseDailyCollection(new Date(),bcDailyCollectionReportResult)) + "}",
                 response.getWriter());
     }
 

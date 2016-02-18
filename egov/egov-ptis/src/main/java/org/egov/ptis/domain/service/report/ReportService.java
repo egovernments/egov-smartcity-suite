@@ -64,7 +64,10 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.RegionalHeirarchy;
+import org.egov.commons.RegionalHeirarchyType;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.service.RegionalHeirarchyService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.DateUtils;
@@ -92,7 +95,9 @@ public class ReportService {
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-
+    @Autowired
+    private RegionalHeirarchyService regionalHeirarchyService;
+    
     private DesignationService designationService;
     
     private @Autowired FinancialYearDAO financialYearDAO;
@@ -400,18 +405,95 @@ public class ReportService {
         this.propPerServ = propPerServ;
     }
 
-    public List<BillCollectorDailyCollectionReportResult> getBillCollectorWiseDailyCollection(Date date) {
-
+    public List<BillCollectorDailyCollectionReportResult> getBillCollectorWiseDailyCollection(Date date, BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) {
+boolean whereConditionAdded=false;
         List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(
                 0);
         int noofDays = 0;
         final StringBuilder queryBuilder = new StringBuilder(
-                " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\" ,collectorname,mobilenumber,target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection, "
-                        + " cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
-                        + " from public.billColl_DialyCollection_view  order by district,ulbname,collectorname ");
+                " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\" ,collectorname,mobilenumber,sum(target_arrears_demand) \"target_arrears_demand\",sum(target_current_demand) \"target_current_demand\",sum(today_arrears_collection) \"today_arrears_collection\",sum(today_currentyear_collection) \"today_currentyear_collection\", "
+                        + " sum(cummulative_arrears_collection) \"cummulative_arrears_collection\",sum(cummulative_currentyear_collection) \"cummulative_currentyear_collection\",sum(lastyear_collection) \"lastyear_collection\",sum(lastyear_cummulative_collection) \"lastyear_cummulative_collection\"   "
+                        + " from public.billColl_DialyCollection_view  ");
 
+        String value_ALL = "ALL";
+        
+        if (bcDailyCollectionReportResult != null) {
+            if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
+                    && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(value_ALL)) {
+                whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
+                queryBuilder.append("  ulbname=:cityName  ");
+            } else if (bcDailyCollectionReportResult.getDistrict() != null
+                    && !bcDailyCollectionReportResult.getDistrict().equals("")
+                    && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(value_ALL)) {
+                if (whereConditionAdded)
+                    queryBuilder.append(" and district=:districtName ");
+                else {
+                    whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
+                    queryBuilder.append(" district=:districtName  ");
+                }
+            } else if (bcDailyCollectionReportResult.getRegion() != null
+                    && !bcDailyCollectionReportResult.getRegion().equals("")
+                    && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(value_ALL)) {
+                if (whereConditionAdded)
+                    queryBuilder.append(" and district in (:districtNames) ");
+                else {
+                    whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
+                    queryBuilder.append("  district in (:districtNames) ");
+                }
+            }
+
+            if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
+                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
+                if (whereConditionAdded)
+                    queryBuilder.append(" and type =:typeOfSearch ");
+                else {
+                    whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
+                    queryBuilder.append(" type =:typeOfSearch ");
+                }
+            }
+
+        }
+        queryBuilder
+                .append(" group by district,ulbname ,ulbcode  ,collectorname,mobilenumber  order by district,ulbname,collectorname ");
         final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
         // query.setDate("collDate", date);
+        
+
+        if (bcDailyCollectionReportResult != null) {
+            if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
+                    && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(value_ALL)) {
+                query.setString("cityName", bcDailyCollectionReportResult.getCity());
+
+            } else if (bcDailyCollectionReportResult.getDistrict() != null
+                    && !bcDailyCollectionReportResult.getDistrict().equals("")
+                    && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(value_ALL)) {
+                query.setString("districtName", bcDailyCollectionReportResult.getDistrict());
+
+            } else if (bcDailyCollectionReportResult.getRegion() != null
+                    && !bcDailyCollectionReportResult.getRegion().equals("")
+                    && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(value_ALL)) {
+                        LinkedList<String> districtlist = new LinkedList<String>();
+                        if (regionalHeirarchyService != null) {
+                            List<RegionalHeirarchy> regions = regionalHeirarchyService
+                                    .getActiveChildRegionHeirarchyByPassingParentNameAndType(RegionalHeirarchyType.DISTRICT,
+                                            bcDailyCollectionReportResult.getRegion());
+                            if (regions != null && regions.size() > 0) {
+                                for (RegionalHeirarchy regiion : regions) {
+                                    districtlist.add(regiion.getName());
+                                }
+                                query.setParameterList("districtNames", districtlist);
+                            }
+        
+                        }
+        
+                    }
+
+            if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
+                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
+                query.setString("typeOfSearch", bcDailyCollectionReportResult.getType());
+            }
+        }
+
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
 
         listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
@@ -425,6 +507,14 @@ public class ReportService {
         buildCollectionReport(listBcPayment, noofDays);
         return listBcPayment;
 
+    }
+
+    private boolean addWhereCondition(boolean conditionTocheckAlreadyAdded, final StringBuilder queryBuilder) {
+        if (!conditionTocheckAlreadyAdded) {
+            queryBuilder.append(" where ");
+            conditionTocheckAlreadyAdded = true;
+        }
+        return conditionTocheckAlreadyAdded;
     }
 
     public List<BillCollectorDailyCollectionReportResult> getUlbWiseDailyCollection(Date date) {

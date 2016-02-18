@@ -44,6 +44,10 @@ import java.util.Date;
 
 public class BillCollectorDailyCollectionReportResult {
 
+    private String region;
+    private String city;
+    private String  type;
+    
     private Date collectionDate;
     private String district;
     private String ulbName;
@@ -237,6 +241,31 @@ public class BillCollectorDailyCollectionReportResult {
 
     public void setGrowth(BigDecimal growth) {
         this.growth = growth;
+    }
+
+  
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

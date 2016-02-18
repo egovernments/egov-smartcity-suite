@@ -46,14 +46,92 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" action=""
-			id="bcDailyCollectionReportForm" modelAttribute="bcDailyCollectionReportResult"
+			id="bcDailyCollectionReportForm" modelAttribute="bcDailyCollectionReportResult" commandName="bcDailyCollectionReportResult"
 			method="get">
 		
+		<div class="panel-body">
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"> Region </label>
+					<div class="col-sm-3 add-margin">
+						<form:select id="region" name="region" path="region"
+							cssClass="form-control" cssErrorClass="form-control error">
+							<form:option value="">
+								<spring:message code="lbl.default.all" />
+							</form:option>
+							<form:options items="${regions}" itemValue="name" itemLabel="name" />
+						</form:select>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"> District
+						</label>
+						<div class="col-sm-2 add-margin">
+							<form:select path="district" id="districtId"
+								data-first-option="false" cssClass="form-control">
+								<form:option value="">
+									<spring:message code="lbl.default.all" />
+								</form:option>
+								<form:options items="${districts}" itemValue="name"
+									itemLabel="name" />
+							</form:select>
+						</div>
+					</div>
+
+				</div>
+			</div>	
+			<div class="panel-body">
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"> Ulb Name</label>
+					<div class="col-sm-3 add-margin">
+						<form:select id="cityId" name="cityId" path="city"
+							cssClass="form-control" cssErrorClass="form-control error">
+							<form:option value="">
+								<spring:message code="lbl.default.all" />
+							</form:option>
+							<form:options items="${cities}" itemValue="name" itemLabel="name" />
+						</form:select>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"> Category of ownership 
+						</label>
+						<div class="col-sm-2 add-margin">
+							<form:select path="type" 
+								data-first-option="false" cssClass="form-control">
+								<form:option value="">
+									<spring:message code="lbl.default.all" />
+								</form:option>
+								<form:option value="PRIVATE">
+									PRIVATE
+								</form:option>
+									<form:option value="COURTCASE">
+									COURTCASE
+								</form:option>
+							</form:select>
+						</div>
+					</div>
+
+				</div>
+			</div>			
+		<div class="row">
+				<div class="text-center">
+					<button type="button" class="btn btn-primary"
+						id="bcdailyCollectionReportSearch">
+						<spring:message code="lbl.search" />
+					</button>
+					<a href="javascript:void(0)" class="btn btn-default"
+						data-dismiss="modal" onclick="self.close()"><spring:message
+							code="lbl.close" /></a>
+				</div>
+			</div>
+		
+		
+		
+		</form:form>
+		<div >
+	<div id="tblbcDailycollectionheader">
 		<div class="col-md-8 table-header text-left"><spring:message code="lbl.bcCollectorDaily.report.title" /> <c:out value="${currentFinancialYear.finYearRange}" /></div>
 		<div class="col-md-4 text-right">Date : <%= new java.util.Date() %></div>
 		<div class="col-md-4 text-right">Amount in Lakhs</div>
-		</form:form>
-		<div >
+	</div>
 				<div class="col-md-12 form-group report-table-container">
 				<table class="table table-bordered datatable multiheadertbl" id="tblbcDailycollection">
 				
@@ -121,14 +199,7 @@
 			</div>
 		</div>
 				
-		<div class="col-md-12">
-		<div class="text-center">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" data-dismiss="modal"
-						onclick="window.close();">
-						&nbsp;&nbsp;&nbsp;<spring:message code="lbl.close" />&nbsp;&nbsp;&nbsp;
-					</button>
-				</div>
-			</div>
+		
 	</div>
 </div>
 <link rel="stylesheet"
