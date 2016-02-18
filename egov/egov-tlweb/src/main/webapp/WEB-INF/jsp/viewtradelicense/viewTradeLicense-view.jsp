@@ -95,10 +95,10 @@
 			<table>
 				<tr>
 					<td>
-						<input name="button1" type="button" class="buttonsubmit" id="button" onClick="printthis()" value="Print" />
+						<input name="button1" type="button" class="buttonsubmit" id="button" onClick="window.print();" value="Print" />
 					</td>
 					<td>
-						<input name="button2" type="button" class="button" id="button" onclick="closethis()" value="Close" />
+						<input name="button2" type="button" class="button" id="button" onclick="window.close();" value="Close" />
 					</td>
 				</tr>
 			</table>
