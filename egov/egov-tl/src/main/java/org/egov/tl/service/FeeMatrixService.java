@@ -84,18 +84,16 @@ public class FeeMatrixService<T extends License> {
     private PersistenceService persistenceService;
 
     @Autowired
+    private FinancialYearDAO financialYearDAO;
+    
+    @Autowired
     public FeeMatrixService(final FeeMatrixRepository feeMatrixRepository) {
         this.feeMatrixRepository = feeMatrixRepository;
     }
 
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
-
     @Transactional
     public FeeMatrix create(final FeeMatrix feeMatrix) {
-
-        final String genUniqueNo = feeMatrix.genUniqueNo();
-        feeMatrix.setUniqueNo(genUniqueNo);
+        feeMatrix.setUniqueNo(feeMatrix.genUniqueNo());
         if (!feeMatrix.getFeeMatrixDetail().isEmpty())
             for (final FeeMatrixDetail fd : feeMatrix.getFeeMatrixDetail())
                 fd.setFeeMatrix(feeMatrix);
@@ -104,8 +102,7 @@ public class FeeMatrixService<T extends License> {
 
     @Transactional
     public FeeMatrix update(final FeeMatrix feeMatrix) {
-        final String genUniqueNo = feeMatrix.genUniqueNo();
-        feeMatrix.setUniqueNo(genUniqueNo);
+        feeMatrix.setUniqueNo(feeMatrix.genUniqueNo());
         return feeMatrixRepository.save(feeMatrix);
     }
 
@@ -181,6 +178,10 @@ public class FeeMatrixService<T extends License> {
         return feeMatrixDetailList;
     }
 
+    public List<FeeMatrix> findBySubCategory(final LicenseSubCategory subCategory) {
+        return feeMatrixRepository.findBySubCategory(subCategory);
+    }
+    
     private String generateFeeMatirixUniqueNo(final T license, final NatureOfBusiness permanent) {
         return new StringBuilder().append(permanent.getId()).append("-").append(license.getLicenseAppType().getId())
                 .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
@@ -201,9 +202,5 @@ public class FeeMatrixService<T extends License> {
             final NatureOfBusiness natureOfBusiness) {
         return new StringBuilder().append(natureOfBusiness.getId()).append("-").append(apptype.getId())
                 .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
-    }
-
-    public List<FeeMatrix> findBySubCategory(final LicenseSubCategory subCategory) {
-        return feeMatrixRepository.findBySubCategory(subCategory);
     }
 }
