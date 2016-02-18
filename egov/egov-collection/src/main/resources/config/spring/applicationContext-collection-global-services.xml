@@ -148,6 +148,8 @@
 
 	 <bean id="TLCollectionsInterface" class="org.egov.tl.service.integration.LicenseBillService" scope="prototype" >
 			<property name="licenseUtils" ref="licenseUtils" />
+			<property name="updateIndexService" ref="updateIndexService" />
+			<property name="tradeLicenseSmsAndEmailService" ref="tradeLicenseSmsAndEmailService" />
 	</bean>
 	
 	<bean id=" BDPGIPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.BillDeskAdaptor" />

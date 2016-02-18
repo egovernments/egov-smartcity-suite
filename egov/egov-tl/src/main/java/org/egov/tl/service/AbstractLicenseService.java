@@ -568,4 +568,13 @@ public abstract class AbstractLicenseService<T extends License> {
         return outstandingFee;
 
     }
+
+    public TradeLicenseUpdateIndexService getUpdateIndexService() {
+        return updateIndexService;
+    }
+
+    public void setUpdateIndexService(TradeLicenseUpdateIndexService updateIndexService) {
+        this.updateIndexService = updateIndexService;
+    }
+    
 }

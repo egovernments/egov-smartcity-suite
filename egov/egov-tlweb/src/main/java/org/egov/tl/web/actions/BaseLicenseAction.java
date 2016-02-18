@@ -93,7 +93,6 @@ import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
-import org.egov.tl.service.TradeLicenseUpdateIndexService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
@@ -140,8 +139,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     private String ulbCode;
     private String signedFileStoreId;
 
-    @Autowired
-    protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     @Autowired
     protected LicenseUtils licenseUtils;
     @Autowired
@@ -181,8 +180,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
-    @Autowired
-    private TradeLicenseUpdateIndexService updateIndexService;
+    
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -686,6 +684,15 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public void setSignedFileStoreId(String signedFileStoreId) {
         this.signedFileStoreId = signedFileStoreId;
     }
-    
+
+    public TradeLicenseSmsAndEmailService getTradeLicenseSmsAndEmailService() {
+        return tradeLicenseSmsAndEmailService;
+    }
+
+    public void setTradeLicenseSmsAndEmailService(TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
+        this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
+    }
+
+   
 
 }

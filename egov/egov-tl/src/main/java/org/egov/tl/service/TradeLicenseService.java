@@ -85,7 +85,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
-    protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
 
     @Autowired
     private TradeLicenseUpdateIndexService updateIndexService;
@@ -176,7 +176,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         }
         if (BUTTONREJECT.equals(workFlowAction) && license.getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                    .find("from org.egov.tl.entity.LicenseStatus where code='CAN'");
+                    .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
             license.setStatus(activeStatus);
         }
     }
@@ -446,4 +446,21 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Query qry = persistenceService.getSession().createQuery(query.toString());
         return qry;
     }
+
+    public TradeLicenseSmsAndEmailService getTradeLicenseSmsAndEmailService() {
+        return tradeLicenseSmsAndEmailService;
+    }
+
+    public void setTradeLicenseSmsAndEmailService(TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
+        this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
+    }
+
+    public TradeLicenseUpdateIndexService getUpdateIndexService() {
+        return updateIndexService;
+    }
+
+    public void setUpdateIndexService(TradeLicenseUpdateIndexService updateIndexService) {
+        this.updateIndexService = updateIndexService;
+    }
+    
 }
