@@ -40,10 +40,7 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 
 
-<script type="text/javascript" src="/WEB-INF/jsp/report/budgetVarianceReport-form.jsp">
 
-
-</script>
 <s:if test="%{budgetVarianceEntries.size()>0}">
 	<br />
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
@@ -135,9 +132,13 @@
 		Export Options: <label onclick="exportXls()"><a
 			href='javascript:void(0);'>Excel</a></label> | <label onclick="exportPdf()"><a
 			href="javascript:void(0);">PDF</a></label>
+			
 	</div>
 	
 </s:if>
 </br>
 </br>
 <s:else><center><h3 style="color: red"> No data found</h3></center></s:else>
+<center><input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" /></center>
+	

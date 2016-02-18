@@ -64,7 +64,7 @@ function getData(){
 		return false;
 	}
 	console.log(accountType);
-	document.budgetVarianceReport.action='/EGF/report/budgetVarianceReport-ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData();
+	document.budgetVarianceReport.action='/EGF/report/budgetVarianceReport-loadData.action?skipPrepare=true&asOnDate='+asOnDate+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData();
 	document.budgetVarianceReport.submit();  
 	/* var url = '/EGF/report/budgetVarianceReport-ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&accountType='+accountType+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData();
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);  */
@@ -279,8 +279,9 @@ function checkMandatoryField(fieldName){
 					onclick="javascript:window.close()" class="button" />
 			</div>
 	</div>
+	
 	</s:form>
+<div id="results"></div>	
 
-	<div id="results"></div>
-</body>
+	</body>
 </html>

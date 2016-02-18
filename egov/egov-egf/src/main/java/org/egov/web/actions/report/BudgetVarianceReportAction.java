@@ -198,8 +198,8 @@ public class BudgetVarianceReportAction extends BaseFormAction {
 
     @ValidationErrorPage(value = "form")
     @SkipValidation
-    @Action(value = "/report/budgetVarianceReport-ajaxLoadData")
-    public String ajaxLoadData() {
+    @Action(value = "/report/budgetVarianceReport-loadData")
+    public String loadData() {
         populateData();
         return "results";
     }
