@@ -421,24 +421,24 @@ boolean whereConditionAdded=false;
             if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
                     && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(value_ALL)) {
                 whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
-                queryBuilder.append("  ulbname=:cityName  ");
+                queryBuilder.append("  lower(ulbname)=:cityName  ");
             } else if (bcDailyCollectionReportResult.getDistrict() != null
                     && !bcDailyCollectionReportResult.getDistrict().equals("")
                     && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(value_ALL)) {
                 if (whereConditionAdded)
-                    queryBuilder.append(" and district=:districtName ");
+                    queryBuilder.append(" and  lower(district)=:districtName ");
                 else {
                     whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
-                    queryBuilder.append(" district=:districtName  ");
+                    queryBuilder.append("  lower(district)=:districtName  ");
                 }
             } else if (bcDailyCollectionReportResult.getRegion() != null
                     && !bcDailyCollectionReportResult.getRegion().equals("")
                     && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(value_ALL)) {
                 if (whereConditionAdded)
-                    queryBuilder.append(" and district in (:districtNames) ");
+                    queryBuilder.append(" and  lower(district) in (:districtNames) ");
                 else {
                     whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
-                    queryBuilder.append("  district in (:districtNames) ");
+                    queryBuilder.append("   lower(district) in (:districtNames) ");
                 }
             }
 
@@ -462,12 +462,12 @@ boolean whereConditionAdded=false;
         if (bcDailyCollectionReportResult != null) {
             if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
                     && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(value_ALL)) {
-                query.setString("cityName", bcDailyCollectionReportResult.getCity());
+                query.setString("cityName", bcDailyCollectionReportResult.getCity().toLowerCase());
 
             } else if (bcDailyCollectionReportResult.getDistrict() != null
                     && !bcDailyCollectionReportResult.getDistrict().equals("")
                     && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(value_ALL)) {
-                query.setString("districtName", bcDailyCollectionReportResult.getDistrict());
+                query.setString("districtName", bcDailyCollectionReportResult.getDistrict().toLowerCase());
 
             } else if (bcDailyCollectionReportResult.getRegion() != null
                     && !bcDailyCollectionReportResult.getRegion().equals("")
@@ -479,7 +479,7 @@ boolean whereConditionAdded=false;
                                             bcDailyCollectionReportResult.getRegion());
                             if (regions != null && regions.size() > 0) {
                                 for (RegionalHeirarchy regiion : regions) {
-                                    districtlist.add(regiion.getName());
+                                    districtlist.add(regiion.getName().toLowerCase());
                                 }
                                 query.setParameterList("districtNames", districtlist);
                             }

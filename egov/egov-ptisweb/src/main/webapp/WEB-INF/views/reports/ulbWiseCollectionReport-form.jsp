@@ -49,7 +49,7 @@
 			id="bcDailyCollectionReportForm" modelAttribute="bcDailyCollectionReportResult"
 			method="get">
 		
-		<div class="col-md-8 table-header text-left"><spring:message code="lbl.ulbWiseDailyColl.report.title" /> <c:out value="${currentFinancialYear.finYearRange}" /></div>
+		<div class="col-md-8 table-header text-left"><spring:message code="lbl.ulbWiseDailyColl.report.details" /> ${bcDailyCollectionReportResult.generatedDate} </div>
 		<div class="col-md-4 text-right">Date : <%= new java.util.Date() %></div>
 		<div class="col-md-4 text-right">Amount in Lakhs</div>
 		</form:form>

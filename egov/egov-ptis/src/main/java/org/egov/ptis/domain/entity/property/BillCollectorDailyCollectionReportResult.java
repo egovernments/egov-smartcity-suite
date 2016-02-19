@@ -74,6 +74,16 @@ public class BillCollectorDailyCollectionReportResult {
 
     private Double lastyear_collection = 0.0;
     private Double lastyear_cummulative_collection = 0.0;
+    private String generatedDate;
+    
+    
+    public String getGeneratedDate() {
+        return generatedDate;
+    }
+
+    public void setGeneratedDate(String generatedDate) {
+        this.generatedDate = generatedDate;
+    }
 
     public Date getCollectionDate() {
         return collectionDate;

@@ -128,7 +128,7 @@
 		</form:form>
 		<div >
 	<div id="tblbcDailycollectionheader">
-		<div class="col-md-8 table-header text-left"><spring:message code="lbl.bcCollectorDaily.report.title" /> <c:out value="${currentFinancialYear.finYearRange}" /></div>
+		<div class="col-md-8 table-header text-left"><spring:message code="lbl.bcCollectorDaily.report.details" /> ${bcDailyCollectionReportResult.generatedDate}   </div>
 		<div class="col-md-4 text-right">Date : <%= new java.util.Date() %></div>
 		<div class="col-md-4 text-right">Amount in Lakhs</div>
 	</div>

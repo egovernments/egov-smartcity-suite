@@ -43,6 +43,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -56,6 +60,7 @@ import org.egov.commons.RegionalHeirarchyType;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.RegionalHeirarchyService;
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
 import org.egov.ptis.domain.service.report.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +138,12 @@ public class BillCollectorWiseDialyCollectionReportController {
 
     @RequestMapping(value = "/billcollectorDailyCollectionReport-form", method = RequestMethod.GET)
     public String searchForm(final Model model) {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        if (bcDailyCollectionReportResult != null)
+            bcDailyCollectionReportResult.setGeneratedDate(dateFormat.format(calendar.getTime()));
+
         return BILL_COLLECTOR_COLL_REPORT_FORM;
     }
 
