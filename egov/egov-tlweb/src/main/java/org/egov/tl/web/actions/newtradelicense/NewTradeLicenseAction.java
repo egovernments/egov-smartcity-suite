@@ -134,13 +134,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 || license().getState().getValue().contains(Constants.WF_STATE_INSPECTION_APPROVED_STR)
                 ||license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
             mode = "disableApprover";
-        
-        String newStr="incedo";
-        //doince
-        String modStr="";
-        modStr=newStr.substring(0, 4);
-        String coll=newStr.substring(4,newStr.length());
-        String result=coll+modStr;
         return super.showForApproval();
     }
 
