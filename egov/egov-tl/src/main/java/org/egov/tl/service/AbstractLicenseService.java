@@ -77,6 +77,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -284,7 +285,7 @@ public abstract class AbstractLicenseService<T extends License> {
     public void createLegacyLicense(final T license, final Map<Integer, Double> legacyInstallmentwiseFees) {
         if (!this.licensePersitenceService.findAllBy("from License where oldLicenseNumber = ?", license.getOldLicenseNumber())
                 .isEmpty())
-            throw new ApplicationRuntimeException("license.number.exist");
+            throw new ValidationException("oldLicenseNumber", "license.number.exist", license.getOldLicenseNumber());
         addLegacyDemand(legacyInstallmentwiseFees, license);
         this.processAndStoreDocument(license.getDocuments());
         license.setLicenseAppType((LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' "));

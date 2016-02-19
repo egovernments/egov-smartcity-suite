@@ -61,9 +61,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocumentType;
-import org.egov.tl.entity.LicenseType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -111,12 +109,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
-        try {
-            return super.create(tradeLicense);
-        } catch (final RuntimeException e) {
-            final ValidationError vr = new ValidationError(e.getMessage(), e.getMessage());
-            throw new ValidationException(Arrays.asList(vr));
-        }
+       return super.create(tradeLicense);
     }
 
     @Override
