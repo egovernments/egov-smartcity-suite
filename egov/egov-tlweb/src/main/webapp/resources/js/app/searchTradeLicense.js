@@ -41,118 +41,251 @@ var reportdatatable;
 jQuery.noConflict();
 
 jQuery(document).ready(function() {
-	jQuery("#applicationNumber").autocomplete({
-		source: function(request,response) {
-				var url='../domain/commonTradeLicenseAjax-populateData.action';
-				jQuery.getJSON(url,{searchParamValue: request.term,searchParamType: applicationNoType},function(data){
-					response(data.ResultSet.Result);
-					if(data.ResultSet.Result==null || data.ResultSet.Result==""){
-						jQuery("#applicationNumber").val('');
-					}
-		      })	
+	
+	// Instantiate the application number Bloodhound suggestion engine
+	var applicationnoengine = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
-	    minLength: 2,
-	    select: function( event, ui ) {
-			jQuery("#applicationNumber").val(ui.item.value);
-		 }
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=ApplicationNumber',
+			filter: function (data) {
+				// Map the remote source JSON array to a JavaScript object array
+				return jQuery.map(data.ResultSet.Result, function (cl) {
+					return {
+						name: cl.label,
+						value: cl.value
+					};
+				});
+			}
+		}
 	});
 	
-	jQuery("#licenseNumber").autocomplete({
-		source: function(request,response) {
-				var url='../domain/commonTradeLicenseAjax-populateData.action';
-				jQuery.getJSON(url,{searchParamValue: request.term,searchParamType: licenseNoType},function(data){
-					response(data.ResultSet.Result);
-					if(data.ResultSet.Result==null || data.ResultSet.Result==""){
-						jQuery("#licenseNumber").val('');
-					}
-		      })	
+	// Initialize the Bloodhound suggestion engine
+	applicationnoengine.initialize();
+	
+	// Instantiate the Typeahead UI
+	jQuery('#applicationNumber').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		}, {
+		displayKey: 'name',
+		source: applicationnoengine.ttAdapter()
+	}).on('typeahead:selected', function(event, data){            
+		
+    });
+	
+	// Instantiate the license number Bloodhound suggestion engine
+	var licensenoengine = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
-	    minLength: 2,
-	    select: function( event, ui ) {
-			jQuery("#licenseNumber").val(ui.item.value);
-		 }
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=LicenseNumber',
+			filter: function (data) {
+				// Map the remote source JSON array to a JavaScript object array
+				return jQuery.map(data.ResultSet.Result, function (cl) {
+					return {
+						name: cl.label,
+						value: cl.value
+					};
+				});
+			}
+		}
 	});
 	
-	jQuery("#oldLicenseNumber").autocomplete({
-		source: function(request,response) {
-				var url='../domain/commonTradeLicenseAjax-populateData.action';
-				jQuery.getJSON(url,{searchParamValue: request.term,searchParamType: oldLicenseNoType},function(data){
-					response(data.ResultSet.Result);
-					if(data.ResultSet.Result==null || data.ResultSet.Result==""){
-						jQuery("#oldLicenseNumber").val('');
-					}
-		      })	
+	// Initialize the Bloodhound suggestion engine
+	licensenoengine.initialize();
+	
+	// Instantiate the Typeahead UI
+	jQuery('#licenseNumber').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		}, {
+		displayKey: 'name',
+		source: licensenoengine.ttAdapter()
+	}).on('typeahead:selected', function(event, data){            
+		
+    });
+	
+	// Instantiate the old license number Bloodhound suggestion engine
+	var oldlicensenoengine = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
-	    minLength: 2,
-	    select: function( event, ui ) {
-			jQuery("#oldLicenseNumber").val(ui.item.value);
-		 }
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=OldLicenseNumber',
+			filter: function (data) {
+				// Map the remote source JSON array to a JavaScript object array
+				return jQuery.map(data.ResultSet.Result, function (cl) {
+					return {
+						name: cl.label,
+						value: cl.value
+					};
+				});
+			}
+		}
 	});
 	
-	jQuery("#tradeTitle").autocomplete({
-		source: function(request,response) {
-				var url='../domain/commonTradeLicenseAjax-populateData.action';
-				jQuery.getJSON(url,{searchParamValue: request.term,searchParamType: tradeTitleType},function(data){
-					response(data.ResultSet.Result);
-					if(data.ResultSet.Result==null || data.ResultSet.Result==""){
-						jQuery("#tradeTitle").val('');
-					}
-		      })	
+	// Initialize the Bloodhound suggestion engine
+	oldlicensenoengine.initialize();
+	
+	// Instantiate the Typeahead UI
+	jQuery('#oldLicenseNumber').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		}, {
+		displayKey: 'name',
+		source: oldlicensenoengine.ttAdapter()
+	}).on('typeahead:selected', function(event, data){            
+		
+    });
+	
+	// Instantiate the trade title Bloodhound suggestion engine
+	var tradetitleengine = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
-	    minLength: 2,
-	    select: function( event, ui ) {
-			jQuery("#tradeTitle").val(ui.item.value);
-		 }
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=TradeTitle',
+			filter: function (data) {
+				// Map the remote source JSON array to a JavaScript object array
+				return jQuery.map(data.ResultSet.Result, function (cl) {
+					return {
+						name: cl.label,
+						value: cl.value
+					};
+				});
+			}
+		}
 	});
 	
-	jQuery("#tradeOwnerName").autocomplete({
-		source: function(request,response) {
-				var url='../domain/commonTradeLicenseAjax-populateData.action';
-				jQuery.getJSON(url,{searchParamValue: request.term,searchParamType: ownerNameType},function(data){
-					response(data.ResultSet.Result);
-					if(data.ResultSet.Result==null || data.ResultSet.Result==""){
-						jQuery("#tradeOwnerName").val('');
-					}
-		      })	
+	// Initialize the Bloodhound suggestion engine
+	tradetitleengine.initialize();
+	
+	// Instantiate the Typeahead UI
+	jQuery('#tradeTitle').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		}, {
+		displayKey: 'name',
+		source: tradetitleengine.ttAdapter()
+	}).on('typeahead:selected', function(event, data){            
+		
+    });
+	
+	// Instantiate the trade owner Bloodhound suggestion engine
+	var tradeownerengine = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
-	    minLength: 2,
-	    select: function( event, ui ) {
-			jQuery("#tradeOwnerName").val(ui.item.value);
-		 }
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=TradeOwnerName',
+			filter: function (data) {
+				// Map the remote source JSON array to a JavaScript object array
+				return jQuery.map(data.ResultSet.Result, function (cl) {
+					return {
+						name: cl.label,
+						value: cl.value
+					};
+				});
+			}
+		}
 	});
 	
-	jQuery("#propertyAssessmentNo").autocomplete({
-		source: function(request,response) {
-				var url='../domain/commonTradeLicenseAjax-populateData.action';
-				jQuery.getJSON(url,{searchParamValue: request.term,searchParamType: propertyNoType},function(data){
-					response(data.ResultSet.Result);
-					if(data.ResultSet.Result==null || data.ResultSet.Result==""){
-						jQuery("#propertyAssessmentNo").val('');
-					}
-		      })	
+	// Initialize the Bloodhound suggestion engine
+	tradeownerengine.initialize();
+	
+	// Instantiate the Typeahead UI
+	jQuery('#tradeOwnerName').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		}, {
+		displayKey: 'name',
+		source: tradeownerengine.ttAdapter()
+	}).on('typeahead:selected', function(event, data){            
+		
+    });
+	
+	// Instantiate the property assessment Bloodhound suggestion engine
+	var propassessnoengine = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
-	    minLength: 2,
-	    select: function( event, ui ) {
-			jQuery("#propertyAssessmentNo").val(ui.item.value);
-		 }
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=PropertyAssessmentNo',
+			filter: function (data) {
+				// Map the remote source JSON array to a JavaScript object array
+				return jQuery.map(data.ResultSet.Result, function (cl) {
+					return {
+						name: cl.label,
+						value: cl.value
+					};
+				});
+			}
+		}
 	});
 	
+	// Initialize the Bloodhound suggestion engine
+	propassessnoengine.initialize();
 	
-	jQuery("#mobileNo").autocomplete({
-		source: function(request,response) {
-				var url='../domain/commonTradeLicenseAjax-populateData.action';
-				jQuery.getJSON(url,{searchParamValue: request.term,searchParamType: mobileNoType},function(data){
-					response(data.ResultSet.Result);
-					if(data.ResultSet.Result==null || data.ResultSet.Result==""){
-						jQuery("#mobileNo").val('');
-					}
-		      })	
+	// Instantiate the Typeahead UI
+	jQuery('#propertyAssessmentNo').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		}, {
+		displayKey: 'name',
+		source: propassessnoengine.ttAdapter()
+	}).on('typeahead:selected', function(event, data){            
+		
+    });
+	
+	// Instantiate the mobile number Bloodhound suggestion engine
+	var mobilenoengine = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
-	    minLength: 2,
-	    select: function( event, ui ) {
-			jQuery("#mobileNo").val(ui.item.value);
-		 }
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=MobileNo',
+			filter: function (data) {
+				// Map the remote source JSON array to a JavaScript object array
+				return jQuery.map(data.ResultSet.Result, function (cl) {
+					return {
+						name: cl.label,
+						value: cl.value
+					};
+				});
+			}
+		}
 	});
+	
+	// Initialize the Bloodhound suggestion engine
+	mobilenoengine.initialize();
+	
+	// Instantiate the Typeahead UI
+	jQuery('#mobileNo').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		}, {
+		displayKey: 'name',
+		source: mobilenoengine.ttAdapter()
+	}).on('typeahead:selected', function(event, data){            
+		
+    });
 	
 	drillDowntableContainer = jQuery("#tblSearchTrade");
 	jQuery('#btnsearch').click(function(e) {
@@ -167,7 +300,7 @@ jQuery(document).ready(function() {
     	var tradeOwnerName=jQuery('#tradeOwnerName').val();
     	var propertyAssessmentNo=jQuery('#propertyAssessmentNo').val();
     	var mobileNo=jQuery('#mobileNo').val();
-		
+    	
 		if ((applicationNumber == null || applicationNumber == "")  &&
 				(licenseNumber == null || licenseNumber == "") && (oldLicenseNumber == null || oldLicenseNumber == "") &&
 				(category == '-1') && (subCategory == '-1') &&
