@@ -41,34 +41,11 @@
 <html>
 <title><s:text name="page.title.estimate.template" /></title>
 <body>
-<div class="new-page-header">
-	<s:if test="%{model.id!=null && mode!='edit'}" >
-		<s:text name="estimate.template.success.save" /> '<s:property value="%{code}" />' <s:text name="estimate.template.success.name" />  '<s:property value="%{name}" />' <s:text name="estimate.template.success.create" />
-	</s:if>
-    <s:if test="%{mode=='edit'}">   
-		<s:text name="estimate.template.success.save" /> '<s:property value="%{code}" />' <s:text name="estimate.template.success.name" />  '<s:property value="%{name}" />' <s:text name="estimate.template.success.save" />
-	</s:if>
-</div>
-
-	<%@ include file="estimateTemplate-commonView.jsp" %>
-
-<div class="row text-center">
-	<div class="add-margin">
-	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" />
-	<s:if test="%{mode!='edit'}">
-		<input type="submit" name="create" Class="btn btn-primary" value="Create New Estimate" id="CREATE" name="button" onclick="createNew();" />
-	</s:if>
-	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
-	</div>
-</div>
-
-<script type="text/javascript">
-function createNew() {
-	window.location = '${pageContext.request.contextPath}/estimate/estimateTemplate-newform.action';
-}
-function modifyData() {
-	window.location = '${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=edit&id='+<s:property value="%{model.id}"/>;
-}
-</script>	
+	<div class="new-page-header">
+		<s:text name="scheduleCategory.create.success" /> <a href="${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>&mode=view" > <s:property value="%{code}" /> </a> <s:text name="scheduleCategory.create.save" />
+	</div>	
+	
+	<%@ include file="scheduleCategory-commonView.jsp" %>
+	
 </body>
 </html>

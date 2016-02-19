@@ -38,62 +38,110 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 
-	<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
-				<div class="panel-heading">
-					<div class="panel-title">
-					    <s:text name="scheduleCategory.sor.category"/>
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-right">
-						    Category Code
-						</label>
-						<div class="col-sm-3 add-margin">
-							<s:textfield
-								cssClass="form-control" name="code" maxlength="15" id="code" size="40"/>
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						    Category Name
-						</label>
-						<div class="col-sm-3 add-margin">
-							<s:textfield
-								cssClass="form-control" name="description" maxlength="150" id="description"  size="40" />
-						</div>
-					</div>
-				</div>
-	</div>
-	
-	<div class="row">
-		<div class="col-sm-12 text-center buttonholdersearch">
-			<s:submit cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save"/> &nbsp;
-			<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button"
-				onclick="window.close();" />
+<%@page import="com.fasterxml.jackson.annotation.JsonInclude.Include"%>
+<div class="panel panel-primary" data-collapsed="0"	style="text-align: left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		<s:if test="%{id==null}"><s:text name="scheduleCategory.sor.category" />
+		</s:if>
+		<s:elseif test="%{id!=null && mode=='edit'}"><s:text name="scheduleCategory.modify.sor"/>
+		</s:elseif>
+		<s:else><s:text name="scheduleCategory.view.sor"/>
+		</s:else>
 		</div>
 	</div>
+	<div class="panel-body">
+		<label class="col-sm-2 control-label text-right"> <s:text name="schedCategory.code" /></label>
+			<s:hidden name="id"	id="id" />
+			<s:hidden name="mode"	id="mode" />
+		<div class="col-sm-3 add-margin">
+			<s:textfield cssClass="form-control" name="code" maxlength="15"	id="code" size="40" />
+		</div>
+		<label class="col-sm-2 control-label text-right"> <s:text name="schedCategory.description" /></label>
+		<div class="col-sm-3 add-margin">
+			<s:textfield cssClass="form-control" name="description"	maxlength="150" id="description" size="40" />
+		</div>
+	</div>
+</div>
+
+<s:if test="%{id==null}">
+<div class="row">
+	<div class="col-sm-12 text-center buttonholdersearch">
+		<s:submit cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save" onclick="methodTest();" /> &nbsp; 
+		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
+	</div>
+</div>
+
+<div class="row report-section"><br />
+	<div  style="overflow-y:scroll; height:400px; ">
+		<table align="centre" border="0" cellpadding="0" cellspacing="0" class="table table-hover">
+			<thead>
+				<tr>
+					<th ><s:text name="schedCategory.code" /></th>
+					<th ><s:text name="schedCategory.description" /></th>
+					<th ><s:text name="scheduleCategory.View/Modify" /></th>
+				</tr>
+			</thead>
+			<tbody >
+				<s:iterator var="p" value="scheduleCategoryList">
+					<tr>
+						<td class="whitebox3wka" ><s:property value="%{code}" /></td>
+						<td class="whitebox3wka"><s:property value="%{description}" /></td>
+						<td class="whitebox3wka">
+							<table >
+								<tr>
+								<td >
+ 								<a href="${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>&mode=view" target="_popup" width='600' height='400' >
+											<s:text name="sor.view" />
+											<td >/</td>
+									</a></td>
+									<egov-authz:authorize actionName="WorksSOREditAutho">
+										<td ><a
+											href="${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>&mode=edit" target="_popup" >
+												<s:text name="schedCategory.modify" />
+										</a></td>
+									</egov-authz:authorize>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</s:iterator>
+			</tbody>
+		</table>
+	</div>
+</div>
+</s:if>
+
+<div class="row">
+	<div class="col-sm-12 text-center buttonholdersearch">
+		<s:if test="%{mode=='edit'}">
+		<input id="modifyButton" class="btn btn-primary" type="submit" onclick="methodTest();" value="MODIFY" name="MODIFY">
+		</s:if>
+		<input  id="closeButton" class="btn btn-default" type="button" onclick="window.close();" name="button" value="Close">
+	</div>
+</div>
+<script>
+function methodTest() {
+ 	if(document.getElementById("code").value=="Category Code"){
+		document.getElementById("code").value="";
+	}
+	if(document.getElementById("description").value=="Category Name") {
+		document.getElementById("description").value="";		
+	}
+}
+function disableFields() {
+	<s:if test="%{mode=='view'}">
+	document.getElementById("code").disabled = true;
+	document.getElementById("description").disabled = true;	
+	</s:if> 
+	<s:elseif test="%{mode=='edit'}">
+	document.getElementById("code").disabled = false;
+	document.getElementById("description").disabled = false;	
+	</s:elseif>
 	
-	<div class="row report-section">
-				
-				<br/>
-				
-				<div class="col-md-6 col-md-offset-3 report-table-container">
-					<table align="center" width="300" border="0" cellpadding="0"
-									cellspacing="0" class="table table-hover">
-									<thead>
-						<tr>
-						  <th><s:text name="schedCategory.code"/></th>
-						  <th><s:text name="schedCategory.description"/></th>
-						</tr>
-						</thead>
-						<tbody>
-						<s:iterator var="p" value="scheduleCategoryList">
-							<tr>
-								<td class="whitebox3wka"><s:property value="%{code}" /></td>
-								<td class="whitebox3wka"><s:property value="%{description}" />
-								</td>
-							</tr>
-						</s:iterator>
-						</tbody>
-					</table>
-			  </div>
-   </div>
+}
+function modifyData(){
+	window.location = '${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>';
+}
+</script>
+ 

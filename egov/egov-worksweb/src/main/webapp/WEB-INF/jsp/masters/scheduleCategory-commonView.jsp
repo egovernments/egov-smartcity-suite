@@ -37,38 +37,26 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
-<html>
-<title><s:text name="page.title.estimate.template" /></title>
-<body>
-<div class="new-page-header">
-	<s:if test="%{model.id!=null && mode!='edit'}" >
-		<s:text name="estimate.template.success.save" /> '<s:property value="%{code}" />' <s:text name="estimate.template.success.name" />  '<s:property value="%{name}" />' <s:text name="estimate.template.success.create" />
-	</s:if>
-    <s:if test="%{mode=='edit'}">   
-		<s:text name="estimate.template.success.save" /> '<s:property value="%{code}" />' <s:text name="estimate.template.success.name" />  '<s:property value="%{name}" />' <s:text name="estimate.template.success.save" />
-	</s:if>
-</div>
-
-	<%@ include file="estimateTemplate-commonView.jsp" %>
-
-<div class="row text-center">
-	<div class="add-margin">
-	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" />
-	<s:if test="%{mode!='edit'}">
-		<input type="submit" name="create" Class="btn btn-primary" value="Create New Estimate" id="CREATE" name="button" onclick="createNew();" />
-	</s:if>
-	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading"></div>
+			<div class="panel-body">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<s:text name="schedCategory.code" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<s:property value="%{code}" />
+					</div>
+					<div class="col-xs-3 add-margin">
+						<s:text name="schedCategory.description" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<s:property value="%{description}" />
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-
-<script type="text/javascript">
-function createNew() {
-	window.location = '${pageContext.request.contextPath}/estimate/estimateTemplate-newform.action';
-}
-function modifyData() {
-	window.location = '${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=edit&id='+<s:property value="%{model.id}"/>;
-}
-</script>	
-</body>
-</html>

@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -51,18 +51,38 @@ import org.egov.works.models.masters.ScheduleCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Results({ 
-	@Result(name = ScheduleCategoryAction.NEW, location = "scheduleCategory-new.jsp"),
-	@Result(name = ScheduleCategoryAction.EDIT, location = "scheduleCategory-edit.jsp") 
+@Results({
+        @Result(name = ScheduleCategoryAction.NEW, location = "scheduleCategory-new.jsp"),
+        @Result(name = ScheduleCategoryAction.EDIT, location = "scheduleCategory-edit.jsp"),
+        @Result(name = ScheduleCategoryAction.SUCCESS, location = "scheduleCategory-success.jsp")
 })
 public class ScheduleCategoryAction extends BaseFormAction {
 
     private static final long serialVersionUID = 8722637434208106061L;
-    
+
     @Autowired
     private ScheduleCategoryService scheduleCategoryService;
     private ScheduleCategory scheduleCategory = new ScheduleCategory();
     private List<ScheduleCategory> scheduleCategoryList = null;
+    private Long id;
+    private String mode;
+    private String code;
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(final String mode) {
+        this.mode = mode;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     @Override
     public String execute() {
@@ -79,17 +99,35 @@ public class ScheduleCategoryAction extends BaseFormAction {
         return NEW;
     }
 
+    @Action(value = "/masters/scheduleCategory-edit")
+    public String edit() {
+        if (mode.equals("edit")) {
+            scheduleCategory = scheduleCategoryService.findById(scheduleCategory.getId(), false);
+            return EDIT;
+        }
+        else {
+            scheduleCategory = scheduleCategoryService.findById(scheduleCategory.getId(), false);
+            return EDIT;
+        }
+    }
+
     @Override
     public void prepare() {
         scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
+        if (id != null)
+            scheduleCategory = scheduleCategoryService.findById(id, false);
         super.prepare();
     }
 
     @Action(value = "/masters/scheduleCategory-save")
     public String save() {
-        scheduleCategoryService.persist(scheduleCategory);
+        if (mode.equals("edit") && !scheduleCategoryService.checkForSOR(id)) {
+            addActionMessage(getText("scheduleCategory.modify.validate.message"));
+            return EDIT;
+        } else
+            scheduleCategoryService.persist(scheduleCategory);
         addActionMessage(getText("schedule.category.save.success"));
-        return list();
+        return SUCCESS;
     }
 
     @Override
@@ -113,4 +151,13 @@ public class ScheduleCategoryAction extends BaseFormAction {
             final ScheduleCategory scheduleCategory) {
         this.scheduleCategory = scheduleCategory;
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
 }

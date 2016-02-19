@@ -205,7 +205,7 @@ var searchSelectionHandler = function(sType, arguments) {
 var month=date.getMonth()+1;
 var dd=date.getDate()+"/"+month+"/"+date.getFullYear();
 
-	        makeJSONCall(["Id","Description","Code","UOM","UnitRate","FullDescription"],'${pageContext.request.contextPath}/masters/scheduleOfRateSearch!findSORAjax.action',{sorID:oData[1]},mySuccessHandler,myFailureHandler) ;
+	        makeJSONCall(["Id","Description","Code","UOM","UnitRate","FullDescription"],'${pageContext.request.contextPath}/masters/scheduleOfRateSearch-findSORAjax.action',{sorID:oData[1]},mySuccessHandler,myFailureHandler) ;
 
 		}
 
@@ -305,54 +305,52 @@ function showProcessImage(event) {
 
 </script>
 
-<div id="baseSORTable" class="panel panel-primary" data-collapsed="0" style="text-align:left">
-				<div class="panel-heading">
-					<div class="panel-title">
-					    SOR
+<div id="baseSORTable" class="panel panel-primary" data-collapsed="0" style="text-align: left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<s:text name="page.title.estimate.SOR" />
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="estimate.scheduleCategory.name" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select onchange="clearCategoryMessage();" headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> 
+				<s:text	name="estimate.addSOR" />
+			</label>
+			<div class="col-sm-8 add-margin">
+				<div id="sorSearch_autocomplete">
+					<div class="right-inner-addon">
+						<input id="search" type="text" name="item" class="form-control"	onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);">
+						<i id="loadImage" style="display: none" class="fa fa-circle-o-notch fa-spin"></i>
 					</div>
+					<span id="searchResults"></span>
+					<egov:autocomplete name="sorSearch" width="50" field="search" url="../masters/scheduleOfRateSearch-searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />
 				</div>
-				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-right">
-						    <s:text name="estimate.scheduleCategory.name" /><span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<s:select onchange="clearCategoryMessage();" headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description"/>
-						</div>
-					</div>
-					
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-right">
-						    Add SOR
-						</label>
-						<div class="col-sm-8 add-margin">
-							<div id="sorSearch_autocomplete">
-							   <div class="right-inner-addon">
-								    <input id="search" type="text" name="item" class="form-control" onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);">
-								    <i id="loadImage" style="display:none" class="fa fa-circle-o-notch fa-spin"></i>
-				    			</div>    
-						    	<span id="searchResults"></span>
-						    	<egov:autocomplete name="sorSearch" width="50" field="search" url="../masters/scheduleOfRateSearch-searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />
-						    </div> 
-						</div>
-					</div>
-					
-					<div class="form-group no-margin-bottom">
-						<div class="col-sm-offset-2 col-sm-8">
-							<div class="alert alert-danger no-margin mt-5" id="sor_error" style="display:none;"></div>
-						</div>
-					</div>	
-					
-					<div class="form-group" id="sorHeaderTable">
-						<hr/>
-						<div class="yui-skin-sam">
-					         <div id="sorTable"></div>
-					         <div id="sorTotals"></div>                                
-					     </div>
-							
-					</div>	
-					
-				</div>
+			</div>
+		</div>
+
+		<div class="form-group no-margin-bottom">
+			<div class="col-sm-offset-2 col-sm-8">
+				<div class="alert alert-danger no-margin mt-5" id="sor_error" style="display: none;"></div>
+			</div>
+		</div>
+
+		<div class="form-group" id="sorHeaderTable">
+			<hr />
+			<div class="yui-skin-sam">
+				<div id="sorTable"></div>
+				<div id="sorTotals"></div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
@@ -370,21 +368,12 @@ makeSORDataTable();
      
     var record = sorDataTable.getRecord(parseInt('<s:property value="#row_status.index"/>'));
     
-    
 </s:iterator>
+<s:if test="%{mode=='view'}">
+for(i=0;i<document.estimateTemplateForm.elements.length;i++){
+	document.estimateTemplateForm.elements[i].disabled=true;
+	document.estimateTemplateForm.elements[i].readonly=true;
+} 
+</s:if>
     
 </script>  
-
-
-             
-            </td>
-          </tr>
-            </table>
-<script type="text/javascript">
-  <s:if test="%{mode=='view'}">
-	for(i=0;i<document.estimateTemplateForm.elements.length;i++){
-		document.estimateTemplateForm.elements[i].disabled=true;
-		document.estimateTemplateForm.elements[i].readonly=true;
-	} 
-  </s:if>
-</script>
