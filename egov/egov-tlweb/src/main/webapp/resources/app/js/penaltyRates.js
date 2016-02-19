@@ -40,28 +40,6 @@
 
 $(document).ready(function()
 {
-$( "#search" ).click(function( event ) {
-	var valid = $('#penaltyform').validate().form();
-	if(!valid)
-		{
-		bootbox.alert("Please fill mandatory fields");
-		return false;
-		}
-	  var param="licenseAppType=";
-	  param=param+$('#licenseAppType').val();
-	   $.ajax({
-			url: "/tl/penaltyRates/search?"+param,
-			type: "GET",
-			//dataType: "json",
-			success: function (response) {
-				 $('#resultdiv').html(response);
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
-	 
-});
 
 $( "#add-row" ).click(function( event ) {
 	var rowCount = $('#result tr').length;
