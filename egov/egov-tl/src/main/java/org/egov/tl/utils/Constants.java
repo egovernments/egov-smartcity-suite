@@ -738,8 +738,8 @@ public class Constants {
         public static final String APPLICATION_STATUS_CREATED_CODE = "CREATED";
         public static final String APPLICATION_STATUS_INSPE_CODE = "INSPECTIONDONE";
         public static final String APPLICATION_STATUS_APPROVED_CODE = "APPROVED";
-        public static final String APPLICATION_STATUS_COLLECTION_CODE = "COLLECTIONAMOUNTPAID";
-        public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNUPDATED";
+        public static final String APPLICATION_STATUS_COLLECTION_CODE = "COLLECTIONPENDING";
+        public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNPENDING";
         public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
         public static final String STR_WITH_APPLICANT_NAME = " Dear ";
         public static final String RENEWAL_LIC_APPTYPE ="Renew";

@@ -403,14 +403,14 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                         + rcptAccInfo.getCrAmount());
                         }
 
-               demand.setAmtCollected(amtCollected);
-                // persistenceService.update(demand);
+               //demand.setAmtCollected(amtCollected);
+                //persistenceService.update(demand);
                 // FIXME ld.getLicense(); will be sufficient to get the license back
                 // Since collection is not working, we re query to get License object
                 // replace the below with ld.getLicense(); once collection fixed
                 final TradeLicense license = (TradeLicense) persistenceService.find("from TradeLicense where id=?",
                         ld.getLicense().getId());
-                if (license.getState() != null)
+               if (license.getState() != null)
                     updateWorkflowState(license);
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(license, billReceipt.getReceiptDate(), demand.getAmtCollected());
                 updateIndexService.updateTradeLicenseIndexes(license);
@@ -432,18 +432,16 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      * update Application status and workflow
      */
     @Transactional
-    public void updateWorkflowState(final License licenseObj) {
+    public void updateWorkflowState( License licenseObj) {
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(licenseObj.getCreatedBy().getId());
         Position pos = wfInitiator.getPosition();
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
         Boolean digitalSignEnabled = licenseUtils.isDigitalSignEnabled();
         WorkFlowMatrix wfmatrix = null;
-        final EgwStatus statusChange = (EgwStatus) persistenceService.find(
-                "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
-                Constants.APPLICATION_STATUS_COLLECTION_CODE);
-        licenseObj.setEgwStatus(statusChange);
+        
         if (digitalSignEnabled) {
+            licenseObj=licenseUtils.applicationStatusChange(licenseObj,Constants.APPLICATION_STATUS_DIGUPDATE_CODE);
             pos = licenseUtils.getCityLevelCommissioner();
             if (licenseObj.getLicenseAppType() != null
                     && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
@@ -462,6 +460,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction());
             }
         } else {
+            licenseObj=licenseUtils.applicationStatusChange(licenseObj,Constants.APPLICATION_STATUS_APPROVED_CODE);
             if (licenseObj.getLicenseAppType() != null
                     && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
                 wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
@@ -478,6 +477,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         // FIXME its a collection API issue to be discussed and rectified
         persistenceService.getSession().flush();
     }
+
+   
 
     /**
      * Deducts the collected amounts as per the amount of the cancelled receipt.

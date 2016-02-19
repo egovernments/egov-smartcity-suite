@@ -175,9 +175,10 @@ public class SearchTradeAction extends BaseFormAction {
             //FIXME EgwStatus usage should be removed from here
             if (license.getEgwStatus() != null) {
                 if (!license.isPaid() && !license.isStateRejected()
-                         && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_APPROVED_CODE))
+                         && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Collect Fees");
-                else if (license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+                else if ( license.getStatus() != null
+                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE))
                     licenseActions.add("Print Certificate");
             } else if (license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");

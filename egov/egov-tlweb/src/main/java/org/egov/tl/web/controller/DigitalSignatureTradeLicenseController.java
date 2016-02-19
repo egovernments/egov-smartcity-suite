@@ -44,7 +44,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -54,7 +53,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
-import org.egov.commons.EgwStatus;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
@@ -70,6 +68,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
+import org.egov.tl.utils.LicenseUtils;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -108,6 +107,9 @@ public class DigitalSignatureTradeLicenseController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private LicenseUtils licenseUtils;
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
@@ -124,15 +126,12 @@ public class DigitalSignatureTradeLicenseController {
         for (final String fileStoreId : fileStoreIdArr) {
             final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
             if (null != applicationNumber && !applicationNumber.isEmpty()) {
-                final License license = (License) persistenceService.find("from License where applicationNumber=?",
+                License license = (License) persistenceService.find("from License where applicationNumber=?",
                         applicationNumber);
                 final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy()
                         .getId());
                 final DateTime currentDate = new DateTime();
-                final EgwStatus statusChange = (EgwStatus) persistenceService.find(
-                        "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
-                        Constants.APPLICATION_STATUS_DIGUPDATE_CODE);
-                license.setEgwStatus(statusChange);
+               license= licenseUtils.applicationStatusChange(license, Constants.APPLICATION_STATUS_APPROVED_CODE);
                 final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                         Constants.WF_STATE_COLLECTION_PENDING, null);
 
