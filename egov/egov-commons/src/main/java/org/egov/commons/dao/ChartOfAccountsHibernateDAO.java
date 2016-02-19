@@ -472,8 +472,8 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
         final Query query = HibernateUtil
                 .getCurrentSession()
                 .createQuery(
-                        "from CChartOfAccounts where id in (select glCodeId.id from CChartOfAccountDetail where detailTypeId.name =:subLedgerCode  ) and type = 'L' and classification=4 and isActiveForPosting = true and id not in (select chartofaccounts.id from Recovery)");
-         query.setString("subLedgerCode", subLedgerCode);
+                        "from CChartOfAccounts where id in (select glCodeId.id from CChartOfAccountDetail where lower(detailTypeId.name) =:subLedgerCode  ) and type = 'L' and classification=4 and isActiveForPosting = true and id not in (select chartofaccounts.id from Recovery)");
+         query.setString("subLedgerCode", subLedgerCode.toLowerCase());
         return query.list();
     }
     

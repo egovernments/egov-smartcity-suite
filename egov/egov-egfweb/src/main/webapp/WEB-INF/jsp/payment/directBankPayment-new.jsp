@@ -220,14 +220,14 @@
 		
 	var makeSubLedgerTable = function() {
 		var subledgerColumns = [ 
-			{key:"subledgerCode",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".subledgerCode","hidden")},
-			{key:"glcode.id",label:'Account Code <span class="mandatory1">*</span>',width:90, formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
-			{key:"detailTypeName",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailTypeName","hidden")},
-			{key:"detailType.id",label:'Type <span class="mandatory1">*</span>',width:90, formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
-			{key:"detailCode",label:'Code <span class="mandatory1">*</span>',width:120, formatter:createSLDetailCodeTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)", ".search", "openSearchWindowFromJV(this)")},
-			{key:"detailKeyId",hidden:true,width:100, formatter:createSLHiddenFieldFormatterJV(SUBLEDGERLIST,".detailKeyId")},
-			{key:"detailKey",label:'Name',width:180, formatter:createSLLongTextFieldFormatterJV(SUBLEDGERLIST,".detailKey","")},
-			{key:"amount",label:'Amount',width:90, formatter:createSLAmountFieldFormatterJV(SUBLEDGERLIST,".amount")},
+			{key:"subledgerCode",hidden:true, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".subledgerCode","hidden")},
+			{key:"glcode.id",label:'Account Code <span class="mandatory1">*</span>', formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
+			{key:"detailTypeName",hidden:true, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailTypeName","hidden")},
+			{key:"detailType.id",label:'Type <span class="mandatory1">*</span>', formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+			{key:"detailCode",label:'Code <span class="mandatory1">*</span>', formatter:createSLDetailCodeTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)", ".search", "openSearchWindowFromJV(this)")},
+			{key:"detailKeyId",hidden:true, formatter:createSLHiddenFieldFormatterJV(SUBLEDGERLIST,".detailKeyId")},
+			{key:"detailKey",label:'Name', formatter:createSLLongTextFieldFormatterJV(SUBLEDGERLIST,".detailKey","")},
+			{key:"amount",label:'Amount', formatter:createSLAmountFieldFormatterJV(SUBLEDGERLIST,".amount")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
 		];
@@ -423,14 +423,32 @@ function populateAccNum(branch){
 }
 function onSubmit()
 {
-	if(!validate()){
-		//undoLoadingMask();
+	enableAll();
+	if (!validateForm_directBankPayment()) {
+		undoLoadingMask();
 		return false;
-		}else{
-			document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-			document.dbpform.submit();
-			
-			}
+	}
+	else if (!updateAndCheckAmount()) {
+		undoLoadingMask();
+		return false;
+	}
+	else if(!balanceCheck()){
+		bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
+			  if(result)
+				  {
+				  	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+					document.dbpform.submit();
+				  }
+			  else
+				  {
+				  console.log("else");
+				  }
+			}); 
+	}else{
+		document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+		document.dbpform.submit();
+		}
+	return false;
 }
 </SCRIPT>
 </body>

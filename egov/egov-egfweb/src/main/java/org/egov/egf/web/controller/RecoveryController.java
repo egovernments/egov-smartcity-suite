@@ -83,6 +83,9 @@ public class RecoveryController {
         }
         if (recovery.getBank() != null && recovery.getBank().getId() != null)
             recovery.setBank(bankService.findById(recovery.getBank().getId(), false));
+        else
+            recovery.setBank(null);
+       
         recovery.setChartofaccounts(chartOfAccountsService.findById(recovery.getChartofaccounts().getId(), false));
         recovery.setEgPartytype(egPartyTypeService.findById(recovery.getEgPartytype().getId(), false));
         recoveryService.create(recovery);
@@ -112,6 +115,8 @@ public class RecoveryController {
         }
         if (recovery.getBank() != null && recovery.getBank().getId() != null)
             recovery.setBank(bankService.findById(recovery.getBank().getId(), false));
+        else
+            recovery.setBank(null);
         recovery.setChartofaccounts(chartOfAccountsService.findById(recovery.getChartofaccounts().getId(), false));
         recovery.setEgPartytype(egPartyTypeService.findById(recovery.getEgPartytype().getId(), false));
         recoveryService.update(recovery);
