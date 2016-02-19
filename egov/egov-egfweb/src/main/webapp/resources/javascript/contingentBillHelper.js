@@ -69,6 +69,17 @@ function validate()
 		undoLoadingMask() ;
 		return false;
 	}
+	var billDate = document.getElementById("billDate").value;
+    var date = billDate.substring(0, 2);
+    var month = billDate.substring(3, 5);
+    var year = billDate.substring(6, 10);
+    var myDate = new Date(year, month - 1, date);
+    var today = new Date();
+
+    if (myDate > today) {
+        bootbox.alert("Bill date is greater than today's date ");
+        return false
+    }
 	
 return true;
 }

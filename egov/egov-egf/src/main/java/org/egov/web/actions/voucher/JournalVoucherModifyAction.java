@@ -143,7 +143,10 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         List<Position> positionsForUser = null;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalVoucherModifyAction | loadvouchers | Start ");
-        voucherHeaderId = parameters.get("voucherId")[0];
+        if (voucherHeader != null && voucherHeader.getId() != null)
+            voucherHeaderId = voucherHeader.getId().toString();
+        else
+            voucherHeaderId = parameters.get("voucherId")[0];
         isOneFunctionCenter = voucherHeader.getIsRestrictedtoOneFunctionCenter();
         if (voucherHeaderId != null)
             voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(voucherHeaderId));
@@ -196,9 +199,9 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("journalVoucherModifyAction | sendForApproval | Start");
         if (voucherHeader.getId() == null)
-            voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(parameters.get("voucherId")[0]));
+            voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY,
+                    Long.valueOf(parameters.get("voucherId")[0]));
 
-      
         populateWorkflowBean();
         voucherHeader = preApprovedActionHelper.sendForApproval(voucherHeader, workflowBean);
         voucherService.persist(voucherHeader);
@@ -272,7 +275,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             if (!validateData(billDetailslist, subLedgerlist)) {
                 voucherHeader = voucherService.updateVoucherHeader(voucherHeader, voucherTypeBean);
 
-               // voucherService.deleteGLDetailByVHId(voucherHeader.getId());
+                // voucherService.deleteGLDetailByVHId(voucherHeader.getId());
                 voucherHeader.getGeneralLedger().removeAll(voucherHeader.getGeneralLedger());
 
                 final List<Transaxtion> transactions = voucherService.postInTransaction(billDetailslist, subLedgerlist,
@@ -300,15 +303,16 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                     voucherHeader.setStatus(FinancialConstants.PREAPPROVEDVOUCHERSTATUS);
                     target = "success";
                 }
-            } 
+            }
             else {
-                throw new ValidationException("InValid data","InValid data");
-            } if (subLedgerlist.size() == 0) {
+                throw new ValidationException("InValid data", "InValid data");
+            }
+            if (subLedgerlist.size() == 0) {
                 subLedgerlist.add(new VoucherDetails());
-                 //setOneFunctionCenterValue();
+                // setOneFunctionCenterValue();
                 resetVoucherHeader();
             } else
-               // setOneFunctionCenterValue();
+                // setOneFunctionCenterValue();
                 resetVoucherHeader();
 
             sendForApproval();
