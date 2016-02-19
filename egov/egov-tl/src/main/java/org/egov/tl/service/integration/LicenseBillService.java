@@ -179,7 +179,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         EgDemandDetails penaltyDemandDetail = null;
         Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
         if ("New".equals(license.getLicenseAppType().getName()))
-            installmentPenalty = billable.getCalculatedPenalty(license.getStartDate(), new Date(),
+            installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(),
                     license.getCurrentDemand().getBaseDemand(), currInstallment);
         else if ("Renew".equals(license.getLicenseAppType().getName()))
             installmentPenalty = billable.getCalculatedPenalty(license.getDateOfExpiry(), new Date(),

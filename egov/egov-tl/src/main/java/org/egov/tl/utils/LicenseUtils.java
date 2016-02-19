@@ -747,11 +747,11 @@ public class LicenseUtils {
 			contractorMap.put(Constants.WORKS_KEY_CLASS, contr.getGrade());
 		}
 		if (!org.apache.commons.lang.StringUtils.isBlank(license
-				.getDateOfCreation().toString())
+				.getCommencementDate().toString())
 				&& !org.apache.commons.lang.StringUtils.isEmpty(license
-						.getDateOfCreation().toString()))
+						.getCommencementDate().toString()))
 			contractorMap.put(Constants.WORKS_KEY_STARTDATE,
-					license.getDateOfCreation());
+					license.getCommencementDate());
 		if (!org.apache.commons.lang.StringUtils.isBlank(license
 				.getDateOfExpiry().toString())
 				&& !org.apache.commons.lang.StringUtils.isEmpty(license

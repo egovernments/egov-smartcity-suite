@@ -123,7 +123,7 @@
 									:
 								</td>
 								<td colspan="3">
-									<b> <s:date name='dateOfCreation' id="formattedDateOfCreation" format='dd-MMM-yyyy' /> <s:property value="%{formattedDateOfCreation}" />&nbsp;</b>
+									<b> <s:date name='commencementDate' id="formattedDateOfCreation" format='dd-MMM-yyyy' /> <s:property value="%{formattedDateOfCreation}" />&nbsp;</b>
 								</td>
 							</tr>
 							<tr>

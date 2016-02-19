@@ -271,10 +271,10 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     }
 
     @Override
-    public BigDecimal calculatePenalty(final Date dateOfCreation, final Date collectionDate, final BigDecimal amount) {
+    public BigDecimal calculatePenalty(final Date commencementDate, final Date collectionDate, final BigDecimal amount) {
         // FIXME check dateOfCreation/startDate or what ever to be used to calculate penality
-        if (dateOfCreation != null) {
-            final int days = Days.daysBetween(new LocalDate(dateOfCreation.getTime()), new LocalDate(collectionDate.getTime()))
+        if (commencementDate != null) {
+            final int days = Days.daysBetween(new LocalDate(commencementDate.getTime()), new LocalDate(collectionDate.getTime()))
                     .getDays();
             final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(days),
                     license.getLicenseAppType());
@@ -301,10 +301,10 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 
-    public Map<Installment, BigDecimal> getCalculatedPenalty(final Date dateOfCreation, final Date collectionDate,
+    public Map<Installment, BigDecimal> getCalculatedPenalty(final Date commencementDate, final Date collectionDate,
             final BigDecimal amount, final Installment currentInstallment) {
         final Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
-        installmentPenalty.put(currentInstallment, calculatePenalty(dateOfCreation, collectionDate, amount));
+        installmentPenalty.put(currentInstallment, calculatePenalty(commencementDate, collectionDate, amount));
         return installmentPenalty;
     }
 }
