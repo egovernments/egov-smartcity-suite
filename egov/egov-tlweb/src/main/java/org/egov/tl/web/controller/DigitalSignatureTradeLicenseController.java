@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -156,11 +158,13 @@ public class DigitalSignatureTradeLicenseController {
         response.setContentType("application/octet-stream");
         response.setHeader("content-disposition", "attachment; filename=\"" + (fileStoreMapper!=null ?fileStoreMapper.getFileName():null) + "\"");
         try {
-            final FileInputStream inStream = new FileInputStream(file);
-            final PrintWriter outStream = response.getWriter();
+            FileInputStream inStream = new FileInputStream(file);
+            OutputStream outStream = response.getOutputStream();
             int bytesRead = -1;
-            while ((bytesRead = inStream.read()) != -1)
-                outStream.write(bytesRead);
+            byte[] buffer = FileUtils.readFileToByteArray(file);
+            while ((bytesRead = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
             inStream.close();
             outStream.close();
         } catch (final FileNotFoundException fileNotFoundExcep) {

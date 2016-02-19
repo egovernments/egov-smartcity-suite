@@ -122,7 +122,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
             @Result(name = "transfertl_approve", type = "redirectAction", location = "transferTradeLicense", params = {
                 "namespace", "/transfer", "method", "showForApproval" }),
             @Result(name = "approve", location = "newTradeLicense-new.jsp"),
-            @Result(name = "report", location = "newTradeLicense-report.jsp") })
+            @Result(name = "report", location = "newTradeLicense-report.jsp"),
+            @Result(name="digitalSignatureRedirection", location="newTradeLicense-digitalSignatureRedirection.jsp")})
 public abstract class BaseLicenseAction<T extends License> extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
 

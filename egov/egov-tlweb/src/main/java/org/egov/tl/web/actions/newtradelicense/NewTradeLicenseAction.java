@@ -128,8 +128,19 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             mode = VIEW;
         if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
             mode = "editForReject";
-        if (license().getState().getValue().contains(Constants.WF_STATE_INSPECTION_PENDING))
+        if (license().getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING))
             mode = "editForApproval";
+        if (license().getState().getValue().contains(Constants.WF_STATE_DIGISIGN_STR)
+                || license().getState().getValue().contains(Constants.WF_STATE_INSPECTION_APPROVED_STR)
+                ||license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
+            mode = "disableApprover";
+        
+        String newStr="incedo";
+        //doince
+        String modStr="";
+        modStr=newStr.substring(0, 4);
+        String coll=newStr.substring(4,newStr.length());
+        String result=coll+modStr;
         return super.showForApproval();
     }
 

@@ -80,22 +80,13 @@ public class Constants {
         public static final String WF_ACTION_FEE_COLLECTED = "FEE_COLLECTED";
         public static final String WF_ACTION_LICENSE_GENERATED = "LICENSE_GENERATION";
         public static final String WF_ACTION_SAVE_DRAFT = "SAVE_DRAFT";
-        public static final String WF_ACTION_SAVE_NEW = "SAVE_NEW";
-        public static final String WF_ACTION_ENTER_TRADE = "ENTER_TRADE";
-        public static final String WF_ACTION_APPROVE_NEW = "APPROVE_NEW";
-        public static final String WF_ACTION_REJECT_NEW = "REJECT_NEW";
         public static final String WF_ACTION_RENEWAL = "RENEWAL";
         public static final String WORKFLOW_STATE_TYPE_END = "END";
-        public static final String WF_STATE_Fee_Collected = "Fee Collected";
-        public static final String WF_STATE_SI_Approval_Pending = "SI Approval Pending";
-        public static final String WF_STATE_AHO_Approval_Pending = "AHO Approval Pending";
-        public static final String WF_STATE_ARO_Approval_Pending_Health = "ARO Approval Pending Health";
-        public static final String WF_STATE_AEE_Approval_Pending = "AEE Approval Pending";
-        public static final String WF_STATE_ARO_Approval_Pending_Town_Planning = "ARO Approval Pending Town-Planning";
-        public static final String WF_STATE_ZO_Approval_Pending = "ZO Approval Pending";
+        public static final String WF_STATE_SO_APPROVED ="Create License:Sanitary inspector Approved";
         public static final String WF_STATE_COLLECTION_PENDING = "Create License:Commissioner Approved";
         public static final String WF_STATE_INSPECTION_PENDING="Create License:Sanitary inspector Approve pending";
-       // public static final String WF_STATE_INSPECTION_PENDING_TEST="Sanitary inspector Approve pending";
+       public static final String WF_STATE_INSPECTION_APPROVED_STR="Sanitary inspector Approved";
+       public static final String WF_STATE_COMMISSIONER_APPROVED_STR="Commissioner Approved";
 
         public static final String WF_STATE_GENERATE_CERTIFICATE="Create License:generate Certificate";
         public static final String WF_STATE_LICENSE_NOT_APPROVED = "License Not Approved";
@@ -104,6 +95,7 @@ public class Constants {
         public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
         public static final String WF_STATE_DIGITAL_SIGN_NEWTL="Create License:Collection Done";
         public static final String WF_STATE_DIGITAL_SIGN_RENEWAL=" Renewal License:Collection Done";
+        public static final String WF_STATE_DIGISIGN_STR="Collection Done";
         // JSP Pages
        
         public static final String VIEW_RESULT_PAGE = "result";

@@ -143,9 +143,9 @@
 			function onBodyLoad(){
   				var currentState=document.getElementById("currentWfstate").value;
   				showHideAgreement();
-				if(currentState=='Create License:Commissioner Approved')	
+				if(document.getElementById("mode").value=='disableApprover')	
 					{
-					toggleFields(true,['Submit','Reject','button2','Approve','approverComments']); 
+					toggleFields(true,['Submit','Reject','button2','Approve','approverComments','Sign','Preview']); 
 					jQuery(".show-row").hide(); 
 					jQuery('#approverComments').removeAttr('<span class="mandatory"></span>');
 					jQuery('#approverDepartment').removeAttr('<span class="mandatory"></span>');
@@ -197,7 +197,7 @@
 
     		function onSubmit() {
         		var mode=document.getElementById("mode").value;
-    			<s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval') &&  mode!='editForReject' )}">
+    			<s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval' || mode== 'disableApprover') &&  mode!='editForReject' )}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
