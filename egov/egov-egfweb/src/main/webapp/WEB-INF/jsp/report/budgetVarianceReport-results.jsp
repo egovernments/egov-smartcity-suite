@@ -136,9 +136,6 @@
 	</div>
 	
 </s:if>
-</br>
-</br>
-<s:else><center><h3 style="color: red"> No data found</h3></center></s:else>
-<center><input type="button" value="Close"
-					onclick="javascript:window.close()" class="button" /></center>
+
+
 	
