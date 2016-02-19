@@ -1895,7 +1895,7 @@ public class EGovernCommon extends AbstractTask {
             fundCondition = " and branch.id in(select branchid from bankaccount where fundid=" + fundId + ")";
 
         query = "select branch.ID as \"bankBranchId\", concat(concat(ba.name, ' - '),branch.branchName) as \"bankBranchName\" "
-                + " FROM bank ba, bankBranch branch WHERE branch.bankId=ba.ID AND ba.isActive=true AND branch.isActive = 1 "
+                + " FROM bank ba, bankBranch branch WHERE branch.bankId=ba.ID AND ba.isActive=true AND branch.isActive = true "
                 + fundCondition + " order by LOWER(ba.name) ";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query:" + query);

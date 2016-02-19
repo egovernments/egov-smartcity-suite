@@ -338,7 +338,7 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme Id received is : " + schemeId);
         if (null != schemeId && schemeId != -1) {
-            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1' order by name",
+            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
                     schemeId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Subscheme List size : " + subSchemes.size());

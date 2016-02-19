@@ -330,7 +330,7 @@ rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllCoaNames"))
 {//TESTED
-	final String query="select name||'`-`'||glcode||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = '1' order by glcode ";
+	final String query="select name||'`-`'||glcode||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true order by glcode ";
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllFunctionCode")){
