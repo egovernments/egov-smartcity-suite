@@ -172,7 +172,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     }
             }
     }
-
+//TODO- remove unused methods and clean up 
     private String getGlcodeForPurposeCode7() {
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
                 "select glcode from chartofaccounts where purposeid=7");
@@ -313,6 +313,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
     /* For detailed */
     public void populateDataForAllSchedulesDetailed(final Statement balanceSheet) {
         getAppConfigValueForRemoveEntrysWithZeroAmount();
+        //TODO- make the appconfig call to one single time
         voucherStatusToExclude = getAppConfigValueFor("finance", "statusexcludeReport");
         minorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_minorcode_length"));
         majorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));

@@ -185,8 +185,8 @@ public class BalanceSheetReportAction extends BaseFormAction {
             addDropdownData("departmentList", masterCache.get("egi-department"));
             addDropdownData("fundList", masterCache.get("egi-fund"));
             addDropdownData("functionList", masterCache.get("egi-function"));
-            addDropdownData("functionaryList", masterCache.get("egi-functionary"));
-            addDropdownData("fieldList", masterCache.get("egi-ward"));
+        //    addDropdownData("functionaryList", masterCache.get("egi-functionary"));
+          //  addDropdownData("fieldList", masterCache.get("egi-ward"));
             // addDropdownData("financialYearList",
             // getPersistenceService().findAllBy("from CFinancialYear where isActive=1 and isActiveForPosting=1 order by finYearRange desc "));
             addDropdownData("financialYearList", persistenceService.findAllBy("from CFinancialYear order by finYearRange desc "));
@@ -207,11 +207,11 @@ public class BalanceSheetReportAction extends BaseFormAction {
             header.append(" in " + balanceSheet.getDepartment().getName());
         } else
             balanceSheet.setDepartment(null);
-        if (balanceSheet.getField() != null && balanceSheet.getField().getId() != null && balanceSheet.getField().getId() != 0) {
+/*        if (balanceSheet.getField() != null && balanceSheet.getField().getId() != null && balanceSheet.getField().getId() != 0) {
             balanceSheet.setField((Boundary) getPersistenceService().find("from Boundary where id=?",
                     balanceSheet.getField().getId()));
             header.append(" in " + balanceSheet.getField().getName());
-        }
+        }*/
         if (balanceSheet.getFund() != null && balanceSheet.getFund().getId() != null && balanceSheet.getFund().getId() != 0) {
             balanceSheet.setFund((Fund) getPersistenceService().find("from Fund where id=?", balanceSheet.getFund().getId()));
             header.append(" for " + balanceSheet.getFund().getName());
@@ -222,12 +222,12 @@ public class BalanceSheetReportAction extends BaseFormAction {
                     balanceSheet.getFunction().getId()));
             header.append(" for " + balanceSheet.getFunction().getName());
         }
-        if (balanceSheet.getFunctionary() != null && balanceSheet.getFunctionary().getId() != null
+ /*       if (balanceSheet.getFunctionary() != null && balanceSheet.getFunctionary().getId() != null
                 && balanceSheet.getFunctionary().getId() != 0) {
             balanceSheet.setFunctionary((Functionary) getPersistenceService().find("from Functionary where id=?",
                     balanceSheet.getFunctionary().getId()));
             header.append(" in " + balanceSheet.getFunctionary().getName());
-        }
+        }*/
         if (balanceSheet.getAsOndate() != null)
             header.append(" as on " + DDMMYYYYFORMATS.format(balanceSheet.getAsOndate()));
         header.toString();
@@ -295,7 +295,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
             balanceSheet.setFunds(balanceSheetService.getFunds());
         balanceSheetScheduleService.populateDataForAllSchedulesDetailed(balanceSheet);
     }
-
+    @Action(value = "/report/balanceSheetReport-printBalanceSheetReport")
     public String printBalanceSheetReport() {
         populateDataSource();
         return "report";
@@ -405,13 +405,14 @@ public class BalanceSheetReportAction extends BaseFormAction {
         balanceSheetService.populateBalanceSheet(balanceSheet);
     }
 
-    public String getUlbName() {
+    //TODO- This table is not used. Check reference and remove
+  /*  public String getUlbName() {
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);
         return " ";
-    }
+    }*/
 
     public String getCurrentYearToDate() {
         return balanceSheetService.getFormattedDate(balanceSheetService.getToDate(balanceSheet));
