@@ -442,8 +442,8 @@ boolean whereConditionAdded=false;
                 }
             }
 
-            if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
-                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
+            if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals(""))
+                  {
                 if (whereConditionAdded)
                     queryBuilder.append(" and type =:typeOfSearch ");
                 else {
@@ -488,9 +488,13 @@ boolean whereConditionAdded=false;
         
                     }
 
-            if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
-                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
-                query.setString("typeOfSearch", bcDailyCollectionReportResult.getType());
+            if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals(""))
+ {
+                if (bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)
+                        || bcDailyCollectionReportResult.getType().equalsIgnoreCase("PRIVATE")) {
+                    query.setString("typeOfSearch", "PRIVATE");
+                } else
+                    query.setString("typeOfSearch", bcDailyCollectionReportResult.getType());
             }
         }
 

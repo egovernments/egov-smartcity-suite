@@ -96,7 +96,7 @@
 						<div class="col-sm-2 add-margin">
 							<form:select path="type" 
 								data-first-option="false" cssClass="form-control">
-								<form:option value="">
+								<form:option value="ALL">
 									<spring:message code="lbl.default.all" />
 								</form:option>
 								<form:option value="PRIVATE">
