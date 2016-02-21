@@ -147,7 +147,7 @@
 					<script type="text/javascript">
 		
 		makeVoucherDetailTable();
-		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
+		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="90%"
 	 </script type="text/javascript" >
 					<div id="codescontainer"></div>
 					<br />
@@ -164,7 +164,7 @@
 			
 			makeSubLedgerTable();
 			
-			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="80%"
+			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="90%"
 		</script>
 
 					<br />
@@ -285,8 +285,8 @@ function validateJV()
 }
 	function onLoadTask()
 	{
-		loadSlFunction();
-		getSlAccountCodes()
+		//loadSlFunction();
+		//getSlAccountCodes();
 		// code- JV subtype - starts
 		document.getElementById('vType').value='<s:property value="voucherTypeBean.voucherSubType"/>';
 		if('<s:property value="voucherTypeBean.voucherSubType"/>' == 'JVGeneral' ){
@@ -296,8 +296,6 @@ function validateJV()
 			document.getElementById('voucherTypeBean.billNum').readOnly=true;
 			document.getElementById('billDate').readOnly=true;
 		}
-		document.getElementById('vouchermis.function').style.display="none";
-		document.getElementById('functionnametext').style.display="none";
 		var varVType = document.getElementById('vType').value;
 		if(varVType == 'JVGeneral' || varVType == '-1') {
 			document.getElementById('partyNameDivId').style.display='none';
