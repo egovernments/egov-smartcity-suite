@@ -4,9 +4,14 @@ $(document)
 		.ready(
 				function() {
 					usagetableContainer = $("#tblbcDailycollection");
-					
-					var reportdatatable =  usagetableContainer
-					.dataTable({
+					$('#tblbcDailycollection').hide();
+					$('#tblbcDailycollectionheader').hide();
+					$('#bcdailyCollectionReportSearch')
+							.on('click',
+									function(event) {
+								event.preventDefault();
+							
+					 usagetableContainer.dataTable({
 						type : 'GET',
 						responsive : true,
 						destroy : true,
@@ -21,7 +26,7 @@ $(document)
 							"aButtons" : [ "print" ]
 						},
 						ajax : {
-							url : "/ptis/reports/billcollectorDailyCollectionReportList"
+							url : "/ptis/reports/billcollectorDailyCollectionReportList?"+$("#bcDailyCollectionReportForm").serialize()
 						
 						},
 						columns : [
@@ -134,6 +139,7 @@ $(document)
 					                $("td:first", nRow).html(iDisplayIndex +1);
 					               return nRow;
 								}
+									
 					});
 					/*$('#btnsearch')
 							.on('click',
@@ -144,7 +150,67 @@ $(document)
 										
 										reportdatatable.fnSetColumnVis(1, true);
 									});*/
+					 
+					 $('#tblbcDailycollection').show();
+					 $('#tblbcDailycollectionheader').show();
+					 
+							});
+				
+					$('#region').change(function(){
+						$.ajax({
+							url: "/ptis/reports/getRegionHeirarchyByType",    
+							type: "GET",
+							data: {
+								regionName : $('#region').val(),   
+								type : 'DISTRICT'
+							},
+							dataType: "json",
+							success: function (response) {
+								console.log("success"+response);
+								$('#districtId').empty();
+								$('#districtId').append($("<option value=''>All</option>"));
+								$('#cityId').empty();
+								$('#cityId').append($("<option value=''>All</option>"));
+								
+								$.each(response, function(index, value) {
+									$('#districtId').append($('<option>').text(value.name).attr('value', value.name));
+								});
+								
+							}, 
+							error: function (response) {
+								
+								console.log("failed");
+							}
+						});
+					});
+					
+					$('#districtId').change(function(){
+						$.ajax({
+							url: "/ptis/reports/getRegionHeirarchyByType",    
+							type: "GET",
+							data: {
+								regionName : $('#districtId').val(),   
+								type : 'CITY'
+							},
+							dataType: "json",
+							success: function (response) {
+								console.log("success"+response);
+								$('#cityId').empty();
+								$('#cityId').append($("<option value=''>All</option>"));
+								$.each(response, function(index, value) {
+									$('#cityId').append($('<option>').text(value.name).attr('value', value.name));
+								});
+								
+							}, 
+							error: function (response) {
+								console.log("failed");
+							}
+						});
+					});
+					
+				
 				});
+
 
 function averageTotalFooter(colidx, api,totalsize) { 
 	// Remove the formatting to get integer data for summation

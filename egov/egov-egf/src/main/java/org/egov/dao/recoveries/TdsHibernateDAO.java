@@ -97,7 +97,7 @@ public class TdsHibernateDAO extends GenericHibernateDAO
     {
         session = HibernateUtil.getCurrentSession();
         final Query qry = session
-                .createQuery("from Recovery tds where tds.isactive=1 and tds.effectivefrom<=:estimateDate order by upper(type)");
+                .createQuery("from Recovery tds where tds.isactive=true and tds.effectivefrom<=:estimateDate order by upper(type)");
         qry.setString("estimateDate", estimateDate);
         return qry.list();
     }
@@ -120,7 +120,7 @@ public class TdsHibernateDAO extends GenericHibernateDAO
     public List<Recovery> getAllActiveAutoRemitTds()
     {
         session = HibernateUtil.getCurrentSession();
-        final Query qry = session.createQuery("from Recovery where isactive=1 and remittanceMode='A'   order by upper(type)");
+        final Query qry = session.createQuery("from Recovery where isactive=true and remittanceMode='A'   order by upper(type)");
         return qry.list();
     }
 
@@ -128,7 +128,7 @@ public class TdsHibernateDAO extends GenericHibernateDAO
     {
         session = HibernateUtil.getCurrentSession();
         final Query qry = session
-                .createQuery("from Recovery where isactive=1 and isEarning is null or isEarning='0' order by upper(type)");
+                .createQuery("from Recovery where isactive=true and isEarning is null or isEarning='0' order by upper(type)");
         return qry.list();
     }
 
@@ -140,7 +140,7 @@ public class TdsHibernateDAO extends GenericHibernateDAO
         session = HibernateUtil.getCurrentSession();
         final StringBuffer qryStr = new StringBuffer();
         List<Recovery> tdsList = null;
-        qryStr.append("from Recovery tds where tds.isactive=1 ");
+        qryStr.append("from Recovery tds where tds.isactive=true ");
         qry = session.createQuery(qryStr.toString());
 
         if (egPartytype != null)

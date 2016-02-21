@@ -131,6 +131,103 @@
 	</tr>
 	</table>
 </s:if>
+<s:if test="%{ inWorkflowTDS.size()>0}">
+	<br />
+	<br />
+	<table width="99%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td colspan="7">
+				<div class="subheadsmallnew">
+					<strong>Deduction remittance in workflow </strong>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="blueborderfortd">
+				<div>
+					<table width="100%" border="0" cellpadding="0" cellspacing="0"
+						class="tablebottom">
+						<tr>
+							<th class="bluebgheadtd">Sl No</th>
+							<th class="bluebgheadtd">Voucher Type</th>
+							<th class="bluebgheadtd">Reference Number</th>
+							<th class="bluebgheadtd">Voucher Date</th>
+							<th class="bluebgheadtd">Party Name</th>
+							<th class="bluebgheadtd">PAN Number</th>
+							<th class="bluebgheadtd">Payment Voucher</th>
+							<th class="bluebgheadtd">Remitted On</th>
+							<th class="bluebgheadtd">Payment Amount</th>
+							<th class="bluebgheadtd">Cheque Number</th>
+							<th class="bluebgheadtd">Drawn On</th>
+							<th class="bluebgheadtd">Cheque Amount(Rs)</th>
+						</tr>
+						<s:iterator value="inWorkflowTDS" status="stat" var="p">
+							<tr>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="#stat.index+1" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="natureOfDeduction" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="voucherNumber" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="voucherDate" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="partyName" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="panNo" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="paymentVoucherNumber" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="remittedOn" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="right">
+										<s:text name="format.number">
+											<s:param name="value" value="amount" />
+										</s:text>
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="chequeNumber" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="left">
+										<s:property value="drawnOn" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="right">
+										<s:if test="%{#p.chequeAmount != null}">
+											<s:text name="format.number">
+												<s:param name="value" value="chequeAmount" />
+											</s:text>&nbsp;
+						</s:if>
+										<s:else>0.00</s:else>
+									</div></td>
+							</tr>
+						</s:iterator>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+	</td>
+	</tr>
+	</table>
+</s:if>
 <s:if test="%{showRemittedEntries==true && remittedTDS.size()>0}">
 	<br />
 	<br />
@@ -229,11 +326,11 @@
 	</table>
 </s:if>
 <s:if
-	test="%{pendingTDS.size()<=0  && remittedTDS.size()<=0}">
+	test="%{pendingTDS.size()<=0  && remittedTDS.size()<=0 && inWorkflowTDS.size()<=0}">
 No pending deduction found
 </s:if>
 <s:if
-	test="%{pendingTDS.size()>0 || showRemittedEntries==true && remittedTDS.size()>0}">
+	test="%{pendingTDS.size()>0 || (showRemittedEntries==true && remittedTDS.size()>0) || inWorkflowTDS.size()>0 }">
 	<div class="buttonbottom" align="center">
 		Export Options: <label onclick="exportXls()"><a
 			href='javascript:void(0);'>Excel</a></label> | <label onclick="exportPdf()"><a

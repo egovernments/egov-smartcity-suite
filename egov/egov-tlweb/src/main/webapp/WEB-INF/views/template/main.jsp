@@ -63,7 +63,6 @@
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-		<script src="<c:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>	
 	    <!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -102,5 +101,68 @@
 					</div>
 			</div>
 		</div>
+		<script>
+
+	    // jQuery plugin to prevent double submission of forms
+		jQuery.fn.preventDoubleSubmission = function() {
+		jQuery(this).on('submit',function(e){
+		    var $form = jQuery(this);
+		    if ($form.data('submitted') === true) {
+		      // Previously submitted - don't submit again
+		      e.preventDefault();
+		    } else {
+		      // Mark it so that the next submit can be ignored
+		      $form.data('submitted', true);
+		    }
+		  });
+		  // Keep chainability
+		  return this;
+		};
+
+		jQuery("form").submit(function( event ) {
+			jQuery('.loader-class').modal('show', {backdrop: 'static'});
+		});
+		
+		jQuery('form').preventDoubleSubmission();
+
+		try { 
+			jQuery(".datepicker").datepicker({
+				format: "dd/mm/yyyy",
+				autoclose: true 
+			}); 
+
+			var d = new Date();
+			var currDate = d.getDate();
+			var currMonth = d.getMonth();
+			var currYear = d.getFullYear();
+			var startDate = new Date(currYear,currMonth,currDate);
+			jQuery('.today').datepicker('setDate',startDate);
+
+			}catch(e){
+			console.warn("No Date Picker");
+		}
+
+		/*Restrict back button*/
+		history.pushState({ page: 1 }, "Title 1", "#no-back");
+		window.onhashchange = function (event) {
+		  window.location.hash = "no-back";
+		};
+
+		/*Restrict page refresh*/
+		window.document.onkeydown = function(event) { 
+		   	 switch (event.keyCode) { 
+		        case 116 : //F5 button
+		            event.returnValue = false;
+		            event.keyCode = 0;
+		            return false; 
+		        case 82 : //R button
+		            if (event.ctrlKey) { //Ctrl button
+		                event.returnValue = false; 
+		                event.keyCode = 0;  
+		                return false; 
+		            } 
+		    }
+		}
+	  </script>
     </body>
 </html>

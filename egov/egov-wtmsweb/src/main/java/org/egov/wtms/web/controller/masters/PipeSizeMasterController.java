@@ -138,6 +138,8 @@ public class PipeSizeMasterController {
                     redirectAttrs.addFlashAttribute("propertyPipeSize", propertypipeSizeobj);
                 } else {
                     pipesize.setActive(true);
+                    double pipeSizeininch=pipesize.getSizeInMilimeter()*0.039370;
+                    pipesize.setSizeInInch(Math.round(pipeSizeininch * 1000.0) / 1000.0);
                     pipeSizeService.createPipeSize(pipesize);
                     propertyPipeSizeService.createPropertyPipeSize(propertyPipeSize);
                     redirectAttrs.addFlashAttribute("propertyPipeSize", propertyPipeSize);
@@ -148,7 +150,7 @@ public class PipeSizeMasterController {
                 resultBinder.rejectValue("pipeSize.sizeInMilimeter", "invalid.size");
                 return "pipesize-master";
             }
-            model.addAttribute("message", "Property PipeSize Data created successfully");
+            model.addAttribute("message", "H.S.C Pipe Size Data Created Successfully");
         }
 
         return "pipesize-master-success";

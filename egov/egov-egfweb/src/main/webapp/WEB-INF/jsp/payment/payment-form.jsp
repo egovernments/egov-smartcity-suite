@@ -246,9 +246,21 @@
 																		list="dropdownData.bankaccountList" listKey="id"
 																		listValue="accountnumber+'---'+accounttype"
 																		headerKey="-1" headerValue="----Choose----"
+																		onChange="populateAvailableBalance(this);"
 																		value="%{bankaccount}" /></td>
-																<egov:updatevalues id="balance" fields="['Text']"
+																<egov:updatevalues id="availableBalance"
+																	fields="['Text']"
 																	url="payment/payment-ajaxGetAccountBalance.action" />
+															</tr>
+															<tr id="bankbalanceRow">
+																<td class="bluebox">&nbsp;</td>
+																<td class="bluebox">&nbsp;</td>
+																<td class="bluebox">&nbsp;</td>
+																<td class="bluebox" width="15%"><strong><s:text
+																			name="payment.balance" />(Rs)</strong></td>
+																<td class="bluebox" colspan="4"><s:textfield
+																		name="availableBalance" id="availableBalance"
+																		readonly="true" style="text-align:right" /></td>
 															</tr>
 														</s:else>
 														<tr>
@@ -502,9 +514,49 @@
 			document.getElementById('grandTotal').value = vFinalGrandTotal.toFixed(vFixedDecimal);
 			document.getElementById('paymentAmountspan').innerHTML = document.getElementById('grandTotal').value;
 		}
-		
-		
-		
+
+
+		function populateAvailableBalance(accnumObj) 
+		{
+					if (document.getElementById('voucherdate').value == '') {
+						bootbox.alert("Please Select the Voucher Date!!");
+						accnumObj.options.value = -1;
+						return;
+					}
+					if (accnumObj.options[accnumObj.selectedIndex].value == -1)
+						document.getElementById('availableBalance').value = '';
+					else
+						populateavailableBalance({
+							bankaccount : accnumObj.options[accnumObj.selectedIndex].value,
+							voucherDate : document.getElementById('voucherdate').value
+									+ '&date=' + new Date()
+						});
+
+		}
+		var callback = {
+				success : function(o) {
+				console.log("success");
+				document.getElementById('availableBalance').value = o.responseText;
+				},
+				failure : function(o) {
+					console.log("failed");
+				}
+		}
+		function balanceCheck() {
+
+			if (document.getElementById('availableBalance')) {
+				console.log("ins did");
+				console.log(parseFloat(document.getElementById('grandTotal').value));
+				console.log(parseFloat(document.getElementById('availableBalance').value));
+				
+				if(parseFloat(document.getElementById('grandTotal').value)>parseFloat(document.getElementById('availableBalance').value))
+				{
+					console.log("ins 44");
+					return false;
+				}
+			}
+			return true;
+		}
 		function onSubmit()
 		{
 			if(dom.get('vouchernumber') && dom.get('vouchernumber').value=='')
@@ -548,9 +600,24 @@
 					}
 				}
 			</s:if>
-			document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
-			document.forms[0].submit();
-			return true;
+			if(!balanceCheck()){
+				bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
+					  if(result)
+						  {
+						  	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+							document.forms[0].submit();
+						  }
+					  else
+						  {
+						  console.log("else");
+						  }
+					}); 
+			}else{
+				document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+				document.forms[0].submit();
+				}
+			
+			return false;
 		}
 		function checkLength(obj)
 		{

@@ -105,6 +105,7 @@ public abstract class ReportService {
         return new ArrayList<Fund>();
     }
 
+    //TODO- find the api for this in COA hibernate dao
     public String getGlcodeForPurposeCode(final Integer purposeId) {
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
                 "select majorcode from chartofaccounts where purposeid="
@@ -128,7 +129,7 @@ public abstract class ReportService {
                 && balanceSheet.getFunction().getId() != 0)
             query = query + " and g.functionid="
                     + balanceSheet.getFunction().getId().toString();
-        if (balanceSheet.getFunctionary() != null
+        /*if (balanceSheet.getFunctionary() != null
                 && balanceSheet.getFunctionary().getId() != null
                 && balanceSheet.getFunctionary().getId() != 0)
             query = query + " and mis.functionaryid="
@@ -137,7 +138,7 @@ public abstract class ReportService {
                 && balanceSheet.getField().getId() != null
                 && balanceSheet.getField().getId() != 0)
             query = query + " and mis.divisionid="
-                    + balanceSheet.getField().getId().toString();
+                    + balanceSheet.getField().getId().toString();*/
         if (balanceSheet.getFund() != null
                 && balanceSheet.getFund().getId() != null
                 && balanceSheet.getFund().getId() != 0)
@@ -180,7 +181,7 @@ public abstract class ReportService {
                 && balanceSheet.getFunction().getId() != 0)
             query = query + " and ts.functionid="
                     + balanceSheet.getFunction().getId().toString();
-        if (balanceSheet.getFunctionary() != null
+/*        if (balanceSheet.getFunctionary() != null
                 && balanceSheet.getFunctionary().getId() != null
                 && balanceSheet.getFunctionary().getId() != 0)
             query = query + " and ts.functionaryid="
@@ -189,7 +190,7 @@ public abstract class ReportService {
                 && balanceSheet.getField().getId() != null
                 && balanceSheet.getField().getId() != 0)
             query = query + " and ts.divisionid="
-                    + balanceSheet.getField().getId().toString();
+                    + balanceSheet.getField().getId().toString();*/
         if (balanceSheet.getFund() != null
                 && balanceSheet.getFund().getId() != null
                 && balanceSheet.getFund().getId() != 0)
@@ -202,7 +203,7 @@ public abstract class ReportService {
         final SimpleDateFormat formatter = Constants.DDMMYYYYFORMAT1;
         return formatter.format(date);
     }
-
+//TODO- Use the common method instead
     public String getAppConfigValueFor(final String module, final String key) {
         try {
             return appConfigValuesService
@@ -271,6 +272,8 @@ public abstract class ReportService {
             final Date toDate, final Date fromDate, final String coaType, final String subReportType) {
         voucherStatusToExclude = getAppConfigValueFor("finance",
                 "statusexcludeReport");
+        //TODO- remove the below line
+        voucherStatusToExclude="4";
         final Query query = HibernateUtil
                 .getCurrentSession()
                 .createSQLQuery(
@@ -284,7 +287,7 @@ public abstract class ReportService {
                                 + getFormattedDate(toDate)
                                 + "' and v.voucherdate >='"
                                 + getFormattedDate(fromDate)
-                                + "' and substr(c.glcode,0,"
+                                + "' and substr(c.glcode,1,"
                                 + minorCodeLength
                                 + ") in "
                                 + "(select distinct coa2.glcode from chartofaccounts coa2, schedulemapping s where s.id=coa2.scheduleid and "
@@ -323,7 +326,7 @@ public abstract class ReportService {
         } else
             financialYear = statement.getFinancialYear();
         return financialYear.getStartingDate();
-    }
+       }
 
     public Date getToDate(final Statement statement) {
         if ("Date".equalsIgnoreCase(statement.getPeriod())
@@ -342,6 +345,7 @@ public abstract class ReportService {
             return calendar.getTime();
         }
         return statement.getFinancialYear().getEndingDate();
+        
     }
 
     void addFundAmount(final StatementEntry entry, final Map<String, BigDecimal> fundTotals) {
@@ -401,14 +405,16 @@ public abstract class ReportService {
     }
 
     protected void populateSchedule(final Statement statement, final String reportSubType) {
+        //TODO change the query parameter
         final Query query = HibernateUtil
                 .getCurrentSession()
                 .createSQLQuery(
                         "select c.majorcode,s.schedulename,s.schedule from chartofaccounts c,schedulemapping s "
                                 + "where s.id=c.scheduleid and s.reporttype = '"
                                 + reportSubType
-                                + "' and c.type in(:coaType) group by c.majorcode,s.schedulename,s.schedule ORDER BY c.majorcode")
-                                .setParameter("coaType", coaType);
+                                + "' and c.type in('A','L') group by c.majorcode,s.schedulename,s.schedule ORDER BY c.majorcode");
+                              //  .setParameter("coaType", coaType);
+        //TODO- change the query
         final List<Object[]> scheduleList = query.list();
         for (final Object[] obj : scheduleList)
             for (int index = 0; index < statement.size(); index++) {

@@ -41,7 +41,6 @@
 package org.egov.tl.service.integration;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -88,7 +87,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -96,6 +94,8 @@ import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.TradeLicenseSmsAndEmailService;
+import org.egov.tl.service.TradeLicenseUpdateIndexService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.elasticsearch.common.joda.time.DateTime;
@@ -134,6 +134,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     private AssignmentService assignmentService;
+    
+    private TradeLicenseUpdateIndexService updateIndexService;
+    
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
 
     @Autowired
     private EgBillDao egBillDao;
@@ -175,7 +179,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         EgDemandDetails penaltyDemandDetail = null;
         Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
         if ("New".equals(license.getLicenseAppType().getName()))
-            installmentPenalty = billable.getCalculatedPenalty(license.getStartDate(), new Date(),
+            installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(),
                     license.getCurrentDemand().getBaseDemand(), currInstallment);
         else if ("Renew".equals(license.getLicenseAppType().getName()))
             installmentPenalty = billable.getCalculatedPenalty(license.getDateOfExpiry(), new Date(),
@@ -399,30 +403,17 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                         + rcptAccInfo.getCrAmount());
                         }
 
-                final StringBuilder smsMsg = new StringBuilder();
-                final StringBuilder emailSubject = new StringBuilder();
-                demand.setAmtCollected(amtCollected);
-                // persistenceService.update(demand);
+               //demand.setAmtCollected(amtCollected);
+                //persistenceService.update(demand);
                 // FIXME ld.getLicense(); will be sufficient to get the license back
                 // Since collection is not working, we re query to get License object
                 // replace the below with ld.getLicense(); once collection fixed
                 final TradeLicense license = (TradeLicense) persistenceService.find("from TradeLicense where id=?",
                         ld.getLicense().getId());
-                if (license.getState() != null)
+               if (license.getState() != null)
                     updateWorkflowState(license);
-                smsMsg.append(Constants.STR_WITH_APPLICANT_NAME).append(license.getLicensee().getApplicantName())
-                .append(",").append("\n").append(Constants.STR_WITH_LICENCE_NUMBER)
-                        .append(license.getLicenseNumber()).append(Constants.STR_FOR_SUBMISSION)
-                        .append(demand.getAmtCollected()).append(Constants.STR_FOR_SUBMISSION_DATE)
-                        .append(new SimpleDateFormat("dd/MM/yyyy").format(billReceipt.getReceiptDate()))
-                        .append(Constants.STR_FOR_CITYMSG).append(EgovThreadLocals.getMunicipalityName());
-                emailSubject.append(Constants.STR_FOR_EMAILSUBJECT).append(license.getLicenseNumber());
-                if (license.getLicensee().getMobilePhoneNumber() != null && smsMsg != null)
-                    messagingService.sendSMS(license.getLicensee().getMobilePhoneNumber(), smsMsg.toString());
-                if (license.getLicensee().getEmailId() != null && smsMsg != null)
-                    messagingService.sendEmail(license.getLicensee().getEmailId(), emailSubject.toString(),
-                            smsMsg.toString());
-
+                tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(license, billReceipt.getReceiptDate(), demand.getAmtCollected());
+                updateIndexService.updateTradeLicenseIndexes(license);
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 reconcileCollForRcptCancel(demand, billReceipt);
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
@@ -441,18 +432,16 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      * update Application status and workflow
      */
     @Transactional
-    public void updateWorkflowState(final License licenseObj) {
+    public void updateWorkflowState( License licenseObj) {
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(licenseObj.getCreatedBy().getId());
         Position pos = wfInitiator.getPosition();
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
         Boolean digitalSignEnabled = licenseUtils.isDigitalSignEnabled();
         WorkFlowMatrix wfmatrix = null;
-        final EgwStatus statusChange = (EgwStatus) persistenceService.find(
-                "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
-                Constants.APPLICATION_STATUS_COLLECTION_CODE);
-        licenseObj.setEgwStatus(statusChange);
+        
         if (digitalSignEnabled) {
+            licenseObj=licenseUtils.applicationStatusChange(licenseObj,Constants.APPLICATION_STATUS_DIGUPDATE_CODE);
             pos = licenseUtils.getCityLevelCommissioner();
             if (licenseObj.getLicenseAppType() != null
                     && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
@@ -471,6 +460,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction());
             }
         } else {
+            licenseObj=licenseUtils.applicationStatusChange(licenseObj,Constants.APPLICATION_STATUS_APPROVED_CODE);
             if (licenseObj.getLicenseAppType() != null
                     && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
                 wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
@@ -487,6 +477,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         // FIXME its a collection API issue to be discussed and rectified
         persistenceService.getSession().flush();
     }
+
+   
 
     /**
      * Deducts the collected amounts as per the amount of the cancelled receipt.
@@ -884,7 +876,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return null;
     }
 
-    public void setLicenseUtils(final LicenseUtils licenseUtils) {
+    
+
+    public void setLicenseUtils(LicenseUtils licenseUtils) {
+        this.licenseUtils = licenseUtils;
     }
 
     @Override
@@ -901,5 +896,22 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     public LicenseUtils getLicenseUtils() {
         return licenseUtils;
     }
+
+    public TradeLicenseUpdateIndexService getUpdateIndexService() {
+        return updateIndexService;
+    }
+
+    public void setUpdateIndexService(TradeLicenseUpdateIndexService updateIndexService) {
+        this.updateIndexService = updateIndexService;
+    }
+
+    public TradeLicenseSmsAndEmailService getTradeLicenseSmsAndEmailService() {
+        return tradeLicenseSmsAndEmailService;
+    }
+
+    public void setTradeLicenseSmsAndEmailService(TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
+        this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
+    }
+    
 
 }

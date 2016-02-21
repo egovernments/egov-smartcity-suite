@@ -71,7 +71,6 @@ public abstract class License extends StateAware {
     protected Boundary parentBoundary;
     // this should be NatureOfBusiness only which means it is Permanent or temporary.
     protected NatureOfBusiness buildingType;
-    protected Date dateOfCreation;
     protected Date dateOfExpiry;
     protected String feeTypeStr;
     protected String inspectionDetails;
@@ -123,11 +122,11 @@ public abstract class License extends StateAware {
     private BigDecimal tradeArea_weight;
 
     private boolean legacy;
-    private Date startDate;
+    private Date commencementDate;
+            
     private Date agreementDate;
     private String agreementDocNo;
     private FileStoreMapper fileStore;
-
 
     public abstract String generateApplicationNumber(String runningNumber);
 
@@ -177,14 +176,6 @@ public abstract class License extends StateAware {
 
     public void setCompanyDetails(final String companyDetails) {
         this.companyDetails = companyDetails;
-    }
-
-    public Date getDateOfCreation() {
-        return dateOfCreation;
-    }
-
-    public void setDateOfCreation(final Date dateOfCreation) {
-        this.dateOfCreation = dateOfCreation;
     }
 
     public Date getDateOfExpiry() {
@@ -563,12 +554,12 @@ public abstract class License extends StateAware {
     }
 
     @Audited
-    public Date getStartDate() {
-        return startDate;
+    public Date getCommencementDate() {
+        return commencementDate;
     }
 
-    public void setStartDate(final Date startDate) {
-        this.startDate = startDate;
+    public void setCommencementDate(final Date commencementDate) {
+        this.commencementDate = commencementDate;
     }
 
     public EgwStatus getEgwStatus() {
@@ -604,7 +595,7 @@ public abstract class License extends StateAware {
     public void setAgreementDocNo(final String agreementDocNo) {
         this.agreementDocNo = agreementDocNo;
     }
-    
+
     public void updateStatus(final LicenseStatus currentStatus) {
         setStatus(currentStatus);
         final LicenseStatusValues statusValues = new LicenseStatusValues();
@@ -640,7 +631,7 @@ public abstract class License extends StateAware {
         }
         return totBal;
     }
-    
+
     public boolean isStateRejected() {
         return getState() != null && getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED);
     }
@@ -649,9 +640,8 @@ public abstract class License extends StateAware {
         return fileStore;
     }
 
-    public void setFileStore(FileStoreMapper fileStore) {
+    public void setFileStore(final FileStoreMapper fileStore) {
         this.fileStore = fileStore;
     }
-    
 
 }

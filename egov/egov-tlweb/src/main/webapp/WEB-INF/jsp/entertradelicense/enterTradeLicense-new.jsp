@@ -92,11 +92,11 @@
 											    <div class="col-sm-3 add-margin">
 											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="100" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
 											    </div>
-											    <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
+											    <%-- <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
 											     <div class="col-sm-3 add-margin">
 											      	<s:date name="dateOfCreation" id="dateOfCreationformat" format="dd/MM/yyyy" />
 													<s:textfield  name="dateOfCreation" id="dateOfCreation" class="form-control datepicker" data-date-end-date="0d" maxlength="10" size="10" value="%{dateOfCreationformat}" />
-											   </div> 
+											   </div>  --%>
 											</div>		
                                              <%@ include file='../common/licensee.jsp'%>
 	                                         <%@ include file='../common/address.jsp'%>
@@ -178,11 +178,11 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.oldlicensenumber.null" />');
 					document.getElementById("oldLicenseNumber").focus();
 					return false;
-				} else if (document.getElementById("dateOfCreation").value == '' || document.getElementById("dateOfCreation").value == null){
+				}/*  else if (document.getElementById("dateOfCreation").value == '' || document.getElementById("dateOfCreation").value == null){
 					showMessage('enterLicense_error', '<s:text name="newlicense.dateofcreation.null" />');
 					document.getElementById("dateOfCreation").focus();
 					return false;
-				} else if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
+				}  */else if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
 					showMessage('enterLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
 					document.getElementById("mobilePhoneNumber").focus();
 					return false;

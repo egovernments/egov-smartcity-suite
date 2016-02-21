@@ -77,17 +77,17 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.hscpipesize.inches" /><span class="mandatory"></span></label>
+			code="lbl.hscpipesize.inches" /></label>
 	<div class="col-sm-3 add-margin" >
-					<form:input class="form-control" title="It will allow upto 4 digits and upto 3 decimal points" pattern="\d{0,4}\.\d{0,3}"  maxlength="50" id="pipesizeInInch"
-						path="pipeSize.sizeInInch" required="required" />
+					<form:input class="form-control"  id="pipesizeInInch"
+						path="pipeSize.sizeInInch" />
 					<form:errors path="pipeSize.sizeInInch"
 						cssClass="add-margin error-msg" />
 				</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.hscpipesize.mm" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin" >
-					<form:input class="form-control" title="It will allow upto 4 digits and 3 decimal points" pattern="\d{0,4}\.\d{0,3}" maxlength="50" id="pipesizeid"
+					<form:input class="form-control" title="It will allow upto 4 digits and 3 decimal points" pattern="\d{0,4}(\.\d{0,3})?" maxlength="50" id="pipesizeid"
 						path="pipeSize.sizeInMilimeter" required="required" />
 					<form:errors path="pipeSize.sizeInMilimeter"
 						cssClass="add-margin error-msg" />

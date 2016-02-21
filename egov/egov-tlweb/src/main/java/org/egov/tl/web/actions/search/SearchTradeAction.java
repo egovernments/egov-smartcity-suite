@@ -61,10 +61,10 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.utils.Constants;
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -126,10 +126,10 @@ public class SearchTradeAction extends BaseFormAction {
     public void search() throws IOException {
         List<SearchForm> resultList = new ArrayList<SearchForm>();
         String result = null;
-        final Query query = tradeLicenseService
-                .prepareQueryforSearchTrade(applicationNumber, licenseNumber, oldLicenseNumber, categoryId, subCategoryId,
+        List<TradeLicense> licenses = tradeLicenseService
+                .searchTradeLicense(applicationNumber, licenseNumber, oldLicenseNumber, categoryId, subCategoryId,
                         tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo);
-        resultList = prepareOutput(query.list());
+        resultList = prepareOutput(licenses);
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
         result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
@@ -154,7 +154,7 @@ public class SearchTradeAction extends BaseFormAction {
      * @param licenseList
      * @return
      */
-    private List<SearchForm> prepareOutput(final List<License> licenseList) {
+    private List<SearchForm> prepareOutput(final List<? extends License> licenseList) {
         final List<SearchForm> finalList = new LinkedList<SearchForm>();
         SearchForm searchFormInfo;
         List<String> licenseActions;
@@ -172,12 +172,13 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
             licenseActions = new ArrayList<String>();
             licenseActions.add("View Trade");
-            if (license.getStatus() != null) {
+            //FIXME EgwStatus usage should be removed from here
+            if (license.getEgwStatus() != null) {
                 if (!license.isPaid() && !license.isStateRejected()
-                        && (license.getEgwStatus() != null && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_APPROVED_CODE) 
-                                || (license.isLegacy() && license.getStatus().getStatusCode().equals(Constants.STATUS_ACTIVE))))
+                         && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Collect Fees");
-                else if (license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+                else if ( license.getStatus() != null
+                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE))
                     licenseActions.add("Print Certificate");
             } else if (license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");

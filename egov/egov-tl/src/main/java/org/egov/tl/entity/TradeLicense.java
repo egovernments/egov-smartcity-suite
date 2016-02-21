@@ -122,8 +122,8 @@ public class TradeLicense extends License {
         if (getTradeName().isNocApplicable() != null && getTradeName().isNocApplicable()) {
             final Calendar instance = Calendar.getInstance();
             final Date newDate = new Date();
-            if (getDateOfCreation() != null) {
-                instance.setTime(getDateOfCreation());
+            if (getCommencementDate() != null) {
+                instance.setTime(getCommencementDate());
                 instance.add(Calendar.MONTH, 10);
                 if (newDate.before(instance.getTime()))
                     disablePrintCert = true;

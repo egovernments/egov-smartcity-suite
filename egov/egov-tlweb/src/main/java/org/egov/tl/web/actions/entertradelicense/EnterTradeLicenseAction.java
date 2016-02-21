@@ -108,11 +108,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/entertradelicense/enterTradeLicense-enterExisting")
     public String create() {
-        try {
-            return super.enterExisting(tradeLicense, legacyInstallmentwiseFees);
-        } catch (final ApplicationRuntimeException e) {
-            throw new ValidationException("oldLicenseNumber", e.getMessage(), tradeLicense.getOldLicenseNumber());
-        }
+        return super.enterExisting(tradeLicense, legacyInstallmentwiseFees);
     }
 
     @SkipValidation

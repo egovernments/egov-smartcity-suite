@@ -162,6 +162,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     @Qualifier("mastersService")
     private MastersService masters;
+    @Autowired
+    @Qualifier("eGovernCommon")
+    private EGovernCommon eGovernCommon;
     private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     public static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     @Autowired
@@ -527,7 +530,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     public CVoucherHeader getUpdatedVNumCGVN(final CVoucherHeader existingVH, final CVoucherHeader voucherHeader,
             String voucherNumType) {
         // CommonMethodsI cmImpl=new CommonMethodsImpl();
-        final EGovernCommon eGovernCommon = new EGovernCommon();
+       
         String autoVoucherType = null;
         if (voucherNumType.equalsIgnoreCase("Journal Voucher"))
             voucherNumType = "Journal";
