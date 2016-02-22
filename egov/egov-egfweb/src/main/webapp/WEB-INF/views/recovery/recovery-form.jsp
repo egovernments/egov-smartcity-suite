@@ -10,7 +10,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.recoverycode" /> <span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="type" required="required"
+							<form:input path="type" required="required" id="type"
 								class="form-control mandatory text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="20" />
 							<form:errors path="type" cssClass="error-msg" />
@@ -28,9 +28,8 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.accountDetailType" /> <span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="egPartytype.id"
-								id="egPartytype" required="required"
-								cssClass="form-control mandatory"
+							<form:select path="egPartytype.id" id="egPartytype"
+								required="required" cssClass="form-control mandatory"
 								cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.select" />
@@ -45,7 +44,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:select path="chartofaccounts.id" id="chartofaccounts"
 								required="required" cssClass="form-control mandatory"
-								cssErrorClass="form-control error" >
+								cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -75,7 +74,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.bank" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="bank.id" id="bank.id" cssClass="form-control"
+							<form:select path="bank.id" id="bank" cssClass="form-control"
 								cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.select" />
@@ -122,8 +121,8 @@
 							<form:errors path="description" cssClass="error-msg" />
 						</div>
 					</div>
-					<input type="hidden" name="recovery" value="${recovery.id}" />
-					<input type="hidden" name="recoveryMode" value="M" />
+					<input type="hidden" name="recovery" value="${recovery.id}" /> <input
+						type="hidden" name="recoveryMode" value="M" />
 				</div>
 			</div>
 		</div>

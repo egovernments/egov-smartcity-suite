@@ -63,7 +63,7 @@
 function printVoucher()
 {
 	
-		document.forms[0].action="journalVoucherPrint!print.action";		
+		document.forms[0].action="journalVoucherPrint-print.action";		
 	
 	document.forms[0].submit();
 }

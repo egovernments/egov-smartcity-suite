@@ -20,8 +20,10 @@
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
-									<form:options items="${chartOfAccounts}" itemValue="id"
-										itemLabel="name" />
+									<c:forEach var="chartOfAccounts" items="${chartOfAccounts}">
+										<option value="${chartOfAccounts.id}"
+											label="${chartOfAccounts.glcode} -  ${chartOfAccounts.name}" />
+									</c:forEach>
 								</form:select>
 								<form:errors path="chartofaccounts" cssClass="error-msg" />
 							</div>
