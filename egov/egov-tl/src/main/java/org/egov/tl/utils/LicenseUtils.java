@@ -767,8 +767,14 @@ public class LicenseUtils {
         final Designation desgnObj = designationService.getDesignationByName("Commissioner");
 
         List<Assignment> assignlist = null;
+        if(deptObj !=null && !"".equals(deptObj))
         assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),
                 new Date());
+       if(assignlist.isEmpty())
+            assignlist=    assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null, desgnObj.getId(), new Date());
+       if(assignlist.isEmpty())
+           assignlist=assignmentService.getAllActiveAssignments(desgnObj.getId());
+      
         pos = !assignlist.isEmpty() ? assignlist.get(0).getPosition() : null;
         return pos;
     }
