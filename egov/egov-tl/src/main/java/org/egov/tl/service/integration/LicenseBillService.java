@@ -59,7 +59,6 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
@@ -84,6 +83,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -122,6 +122,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     private SimpleWorkflowService<License> transferWorkflowService;
+    
+    @Autowired
+    private ModuleService moduleService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -167,12 +170,15 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>();
         final LicenseBill billable = (LicenseBill) billObj;
         // final Set<LicenseDemand> demands = this.license.getDemandSet();
-        final EgDemand demand = license.getCurrentDemand();
+       final EgDemand demand = license.getCurrentDemand();
         final Date currentDate = new Date();
         final Map installmentWise = new HashMap<Installment, List<EgDemandDetails>>();
         final Set<Installment> sortedInstallmentSet = new TreeSet<Installment>();
         final DemandComparatorByOrderId demandComparatorByOrderId = new DemandComparatorByOrderId();
-        final Module module = license.getTradeName().getLicenseType().getModule();
+         Module module = (license.getTradeName()!=null && license.getTradeName().getLicenseType()!=null ?
+                license.getTradeName().getLicenseType().getModule():null);
+        if(module ==null)
+            module=moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME);
         final Installment currInstallment = getCurrentInstallment(module);
         final List<EgDemandDetails> orderedDetailsList = new ArrayList<EgDemandDetails>();
         Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
