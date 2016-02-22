@@ -408,7 +408,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                .get(0);
+                                .get(0);
     }
 
     /**
@@ -663,24 +663,24 @@ public class CollectionsUtil {
         if (contraJournalVoucherObj.getVoucherHeaderId() == null) {
             if (department.getCode().equals('R'))
                 designations = persistenceService
-                        .findAllBy(
-                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
-                                departmentId, "REVENUE INSPECTOR");
+                .findAllBy(
+                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
+                        departmentId, "REVENUE INSPECTOR");
             else
                 designations = persistenceService
-                        .findAllBy(
-                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                                departmentId);
+                .findAllBy(
+                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                        departmentId);
         } else if (department.getCode().equals("CAF"))
             designations = persistenceService
-                    .findAllBy(
-                            "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
-                            "CAF", "SENIOR GRADE CLERK");
+            .findAllBy(
+                    "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
+                    "CAF", "SENIOR GRADE CLERK");
         else
             designations = persistenceService
-                    .findAllBy(
-                            "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                            departmentId);
+            .findAllBy(
+                    "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                    departmentId);
         return designations;
     }
 
@@ -738,7 +738,7 @@ public class CollectionsUtil {
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-eportal.xml",
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-ptis.xml",
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-erpcollections.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-bpa.xml" });
+        "classpath*:org/egov/infstr/beanfactory/applicationContext-bpa.xml" });
         final BillingIntegrationService billingService = (BillingIntegrationService) applicationContext.getBean(code
                 + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService;
@@ -797,7 +797,7 @@ public class CollectionsUtil {
 
         final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(receiptHeader.getReceiptdate(),
                 receiptHeader.getReceiptnumber(), billingService.getName(), receiptHeader.getReceiptInstrument()
-                .iterator().next().getInstrumentType().getType(), receiptHeader.getTotalAmount(),
+                        .iterator().next().getInstrumentType().getType(), receiptHeader.getTotalAmount(),
                 receiptHeader.getSource(),
                 receiptHeader.getStatus().getDescription()
                 );
@@ -826,10 +826,10 @@ public class CollectionsUtil {
         collectionIndexBuilder.penaltyAmount(receiptAmountInfo.getPenaltyAmount());
         collectionIndexBuilder.arrearCess(receiptAmountInfo.getArrearCess());
         collectionIndexBuilder.currentCess(receiptAmountInfo.getCurrentCess());
-        if (receiptAmountInfo.getInstallmentFromDate() != null)
-            collectionIndexBuilder.installmentFromDate(receiptAmountInfo.getInstallmentFromDate());
-        if (receiptAmountInfo.getInstallmentToDate() != null)
-            collectionIndexBuilder.installmentToDate(receiptAmountInfo.getInstallmentToDate());
+        if (receiptAmountInfo.getInstallmentFrom() != null)
+            collectionIndexBuilder.installmentFrom(receiptAmountInfo.getInstallmentFrom());
+        if (receiptAmountInfo.getInstallmentTo() != null)
+            collectionIndexBuilder.installmentTo(receiptAmountInfo.getInstallmentTo());
 
         return collectionIndexBuilder.build();
     }
