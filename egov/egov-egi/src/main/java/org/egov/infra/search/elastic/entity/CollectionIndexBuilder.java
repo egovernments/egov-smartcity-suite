@@ -104,6 +104,31 @@ public class CollectionIndexBuilder {
         collectionIndex.setLatePaymentCharges(latePaymentCharges);
         return this;
     }
+    
+    public CollectionIndexBuilder arrearCess(final BigDecimal arrearCess) {
+        collectionIndex.setArrearCess(arrearCess);
+        return this;
+    }
+    
+    public CollectionIndexBuilder currentCess(final BigDecimal currentCess) {
+        collectionIndex.setCurrentCess(currentCess);
+        return this;
+    }
+    
+    public CollectionIndexBuilder installmentFromDate(final Date installmentFromDate) {
+        collectionIndex.setInstallmentFromDate(installmentFromDate);
+        return this;
+    }
+    
+    public CollectionIndexBuilder installmentToDate(final Date installmentToDate) {
+        collectionIndex.setInstallmentToDate(installmentToDate);
+        return this;
+    }
+    
+    public CollectionIndexBuilder payeeName(final String payeeName) {
+        collectionIndex.setPayeeName(payeeName);
+        return this;
+    }
 
     public CollectionIndex build() throws ApplicationRuntimeException {
         validate();

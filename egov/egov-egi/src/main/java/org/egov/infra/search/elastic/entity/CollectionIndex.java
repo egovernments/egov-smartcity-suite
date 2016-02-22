@@ -140,12 +140,28 @@ public class CollectionIndex extends AbstractAuditable {
 
     @NotNull
     @Length(max = 50)
-    @Searchable(group = Searchable.Group.CLAUSES)
+    @Searchable(name ="status", group = Searchable.Group.CLAUSES)
     private String status;
     
     @Searchable(name = "latepaymentcharges", group = Searchable.Group.SEARCHABLE)
     private BigDecimal latePaymentCharges;
+    
+    @Searchable(name = "arrearcess", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal arrearCess;
+    
+    @Searchable(name = "currentcess", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal currentCess;
+    
+    @Searchable(name = "installmentfromdate", group = Searchable.Group.SEARCHABLE)
+    private Date installmentFromDate;
 
+    @Searchable(name = "installmenttodate", group = Searchable.Group.SEARCHABLE)
+    private Date installmentToDate;
+    
+    @Searchable(name = "payeename", group = Searchable.Group.SEARCHABLE)
+    private String payeeName;
+
+    
     @Override
     public Long getId() {
         return id;
@@ -298,6 +314,46 @@ public class CollectionIndex extends AbstractAuditable {
 
     public void setLatePaymentCharges(BigDecimal latePaymentCharges) {
         this.latePaymentCharges = latePaymentCharges;
+    }
+
+    public BigDecimal getArrearCess() {
+        return arrearCess;
+    }
+
+    public void setArrearCess(BigDecimal arrearCess) {
+        this.arrearCess = arrearCess;
+    }
+
+    public BigDecimal getCurrentCess() {
+        return currentCess;
+    }
+
+    public void setCurrentCess(BigDecimal currentCess) {
+        this.currentCess = currentCess;
+    }
+
+    public Date getInstallmentFromDate() {
+        return installmentFromDate;
+    }
+
+    public void setInstallmentFromDate(Date installmentFromDate) {
+        this.installmentFromDate = installmentFromDate;
+    }
+
+    public Date getInstallmentToDate() {
+        return installmentToDate;
+    }
+
+    public void setInstallmentToDate(Date installmentToDate) {
+        this.installmentToDate = installmentToDate;
+    }
+
+    public String getPayeeName() {
+        return payeeName;
+    }
+
+    public void setPayeeName(String payeeName) {
+        this.payeeName = payeeName;
     }
 
 }

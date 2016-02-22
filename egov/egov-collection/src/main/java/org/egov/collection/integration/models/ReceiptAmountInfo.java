@@ -40,6 +40,7 @@
 package org.egov.collection.integration.models;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ReceiptAmountInfo {
     private BigDecimal arrearsAmount =  BigDecimal.ZERO;
@@ -48,7 +49,12 @@ public class ReceiptAmountInfo {
     private BigDecimal currentInstallmentAmount =  BigDecimal.ZERO;
     private BigDecimal advanceAmount =  BigDecimal.ZERO;
     private BigDecimal latePaymentCharges =  BigDecimal.ZERO;
-
+    private BigDecimal arrearCess =  BigDecimal.ZERO;
+    private BigDecimal currentCess =  BigDecimal.ZERO;
+    private Date installmentFromDate;
+    private Date installmentToDate;
+    
+    
     public BigDecimal getArrearsAmount() {
         return arrearsAmount;
     }
@@ -108,6 +114,62 @@ public class ReceiptAmountInfo {
      */
     public void setLatePaymentCharges(BigDecimal latePaymentCharges) {
         this.latePaymentCharges = latePaymentCharges;
+    }
+
+    /**
+     * @return the arrearCess
+     */
+    public BigDecimal getArrearCess() {
+        return arrearCess;
+    }
+
+    /**
+     * @param arrearCess the arrearCess to set
+     */
+    public void setArrearCess(BigDecimal arrearCess) {
+        this.arrearCess = arrearCess;
+    }
+
+    /**
+     * @return the currentCess
+     */
+    public BigDecimal getCurrentCess() {
+        return currentCess;
+    }
+
+    /**
+     * @param currentCess the currentCess to set
+     */
+    public void setCurrentCess(BigDecimal currentCess) {
+        this.currentCess = currentCess;
+    }
+
+    /**
+     * @return the installmentFromDate
+     */
+    public Date getInstallmentFromDate() {
+        return installmentFromDate;
+    }
+
+    /**
+     * @param installmentFromDate the installmentFromDate to set
+     */
+    public void setInstallmentFromDate(Date installmentFromDate) {
+        this.installmentFromDate = installmentFromDate;
+    }
+
+    /**
+     * @return the installmentToDate
+     */
+    public Date getInstallmentToDate() {
+        return installmentToDate;
+    }
+
+    /**
+     * @param installmentToDate the installmentToDate to set
+     */
+    public void setInstallmentToDate(Date installmentToDate) {
+        this.installmentToDate = installmentToDate;
     }
 
 }
