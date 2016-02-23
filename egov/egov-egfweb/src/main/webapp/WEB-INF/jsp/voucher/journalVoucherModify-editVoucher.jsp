@@ -248,8 +248,8 @@ function validateJV()
 	var currDate = cDate.getDate()+"/"+(parseInt(cDate.getMonth())+1)+"/"+cDate.getYear();
 	var vhDate=document.getElementById('voucherDate').value;
 	var VhType= document.getElementById('vType').value;
-	var typeDate=document.getElementById('worksVoucherRestrictedDate').value;
-	var restrictionDate = typeDate.split(",")
+	/* var typeDate=document.getElementById('worksVoucherRestrictedDate').value;
+	var restrictionDate = typeDate.split(",") */
 
 	if(vhDate == '' )	{
 		document.getElementById('lblError').innerHTML = "Please enter a voucher date ";
@@ -258,7 +258,7 @@ function validateJV()
 	}
 
 	//bootbox.alert("---"+VhType);
-	if(VhType=='Works'){
+	/* if(VhType=='Works'){
 		var chkd1=vhDate.split('/');
 		var chkd2=restrictionDate[1].split('/');
 		var voucherDt=new Date(chkd1[2],chkd1[1]-1,chkd1[0]);
@@ -268,7 +268,7 @@ function validateJV()
 			bootbox.alert(" Cannot Modify Works JV Date to greater than "+restrictionDate[1]);
 			return false;
 		}
-	}
+	} */
 	
 	var varVType = document.getElementById('vType').value;
 	if( varVType != 'JVGeneral' && varVType != '-1' )	{
