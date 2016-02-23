@@ -174,7 +174,7 @@ public class SearchTradeAction extends BaseFormAction {
             licenseActions.add("View Trade");
             //FIXME EgwStatus usage should be removed from here
             if (license.getEgwStatus() != null) {
-                if (!license.isPaid() && !license.isStateRejected()
+                if ((roleName.contains(Constants.ROLE_BILLCOLLECTOR)) && !license.isPaid() && !license.isStateRejected()
                          && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Collect Fees");
                 else if ( license.getStatus() != null
