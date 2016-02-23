@@ -55,10 +55,12 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.entity.LicenseType;
 import org.egov.tl.entity.RateTypeEnum;
 import org.egov.tl.service.FeeMatrixService;
 import org.egov.tl.service.FeeTypeService;
@@ -86,7 +88,9 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	public static final String VIEW = "view";
 	private Map<Long, String> licenseCategoryMap;
 	private Map<Long, String> licenseSubCategoryMap;
-
+	@Autowired
+	@Qualifier("persistenceService")
+	private PersistenceService persistenceService;
 	@Autowired
 	@Qualifier("licenseSubCategoryService")
 	private LicenseSubCategoryService licenseSubCategoryService;
@@ -212,6 +216,8 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 			if(categoryId!=null){
 				subCategory.setCategory(licenseCategoryService.findById(categoryId));
 			}
+			LicenseType licenseType=(LicenseType)persistenceService.find("from org.egov.tl.entity.LicenseType where name=?", Constants.TRADELICENSE);
+			subCategory.setLicenseType(licenseType);
 			subCategory.getLicenseSubCategoryDetails().clear();
 			populateSubCategoryDetails();
 			subCategory = licenseSubCategoryService.create(subCategory);
