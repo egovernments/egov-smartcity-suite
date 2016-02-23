@@ -208,7 +208,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("licencenumber", license.getLicenseNumber());
         reportParams.put("wardName", license.getBoundary().getName());
         reportParams.put("cscNumber", "");
-        reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
+        reportParams.put("nameOfEstablishment", (license.getNameOfEstablishment() !=null ? license.getNameOfEstablishment() :""));
         reportParams.put("licenceAddress", license.getAddress());
         reportParams.put("municipality", cityMunicipalityName);
         reportParams.put("district", districtName);
@@ -489,12 +489,12 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
     }
 
-    @Override
+    
     public TradeLicenseUpdateIndexService getUpdateIndexService() {
         return updateIndexService;
     }
 
-    @Override
+    
     public void setUpdateIndexService(final TradeLicenseUpdateIndexService updateIndexService) {
         this.updateIndexService = updateIndexService;
     }
