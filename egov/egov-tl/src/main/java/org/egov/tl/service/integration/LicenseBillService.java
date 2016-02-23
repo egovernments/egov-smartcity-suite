@@ -233,7 +233,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             .compareTo(demandDetail.getAmtCollected()) != 0) {
                 final EgBillDetails billdetail = new EgBillDetails();
                 final EgBillDetails billdetailRebate = new EgBillDetails();
-                if (demandDetail.getAmtRebate() != null && !demandDetail.getAmtRebate().equals(BigDecimal.ZERO)) {
+                if (demandDetail.getAmtRebate() != null && demandDetail.getAmtRebate().compareTo(BigDecimal.ZERO) != 0) {
                     final EgReasonCategory reasonCategory = demandGenericDao
                             .getReasonCategoryByCode(Constants.DEMANDRSN_REBATE);
                     final List<EgDemandReasonMaster> demandReasonMasterByCategory = demandGenericDao
@@ -568,7 +568,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             dmdDet = insertPenalty(chqBouncePenalty, ld.getLicense().getTradeName().getLicenseType().getModule());
         else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
-            existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.equals(BigDecimal.ZERO) ? existDmdDetAmt = BigDecimal.ZERO
+            existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
                     : existDmdDetAmt;
             penaltyDmdDet.setAmount(existDmdDetAmt.add(chqBouncePenalty));
             dmdDet = penaltyDmdDet;
@@ -679,7 +679,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     public EgBill updateBillForChqBounce(final BillReceiptInfo bri, final EgBill egBill, final BigDecimal totalChqAmt) {
         final BigDecimal zeroVal = BigDecimal.ZERO;
-        if (totalChqAmt != null && !totalChqAmt.equals(zeroVal) && egBill != null) {
+        if (totalChqAmt != null && totalChqAmt.compareTo(zeroVal) != 0 && egBill != null) {
             final List<EgBillDetails> billList = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
             // Reversed the list because the knocking off the amount should
             // start from current Installment to least Installment.

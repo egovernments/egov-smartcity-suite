@@ -42,28 +42,6 @@
 	<head>
 		<title><s:text name="page.title.viewtrade" /></title>
 		<sx:head />
-		<script>
-			function closethis() {
-				if (confirm("Do you want to close this window ?")) {
-					window.close();
-				}
-			}
-			
-			function printthis() {
-				if (confirm("Do you want to print this screen ?")) {
-					var html="<html>";
-					html+= document.getElementById('content').innerHTML;
-					html+="</html>";
-					
-					var printWin = window.open('','','left=0,top=0,width=1,height=1,toolbar=0,scrollbars=0,status=0');
-					printWin.document.write(html);
-					printWin.document.close();
-					printWin.focus();
-					printWin.print();
-					printWin.close();
-				}		
-			}
-		</script>
 	</head>
 	<body>
 		<div id="content">
@@ -95,7 +73,7 @@
 			<table>
 				<tr>
 					<td>
-						<input name="button1" type="button" class="buttonsubmit" id="button" onClick="window.print();" value="Print" />
+						<input name="button1" type="button" class="buttonsubmit" id="button" onclick="window.print();" value="Print" />
 					</td>
 					<td>
 						<input name="button2" type="button" class="button" id="button" onclick="window.close();" value="Close" />

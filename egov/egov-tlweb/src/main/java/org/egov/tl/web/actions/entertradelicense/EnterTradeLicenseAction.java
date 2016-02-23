@@ -43,6 +43,7 @@ import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -59,6 +60,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
@@ -113,8 +115,13 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     @SkipValidation
+    @ValidationErrorPage("viewlicense")
     @Action(value = "/entertradelicense/update-form")
     public String showLegacyUpdateForm() {
+        if (!license().isNew())
+            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        if (tradeLicense != null && tradeLicense.isLegacy() && tradeLicense.isPaid())
+            throw new ValidationException("legacy.license.modify.excp", "You can't modify this license");
         prepareUpdate();
         for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense()) {
             legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0d);
@@ -124,7 +131,8 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             legacyInstallmentwiseFees.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
                     demandDetail.getAmount().doubleValue());
             legacyFeePayStatus.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
-                    demandDetail.getAmtCollected().equals(demandDetail.getAmount()));
+                    demandDetail.getAmtCollected().compareTo(BigDecimal.ZERO) != 0 &&
+                            demandDetail.getAmtCollected().compareTo(demandDetail.getAmount()) == 0);
         }
         return "update";
     }
@@ -206,10 +214,10 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         return legacyFeePayStatus;
     }
 
-    public void setLegacyFeePayStatus(Map<Integer, Boolean> legacyFeePayStatus) {
+    public void setLegacyFeePayStatus(final Map<Integer, Boolean> legacyFeePayStatus) {
         this.legacyFeePayStatus = legacyFeePayStatus;
     }
-    
+
     public String getLicenseNumber() {
         return licenseNumber;
     }

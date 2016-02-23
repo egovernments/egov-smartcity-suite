@@ -607,15 +607,15 @@ public abstract class License extends StateAware {
     }
 
     public boolean isPaid() {
-        return getTotalBalance().equals(BigDecimal.ZERO);
+        return getTotalBalance().compareTo(BigDecimal.ZERO) == 0;
     }
 
     public BigDecimal getTotalBalance() {
         BigDecimal totBal = BigDecimal.ZERO;
         for (final EgDemandDetails dd : licenseDemand.getEgDemandDetails()) {
-            if (!dd.getAmount().subtract(dd.getAmtCollected()).equals(BigDecimal.ZERO))
+            if (dd.getAmount().subtract(dd.getAmtCollected()).compareTo(BigDecimal.ZERO) != 0)
                 totBal = totBal.add(dd.getAmount().subtract(dd.getAmtCollected()));
-            if (!dd.getAmtRebate().equals(BigDecimal.ZERO))
+            if (dd.getAmtRebate().compareTo(BigDecimal.ZERO) != 0)
                 totBal = totBal.subtract(dd.getAmtRebate());
         }
         return totBal;
@@ -624,9 +624,9 @@ public abstract class License extends StateAware {
     public BigDecimal getFeeAmount() {
         BigDecimal totBal = BigDecimal.ZERO;
         for (final EgDemandDetails dd : licenseDemand.getEgDemandDetails()) {
-            if (!dd.getAmount().equals(BigDecimal.ZERO))
+            if (dd.getAmount().compareTo(BigDecimal.ZERO) != 0)
                 totBal = totBal.add(dd.getAmount());
-            if (!dd.getAmtRebate().equals(BigDecimal.ZERO))
+            if (dd.getAmtRebate().compareTo(BigDecimal.ZERO) != 0)
                 totBal = totBal.subtract(dd.getAmtRebate());
         }
         return totBal;

@@ -351,17 +351,19 @@ public abstract class AbstractLicenseService<T extends License> {
             final Boolean feePaymentStatus = legacyFeePayStatus.get(installmentNumber);
             if (updatedFee != null) {
                 final BigDecimal updatedDemandAmt = BigDecimal.valueOf(updatedFee);
-                if (!updatedDemandAmt.equals(demandDetail.getAmount())) {
-                    final BigDecimal previousDemandAmt = demandDetail.getAmount();
-                    demandDetail.setAmount(updatedDemandAmt);
-                    licenseDemand.setBaseDemand(
-                            licenseDemand.getBaseDemand().subtract(previousDemandAmt).add(updatedDemandAmt));
-                }
-
-                if (feePaymentStatus != null && feePaymentStatus)
+                final BigDecimal previousDemandAmt = demandDetail.getAmount();
+                demandDetail.setAmount(updatedDemandAmt);
+                licenseDemand.setBaseDemand(
+                        licenseDemand.getBaseDemand().subtract(previousDemandAmt).add(updatedDemandAmt));
+                if (feePaymentStatus != null && feePaymentStatus) {
                     demandDetail.setAmtCollected(updatedDemandAmt);
-                else
+                } else {
                     demandDetail.setAmtCollected(BigDecimal.ZERO);
+                }
+            } else {
+                demandDetail.setAmount(BigDecimal.ZERO);
+                licenseDemand.setBaseDemand(BigDecimal.ZERO);
+                demandDetail.setAmtCollected(BigDecimal.ZERO);
             }
 
             updatedInstallmentFees.put(installmentNumber, 0d);
