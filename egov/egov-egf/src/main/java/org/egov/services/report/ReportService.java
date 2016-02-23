@@ -71,6 +71,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ReportService {
@@ -270,10 +271,9 @@ public abstract class ReportService {
 
     List<StatementResultObject> getTransactionAmount(final String filterQuery,
             final Date toDate, final Date fromDate, final String coaType, final String subReportType) {
-        voucherStatusToExclude = getAppConfigValueFor("finance",
+        voucherStatusToExclude = getAppConfigValueFor("EGF",
                 "statusexcludeReport");
-        //TODO- remove the below line
-        voucherStatusToExclude="4";
+        
         final Query query = HibernateUtil
                 .getCurrentSession()
                 .createSQLQuery(
@@ -296,8 +296,8 @@ public abstract class ReportService {
                                 + "') "
                                 + filterQuery
                                 + " group by c.majorcode,v.fundid,c.type order by c.majorcode")
-                                .addScalar("glCode").addScalar("fundId").addScalar("type")
-                                .addScalar("amount").setResultTransformer(
+                                .addScalar("glCode").addScalar("fundId",BigDecimalType.INSTANCE).addScalar("type")
+                                .addScalar("amount",BigDecimalType.INSTANCE).setResultTransformer(
                                         Transformers.aliasToBean(StatementResultObject.class));
         return query.list();
     }

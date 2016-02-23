@@ -52,10 +52,13 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -69,7 +72,6 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({
     @Result(name = "allScheduleDetailedResults", location = "balanceSheetReport-allScheduleDetailedResults.jsp"),
@@ -96,8 +98,17 @@ public class BalanceSheetReportAction extends BaseFormAction {
     ReportHelper reportHelper;
     Statement balanceSheet = new Statement();
     private Date todayDate;
+    FinancialYearDAO financialYearDAO;
+    CFinancialYear financialYear=new CFinancialYear();
+    public FinancialYearDAO getFinancialYearDAO() {
+		return financialYearDAO;
+	}
 
-    public Date getFromDate() {
+	public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+		this.financialYearDAO = financialYearDAO;
+	}
+
+	public Date getFromDate() {
         return balanceSheetService.getFromDate(balanceSheet);
     }
 
@@ -238,6 +249,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
         return balanceSheet;
     }
 
+    @SkipValidation
     @Action(value = "/report/balanceSheetReport-generateBalanceSheetReport")
     public String generateBalanceSheetReport() {
         return "report";
@@ -256,6 +268,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
     }
 
     /* for Detailed */
+    @SkipValidation
     @Action(value = "/report/balanceSheetReport-generateScheduleReportDetailed")
     public String generateScheduleReportDetailed() {
         populateDataSourceForAllSchedulesDetailed();
@@ -395,7 +408,9 @@ public class BalanceSheetReportAction extends BaseFormAction {
     }
 
     protected void populateDataSource() {
-        setRelatedEntitesOn();
+    	
+    	setRelatedEntitesOn();
+        
         if (balanceSheet.getFund() != null && balanceSheet.getFund().getId() != null) {
             final List<Fund> selFund = new ArrayList<Fund>();
             selFund.add(balanceSheet.getFund());
@@ -406,14 +421,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
     }
 
     //TODO- This table is not used. Check reference and remove
-  /*  public String getUlbName() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
-        final List<String> result = query.list();
-        if (result != null)
-            return result.get(0);
-        return " ";
-    }*/
-
+  
     public String getCurrentYearToDate() {
         return balanceSheetService.getFormattedDate(balanceSheetService.getToDate(balanceSheet));
     }
@@ -439,4 +447,5 @@ public class BalanceSheetReportAction extends BaseFormAction {
         this.header = header;
     }
 
+	
 }
