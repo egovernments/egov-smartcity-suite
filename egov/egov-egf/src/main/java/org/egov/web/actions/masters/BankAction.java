@@ -178,7 +178,7 @@ public class BankAction extends BaseFormAction {
     }
 
     public String getFundsJSON() {
-        final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", 1);
+        final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", true);
         final StringBuilder fundJson = new StringBuilder(":;");
         for (final Object[] fund : funds)
             fundJson.append(fund[0]).append(":").append(fund[1]).append(";");
