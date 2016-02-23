@@ -59,8 +59,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
@@ -85,6 +83,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap = new HashMap<>();
     private Map<Integer, Double> legacyInstallmentwiseFees = new TreeMap<>();
+    private Map<Integer, Boolean> legacyFeePayStatus = new TreeMap<>();
     private String licenseNumber;
 
     @Autowired
@@ -100,33 +99,40 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/entertradelicense/enterTradeLicense-enterExistingForm")
     public String enterExistingForm() {
         tradeLicense.setApplicationDate(new Date());
-        for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense())
+        for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense()) {
             legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0d);
+            legacyFeePayStatus.put(installment.getInstallmentNumber(), false);
+        }
         return super.newForm();
     }
 
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/entertradelicense/enterTradeLicense-enterExisting")
     public String create() {
-        return super.enterExisting(tradeLicense, legacyInstallmentwiseFees);
+        return super.enterExisting(tradeLicense, legacyInstallmentwiseFees, legacyFeePayStatus);
     }
 
     @SkipValidation
     @Action(value = "/entertradelicense/update-form")
     public String showLegacyUpdateForm() {
         prepareUpdate();
-        for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense())
+        for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense()) {
             legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0d);
-        for (final EgDemandDetails demandDetail : license().getCurrentDemand().getEgDemandDetails())
+            legacyFeePayStatus.put(installment.getInstallmentNumber(), false);
+        }
+        for (final EgDemandDetails demandDetail : license().getCurrentDemand().getEgDemandDetails()) {
             legacyInstallmentwiseFees.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
                     demandDetail.getAmount().doubleValue());
+            legacyFeePayStatus.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
+                    demandDetail.getAmtCollected().equals(demandDetail.getAmount()));
+        }
         return "update";
     }
 
     @Action(value = "/entertradelicense/update")
     public String update() {
         super.setCheckList();
-        tradeLicenseService.updateLegacyLicense(tradeLicense, legacyInstallmentwiseFees);
+        tradeLicenseService.updateLegacyLicense(tradeLicense, legacyInstallmentwiseFees, legacyFeePayStatus);
         return "viewlicense";
     }
 
@@ -196,6 +202,14 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.legacyInstallmentwiseFees = legacyInstallmentwiseFees;
     }
 
+    public Map<Integer, Boolean> getLegacyFeePayStatus() {
+        return legacyFeePayStatus;
+    }
+
+    public void setLegacyFeePayStatus(Map<Integer, Boolean> legacyFeePayStatus) {
+        this.legacyFeePayStatus = legacyFeePayStatus;
+    }
+    
     public String getLicenseNumber() {
         return licenseNumber;
     }

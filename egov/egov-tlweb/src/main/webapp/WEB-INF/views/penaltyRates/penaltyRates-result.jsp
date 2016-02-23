@@ -42,7 +42,6 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <div class="table-header">The Search result is</div>
     <input type="hidden"  name="licenseAppTypeId"  value="${penaltyForm.licenseAppType.id}"  />
     <table class="table table-bordered" id="result">
       <thead>

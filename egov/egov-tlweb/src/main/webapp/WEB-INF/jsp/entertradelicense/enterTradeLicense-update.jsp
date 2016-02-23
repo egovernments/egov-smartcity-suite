@@ -111,6 +111,7 @@
 													<tr>
 														<th><s:text name='license.fin.year'/></th>
 														<th><s:text name='license.fee.amount'/></th>
+														<th class="text-center"><s:text name='license.fee.paid.y.n'/></th>
 													</tr>
 												</thead>
 												<tbody>
@@ -123,12 +124,15 @@
 														</s:if>
 														<td><input type="text"  name="" class="form-control feeyear" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
 														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
+														<td class="text-center">
+														<s:checkbox name="legacyFeePayStatus[%{#attr.LIFee.key}]"></s:checkbox>
+														</td>
 													</tr>
 												</s:iterator>
 												</tbody>
 												<tfoot>
 													<tr>
-														<td class="error-msg" colspan="2">
+														<td class="error-msg" colspan="3">
 															<s:text  name="license.legacy.info">
 																<s:param>${startfinyear}</s:param>
 															</s:text>
