@@ -41,7 +41,8 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css" />
 <title>Cheque Assignment Search</title>
 </head>
 <body onload="onload()">
@@ -49,7 +50,8 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Cheque Assignment Search" />
 		</jsp:include>
-		<span id="errorSpan"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span id="errorSpan" style="color: red;"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">
@@ -101,7 +103,7 @@
 					<td style="width: 5%"></td>
 					<egov:ajaxdropdown id="bank_branch" fields="['Text','Value']"
 						dropdownId="bank_branch"
-						url="voucher/common!ajaxLoadBanksWithApprovedPayments.action" />
+						url="voucher/common-ajaxLoadBanksWithApprovedPayments.action" />
 					<td class="greybox"><s:text name="chq.assignment.bank" /><span
 						class="mandatory"></span></td>
 					<td class="greybox"><s:select name="bank_branch"
@@ -110,7 +112,7 @@
 							value="%{bank_branch}" /></td>
 					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
 						dropdownId="bankaccount"
-						url="voucher/common!ajaxLoadBankAccountsWithApprovedPayments.action" />
+						url="voucher/common-ajaxLoadBankAccountsWithApprovedPayments.action" />
 					<td class="greybox"><s:text name="chq.assignment.bankaccount" /><span
 						class="mandatory"></span></td>
 					<td class="greybox" colspan="2"><s:select name="bankaccount"
@@ -129,7 +131,7 @@
 			</table>
 			<div class="buttonbottom">
 				<s:submit method="search" value="Search" id="searchBtn"
-					cssClass="buttonsubmit" />
+					cssClass="buttonsubmit" onclick="return validateSearch()" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
@@ -137,54 +139,59 @@
 		<s:hidden name="bankbranch" id="bankbranch" />
 	</s:form>
 	<script>
-				var date='<s:date name="currentDate" format="dd/MM/yyyy"/>';
-				function onload()
-				{
-					var chequeRadio=document.getElementById('paymentModecheque');
-					var billTypeObj=document.getElementById('billType');
-					if(chequeRadio.checked)
-					{
-						billTypeObj.disabled=false;
-					}	
-					else
-					{
-						billTypeObj.disabled=true;
-					}
-				}
-				function enableOrDisableBillType(obj)
-				{
-					var billTypeObj=document.getElementById('billType');
-					billTypeObj.options[0].selected=1;
-					if(obj.value=='cheque')
-						billTypeObj.disabled=false;
-					else
-						billTypeObj.disabled=true;
-				} 
-				
-				function loadBank(obj)
-				{
-				var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
-						if(obj.options[obj.selectedIndex].value!=-1)
-						populatebank_branch({fundId:obj.options[obj.selectedIndex].value+'&asOnDate='+date});
-				}
-				function loadBankAccount(obj)
-				{
-					var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
-					var fund = document.getElementById('fundId');
-					if(obj.options[obj.selectedIndex].value!=-1)
-					{
-					var x=	obj.options[obj.selectedIndex].value.split("-");
-					document.getElementById("bankbranch").value=x[1];
-					populatebankaccount({branchId:x[1]+'&asOnDate='+date,fundId:fund.options[fund.selectedIndex].value});
-					}
-					
-				}
-			</script>
+		var date = '<s:date name="currentDate" format="dd/MM/yyyy"/>';
+		function onload() {
+			var chequeRadio = document.getElementById('paymentModecheque');
+			var billTypeObj = document.getElementById('billType');
+			if (chequeRadio.checked) {
+				billTypeObj.disabled = false;
+			} else {
+				billTypeObj.disabled = true;
+			}
+		}
+		function enableOrDisableBillType(obj) {
+			var billTypeObj = document.getElementById('billType');
+			billTypeObj.options[0].selected = 1;
+			if (obj.value == 'cheque')
+				billTypeObj.disabled = false;
+			else
+				billTypeObj.disabled = true;
+		}
+
+		function loadBank(obj) {
+			var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
+			if (obj.options[obj.selectedIndex].value != -1)
+				populatebank_branch({
+					fundId : obj.options[obj.selectedIndex].value
+							+ '&asOnDate=' + date
+				});
+		}
+		function loadBankAccount(obj) {
+			var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
+			var fund = document.getElementById('fundId');
+			if (obj.options[obj.selectedIndex].value != -1) {
+				var x = obj.options[obj.selectedIndex].value.split("-");
+				document.getElementById("bankbranch").value = x[1];
+				populatebankaccount({
+					branchId : x[1] + '&asOnDate=' + date,
+					fundId : fund.options[fund.selectedIndex].value
+				});
+			}
+
+		}
+		function validateSearch() {
+
+			document.forms[0].action = '/EGF/payment/chequeAssignment-search.action';
+			document.forms[0].submit();
+
+			return true;
+		}
+	</script>
 	<s:if test="%{!validateUser('chequeassignment')}">
 		<script>
-					document.getElementById('searchBtn').disabled=true;
-					document.getElementById('errorSpan').innerHTML='<s:text name="chq.assignment.invalid.user"/>'
-				</script>
+			document.getElementById('searchBtn').disabled = true;
+			document.getElementById('errorSpan').innerHTML = '<s:text name="chq.assignment.invalid.user"/>'
+		</script>
 	</s:if>
 </body>
 </html>

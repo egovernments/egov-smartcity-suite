@@ -58,4 +58,9 @@ public class RecoveryService {
     public List<Recovery> getByAccountCode(CChartOfAccounts chartOfAccounts) {
         return recoveryRepository.findByChartofaccounts(chartOfAccounts);
     }
+    
+    public List<Recovery> getAllActiveAutoRemitTds()
+    {
+        return recoveryRepository.findByIsactiveAndRemittanceModeOrderByType(true, 'A');
+    }
 }

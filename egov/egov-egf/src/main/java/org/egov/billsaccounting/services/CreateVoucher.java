@@ -723,6 +723,7 @@ public class CreateVoucher {
      * @return voucherheader object in case of success and null in case of fail.
      * @throws ApplicationRuntimeException
      */
+    @Transactional
     public CVoucherHeader createPreApprovedVoucher(final HashMap<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails)
             throws ApplicationRuntimeException, ValidationException {

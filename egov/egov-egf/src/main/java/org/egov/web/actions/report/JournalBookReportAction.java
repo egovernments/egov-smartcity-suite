@@ -66,7 +66,6 @@ import org.hibernate.type.StringType;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
-import com.exilant.eGov.src.transactions.JbReport;
 import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -86,7 +85,6 @@ public class JournalBookReportAction extends BaseFormAction {
     private static final long serialVersionUID = -7540296344209825345L;
     private static final Logger LOGGER = Logger.getLogger(JournalBookReportAction.class);
     private GeneralLedgerBean journalBookReport = new GeneralLedgerBean();
-    private JbReport journalBook = new JbReport();
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private List<GeneralLedgerBean> journalBookDisplayList = new ArrayList<GeneralLedgerBean>();
     String heading = "";
@@ -263,14 +261,6 @@ public class JournalBookReportAction extends BaseFormAction {
 
     public void setJournalBookReport(final GeneralLedgerBean journalBookReport) {
         this.journalBookReport = journalBookReport;
-    }
-
-    public JbReport getJournalBook() {
-        return journalBook;
-    }
-
-    public void setJournalBook(final JbReport journalBook) {
-        this.journalBook = journalBook;
     }
 
     public List<GeneralLedgerBean> getJournalBookDisplayList() {

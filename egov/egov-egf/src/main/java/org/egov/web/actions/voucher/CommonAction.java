@@ -124,13 +124,13 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  *
  */
 
-@Transactional(readOnly = true)
 @Results({
         @Result(name = "bankAccountByBranch", location = "common-bankAccountByBranch.jsp"),
         @Result(name = "branch", location = "common-branch.jsp"),
         @Result(name = "users", location = "common-users.jsp"),
         @Result(name = "arfNoSearchResults", location = "common-arfNoSearchResults.jsp"),
         @Result(name = "bankAccNum", location = "common-bankAccNum.jsp"),
+        @Result(name = "bankAccNum-bankName", location = "common-bankAccNum-bankName.jsp"),
         @Result(name = Constants.FUNDSOURCE, location = "common-" + Constants.FUNDSOURCE + ".jsp"),
         @Result(name = "workflowHistory", location = "common-workflowHistory.jsp"),
         @Result(name = "searchAccountCodes", location = "common-searchAccountCodes.jsp"),
@@ -1963,7 +1963,7 @@ public class CommonAction extends BaseFormAction {
             queryString = queryString.append(" and vh.name NOT IN ( '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE
                     + "','" + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "')");
             queryString = queryString.append("and vh.voucherdate <= :date1 )");
-            queryString = queryString.append("AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true" +
+            queryString = queryString.append(" AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true " +
                     "AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
             if (fundId != null && fundId != 0 && fundId != -1)
                 queryString = queryString.append(" and bankaccount.fundid=" + fundId);
@@ -1996,7 +1996,7 @@ public class CommonAction extends BaseFormAction {
             queryString = queryString.append("  and vh.voucherdate <= :date2 " +
                     " and vh.name NOT IN ( '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "','"
                     + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' ) ) ");
-            queryString = queryString.append("AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true" +
+            queryString = queryString.append(" AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true " +
                     "AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
             if (fundId != null && fundId != 0 && fundId != -1)
                 queryString = queryString.append(" and bankaccount.fundid=" + fundId);
@@ -2649,9 +2649,9 @@ public class CommonAction extends BaseFormAction {
             StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
             queryString = queryString
-                    .append("SELECT  bankaccount.accountnumber AS accountnumber,  bankaccount.accounttype AS accounttype,"
+                    .append("SELECT  bankaccount.accountnumber AS accountnumber,  bank.name AS accounttype,"
                             +
-                            " CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode  FROM chartofaccounts coa, bankaccount bankaccount"
+                            " CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode  FROM chartofaccounts coa, bankaccount bankaccount ,bankbranch branch,bank bank "
                             +
                             " WHERE bankaccount.ID IN (SELECT DISTINCT PH.bankaccountnumberid  "
                             +
@@ -2663,21 +2663,21 @@ public class CommonAction extends BaseFormAction {
                             +
                             " AND iv.VOUCHERHEADERID   IS NULL AND vh.name NOT          IN ( 'Remittance Payment','Salary Bill Payment' ))"
                             +
-                            " AND coa.id                =bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS')"
+                            " AND coa.id = bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS')"
                             +
-                            " AND bankaccount.fundid    =" + fundId + " AND bankaccount.branchid  =" + branchId
+                            " AND bankaccount.fundid    =" + fundId + " AND bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.branchid  =" + branchId
                             + " and bankaccount.isactive=true ");
             // queryString =
             // queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"+FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT+"' and vh.name NOT IN ( '"+FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE+"','"+FinancialConstants.PAYMENTVOUCHER_NAME_SALARY+"' ) ");
             // query to fetch vouchers for which cheque has been assigned and surrendered
             queryString
-                    .append(" union select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
+                    .append(" union select bankaccount.accountnumber as accountnumber,bank.name as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
                             +
                             " from chartofaccounts coa, "
                             +
-                            " Bankaccount bankaccount"
+                            " Bankaccount bankaccount  ,bankbranch branch,bank bank "
                             +
-                            " where bankaccount.id in(SELECT DISTINCT PH.bankaccountnumberid  from  "
+                            " where bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.id in(SELECT DISTINCT PH.bankaccountnumberid  from  "
                             +
                             " egf_instrumentvoucher iv,voucherheader vh,"
                             +
@@ -2741,7 +2741,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Done | ajaxLoadBankAccountsWithApprovedPayments ");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccountsWithApprovedPayments.");
-        return "bankAccNum";
+        return "bankAccNum-bankName";
     }
 
     @SuppressWarnings("unchecked")

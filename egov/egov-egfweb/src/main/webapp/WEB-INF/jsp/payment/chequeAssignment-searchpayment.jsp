@@ -41,7 +41,7 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css" />
 <title>Cheque Assignment Search</title>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
@@ -51,7 +51,7 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Cheque Assignment Search" />
 		</jsp:include>
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">
@@ -82,18 +82,18 @@
 						<th class="bluebgheadtdnew"><s:text
 								name="chq.assignment.instrument.serialno" /></th>
 						<th class="bluebgheadtdnew" width="10%"><s:text
-								name="chq.assignment.instrument.no" /><span class="mandatory">*</span></th>
+								name="chq.assignment.instrument.no" /><span class="mandatory1">*</span></th>
 						<th class="bluebgheadtdnew"><s:text
-								name="chq.assignment.instrument.date" /><span class="mandatory">*</span><br>(dd/mm/yyyy)</th>
+								name="chq.assignment.instrument.date" /><span class="mandatory1">*</span><br>(dd/mm/yyyy)</th>
 					</s:if>
 					<s:elseif
 						test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
 						<th class="bluebgheadtdnew"><s:text
 								name="chq.assignment.instrument.serialno" /></th>
 						<th class="bluebgheadtdnew" width="10%"><s:text
-								name="chq.assignment.instrument.no" /><span class="mandatory">*</span></th>
+								name="chq.assignment.instrument.no" /><span class="mandatory1">*</span></th>
 						<th class="bluebgheadtdnew"><s:text
-								name="chq.assignment.instrument.date" /><span class="mandatory">*</span><br>(dd/mm/yyyy)</th>
+								name="chq.assignment.instrument.date" /><span class="mandatory1">*</span><br>(dd/mm/yyyy)</th>
 					</s:elseif>
 				</tr>
 				<s:iterator var="p" value="chequeAssignmentList" status="s">
@@ -196,7 +196,7 @@
 				<table align="center" width="100%" cellspacing="0">
 					<tr>
 						<td class="greybox"><s:text name="chq.assignment.department" /><span
-							class="mandatory">*</span> <s:select
+							class="mandatory1">*</span> <s:select
 								name="vouchermis.departmentid" id="departmentid"
 								list="dropdownData.departmentList" listKey="id"
 								listValue="name" headerKey="-1" headerValue="----Choose----"
@@ -205,15 +205,15 @@
 						<s:if test="%{reassignSurrenderChq && paymentMode!='cheque'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.serialno" /><span
-								class="mandatory">*</span> <s:select name="serialNo"
+								class="mandatory1">*</span> <s:select name="serialNo"
 									id="serialNo" list="chequeSlNoMap" value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
-									name="chq.assignment.instrument.no" /><span class="mandatory">*</span>
+									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
 								<s:textfield id="chequeNumber0" name="chequeNo"
 									value="%{chequeNo}"
 									onchange="validateReassignSurrenderChequeNumber(this)" /></td>
 							<td class="greybox"><s:text
-									name="chq.assignment.instrument.date" /><span class="mandatory">*</span>(dd/mm/yyyy)
+									name="chq.assignment.instrument.date" /><span class="mandatory1">*</span>(dd/mm/yyyy)
 								<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDt" name="chequeDt"
 									value="%{tempChequeDate}"
@@ -229,14 +229,14 @@
 							test="%{!isChequeNoGenerationAuto() && paymentMode=='cash'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.serialno" /><span
-								class="mandatory">*</span> <s:select name="serialNo"
+								class="mandatory1">*</span> <s:select name="serialNo"
 									id="serialNo" list="chequeSlNoMap" value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
-									name="chq.assignment.instrument.no" /><span class="mandatory">*</span>
+									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
 								<s:textfield id="chequeNumber0" name="chequeNo"
 									value="%{chequeNo}" onchange="validateChequeNumber(this)" /></td>
 							<td class="greybox"><s:text
-									name="chq.assignment.instrument.date" /><span class="mandatory">*</span>(dd/mm/yyyy)
+									name="chq.assignment.instrument.date" /><span class="mandatory1">*</span>(dd/mm/yyyy)
 								<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDt" name="chequeDt"
 									value="%{tempChequeDate}"
@@ -250,10 +250,10 @@
 							test="%{!isChequeNoGenerationAuto() && paymentMode=='rtgs'}">
 							<td class="greybox"></td>
 							<td class="greybox"><s:text name="chq.assignment.rtgs.refno" /><span
-								class="mandatory">*</span> <s:textfield id="rtgsRefNo"
+								class="mandatory1">*</span> <s:textfield id="rtgsRefNo"
 									name="rtgsRefNo" value="%{chequeNo}" /></td>
 							<td class="greybox"><s:text name="chq.assignment.rtgs.date" /><span
-								class="mandatory">*</span>(dd/mm/yyyy) <s:date name="rtgsDate"
+								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="rtgsDate"
 									var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDt" name="rtgsDate"
 									value="%{tempChequeDate}"
@@ -267,7 +267,7 @@
 						<s:if test="%{paymentMode=='cash'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.infavourof" /><span
-								class="mandatory">*</span> <s:textfield id="inFavourOf"
+								class="mandatory1">*</span> <s:textfield id="inFavourOf"
 									name="inFavourOf" value="%{inFavourOf}" maxlength="50" /></td>
 						</s:if>
 					</tr>
@@ -278,8 +278,8 @@
 					value="%{selectedRows}" />
 				<s:hidden id="paymentMode" name="paymentMode" value="%{paymentMode}" />
 				<s:hidden id="bankaccount" name="bankaccount" value="%{bankaccount}" />
-				<s:submit id="assignChequeBtn" method="create" value="Assign Cheque"
-					cssClass="buttonsubmit" onclick="return validate();" />
+				<input type="submit" class="buttonsubmit" value="Assign Cheque"
+					id="assignChequeBtn" name="button" onclick="return validate();" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
@@ -318,6 +318,9 @@
 					 result=validateChequeDateForChequeMode();
 				</s:if> 
 				dom.get('departmentid').disabled=false;  
+				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
+		    	document.forms[0].submit();
+				
 				return result;   
 			}
 		function validateForRtgsMode(){
@@ -423,37 +426,9 @@
 			
 			function validateChequeNumber(obj)
 			{
-				if(isNaN(obj.value))
-				{
-					bootbox.alert('Cheque number contains alpha characters.');
-					obj.value='';
-					return false;
-				}
-				if(obj.value.length!=6)
-				{
-					bootbox.alert("Cheque number must be 6 digits long.");
-					obj.value='';
-					return false;
-				}
-				//Cheque number might contain . or - which is not handled by isNaN
 				var pattPeriod=/\./i;
 				var pattNegative=/-/i;
-				if(obj.value.match(pattPeriod)!=null || obj.value.match(pattNegative)!=null )
-				{
-					bootbox.alert('Cheque number should contain only numbers');
-					obj.value='';
-					return false;
-				}
 				var index = obj.id.substring(12,obj.id.length);
-				if(obj.value=='')
-					return true;
-					
-				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
-				{
-					bootbox.alert('Select Cheque Issued From');
-					obj.value='';
-					return false;
-				}
 				var dept = dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value;
 				var name=obj.name;
 				if(name=='chequeNo')
@@ -465,9 +440,42 @@
 				{
 				name=name.replace("chequeNumber","serialNo");
 				}
+				if(obj.value=='')
+					return true;
+				else if(isNaN(obj.value))
+				{
+					bootbox.alert('Cheque number contains alpha characters.', function() {
+						obj.value='';
+						return true;
+					});
+				}else if(obj.value.length!=6)
+				{
+					bootbox.alert("Cheque number must be 6 digits long.", function() {
+						obj.value='';
+						return true;
+					});
+					
+				}
+				else if(obj.value.match(pattPeriod)!=null || obj.value.match(pattNegative)!=null )
+				{
+					bootbox.alert('Cheque number should contain only numbers', function() {
+						obj.value='';
+						return true;
+					});
+				}
+				
+				else if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
+				{
+					bootbox.alert('Select Cheque Issued From');
+					obj.value='';
+					return true;
+				}
+				else {
 				var slNo = dom.get(name).options[dom.get(name).selectedIndex].value;
-				var url = '${pageContext.request.contextPath}/voucher/common!ajaxValidateChequeNumber.action?bankaccountId='+document.getElementById('bankaccount').value+'&chequeNumber='+obj.value+'&index='+index+'&departmentId='+dept+"&serialNo="+slNo;
+				var url = '${pageContext.request.contextPath}/voucher/common-ajaxValidateChequeNumber.action?bankaccountId='+document.getElementById('bankaccount').value+'&chequeNumber='+obj.value+'&index='+index+'&departmentId='+dept+"&serialNo="+slNo;
 				var transaction = YAHOO.util.Connect.asyncRequest('POST', url,callback , null);
+				}
+				return true;
 			}
 			
 			function validateReassignSurrenderChequeNumber(obj)
@@ -515,7 +523,7 @@
 				}
 				var dept = dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value;
 				var slNo = dom.get(name).options[dom.get(name).selectedIndex].value;
-				var url = '${pageContext.request.contextPath}/voucher/common!ajaxValidateReassignSurrenderChequeNumber.action?bankaccountId='+document.getElementById('bankaccount').value+'&chequeNumber='+obj.value+'&index='+index+'&departmentId='+dept+"&serialNo="+slNo;
+				var url = '${pageContext.request.contextPath}/voucher/common-ajaxValidateReassignSurrenderChequeNumber.action?bankaccountId='+document.getElementById('bankaccount').value+'&chequeNumber='+obj.value+'&index='+index+'&departmentId='+dept+"&serialNo="+slNo;
 				var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackReassign, null);
 			}
 			var callback = {
@@ -572,14 +580,14 @@
 				}
 			}
 		</script>
-	<s:if test="%{isFieldMandatory('department')}">
+<%-- 	<s:if test="%{isFieldMandatory('department')}">
 		<s:if
 			test="%{assignmentType!='SalaryPayment' && assignmentType!='RemittancePayment'}">
 			<script>
 						document.getElementById('departmentid').disabled=true;
 					</script>
 		</s:if>
-	</s:if>
+	</s:if> --%>
 	<s:if
 		test="chequeAssignmentList == null || chequeAssignmentList.size==0">
 		<script>
