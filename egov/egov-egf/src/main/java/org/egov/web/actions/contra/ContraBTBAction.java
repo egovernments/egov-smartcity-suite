@@ -172,7 +172,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         ModeOfCollectionMap.put(MDC_CHEQUE, MDC_CHEQUE);
         ModeOfCollectionMap.put(MDC_OTHER, MDC_OTHER);
         final List<CChartOfAccounts> glCodeList = persistenceService
-                .findAllBy("from CChartOfAccounts coa where coa.purposeId=8 and coa.classification=4 and coa.isActiveForPosting=1 order by coa.glcode ");
+                .findAllBy("from CChartOfAccounts coa where coa.purposeId=8 and coa.classification=4 and coa.isActiveForPosting=true order by coa.glcode ");
         addDropdownData("interFundList", glCodeList);
         LoadAjaxedDropDowns();
     }
@@ -1451,7 +1451,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             // as per 1781 story
             accountNumbersList = persistenceService
             .findAllBy(
-                    "from Bankaccount account where account.bankbranch.id=? and account.fund.id=?  and account.isactive=1 ",
+                    "from Bankaccount account where account.bankbranch.id=? and account.fund.id=?  and account.isactive=true ",
                     branchId, fundId);
         return accountNumbersList;
     }
@@ -1465,7 +1465,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                     .findAllBy(
                             "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname "
                                     + " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
-                                    + " where  bank.isactive=1  and bankBranch.isactive=1 and bankaccount.isactive=1 and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
+                                    + " where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
                                     + " and bankaccount.fund.id=?", fundId);
             for (final Object[] element : bankBranch)
                 bankBrmap.put(element[0].toString(), element[1].toString());

@@ -103,9 +103,12 @@ public class JournalBookReportAction extends BaseFormAction {
     public void prepareNewForm() {
         final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         super.prepare();
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
+        addDropdownData("fundsourceList",
+                persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("functionList", masterCache.get("egi-function"));
+ 
         addDropdownData("voucherNameList", VoucherHelper.VOUCHER_TYPE_NAMES.get(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside  Prepare ........");

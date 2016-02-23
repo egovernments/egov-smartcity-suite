@@ -208,7 +208,7 @@ public class AssignmentHibernateDAO extends GenericHibernateDAO implements Assig
 		{
 			StringBuffer query = null;
 		
-			query =new StringBuffer("from EmployeeView ev where ev.isActive=1 and ev.assignment.isPrimary='N'");
+			query =new StringBuffer("from EmployeeView ev where ev.isActive=true and ev.assignment.isPrimary='N'");
 		
 			if(code!=null && !code.equals(""))
 			{

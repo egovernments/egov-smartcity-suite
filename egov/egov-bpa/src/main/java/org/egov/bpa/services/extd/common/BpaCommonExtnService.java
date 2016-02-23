@@ -1698,7 +1698,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 }*/
 
    public List getAllBanks() {
-		listOfBanks = (List<Bank>) persistenceService.findAllBy("from Bank where isactive=1 order by upper(name)");
+		listOfBanks = (List<Bank>) persistenceService.findAllBy("from Bank where isactive=true order by upper(name)");
 		return listOfBanks;
    }
    public Bank getBankbyId(Integer bankId){

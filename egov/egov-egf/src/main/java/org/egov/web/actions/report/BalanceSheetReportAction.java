@@ -199,7 +199,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
         //    addDropdownData("functionaryList", masterCache.get("egi-functionary"));
           //  addDropdownData("fieldList", masterCache.get("egi-ward"));
             // addDropdownData("financialYearList",
-            // getPersistenceService().findAllBy("from CFinancialYear where isActive=1 and isActiveForPosting=1 order by finYearRange desc "));
+            // getPersistenceService().findAllBy("from CFinancialYear where isActive=true and isActiveForPosting=true order by finYearRange desc "));
             addDropdownData("financialYearList", persistenceService.findAllBy("from CFinancialYear order by finYearRange desc "));
         }
     }

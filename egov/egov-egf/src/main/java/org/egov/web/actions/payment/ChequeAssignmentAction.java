@@ -1379,7 +1379,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             if (bank_branch != null && !bank_branch.equals("-1"))
                 addDropdownData(
                         "bankaccountList",
-                        persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=1 ",
+                        persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ",
                                 Integer.valueOf(bank_branch.split("-")[1])));
             loadReasonsForSurrendaring();
             return beforeSearchForSurrender();
@@ -1445,7 +1445,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             if (bank_branch != null && !bank_branch.equals("-1"))
                 addDropdownData(
                         "bankaccountList",
-                        persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=1 ",
+                        persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ",
                                 Integer.valueOf(bank_branch.split("-")[1])));
             loadReasonsForSurrendaring();
             return beforeSearchForRTGSSurrender();

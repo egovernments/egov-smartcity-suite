@@ -133,18 +133,18 @@ public class EmployeeService implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<CFunction> getAllFunctions() {
-        return getCurrentSession().createQuery("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)")
+        return getCurrentSession().createQuery("from CFunction where isactive = true AND isnotleaf=false order by upper(name)")
                 .list();
     }
 
     @SuppressWarnings("unchecked")
     public List<Functionary> getAllFunctionaries() {
-        return getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list();
+        return getCurrentSession().createQuery("from Functionary where isactive=true order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
     public List<Fund> getAllFunds() {
-        return getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)")
+        return getCurrentSession().createQuery("from Fund where isactive = true and isNotLeaf!=true order by upper(name)")
                 .list();
     }
 

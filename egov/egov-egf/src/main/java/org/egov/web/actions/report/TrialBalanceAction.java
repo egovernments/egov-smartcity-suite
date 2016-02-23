@@ -268,7 +268,7 @@ public class TrialBalanceAction extends BaseFormAction {
         if (rb.getFundId() != null)
             fundcondition = " and fundid=:fundId";
         else
-            fundcondition = " and fundid in (select id from fund where isactive=1 and isnotleaf!=1 )";
+            fundcondition = " and fundid in (select id from fund where isactive=true and isnotleaf!=true )";
         // if(LOGGER.isInfoEnabled()) LOGGER.info("fund cond query  "+fundcondition);
         if (null != rb.getDepartmentId() || null != rb.getFunctionaryId()) {
             voucherMisTable = ",vouchermis mis ";

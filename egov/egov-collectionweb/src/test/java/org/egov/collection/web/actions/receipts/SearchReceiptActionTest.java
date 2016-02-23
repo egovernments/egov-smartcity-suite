@@ -67,7 +67,7 @@ public class SearchReceiptActionTest { /*extends AbstractPersistenceServiceTest<
 	@Test
 	public void testPrepareAction(){
 		List<Location> actualCounterList = genericService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_COUNTERS);
-		List<InstrumentType> actualInstrumentTypeList = genericService.findAllBy("from InstrumentType i where i.isActive = 1 order by type");
+		List<InstrumentType> actualInstrumentTypeList = genericService.findAllBy("from InstrumentType i where i.isActive = true order by type");
 		List<InstrumentType> actualUserList = genericService.findAllByNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPTS);
 		
 		action.prepare();

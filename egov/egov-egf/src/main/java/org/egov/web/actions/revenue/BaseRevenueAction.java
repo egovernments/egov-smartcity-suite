@@ -76,10 +76,10 @@ public class BaseRevenueAction extends BaseFormAction {
     public void prepare()
     {
         mode = "view";
-        finYearList = persistenceService.findAllBy("from CFinancialYear  where isActiveForPosting=1 order by finYearRange DESC");
+        finYearList = persistenceService.findAllBy("from CFinancialYear  where isActiveForPosting=true order by finYearRange DESC");
         departmentList = persistenceService.findAllBy("from Department order by deptName");
         // addDropdownData("finanYearList",
-        // persistenceService.findAllBy("from CFinancialYear  where isActiveForPosting=1 order by finYearRange "));
+        // persistenceService.findAllBy("from CFinancialYear  where isActiveForPosting=true order by finYearRange "));
 
     }
 

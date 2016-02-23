@@ -1124,7 +1124,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         if (adt.getTablename().equalsIgnoreCase("EG_EMPLOYEE"))
         {
             final PersonalInformation information = (PersonalInformation) getPersistenceService().find(
-                    " from PersonalInformation where employeeCode=? and isActive=1", code);
+                    " from PersonalInformation where employeeCode=? and isActive=true", code);
             if (information == null)
                 values = index + "~" + ERROR;
             else
@@ -1132,7 +1132,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         }
         else if (adt.getTablename().equalsIgnoreCase("RELATION"))
         {
-            final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=? and isactive=1", code);
+            final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=? and isactive=true", code);
             if (relation == null)
                 values = index + "~" + ERROR;
             else
@@ -1141,7 +1141,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         else if (adt.getTablename().equalsIgnoreCase("ACCOUNTENTITYMASTER"))
         {
             final AccountEntity accountEntity = (AccountEntity) getPersistenceService().find(
-                    " from AccountEntity where code=? and isactive=1 ", code);
+                    " from AccountEntity where code=? and isactive=true ", code);
             if (accountEntity == null)
                 values = index + "~" + ERROR;
             else

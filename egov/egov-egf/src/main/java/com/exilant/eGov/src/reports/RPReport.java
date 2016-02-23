@@ -970,7 +970,7 @@ public class RPReport
                 + "') and coa.id = ts.glcodeid "
                 + " AND financialyearid =(SELECT ID FROM financialyear WHERE startingdate <= ? AND endingdate >= ?)  "
                 + fundCondition
-                + " and f.id=ts.fundid and f.isactive=1 and f.isnotleaf!=1 "
+                + " and f.id=ts.fundid and f.isactive=true and f.isnotleaf!=true "
                 + " and substr(coa.glcode,1,"
                 + substringVal
                 + ") like '"

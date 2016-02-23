@@ -88,11 +88,9 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
 
     @Deprecated
     public Collection getAccountCodeListForDetails() {
-        return HibernateUtil
-                .getCurrentSession()
-                .createQuery(
-                        "select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting = 1 order by acc.glcode")
-                .list();
+
+        return HibernateUtil.getCurrentSession().createQuery("select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true order by acc.glcode").list();
+
     }
 
     /**
@@ -101,11 +99,9 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
      * @throws ApplicationException
      */
     public List<CChartOfAccounts> getDetailedAccountCodeList() {
-        return HibernateUtil
-                .getCurrentSession()
-                .createQuery(
-                        "select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting = 1 order by acc.glcode")
-                .setCacheable(true).list();
+
+        return HibernateUtil.getCurrentSession().createQuery("select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true order by acc.glcode").setCacheable(true).list();
+
     }
 
     @Deprecated
@@ -208,10 +204,8 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
      * @return list of chartofaccount objects
      */
     public List<CChartOfAccounts> getActiveAccountsForType(final char type) {
-        final Query query = HibernateUtil
-                .getCurrentSession()
-                .createQuery(
-                        "select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting = 1 and type=:type order by acc.name");
+        final Query query = HibernateUtil.getCurrentSession().createQuery("select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true and type=:type order by acc.name");
+
         query.setCharacter("type", type);
         return query.list();
     }
@@ -269,11 +263,8 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
      */
     public List<CChartOfAccounts> getNonControlCodeList() {
         try {
-            return HibernateUtil
-                    .getCurrentSession()
-                    .createQuery(
-                            " from CChartOfAccounts acc where acc.classification=4 and acc.isActiveForPosting=1 and acc.id not in (select cd.glCodeId from CChartOfAccountDetail cd) ")
-                    .list();
+            return HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts acc where acc.classification=4 and acc.isActiveForPosting=true and acc.id not in (select cd.glCodeId from CChartOfAccountDetail cd) ").list();
+
         } catch (final Exception e) {
             LOG.error(e);
             throw new ApplicationRuntimeException("Error occurred while getting Non-Control Code list", e);
@@ -331,7 +322,8 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
             types[count++] = typ;
         }
         final Query query = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts where classification=4 " +
-                "and isActiveForPosting=1 and type in (:type)");
+        		"and isActiveForPosting=true and type in (:type)");
+
         query.setParameterList("type", types);
         query.setCacheable(true);
         return query.list();
@@ -401,29 +393,20 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
                     "The GL Code value supplied does not exist in the System")));
         }
         final List<CChartOfAccounts> listChartOfAcc = new ArrayList<CChartOfAccounts>();
-        query = HibernateUtil.getCurrentSession().createQuery(
-                " FROM CChartOfAccounts WHERE glcode=:glCode  AND classification=4 AND isActiveForPosting=1 ");
+        query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE glcode=:glCode  AND classification=4 AND isActiveForPosting=true ");
         query.setString("glCode", glCode);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
-        query = HibernateUtil
-                .getCurrentSession()
-                .createQuery(
-                        " from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE glcode=:glCode) AND classification=4 AND isActiveForPosting=1 ");
+        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE glcode=:glCode) AND classification=4 AND isActiveForPosting=true ");
         query.setString("glCode", glCode);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
-        query = HibernateUtil
-                .getCurrentSession()
-                .createQuery(
-                        " from CChartOfAccounts where parentId IN (select id from CChartOfAccounts where parentId IN ( select id  FROM CChartOfAccounts WHERE glcode=:glCode)) AND classification=4 AND isActiveForPosting=1 ");
+        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where parentId IN (select id from CChartOfAccounts where parentId IN ( select id  FROM CChartOfAccounts WHERE glcode=:glCode)) AND classification=4 AND isActiveForPosting=true ");
         query.setString("glCode", glCode);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
-        query = HibernateUtil
-                .getCurrentSession()
-                .createQuery(
-                        " from CChartOfAccounts where parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN ( select id  FROM CChartOfAccounts WHERE glcode=:glCode)))AND classification=4 AND isActiveForPosting=1 ");
+        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN ( select id  FROM CChartOfAccounts WHERE glcode=:glCode)))AND classification=4 AND isActiveForPosting=true ");
+
         query.setString("glCode", glCode);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());

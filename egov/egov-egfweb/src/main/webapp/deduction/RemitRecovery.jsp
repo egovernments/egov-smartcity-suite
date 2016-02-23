@@ -176,7 +176,7 @@ function onBodyLoad()
 			table.rows[i].cells[1].style.display="none";
 		}		
 				
-		loadSelectData('../commonyui/egov/loadComboAjax.jsp', 'BANKACCOUNT', 'ID', 'ACCOUNTNUMBER', 'branchId=#1 and isactive=1 and fundid='+document.RemitRecoveryForm.fund.value+' order by id', 'bank', 'bankAccount');				
+		loadSelectData('../commonyui/egov/loadComboAjax.jsp', 'BANKACCOUNT', 'ID', 'ACCOUNTNUMBER', 'branchId=#1 and isactive=true and fundid='+document.RemitRecoveryForm.fund.value+' order by id', 'bank', 'bankAccount');				
 		document.RemitRecoveryForm.bankAccount.value="<%=rrf.getBankAccount()%>";
 		var vnum=document.RemitRecoveryForm.pymntVhNo.value;
 		var subVnum=document.RemitRecoveryForm.pymntVhNo.value.substring(0,2);
@@ -223,7 +223,7 @@ function onBodyLoad()
 				document.RemitRecoveryForm.elements[i].disabled =true;
 			}					
 		}
-		loadSelectData('../commonyui/egov/loadComboAjax.jsp', 'BANKACCOUNT', 'ID', 'ACCOUNTNUMBER', 'branchId=#1 and isactive=1 and fundid='+document.RemitRecoveryForm.fund.value+' order by id', 'bank', 'bankAccount');				
+		loadSelectData('../commonyui/egov/loadComboAjax.jsp', 'BANKACCOUNT', 'ID', 'ACCOUNTNUMBER', 'branchId=#1 and isactive=true and fundid='+document.RemitRecoveryForm.fund.value+' order by id', 'bank', 'bankAccount');				
 		document.RemitRecoveryForm.bankAccount.value="<%=rrf.getBankAccount()%>";		
 	}
 }
@@ -826,7 +826,7 @@ function print()
 		<tr>
 	 		<td class="labelcell" align="right" height="35" >Bank<SPAN class="leadon">*</SPAN>&nbsp;</td> 
 			<td colspan="2" class="smallfieldcell" align="left" >
-				<html:select  property="bank" styleClass="bigcombowidth" style="width:250px" styleId="bank" onchange="loadSelectData('../commonyui/egov/loadComboAjax.jsp', 'BANKACCOUNT', 'ID', 'ACCOUNTNUMBER', 'branchId=#1 and isactive=1 and fundid='+document.RemitRecoveryForm.fund.value+' order by id', 'bank', 'bankAccount')">
+				<html:select  property="bank" styleClass="bigcombowidth" style="width:250px" styleId="bank" onchange="loadSelectData('../commonyui/egov/loadComboAjax.jsp', 'BANKACCOUNT', 'ID', 'ACCOUNTNUMBER', 'branchId=#1 and isactive=true and fundid='+document.RemitRecoveryForm.fund.value+' order by id', 'bank', 'bankAccount')">
 				<html:option value='0'>--Choose--</html:option>	
 				<c:forEach var="bankBr" items="${bankBranchList}" > 
 					<html:option value="${bankBr.id}">${bankBr.name}</html:option>

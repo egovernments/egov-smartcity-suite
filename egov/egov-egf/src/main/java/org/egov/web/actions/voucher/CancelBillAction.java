@@ -139,7 +139,7 @@ public class CancelBillAction extends BaseFormAction {
             LOGGER.debug("Inside Prepare method");
         dropdownData.put("DepartmentList", masterCache.get("egi-department"));
         // get this from master data cache
-        addDropdownData("fundList", persistenceService.findAllBy("from Fund where isactive=1 and isnotleaf=0 order by name"));
+        addDropdownData("fundList", persistenceService.findAllBy("from Fund where isactive=true and isnotleaf=false order by name"));
         // Important - Remove the like part of the query below to generalize the bill cancellation screen
         addDropdownData(
                 "expenditureList",

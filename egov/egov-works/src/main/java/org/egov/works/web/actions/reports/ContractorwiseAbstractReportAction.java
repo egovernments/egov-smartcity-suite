@@ -182,7 +182,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         populateCategoryList(ajaxEstimateAction, getWorksType() == -1 ? false : getWorksType() != -1);
         addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
         addDropdownData("functionList", commonsService.getAllFunction());
-        addDropdownData("schemeList", getPersistenceService().findAllBy("from Scheme sc where sc.isactive=1"));
+        addDropdownData("schemeList", getPersistenceService().findAllBy("from Scheme sc where sc.isactive=true"));
         final AjaxWorkProgressAction ajaxWorkProgressAction = new AjaxWorkProgressAction();
         populateSubSchemeList(ajaxWorkProgressAction, getScheme() != null);
         addDropdownData("budgetHeadList", getBudgetGroupsFromAppConfig());

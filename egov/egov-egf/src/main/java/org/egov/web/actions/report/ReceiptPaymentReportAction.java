@@ -146,7 +146,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
         final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         addDropdownData("fundList", masterCache.get("egi-fund"));
         addDropdownData("financialYearList",
-                getPersistenceService().findAllBy("from CFinancialYear where isActive=1 order by finYearRange desc "));
+                getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
     }
 
     private void addAomuntToScheduleMap(final List<StatementResultObject> receiptPaymentList,

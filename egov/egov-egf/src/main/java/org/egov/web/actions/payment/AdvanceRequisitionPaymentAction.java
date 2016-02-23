@@ -207,14 +207,14 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
     private void populateBanks() {
         if (bankaccount.getId() != null)
             addDropdownData("bankList", persistenceService.findAllBy("from Bankbranch bb where " +
-                    "bb.isactive=1 and bb.bank.isactive=1 order by bb.bank.name"));
+                    "bb.isactive=true and bb.bank.isactive=true order by bb.bank.name"));
     }
 
     private void populateBankAccounts() {
         if (bankaccount.getId() != null)
             addDropdownData("accNumList", persistenceService.findAllBy(
                     "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? " +
-                            "and ba.isactive=1 order by ba.chartofaccounts.glcode", bankaccount.getBankbranch().getId(),
+                            "and ba.isactive=true order by ba.chartofaccounts.glcode", bankaccount.getBankbranch().getId(),
                             bankaccount.getFund().getId()));
     }
 

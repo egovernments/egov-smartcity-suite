@@ -22,7 +22,7 @@
 		</property>
 		<property name="isActive">
 			<column name="ISACTIVE" />
-		</property>
+		</property>  
 		<property name="created">
 			<column name="CREATED" />
 		</property>

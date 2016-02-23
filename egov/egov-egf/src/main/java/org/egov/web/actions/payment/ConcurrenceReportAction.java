@@ -110,7 +110,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         if (!parameters.containsKey("skipPrepare")) {
-            addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+            addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
             addDropdownData("bankList", Collections.EMPTY_LIST);
             addDropdownData("accNumList", Collections.EMPTY_LIST);
         }

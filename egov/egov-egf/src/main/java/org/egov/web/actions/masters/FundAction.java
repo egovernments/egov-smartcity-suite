@@ -85,7 +85,7 @@ public class FundAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         dropdownData.put("fundList", persistenceService
-                .findAllBy("from Fund where isActive=1 order by name"));
+                .findAllBy("from Fund where isActive=true order by name"));
     }
 
     @SkipValidation

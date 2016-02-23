@@ -124,7 +124,7 @@ public class SalaryBillRegisterAction extends BaseFormAction {
         addDropdownData("departmentList", masterCache.get("egi-department"));
         addDropdownData("functionaryList", masterCache.get("egi-functionary"));
         addDropdownData("financialYearList",
-                persistenceService.findAllBy("from CFinancialYear where isActive=1 order by finYearRange desc "));
+                persistenceService.findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
         addDropdownData("detailTypeList", Collections.EMPTY_LIST);
         populateSalaryCode();
         populateEarningCodes();
@@ -171,7 +171,7 @@ public class SalaryBillRegisterAction extends BaseFormAction {
                 "salaryBillDefaultPurposeId");
         final String cBillDefaulPurposeId = defaultConfigValuesByModuleAndKey.get(0).getValue();
         final List<CChartOfAccounts> salaryPayableCoa = persistenceService.findAllBy("FROM CChartOfAccounts WHERE purposeid in ("
-                + cBillDefaulPurposeId + ") and isactiveforposting = 1 and classification=4");
+                + cBillDefaulPurposeId + ") and isactiveforposting = true and classification=4");
         for (final CChartOfAccounts chartOfAccounts : salaryPayableCoa) {
             final EgBilldetails billdetails = new EgBilldetails();
             billdetails.setGlcodeid(BigDecimal.valueOf(chartOfAccounts.getId()));

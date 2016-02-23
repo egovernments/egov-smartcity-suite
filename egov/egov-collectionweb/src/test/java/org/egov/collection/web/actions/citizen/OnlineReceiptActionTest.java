@@ -120,7 +120,7 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 		
 		financialsUtil = new FinancialsUtil(){
 			public InstrumentType getInstrumentTypeByType(String type){
-				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=1",type);
+				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=true",type);
 			}
 			public CVoucherHeader createPreApprovalVoucher(
 					Map<String, Object> headerdetails,

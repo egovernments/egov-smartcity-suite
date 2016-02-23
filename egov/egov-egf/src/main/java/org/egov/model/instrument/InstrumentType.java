@@ -51,15 +51,9 @@ public class InstrumentType extends BaseModel {
     private static final long serialVersionUID = 8681244690485333431L;
     private Long id;
     private String type;
-    private String isActive;
+    private Boolean isActive;
 
-    public String getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(final String isActive) {
-        this.isActive = isActive;
-    }
+   
 
     private Set instrumentAccountCodes = new HashSet<InstrumentAccountCodes>();
 
@@ -97,5 +91,13 @@ public class InstrumentType extends BaseModel {
                 ",isActive=" + isActive).append("]");
         return itBuffer.toString();
     }
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
 
 }
