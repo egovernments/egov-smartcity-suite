@@ -130,8 +130,6 @@ public class LicenseUtils {
     @Autowired
     protected CollectionIntegrationService collectionIntegrationService;
     @Autowired
-    private AppConfigValueService appConfigValueService;
-    @Autowired
     private DepartmentService departmentService;
     @Autowired
     private DesignationService designationService;
@@ -300,7 +298,7 @@ public class LicenseUtils {
      */
     public String getAppConfigValue(final String key, final String moduleName) {
         String value = Constants.EMPTY_STRING;
-        final AppConfigValues appConfigValues = appConfigValueService.getAppConfigValueByDate(moduleName, key,
+        final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(moduleName, key,
                 new Date());
         value = appConfigValues.getValue();
         return value;
@@ -760,13 +758,19 @@ public class LicenseUtils {
                 Constants.TRADELICENSE_MODULENAME, Constants.DIGITALSIGNINCLUDEINWORKFLOW).get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
+    
+    public String getDepartmentCodeForBillGenerate(){
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                Constants.TRADELICENSE_MODULENAME, "DEPARTMENTFORGENERATEBILL").get(0);
+        return (appConfigValue !=null ?appConfigValue.getValue():"");
+    }
 
     public Position getCityLevelCommissioner() {
         Position pos = null;
         final Department deptObj = departmentService.getDepartmentByName(Constants.ROLE_COMMISSIONERDEPARTEMNT);
         final Designation desgnObj = designationService.getDesignationByName("Commissioner");
 
-        List<Assignment> assignlist = null;
+        List<Assignment> assignlist = new ArrayList<Assignment>();
         if(deptObj !=null && !"".equals(deptObj))
         assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),
                 new Date());

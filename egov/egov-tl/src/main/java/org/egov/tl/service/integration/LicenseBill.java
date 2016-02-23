@@ -78,6 +78,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     private EgBillDao egBillDao;
     private String referenceNumber;
     private Boolean isCallbackForApportion = Boolean.FALSE;
+    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     private String transanctionReferenceNumber;
     @Autowired
     private PenaltyRatesService penaltyRatesService;
@@ -156,12 +157,12 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getDepartmentCode() {
-        return "H";// TODO Change according to TL
+        return licenseUtils.getDepartmentCodeForBillGenerate();
     }
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        return BigDecimal.ZERO;
+        return new BigDecimal(DEFAULT_FUNCTIONARY_CODE);
     }
 
     @Override

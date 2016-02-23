@@ -116,6 +116,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private static final Logger LOG = LoggerFactory.getLogger(LicenseBillService.class);
 
     protected License license;
+    public static final String TL_FUNCTION_CODE = "10151500";
+
 
     @Autowired
     private EgBillDetailsDao egBillDetailsDao;
@@ -250,6 +252,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             billdetailRebate.setOrderNo(i++);
                             billdetailRebate.setDescription(reasonDed.getEgDemandReasonMaster().getReasonMaster()
                                     + " - " + installment.getDescription());
+                            billdetailRebate.setFunctionCode(TL_FUNCTION_CODE);
                             billDetails.add(billdetailRebate);
                         }
                     }
