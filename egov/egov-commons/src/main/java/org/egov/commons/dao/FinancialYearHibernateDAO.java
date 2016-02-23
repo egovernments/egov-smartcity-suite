@@ -199,7 +199,7 @@ public CFinancialYear getFinancialYearById(Long id) {
     	 logger.info("Obtained session");
  	    String result="";
  	    Query query=HibernateUtil.getCurrentSession().createQuery("" +
- 	    		" from CFinancialYear cfinancialyear where   cfinancialyear.isActiveForPosting=true and cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  ");
+ 	    		" from CFinancialYear cfinancialyear where   cfinancialyear.isActiveForPosting=false and cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  ");
  	    query.setDate("sDate", fromDate);
  	    query.setDate("eDate", toDate);
  	    ArrayList list= (ArrayList)query.list();
