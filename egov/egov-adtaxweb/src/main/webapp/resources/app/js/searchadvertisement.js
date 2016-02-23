@@ -200,5 +200,31 @@ return ('<select class="dropchange" id="renewdropdown" ><option>Select from Belo
 							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						}
 						}); 
+	
+	
+$('#createrevenueinspector').click(function(){
+		
+		$('#createrevenueinspectorform').attr('method','get');
+		$('#createrevenueinspectorform').attr('action','/adtax/tpbo/create-revenue-inspector');
+	});
+	
+	$('#updaterevenueinspector').click(function(){
+		
+		$('#updaterevenueinspectorform').attr('method','get');
+		$('#updaterevenueinspectorform').attr('action','/adtax/tpbo/update');
+	});
+	
+	$("#searcheditbutton").click(function() {
+		var action = '/adtax/tpbo/updateTpbo/' + $('#id').val();
+		$('#searchrevenueinspectorform').attr('method', 'get');
+		$('#searchrevenueinspectorform').attr('action', action);
+	});
+	
+	$("#searchviewbutton").click(function() {
+		var action = '/adtax/tpbo/tpbo-update/'+$('#id').val();
+		$('#searchrevenueinspectorform').attr('method', 'get');
+		$('#searchrevenueinspectorform').attr('action', action);
+	});
+
 });
 
