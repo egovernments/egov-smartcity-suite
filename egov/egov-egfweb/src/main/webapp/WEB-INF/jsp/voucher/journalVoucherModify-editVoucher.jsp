@@ -147,7 +147,7 @@
 					<script type="text/javascript">
 		
 		makeVoucherDetailTable();
-		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
+		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="90%"
 	 </script type="text/javascript" >
 					<div id="codescontainer"></div>
 					<br />
@@ -164,7 +164,7 @@
 			
 			makeSubLedgerTable();
 			
-			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="80%"
+			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="90%"
 		</script>
 
 					<br />
@@ -248,8 +248,8 @@ function validateJV()
 	var currDate = cDate.getDate()+"/"+(parseInt(cDate.getMonth())+1)+"/"+cDate.getYear();
 	var vhDate=document.getElementById('voucherDate').value;
 	var VhType= document.getElementById('vType').value;
-	var typeDate=document.getElementById('worksVoucherRestrictedDate').value;
-	var restrictionDate = typeDate.split(",")
+	/* var typeDate=document.getElementById('worksVoucherRestrictedDate').value;
+	var restrictionDate = typeDate.split(",") */
 
 	if(vhDate == '' )	{
 		document.getElementById('lblError').innerHTML = "Please enter a voucher date ";
@@ -258,7 +258,7 @@ function validateJV()
 	}
 
 	//bootbox.alert("---"+VhType);
-	if(VhType=='Works'){
+	/* if(VhType=='Works'){
 		var chkd1=vhDate.split('/');
 		var chkd2=restrictionDate[1].split('/');
 		var voucherDt=new Date(chkd1[2],chkd1[1]-1,chkd1[0]);
@@ -268,7 +268,7 @@ function validateJV()
 			bootbox.alert(" Cannot Modify Works JV Date to greater than "+restrictionDate[1]);
 			return false;
 		}
-	}
+	} */
 	
 	var varVType = document.getElementById('vType').value;
 	if( varVType != 'JVGeneral' && varVType != '-1' )	{
@@ -285,8 +285,8 @@ function validateJV()
 }
 	function onLoadTask()
 	{
-		loadSlFunction();
-		getSlAccountCodes()
+		//loadSlFunction();
+		//getSlAccountCodes();
 		// code- JV subtype - starts
 		document.getElementById('vType').value='<s:property value="voucherTypeBean.voucherSubType"/>';
 		if('<s:property value="voucherTypeBean.voucherSubType"/>' == 'JVGeneral' ){
@@ -296,8 +296,6 @@ function validateJV()
 			document.getElementById('voucherTypeBean.billNum').readOnly=true;
 			document.getElementById('billDate').readOnly=true;
 		}
-		document.getElementById('vouchermis.function').style.display="none";
-		document.getElementById('functionnametext').style.display="none";
 		var varVType = document.getElementById('vType').value;
 		if(varVType == 'JVGeneral' || varVType == '-1') {
 			document.getElementById('partyNameDivId').style.display='none';
@@ -316,7 +314,7 @@ function validateJV()
 				window.close();
 			}else if(saveMode == 'saveview'){
 				bootbox.alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
-				window.open('preApprovedVoucher!loadvoucherview.action?vhid=<s:property value='%{voucherHeader.id}'/>','Search','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
+				window.open('preApprovedVoucher-loadvoucherview.action?vhid=<s:property value='%{voucherHeader.id}'/>','Search','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
 			}else if(saveMode == 'saveprint'){
 				bootbox.alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
 				window.open('journalVoucherPrint-print.action?id=<s:property value='%{voucherHeader.id}'/>','','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');

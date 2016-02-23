@@ -99,8 +99,10 @@ public class RecoveryController {
         if (recovery.getBank() != null && recovery.getBank().getId() != null)
             recovery.setBankLoan(true);
         List<CChartOfAccounts> coas = new ArrayList<CChartOfAccounts>();
-        coas.add(chartOfAccountsService.findById(recovery.getChartofaccounts().getId(), false));
+        CChartOfAccounts coa = chartOfAccountsService.findById(recovery.getChartofaccounts().getId(), false);
+        coas.add(coa);
         prepareNewForm(model);
+        recovery.setChartofaccounts(coa);
         model.addAttribute("chartOfAccountss",coas);
         model.addAttribute("recovery", recovery);
         return RECOVERY_EDIT;

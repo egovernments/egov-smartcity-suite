@@ -53,7 +53,7 @@ public class CollectionIndexBuilder {
     private final CollectionIndex collectionIndex;
 
     public CollectionIndexBuilder(final Date receiptDate, final String receiptNumber, final String billingService,
-            final String paymentMode, final BigDecimal totalAmount, final String channel,             final String status) {
+            final String paymentMode, final BigDecimal totalAmount, final String channel, final String status) {
 
         collectionIndex = new CollectionIndex();
         collectionIndex.setReceiptDate(receiptDate);
@@ -69,7 +69,7 @@ public class CollectionIndexBuilder {
         collectionIndex.setConsumerCode(consumerCode);
         return this;
     }
-    
+
     public CollectionIndexBuilder arrearAmount(final BigDecimal arrearAmount) {
         collectionIndex.setArrearAmount(arrearAmount);
         return this;
@@ -99,9 +99,34 @@ public class CollectionIndexBuilder {
         collectionIndex.setBillNumber(billNumber);
         return this;
     }
-    
+
     public CollectionIndexBuilder latePaymentChargesAmount(final BigDecimal latePaymentCharges) {
         collectionIndex.setLatePaymentCharges(latePaymentCharges);
+        return this;
+    }
+
+    public CollectionIndexBuilder arrearCess(final BigDecimal arrearCess) {
+        collectionIndex.setArrearCess(arrearCess);
+        return this;
+    }
+
+    public CollectionIndexBuilder currentCess(final BigDecimal currentCess) {
+        collectionIndex.setCurrentCess(currentCess);
+        return this;
+    }
+
+    public CollectionIndexBuilder installmentFrom(final String installmentFrom) {
+        collectionIndex.setInstallmentFrom(installmentFrom);
+        return this;
+    }
+
+    public CollectionIndexBuilder installmentTo(final String installmentTo) {
+        collectionIndex.setInstallmentTo(installmentTo);
+        return this;
+    }
+
+    public CollectionIndexBuilder payeeName(final String payeeName) {
+        collectionIndex.setPayeeName(payeeName);
         return this;
     }
 

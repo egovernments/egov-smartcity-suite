@@ -79,6 +79,7 @@ public class Constants {
         // Workflow states & actions
         public static final String WF_ACTION_FEE_COLLECTED = "FEE_COLLECTED";
         public static final String WF_ACTION_LICENSE_GENERATED = "LICENSE_GENERATION";
+        public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
         public static final String WF_ACTION_SAVE_DRAFT = "SAVE_DRAFT";
         public static final String WF_ACTION_RENEWAL = "RENEWAL";
         public static final String WORKFLOW_STATE_TYPE_END = "END";

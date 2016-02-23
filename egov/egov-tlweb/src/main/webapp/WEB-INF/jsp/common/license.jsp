@@ -77,7 +77,7 @@ function getUom(){
     <div class="panel-title"><s:text name='license.details.lbl' /></div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.establishmentname' /></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.establishmentname' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
          	<s:textfield name="nameOfEstablishment" cssClass="form-control patternvalidation"  data-pattern="alphabetwithspace" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="250" onBlur="checkLength(this,32)"/>
     </div>

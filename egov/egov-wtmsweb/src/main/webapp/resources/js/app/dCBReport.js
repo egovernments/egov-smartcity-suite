@@ -155,7 +155,7 @@ function setHiddenValueByLink(obj, param, event, boundaryId) {
 	$('input[name=' + $(obj).data('hiddenele') + ']')
 			.val($(obj).data('eleval'));
 	if (param.value == 'property') {
-		window.open("/ptis/view/viewProperty-viewForm.action?propertyId="
+		window.open("/wtms/viewDcb/consumerCodeWis/"
 				+ boundaryId, '',
 				'scrollbars=yes,width=1000,height=700,status=yes');
 	} else {
@@ -252,7 +252,7 @@ function callAjaxByBoundary(event) {
 								} else {
 									return {
 										name : row.hscno,
-										id : row.propertyid
+										id : row.hscno
 									};
 								}
 							},

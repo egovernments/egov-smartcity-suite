@@ -105,7 +105,7 @@ $(document).ready(function(){
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
-			"ajax": "/adtax/hoarding/search-adtax-result?"+$("#hoardingsearchform").serialize(),
+			"ajax": "/adtax/hoarding/search-adtax-result?"+$("#adtaxsearchform").serialize(),
 			"columns" : [
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},

@@ -63,12 +63,13 @@ function getData(){
 	var endDate =  document.getElementById('endDate').value;
 	var bankAccount = document.getElementById('accountNumber').value;
 	
-	isValid = validateData();
-	if(isValid == false)
+	isValid = validateDataa();
+	if(isValid == false )
 		return false;
 	doLoadingMask();
 	var url = '/EGF/report/bankBookReport-ajaxLoadBankBook.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData();
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
+	return true;
 }
 
 
@@ -134,7 +135,7 @@ function exportPdf(){
 	window.open('/EGF/report/bankBookReport-exportPdf.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
-function validateData(){
+function validateDataa(){
 	var bankAccount = document.getElementById('accountNumber').value;
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
@@ -145,21 +146,26 @@ function validateData(){
 		bootbox.alert("Please select a Bank Account")
 		return false;
 	}
-	var startDate =  Date.parse(document.getElementById('startDate').value);
-	if(isNaN(startDate)){
-		bootbox.alert("Please enter a valid start date")
+	
+	var startDate = document.getElementById('startDate').value;
+	if(startDate=='')
+		{ 
+		bootbox.alert("Please enter start date")
 		return false;
-	}
+		}
 	
 	var endDate = document.getElementById('endDate').value;
+	
 	if(endDate=='')
 		{ 
 		bootbox.alert("Please enter end date")
 		return false;
 		}
+
 	
 	return true;
 }
+
 
 function validateFund(){
 	var fund = document.getElementById('fundId').value;

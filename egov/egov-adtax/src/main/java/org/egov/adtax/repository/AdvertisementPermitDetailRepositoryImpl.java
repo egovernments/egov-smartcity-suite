@@ -157,7 +157,8 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
                 hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id",
                         advertisementPermitDetail.getAdvertisement().getRevenueInspector().getId()));
         }
-        hoardingCriteria.add(Restrictions.eq("permitStatus.code", AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
+        //TODO: commented . Check any particular reason for hard coding the status ?
+       // hoardingCriteria.add(Restrictions.eq("permitStatus.code", AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
         return hoardingCriteria.list();
 
     }

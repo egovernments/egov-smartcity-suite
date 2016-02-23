@@ -69,7 +69,7 @@
 										required="required" />
 									<form:errors path="code" cssClass="error-msg" />
 								</div>
-								<label class="col-sm-3 control-label text-right"><spring:message
+								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.category.name" /><span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
 									<form:textarea cssClass="form-control patternvalidation"
@@ -92,9 +92,9 @@
 										required="required" />
 									<form:errors path="code" cssClass="error-msg" />
 								</div>
-								<label class="col-sm-4 control-label text-right"><spring:message
+								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.category.name" /><span class="mandatory"></span></label>
-								<div class="col-sm-1 add-margin">
+								<div class="col-sm-3 add-margin">
 									<form:input type="text" cssClass="form-control" path="name"
 										id="classdesc" required="required" readonly="true" />
 
@@ -112,8 +112,8 @@
 							<form:errors path="active" cssClass="error-msg" />
 						</div>
 
-						<label class="col-sm-5 control-label text-right"><spring:message
-								code="lbl.property.id" /><span class="mandatory"></span></label>
+						<label class="col-sm-4 control-label text-right"><spring:message
+								code="lbl.property.id" /></label>
 						<div class="col-sm-1 add-margin">
 							<form:checkbox path="propertyMandatory"
 								id="classPropertyMandatory" cssClass="form-control" />

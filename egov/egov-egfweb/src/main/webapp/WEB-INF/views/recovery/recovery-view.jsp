@@ -30,7 +30,7 @@
 							<spring:message code="lbl.chartofaccounts" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${recovery.chartofaccounts.name}</div>
+							${recovery.chartofaccounts.glcode} - ${recovery.chartofaccounts.name}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
@@ -68,7 +68,7 @@
 						<div class="col-sm-3 add-margin view-content">
 							${recovery.bank.name}</div>
 					</div>
-					<div class="row add-border">
+					<%-- <div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.recoverymode" />
 						</div>
@@ -79,7 +79,7 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${recovery.remittanceMode}</div>
-					</div>
+					</div> --%>
 				</div>
 			</div>
 		</div>
