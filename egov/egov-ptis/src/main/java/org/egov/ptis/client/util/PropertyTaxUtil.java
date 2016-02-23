@@ -2460,7 +2460,7 @@ public class PropertyTaxUtil {
         if(wardId != null && wardId != -1){
                 query.append(" and pmv.ward.id = ").append(wardId); 
         }
-        orderByClause = orderByClause.concat(" pmv.ward.id asc, "+arrearBalanceCond+" desc ");
+        orderByClause = orderByClause.concat(arrearBalanceCond+" desc, pmv.ward.id asc ");
         query.append(orderByClause);
 
         final Query qry = persistenceService.getSession().createQuery(query.toString());
