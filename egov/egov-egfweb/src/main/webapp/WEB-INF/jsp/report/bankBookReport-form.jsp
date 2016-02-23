@@ -44,6 +44,8 @@
 	src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+	<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
 </head>
 <script>
 var callback = {
@@ -63,13 +65,18 @@ function getData(){
 	var endDate =  document.getElementById('endDate').value;
 	var bankAccount = document.getElementById('accountNumber').value;
 	
+    
+
+	//var isDateValid =validateFromAndToDate(startDate,endDate);
 	isValid = validateDataa();
 	if(isValid == false )
+		{
 		return false;
-	doLoadingMask();
+		}
+	
+	//doLoadingMask();
 	var url = '/EGF/report/bankBookReport-ajaxLoadBankBook.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData();
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
-	return true;
 }
 
 
@@ -162,7 +169,11 @@ function validateDataa(){
 		return false;
 		}
 
-	
+	if(startDate > endDate)
+	{ 
+		bootbox.alert("Start date should be less than end date.")
+		return false;
+		}
 	return true;
 }
 
@@ -197,6 +208,9 @@ function showChequeDetails(voucherId){
 }
 </script>
 <body>
+
+ 
+ 
 	<div class="formmainbox">
 		<div class="formheading"></div>
 		<div class="subheadnew">Bank Book Report</div>

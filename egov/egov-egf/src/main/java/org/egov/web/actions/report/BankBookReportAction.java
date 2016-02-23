@@ -60,6 +60,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -135,6 +136,7 @@ public class BankBookReportAction extends BaseFormAction {
     private Date todayDate;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private final List<String> voucherNo = new ArrayList<String>();
     private boolean isCreditOpeningBalance = false;
@@ -236,6 +238,18 @@ public class BankBookReportAction extends BaseFormAction {
         if (parameters.containsKey("bankAccount.id") && parameters.get("bankAccount.id")[0] != null) {
             startDate = parseDate("startDate");
             endDate = parseDate("endDate");
+            
+            CFinancialYear financialYear=financialYearDAO.getFinancialYearByDate(startDate);
+            Date endingDate=financialYear.getEndingDate();
+            
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String endFormat = formatter.format(endDate);
+            String endFormat1 = formatter.format(endingDate);
+            if(endFormat.compareTo(endFormat1)>0 ) 
+            {
+            	addActionError(getText("End date should be within a financial year"));
+            	return "results";
+            }
             setTodayDate(new Date());
             bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                     Long.valueOf(parameters.get("bankAccount.id")[0]));

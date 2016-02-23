@@ -40,7 +40,7 @@
 <script language="javascript"
 	src="../resources/javascript/jsCommonMethods.js"></script>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-
+<h5 style="color: red"><s:actionerror /></h5>
 <s:if test="%{bankBookViewEntries.size()>0}">
 	<br />
 
@@ -171,4 +171,4 @@
 	</tr>
 	</table>
 </s:if>
-<s:else>No data found</s:else>
+<s:else><h5 style="color: red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No data found</h5></s:else>
