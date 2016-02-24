@@ -71,11 +71,11 @@
 					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("ownershipType").value == '-1'){
-					showMessage('newLicense_error', '<s:text name="newlicense.tradeTitle.null" />');
+					showMessage('newLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
 					window.scroll(0, 0); 
 					return false;
 				}else if (document.getElementById("nameOfEstablishment").value == '' || document.getElementById("nameOfEstablishment").value == null){
-					showMessage('newLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
+					showMessage('newLicense_error', '<s:text name="newlicense.tradeTitle.null" />');
 					window.scroll(0, 0); 
 					return false;
 				}  
