@@ -111,13 +111,13 @@ $('#dailyCollectionReportSearch').click(function(e){
 										jQuery('#report-footer').show(); 
 									}
 									if (data.length > 0) {
-										updateTotalFooter(11, api);
-										updateTotalFooter(12, api);
-										updateTotalFooter(13, api);
+										updateTotalFooter(8, api);
+										updateTotalFooter(9, api);
+										updateTotalFooter(10, api);
 									}
 								},
 								"aoColumnDefs" : [ {
-									"aTargets" : [11,12,13],
+									"aTargets" : [8,9,10],
 									"mRender" : function(data, type, full) {
 										return formatNumberInr(data);    
 									}
