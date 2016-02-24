@@ -153,7 +153,7 @@ public abstract class ScheduleService extends PersistenceService {
                         + voucherStatusToExclude + ")  AND v.voucherdate <= '" +
                         getFormattedDate(toDate) + "' and v.voucherdate >='" + getFormattedDate(fromDate) +
                         "' and substr(c.glcode,1," + detailCodeLength
-                        + ") in (select DISTINCT coa4.glcode from chartofaccounts coa4 where coa4.parentid in (SELECT coa3.id" +
+                        + ") not in (select DISTINCT coa4.glcode from chartofaccounts coa4 where coa4.parentid in (SELECT coa3.id" +
                         " FROM chartofaccounts coa3 WHERE coa3.parentid IN(select coa2.id from chartofaccounts coa2, " +
                         "schedulemapping s where s.id=coa2.scheduleid and coa2.classification=2 and s.reporttype = '"
                         + reportType + "'))) " + filterQuery +
