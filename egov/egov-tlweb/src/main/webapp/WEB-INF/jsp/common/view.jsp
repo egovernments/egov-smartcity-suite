@@ -126,7 +126,9 @@
 	<div class="row">
 		<div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
 		<div class="col-xs-3 add-margin view-content">
-		<s:date  name="commencementDate" id="startdate" format="dd-MMM-yyyy" /><s:property value="%{commencementDate}" /></div>
+		
+		<s:date name="commencementDate" id="formattedStartDate" format="dd/MM/yyyy" />
+		<s:text  name="commencementDate" id="startdate"  /><s:property value="%{formattedStartDate}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.remarks' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{remarks}" /></div>
 	</div>

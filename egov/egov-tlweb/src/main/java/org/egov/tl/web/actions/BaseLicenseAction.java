@@ -430,8 +430,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             addActionMessage(this.getText("license.sent") + " " + userName);
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONREJECT)) {
             if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                addActionMessage(this.getText("license.rejectedfirst") + user.getName() + " "
-                        + this.getText("license.rejectedlast"));
+                addActionMessage(this.getText("license.rejectedfirst") + user.getName() 
+                        );
             else
                 addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONGENERATEDCERTIFICATE))
