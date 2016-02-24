@@ -813,6 +813,7 @@ public class CollectionsUtil {
         collectionIndexBuilder.currentAmount(receiptAmountInfo.getCurrentInstallmentAmount());
         collectionIndexBuilder.penaltyAmount(receiptAmountInfo.getPenaltyAmount());
         collectionIndexBuilder.arrearCess(receiptAmountInfo.getArrearCess());
+        collectionIndexBuilder.latePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges());
         collectionIndexBuilder.currentCess(receiptAmountInfo.getCurrentCess());
         if (receiptAmountInfo.getInstallmentFrom() != null)
             collectionIndexBuilder.installmentFrom(receiptAmountInfo.getInstallmentFrom());
