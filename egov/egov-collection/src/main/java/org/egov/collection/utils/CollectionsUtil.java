@@ -547,7 +547,7 @@ public class CollectionsUtil {
                     Long.valueOf(boundaryId), functionaryId);
         } catch (final Exception e) {
             final String errorMsg = "Could not get PersonalInformation";
-            LOGGER.error("Could not get PersonalInformation", e);
+            LOGGER.error(errorMsg, e);
             throw new ApplicationRuntimeException(errorMsg, e);
         }
         return personalInformation;
@@ -577,7 +577,9 @@ public class CollectionsUtil {
                     if (!employeeView.getAssignment().getPrimary())
                         departmentlist.add(employeeView.getAssignment().getDepartment());
         } catch (final Exception e) {
-            LOGGER.error("Could not get list of assignments", e);
+            final String errorMsg = "Could not get list of assignments";
+            LOGGER.error(errorMsg, e);
+            throw new ApplicationRuntimeException(errorMsg, e);
         }
 
         return departmentlist;
@@ -595,9 +597,9 @@ public class CollectionsUtil {
 
     public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId,
             final ReceiptHeader receiptHeaderObj) {
-        List<Designation> designations = new ArrayList();
+        List<Designation> designations = new ArrayList<Designation>(0);
         designations = designationService.getAllDesignationByDepartment(Long.valueOf(departmentId), new Date());
-        final List<Designation> designation = new ArrayList();
+        final List<Designation> designation = new ArrayList<Designation>(0);
 
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -611,7 +613,7 @@ public class CollectionsUtil {
 
     public List<Department> getDepartmentsAllowedForChallanApproval(final User loggedInUser,
             final ReceiptHeader receiptHeaderObj) {
-        final List<Department> departments = new ArrayList();
+        final List<Department> departments = new ArrayList<Department>(0);
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.COLLECTION_DESIG_CHALLAN_WORKFLOW);
@@ -627,11 +629,6 @@ public class CollectionsUtil {
     }
 
     public List<Department> getDepartmentsAllowedForBankRemittanceApproval(final User loggedInUser) {
-        /*
-         * scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDEPARTMENTS); return
-         * (List<Department>) scripts.get(0).eval( Script.createContext("loggedInUser", loggedInUser, "collUtil", this,
-         * "persistanceService", persistenceService, "contraJournalVoucherObj", new ContraJournalVoucher()));
-         */
         List<Department> departments;
         Department department;
         final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
@@ -645,10 +642,6 @@ public class CollectionsUtil {
             else
                 departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", "CAF");
         } else
-            /*
-             * departments = persistenceService.findAllBy(
-             * "select dept from Department dept where dept.billingLocation= ? order by dept.name " , '0');
-             */
             departments = persistenceService.findAllBy("select dept from Department dept order by dept.name ");
 
         return departments;
@@ -774,11 +767,6 @@ public class CollectionsUtil {
         return userService.getUserById(userId);
     }
 
-    /*
-     * public Location getLocationByUser(final Long userId) { final User user = userService.getUserById(userId); return (Location)
-     * persistenceService.findByNamedQuery (CollectionConstants.QUERY_LOCATION_BY_USER, user.getUsername()); }
-     */
-
     public void setUserService(final UserService userService) {
         this.userService = userService;
     }
@@ -797,7 +785,7 @@ public class CollectionsUtil {
 
         final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(receiptHeader.getReceiptdate(),
                 receiptHeader.getReceiptnumber(), billingService.getName(), receiptHeader.getReceiptInstrument()
-                        .iterator().next().getInstrumentType().getType(), receiptHeader.getTotalAmount(),
+                .iterator().next().getInstrumentType().getType(), receiptHeader.getTotalAmount(),
                 receiptHeader.getSource(),
                 receiptHeader.getStatus().getDescription()
                 );
