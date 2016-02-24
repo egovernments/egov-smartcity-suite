@@ -213,7 +213,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private String taxExemptionId;
     private String parentIndex;
     private String amenities;
-    private String[] floorNoStr = new String[20];
+    private String[] floorNoStr = new String[100];
     private String propTypeId;
     private String propUsageId;
     private String propOccId;
@@ -223,7 +223,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private String applicationNoMessage;
     private String assessmentNoMessage;
     private String propertyInitiatedBy;
-    private String mode = CREATE;
+    private String mode = CREATE;   
     private String northBoundary;
     private String southBoundary;
     private String eastBoundary;

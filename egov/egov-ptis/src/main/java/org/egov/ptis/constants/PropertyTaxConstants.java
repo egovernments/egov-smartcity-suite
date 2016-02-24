@@ -525,6 +525,26 @@ public interface PropertyTaxConstants {
             put(28, "28th Floor");
             put(29, "29th Floor");
             put(30, "30th Floor");
+            put(31, "31st floor");
+            put(32, "32nd Floor");
+            put(33, "33rd Floor");
+            put(34, "34th Floor");
+            put(35, "35th Floor");
+            put(36, "36th Floor");
+            put(37, "37th Floor");
+            put(38, "38th Floor");
+            put(39, "39th Floor");
+            put(40, "40th Floor");
+            put(41, "41st floor");
+            put(42, "42nd Floor");
+            put(43, "43rd Floor");
+            put(44, "44th Floor");
+            put(45, "45th Floor");
+            put(46, "46th Floor");
+            put(47, "47th Floor");
+            put(48, "48th Floor");
+            put(49, "49th Floor");
+            put(50, "50th Floor");
         }
     };
 
