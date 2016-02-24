@@ -135,9 +135,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
 
-        BigDecimal newTradeAreWt=tradeLicense.getTradeArea_weight();
+        BigDecimal newTradeAreWt=BigDecimal.ZERO;
+       if(null != license().getState() &&  license().getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
+         newTradeAreWt=tradeLicense.getTradeArea_weight();
+        }
         tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
+        if(null != license().getState() && license().getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
         tradeLicense.setTradeArea_weight(newTradeAreWt);
+        }
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
                 && (tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING)|| tradeLicense.getState().getValue().equals(Constants.WF_STATE_RENEWAL_COMM_APPROVED))&& tradeLicense != null
                 && !tradeLicense.isPaid() &&

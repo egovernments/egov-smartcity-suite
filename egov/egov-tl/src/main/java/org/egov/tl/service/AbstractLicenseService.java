@@ -213,14 +213,22 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     private BigDecimal raiseNewDemand(final List<FeeMatrixDetail> feeList, final T license) {
-        final LicenseDemand ld = new LicenseDemand();
+         LicenseDemand ld=null;
+    if(license.getLicenseDemand()==null){
+        ld = new LicenseDemand();
+    }
+    else ld =license.getLicenseDemand();
+       
         final Module moduleName = getModuleName();
         BigDecimal totalAmount = BigDecimal.ZERO;
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(moduleName,
                 license.getApplicationDate());
         ld.setIsHistory("N");
         ld.setEgInstallmentMaster(installment);
+        if(license.getLicenseDemand() ==null)
+        {
         ld.setCreateDate(new Date());
+        }
         ld.setLicense(license);
         ld.setIsLateRenewal('0');
         LOGGER.debug("calculating FEE          ...............................................");
@@ -229,6 +237,7 @@ public abstract class AbstractLicenseService<T extends License> {
             demandDetails = new LinkedHashSet<EgDemandDetails>();
         else
             demandDetails = ld.getEgDemandDetails();
+        if(license.getLicenseDemand() ==null){
         for (final FeeMatrixDetail fm : feeList) {
             final EgDemandReasonMaster reasonMaster = demandGenericDao
                     .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), moduleName);
@@ -244,15 +253,31 @@ public abstract class AbstractLicenseService<T extends License> {
                 demandDetails.add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
                 totalAmount = totalAmount.add(fm.getAmount());
             }
-
+        }}
+        else{
+             demandDetails = ld.getEgDemandDetails();
+            for (final EgDemandDetails dmd : demandDetails)
+                for (final FeeMatrixDetail fm : feeList)
+                    if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()))
+                        if (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
+                            dmd.setAmount(fm.getAmount());
+                            totalAmount = totalAmount.add(fm.getAmount());
+                            dmd.setModifiedDate(new Date());
+                            demandDetails.add(dmd);
+                        }
         }
-
+        
         ld.setEgDemandDetails(demandDetails);
         ld.setBaseDemand(totalAmount);
         license.setLicenseDemand(ld);
         return totalAmount;
     }
 
+    public void updateDemand( final T license)
+    {
+        this.raiseNewDemand(feeMatrixService.findFeeList(license), license);
+    }
     @Transactional
     public BigDecimal recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
@@ -269,7 +294,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     }
         return totalAmount;
     }
-
+   
     private void setAuditEntries(final T license) {
         if (license.getId() == null) {
             license.setCreatedBy(securityUtils.getCurrentUser());

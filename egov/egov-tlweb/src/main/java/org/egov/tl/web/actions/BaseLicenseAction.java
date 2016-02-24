@@ -179,6 +179,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    
+    
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -214,10 +216,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     // sub class should get the object of the model and set to license()
     public String approve() {
+        
         if (workFlowAction.equals(Constants.WF_PREVIEW_BUTTON))
             return redirectToPrintCertificate();
         if (workFlowAction.equals(Constants.SIGNWORKFLOWACTION))
             return digitalSignRedirection();
+        if(license().getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
+        licenseService().updateDemand(license());
+        }
         tradeLicenseService.updateStatusInWorkFlowProgress((TradeLicense) license(), workFlowAction);
         processWorkflow(NEW);
         tradeLicenseService.updateTradeLicense((TradeLicense) license(), workflowBean);
