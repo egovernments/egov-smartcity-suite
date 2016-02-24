@@ -59,7 +59,6 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +66,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ConnectionBillService extends BillServiceInterface {
-
+    
+    private static final String STRING_WCMS_FUCNTION_CODE = "50515100";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -125,7 +125,8 @@ public class ConnectionBillService extends BillServiceInterface {
                 billdetail.setModifiedDate(currentDate);
                 billdetail.setOrderNo(i++);
                 billdetail.setDescription(
-                        reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription() + " # " + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription() ); 
+                        reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription() + " # " + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription() );
+                billdetail.setFunctionCode(STRING_WCMS_FUCNTION_CODE);
                 billDetails.add(billdetail);
             }
         }
@@ -137,24 +138,6 @@ public class ConnectionBillService extends BillServiceInterface {
     public void cancelBill() {
         // TODO Auto-generated method stub
 
-    }
-
-    EgBillDetails createBillDet(final Integer orderNo, final BigDecimal billDetAmt, final String glCode,
-            final String description, final Integer addlFlag) {
-        if (orderNo == null || billDetAmt == null || glCode == null)
-            throw new ApplicationRuntimeException("Exception in createBillDet....");
-        final EgBillDetails billdetail = new EgBillDetails();
-        billdetail.setFunctionCode("FUNCTION_CODE");
-        billdetail.setOrderNo(orderNo);
-        billdetail.setCreateDate(new Date());
-        billdetail.setModifiedDate(new Date());
-        billdetail.setCrAmount(billDetAmt);
-        billdetail.setDrAmount(BigDecimal.ZERO);
-        billdetail.setGlcode(glCode);
-        billdetail.setDescription(description);
-        billdetail.setAdditionalFlag(addlFlag);
-        LOGGER.info("Bill Detail object created with amount " + billDetAmt);
-        return billdetail;
     }
 
 }

@@ -144,10 +144,8 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     /**
-     * @param demand
-     *            Updates WaterConnectionDetails Object once Collection Is done.
-     *            send Record move to Commissioner and Send SMS and Email after
-     *            Collection
+     * @param demand Updates WaterConnectionDetails Object once Collection Is done. send Record move to Commissioner and Send SMS
+     * and Email after Collection
      */
     @Transactional
     public void updateWaterConnectionDetails(final EgDemand demand) {
@@ -188,8 +186,8 @@ public class WaterTaxCollection extends TaxCollection {
 
         final StringBuffer query = new StringBuffer(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-        .append("WHERE dmdet.egDemand.id = :demand");
+                .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+                .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
 
@@ -256,10 +254,8 @@ public class WaterTaxCollection extends TaxCollection {
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
 
         /*
-         * if (demand.getAmtCollected() != null && demand.getAmtCollected() !=
-         * BigDecimal.ZERO)
-         * demand.setAmtCollected(demand.getAmtCollected().subtract
-         * (billRcptInfo.getTotalAmount()));
+         * if (demand.getAmtCollected() != null && demand.getAmtCollected() != BigDecimal.ZERO)
+         * demand.setAmtCollected(demand.getAmtCollected().subtract (billRcptInfo.getTotalAmount()));
          */
 
         updateDmdDetForRcptCancel(demand, billRcptInfo);
@@ -299,7 +295,7 @@ public class WaterTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                             demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
@@ -338,8 +334,8 @@ public class WaterTaxCollection extends TaxCollection {
     private void updateWaterTaxIndexes(final EgDemand demand) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
-        String sourceChannel =null;
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails,sourceChannel );
+        final String sourceChannel = null;
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails, sourceChannel);
     }
 
     @Override
@@ -403,55 +399,71 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Override
     public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
-        String additionalInfo = "Paid From";
+        StringBuilder additionalInfo = new StringBuilder("Paid From");
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         final BigDecimal amounttobeCalc = egBill.getTotalAmount().subtract(egBill.getTotalCollectedAmount());
         final List<EgBillDetails> billdEtList = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
-        egBill.getEgBillDetails().size();
-        egBill.getEgBillDetails().size();
         for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
             if (billDet.getOrderNo() == 1) {
-                additionalInfo = additionalInfo + " "
-                        + formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate());
-                additionalInfo = additionalInfo + " To ";
+                additionalInfo.append(" ").append(
+                        formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate())).append(" To ");
                 if (billdEtList.size() == 1) {
-                    additionalInfo = additionalInfo
-                            + formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate());
+                    additionalInfo.append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
                     break;
                 }
 
             }
             if (billdEtList.size() > 1
                     && billdEtList.get(billdEtList.size() - 1).getOrderNo().equals(billDet.getOrderNo())) {
-                additionalInfo = additionalInfo
-                        + formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate());
+                additionalInfo.append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
                 break;
             }
         }
         if (!amounttobeCalc.equals(BigDecimal.ZERO))
-            additionalInfo = additionalInfo + " (Partialy)";
+            additionalInfo = additionalInfo.append(" (Partialy)");
 
-        return additionalInfo;
+        return additionalInfo.toString();
     }
-    
+
     @Override
-    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
-        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+    public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
+        final ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
+        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
+
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
         BigDecimal arrearAmount = BigDecimal.ZERO;
-        
-        for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()) {
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                    && !rcptAccInfo.getIsRevenueAccount()) {
-                final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+
+        for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
+            if (billDet.getCrAmount() != null && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+                final String[] desc = billDet.getDescription().split("-", 2);
                 final String[] installsplit = desc[1].split("#");
-                if(installsplit[0].trim().equals(installsplit[1].trim())) {
-                    currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
-                }else {
-                    arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
+                if (installsplit[0].trim().equals(installsplit[1].trim()))
+                    currentInstallmentAmount = currentInstallmentAmount.add(billDet.getCrAmount());
+                else
+                    arrearAmount = arrearAmount.add(billDet.getCrAmount());
+
+            }
+        }
+
+        for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
+            if (billDet.getOrderNo() == 1) {
+                receiptAmountInfo.setInstallmentFrom(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster()
+                        .getFromDate()));
+                if (billDetails.size() == 1) {
+                    receiptAmountInfo.setInstallmentTo(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster()
+                            .getToDate()));
+                    break;
                 }
-                
+
+            }
+            if (billDetails.size() > 1
+                    && billDetails.get(billDetails.size() - 1).getOrderNo().equals(billDet.getOrderNo())) {
+                receiptAmountInfo.setInstallmentTo(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster()
+                        .getToDate()));
+                break;
             }
         }
         receiptAmountInfo.setArrearsAmount(arrearAmount);
