@@ -47,9 +47,9 @@
 		<div id="enterLicense_error" class="error-msg" style="display:none;"></div>
                 <div class="row">
                     <div class="col-md-12">
-                     <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  format="dd/MM/yyyy"/></div>
-                     <s:if test="%{applicationNumber!=null}">
-                    	 <div class="text-right error-msg" style="font-size:14px;"><s:text name="application.num" /> : <s:property value="%{applicationNumber}" /></div>
+                     <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="model.applicationDate"  format="dd/MM/yyyy"/></div>
+                     <s:if test="%{model.applicationNumber!=null}">
+                    	 <div class="text-right error-msg" style="font-size:14px;"><s:text name="application.num" /> : <s:property value="%{model.applicationNumber}" /></div>
                  	</s:if>
                		<s:if test="%{hasErrors()}">
 						<div align="center" class="error-msg" >

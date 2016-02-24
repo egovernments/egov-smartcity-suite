@@ -49,6 +49,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
@@ -163,13 +164,11 @@ public class FeeMatrixService<T extends License> {
                     feeMatrix = feeMatrixRepository
                             .findByUniqueNo(uniqueNo + "-" + fee.getId() + "-" + uomId + "-" + financialYearByDate.getId());
                     if (feeMatrix == null)
-                        throw new ApplicationRuntimeException(
-                                "License Fee Structure  is not defined for the selected combination");
+                        throw new ValidationException("TL-002", "TL-002");
                     feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix, license.getTradeArea_weight(),
                             license.getApplicationDate(), financialYearByDate.getId());
                     if (feeMatrixDetail == null)
-                        throw new ApplicationRuntimeException(
-                                "License Fee Structure range is not defined for the selected combination");
+                        throw new ValidationException("TL-003", "TL-003");
                     feeMatrixDetailList.add(feeMatrixDetail);
                     break switchLoop;
 

@@ -274,10 +274,10 @@ public abstract class AbstractLicenseService<T extends License> {
         return totalAmount;
     }
 
-    public void updateDemand( final T license)
-    {
+    public void updateDemand( final T license) {
         this.raiseNewDemand(feeMatrixService.findFeeList(license), license);
     }
+    
     @Transactional
     public BigDecimal recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
@@ -310,7 +310,7 @@ public abstract class AbstractLicenseService<T extends License> {
             final Map<Integer, Boolean> legacyFeePayStatus) {
         if (!this.licensePersitenceService.findAllBy("from License where oldLicenseNumber = ?", license.getOldLicenseNumber())
                 .isEmpty())
-            throw new ValidationException("oldLicenseNumber", "license.number.exist", license.getOldLicenseNumber());
+            throw new ValidationException("TL-001", "TL-001", license.getOldLicenseNumber());
         addLegacyDemand(legacyInstallmentwiseFees, legacyFeePayStatus, license);
         this.processAndStoreDocument(license.getDocuments());
         license.setLicenseAppType((LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' "));
