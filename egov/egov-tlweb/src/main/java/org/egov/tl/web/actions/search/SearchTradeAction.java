@@ -178,14 +178,10 @@ public class SearchTradeAction extends BaseFormAction {
                          && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Collect Fees");
                 else if ( license.getStatus() != null
-                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE))
+                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE) && !(roleName.contains(Constants.ROLE_BILLCOLLECTOR)))
                     licenseActions.add("Print Certificate");
             } else if (license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");
-
-            if (roleName.contains(Constants.TL_CREATOR_ROLENAME))
-                if (license.getOldLicenseNumber() != null && !license.getOldLicenseNumber().isEmpty())
-                    licenseActions.add("Modify License");
             if (roleName.contains(Constants.TL_CREATOR_ROLENAME) || roleName.contains(Constants.TL_APPROVER_ROLENAME))
                 if (!license.isPaid() && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
                         && license.getStatus() != null

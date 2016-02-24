@@ -42,6 +42,8 @@ package org.egov.tl.web.actions.masters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -132,7 +134,7 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
 		// In Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
-			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAll()));
+			setLicenseSubCategoryMap(Collections.EMPTY_MAP);
 		if (getId() != null){
 			subCategory = licenseSubCategoryService.findById(getId());
 			setCategoryId(subCategory.getCategory().getId());
