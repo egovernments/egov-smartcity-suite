@@ -143,7 +143,13 @@
 		var tfoot = billDetailsTable.getTbodyEl().parentNode.createTFoot();
 		var tr = tfoot.insertRow(-1);
 		var th = tr.appendChild(document.createElement('th'));
+		<s:if test='%{isRestrictedtoOneFunctionCenter == true}'>
 		th.colSpan = 5;
+		</s:if>
+		<s:else>
+		th.colSpan = 4;
+		</s:else>
+		
 		th.innerHTML = 'Total&nbsp;&nbsp;&nbsp;';
 		th.align='right';
 		th.style.borderTop = "1px solid #84B1AD";

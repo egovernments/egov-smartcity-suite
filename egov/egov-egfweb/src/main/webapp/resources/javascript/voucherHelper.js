@@ -419,7 +419,7 @@ function loadCoa(id){
 
 function loadDropDownCodes()
 {
-	var	url = path+"/commons/Process.jsp?type=getAllCoaCodes";
+	var	url = "/EGF/commons/Process.jsp?type=getAllCoaCodes";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -828,7 +828,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = path+"/commons/Process.jsp?type=getAllFunctionName";
+	var url = "/EGF/commons/Process.jsp?type=getAllFunctionName";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{

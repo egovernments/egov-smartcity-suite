@@ -33,13 +33,10 @@
  */
 package org.egov.web.actions.voucher;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +47,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.service.EisCommonService;
@@ -70,6 +66,7 @@ import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.services.voucher.JournalVoucherActionHelper;
 import org.egov.services.voucher.PreApprovedActionHelper;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
@@ -81,7 +78,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
 
 @ParentPackage("egov")
 @Results({
@@ -123,6 +119,10 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     @Autowired
     @Qualifier("preApprovedActionHelper")
     private PreApprovedActionHelper preApprovedActionHelper;
+
+    @Autowired
+    @Qualifier("journalVoucherActionHelper")
+    private JournalVoucherActionHelper journalVoucherActionHelper;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -204,7 +204,6 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
 
         populateWorkflowBean();
         voucherHeader = preApprovedActionHelper.sendForApproval(voucherHeader, workflowBean);
-        voucherService.persist(voucherHeader);
         if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("pjv.voucher.approved",
                     new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
@@ -257,6 +256,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         if (voucherHeader.getId() == null)
             voucherHeader.setId(Long.valueOf(parameters.get(VHID)[0]));
         validateBeforeEdit(voucherHeader);
+        CVoucherHeader oldVh = voucherHeader;
         populateWorkflowBean();
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             sendForApproval();
@@ -271,38 +271,11 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         removeEmptyRowsSubledger(subLedgerlist);
 
         try {
-
+            populateWorkflowBean();
             if (!validateData(billDetailslist, subLedgerlist)) {
-                voucherHeader = voucherService.updateVoucherHeader(voucherHeader, voucherTypeBean);
-
-                // voucherService.deleteGLDetailByVHId(voucherHeader.getId());
-                voucherHeader.getGeneralLedger().removeAll(voucherHeader.getGeneralLedger());
-
-                final List<Transaxtion> transactions = voucherService.postInTransaction(billDetailslist, subLedgerlist,
-                        voucherHeader);
-
-                Transaxtion txnList[] = new Transaxtion[transactions.size()];
-                txnList = transactions.toArray(txnList);
-                final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-                if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
-                {
-                    final List<ValidationError> errors = new ArrayList<ValidationError>();
-                    errors.add(new ValidationError("exp", "Engine Validation failed"));
-                    throw new ValidationException(errors);
-                }
-                else {
-                    if (!"JVGeneral".equalsIgnoreCase(voucherHeader.getName())) {
-                        final String totalamount = parameters.get("totaldbamount")[0];
-                        if (LOGGER.isDebugEnabled())
-                            LOGGER.debug("Journal Voucher Modify Action | Bill modify | voucher name = "
-                                    + voucherHeader.getName());
-                        // cancelBill(voucherHeader.getId());
-                        voucherService.updateBillForVSubType(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean,
-                                new BigDecimal(totalamount));
-                    }
-                    voucherHeader.setStatus(FinancialConstants.PREAPPROVEDVOUCHERSTATUS);
-                    target = "success";
-                }
+                voucherHeader = journalVoucherActionHelper.editVoucher(billDetailslist, subLedgerlist, voucherHeader,
+                        voucherTypeBean, workflowBean, parameters.get("totaldbamount")[0]);
+                target = "success";
             }
             else {
                 throw new ValidationException("InValid data", "InValid data");
@@ -315,21 +288,22 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                 // setOneFunctionCenterValue();
                 resetVoucherHeader();
 
-            sendForApproval();
-
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                addActionMessage(getText("pjv.voucher.approved",
+                        new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
         } catch (final ValidationException e) {
-            clearMessages();
-
             resetVoucherHeader();
+            voucherHeader = oldVh;
+            setOneFunctionCenterValue();
             if (subLedgerlist.size() == 0)
                 subLedgerlist.add(new VoucherDetails());
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            clearMessages();
-            setOneFunctionCenterValue();
             resetVoucherHeader();
+            voucherHeader = oldVh;
+            setOneFunctionCenterValue();
             if (subLedgerlist.size() == 0)
                 subLedgerlist.add(new VoucherDetails());
             final List<ValidationError> errors = new ArrayList<ValidationError>();

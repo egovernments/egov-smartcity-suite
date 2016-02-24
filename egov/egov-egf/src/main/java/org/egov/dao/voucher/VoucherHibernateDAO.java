@@ -216,10 +216,6 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
                     qry.setInteger("gldetailId", Integer.valueOf(generalLedgerDetail.getId().toString()));
                     qry.executeUpdate();
                 }
-                final Query qry = HibernateUtil.getCurrentSession().createQuery(
-                        "delete from CGeneralLedgerDetail where generalLedgerId=:glId");
-                qry.setInteger("glId", Integer.valueOf(generalLedger.getId().toString()));
-                qry.executeUpdate();
             }
             /**
              * Deleting record from general ledger .

@@ -50,23 +50,24 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="PJV-Approval" />
 		</jsp:include>
-		<span class="mandatory"> <s:actionmessage />
+		<span class="mandatory1"> <s:actionmessage />
 		</span>
 		<br />
 		<s:hidden id="id" name="id" value="%{voucherHeader.id}" />
-		<s:submit cssClass="button" id="print" value="Print Preview"
-			onclick="printVoucher()" />
-		<input type="button" value="Close" onclick="javascript:window.close()"
-			class="button" />
+		<div class="buttonbottom" align="center">
+			<s:submit cssClass="button" id="print" value="Print Preview"
+				onclick="printVoucher()" />
+			<input type="button" value="Close"
+				onclick="javascript:window.close()" class="button" />
+		</div>
 	</s:form>
 	<script>
-function printVoucher()
-{
-	
-		document.forms[0].action="journalVoucherPrint-print.action";		
-	
-	document.forms[0].submit();
-}
-</script>
+		function printVoucher() {
+
+			document.forms[0].action = "journalVoucherPrint-print.action";
+
+			document.forms[0].submit();
+		}
+	</script>
 </body>
 </html>

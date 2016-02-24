@@ -490,13 +490,14 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     }
 
     @SuppressWarnings("deprecation")
+    @Transactional
     public CVoucherHeader updateVoucherHeader(final CVoucherHeader voucherHeader, final VoucherTypeBean voucherTypeBean) {
         String voucherNumType = voucherTypeBean.getVoucherNumType();
         if (voucherTypeBean.getVoucherNumType() == null)
             voucherNumType = voucherHeader.getType();
         return updateVoucherHeader(voucherHeader, voucherNumType);
     }
-
+    @Transactional
     public CVoucherHeader updateVoucherHeader(final CVoucherHeader voucherHeader, final String voucherNumType) {
         CVoucherHeader existingVH = null;
         try {
@@ -571,10 +572,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(),
                         autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
                 existingVH.setVoucherNumber(strVoucherNumber);
-                final String vType = voucherHeader.getFundId().getIdentifier() + "/" + autoVoucherType + "/CGVN";
+                final String vType = voucherHeader.getFundId().getIdentifier().toString() + "/" + getCgnType(voucherHeader.getType()) + "/CGVN";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Voucher type  : " + vType);
-                String eg_voucher = eGovernCommon.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
+                String eg_voucher = voucherHelper.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
                 for (int i = eg_voucher.length(); i < 10; i++)
                     eg_voucher = "0" + eg_voucher;
                 existingVH.setCgvn(vType + eg_voucher);
@@ -604,10 +605,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                     final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(),
                             autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
                     existingVH.setVoucherNumber(strVoucherNumber);
-                    final String vType = voucherHeader.getFundId().getIdentifier() + "/" + autoVoucherType + "/CGVN";
+                    final String vType = voucherHeader.getFundId().getIdentifier().toString() + "/" + getCgnType(voucherHeader.getType()) + "/CGVN";
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Voucher type  : " + vType);
-                    String eg_voucher = eGovernCommon.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
+                    String eg_voucher = voucherHelper.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
                     for (int i = eg_voucher.length(); i < 10; i++)
                         eg_voucher = "0" + eg_voucher;
                     existingVH.setCgvn(vType + eg_voucher);
@@ -634,7 +635,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
         return existingVH;
     }
-
+    @Transactional
     public void deleteGLDetailByVHId(final Object voucherHeaderId) {
         voucherHibDAO.deleteGLDetailByVHId(voucherHeaderId);
     }
@@ -849,6 +850,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         }
         return cgnType;
     }
+    
 
     public void insertIntoRecordStatus(final CVoucherHeader voucherHeader) throws Exception {
         try {
@@ -1176,6 +1178,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
      * @return egBillregister - the updated bill register object.
      * @throws ValidationException
      */
+    @Transactional
     public EgBillregister updateBillForVSubType(final List<VoucherDetails> billDetailslist,
             final List<VoucherDetails> subLedgerlist,
             final CVoucherHeader voucherHeader,
