@@ -15,14 +15,14 @@ public class RecoveryJsonAdaptor implements JsonSerializer<Recovery>
         final JsonObject jsonObject = new JsonObject();
         if (recovery != null)
         {
-            jsonObject.addProperty("recoverycode", recovery.getType());
-            jsonObject.addProperty("recoveryname", recovery.getRecoveryName());
-            jsonObject.addProperty("subledgertype",recovery.getEgPartytype()!=null?recovery.getEgPartytype().getCode():"");
-            jsonObject.addProperty("chartofaccounts", recovery.getChartofaccounts().getName());
-            jsonObject.addProperty("remittedto", recovery.getRemitted());
-            jsonObject.addProperty("ifscCode", recovery.getIfscCode());
-            jsonObject.addProperty("accountNumber", recovery.getAccountNumber());
-            jsonObject.addProperty("isactive", recovery.getIsactive());
+            jsonObject.addProperty("recoverycode", recovery.getType()!=null?recovery.getType():"");
+            jsonObject.addProperty("recoveryname", recovery.getRecoveryName()!=null?recovery.getRecoveryName():"");
+            jsonObject.addProperty("subledgertype",recovery.getEgPartytype()!=null?(recovery.getEgPartytype().getCode()!=null?recovery.getEgPartytype().getCode():""):"");
+            jsonObject.addProperty("chartofaccounts", recovery.getChartofaccounts()!=null?(recovery.getChartofaccounts().getName()!=null?recovery.getChartofaccounts().getName():""):"");
+            jsonObject.addProperty("remittedto", recovery.getRemitted()!=null?recovery.getRemitted():"");
+            jsonObject.addProperty("ifscCode", recovery.getIfscCode()!=null?recovery.getIfscCode():"");
+            jsonObject.addProperty("accountNumber", recovery.getAccountNumber()!=null?recovery.getAccountNumber():"");
+            jsonObject.addProperty("isactive", recovery.getIsactive()!=null?recovery.getIsactive().toString():"");
             jsonObject.addProperty("id", recovery.getId());
         }
         return jsonObject;
