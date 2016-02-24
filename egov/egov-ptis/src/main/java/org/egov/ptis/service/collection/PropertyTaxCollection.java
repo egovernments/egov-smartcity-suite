@@ -44,12 +44,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANC
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 import static org.egov.ptis.constants.PropertyTaxConstants.FIRST_REBATETAX_PERC;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
@@ -60,7 +62,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CH
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -83,6 +84,7 @@ import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -823,20 +825,29 @@ public class PropertyTaxCollection extends TaxCollection {
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
         BigDecimal arrearAmount = BigDecimal.ZERO;
         BigDecimal latePaymentCharges = BigDecimal.ZERO;
+        BigDecimal arrearLibCess = BigDecimal.ZERO;
+        BigDecimal currLibCess = BigDecimal.ZERO;
+        final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
+        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
 
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()) {
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String installment = desc[1];
+
                 if (PropertyTaxUtil.getCurrentInstallment().getDescription().equals(installment)) {
                     if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_PENALTY)) {
                         latePaymentCharges = latePaymentCharges.add(rcptAccInfo.getCrAmount());
+                    } else if (desc[0].equals(DEMANDRSN_STR_LIBRARY_CESS)) {
+                        currLibCess = currLibCess.add(rcptAccInfo.getCrAmount());
                     } else {
                         currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
                     }
                 } else {
                     if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_PENALTY)) {
                         latePaymentCharges = latePaymentCharges.add(rcptAccInfo.getCrAmount());
+                    } else if (desc[0].equals(DEMANDRSN_STR_LIBRARY_CESS)) {
+                        arrearLibCess = arrearLibCess.add(rcptAccInfo.getCrAmount());
                     } else {
                         arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
                     }
@@ -844,9 +855,27 @@ public class PropertyTaxCollection extends TaxCollection {
             }
         }
 
+        for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
+            final String[] desc = billDet.getDescription().split("-", 2);
+            if (billDet.getOrderNo() == 1) {
+                receiptAmountInfo.setInstallmentFrom(desc[1]);
+                if (billDetails.size() == 1) {
+                    receiptAmountInfo.setInstallmentTo(desc[1]);
+                    break;
+                }
+            }
+            if (billDetails.size() > 1
+                    && billDetails.get(billDetails.size() - 1).getOrderNo().equals(billDet.getOrderNo())) {
+                receiptAmountInfo.setInstallmentTo(desc[1]);
+                break;
+            }
+        }
+
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
         receiptAmountInfo.setLatePaymentCharges(latePaymentCharges);
         receiptAmountInfo.setArrearsAmount(arrearAmount);
+        receiptAmountInfo.setCurrentCess(currLibCess);
+        receiptAmountInfo.setArrearCess(arrearLibCess);
         return receiptAmountInfo;
     }
 
