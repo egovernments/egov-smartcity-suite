@@ -221,9 +221,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             return redirectToPrintCertificate();
         if (workFlowAction.equals(Constants.SIGNWORKFLOWACTION))
             return digitalSignRedirection();
-        if(license().getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
-        licenseService().updateDemand(license());
-        }
         tradeLicenseService.updateStatusInWorkFlowProgress((TradeLicense) license(), workFlowAction);
         processWorkflow(NEW);
         tradeLicenseService.updateTradeLicense((TradeLicense) license(), workflowBean);
