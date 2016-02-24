@@ -125,7 +125,7 @@
 														<td><input type="text"  name="" class="form-control feeyear" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
 														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
 														<td class="text-center">
-														<s:checkbox name="legacyFeePayStatus[%{#attr.LIFee.key}]"></s:checkbox>
+														<s:checkbox name="legacyFeePayStatus[%{#attr.LIFee.key}]" class="case"></s:checkbox>
 														</td>
 													</tr>
 												</s:iterator>
@@ -245,20 +245,28 @@
 					}else{
 						/*validate fee details*/
 						if(validate_feedetails()){
-							formsubmit();
+							//checkbox checked
+							if(feedetails_checked()){
+								formsubmit();
+							}else{
+								return false;
+							}
 						}else{
 							return false;
 						}
 					}
 				} else{
-					
 					/*validate fee details*/
 					if(validate_feedetails()){
-						formsubmit();
+						//checkbox checked
+						if(feedetails_checked()){
+							formsubmit();
+						}else{
+							return false;
+						}
 					}else{
 						return false;
 					}
-
 				}
   			}
 
@@ -271,25 +279,55 @@
 					var rowval = jQuery(this).find("input.feeamount").val();
 					if(parseFloat(rowval) > 0){
 						globalindex = index;
-						validated = true;
+						validated = true;					
 					}else{
-						if(!jQuery(this).is(":last-child")){
-							if(index == (globalindex+1)){
-								bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details is missing!');
+						if(index == (globalindex+1)){
+							bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details amount is missing!');
+							validated = false;
+							return false;
+						}else{
+							if(jQuery(this).is(":last-child")){
+								bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details amount is mandatory!');
 								validated = false;
 								return false;
 							}
-						}else{
-							if(globalindex == undefined){
-								bootbox.alert('Atleast one financial year fee details is required!');
-								validated = false;
-							}else{
-								validated = true;
-							}
 						}
-						
 					}
 				});
+				return validated;
+			}
+
+			function feedetails_checked(){
+				
+				var checkindex;
+				var validated = false;
+				
+				jQuery('.case:checked').each(function () {
+			        checkindex = jQuery(this).closest('tr').index();
+			    });
+
+				if(checkindex != undefined){
+					jQuery("table.feedetails tbody tr").each(function (index) {
+						if(index > checkindex){
+							validated = true;
+							return;
+						}else{
+							var rowval = jQuery(this).find("input.feeamount").val();	
+							if(parseFloat(rowval) > 0){
+								if(jQuery(this).is(":last-child")){
+									//leave it
+									validated = true;
+								}else{
+									if(jQuery(this).find('input[type=checkbox]:checked').val() == undefined){
+										bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details paid should be checked!');
+										validated = false;
+										return false;
+									}
+								}
+							}
+						}
+					});
+				}
 				return validated;
 			}
 
