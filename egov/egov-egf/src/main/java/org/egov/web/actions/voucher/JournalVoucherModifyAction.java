@@ -199,9 +199,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("journalVoucherModifyAction | sendForApproval | Start");
         if (voucherHeader.getId() == null)
-            voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY,
-                    Long.valueOf(parameters.get("voucherId")[0]));
-
+            voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get("voucherId")[0]), false);
         populateWorkflowBean();
         voucherHeader = preApprovedActionHelper.sendForApproval(voucherHeader, workflowBean);
         if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
@@ -259,8 +257,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         CVoucherHeader oldVh = voucherHeader;
         populateWorkflowBean();
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]), false);
             sendForApproval();
-            addActionMsg(voucherHeader.getState().getValue(), voucherHeader.getState().getOwnerPosition());
             return "message";
         }
         if (null != voucherNumManual && StringUtils.isNotEmpty(voucherNumManual))
@@ -317,8 +315,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
 
     private void cancelBill(final Long vhId) {
         final StringBuffer billQuery = new StringBuffer();
-        final String statusQuery = "(select stat.id from  EgwStatus  stat where stat.moduletype=:module and stat.description=:description)";
-        final String cancelQuery = "Update EgBillregister set billstatus=:billstatus , status.id =" + statusQuery
+        final String statusQuery = "(select stat.id from  egw_status  stat where stat.moduletype=:module and stat.description=:description)";
+        final String cancelQuery = "Update eg_billregister set billstatus=:billstatus , statusid =" + statusQuery
                 + " where  id=:billId";
         String moduleType = "", description = "", billstatus = "";
         final EgBillregistermis billMis = (EgBillregistermis) persistenceService.find(
@@ -358,7 +356,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                 moduleType = FinancialConstants.CONTRACTORBILL;
             }
 
-            final Query billQry = HibernateUtil.getCurrentSession().createQuery(cancelQuery.toString());
+            final Query billQry = HibernateUtil.getCurrentSession().createSQLQuery(cancelQuery.toString());
             billQry.setString("module", moduleType);
             billQry.setString("description", description);
             billQry.setString("billstatus", billstatus);
