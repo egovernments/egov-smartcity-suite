@@ -50,7 +50,7 @@
 	 		var callBackUrl = '/tl/digitalSignature/tradeLicense/transitionWorkflow';
 			jQuery('<form>.').attr({
 				method: 'post',
-				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=WTMS&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
+				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=TL&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
 				target: '_self'
 			})
 			.appendTo(document.body).submit();  
