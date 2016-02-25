@@ -414,14 +414,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @param receiptBulkUpload
      */
     public void startWorkflow(final ReceiptHeader receiptHeader) throws ApplicationRuntimeException {
-        Boolean createVoucherForBillingService = Boolean.FALSE;
-        if (receiptHeader.getService().getVoucherCutOffDate() != null
-                && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
-            if (receiptHeader.getService().getVoucherCreation())
-                createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
-        } else if (receiptHeader.getService().getVoucherCutOffDate() == null)
-            if (receiptHeader.getService().getVoucherCreation())
-                createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
+        Boolean createVoucherForBillingService  = collectionsUtil.checkVoucherCreation(receiptHeader);
         Position position = null;
 
         if (!collectionsUtil.isEmployee(receiptHeader.getCreatedBy()))

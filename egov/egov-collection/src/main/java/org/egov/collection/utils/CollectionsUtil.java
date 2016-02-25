@@ -722,21 +722,6 @@ public class CollectionsUtil {
 
     }
 
-    public BillingIntegrationService getBillingService(final String code) {
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
-                "classpath*:org/egov/infstr/beanfactory/globalApplicationContext.xml",
-                "classpath*:org/egov/infstr/beanfactory/egiApplicationContext.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-pims.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-egf.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-eportal.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-ptis.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-erpcollections.xml",
-        "classpath*:org/egov/infstr/beanfactory/applicationContext-bpa.xml" });
-        final BillingIntegrationService billingService = (BillingIntegrationService) applicationContext.getBean(code
-                + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
-        return billingService;
-    }
-
     /**
      * @param consumerCode
      * @return last three online transaction for the consumerCode
@@ -821,6 +806,18 @@ public class CollectionsUtil {
             collectionIndexBuilder.installmentTo(receiptAmountInfo.getInstallmentTo());
 
         return collectionIndexBuilder.build();
+    }
+
+    public Boolean checkVoucherCreation(final ReceiptHeader receiptHeader) {
+        Boolean createVoucherForBillingService = Boolean.FALSE;
+        if (receiptHeader.getService().getVoucherCutOffDate() != null
+                && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
+            if (receiptHeader.getService().getVoucherCreation())
+                createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
+        } else if (receiptHeader.getService().getVoucherCutOffDate() == null)
+            if (receiptHeader.getService().getVoucherCreation())
+                createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
+        return createVoucherForBillingService;
     }
 
 }
