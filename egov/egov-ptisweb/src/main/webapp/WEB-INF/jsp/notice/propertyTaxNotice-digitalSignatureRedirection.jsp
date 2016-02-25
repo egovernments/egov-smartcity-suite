@@ -50,7 +50,7 @@
 	 		var callBackUrl = '/ptis/digitalSignature/propertyTax/transitionWorkflow';
 			jQuery('<form>.').attr({
 				method: 'post',
-				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=PTIS&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
+				action: '/ptis/digitalSignature/propertyTax/transitionWorkflow?fileStoreId='+fileStoreIds,
 				target: '_self'
 			})
 			.appendTo(document.body).submit();

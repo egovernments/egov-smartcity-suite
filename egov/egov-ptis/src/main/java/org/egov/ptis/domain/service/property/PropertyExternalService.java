@@ -1160,11 +1160,11 @@ public class PropertyExternalService {
             propertyImpl.getPropertyDetail().setSiteOwner(siteOwnerName);
 
         propertyImpl.getPropertyDetail().setBuildingPlanDetailsChecked(isBuildingPlanDetails);
-        if (isBuildingPlanDetails) {
+        /*if (isBuildingPlanDetails) {
             propertyImpl.getPropertyDetail().setBuildingPermissionNo(buildingPermissionNo);
             propertyImpl.getPropertyDetail().setBuildingPermissionDate(convertStringToDate(buildingPermissionDate));
             propertyImpl.getPropertyDetail().setDeviationPercentage(percentageDeviation);
-        }
+        }*/
 
         propertyImpl.getPropertyDetail().setLift(lift);
         propertyImpl.getPropertyDetail().setToilets(toilet);

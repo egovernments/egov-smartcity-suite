@@ -50,6 +50,9 @@
 		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span	class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="building.permNo" />
+		<th class="bluebgheadtd"><s:text name="buildingpermdate" />
+		<th class="bluebgheadtd"><s:text name="buildingpermplintharea" />
 		<th class="bluebgheadtd"><s:text name="drainage" /></th>
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
 		<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
@@ -136,6 +139,33 @@
 						maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[0].builtUpArea.area" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 						cssStyle="width:100%" data-optional="0" data-errormsg="Plinth area is mandatory!" title="Length X Width"/>
+				</div>
+			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="propertyDetail.floorDetailsProxy[0].buildingPermissionNo" 
+						maxlength="16" size="16" id="propertyDetail.floorDetailsProxy[0].buildingPermissionNo" value="%{propertyDetail.floorDetailsProxy[0].buildingPermissionNo}"
+						onblur="checkZero(this);" onchange="trim(this,this.value);"
+						cssStyle="width:100%" title="Building Permission Number"/>
+				</div>
+			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="propertyDetail.floorDetailsProxy[0].buildingPermissionDate" 
+						maxlength="16" size="16" id="propertyDetail.floorDetailsProxy[0].buildingPermissionDate" value="%{propertyDetail.floorDetailsProxy[0].buildingPermissionDate}"
+						cssClass="datepicker" autocomplete="off"
+						cssStyle="width:100%" title="Building Permission Date"/>
+				</div>
+			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area" 
+						maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area" value="%{propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Building paln plinth Area');checkZero(this,'Building paln plinth Area');"
+						cssStyle="width:100%" title="Plinth area in building plan"/>
 				</div>
 			</td>
 			

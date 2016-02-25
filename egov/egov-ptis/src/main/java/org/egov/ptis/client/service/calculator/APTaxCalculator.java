@@ -82,6 +82,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
@@ -165,7 +166,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                     taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
                     totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
                 }
-                unAuthDeviationPerc = getUnAuthDeviationPerc(property);
+                unAuthDeviationPerc = getUnAuthDeviationPerc(property.getPropertyDetail());
                 for (final Floor floorIF : property.getPropertyDetail().getFloorDetails()) {
                     // TODO think about, these beans to be client
                     // specific
@@ -499,15 +500,16 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return tax;
     }
 
-    private String getUnAuthDeviationPerc(Property property) {
-        if (property.getPropertyDetail().getBuildingPermissionNo() == null
+    private String getUnAuthDeviationPerc(PropertyDetail propertyDetail) {
+        /*if (property.getPropertyDetail().getBuildingPermissionNo() == null
                 || property.getPropertyDetail().getBuildingPermissionNo().isEmpty()) {
             return "100";
         } else {
             return property.getPropertyDetail().getDeviationPercentage() != null
                     && !property.getPropertyDetail().getDeviationPercentage().isEmpty() ? property.getPropertyDetail()
                     .getDeviationPercentage() : "0";
-        }
+        }*/
+        return null;
     }
 
     private BigDecimal calculateUnAuthPenalty(String deviationPerc, BigDecimal totalPropertyTax) {

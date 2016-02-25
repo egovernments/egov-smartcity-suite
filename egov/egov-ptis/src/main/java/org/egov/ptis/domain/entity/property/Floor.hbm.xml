@@ -103,6 +103,12 @@
 		<property name="noOfSeats" column="no_of_seats"	type="integer" />
 		<property name="drainage" column="drainage"	type="boolean" />
 		<property name="firmName" column="firmname" type="java.lang.String"/> 
+		<property name="buildingPermissionNo" column="building_permission_no" type="java.lang.String"/> 		
+		<property name="buildingPermissionDate" column="building_permission_date" type="java.util.Date"/>
+		
+		<component name="buildingPlanPlinthArea" class="org.egov.commons.Area">
+			<property name="area" column="building_permission_pintharea"/>	
+		</component>
 		<!--
 		EXTRA_FIELD1 varchar
 		
