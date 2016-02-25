@@ -760,9 +760,9 @@ public class LicenseUtils {
     }
     
     public String getDepartmentCodeForBillGenerate(){
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                Constants.TRADELICENSE_MODULENAME, "DEPARTMENTFORGENERATEBILL").get(0);
-        return (appConfigValue !=null ?appConfigValue.getValue():"");
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                Constants.TRADELICENSE_MODULENAME, "DEPARTMENTFORGENERATEBILL");
+        return (!appConfigValue.isEmpty() ?appConfigValue.get(0).getValue():"");
     }
 
     public Position getCityLevelCommissioner() {
