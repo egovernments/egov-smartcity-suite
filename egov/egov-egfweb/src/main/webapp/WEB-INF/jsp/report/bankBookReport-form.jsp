@@ -169,6 +169,12 @@ function validateDataa(){
 		return false;
 		}
 
+	var fromdate= startDate.split('/');
+	startDate=new Date(fromdate[2],fromdate[1]-1,fromdate[0]);
+    var todate = endDate.split('/');
+    endDate=new Date(todate[2],todate[1]-1,todate[0]);
+	
+
 	if(startDate > endDate)
 	{ 
 		bootbox.alert("Start date should be less than end date.")

@@ -239,7 +239,7 @@ public class BankBookReportAction extends BaseFormAction {
             startDate = parseDate("startDate");
             endDate = parseDate("endDate");
             
-            CFinancialYear financialYear=financialYearDAO.getFinancialYearByDate(startDate);
+            CFinancialYear financialYear=financialYearDAO.getFinYearByDate(startDate);
             Date endingDate=financialYear.getEndingDate();
             
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
