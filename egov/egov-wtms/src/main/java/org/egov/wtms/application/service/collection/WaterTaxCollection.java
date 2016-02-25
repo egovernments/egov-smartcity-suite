@@ -108,6 +108,9 @@ public class WaterTaxCollection extends TaxCollection {
     @Autowired
     private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
 
+    @Autowired
+    private ConnectionBillService connectionBillService;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -186,8 +189,8 @@ public class WaterTaxCollection extends TaxCollection {
 
         final StringBuffer query = new StringBuffer(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-        .append("WHERE dmdet.egDemand.id = :demand");
+                .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+                .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
 
@@ -202,7 +205,7 @@ public class WaterTaxCollection extends TaxCollection {
 
                 dmdRsn = dmdDtls.getEgDemandReason();
                 installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
-                demandDetailByReason = new HashMap<String, EgDemandDetails>();
+                demandDetailByReason = new HashMap<String, EgDemandDetails>(0);
                 if (installmentWiseDemandDetailsByReason.get(installmentDesc) == null) {
                     demandDetailByReason.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
                     installmentWiseDemandDetailsByReason.put(installmentDesc, demandDetailByReason);
@@ -276,7 +279,7 @@ public class WaterTaxCollection extends TaxCollection {
         String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-            && !rcptAccInfo.getIsRevenueAccount()) {
+                    && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String[] installsplit = desc[1].split("#");
@@ -295,7 +298,7 @@ public class WaterTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                             demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
@@ -386,9 +389,15 @@ public class WaterTaxCollection extends TaxCollection {
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber, final BigDecimal actualAmountPaid,
             final List<ReceiptDetail> receiptDetailList) {
-        LOGGER.debug("reconstructReceiptDetail billReferenceNumber " + billReferenceNumber + " actualAmountPaid "
+        final Long billID = Long.valueOf(billReferenceNumber);
+        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(0);
+        final EgBill bill = connectionBillService.updateBillWithLatest(billID);
+        LOGGER.debug("Reconstruct consumer code :" + bill.getConsumerId() + ", with bill reference number: "
+                + billReferenceNumber + ", for Amount Paid :"
                 + actualAmountPaid);
-        return null;
+        final CollectionApportioner apportioner = new CollectionApportioner();
+        billDetails.addAll(bill.getEgBillDetails());
+        return apportioner.reConstruct(actualAmountPaid, billDetails);
     }
 
     @Override
