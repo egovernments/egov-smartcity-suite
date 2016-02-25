@@ -126,16 +126,30 @@ function getUom(){
 	<s:textfield name="commencementDate" cssClass="form-control datepicker" required="true" id="startDate"  maxlength="10" value="%{formattedStartDate}"/>
     </div>
 </div>
-<s:if test="%{feeAmount != 0}">
-	<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='Fee Amount' /></label>
-    <div class="col-sm-3 add-margin">
-         <s:textfield name="feeAmount" id="feeAmount" value="%{feeAmount}" class="form-control" readOnly="true"/>
-    </div></div>
-    </s:if>
-	
-
-
+<s:set value="outstandingFee" var="feeInfo"></s:set>
+<s:if test="%{feeInfo.size != 0}">
+<div class="panel-heading  custom_form_panel_heading subheadnew">
+    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
+</div>
+<table class="table table-bordered" style="width:97%;margin:0 auto;">
+	<thead>
+		<tr>
+			<th><s:text name='license.fee.type' /></th>
+			<th><s:text name='license.fee.current' /></th>
+			<th><s:text name='license.fee.arrears' /></th>
+		</tr>
+	</thead>
+	<tbody>
+		<s:iterator value="feeInfo" var="fee" status="status">
+			<tr>
+				<td>${fee.key}</td>
+				<td>${fee.value['current']}</td>
+				<td>${fee.value['arrear']}</td>
+			</tr>
+		</s:iterator>
+	</tbody>
+</table>
+</s:if>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.traderCheckbox.lbl' /></label>
     <div class="col-sm-3 add-margin">
