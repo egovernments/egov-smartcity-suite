@@ -310,7 +310,7 @@ public class ReportService {
             if(doorNo!=null && !doorNo.isEmpty())
                 result.setDoorNumber(doorNo);
             else
-                result.setDoorNumber("");
+                result.setDoorNumber("N/A");
             result.setStatus(receiptHeader.getStatus().getDescription());
 
             StringBuilder paymentMode = new StringBuilder(30);
