@@ -611,18 +611,7 @@ public abstract class License extends StateAware {
     }
 
     public BigDecimal getTotalBalance() {
-        BigDecimal totBal = BigDecimal.ZERO;
-        for (final EgDemandDetails dd : licenseDemand.getEgDemandDetails()) {
-            if (dd.getAmount().subtract(dd.getAmtCollected()).compareTo(BigDecimal.ZERO) != 0)
-                totBal = totBal.add(dd.getAmount().subtract(dd.getAmtCollected()));
-            if (dd.getAmtRebate().compareTo(BigDecimal.ZERO) != 0)
-                totBal = totBal.subtract(dd.getAmtRebate());
-        }
-        return totBal;
-    }
-
-    public BigDecimal getFeeAmount() {
-        return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
+       return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
     }
 
     public boolean isStateRejected() {

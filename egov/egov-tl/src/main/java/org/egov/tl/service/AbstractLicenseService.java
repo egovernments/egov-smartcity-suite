@@ -411,14 +411,6 @@ public abstract class AbstractLicenseService<T extends License> {
             }
     }
 
-    public LicenseDemand getCurrentYearDemand(final T license) {
-        final Date currDate = new Date();
-        final LicenseDemand currLicenseDemand = (LicenseDemand) persistenceService
-                .find("from LicenseDemand ld where ld.license.id=? and (ld.egInstallmentMaster.fromDate <= ? and ld.egInstallmentMaster.toDate >=?)",
-                        license.getId(), currDate, currDate);
-        return currLicenseDemand;
-    }
-
     public List<Installment> getCurrAndPreviousInstallment() {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
         final Calendar calendar = Calendar.getInstance();

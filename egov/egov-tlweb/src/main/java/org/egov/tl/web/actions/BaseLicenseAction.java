@@ -57,7 +57,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -544,24 +543,16 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         workflowBean.setAppoverUserList(Collections.emptyList());
     }
 
-    // this will give current Demand only while saving or immediate after create
     public LicenseDemand getCurrentYearDemand() {
         return license().getLicenseDemand();
     }
 
-    // this will give current Demand only while saving or immediate after create
     public String getPayableAmountInWords() {
-        String baseDemand = "";
-
-        baseDemand = NumberToWord.amountInWords(getAapplicableDemand(license().getCurrentDemand()).doubleValue());
-
-        return baseDemand;
+        return NumberToWord.amountInWords(license().getTotalBalance().doubleValue());
     }
 
     public String getCollectedDemandAmountInWords() {
-        // this below api will give you the current year Demand from database
-        final LicenseDemand currentYearDemand = licenseService().getCurrentYearDemand(license());
-        return NumberToWord.amountInWords(currentYearDemand.getAmtCollected().doubleValue());
+        return NumberToWord.amountInWords(license().getLicenseDemand().getAmtCollected().doubleValue());
     }
 
     public List<LicenseChecklistHelper> getSelectedChecklist() {
@@ -578,17 +569,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             isCurrent = true;
         return isCurrent;
 
-    }
-
-    public BigDecimal getAapplicableDemand(final EgDemand demand) {
-        // TODO: Code was reviewed by Satyam, No changes required
-        BigDecimal total = BigDecimal.ZERO;
-        if (demand.getIsHistory().equals("N"))
-            for (final EgDemandDetails details : demand.getEgDemandDetails()) {
-                total = total.add(details.getAmount());
-                total = total.subtract(details.getAmtRebate());
-            }
-        return total;
     }
 
     public Map<String, Map<String, BigDecimal>> getOutstandingFee() {
