@@ -279,6 +279,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             }
         } catch (final ParseException e) {
             LOGGER.error("Exception while voucher date", e);
+            throw new ApplicationRuntimeException(e.getMessage());
         }
 
         if (receiptHeader.getVoucherNum() != null && !receiptHeader.getVoucherNum().equals(""))
