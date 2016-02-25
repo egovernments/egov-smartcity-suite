@@ -40,7 +40,6 @@
 
 package org.egov.tl.service;
 
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -53,38 +52,40 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-@Service 
+@Service
 @Transactional(readOnly = true)
-public class FeeMatrixDetailService  {
+public class FeeMatrixDetailService {
 
-	private final FeeMatrixDetailRepository feeMatrixDetailRepository;
-	
+    private final FeeMatrixDetailRepository feeMatrixDetailRepository;
 
-	@Autowired
-	public FeeMatrixDetailService(final FeeMatrixDetailRepository feeMatrixDetailRepository) {
-		this.feeMatrixDetailRepository = feeMatrixDetailRepository;
-	}
+    @Autowired
+    public FeeMatrixDetailService(final FeeMatrixDetailRepository feeMatrixDetailRepository) {
+        this.feeMatrixDetailRepository = feeMatrixDetailRepository;
+    }
 
-	public List<FeeMatrixDetail> findAll() {
-		return feeMatrixDetailRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
-	}
+    public List<FeeMatrixDetail> findAll() {
+        return feeMatrixDetailRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
 
-	public FeeMatrixDetail findByLicenseFeeByRange(FeeMatrix feeMatrix,
-			BigDecimal uom, Date date,long financialYearId) {
-	return 	feeMatrixDetailRepository.findFeeDetailList(feeMatrix,uom.intValue(),date,financialYearId) ;
-		
-	}
-	
-	public FeeMatrixDetail findByFeeMatrixDetailId(Long feeMatrixDetailId) {
-            FeeMatrixDetail feeMatrixDetail = feeMatrixDetailRepository.findOne(feeMatrixDetailId);  
-            return feeMatrixDetail;  
-        }
-	
-	@Transactional
-        public void delete(final FeeMatrixDetail feeMatrixDetail) {
-	    feeMatrixDetailRepository.delete(feeMatrixDetail);
-        } 
-	
-	
+    public FeeMatrixDetail findByLicenseFeeByRange(final FeeMatrix feeMatrix,
+            final BigDecimal uom, final Date date, final long financialYearId) {
+        return feeMatrixDetailRepository.findFeeDetailList(feeMatrix, uom.intValue(), date, financialYearId);
+
+    }
+
+    public FeeMatrixDetail findByFeeMatrixDetailId(final Long feeMatrixDetailId) {
+        final FeeMatrixDetail feeMatrixDetail = feeMatrixDetailRepository.findOne(feeMatrixDetailId);
+        return feeMatrixDetail;
+    }
+
+    @Transactional
+    public void delete(final FeeMatrixDetail feeMatrixDetail) {
+        feeMatrixDetailRepository.delete(feeMatrixDetail);
+    }
+
+    public List<FeeMatrixDetail> searchFeeMatrix(final Long licenseCategory, final Long subCategory, final Long financialYear) {
+        return feeMatrixDetailRepository.findByParams(licenseCategory, subCategory, financialYear);
+
+    }
+
 }

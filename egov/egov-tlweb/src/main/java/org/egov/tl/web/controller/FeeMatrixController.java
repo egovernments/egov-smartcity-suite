@@ -40,11 +40,14 @@
 
 package org.egov.tl.web.controller;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.egov.commons.dao.FinancialYearDAO;
@@ -52,12 +55,16 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.FeeMatrix;
+import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.service.FeeMatrixDetailService;
 import org.egov.tl.service.FeeMatrixService;
 import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.web.adaptor.FeeMatrixAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -66,6 +73,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/feematrix/")
@@ -77,6 +88,9 @@ public class FeeMatrixController {
 
     @Autowired
     private FeeMatrixService feeMatrixService;
+
+    @Autowired
+    private FeeMatrixDetailService feeMatrixDetailService;
 
     @Autowired
     @Qualifier("persistenceService")
@@ -161,4 +175,30 @@ public class FeeMatrixController {
         return FEEMATRIX_VIEW;
     }
 
+    @RequestMapping(value = "view-feematrix", method = RequestMethod.GET)
+    public String viewForm(final Model model, @RequestParam(required = false) final String fee) {
+        model.addAttribute("feeMatrix", new FeeMatrix());
+        model.addAttribute("financialYears", financialYearDAO.getAllActiveFinancialYearList());
+        model.addAttribute("licenseCategorys", licenseCategoryService.findAllOrderByName());
+        model.addAttribute("subCategorys", Collections.EMPTY_LIST);
+        return "feematrix-view";
+    }
+
+    @RequestMapping(value = "viewresult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String viewresult(@RequestParam(required = false) final Long category,
+            @RequestParam(required = false) final Long subCategory, @RequestParam(required = false) final Long finyear,
+            final HttpServletResponse response)
+            throws IOException, ParseException {
+        final List<FeeMatrixDetail> feeMatrixDetails = feeMatrixDetailService.searchFeeMatrix(category, subCategory, finyear);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(feeMatrixDetails)).append("}")
+                .toString();
+        return result;
+    }
+
+    public Object toSearchResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(FeeMatrixDetail.class, new FeeMatrixAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 }
