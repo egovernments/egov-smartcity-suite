@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -101,12 +102,13 @@ public class JournalBookReportAction extends BaseFormAction {
     public void prepareNewForm() {
         final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         super.prepare();
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
+        addDropdownData("fundList",
+                persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("fundsourceList",
                 persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("functionList", masterCache.get("egi-function"));
- 
+
         addDropdownData("voucherNameList", VoucherHelper.VOUCHER_TYPE_NAMES.get(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside  Prepare ........");
@@ -156,6 +158,8 @@ public class JournalBookReportAction extends BaseFormAction {
                 .setResultTransformer(Transformers.aliasToBean(GeneralLedgerBean.class));
         journalBookDisplayList = query.list();
         for (GeneralLedgerBean bean : journalBookDisplayList) {
+            bean.setDebitamount(new BigDecimal(bean.getDebitamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            bean.setCreditamount(new BigDecimal(bean.getCreditamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             if (!voucherDate.equalsIgnoreCase("") && voucherDate.equalsIgnoreCase(bean.getVoucherdate())
                     && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
                 bean.setVoucherdate("");
@@ -201,7 +205,7 @@ public class JournalBookReportAction extends BaseFormAction {
         if (journalBookReport.getDept_name() != null && !journalBookReport.getDept_name().equals(""))
             subQuery = subQuery + " and vmis.departmentid=" + journalBookReport.getDept_name() + " ";
         if (journalBookReport.getFunctionId() != null && !journalBookReport.getFunctionId().equals(""))
-            subQuery = subQuery + " and     vmis.functionid=d.id  =" + journalBookReport.getFundSource_id() + " ";
+            subQuery = subQuery + " and vmis.functionid  =" + journalBookReport.getFunctionId() + " ";
         query = "SELECT TO_CHAR(vh.voucherdate,'dd-Mon-yyyy') AS voucherdate,vh.vouchernumber AS vouchernumber,f.name AS fund,gl.glcode AS code,coa.name AS accName,"
                 + "vh.description AS narration,vh.isconfirmed AS isconfirmed,gl.debitamount AS debitamount, gl.creditamount AS creditamount,vh.name AS voucherName,vh.id AS vhId "
                 + " FROM voucherheader vh, generalledger gl,fund f,function fn ,vouchermis vmis,chartofaccounts coa WHERE vh.id = gl.voucherheaderid AND gl.glcodeid = coa.id AND vh.fundid = f.id"
