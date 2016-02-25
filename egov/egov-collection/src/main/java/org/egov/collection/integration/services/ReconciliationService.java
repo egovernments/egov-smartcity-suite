@@ -40,6 +40,7 @@
 package org.egov.collection.integration.services;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -89,7 +90,8 @@ public class ReconciliationService {
         receiptHeaderService.getSession().flush();
 
         final List<ReceiptDetail> receiptDetailList = billingService.reconstructReceiptDetail(
-                onlinePaymentReceiptHeader.getReferencenumber(), onlinePaymentReceiptHeader.getTotalAmount());
+                onlinePaymentReceiptHeader.getReferencenumber(), onlinePaymentReceiptHeader.getTotalAmount(),
+                new ArrayList(onlinePaymentReceiptHeader.getReceiptDetails()));
         if (receiptDetailList != null) {
             LOGGER.debug("Reconstructed receiptDetailList : " + receiptDetailList.toString());
             for (final ReceiptDetail receiptDetail : receiptDetailList) {

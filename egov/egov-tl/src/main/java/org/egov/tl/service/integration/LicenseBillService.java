@@ -118,13 +118,12 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     protected License license;
     public static final String TL_FUNCTION_CODE = "10151500";
 
-
     @Autowired
     private EgBillDetailsDao egBillDetailsDao;
 
     @Autowired
     private SimpleWorkflowService<License> transferWorkflowService;
-    
+
     @Autowired
     private ModuleService moduleService;
 
@@ -139,9 +138,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     private AssignmentService assignmentService;
-    
+
     private TradeLicenseUpdateIndexService updateIndexService;
-    
+
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
 
     @Autowired
@@ -159,7 +158,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
-    
+
     private LicenseUtils licenseUtils;
 
     public void setLicense(final License license) {
@@ -172,116 +171,116 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>();
         final LicenseBill billable = (LicenseBill) billObj;
         // final Set<LicenseDemand> demands = this.license.getDemandSet();
-       final EgDemand demand = license.getCurrentDemand();
+        final EgDemand demand = license.getCurrentDemand();
         final Date currentDate = new Date();
         final Map installmentWise = new HashMap<Installment, List<EgDemandDetails>>();
         final Set<Installment> sortedInstallmentSet = new TreeSet<Installment>();
         final DemandComparatorByOrderId demandComparatorByOrderId = new DemandComparatorByOrderId();
-         Module module = (license.getTradeName()!=null && license.getTradeName().getLicenseType()!=null ?
-                license.getTradeName().getLicenseType().getModule():null);
-        if(module ==null)
-            module=moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME);
-        final Installment currInstallment = getCurrentInstallment(module);
-        final List<EgDemandDetails> orderedDetailsList = new ArrayList<EgDemandDetails>();
-        Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
-        EgDemandDetails penaltyDemandDetail = null;
-        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
-        if ("New".equals(license.getLicenseAppType().getName()))
-            installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(),
-                    license.getCurrentDemand().getBaseDemand(), currInstallment);
-        else if ("Renew".equals(license.getLicenseAppType().getName()))
-            installmentPenalty = billable.getCalculatedPenalty(license.getDateOfExpiry(), new Date(),
-                    license.getCurrentDemand().getBaseDemand(), currInstallment);
-        installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license, license.getCurrentDemand());
-        penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(getCurrentInstallment(module));
-        for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet())
-            if (penalty.getValue().signum() > 0)
-                if (penaltyDemandDetail != null)
-                    penaltyDemandDetail.setAmount(penalty.getValue());
-                else {
-                    penaltyDemandDetail = insertPenaltyAndBillDetails(billDetails, billable, penalty.getValue(),
-                            penalty.getKey());
-                    if (penaltyDemandDetail != null) {
-                        demand.getEgDemandDetails().add(penaltyDemandDetail);
-                        demand.addBaseDemand(penaltyDemandDetail.getAmount());
-                    }
-                }
-        for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
-            final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
-            if (installmentWise.get(installment) == null) {
-                final List<EgDemandDetails> detailsList = new ArrayList<EgDemandDetails>();
-                detailsList.add(demandDetail);
-                installmentWise.put(demandDetail.getEgDemandReason().getEgInstallmentMaster(), detailsList);
-                sortedInstallmentSet.add(installment);
-            } else
-                ((List<EgDemandDetails>) installmentWise.get(demandDetail.getEgDemandReason().getEgInstallmentMaster()))
-                        .add(demandDetail);
-        }
-        for (final Installment i : sortedInstallmentSet) {
-            final List<EgDemandDetails> installmentWiseDetails = (List<EgDemandDetails>) installmentWise.get(i);
-            Collections.sort(installmentWiseDetails, demandComparatorByOrderId);
-            orderedDetailsList.addAll(installmentWiseDetails);
-        }
-
-        int i = 1;
-        for (final EgDemandDetails demandDetail : orderedDetailsList) {
-
-            final EgDemandReason reason = demandDetail.getEgDemandReason();
-            final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDebit().equalsIgnoreCase("N")
-                    && demandDetail.getAmount().subtract(demandDetail.getAmtRebate())
-                            .compareTo(demandDetail.getAmtCollected()) != 0) {
-                final EgBillDetails billdetail = new EgBillDetails();
-                final EgBillDetails billdetailRebate = new EgBillDetails();
-                if (demandDetail.getAmtRebate() != null && demandDetail.getAmtRebate().compareTo(BigDecimal.ZERO) != 0) {
-                    final EgReasonCategory reasonCategory = demandGenericDao
-                            .getReasonCategoryByCode(Constants.DEMANDRSN_REBATE);
-                    final List<EgDemandReasonMaster> demandReasonMasterByCategory = demandGenericDao
-                            .getDemandReasonMasterByCategoryAndModule(reasonCategory, module);
-                    for (final EgDemandReasonMaster demandReasonMaster : demandReasonMasterByCategory) {
-                        final EgDemandReason reasonDed = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
-                                demandReasonMaster, installment, module);
-                        if (demandDetail.getEgDemandReason().getId().equals(reasonDed.getEgDemandReason().getId())) {
-                            billdetailRebate.setDrAmount(demandDetail.getAmtRebate());
-                            billdetailRebate.setCrAmount(BigDecimal.ZERO);
-                            billdetailRebate.setGlcode(reasonDed.getGlcodeId().getGlcode());
-                            billdetailRebate.setEgDemandReason(demandDetail.getEgDemandReason());
-                            billdetailRebate.setAdditionalFlag(1);
-                            billdetailRebate.setCreateDate(currentDate);
-                            billdetailRebate.setModifiedDate(currentDate);
-                            billdetailRebate.setOrderNo(i++);
-                            billdetailRebate.setDescription(reasonDed.getEgDemandReasonMaster().getReasonMaster()
-                                    + " - " + installment.getDescription());
-                            billdetailRebate.setFunctionCode(TL_FUNCTION_CODE);
-                            billDetails.add(billdetailRebate);
+        Module module = license.getTradeName() != null && license.getTradeName().getLicenseType() != null ?
+                license.getTradeName().getLicenseType().getModule() : null;
+                if (module == null)
+                    module = moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME);
+                final Installment currInstallment = getCurrentInstallment(module);
+                final List<EgDemandDetails> orderedDetailsList = new ArrayList<EgDemandDetails>();
+                Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
+                EgDemandDetails penaltyDemandDetail = null;
+                Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
+                if ("New".equals(license.getLicenseAppType().getName()))
+                    installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(),
+                            license.getCurrentDemand().getBaseDemand(), currInstallment);
+                else if ("Renew".equals(license.getLicenseAppType().getName()))
+                    installmentPenalty = billable.getCalculatedPenalty(license.getDateOfExpiry(), new Date(),
+                            license.getCurrentDemand().getBaseDemand(), currInstallment);
+                installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license, license.getCurrentDemand());
+                penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(getCurrentInstallment(module));
+                for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet())
+                    if (penalty.getValue().signum() > 0)
+                        if (penaltyDemandDetail != null)
+                            penaltyDemandDetail.setAmount(penalty.getValue());
+                        else {
+                            penaltyDemandDetail = insertPenaltyAndBillDetails(billDetails, billable, penalty.getValue(),
+                                    penalty.getKey());
+                            if (penaltyDemandDetail != null) {
+                                demand.getEgDemandDetails().add(penaltyDemandDetail);
+                                demand.addBaseDemand(penaltyDemandDetail.getAmount());
+                            }
                         }
+                for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
+                    final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+                    if (installmentWise.get(installment) == null) {
+                        final List<EgDemandDetails> detailsList = new ArrayList<EgDemandDetails>();
+                        detailsList.add(demandDetail);
+                        installmentWise.put(demandDetail.getEgDemandReason().getEgInstallmentMaster(), detailsList);
+                        sortedInstallmentSet.add(installment);
+                    } else
+                        ((List<EgDemandDetails>) installmentWise.get(demandDetail.getEgDemandReason().getEgInstallmentMaster()))
+                        .add(demandDetail);
+                }
+                for (final Installment i : sortedInstallmentSet) {
+                    final List<EgDemandDetails> installmentWiseDetails = (List<EgDemandDetails>) installmentWise.get(i);
+                    Collections.sort(installmentWiseDetails, demandComparatorByOrderId);
+                    orderedDetailsList.addAll(installmentWiseDetails);
+                }
+
+                int i = 1;
+                for (final EgDemandDetails demandDetail : orderedDetailsList) {
+
+                    final EgDemandReason reason = demandDetail.getEgDemandReason();
+                    final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+                    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDebit().equalsIgnoreCase("N")
+                            && demandDetail.getAmount().subtract(demandDetail.getAmtRebate())
+                            .compareTo(demandDetail.getAmtCollected()) != 0) {
+                        final EgBillDetails billdetail = new EgBillDetails();
+                        final EgBillDetails billdetailRebate = new EgBillDetails();
+                        if (demandDetail.getAmtRebate() != null && demandDetail.getAmtRebate().compareTo(BigDecimal.ZERO) != 0) {
+                            final EgReasonCategory reasonCategory = demandGenericDao
+                                    .getReasonCategoryByCode(Constants.DEMANDRSN_REBATE);
+                            final List<EgDemandReasonMaster> demandReasonMasterByCategory = demandGenericDao
+                                    .getDemandReasonMasterByCategoryAndModule(reasonCategory, module);
+                            for (final EgDemandReasonMaster demandReasonMaster : demandReasonMasterByCategory) {
+                                final EgDemandReason reasonDed = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+                                        demandReasonMaster, installment, module);
+                                if (demandDetail.getEgDemandReason().getId().equals(reasonDed.getEgDemandReason().getId())) {
+                                    billdetailRebate.setDrAmount(demandDetail.getAmtRebate());
+                                    billdetailRebate.setCrAmount(BigDecimal.ZERO);
+                                    billdetailRebate.setGlcode(reasonDed.getGlcodeId().getGlcode());
+                                    billdetailRebate.setEgDemandReason(demandDetail.getEgDemandReason());
+                                    billdetailRebate.setAdditionalFlag(1);
+                                    billdetailRebate.setCreateDate(currentDate);
+                                    billdetailRebate.setModifiedDate(currentDate);
+                                    billdetailRebate.setOrderNo(i++);
+                                    billdetailRebate.setDescription(reasonDed.getEgDemandReasonMaster().getReasonMaster()
+                                            + " - " + installment.getDescription());
+                                    billdetailRebate.setFunctionCode(TL_FUNCTION_CODE);
+                                    billDetails.add(billdetailRebate);
+                                }
+                            }
+                        }
+                        if (demandDetail.getAmount() != null) {
+                            billdetail.setDrAmount(BigDecimal.ZERO);
+                            billdetail.setCrAmount(demandDetail.getAmount());
+                        }
+
+                        if (LOGGER.isDebugEnabled())
+                            LOGGER.debug("demandDetail.getEgDemandReason()"
+                                    + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() + " glcodeerror"
+                                    + demandDetail.getEgDemandReason().getGlcodeId());
+                        billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
+                        billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
+                        billdetail.setAdditionalFlag(1);
+                        billdetail.setCreateDate(currentDate);
+                        billdetail.setModifiedDate(currentDate);
+                        // billdetail.setOrderNo(Integer.valueOf(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getOrderId().toString()));
+                        billdetail.setOrderNo(i++);
+                        billdetail.setDescription(reason.getEgDemandReasonMaster().getReasonMaster() + " - "
+                                + installment.getDescription());
+                        billDetails.add(billdetail);
                     }
-                }
-                if (demandDetail.getAmount() != null) {
-                    billdetail.setDrAmount(BigDecimal.ZERO);
-                    billdetail.setCrAmount(demandDetail.getAmount());
-                }
 
+                }
                 if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("demandDetail.getEgDemandReason()"
-                            + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() + " glcodeerror"
-                            + demandDetail.getEgDemandReason().getGlcodeId());
-                billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
-                billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
-                billdetail.setAdditionalFlag(1);
-                billdetail.setCreateDate(currentDate);
-                billdetail.setModifiedDate(currentDate);
-                // billdetail.setOrderNo(Integer.valueOf(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getOrderId().toString()));
-                billdetail.setOrderNo(i++);
-                billdetail.setDescription(reason.getEgDemandReasonMaster().getReasonMaster() + " - "
-                        + installment.getDescription());
-                billDetails.add(billdetail);
-            }
-
-        }
-        if (LOGGER.isDebugEnabled())
-            LOG.debug("created Bill Details");
-        return billDetails;
+                    LOG.debug("created Bill Details");
+                return billDetails;
     }
 
     public Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final License license,
@@ -289,10 +288,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetails = new TreeMap<Installment, EgDemandDetails>();
         final Installment currentInstall = currentDemand.getEgInstallmentMaster();
         final String query = new StringBuilder()
-                .append("select ld from LicenseDemand ld inner join fetch ld.egDemandDetails dd ")
-                .append("inner join fetch dd.egDemandReason dr inner join fetch dr.egDemandReasonMaster drm ")
-                .append("inner join fetch ld.license l where l = :license and ld.egInstallmentMaster = :installment ")
-                .append("and drm.code = :penaltyReasonCode").toString();
+        .append("select ld from LicenseDemand ld inner join fetch ld.egDemandDetails dd ")
+        .append("inner join fetch dd.egDemandReason dr inner join fetch dr.egDemandReasonMaster drm ")
+        .append("inner join fetch ld.license l where l = :license and ld.egInstallmentMaster = :installment ")
+        .append("and drm.code = :penaltyReasonCode").toString();
 
         final List list = persistenceService.getSession().createQuery(query).setEntity("license", license)
                 .setEntity("installment", currentInstall)
@@ -367,7 +366,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final EgBill bill = egBillDao.findById(Long.valueOf(billReceiptInfoImpl.getBillReferenceNum()), false);
             final EgDemand demand = bill.getEgDemand();
             if (billReceipt.getEvent().equals(EVENT_RECEIPT_CREATED)) {
-                final BigDecimal amtCollected = BigDecimal.ZERO;
                 final LicenseDemand ld = (LicenseDemand) persistenceService.find("from LicenseDemand where id=?",
                         demand.getId());
                 ld.getLicense().getTradeName().getLicenseType().getModule();
@@ -412,16 +410,17 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                         + rcptAccInfo.getCrAmount());
                         }
 
-               //demand.setAmtCollected(amtCollected);
-                //persistenceService.update(demand);
+                // demand.setAmtCollected(amtCollected);
+                // persistenceService.update(demand);
                 // FIXME ld.getLicense(); will be sufficient to get the license back
                 // Since collection is not working, we re query to get License object
                 // replace the below with ld.getLicense(); once collection fixed
                 final TradeLicense license = (TradeLicense) persistenceService.find("from TradeLicense where id=?",
                         ld.getLicense().getId());
-               if (license.getState() != null)
+                if (license.getState() != null)
                     updateWorkflowState(license);
-                tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(license, billReceipt.getReceiptDate(), demand.getAmtCollected());
+                tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(license, billReceipt.getReceiptDate(),
+                        demand.getAmtCollected());
                 updateIndexService.updateTradeLicenseIndexes(license);
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 reconcileCollForRcptCancel(demand, billReceipt);
@@ -441,53 +440,50 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      * update Application status and workflow
      */
     @Transactional
-    public void updateWorkflowState( License licenseObj) {
+    public void updateWorkflowState(License licenseObj) {
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(licenseObj.getCreatedBy().getId());
         Position pos = wfInitiator.getPosition();
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        Boolean digitalSignEnabled = licenseUtils.isDigitalSignEnabled();
+        final Boolean digitalSignEnabled = licenseUtils.isDigitalSignEnabled();
         WorkFlowMatrix wfmatrix = null;
-        
+
         if (digitalSignEnabled) {
-            licenseObj=licenseUtils.applicationStatusChange(licenseObj,Constants.APPLICATION_STATUS_DIGUPDATE_CODE);
+            licenseObj = licenseUtils.applicationStatusChange(licenseObj, Constants.APPLICATION_STATUS_DIGUPDATE_CODE);
             pos = licenseUtils.getCityLevelCommissioner();
             if (licenseObj.getLicenseAppType() != null
                     && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
                 wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
                         Constants.WF_STATE_DIGITAL_SIGN_RENEWAL, null);
                 licenseObj.transition(true).withSenderName(user.getName())
-                        .withComments(Constants.WORKFLOW_STATE_COLLECTED)
-                        .withStateValue(Constants.WF_STATE_DIGITAL_SIGN_RENEWAL).withDateInfo(currentDate.toDate())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                .withComments(Constants.WORKFLOW_STATE_COLLECTED)
+                .withStateValue(Constants.WF_STATE_DIGITAL_SIGN_RENEWAL).withDateInfo(currentDate.toDate())
+                .withOwner(pos).withNextAction(wfmatrix.getNextAction());
             } else {
                 wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                         Constants.WF_STATE_DIGITAL_SIGN_NEWTL, null);
                 licenseObj.transition(true).withSenderName(user.getName())
-                        .withComments(Constants.WORKFLOW_STATE_COLLECTED)
-                        .withStateValue(Constants.WF_STATE_DIGITAL_SIGN_NEWTL).withDateInfo(currentDate.toDate())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                .withComments(Constants.WORKFLOW_STATE_COLLECTED)
+                .withStateValue(Constants.WF_STATE_DIGITAL_SIGN_NEWTL).withDateInfo(currentDate.toDate())
+                .withOwner(pos).withNextAction(wfmatrix.getNextAction());
             }
         } else {
-            licenseObj=licenseUtils.applicationStatusChange(licenseObj,Constants.APPLICATION_STATUS_APPROVED_CODE);
+            licenseObj = licenseUtils.applicationStatusChange(licenseObj, Constants.APPLICATION_STATUS_APPROVED_CODE);
             if (licenseObj.getLicenseAppType() != null
-                    && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+                    && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
                 wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
                         Constants.WF_STATE_RENEWAL_COMM_APPROVED, null);
-            } else {
+            else
                 wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                         Constants.WF_STATE_COLLECTION_PENDING, null);
-            }
             licenseObj.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                    .withNextAction(wfmatrix.getNextAction());
+            .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+            .withNextAction(wfmatrix.getNextAction());
         }
         // TODO: updating License with workFlow Entry
         // FIXME its a collection API issue to be discussed and rectified
         persistenceService.getSession().flush();
     }
-
-   
 
     /**
      * Deducts the collected amounts as per the amount of the cancelled receipt.
@@ -520,7 +516,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                    && !rcptAccInfo.getIsRevenueAccount()) {
+            && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String installment = desc[1].trim();
@@ -529,7 +525,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             && installment.equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()
                                     .getDescription())) {
                         demandDetail
-                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         LOGGER.info("Deducted Collected amount and receipt details for tax : " + reason
                                 + " installment : " + installment + " with receipt No : "
                                 + billRcptInfo.getReceiptNum() + " for Rs. " + demandDetail.getAmtCollected());
@@ -632,7 +628,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Transactional
     public boolean updateNewReceipt(final Set<BillReceiptInfo> billReceipts) throws InvalidAccountHeadException,
-            ObjectNotFoundException {
+    ObjectNotFoundException {
         try {
             for (final BillReceiptInfo bri : billReceipts) {
                 linkBillToReceipt(bri);
@@ -781,7 +777,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     private BillReceipt linkBillToReceipt(final BillReceiptInfo bri) throws InvalidAccountHeadException,
-            ObjectNotFoundException {
+    ObjectNotFoundException {
         BillReceipt billRecpt = null;
         if (bri == null)
             throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
@@ -880,14 +876,12 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
-            final BigDecimal actualAmountPaid) {
+            final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    
-
-    public void setLicenseUtils(LicenseUtils licenseUtils) {
+    public void setLicenseUtils(final LicenseUtils licenseUtils) {
         this.licenseUtils = licenseUtils;
     }
 
@@ -910,7 +904,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return updateIndexService;
     }
 
-    public void setUpdateIndexService(TradeLicenseUpdateIndexService updateIndexService) {
+    public void setUpdateIndexService(final TradeLicenseUpdateIndexService updateIndexService) {
         this.updateIndexService = updateIndexService;
     }
 
@@ -918,9 +912,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return tradeLicenseSmsAndEmailService;
     }
 
-    public void setTradeLicenseSmsAndEmailService(TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
+    public void setTradeLicenseSmsAndEmailService(final TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
         this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
     }
-    
 
 }

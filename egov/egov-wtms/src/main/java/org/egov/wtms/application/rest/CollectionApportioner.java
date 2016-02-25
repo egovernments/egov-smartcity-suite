@@ -58,15 +58,9 @@ public class CollectionApportioner {
     public static final String STRING_FULLTAX = "FULLTAX";
     public static final String STRING_ADVANCE = "ADVANCE";
     private static final Logger LOGGER = Logger.getLogger(CollectionApportioner.class);
-    private boolean isEligibleForCurrentRebate;
-    private boolean isEligibleForAdvanceRebate;
-    private BigDecimal rebate;
 
-    public CollectionApportioner(boolean isEligibleForCurrentRebate, boolean isEligibleForAdvanceRebate,
-            BigDecimal rebate) {
-        this.isEligibleForCurrentRebate = isEligibleForCurrentRebate;
-        this.isEligibleForAdvanceRebate = isEligibleForAdvanceRebate;
-        // this.rebate = rebate;
+    public CollectionApportioner() {
+
     }
 
     public void apportion(BigDecimal amtPaid, List<ReceiptDetail> receiptDetails, Map<String, BigDecimal> instDmdMap) {
@@ -173,13 +167,5 @@ public class CollectionApportioner {
             return new Amount(amount.divide(bd));
         }
 
-    }
-
-    void setEligibleForCurrentRebate(boolean isEligibleForCurrentRebate) {
-        this.isEligibleForCurrentRebate = isEligibleForCurrentRebate;
-    }
-
-    void setEligibleForAdvanceRebate(boolean isEligibleForAdvanceRebate) {
-        this.isEligibleForAdvanceRebate = isEligibleForAdvanceRebate;
     }
 }
