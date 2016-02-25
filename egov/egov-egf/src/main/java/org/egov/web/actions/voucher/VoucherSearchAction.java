@@ -294,7 +294,7 @@ public class VoucherSearchAction extends BaseFormAction
                 else
                     voucherMap.put("source", sourceMap.get(voucherheader.getModuleId()));
 
-                voucherMap.put("amount", amt);
+                voucherMap.put("amount", amt.setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 voucherMap.put("status", getVoucherStatus(voucherheader.getStatus()));
                 voucherList.add(voucherMap);
             }
@@ -335,7 +335,7 @@ public class VoucherSearchAction extends BaseFormAction
                     /*
                      * for(VoucherDetail detail:voucherheader.getVoucherDetail()) { amt = amt.add(detail.getDebitAmount()); }
                      */
-                    voucherMap.put("amount", voucherheader.getTotalAmount());
+                    voucherMap.put("amount", voucherheader.getTotalAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                     voucherMap.put("status", getVoucherStatus(voucherheader.getStatus()));
                     voucherList.add(voucherMap);
                 }
