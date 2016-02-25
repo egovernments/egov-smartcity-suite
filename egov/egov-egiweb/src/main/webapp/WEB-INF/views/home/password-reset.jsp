@@ -56,6 +56,7 @@
 							<spring:message code="lbl.new.pwd"/> <span class="mandatory"></span> 
 						</label>
 						<div class="col-sm-4" >
+							<input style="display:none" type="password">
 							<input type="password" name="newPassword" class="form-control check-password" id="new-pass" required="required" minlength="8" maxlength="32"/>
 						</div>
 					</div>
