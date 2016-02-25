@@ -95,7 +95,7 @@ public class Constants {
         public static final String WF_STATE_RENEWAL_COMM_APPROVED="Renewal License:Commissioner Approved";
         public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
         public static final String WF_STATE_DIGITAL_SIGN_NEWTL="Create License:Collection Done";
-        public static final String WF_STATE_DIGITAL_SIGN_RENEWAL=" Renewal License:Collection Done";
+        public static final String WF_STATE_DIGITAL_SIGN_RENEWAL="Renewal License:Collection Done";
         public static final String WF_STATE_DIGISIGN_STR="Collection Done";
         // JSP Pages
        
