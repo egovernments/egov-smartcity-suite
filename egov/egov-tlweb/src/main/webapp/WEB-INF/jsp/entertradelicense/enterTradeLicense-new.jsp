@@ -315,6 +315,7 @@
 			        checkindex = jQuery(this).closest('tr').index();
 			    });
 
+				console.log('checkindex'+checkindex);
 				if(checkindex != undefined){
 					jQuery("table.feedetails tbody tr").each(function (index) {
 						if(index > checkindex){
@@ -336,6 +337,8 @@
 							}
 						}
 					});
+				}else{
+					validated = true;
 				}
 				return validated;
 			}
