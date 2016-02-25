@@ -228,12 +228,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("installMentYear", installMentYear);
         reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
-        BigDecimal demandamt = BigDecimal.ZERO;
-
-        for (final EgDemandDetails deDet : license.getCurrentDemand().getEgDemandDetails())
-            if (deDet.getAmount().compareTo(BigDecimal.ZERO) > 0)
-                demandamt = demandamt.add(deDet.getAmount());
-        reportParams.put("demandTotalamt", demandamt);
+       reportParams.put("demandTotalamt", (license.getCurrentDemand()!=null ?license.getCurrentDemand().getAmtCollected():BigDecimal.ZERO));
         return reportParams;
     }
 
