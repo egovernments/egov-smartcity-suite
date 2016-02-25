@@ -341,7 +341,9 @@
 								test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
 							">
+							    <div class="formmainbox" style="box-shadow:none;">
 								<jsp:include page="recordInspecationDetails.jsp" />
+								</div>
 							</s:elseif>
 							<s:elseif
 								test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
