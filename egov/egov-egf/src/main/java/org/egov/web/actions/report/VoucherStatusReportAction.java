@@ -328,7 +328,7 @@ public class VoucherStatusReportAction extends BaseFormAction
 
         if (voucherHeader.getType() != null && !voucherHeader.getType().equals("-1"))
             sql = sql + " and vh.type='" + voucherHeader.getType() + "'";
-        if (voucherHeader.getName() != null && !voucherHeader.getName().equalsIgnoreCase("-1"))
+        if (voucherHeader.getName() != null && !voucherHeader.getName().equalsIgnoreCase("-1") && !voucherHeader.getName().equalsIgnoreCase("0"))
             sql = sql + " and vh.name='" + voucherHeader.getName() + "'";
         if (fromDate != null)
             sql = sql + " and vh.voucherDate>='" + Constants.DDMMYYYYFORMAT1.format(fromDate) + "'";
@@ -408,7 +408,7 @@ public class VoucherStatusReportAction extends BaseFormAction
             vhcrRptView.setVoucherDate(cVchrHdr.getVoucherDate());
             vhcrRptView.setSource(getVoucherModule(cVchrHdr.getModuleId()));
             for (final CGeneralLedger detail : cVchrHdr.getGeneralledger())
-                amt = amt.add(new BigDecimal(detail.getDebitAmount()));
+                amt = amt.add(BigDecimal.valueOf(detail.getDebitAmount()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
             vhcrRptView.setAmount(amt);
             vhcrRptView.setOwner(getVoucherOwner(cVchrHdr));
             vhcrRptView.setStatus(getVoucherStatus(cVchrHdr.getStatus()));
