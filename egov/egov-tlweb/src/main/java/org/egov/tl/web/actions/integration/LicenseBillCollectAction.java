@@ -51,33 +51,41 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.License;
+import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBill;
 import org.egov.tl.service.integration.LicenseBillService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 public class LicenseBillCollectAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private Long licenseId;
+    private LicenseBill licenseBill;
+    private String collectXML;
     
     @Autowired
     private LicenseBillService licenseBillService;
-    private LicenseBill licenseBill;
-    private String collectXML;
+    
     @Autowired
     private ModuleService moduleService;
+    
     @Autowired
     private LicenseNumberGenerator licenseNumberGenerator;
+    
     @Autowired
     private InstallmentDao installmentDao;
+    
+    @Autowired
+    @Qualifier("tradeLicenseService")
+    private TradeLicenseService tradeLicenseService;
 
     @Override
     public String execute() throws UnsupportedEncodingException, IOException {
-        persistenceService.setType(License.class);
-        final License license = (License) persistenceService.findById(licenseId, false);
+        final License license = tradeLicenseService.licensePersitenceService().findById(licenseId, false);
         if (license.isPaid()) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
@@ -99,8 +107,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
             licenseId = Long.valueOf((Long) getSession().get("model.id"));
             getSession().remove("model.id");
         }
-        persistenceService.setType(License.class);
-        final License license = (License) persistenceService.findById(licenseId, false);
+        final License license = tradeLicenseService.licensePersitenceService().findById(licenseId, false);
         licenseBill.setLicense(license);
         licenseBillService.setLicense(license);
         collectXML = URLEncoder.encode(licenseBillService.getBillXML(licenseBill), "UTF-8");
