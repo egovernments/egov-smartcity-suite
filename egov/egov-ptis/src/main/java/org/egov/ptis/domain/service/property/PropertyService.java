@@ -2457,8 +2457,9 @@ public class PropertyService {
         if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(reason)) {
             if (parentBifurcated && !childrenCreated)
                 errorMsg = "error.child.not.created";
-            else
-                errorMsg = validateArea(propertyModel, basicProperty.getActiveProperty(), children);
+         // commented as child property extent of site can be greater than parent property 
+          /*  else 
+                errorMsg = validateArea(propertyModel, basicProperty.getActiveProperty(), children); */
         }
         /**
          * Reason For Modification is Alteration of Assessment
@@ -2479,7 +2480,8 @@ public class PropertyService {
                 parentProperty = getLatestHistoryProperty(basicProperty.getUpicNo());
             else
                 parentProperty = basicProperty.getActiveProperty();
-            errorMsg = validateArea(propertyModel, parentProperty, children);
+          // commented as child property extent of site can be greater than parent property
+          //  errorMsg = validateArea(propertyModel, parentProperty, children);
         }
         return errorMsg;
     }
