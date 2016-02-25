@@ -361,6 +361,7 @@
 									<label class="control-label">Old Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
+									<input style="display:none">
 									<input type="password" class="form-control" id="old-pass" required="required">
 								</div>
 							</div>

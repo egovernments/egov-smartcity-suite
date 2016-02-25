@@ -160,6 +160,8 @@
 								<div class="form-group">
 									<div class="signin-title"><spring:message code="lbl.login"/></div>
 								</div>
+								<input style="display:none" type="text">
+								<input style="display:none" type="password" />
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
@@ -176,7 +178,6 @@
 										<div class="input-group-addon style-label">
 											<i class="entypo-key theme-color style-color"></i>
 										</div>
-										<input style="display:none">
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
 											autocomplete="off" required="required" /> <span
