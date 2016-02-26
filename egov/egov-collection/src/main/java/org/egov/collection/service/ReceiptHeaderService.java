@@ -1755,7 +1755,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     /**
      * Updates the billing system with receipt information
-     * @param receiptHeader TODO
+     * @param receiptHeader
      */
     public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader)
             throws ApplicationRuntimeException {
