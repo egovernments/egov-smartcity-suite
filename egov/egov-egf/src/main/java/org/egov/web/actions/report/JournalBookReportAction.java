@@ -160,19 +160,19 @@ public class JournalBookReportAction extends BaseFormAction {
         for (GeneralLedgerBean bean : journalBookDisplayList) {
             bean.setDebitamount(new BigDecimal(bean.getDebitamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             bean.setCreditamount(new BigDecimal(bean.getCreditamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-            if (!voucherDate.equalsIgnoreCase("") && voucherDate.equalsIgnoreCase(bean.getVoucherdate())
+            if (voucherDate!=null && !voucherDate.equalsIgnoreCase("") && voucherDate.equalsIgnoreCase(bean.getVoucherdate())
                     && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
                 bean.setVoucherdate("");
             } else {
                 voucherDate = bean.getVoucherdate();
             }
-            if (!voucherName.equalsIgnoreCase("") && voucherName.equalsIgnoreCase(bean.getVoucherName())
+            if (voucherName!=null && !voucherName.equalsIgnoreCase("") && voucherName.equalsIgnoreCase(bean.getVoucherName())
                     && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
                 bean.setVoucherName("");
             } else {
                 voucherName = bean.getVoucherName();
             }
-            if (!voucherNumber.equalsIgnoreCase("") && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
+            if (voucherNumber!=null &&  !voucherNumber.equalsIgnoreCase("") && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
                 bean.setVouchernumber("");
             } else {
                 voucherNumber = bean.getVouchernumber();
