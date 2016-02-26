@@ -126,7 +126,7 @@ public class TrialBalance
             if (fundId != null && !fundId.equalsIgnoreCase(""))
                 fundcondition = " and fundid=?";
             else {
-                fundcondition = " and fundid in (select id from fund where isactive=1 and isnotleaf!=1 )";
+                fundcondition = " and fundid in (select id from fund where isactive=true and isnotleaf!=true )";
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("fund cond query  " + fundcondition);
             }

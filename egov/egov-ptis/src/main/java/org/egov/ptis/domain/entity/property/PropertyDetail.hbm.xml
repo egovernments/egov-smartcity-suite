@@ -118,7 +118,7 @@
 			<key column="ID_PROPERTY_DETAIL" not-null="true" /> <one-to-many class="org.egov.ptis.domain.entity.property.Floor" 
 			/> </set> -->
 		<bag name="floorDetails" cascade="all-delete-orphan" table="EGPT_FLOOR_DETAIL"
-			inverse="true">
+			inverse="true" order-by="id">
 			<key>
 				<column name="ID_PROPERTY_DETAIL" precision="22" scale="0"
 					not-null="true" />

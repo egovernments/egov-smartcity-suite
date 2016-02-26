@@ -40,17 +40,19 @@
 
 package org.egov.tl.repository;
 
+import java.util.List;
 
 import org.egov.tl.entity.LicenseCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+@Repository
+public interface LicenseCategoryRepository extends JpaRepository<LicenseCategory, Long> {
 
-@Repository 
-public interface LicenseCategoryRepository extends JpaRepository<LicenseCategory,Long> {
+    LicenseCategory findByNameIgnoreCase(String name);
 
-LicenseCategory findByNameIgnoreCase(String name);
+    LicenseCategory findByCodeIgnoreCase(String code);
 
-LicenseCategory findByCodeIgnoreCase(String code);
+    List<LicenseCategory> findAllByOrderByNameAsc();
 
 }

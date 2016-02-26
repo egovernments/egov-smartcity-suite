@@ -1851,6 +1851,11 @@ b, label, strong{
         cursor:pointer;
     }
     
+    tbody.no-pointer tr:hover
+    {
+        cursor:default;
+    }
+    
 }
 
 table.dataTable{
@@ -1885,15 +1890,12 @@ table.dataTable{
 }
 
 table.dataTable thead th {
-    position: relative;
     background-image: none !important;
+    border:1px solid #ccc;
 }
 
 table.dataTable thead th.sorting:after, table.dataTable th.sorting_asc:after, table.dataTable th.sorting_desc:after {
-    position: absolute;
-    top: 12px;
-    right: 8px;
-    display: block;
+    float:right;
     font-family: FontAwesome;
 }
 

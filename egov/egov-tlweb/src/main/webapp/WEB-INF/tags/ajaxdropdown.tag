@@ -48,45 +48,42 @@
 <%@ attribute name="contextToBeUsed" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script>
-<%
-String[] optionAttributeList=new String[0];
-if(optionAttributes!=null && !"".equals(optionAttributes.trim())){
-    optionAttributeList=optionAttributes.split(",");
-    for(int i=0;i<optionAttributeList.length;i++){
-        optionAttributeList[i]=optionAttributeList[i].trim();
-    }
-}
-%>
-${id}SuccessHandler=function(req,res){
-  ${id}Dropdown=dom.get("${dropdownId}");
-  var resLength =res.results.length+1;
-  var dropDownLength = ${id}Dropdown.length;
-  for(i=0;i<res.results.length;i++){
-    ${id}Dropdown.options[i+1]=new Option(res.results[i].Text,res.results[i].Value);
-    if(res.results[i].Value=='<%=selectedValue%>')   ${id}.Dropdown.selectedIndex = i;
-    <%for(int i=0;i<optionAttributeList.length;i++){%>
-    ${id}Dropdown.options[i+1].<%=optionAttributeList[i]%>=res.results[i].<%=optionAttributeList[i]%>;
-    <%}%>
-  }
- while(dropDownLength>resLength)
- {
-     ${id}Dropdown.options[res.results.length+1] = null;
-      dropDownLength=dropDownLength-1;
- }
-  <% if(afterSuccess!=null && !afterSuccess.trim().equals("")){%>
+
+${id}SuccessHandler=function(data, textStatus, xhr){
+
+	jQuery('#${dropdownId} option[value != "-1"]').remove();
+
+	jQuery.each(data.ResultSet.Result, function (i, item) {
+		jQuery('#${dropdownId}').append(jQuery('<option>', { 
+	        value: item.Value,
+	        text : item.Text 
+	  }));
+   });
+
+	jQuery('#${dropdownId}').prop('selectedIndex', 0);
+
+  <% if(afterSuccess != null && !afterSuccess.trim().equals("")) {%>
      ${afterSuccess}(req,res)
   <%}%>
 }
 ${id}FailureHandler=function(){
-  alert('Unable to load ${dropdownId}');
+  console.log('Unable to load ${dropdownId}');
 }
 
 function populate${dropdownId}(params){
-   <% if(contextToBeUsed!=null && !contextToBeUsed.trim().equals("")){%>
+   <% if(contextToBeUsed != null && !contextToBeUsed.trim().equals("")) { %>
    		<c:set var="contextRoot" value="${contextToBeUsed}" />
    <% } else  {%>
    		<c:set var="contextRoot" value="${pageContext.request.contextPath}" />
    <% } %>
-   makeJSONCall(${fields},'${contextRoot}/${url}',params,${id}SuccessHandler,${id}FailureHandler) ;
+   
+   jQuery.ajax({
+		type: "GET",
+		url: '${contextRoot}/${url}',
+		data: params,
+		dataType: "json",
+		success: ${id}SuccessHandler, 
+		error: ${id}FailureHandler
+	});
 }
 </script>

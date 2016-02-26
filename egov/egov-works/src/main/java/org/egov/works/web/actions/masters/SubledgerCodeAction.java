@@ -164,7 +164,7 @@ public class SubledgerCodeAction extends BaseFormAction {
         super.prepare();
         setupDropdownDataExcluding("typeOfWork", "subTypeOfWork", "fundSource", "function", "ward", "zone", "fund", "scheme",
                 "subScheme");
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1"));
+        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true"));
         addDropdownData("typeOfWorkList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
         // TODO: Need to uncomment

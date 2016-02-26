@@ -359,4 +359,12 @@ public class CVoucherHeader extends StateAware {
         this.voucherSubType = voucherSubType;
     }
 
+    public Set<CGeneralLedger> getGeneralLedger() {
+        return generalLedger;
+    }
+
+    public void setGeneralLedger(Set<CGeneralLedger> generalLedger) {
+        this.generalLedger = generalLedger;
+    }
+
 }

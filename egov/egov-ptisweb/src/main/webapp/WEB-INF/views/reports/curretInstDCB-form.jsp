@@ -83,7 +83,16 @@
         		</div>
 		</form:form>
 		<div></div>
-		<table class="table table-bordered datatable dt-responsive table-hover" id="currInstDCBReport-table">
+		<table class="table table-bordered table-hover multiheadertbl" id="currInstDCBReport-table">
+		
+		<tfoot id="report-footer">
+							<tr>
+								<td>Total</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
 		</table>
 	</div>
 </div>
@@ -100,4 +109,4 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/js/app/currInstDCBReport.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/currInstDCBReport.js?rnd=${app_release_no}'/>"></script>

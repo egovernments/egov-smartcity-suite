@@ -54,7 +54,6 @@
 </script>
 </head>
 <body onload="refreshInbox()">
-	<center>
 	<div id="main">
 		<div class="row">
 			<div class="col-md-12">
@@ -133,7 +132,7 @@
 								<s:text name="license.startdate" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:date name="startDate" id="startdate" format="dd-MMM-yyyy" /><s:property value="%{startdate}" />
+								<s:date name="commencementDate" id="startdate" format="dd-MMM-yyyy" /><s:property value="%{startdate}" />
 							</div>
 						</div>
 						
@@ -150,6 +149,5 @@
 				type="button" id="close" value="Close" class="button"
 				onclick="javascript:window.close();" />
 		</div>
-	</center>
 </body>
 </html>

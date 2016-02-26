@@ -63,7 +63,7 @@ public class SubScheme implements java.io.Serializable
 
 	private Date validto;
 
-	private String isactive="0";
+	private Boolean isactive;
 
 	private Date lastmodifieddate;
 	private Department department;
@@ -84,30 +84,7 @@ public class SubScheme implements java.io.Serializable
 	public SubScheme(){
 	}
 
-	public SubScheme(Integer id, Scheme scheme, String code, String name,
-			Date validfrom, String isactive, Date lastmodifieddate)
-	{
-		this.id = id;
-		this.scheme = scheme;
-		this.code = code;
-		this.name = name;
-		this.validfrom = validfrom;
-		this.isactive = isactive;
-		this.lastmodifieddate = lastmodifieddate;
-	}
-
-	public SubScheme(Integer id, Scheme scheme, String code, String name,
-			Date validfrom, Date validto, String isactive, Date lastmodifieddate)
-	{
-		this.id = id;
-		this.scheme = scheme;
-		this.code = code;
-		this.name = name;
-		this.validfrom = validfrom;
-		this.validto = validto;
-		this.isactive = isactive;
-		this.lastmodifieddate = lastmodifieddate;
-	}
+	
 
 	public Integer getId()
 	{
@@ -169,22 +146,7 @@ public class SubScheme implements java.io.Serializable
 		this.validto = validto;
 	}
 
-	public String getIsactive()
-	{
-		return this.isactive;
-	}
-
-	@Deprecated
-	public void setIsactive(String isactive){
-		this.isactive = isactive;
-	}
 	
-	public void setIsactive(boolean isactive){
-		if(isactive)
-			this.isactive = "1";
-		else
-			this.isactive = "0";
-	}
 
 	public Date getLastmodifieddate()
 	{
@@ -306,6 +268,18 @@ public class SubScheme implements java.io.Serializable
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+
+
+	public Boolean getIsactive() {
+		return isactive;
+	}
+
+
+
+	public void setIsactive(Boolean isactive) {
+		this.isactive = isactive;
 	}
 
 }

@@ -100,7 +100,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @SuppressWarnings("unchecked")
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 @Results({
     @Result(name = BillRegisterReportAction.NEW, location = "billRegisterReport-" + BillRegisterReportAction.NEW + ".jsp"),
     @Result(name = "completeBill", location = "billRegisterReport-completeBill.jsp")
@@ -120,7 +119,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     private Date fromDate;
     
     @Autowired	
-    private static AppConfigValueService appConfigValueService;
+    private  AppConfigValueService appConfigValueService;
     
    
 

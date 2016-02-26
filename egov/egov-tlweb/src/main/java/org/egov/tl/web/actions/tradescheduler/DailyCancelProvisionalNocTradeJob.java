@@ -99,7 +99,7 @@ public class DailyCancelProvisionalNocTradeJob extends AbstractQuartzJob {
         criteria.createAlias("tradeName", "trdname");
         criteria.add(Restrictions.eq("trdname.nocApplicable", true));
         criteria.add(Restrictions.isNull("isCertificateGenerated"));
-        criteria.add(Restrictions.le("dateOfCreation", nocExpireDate));
+        criteria.add(Restrictions.le("commencementDate", nocExpireDate));
         criteria.createAlias("status", "sts");
         criteria.add(Restrictions.eq("sts.statusCode", "ACT"));
         return criteria;

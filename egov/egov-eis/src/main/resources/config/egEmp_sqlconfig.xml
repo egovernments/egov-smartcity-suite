@@ -53,7 +53,7 @@
 
 <egEmp-function>
 	<type>hql</type>
-        <query>from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)</query> 
+        <query>from CFunction where isactive = true AND isnotleaf=false order by upper(name)</query> 
 </egEmp-function> 
 
 <egEmp-CFinancialYear>
@@ -90,7 +90,7 @@
 
 <egEmp-fund>
 	<type>hql</type>
-	<query>from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)</query>
+	<query>from Fund where isactive = true and isNotLeaf!=true order by upper(name)</query>
 </egEmp-fund> 
 <egEmp-EmployeeStatusMaster>
 	<type>hql</type>

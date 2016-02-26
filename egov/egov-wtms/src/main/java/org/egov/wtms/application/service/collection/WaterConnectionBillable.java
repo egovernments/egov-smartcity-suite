@@ -81,6 +81,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     private static final String STRING_DEPARTMENT_CODE = "REV";
     private static final String STRING_SERVICE_CODE = "WT";
+    private static final String EST_STRING_SERVICE_CODE = "WES";
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
@@ -106,7 +107,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private ModuleService moduleService;
     @Autowired
     private ConnectionDemandService connectioDemanService;
-
+    
     @Override
     public String getBillPayee() {
         return buildOwnerFullName(getAssessmentDetails().getOwnerNames());
@@ -214,6 +215,9 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getServiceCode() {
+        if (getWaterConnectionDetails().getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
+            return EST_STRING_SERVICE_CODE;
+        else
         return STRING_SERVICE_CODE;
     }
 

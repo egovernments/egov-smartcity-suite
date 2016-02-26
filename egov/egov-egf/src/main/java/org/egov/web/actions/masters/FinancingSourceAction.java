@@ -107,7 +107,7 @@ public class FinancingSourceAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         addDropdownData("subschemeList",
-                persistenceService.findAllBy("from SubScheme where isactive=1 order by name"));
+                persistenceService.findAllBy("from SubScheme where isactive=true order by name"));
         final StringTokenizer sTokenizer = new StringTokenizer(getText("masters.finsrc.fundingtypes"), "|");
         fundingTypeList = new ArrayList<String>();
         while (sTokenizer.hasMoreElements())

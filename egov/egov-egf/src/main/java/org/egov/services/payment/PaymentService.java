@@ -104,6 +104,7 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.services.cheque.ChequeAssignmentService;
 import org.egov.services.cheque.ChequeService;
+import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.services.report.FundFlowService;
 import org.egov.services.voucher.VoucherService;
@@ -151,7 +152,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     private static final String TRANSACTION_FAILED = "Transaction failed";
     private List<HashMap<String, Object>> accountcodedetails = null;
     private List<HashMap<String, Object>> subledgerdetails = null;
+    @Autowired
+    @Qualifier("instrumentService")
     private InstrumentService instrumentService;
+    @Autowired
+    @Qualifier("instrumentHeaderService")
+    private InstrumentHeaderService instrumentHeaderService;
+    @Autowired
+    @Qualifier("chequeService")
     private ChequeService chequeService;
     private User user = null;
     private int conBillIdlength = 0;
@@ -2469,7 +2477,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("selectedPaymentList===" + selectedPaymentVHList);
-        final Bankaccount account = (Bankaccount) persistenceService.find(" from Bankaccount where  id=?", bankaccount);
+        final Bankaccount account = (Bankaccount) persistenceService.find(" from Bankaccount where  id=?", bankaccount.longValue());
         // get voucherList
         final List<CVoucherHeader> voucherList = persistenceService.findAllByNamedQuery("getVoucherList", selectedPaymentVHList);
 
@@ -2581,7 +2589,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             LOGGER.debug("Completed createInstrument.");
         return instHeaderList;
     }
-
+    @Transactional
     public List<InstrumentHeader> reassignInstrument(final List<ChequeAssignment> chequeAssignmentList, final String paymentMode,
             final Integer bankaccount, final Map<String, String[]> parameters, final Department dept)
             throws ApplicationRuntimeException, Exception
@@ -2738,8 +2746,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             LOGGER.debug("Completed prepareInstrumentHeaderForRtgs.");
         return instrumentHeaderMap;
     }
-
-    protected InstrumentHeader reassignInstrumentHeader(final Bankaccount account, final String chqNo, final String instType,
+    @Transactional
+    public InstrumentHeader reassignInstrumentHeader(final Bankaccount account, final String chqNo, final String instType,
             final String partyName, final BigDecimal amount, final Date date, final String key, final String serialNo)
     {
         if (LOGGER.isDebugEnabled())
@@ -2767,7 +2775,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed reassignInstrumentHeader.");
-        return instrumentService.instrumentHeaderService.persist(ih);
+        return instrumentHeaderService.persist(ih);
     }
 
     protected Map<String, Object> preapreInstrumentVoucher(final CVoucherHeader voucherHeader, final Bankaccount account,
@@ -2800,8 +2808,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             LOGGER.debug("Completed preapreInstrumentVoucher.");
         return instrumentVoucherMap;
     }
-
-    protected Map<String, Object> reassignInstrumentVoucher(final CVoucherHeader voucherHeader, final Bankaccount account,
+    @Transactional
+    public Map<String, Object> reassignInstrumentVoucher(final CVoucherHeader voucherHeader, final Bankaccount account,
             final String chqNo, final String paidTo, final String serailNo)
     {
         if (LOGGER.isDebugEnabled())

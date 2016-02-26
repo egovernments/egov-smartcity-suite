@@ -62,24 +62,23 @@ import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.service.FeeMatrixDetailService;
-import org.egov.tl.service.FeeTypeService;
+import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
-
 @Results({
-@Result(name = "ward", location = "commonAjax-ward.jsp"),
-@Result(name = "subcategory", location = "commonAjax-subcategory.jsp"),
-@Result(name = "feeType", location = "commonAjax-feeType.jsp"),
-@Result(name = "unitOfMeasurement", location = "commonAjax-unitOfMeasurement.jsp"),
-@Result(name = "designation", location = "commonAjax-designation.jsp"),
-@Result(name = "users", location = "commonAjax-users.jsp"),
-@Result(name = "SUCCESS", type = "redirectAction", location = "CommonAjaxAction.action"),
-@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" })
+        @Result(name = "ward", location = "commonAjax-ward.jsp"),
+        @Result(name = "subcategory", location = "commonAjax-subcategory.jsp"),
+        @Result(name = "feeType", location = "commonAjax-feeType.jsp"),
+        @Result(name = "unitOfMeasurement", location = "commonAjax-unitOfMeasurement.jsp"),
+        @Result(name = "designation", location = "commonAjax-designation.jsp"),
+        @Result(name = "users", location = "commonAjax-users.jsp"),
+        @Result(name = "deleteRow", location = "commonAjax-deleteRow.jsp"),
+        @Result(name = "SUCCESS", type = "redirectAction", location = "CommonAjaxAction.action"),
+        @Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" })
 })
 public class CommonAjaxAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -97,9 +96,10 @@ public class CommonAjaxAction extends BaseFormAction {
     private int locationId;
     private int zoneId;
     private Long categoryId;
-    private Long subCategoryId; 
+    private Long subCategoryId;
     private Long feeTypeId;
     private Long feeMatrixDetailId;
+    private Long penaltyRateId;
     private List<Boundary> locationList = new LinkedList<Boundary>();
     private List<Boundary> areaList = new LinkedList<Boundary>();
     private List<Boundary> streetList = new LinkedList<Boundary>();
@@ -117,24 +117,22 @@ public class CommonAjaxAction extends BaseFormAction {
     @Autowired
     private EisCommonService eisCommonService;
     @Autowired
-    private  FeeMatrixDetailService feeMatrixDetailService;
+    private FeeMatrixDetailService feeMatrixDetailService;
     @Autowired
-    private  FeeTypeService feeTypeService;
-    @Autowired
-    private  UnitOfMeasurementService unitOfMeasurementService;
+    private PenaltyRatesService penaltyRatesService;
     private String rateType;
     private Long uomId;
     private String uomName;
     @Autowired
     private LicenseSubCategoryService licenseSubCategoryService;
     private List<LicenseSubCategory> subCategoryList;
-    private List<FeeType> feeTypeList = new ArrayList<FeeType>(); 
+    private List<FeeType> feeTypeList = new ArrayList<FeeType>();
 
     public InputStream getReturnStream() {
         final ByteArrayInputStream is = new ByteArrayInputStream(returnStream.getBytes());
         return is;
     }
- 
+
     @Override
     public Object getModel() {
         return null;
@@ -176,7 +174,7 @@ public class CommonAjaxAction extends BaseFormAction {
      *
      * @return the string
      */
-@Action(value="/commonAjax-populateDivisions")
+    @Action(value = "/commonAjax-populateDivisions")
     public String populateDivisions() {
         try {
             final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(zoneId));
@@ -191,7 +189,7 @@ public class CommonAjaxAction extends BaseFormAction {
         return "ward";
     }
 
-@Action(value="/commonAjax-ajaxPopulateDesignationsByDept")
+    @Action(value = "/commonAjax-ajaxPopulateDesignationsByDept")
     public String ajaxPopulateDesignationsByDept() {
         try {
 
@@ -206,7 +204,7 @@ public class CommonAjaxAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
-@Action(value="/domain/commonAjax-ajaxPopulateUsersByDesignation")
+    @Action(value = "/domain/commonAjax-ajaxPopulateUsersByDesignation")
     public String ajaxPopulateUsersByDesignation() {
         try {
             allActiveUsersByGivenDesg = eisCommonService.getAllActiveUsersByGivenDesig(Long.valueOf(designationId));
@@ -217,56 +215,56 @@ public class CommonAjaxAction extends BaseFormAction {
         }
         return "users";
     }
-    
-    @Action(value="/domain/commonAjax-ajaxPopulateSubCategory")  
+
+    @Action(value = "/domain/commonAjax-ajaxPopulateSubCategory")
     public String ajaxPopulateSubCategory() {
-    subCategoryList = licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
-    return "subcategory";       
+        subCategoryList = licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
+        return "subcategory";
     }
-    
-    @Action(value="/domain/commonAjax-ajaxPopulateFeeType")  
+
+    @Action(value = "/domain/commonAjax-ajaxPopulateFeeType")
     public String ajaxPopulateFeeType() {
-        LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
-        if(subCategory!=null){
-            if(!subCategory.getLicenseSubCategoryDetails().isEmpty()){
-                for(LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails()){
-                      feeTypeList.add(scd.getFeeType());   
-                    }
-                }
-            }
-        return "feeType";       
+        final LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
+        if (subCategory != null)
+            if (!subCategory.getLicenseSubCategoryDetails().isEmpty())
+                for (final LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails())
+                    feeTypeList.add(scd.getFeeType());
+        return "feeType";
     }
-    
-     @Action(value="/domain/commonAjax-ajaxPopulateUom")  
+
+    @Action(value = "/domain/commonAjax-ajaxPopulateUom")
     public String ajaxPopulateUom() {
-     LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
-     if(subCategory!=null){
-         if(!subCategory.getLicenseSubCategoryDetails().isEmpty()){
-             for(LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails()){
-                 if(scd.getFeeType().getId()==feeTypeId){
-                     uomId=scd.getUom().getId();
-                     uomName=scd.getUom().getName();
-                     rateType=scd.getRateType().toString(); 
-                 }
-             }
-         }
-     }
-      return "unitOfMeasurement"; 
+        final LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
+        if (subCategory != null)
+            if (!subCategory.getLicenseSubCategoryDetails().isEmpty())
+                for (final LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails())
+                    if (scd.getFeeType().getId() == feeTypeId) {
+                        uomId = scd.getUom().getId();
+                        uomName = scd.getUom().getName();
+                        rateType = scd.getRateType().toString();
+                    }
+        return "unitOfMeasurement";
     }
-    
+
     /**
      * @description delete feedetail
      * @return
      */
-    @Action(value="/domain/commonAjax-deleteFee")  
-    public String deleteFee(){
-        FeeMatrixDetail feeMatrixDetail=feeMatrixDetailService.findByFeeMatrixDetailId(feeMatrixDetailId);
-        if(feeMatrixDetail!=null){
+    @Action(value = "/domain/commonAjax-deleteFee")
+    public String deleteFee() {
+        final FeeMatrixDetail feeMatrixDetail = feeMatrixDetailService.findByFeeMatrixDetailId(feeMatrixDetailId);
+        if (feeMatrixDetail != null)
             feeMatrixDetailService.delete(feeMatrixDetail);
-        }
-        return "deleteFee"; 
+        return "deleteFee";
     }
 
+    @Action(value = "/domain/commonAjax-deleteRow")
+    public String deleteRow() {
+        final PenaltyRates penaltyRates = penaltyRatesService.findOne(Long.valueOf(penaltyRateId));
+        if (penaltyRates != null)
+            penaltyRatesService.delete(penaltyRates);
+        return "deleteRow";
+    }
 
     public List<User> getAllActiveUsersByGivenDesg() {
         return allActiveUsersByGivenDesg;
@@ -372,60 +370,60 @@ public class CommonAjaxAction extends BaseFormAction {
         this.licenseUtils = licenseUtils;
     }
 
-        public BoundaryService getBoundaryService() {
-                return boundaryService;
-        }
+    public BoundaryService getBoundaryService() {
+        return boundaryService;
+    }
 
-        public void setBoundaryService(BoundaryService boundaryService) {
-                this.boundaryService = boundaryService;
-        }
+    public void setBoundaryService(final BoundaryService boundaryService) {
+        this.boundaryService = boundaryService;
+    }
 
-        public DesignationService getDesignationService() {
-                return designationService;
-        }
+    public DesignationService getDesignationService() {
+        return designationService;
+    }
 
-        public void setDesignationService(DesignationService designationService) {
-                this.designationService = designationService;
-        }
+    public void setDesignationService(final DesignationService designationService) {
+        this.designationService = designationService;
+    }
 
-        public EisCommonService getEisCommonService() {
-                return eisCommonService;
-        }
+    public EisCommonService getEisCommonService() {
+        return eisCommonService;
+    }
 
-        public void setEisCommonService(EisCommonService eisCommonService) {
-                this.eisCommonService = eisCommonService;
-        }
+    public void setEisCommonService(final EisCommonService eisCommonService) {
+        this.eisCommonService = eisCommonService;
+    }
 
-        public LicenseSubCategoryService getLicenseSubCategoryService() {
-                return licenseSubCategoryService;
-        }
+    public LicenseSubCategoryService getLicenseSubCategoryService() {
+        return licenseSubCategoryService;
+    }
 
-        public void setLicenseSubCategoryService(
-                        LicenseSubCategoryService licenseSubCategoryService) {
-                this.licenseSubCategoryService = licenseSubCategoryService;
-        }
+    public void setLicenseSubCategoryService(
+            final LicenseSubCategoryService licenseSubCategoryService) {
+        this.licenseSubCategoryService = licenseSubCategoryService;
+    }
 
-        public Long getCategoryId() {
-                return categoryId;
-        }
+    public Long getCategoryId() {
+        return categoryId;
+    }
 
-        public void setCategoryId(Long categoryId) {
-                this.categoryId = categoryId;
-        }
+    public void setCategoryId(final Long categoryId) {
+        this.categoryId = categoryId;
+    }
 
-        public List<LicenseSubCategory> getSubCategoryList() {
-                return subCategoryList;
-        }
+    public List<LicenseSubCategory> getSubCategoryList() {
+        return subCategoryList;
+    }
 
-        public void setSubCategoryList(List<LicenseSubCategory> subCategoryList) {
-                this.subCategoryList = subCategoryList;
-        }
+    public void setSubCategoryList(final List<LicenseSubCategory> subCategoryList) {
+        this.subCategoryList = subCategoryList;
+    }
 
     public Long getFeeMatrixDetailId() {
         return feeMatrixDetailId;
     }
 
-    public void setFeeMatrixDetailId(Long feeMatrixDetailId) {
+    public void setFeeMatrixDetailId(final Long feeMatrixDetailId) {
         this.feeMatrixDetailId = feeMatrixDetailId;
     }
 
@@ -433,7 +431,7 @@ public class CommonAjaxAction extends BaseFormAction {
         return subCategoryId;
     }
 
-    public void setSubCategoryId(Long subCategoryId) {
+    public void setSubCategoryId(final Long subCategoryId) {
         this.subCategoryId = subCategoryId;
     }
 
@@ -441,7 +439,7 @@ public class CommonAjaxAction extends BaseFormAction {
         return feeTypeId;
     }
 
-    public void setFeeTypeId(Long feeTypeId) {
+    public void setFeeTypeId(final Long feeTypeId) {
         this.feeTypeId = feeTypeId;
     }
 
@@ -449,7 +447,7 @@ public class CommonAjaxAction extends BaseFormAction {
         return feeTypeList;
     }
 
-    public void setFeeTypeList(List<FeeType> feeTypeList) {
+    public void setFeeTypeList(final List<FeeType> feeTypeList) {
         this.feeTypeList = feeTypeList;
     }
 
@@ -457,7 +455,7 @@ public class CommonAjaxAction extends BaseFormAction {
         return rateType;
     }
 
-    public void setRateType(String rateType) {
+    public void setRateType(final String rateType) {
         this.rateType = rateType;
     }
 
@@ -465,7 +463,7 @@ public class CommonAjaxAction extends BaseFormAction {
         return uomId;
     }
 
-    public void setUomId(Long uomId) {
+    public void setUomId(final Long uomId) {
         this.uomId = uomId;
     }
 
@@ -473,8 +471,16 @@ public class CommonAjaxAction extends BaseFormAction {
         return uomName;
     }
 
-    public void setUomName(String uomName) {
+    public void setUomName(final String uomName) {
         this.uomName = uomName;
+    }
+
+    public Long getPenaltyRateId() {
+        return penaltyRateId;
+    }
+
+    public void setPenaltyRateId(final Long penaltyRateId) {
+        this.penaltyRateId = penaltyRateId;
     }
 
 }

@@ -228,6 +228,15 @@
 					value="%{propertyDetail.propertyMutationMaster.mutationName}" />
 			</div>
 		</div>
+		<div class="row add-border">
+		    <div class="col-xs-3 add-margin">
+				<s:text name="assessmentDate"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+			<s:date name="%{basicProperty.assessmentdate}" var="assessmentDate" format="dd/MM/yyyy" />
+				<s:property default="N/A" value="%{#assessmentDate}" /> 
+			</div>
+		</div>
 
 	</div>
 </div>

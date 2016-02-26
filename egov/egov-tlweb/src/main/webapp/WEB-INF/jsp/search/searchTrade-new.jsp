@@ -40,11 +40,11 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page import="org.egov.tl.utils.Constants"%> 
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 	<title><s:text name='license.search' /></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 </head>
 <script>
 var applicationNoType='<s:property value="%{@org.egov.tl.utils.Constants@SEARCH_BY_APPNO}"/>'; 
@@ -164,21 +164,12 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 		</div>
 	</div>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>"> 
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"> </script>
-
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
-	<script type="text/javascript" src="/tl/resources/javascript/license/searchTradeLicense.js"></script>
+	<script type="text/javascript" src="/tl/resources/js/app/searchTradeLicense.js"></script>
 	 <style>
 		.ui-autocomplete { 
 		    /* these sets the height and width */

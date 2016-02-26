@@ -42,7 +42,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <div class="panel-heading  custom_form_panel_heading subheadnew">
-    <div class="panel-title">Trader Details</div>
+    <div class="panel-title"><s:text name='license.title.applicantdetails' /></div>
 </div>
 <div class="panel-body">
 	
@@ -102,10 +102,11 @@
 </div>
 <div class="panel-body">
 
-<div class="row add-border">
-		<div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
-		<div class="col-xs-3 add-margin view-content">
-		<s:date  name="startDate" id="startdate" format="dd-MMM-yyyy" /><s:property value="%{startdate}" /></div>
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.licensenumber' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{licenseNumber}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.old.license.number' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{oldLicenseNumber}" /></div>
 	</div>
 
 	<div class="row add-border">
@@ -123,6 +124,11 @@
 	</div>
 	
 	<div class="row">
+		<div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
+		<div class="col-xs-3 add-margin view-content">
+		
+		<s:date name="commencementDate" id="formattedStartDate" format="dd/MM/yyyy" />
+		<s:text  name="commencementDate" id="startdate"  /><s:property value="%{formattedStartDate}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.remarks' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{remarks}" /></div>
 	</div>
@@ -144,20 +150,21 @@
 </div>
 </s:if>
 
-
+<s:set value="outstandingFee" var="feeInfo"></s:set>
+<s:if test="%{#attr.feeInfo.size > 0}">
 <div class="panel-heading  custom_form_panel_heading subheadnew">
     <div class="panel-title"><s:text name='license.title.feedetail' /></div>
 </div>
 <table class="table table-bordered" style="width:97%;margin:0 auto;">
 	<thead>
 		<tr>
-			<th>Fee Type</th>
-			<th>Current</th>
-			<th>Arrear</th>
+			<th><s:text name='license.fee.type' /></th>
+			<th><s:text name='license.fee.current' /></th>
+			<th><s:text name='license.fee.arrears' /></th>
 		</tr>
 	</thead>
 	<tbody>
-		<s:iterator value="outstandingFee" var="fee" status="status">
+		<s:iterator value="feeInfo" var="fee" status="status">
 			<tr>
 				<td>${fee.key}</td>
 				<td>${fee.value['current']}</td>
@@ -166,6 +173,7 @@
 		</s:iterator>
 	</tbody>
 </table>
+</s:if>
 <div class="panel-heading  custom_form_panel_heading subheadnew">
     <div class="panel-title"><s:text name='license.title.documentDetails' /></div>
 </div>

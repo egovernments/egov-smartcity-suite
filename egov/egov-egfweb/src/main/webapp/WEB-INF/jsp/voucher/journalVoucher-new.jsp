@@ -254,7 +254,27 @@
 				return false;
 			}
 		}
-		
+		var billDate = document.getElementById("billDate").value;
+	    var date = billDate.substring(0, 2);
+	    var month = billDate.substring(3, 5);
+	    var year = billDate.substring(6, 10);
+	    var myBillDate = new Date(year, month - 1, date);
+	    var today = new Date();
+
+	    if (myBillDate > today) {
+	        bootbox.alert("Bill date is greater than today's date ");
+	        return false
+	    }
+	    var partyBillDate = document.getElementById("partyBillDate").value;
+	    var partydate = partyBillDate.substring(0, 2);
+	    var partymonth = partyBillDate.substring(3, 5);
+	    var partyyear = partyBillDate.substring(6, 10);
+	    var myPartyBillDate = new Date(partyyear, partymonth - 1, partydate);
+
+	    if (myPartyBillDate > today) {
+	        bootbox.alert("Party bill date is greater than today's date ");
+	        return false
+	    }
 		
 	// Javascript validation of the MIS Manadate attributes.
 		<s:if test="%{isFieldMandatory('vouchernumber')}"> 
@@ -373,7 +393,9 @@ function onloadtask(){
 		document.getElementById('voucherTypeBean.voucherSubType').value = "JVGeneral";
 	</s:if>
 	if(message == null || message == '')
-		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.	
+		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.
+	if(document.getElementById('approverDepartment'))
+		document.getElementById('approverDepartment').value = "-1";
   }
 function showMessage(message){
 	var buttonValue = '<s:property value="buttonValue"/>';

@@ -248,7 +248,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                 && null != voucherHeader.getVouchermis().getSchemeid())
             addDropdownData(
                     "subschemeList",
-                    getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1' order by name",
+                    getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
                             voucherHeader.getVouchermis().getSchemeid().getId()));
     }
 
@@ -610,7 +610,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             }
 
         final StringBuffer fyQuery = new StringBuffer();
-        fyQuery.append("from CFinancialYear where isActiveForPosting=1 and startingDate <= '").
+        fyQuery.append("from CFinancialYear where isActiveForPosting=true and startingDate <= '").
                 append(Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate())).append("' AND endingDate >='")
                 .append(Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate())).append("'");
         final List<CFinancialYear> list = persistenceService.findAllBy(fyQuery.toString());
@@ -629,7 +629,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                     contraBean.getBankBranchId().length()));
             final List<Bankaccount> bankAccountList = getPersistenceService().findAllBy(
                     "from Bankaccount ba where ba.bankbranch.id=? " +
-                            "  and isactive=1 order by id", branchId);
+                            "  and isactive=true order by id", branchId);
             addDropdownData("accNumList", bankAccountList);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Account number list size " + bankAccountList.size());
@@ -644,7 +644,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             final Integer branchId = Integer.valueOf(bankBranchId.substring(index1 + 1, bankBranchId.length()));
             final List<Bankaccount> bankAccountList = getPersistenceService().findAllBy(
                     "from Bankaccount ba where ba.bankbranch.id=? " +
-                            "  and isactive=1 order by id", branchId);
+                            "  and isactive=true order by id", branchId);
             addDropdownData("accNumList", bankAccountList);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Account number list size " + bankAccountList.size());
@@ -665,7 +665,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                                     +
                                     " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
                                     +
-                                    " where  bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
+                                    " where  bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
                                     +
                                     " and bankaccount.fund.id=?", voucherHeader.getFundId().getId());
 

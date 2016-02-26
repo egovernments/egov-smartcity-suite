@@ -86,12 +86,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=PendingTDSReport.pdf" }),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=PendingTDSReport.xls" }),
-                        @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=TdsSummaryReport.pdf" }),
-                                @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                                        "contentType", "application/xls", "contentDisposition", "no-cache;filename=TdsSummaryReport.xls" })
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=PendingTDSReport.xls" }),
+        @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=TdsSummaryReport.pdf" }),
+        @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/xls", "contentDisposition", "no-cache;filename=TdsSummaryReport.xls" }),
+        @Result(name = "results", location = "pendingTDSReport-results.jsp"),
+        @Result(name = "entities", location = "pendingTDSReport-entities.jsp"),
+        @Result(name = "summaryForm", location = "pendingTDSReport-summaryForm.jsp"),
+        @Result(name = "reportForm", location = "pendingTDSReport-reportForm.jsp"),
+        @Result(name = "summaryResults", location = "pendingTDSReport-summaryResults.jsp")
 })
 @Transactional(readOnly = true)
 @ParentPackage("egov")
@@ -111,6 +116,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     private boolean showRemittedEntries = false;
     private List<RemittanceBean> pendingTDS = new ArrayList<RemittanceBean>();
     private List<TDSEntry> remittedTDS = new ArrayList<TDSEntry>();
+    private List<TDSEntry> inWorkflowTDS = new ArrayList<TDSEntry>();
     private Recovery recovery = new Recovery();
     private Fund fund = new Fund();
     private Department department = new Department();
@@ -119,6 +125,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     private RemitRecoveryService remitRecoveryService;
     private FinancialYearHibernateDAO financialYearDAO;
     private String message = "";
+    private String mode = "";
     private static Logger LOGGER = Logger.getLogger(PendingTDSReportAction.class);
 
     public void setFinancialYearDAO(final FinancialYearHibernateDAO financialYearDAO) {
@@ -131,6 +138,7 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     @Override
     public String execute() throws Exception {
+        mode = "deduction";
         return "reportForm";
     }
 
@@ -144,10 +152,11 @@ public class PendingTDSReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
-        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
+        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));  
+
         addDropdownData("recoveryList",
-                persistenceService.findAllBy(" from Recovery where isactive=1 order by chartofaccounts.glcode"));
+                persistenceService.findAllBy(" from Recovery where isactive=true order by chartofaccounts.glcode"));
     }
 
     @Action(value = "/report/pendingTDSReport-ajaxLoadData")
@@ -203,6 +212,8 @@ public class PendingTDSReportAction extends BaseFormAction {
     Map<String, Object> getParamMap() {
         final Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("remittedTDSJasper", this.getClass().getResourceAsStream("/reports/templates/remittedTDSReport.jasper"));
+        paramMap.put("inWorkflowTDSJasper", this.getClass().getResourceAsStream("/reports/templates/inWorkflowTDSReport.jasper"));
+        paramMap.put("inWorkflowTDS", inWorkflowTDS);
         if (showRemittedEntries)
             paramMap.put("remittedTDS", remittedTDS);
         else
@@ -240,6 +251,56 @@ public class PendingTDSReportAction extends BaseFormAction {
         if (fromDate != null)
             remittanceBean.setFromDate(Constants.DDMMYYYYFORMAT1.format(fromDate));
         pendingTDS = remitRecoveryService.getRecoveryDetailsForReport(remittanceBean, getVoucherHeader(), detailKey);
+        final StringBuffer query1 = new StringBuffer(1000);
+        List<EgRemittanceDetail> result1 = new ArrayList<EgRemittanceDetail>();
+        query1.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalledger.glcodeId.id=? "
+                +
+                "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 5 and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.status=0 and "
+                +
+                "egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate <= ? ");
+        if (fromDate != null)
+            query1.append(" and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate >= ?");
+        query1.append(deptQuery).append(partyNameQuery);
+        query1.append(" order by egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherNumber ");
+        if (fromDate != null)
+            result1 = persistenceService.findAllBy(query1.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
+                    asOnDate, fromDate);
+        else
+            result1 = persistenceService.findAllBy(query1.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
+                    asOnDate);
+        Boolean createPartialRow1 = false;
+        for (final EgRemittanceDetail entry : result1) {
+            createPartialRow1 = false;
+            for (final TDSEntry tdsExists : inWorkflowTDS)
+                if (tdsExists.getEgRemittanceGlDtlId().intValue() == entry.getEgRemittanceGldtl().getId().intValue())
+                    createPartialRow1 = true;
+            TDSEntry tds = new TDSEntry();
+            tds.setEgRemittanceGlDtlId(entry.getEgRemittanceGldtl().getId());
+            if (!createPartialRow1)
+                tds = createTds(entry);
+            tds.setRemittedOn(Constants.DDMMYYYYFORMAT2.format(entry.getEgRemittance().getVoucherheader().getVoucherDate()));
+            tds.setAmount(entry.getRemittedamt());
+            if (entry.getEgRemittance().getVoucherheader() != null)
+                tds.setPaymentVoucherNumber(entry.getEgRemittance().getVoucherheader().getVoucherNumber());
+            final List<InstrumentVoucher> ivList = persistenceService.findAllBy("from InstrumentVoucher where" +
+                    " instrumentHeaderId.statusId.description in(?,?,?) and voucherHeaderId=?"
+                    , FinancialConstants.INSTRUMENT_DEPOSITED_STATUS, FinancialConstants.INSTRUMENT_CREATED_STATUS,
+                    FinancialConstants.INSTRUMENT_RECONCILED_STATUS, entry.getEgRemittance().getVoucherheader());
+            boolean isMultiple = false;
+            for (final InstrumentVoucher iv : ivList)
+            {
+                if (entry.getRemittedamt().compareTo(iv.getInstrumentHeaderId().getInstrumentAmount()) != 0)
+                    isMultiple = true;
+
+                tds.setChequeNumber(iv.getInstrumentHeaderId().getInstrumentNumber());
+                if (isMultiple)
+                    tds.setChequeNumber(tds.getChequeNumber() + "-MULTIPLE");
+                tds.setChequeAmount(iv.getInstrumentHeaderId().getInstrumentAmount());
+                if (iv.getInstrumentHeaderId().getInstrumentDate() != null)
+                    tds.setDrawnOn(Constants.DDMMYYYYFORMAT2.format(iv.getInstrumentHeaderId().getInstrumentDate()));
+            }
+            inWorkflowTDS.add(tds);
+        }
         if (showRemittedEntries) {
             if (department.getId() != null && department.getId() != -1)
                 deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.vouchermis.departmentid.id="
@@ -247,10 +308,11 @@ public class PendingTDSReportAction extends BaseFormAction {
             if (detailKey != null && detailKey != -1)
                 partyNameQuery = " and egRemittanceGldtl.generalledgerdetail.detailkeyid=" + detailKey;
             final StringBuffer query = new StringBuffer(1000);
+           
             List<EgRemittanceDetail> result = new ArrayList<EgRemittanceDetail>();
             query.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalledger.glcodeId.id=? "
                     +
-                    "and egRemittance.fund.id=? and egRemittance.voucherheader.status=0 and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.status=0 and "
+                    "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 0 and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.status=0 and "
                     +
                     "egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate <= ? ");
             if (fromDate != null)
@@ -263,6 +325,7 @@ public class PendingTDSReportAction extends BaseFormAction {
             else
                 result = persistenceService.findAllBy(query.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
                         asOnDate);
+            
             Boolean createPartialRow = false;
             for (final EgRemittanceDetail entry : result) {
                 createPartialRow = false;
@@ -296,6 +359,7 @@ public class PendingTDSReportAction extends BaseFormAction {
                 }
                 remittedTDS.add(tds);
             }
+           
         }
     }
 
@@ -331,9 +395,9 @@ public class PendingTDSReportAction extends BaseFormAction {
                 LOGGER.debug(qry);
             result = HibernateUtil.getCurrentSession().createSQLQuery(qry).list();
             // Query to get total deduction
-            final String qryTolDeduction = "SELECT type,MONTH,SUM(gldtamt) FROM (SELECT DISTINCT er.month AS MONTH,ergl.gldtlamt           AS gldtamt,"
+            final String qryTolDeduction = "SELECT type,MONTH,SUM(gldtamt) FROM (SELECT DISTINCT er.month AS MONTH,ergl.gldtlamt AS gldtamt,"
                     +
-                    "ergl.gldtlid,vh.name AS type FROM eg_remittance_detail erd,voucherheader vh1 RIGHT OUTER JOIN eg_remittance er ON vh1.id=er.paymentvhid,"
+                    "ergl.gldtlid as gldtlid,vh.name AS type FROM eg_remittance_detail erd,voucherheader vh1 RIGHT OUTER JOIN eg_remittance er ON vh1.id=er.paymentvhid,"
                     +
                     "voucherheader vh,vouchermis mis,generalledger gl,generalledgerdetail gld,fund f, eg_remittance_gldtl ergl WHERE erd.remittancegldtlid= ergl.id"
                     +
@@ -350,7 +414,7 @@ public class PendingTDSReportAction extends BaseFormAction {
                     + "','dd/MM/yyyy') and "
                     + " vh.voucherDate >= to_date('"
                     + Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate())
-                    + "','dd/MM/yyyy') " + deptQuery + partyNameQuery + ")group by type,month";
+                    + "','dd/MM/yyyy') " + deptQuery + partyNameQuery + ") as temptable group by type,month";
             resultTolDeduction = HibernateUtil.getCurrentSession().createSQLQuery(qryTolDeduction).list();
         } catch (final ApplicationRuntimeException e) {
             message = e.getMessage();
@@ -523,6 +587,14 @@ public class PendingTDSReportAction extends BaseFormAction {
         return remittedTDS;
     }
 
+    public List<TDSEntry> getInWorkflowTDS() {
+        return inWorkflowTDS;
+    }
+
+    public void setInWorkflowTDS(List<TDSEntry> inWorkflowTDS) {
+        this.inWorkflowTDS = inWorkflowTDS;
+    }
+
     public void setRecovery(final Recovery recovery) {
         this.recovery = recovery;
     }
@@ -573,6 +645,14 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
 }

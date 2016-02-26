@@ -48,7 +48,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -68,7 +71,9 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
+import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Namespace("/collection")
 @ResultPath("/WEB-INF/jsp/")
@@ -91,6 +96,8 @@ public class CollectPropertyTaxAction extends BaseFormAction {
     private Boolean levyPenalty = false;
     private String errorMsg;
     private Boolean isAssessmentNoValid = Boolean.FALSE;
+    private String infoMessage;
+    DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 
     private final List<String> args = new ArrayList<String>();
 
@@ -102,6 +109,9 @@ public class CollectPropertyTaxAction extends BaseFormAction {
         return null;
     }
 
+    @Qualifier("entityQueryService")
+    private @Autowired PersistenceService entityQueryService;
+    
     /**
      * @return
      */
@@ -132,7 +142,21 @@ public class CollectPropertyTaxAction extends BaseFormAction {
                 .getProperty());
         final BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
         final BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
-
+        //finding if there are any alter additions from eSuvidha.
+		final SQLQuery qry = entityQueryService
+				.getSession()
+				.createSQLQuery(
+						"select i_asmtno, ts_dttm, (coalesce(d_crnpt,0) + coalesce(d_crned,0) + coalesce(d_crnlcs,0) + coalesce(d_crnuauthcnstplty,0)) from pt_extnasmtbal_tbl where (coalesce(d_crnpt,0)>0 or coalesce(d_crned,0)>0 or coalesce(d_crnlcs,0)>0 or coalesce(d_crnuauthcnstplty,0)>0) and i_asmtno =:propertyid");
+        qry.setInteger("propertyid", Integer.valueOf(propertyId));
+        final List<Object[]> list = (List<Object[]>) qry.list();
+        
+		if (list!=null && list.size() > 0) {
+			final Object[] alters = (Object[]) list.get(0);
+			infoMessage = "This property undergone Adition/Alteration on " + dateFormat.format((Date) alters[1])
+					+ " and the excess amount " + (BigDecimal) alters[2]
+					+ " was pending so, there might be difference in tax due compared to demand notice.";
+		}
+		
         if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0) {
             args.add(propertyId);
             isAssessmentNoValid = Boolean.TRUE;
@@ -224,5 +248,13 @@ public class CollectPropertyTaxAction extends BaseFormAction {
     public void setIsAssessmentNoValid(final Boolean isAssessmentNoValid) {
         this.isAssessmentNoValid = isAssessmentNoValid;
     }
+
+	public String getInfoMessage() {
+		return infoMessage;
+	}
+
+	public void setInfoMessage(String infoMessage) {
+		this.infoMessage = infoMessage;
+	}
 
 }

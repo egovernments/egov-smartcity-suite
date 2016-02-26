@@ -48,8 +48,13 @@ function validate()
 		undoLoadingMask() ;
 		return false;
 	}
-	
-
+	if(document.getElementById("contingentBill_commonBean_billNumber")){
+		var billNumber = document.getElementById("contingentBill_commonBean_billNumber").value;
+		if(billNumber== null || billNumber == ""){
+			bootbox.alert("Please select bill number");
+			return false;
+		}
+	}
 	var len=billDetailsTableFinal.getRecordSet().getLength();
 	if( len!=undefined && len>=1)
 	{
@@ -64,6 +69,17 @@ function validate()
 		undoLoadingMask() ;
 		return false;
 	}
+	var billDate = document.getElementById("billDate").value;
+    var date = billDate.substring(0, 2);
+    var month = billDate.substring(3, 5);
+    var year = billDate.substring(6, 10);
+    var myDate = new Date(year, month - 1, date);
+    var today = new Date();
+
+    if (myDate > today) {
+        bootbox.alert("Bill date is greater than today's date ");
+        return false
+    }
 	
 return true;
 }
@@ -650,6 +666,7 @@ function splitEntities(obj)
 {
 	
 var entity=obj.value;
+var detailKey  = document.getElementById("detailKey").value;
 if(entity.trim()!="")
 {
 var entity_array=entity.split("`~`");
@@ -662,7 +679,7 @@ document.getElementById("detailName").value=entity_array[0].split("`-`")[1];
 document.getElementById("commonBean.payto").value=entity_array[0].split("`-`")[1];
 //bootbox.alert(document.getElementById("commonBean.payto").value);
 }
-else
+else if(detailKey == null || detailKey== "")
 {
 //bootbox.alert(invalidEntityselected);
 obj.value="";

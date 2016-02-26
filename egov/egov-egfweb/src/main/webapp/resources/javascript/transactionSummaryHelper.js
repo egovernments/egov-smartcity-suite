@@ -590,7 +590,7 @@ function autocompleteEntities(obj) {
 	oAutoCompEntityForJV.minQueryLength = 1;
 	oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 	oAutoCompEntityForJV.useShadow = true;
-	oAutoCompEntityForJV.forceSelection = true;
+	//oAutoCompEntityForJV.forceSelection = true;
 	oAutoCompEntityForJV.maxResultsDisplayed = 10;
 	oAutoCompEntityForJV.useIFrame = true;
 	oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox,

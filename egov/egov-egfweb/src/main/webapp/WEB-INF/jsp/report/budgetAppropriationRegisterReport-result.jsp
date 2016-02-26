@@ -76,14 +76,14 @@ function disableTheFiels() {
 				<td class="bluebox">&nbsp;</td>
 				<td class="bluebox"><s:text name="report.department" />
 					<s:if test="%{isFieldMandatory('executingDepartment')}">
-						<span class="mandatory">*</span>
+						<span class="mandatory1">*</span>
 					</s:if></td>
 				<td class="bluebox"><s:select
 						list="dropdownData.executingDepartmentList" listKey="id"
 						listValue="name" name="department.id" headerKey="0"
 						headerValue="--- Select ---" value="department.id" id="department"></s:select></td>
 				<td class="bluebox"><s:text name="report.budged.head" /><span
-					class="mandatory">*</span></td>
+					class="mandatory1">*</span></td>
 				<td class="bluebox"><s:select
 						list="dropdownData.budgetGroupList" listKey="id" listValue="name"
 						name="budgetDetail.budgetGroup.id" headerKey="0"
@@ -95,12 +95,12 @@ function disableTheFiels() {
 				<td class="greybox">&nbsp;</td>
 				<td class="greybox"><s:text name="report.function.center" />
 					<s:if test="%{isFieldMandatory('function')}">
-						<span class="mandatory">*</span>
+						<span class="mandatory1">*</span>
 					</s:if></td>
 				<td class="greybox"><s:select list="dropdownData.functionList"
 						listKey="id" listValue="name" name="function.id" headerKey="0"
 						headerValue="--- Select ---" value="function.id" id="function"></s:select></td>
-				<td class="greybox">As on Date:<span class="mandatory">*</span></td>
+				<td class="greybox">As on Date:<span class="mandatory1">*</span></td>
 				<td class="greybox"><s:textfield name="asOnDate" id="asOnDate"
 						cssStyle="width:100px"
 						onkeyup="DateFormat(this,this.value,event,false,'3')" />(dd/mm/yyyy)
@@ -112,7 +112,7 @@ function disableTheFiels() {
 				<td class="bluebox">&nbsp;</td>
 				<td class="bluebox"><s:text name="report.fund" />
 					<s:if test="%{isFieldMandatory('fund')}">
-						<span class="mandatory">*</span>
+						<span class="mandatory1">*</span>
 					</s:if></td>
 				<td class="bluebox" colspan="4"><s:select
 						list="dropdownData.fundList" listKey="id" listValue="name"
@@ -237,13 +237,14 @@ function disableTheFiels() {
 								<td>
 									<div class="excelpdf">
 										<a
-											href='${pageContext.request.contextPath}/report/budgetAppropriationRegisterReport!generatePdf.action?asOnDate=<s:property value="strAsOnDate"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&budgetGroup.id=<s:property value="budgetGroup.id"/>&fund.id=<s:property value="fund.id"/>'>PDF</a>
+											href='${pageContext.request.contextPath}/report/budgetAppropriationRegisterReport-generatePdf.action?asOnDate=<s:property value="strAsOnDate"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&budgetGroup.id=<s:property value="budgetGroup.id"/>&fund.id=<s:property value="fund.id"/>'>PDF</a>
 										<img align="absmiddle"
 											src="/egi/resources/erp2/images/pdf.png"> <a
-											href='${pageContext.request.contextPath}/report/budgetAppropriationRegisterReport!generateXls.action?asOnDate=<s:property value="strAsOnDate"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&budgetGroup.id=<s:property value="budgetGroup.id"/>&fund.id=<s:property value="fund.id"/>'>Excel</a>
+											href='${pageContext.request.contextPath}/report/budgetAppropriationRegisterReport-generateXls.action?asOnDate=<s:property value="strAsOnDate"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&budgetGroup.id=<s:property value="budgetGroup.id"/>&fund.id=<s:property value="fund.id"/>'>Excel</a>
 										<img align="absmiddle"
 											src="/egi/resources/erp2/images/excel.png">
 									</div>
+									
 								</td>
 							</tr>
 						</table>

@@ -51,11 +51,11 @@ public class CFunction {
 	private String type;
 	private int level;
 	private Long parentId;
-	private boolean isActive;
+	private Boolean isActive;
 	private Date created;
 	private Date lastModified;
 	private String modifiedBy;
-	private int isNotLeaf;
+	private Boolean isNotLeaf;
 	private String funcNameActual;
 	private CFunction function;
 	/**
@@ -126,20 +126,7 @@ public class CFunction {
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-	/**
-	 * @return Returns the isNotLeaf.
-	 */
-	public int getIsNotLeaf() {
-		return isNotLeaf;
-	}
-
-	/**
-	 * @param isNotLeaf The isNotLeaf to set.
-	 */
-	public void setIsNotLeaf(int isNotLeaf) {
-		this.isNotLeaf = isNotLeaf;
-	}
-
+	
 	/**
 	 * @return Returns the lastModified.
 	 */
@@ -227,5 +214,21 @@ public class CFunction {
 	 */
 	public void setFunction(CFunction function) {
 		this.function = function;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public Boolean getIsNotLeaf() {
+		return isNotLeaf;
+	}
+
+	public void setIsNotLeaf(Boolean isNotLeaf) {
+		this.isNotLeaf = isNotLeaf;
 	}
 }

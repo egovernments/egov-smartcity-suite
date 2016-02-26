@@ -44,6 +44,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ACTUAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ENCODED_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISCORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISSEASHORE_ULB;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_REBATE_STR;
@@ -1882,12 +1883,12 @@ public class PropertyTaxUtil {
     }
 
     public Boolean isSeaShoreULB() {
-        Boolean isCorporation = Boolean.FALSE;
+        Boolean isSeaShoreULB = Boolean.FALSE;
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
-                APPCONFIG_ISCORPORATION);
+                APPCONFIG_ISSEASHORE_ULB);
         if (appConfigValue != null && !appConfigValue.isEmpty())
-            isCorporation = Boolean.valueOf(appConfigValue.get(0).getValue());
-        return isCorporation;
+            isSeaShoreULB = Boolean.valueOf(appConfigValue.get(0).getValue());
+        return isSeaShoreULB;
     }
 
     public Boolean isPrimaryServiceApplicable() {
@@ -2077,7 +2078,7 @@ public class PropertyTaxUtil {
             param = boundaryId;
         // To retreive Arrear Demand and Collection Details
         arrear_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
-                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment "
+                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true "
                 + "and im.start_date not between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
                 + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 
@@ -2093,7 +2094,7 @@ public class PropertyTaxUtil {
 
         // To retreive Current Demand and Collection Details
         current_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
-                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment "
+                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true "
                 + "and im.start_date between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
                 + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 
@@ -2116,7 +2117,7 @@ public class PropertyTaxUtil {
                 + "cast(sum(arrearPFTColl) AS numeric) as \"clctn_arrearPFT\",cast(sum(arrearSTColl) AS numeric) as \"clctn_arrearST\","
                 + "cast(sum(arrearVLTColl) AS numeric) as \"clctn_arrearVLT\",cast(sum(arrearPSCTColl) AS numeric) as \"clctn_arrearPSCT\","
                 + "cast(sum(curGT) AS numeric) as \"dmnd_currentPT\", cast(sum(curLC) AS numeric) as \"dmnd_currentLC\", cast(sum(curEC) AS numeric) as \"dmnd_currentEC\","
-                + "cast(sum(curUPT) AS numeric) as \"dmnd_currentUPT\",cast(sum(curUPT) AS numeric) as \"dmnd_currentPFT\",cast(sum(curST) AS numeric) as \"dmnd_currentST\","
+                + "cast(sum(curUPT) AS numeric) as \"dmnd_currentUPT\",cast(sum(curPFT) AS numeric) as \"dmnd_currentPFT\",cast(sum(curST) AS numeric) as \"dmnd_currentST\","
                 + "cast(sum(curVLT) AS numeric) as \"dmnd_currentVLT\",CAST(sum(curPSCT) AS numeric) as \"dmnd_currentPSCT\",CAST(sum(curGTColl) AS numeric) as \"clctn_currentPT\", "
                 + "cast(sum(curLCColl) AS numeric) as \"clctn_currentLC\", cast(sum(curECColl) AS numeric) as \"clctn_currentEC\",cast(sum(curUPTColl) AS numeric) as \"clctn_currentUPT\","
                 + "cast(sum(curPFTColl) AS numeric) as \"clctn_currentPFT\",cast(sum(curSTColl) AS numeric) as \"clctn_currentST\","
@@ -2277,7 +2278,7 @@ public class PropertyTaxUtil {
         final Query qry = persistenceService.getSession().createSQLQuery(selectQuery)
                 .setLong("basicPropId", basicPropId);
         list = qry.list();
-        return (BigDecimal) list.get(0);
+        return (null != list && !list.contains(null)) ? new BigDecimal((Double) list.get(0)) : null;
     }
 
     public Map<String, BigDecimal> prepareDemandDetForWorkflowProperty(final Property property,
@@ -2428,7 +2429,7 @@ public class PropertyTaxUtil {
      */
     public boolean checkIsNagarPanchayat() {
         HttpServletRequest request = ServletActionContext.getRequest();
-    	String grade=(request.getSession().getAttribute("cityGrade")!=null?
+        String grade=(request.getSession().getAttribute("cityGrade")!=null?
                 request.getSession().getAttribute("cityGrade").toString():null);
         return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
     }
@@ -2447,21 +2448,24 @@ public class PropertyTaxUtil {
         
         query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true ");
         String arrearBalanceCond = " (pmv.aggrArrDmd - pmv.aggrArrColl) ";
+        String arrearBalanceNotZeroCond = " and (pmv.aggrArrDmd - pmv.aggrArrColl)!=0 ";
         String orderByClause = " order by ";
-        if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
-        	query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
-        	query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
+        query.append(arrearBalanceNotZeroCond);
+        if(StringUtils.isNotBlank(fromDemand) && StringUtils.isBlank(toDemand)){
+            query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
+        } else if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
+                query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
+                query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
         }
         if(wardId != null && wardId != -1){
-        	query.append(" and pmv.ward.id = ").append(wardId);
+                query.append(" and pmv.ward.id = ").append(wardId); 
         }
-        	
-        orderByClause = orderByClause.concat(" pmv.ward.id asc, "+arrearBalanceCond+" desc ");
+        orderByClause = orderByClause.concat(arrearBalanceCond+" desc, pmv.ward.id asc ");
         query.append(orderByClause);
 
         final Query qry = persistenceService.getSession().createQuery(query.toString());
         if(limit != null && limit != -1)
-        	qry.setMaxResults(limit);
+                qry.setMaxResults(limit);
         return qry;
     }
 }

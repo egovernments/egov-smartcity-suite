@@ -48,7 +48,7 @@
 	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 	function validateFormAndSubmit(){
-			var subCategoryId= dom.get("subCategoryId").value;
+			var subCategoryId= document.getElementById("subCategory").value;
 			 if (subCategoryId == "-1"){
 				showMessage('subCategory_error', '<s:text name="licenseSubCategory.subCategory.null" />');
 				return false;
@@ -82,19 +82,27 @@
 						<s:hidden name="userMode" id="userMode"/>
 						<div class="form-group">
 							<label for="field-1" class="col-sm-4 control-label text-right"><s:text
-									name="licenseSubCategory.subCategory.lbl" /><span class="mandatory"></span></label>
+									name="licenseCategory.category.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-4 add-margin">
-								<s:select headerKey="-1"
-										headerValue="%{getText('default.select')}" name="subCategoryId"
-										id="subCategoryId" listKey="key" listValue="value"
-										list="licenseSubCategoryMap" cssClass="form-control" value="%{subCategoryId}" 
-										/>
-							</div>
+								<s:select headerKey="-1" headerValue="%{getText('default.select')}" name="categoryId"
+										id="categoryId" listKey="key" listValue="value"
+										list="licenseCategoryMap" cssClass="form-control" value="%{categoryId}" class="form-control"
+										 onChange="setupAjaxSubCategory(this);"/>
+								<egov:ajaxdropdown id="populateSubCategory" fields="['Text','Value']" dropdownId='subCategory'
+								 url='domain/commonTradeLicenseAjax-populateSubCategory.action' />
+    						</div>
+						</div>
+						<div class="form-group">
+							<label for="field-1" class="col-sm-4 control-label text-right">
+								<s:text	name="licenseSubCategory.subCategory.lbl" /><span class="mandatory"></span></label>
+							<div class="col-sm-4 add-margin">
+        						<s:select name="tradeName" id="subCategory" list="licenseSubCategoryMap"
+								listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control"/>
+    						</div>
 						</div>
 					</div>
 				</div>
 			</s:form>
-
 			<div class="row">
 				<div class="text-center">
 				<s:if test="%{userMode=='edit'}">

@@ -44,21 +44,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.utils.DateUtils;
 import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
-import org.joda.time.LocalDate;
 
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class TradeLicense extends License {
@@ -82,38 +75,6 @@ public class TradeLicense extends License {
     
     private List<LicenseDocument> documents = new ArrayList<>();
 
-    public Set<EgDemandDetails> additionalDemandDetails(final Set<EgDemandReasonMaster> egDemandReasonMasters,
-            final Installment installment) {
-        LOGGER.debug("Adding additinal Demand Details...");
-        final Set<EgDemandDetails> addtionalDemandDetails = new LinkedHashSet<EgDemandDetails>();
-        BigDecimal baseMotorFee = null;
-        BigDecimal actualMotorFee = null;
-        BigDecimal amountToaddBaseDemand = BigDecimal.ZERO;
-        for (final MotorMaster mm : getMotorMasterList()) {
-            if (mm.getMotorHpFrom().compareTo(BigDecimal.ZERO) == 0 && mm.getMotorHpTo().compareTo(BigDecimal.ZERO) == 0)
-                baseMotorFee = mm.getUsingFee();
-                actualMotorFee = mm.getUsingFee();
-        }
-        LOGGER.debug("Adding Motor Fee Details...");
-        for (final EgDemandReasonMaster dm : egDemandReasonMasters)
-            if (dm.getReasonMaster().equalsIgnoreCase("Motor Fee"))
-                for (final EgDemandReason reason : dm.getEgDemandReasons())
-                    if (reason.getEgInstallmentMaster().getId().equals(installment.getId()))
-                        // check for current year installment only
-                            addtionalDemandDetails.add(EgDemandDetails
-                                    .fromReasonAndAmounts(baseMotorFee, reason, BigDecimal.ZERO));
-                            amountToaddBaseDemand = baseMotorFee;
-        LOGGER.debug("Adding Motor Fee completed.");
-        LOGGER.debug("Addtional Demand Details size." + addtionalDemandDetails.size());
-        LOGGER.debug("Adding additinal Demand Details done.");
-        for (final LicenseDemand ld : getDemandSet())
-            if (ld.getEgInstallmentMaster().getId() == installment.getId()) {
-                ld.getEgDemandDetails().addAll(addtionalDemandDetails);
-                ld.addBaseDemand(amountToaddBaseDemand);
-                break;
-            }
-        return addtionalDemandDetails;
-    }
 
     @Override
     public String generateApplicationNumber(final String runningNumber) {
@@ -144,50 +105,11 @@ public class TradeLicense extends License {
     public String getStateDetails() {
         final StringBuffer details = new StringBuffer();
         if (getLicenseNumber() != null && !getLicenseNumber().isEmpty())
-            details.append(getLicenseNumber()).append("/");
+            details.append(getLicenseNumber()).append(" / ");
         details.append(getApplicationNumber());
         return details.toString();
     }
     
-    @Override
-    public void setCreationAndExpiryDate() {
-        setDateOfCreation(new Date());
-        updateExpiryDate(new Date());
-    }
-
-    @Override
-    public void setCreationAndExpiryDateForEnterLicense() {
-        setDateOfCreation(getDateOfCreation());
-        updateExpiryDate(getDateOfCreation());
-    }
-
-    @Override
-    public void updateExpiryDate(final Date renewalDate) {
-        // this.setDateOfCreation(new Date());
-        final Calendar instance = Calendar.getInstance();
-        if ("PFA".equalsIgnoreCase(getFeeTypeStr())) {
-            final Date dateOfExpiry = renewalDate;
-            instance.setTime(dateOfExpiry);
-            final int month = instance.get(Calendar.MONTH);
-            int year = instance.get(Calendar.YEAR);
-            year = year + 5;
-            if (month == Calendar.JANUARY || month == Calendar.FEBRUARY || month == Calendar.MARCH)
-                year = year - 1;
-            instance.set(year, 2, 31);
-            setDateOfExpiry(instance.getTime());
-        } else if ("CNC".equalsIgnoreCase(getFeeTypeStr())) {
-            final Date dateOfExpiry = renewalDate;
-            instance.setTime(dateOfExpiry);
-            final int month = instance.get(Calendar.MONTH);
-            int year = instance.get(Calendar.YEAR);
-            year = year + 1;
-            if (month == Calendar.JANUARY || month == Calendar.FEBRUARY || month == Calendar.MARCH)
-                year = year - 1;
-            instance.set(year, 2, 31);
-            setDateOfExpiry(instance.getTime());
-        }
-    }
-
     public List<String> populateHotelGradeList() {
         hotelGradeList = new ArrayList<String>();
         for (final String element : HOTELGRADE)
@@ -195,14 +117,13 @@ public class TradeLicense extends License {
         return hotelGradeList;
     }
     
-    // TODO: Reviewed by Satyam, suggested to rename the variable name, committing after changes
     public Boolean disablePrintCertificate() {
         Boolean disablePrintCert = false;
         if (getTradeName().isNocApplicable() != null && getTradeName().isNocApplicable()) {
             final Calendar instance = Calendar.getInstance();
             final Date newDate = new Date();
-            if (getDateOfCreation() != null) {
-                instance.setTime(getDateOfCreation());
+            if (getCommencementDate() != null) {
+                instance.setTime(getCommencementDate());
                 instance.add(Calendar.MONTH, 10);
                 if (newDate.before(instance.getTime()))
                     disablePrintCert = true;

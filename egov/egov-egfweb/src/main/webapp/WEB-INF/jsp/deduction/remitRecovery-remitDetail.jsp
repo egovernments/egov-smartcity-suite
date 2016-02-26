@@ -72,6 +72,43 @@ function validateFund(){
 	}
 	return true;
 }
+function populateAvailableBalance(accnumObj) 
+{
+			if (document.getElementById('voucherDate').value == '') {
+				bootbox.alert("Please Select the Voucher Date!!");
+				accnumObj.options.value = -1;
+				return;
+			}
+			if (accnumObj.options[accnumObj.selectedIndex].value == -1)
+				document.getElementById('availableBalance').value = '';
+			else
+				populateavailableBalance({
+					bankaccount : accnumObj.options[accnumObj.selectedIndex].value,
+					voucherDate : document.getElementById('voucherDate').value
+							+ '&date=' + new Date()
+				});
+
+}
+var callback = {
+		success : function(o) {
+		console.log("success");
+		document.getElementById('availableBalance').value = o.responseText;
+		},
+		failure : function(o) {
+			console.log("failed");
+		}
+}
+function balanceCheck() {
+
+	if (document.getElementById('availableBalance')) {
+		if(parseFloat(document.getElementById('totalAmount').value)>parseFloat(document.getElementById('availableBalance').value))
+		{
+			console.log("ins 44");
+			return false;
+		}
+	}
+	return true;
+}
 function checkLength(obj)
 {
 	if(obj.value.length>1024)
@@ -135,18 +172,8 @@ function populateUser(){
 	designationId:desgId,functionaryName:functionary})
 		
 }
-function validateApproveUser(name,value){
-	document.getElementById("actionName").value= name;
-<s:if test="%{wfitemstate !='END'}">
-	 if( (value == 'Approve' || value=='Send for Approval' || value == 'Forward' || value == 'Save And Forward') && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-		bootbox.alert("Please Select the user");
-		return false;
-	}
-</s:if>
-	return true;
-}
 
-	function validate(name,value)
+	function validate()
 		{
 		document.getElementById('lblError').innerHTML = "";
 			if(!validateMIS())
@@ -161,15 +188,58 @@ function validateApproveUser(name,value){
 		   document.getElementById('lblError').innerHTML='Please select Bank Account';
 		   return false;
 		   } 
-			if(!validateApproveUser(name,value))    
-				return false;
+		  
 			return true;
 		}
-
+function onLoad(){
+	var fund = document.getElementById('fundId');
+	var scheme = document.getElementById('schemeid');
+	var subscheme = document.getElementById('subschemeid');
+	var fundsource = document.getElementById('fundsourceId');
+	var department = document.getElementById('vouchermis.departmentid');
+	var functionid = document.getElementById('vouchermis.function');
+	jQuery(fund).attr('disabled', 'disabled');
+	jQuery(scheme).attr('disabled', 'disabled');
+	jQuery(subscheme).attr('disabled', 'disabled');
+	jQuery(fundsource).attr('disabled', 'disabled');
+	jQuery(department).attr('disabled', 'disabled');
+	jQuery(functionid).attr('disabled', 'disabled');
+	if(document.getElementById('approverDepartment'))
+		document.getElementById('approverDepartment').value = "-1";
+}
+function onSubmit()
+{
+	if(validate()){
+		 var myform = jQuery('#remittanceForm');
+		// re-disabled the set of inputs that you previously
+		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
+		 if(!balanceCheck()){
+				bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
+					if(result)
+					  {
+						document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+						document.remittanceForm.submit();
+					  }
+				  else
+					  {
+					  console.log("else");
+					  }
+					}); 
+			}else{
+				document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+				document.remittanceForm.submit();
+				}
+		
+	}
+		return false;
+		
+	
+}
 </script>
 </head>
-<body>
-	<s:form action="remitRecovery" theme="simple" name="remittanceForm">
+<body onload="return onLoad();">
+	<s:form action="remitRecovery" theme="simple" name="remittanceForm"
+		id="remittanceForm">
 		<s:push value="model">
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="Remittance Recovery" />
@@ -180,7 +250,7 @@ function validateApproveUser(name,value){
 					<p class="error-block" id="lblError"></p>
 				</font>
 			</div>
-			<span class="mandatory">
+			<span class="mandatory1">
 				<div id="Errors">
 					<s:actionerror />
 					<s:fielderror />
@@ -218,18 +288,18 @@ function validateApproveUser(name,value){
 																	<td class="bluebox">&nbsp;</td>
 																	<s:if test="%{shouldShowHeaderField('vouchernumber')}">
 																		<td class="bluebox"><s:text name="voucher.number" /><span
-																			class="mandatory">*</span></td>
+																			class="mandatory1">*</span></td>
 																		<td class="bluebox"><s:textfield
 																				name="voucherNumber" id="vouchernumber" /></td>
 																	</s:if>
 																	<td class="bluebox" width="18%"><s:text
-																			name="voucher.date" />&nbsp;<span class="mandatory">*</span></td>
+																			name="voucher.date" />&nbsp;<span class="mandatory1">*</span></td>
 																	<s:date name='voucherDate' id="voucherDateId"
 																		format='dd/MM/yyyy' />
 																	<td class="bluebox" width="34%">
 																		<div name="daterow">
 																			<s:textfield name="voucherDate" id="voucherDate"
-																				maxlength="10"
+																				maxlength="10" readonly="true"
 																				onkeyup="DateFormat(this,this.value,event,false,'3')"
 																				size="15" value="%{voucherDateId}" />
 																			<A
@@ -250,9 +320,9 @@ function validateApproveUser(name,value){
 																	<td class="bluebox">&nbsp;</td>
 																	<egov:ajaxdropdown id="bank" fields="['Text','Value']"
 																		dropdownId="bank"
-																		url="voucher/common!ajaxLoadBanksByFundAndType.action" />
+																		url="voucher/common-ajaxLoadBanksByFundAndType.action" />
 																	<td class="bluebox"><s:text name="bank" />&nbsp;<span
-																		class="bluebox"><span class="mandatory">*</span></span></td>
+																		class="bluebox"><span class="mandatory1">*</span></span></td>
 																	<td class="bluebox"><s:select name="bank"
 																			id="bank" list="dropdownData.bankList"
 																			listKey="bank.id+'-'+id"
@@ -261,13 +331,14 @@ function validateApproveUser(name,value){
 																			onChange="populateAccNumbers(this);" /></td>
 																	<egov:ajaxdropdown id="accountNumber"
 																		fields="['Text','Value']" dropdownId="bankaccount"
-																		url="voucher/common!ajaxLoadAccNumAndType.action" />
+																		url="voucher/common-ajaxLoadAccNumAndType.action" />
 																	<td class="bluebox"><s:text name="account.number" />&nbsp;<span
-																		class="bluebox"><span class="mandatory">*</span></span></td>
+																		class="bluebox"><span class="mandatory1">*</span></span></td>
 																	<td class="bluebox"><s:select
 																			name="commonBean.accountNumberId" id="bankaccount"
 																			list="dropdownData.accNumList" listKey="id"
 																			listValue="chartofaccounts.glcode+'--'+accountnumber+'--'+accounttype"
+																			onChange="populateAvailableBalance(this);"
 																			headerKey="-1" headerValue="----Choose----" /></td>
 																</tr>
 																<tr class="greybox">
@@ -277,14 +348,14 @@ function validateApproveUser(name,value){
 																		id="remitAmount" /></td>
 																	<egov:updatevalues id="availableBalance"
 																		fields="['Text']"
-																		url="/payment/payment!ajaxGetAccountBalance.action" />
+																		url="/payment/payment-ajaxGetAccountBalance.action" />
 																	<td class="greybox"><span id="balanceText"
 																		style="display: none" width="18%"><s:text
 																				name="balance.available" />&nbsp;</span></td>
 																	<td class="greybox"><span id="balanceAvl"
-																		style="display: none" width="32%"><s:textfield
+																		width="32%"><s:textfield
 																				name="commonBean.availableBalance"
-																				id="availableBalance" readonly="readonly"
+																				id="availableBalance" readonly="true"
 																				style="text-align:right"
 																				value="%{commonBean.availableBalance}" /></span></td>
 																</tr>
@@ -316,10 +387,11 @@ function validateApproveUser(name,value){
 															<table align="center" border="0" cellpadding="0"
 																cellspacing="0" class="newtable">
 																<tr>
-																	<td colspan="6"><div class="subheadsmallnew">
-																			<s:text name="remit.recovery.detais" />
-																		</div></td>
+																	<td align="center" colspan="6" class="serachbillhead">
+																		<s:text name="remit.recovery.detais" />
+																	</td>
 																</tr>
+
 																<tr>
 																	<td colspan="6">
 																		<div style="float: left; width: 100%;">
@@ -329,6 +401,7 @@ function validateApproveUser(name,value){
 																			<div class="yui-skin-sam" align="center">
 																				<div id="recoveryDetailsTableNew"></div>
 																			</div>
+
 																			<script>
 								populateRecoveryDetailsForPayment();
 								document.getElementById('recoveryDetailsTableNew').getElementsByTagName('table')[0].width="80%";
@@ -337,12 +410,11 @@ function validateApproveUser(name,value){
 															</table>
 															<table align="center" id="totalAmtTable">
 																<tr>
-																	<td width="1033"></td>
+																	<td width="800"></td>
 																	<td>Total Amount</td>
-																	<td><s:textfield
-																			name="remittanceBean.totalAmount" id="totalAmount"
-																			style='width:90px;text-align:right' readonly="true"
-																			value="0" /></td>
+																	<td><s:textfield name="remittanceBean.totalAmount"
+																			id="totalAmount" style='width:90px;text-align:right'
+																			readonly="true" value="0" /></td>
 																</tr>
 
 																</div>
@@ -360,34 +432,13 @@ function validateApproveUser(name,value){
 							</td>
 						</tr>
 					</table>
+
 				</div>
+				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
+				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 			</div>
-			<s:if test="%{wfitemstate !='END'}">
-				<%@include file="../voucher/workflowApproval.jsp"%>
-			</s:if>
-			<table align="center">
-				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox">Comments</td>
-					<td class="bluebox" colspan="4"><s:textarea name="comments"
-							id="comments" cols="100" rows="3" onblur="checkLength(this)"
-							value="%{getComments()}" /></td>
-				</tr>
-			</table>
-			<div class="buttonbottom" id="buttondiv">
-				<s:hidden name="paymentid" value="%{paymentheader.id}" />
-				<s:hidden name="actionname" id="actionName" value="%{action}" />
-				<s:iterator value="%{getValidActions()}" var="p" status="s">
-					<s:submit type="submit" cssClass="buttonsubmit"
-						value="%{description}" id="wfBtn%{#s.index}" name="%{name}"
-						method="create"
-						onclick="return validate('%{name}','%{description}')" />
-				</s:iterator>
-				<s:submit method="search" value="Back " cssClass="buttonsubmit"
-					id="backbtnid" />
-				<input type="submit" value="Close"
-					onclick="javascript:window.close()" class="button" />
-			</div>
+
+
 			<script type="text/javascript">
 	//bootbox.alert('<s:property value="fund.id"/>');                               
 	//populatebank({fundId:<s:property value="fundId.id"/>,typeOfAccount:"PAYMENT,RECEIPTS_PAYMENTS"});
@@ -416,10 +467,13 @@ function validateApproveUser(name,value){
 				document.getElementById('balanceText').style.display='block';
 				document.getElementById('balanceAvl').style.display='block';
 			}
+			
 		</script>
 			</s:if>
 		</s:push>
+
 	</s:form>
+
 
 </body>
 

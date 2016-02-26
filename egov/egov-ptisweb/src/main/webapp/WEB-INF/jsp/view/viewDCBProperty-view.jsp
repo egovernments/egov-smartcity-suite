@@ -353,11 +353,6 @@
 													</div>
 												</td>
 											</c:if>
-											<c:if test="${fieldnames == 'Advance Collection'}">
-												<s:set value="%{value.getCollections()[#fieldnames]}"
-													var="adv" />
-												<c:set value="${advance + adv}" var="advance" />
-											</c:if>
 										</s:iterator>
 
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
@@ -535,7 +530,69 @@
 										</c:if>
 									</s:iterator>
 								</tr>
+								<c:if test="${dcbReport.getTotalAdvance()>0}">
+                               <tr>
+									<td class="blueborderfortd">
+										<div align="center">
+											&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											&nbsp;
+										</div>
+									</td>
 
+									<td class="blueborderfortd">
+										<div align="right">
+											<b><s:text name="Advance" />:</b>
+										</div>
+									</td>
+
+									<td class="blueborderfortd">
+										<div align="right">
+											<span class="bold"> 
+												<s:text name="format.money">
+													<s:param value="dcbReport.getTotalAdvance()" />
+												</s:text>
+											</span>
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										&nbsp;
+									</td>
+								</tr>
+								</c:if>
 								<tr>
 									<td class="blueborderfortd">
 										<div align="center">

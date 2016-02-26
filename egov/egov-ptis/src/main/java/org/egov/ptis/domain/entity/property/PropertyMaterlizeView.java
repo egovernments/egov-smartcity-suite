@@ -71,6 +71,10 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal aggrCurrColl;
     private BigDecimal aggrArrColl;
     private BigDecimal totalDemand;
+    private BigDecimal aggrArrearPenaly;
+    private BigDecimal aggrArrearPenalyColl;
+    private BigDecimal aggrCurrPenaly;
+    private BigDecimal aggrCurrPenalyColl; 
     private String gisRefNo;
     private Set<InstDmdCollMaterializeView> instDmdColl;
     private BigDecimal alv;
@@ -314,6 +318,38 @@ public class PropertyMaterlizeView implements Serializable {
 
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public BigDecimal getAggrArrearPenaly() {
+        return aggrArrearPenaly;
+    }
+
+    public void setAggrArrearPenaly(BigDecimal aggrArrearPenaly) {
+        this.aggrArrearPenaly = aggrArrearPenaly;
+    }
+
+    public BigDecimal getAggrArrearPenalyColl() {
+        return aggrArrearPenalyColl;
+    }
+
+    public void setAggrArrearPenalyColl(BigDecimal aggrArrearPenalyColl) {
+        this.aggrArrearPenalyColl = aggrArrearPenalyColl;
+    }
+
+    public BigDecimal getAggrCurrPenaly() {
+        return aggrCurrPenaly;
+    }
+
+    public void setAggrCurrPenaly(BigDecimal aggrCurrPenaly) {
+        this.aggrCurrPenaly = aggrCurrPenaly;
+    }
+
+    public BigDecimal getAggrCurrPenalyColl() {
+        return aggrCurrPenalyColl;
+    }
+
+    public void setAggrCurrPenalyColl(BigDecimal aggrCurrPenalyColl) {
+        this.aggrCurrPenalyColl = aggrCurrPenalyColl;
     }
     
 }

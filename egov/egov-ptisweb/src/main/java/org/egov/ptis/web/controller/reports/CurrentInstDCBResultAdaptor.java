@@ -40,6 +40,7 @@
 package org.egov.ptis.web.controller.reports;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 
 import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
 
@@ -55,10 +56,10 @@ public class CurrentInstDCBResultAdaptor implements JsonSerializer<CurrentInstDC
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("wardName", currentInstDCBReportResult.getWardName());
         jsonObject.addProperty("noOfProperties",currentInstDCBReportResult.getNoOfProperties());
-        jsonObject.addProperty("currDemand",currentInstDCBReportResult.getCurrDemand());
-        jsonObject.addProperty("currCollection",currentInstDCBReportResult.getCurrCollection());
-        jsonObject.addProperty("arrearDemand",currentInstDCBReportResult.getArrearDemand());
-        jsonObject.addProperty("arrearCollection",currentInstDCBReportResult.getArrearCollection());
+        jsonObject.addProperty("currDemand",currentInstDCBReportResult.getCurrDemand().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("currCollection",currentInstDCBReportResult.getCurrCollection().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("arrearDemand",currentInstDCBReportResult.getArrearDemand().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("arrearCollection",currentInstDCBReportResult.getArrearCollection().setScale(2, BigDecimal.ROUND_HALF_UP));
         return jsonObject;
         
     }

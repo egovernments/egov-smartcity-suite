@@ -124,13 +124,13 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  *
  */
 
-@Transactional(readOnly = true)
 @Results({
         @Result(name = "bankAccountByBranch", location = "common-bankAccountByBranch.jsp"),
         @Result(name = "branch", location = "common-branch.jsp"),
         @Result(name = "users", location = "common-users.jsp"),
         @Result(name = "arfNoSearchResults", location = "common-arfNoSearchResults.jsp"),
         @Result(name = "bankAccNum", location = "common-bankAccNum.jsp"),
+        @Result(name = "bankAccNum-bankName", location = "common-bankAccNum-bankName.jsp"),
         @Result(name = Constants.FUNDSOURCE, location = "common-" + Constants.FUNDSOURCE + ".jsp"),
         @Result(name = "workflowHistory", location = "common-workflowHistory.jsp"),
         @Result(name = "searchAccountCodes", location = "common-searchAccountCodes.jsp"),
@@ -315,7 +315,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Fund Id received is :  " + fundId + "   and Startswith   :" + startsWith);
         startsWith = "%" + startsWith + "%";
         schemeList = new ArrayList<Scheme>();
-        final String qry = "from Scheme  where upper(code) like upper(?) or upper(name) like upper(?) and isactive=1 ";
+        final String qry = "from Scheme  where upper(code) like upper(?) or upper(name) like upper(?) and isactive=true ";
         if (null != fundId && fundId != -1)
             schemeList.addAll(getPersistenceService().findPageBy(qry + " and fund.id=(?) order by code,name ", 0,
                     20, startsWith, startsWith, fundId).getList());
@@ -338,7 +338,7 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme Id received is : " + schemeId);
         if (null != schemeId && schemeId != -1) {
-            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1' order by name",
+            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
                     schemeId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Subscheme List size : " + subSchemes.size());
@@ -360,7 +360,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("schemeId Id received is :  " + schemeId + "   and Startswith   :" + startsWith);
         startsWith = "%" + startsWith + "%";
         subSchemes = new ArrayList<SubScheme>();
-        final String qry = "from SubScheme  where upper(code) like upper(?) or upper(name) like upper(?) and isactive=1 ";
+        final String qry = "from SubScheme  where upper(code) like upper(?) or upper(name) like upper(?) and isactive=true ";
         if (null != schemeId)
             subSchemes.addAll(getPersistenceService().findPageBy(qry + " and scheme.id=(?) order by code,name",
                     0, 20, startsWith, startsWith, schemeId).getList());
@@ -391,7 +391,7 @@ public class CommonAction extends BaseFormAction {
                                     +
                                     " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
                                     +
-                                    " where  bank.isactive=1  and bankBranch.isactive=1 and bankaccount.isactive=1  and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
+                                    " where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true  and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
                                     +
                                     " and bankaccount.fund.id=? order by 2", fundId);
 
@@ -437,7 +437,7 @@ public class CommonAction extends BaseFormAction {
             bankQuery
                     .append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' ')")
                     .append(",bankBranch.branchname) as bankbranchname FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount ")
-                    .append(" where  bank.isactive=1  and bankBranch.isactive=1 and bankaccount.isactive=1  and bank.id = bankBranch.bank.id ")
+                    .append(" where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true  and bank.id = bankBranch.bank.id ")
                     .append("and bankBranch.id = bankaccount.bankbranch.id");
             if (fundId != null)
                 bankBranch = getPersistenceService().findAllBy(
@@ -513,8 +513,8 @@ public class CommonAction extends BaseFormAction {
         final StringBuffer query = new StringBuffer();
         query.append(
                 "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ")
-                .append("FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount where  bank.isactive=1  and bankBranch.isactive=1 and ")
-                .append(" bankaccount.isactive=1 and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ");
+                .append("FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount where  bank.isactive=true  and bankBranch.isactive=true and ")
+                .append(" bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ");
         if (fundId != null)
             query.append("and bankaccount.fund.id=? and bankaccount.type in(");
         else
@@ -576,7 +576,7 @@ public class CommonAction extends BaseFormAction {
 
             accNumList = getPersistenceService()
                     .findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and ba.bankbranch.bank.id=? and isactive=1 order by ba.chartofaccounts.glcode",
+                            "from Bankaccount ba where ba.bankbranch.id=? and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
                             branchId, bankId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
@@ -601,7 +601,7 @@ public class CommonAction extends BaseFormAction {
         try {
 
             accNumList = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=1 order by ba.chartofaccounts.glcode", branchId);
+                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode", branchId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
         } catch (final HibernateException e) {
@@ -628,12 +628,12 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null)
                 branchList = getPersistenceService()
                         .findAllBy(
-                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=? and bb.isactive=1 and ba.fund.id=?",
+                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=? and bb.isactive=true and ba.fund.id=?",
                                 bankId, fundId);
             else
                 branchList = getPersistenceService()
                         .findAllBy(
-                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=? and bb.isactive=1",
+                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=? and bb.isactive=true",
                                 bankId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank Branch Number list size =  " + branchList.size());
@@ -658,12 +658,12 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null)
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=1 and ba.fund.id=?",
+                                "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true and ba.fund.id=?",
                                 branchId, fundId);
             else
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=1",
+                                "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true",
                                 branchId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank Account Number list size =  " + accNumList.size());
@@ -756,11 +756,11 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null && fundId != -1 && fundId != 0)
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=1 order by ba.chartofaccounts.glcode",
+                                "from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=true order by ba.chartofaccounts.glcode",
                                 branchId, fundId);
             else
                 accNumList = getPersistenceService().findAllBy(
-                        "from Bankaccount ba where ba.bankbranch.id=? and isactive=1 order by ba.chartofaccounts.glcode",
+                        "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
                         branchId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
@@ -818,32 +818,32 @@ public class CommonAction extends BaseFormAction {
                     if (fundId != null)
                         accNumList = getPersistenceService()
                                 .findAllBy(
-                                        "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=1 and type in (?, ?) order by ba.chartofaccounts.glcode",
-                                        branchId, fundId, bankId, strArray[0], strArray[1]);
+                                        "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
+                                        branchId, fundId, bankId, BankAccountType.valueOf(strArray[0].toUpperCase()),BankAccountType.valueOf( strArray[1].toUpperCase()));
                     else
                         accNumList = getPersistenceService()
                                 .findAllBy(
-                                        "from Bankaccount ba where ba.bankbranch.id=? and  ba.bankbranch.bank.id=? and isactive=1 and type in (?, ?) order by ba.chartofaccounts.glcode",
-                                        branchId, bankId, strArray[0], strArray[1]);
+                                        "from Bankaccount ba where ba.bankbranch.id=? and  ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
+                                        branchId, bankId, BankAccountType.valueOf(strArray[0]), BankAccountType.valueOf(strArray[1]));
                 } else if (fundId != null)
                     accNumList = getPersistenceService()
                             .findAllBy(
-                                    "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=1 and type in (?) order by ba.chartofaccounts.glcode",
+                                    "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
                                     branchId, fundId, bankId, typeOfAccount);
                 else
                     accNumList = getPersistenceService()
                             .findAllBy(
-                                    "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=1 and type in (?) order by ba.chartofaccounts.glcode",
+                                    "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
                                     branchId, bankId, typeOfAccount);
             } else if (fundId != null)
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=1 order by ba.chartofaccounts.glcode",
+                                "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
                                 branchId, fundId, bankId);
             else
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=1 order by ba.chartofaccounts.glcode",
+                                "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
                                 branchId, bankId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
@@ -956,7 +956,7 @@ public class CommonAction extends BaseFormAction {
         {
             branchList = persistenceService
                     .findAllBy(
-                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=? ) and br.isactive=1 order by br.bank.name asc",
+                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=? ) and br.isactive=true order by br.bank.name asc",
                             fundId);
         } catch (final Exception e)
         {
@@ -976,7 +976,7 @@ public class CommonAction extends BaseFormAction {
         {
             branchList = persistenceService
                     .findAllBy(
-                            "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=1",
+                            "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=true",
                             bankId);
         } catch (final Exception e)
         {
@@ -1009,40 +1009,40 @@ public class CommonAction extends BaseFormAction {
                     throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
                 }
                 accNumList = persistenceService.findAllBy(
-                        " from Bankaccount where accountnumber=? and isactive=1 order by chartofaccounts.glcode ", bankAccount);
+                        " from Bankaccount where accountnumber=? and isactive=true order by chartofaccounts.glcode ", bankAccount);
             } else if (typeOfAccount != null && !typeOfAccount.equals("")) {
                 if (typeOfAccount.indexOf(",") != -1) {
                     final String[] strArray = typeOfAccount.split(",");
                     if (fundId != null && fundId != -1 && fundId != 0)
                         accNumList = persistenceService
                                 .findAllBy(
-                                        " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ",
+                                        " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true  and type in (?,?) order by chartofaccounts.glcode ",
                                         fundId, branchId, BankAccountType.valueOf(strArray[0]),
                                         BankAccountType.valueOf(strArray[1]));
                     else
                         accNumList = persistenceService
                                 .findAllBy(
-                                        " from Bankaccount where  bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ",
+                                        " from Bankaccount where  bankbranch.id=? and isactive=true  and type in (?,?) order by chartofaccounts.glcode ",
                                         fundId, branchId, BankAccountType.valueOf(strArray[0]),
                                         BankAccountType.valueOf(strArray[1]));
                 } else if (fundId != null && fundId != -1 && fundId != 0)
                     accNumList = persistenceService
                             .findAllBy(
-                                    " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1  and type in (?) order by chartofaccounts.glcode ",
+                                    " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true  and type in (?) order by chartofaccounts.glcode ",
                                     fundId, branchId, typeOfAccount);
                 else
                     accNumList = persistenceService
                             .findAllBy(
-                                    " from Bankaccount where  bankbranch.id=? and isactive=1  and type in (?) order by chartofaccounts.glcode ",
+                                    " from Bankaccount where  bankbranch.id=? and isactive=true  and type in (?) order by chartofaccounts.glcode ",
                                     fundId, branchId, typeOfAccount);
             } else if (fundId != null && fundId != -1 && fundId != 0)
                 accNumList = persistenceService
                         .findAllBy(
-                                " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1 order by chartofaccounts.glcode",
+                                " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true order by chartofaccounts.glcode",
                                 fundId, branchId);
             else
                 accNumList = persistenceService.findAllBy(
-                        " from Bankaccount where  bankbranch.id=? and isactive=1 order by chartofaccounts.glcode",
+                        " from Bankaccount where  bankbranch.id=? and isactive=true order by chartofaccounts.glcode",
                         fundId, branchId);
         } catch (final Exception e)
         {
@@ -1062,7 +1062,7 @@ public class CommonAction extends BaseFormAction {
         fundId = subScheme.getScheme().getFund().getId();
         final String[] strArray = typeOfAccount.split(",");
         accNumList = persistenceService.findAllBy(
-                " from Bankaccount where fund.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,
+                " from Bankaccount where fund.id=? and isactive=true  and type in (?,?) order by chartofaccounts.glcode ", fundId,
                 strArray[0], strArray[1]);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccountsBySubscheme.");
@@ -1097,7 +1097,7 @@ public class CommonAction extends BaseFormAction {
             if (adt.getTablename().equalsIgnoreCase("EG_EMPLOYEE"))
             {
                 final PersonalInformation information = (PersonalInformation) getPersistenceService().find(
-                        " from PersonalInformation where employeeCode=? and isActive=1", code);
+                        " from PersonalInformation where employeeCode=? and isActive=true", code);
                 if (information == null)
                     value = index + "~" + ERROR;
                 else
@@ -1105,7 +1105,7 @@ public class CommonAction extends BaseFormAction {
             }
             else if (adt.getTablename().equalsIgnoreCase("RELATION"))
             {
-                final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=? and isactive=1",
+                final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=? and isactive=true",
                         code);
                 if (relation == null)
                     value = index + "~" + ERROR;
@@ -1115,7 +1115,7 @@ public class CommonAction extends BaseFormAction {
             else if (adt.getTablename().equalsIgnoreCase("ACCOUNTENTITYMASTER"))
             {
                 final AccountEntity accountEntity = (AccountEntity) getPersistenceService().find(
-                        " from AccountEntity where code=? and isactive=1 ", code);
+                        " from AccountEntity where code=? and isactive=true ", code);
                 if (accountEntity == null)
                     value = index + "~" + ERROR;
                 else
@@ -1180,7 +1180,7 @@ public class CommonAction extends BaseFormAction {
             }
             if (adt.getTablename().equalsIgnoreCase("EG_EMPLOYEE")) {
                 final List<PersonalInformation> information = getPersistenceService().findAllBy(
-                        "from PersonalInformation where isActive=1 order by employeeCode");
+                        "from PersonalInformation where isActive=true order by employeeCode");
                 if (information == null)
                     value = index + "~" + ERROR;
                 else
@@ -1189,7 +1189,7 @@ public class CommonAction extends BaseFormAction {
                                 + personalInformation.getEmployeeFirstName());
             }
             else if (adt.getTablename().equalsIgnoreCase("RELATION")) {
-                final List<Relation> relation = getPersistenceService().findAllBy("from Relation where isactive=1 order by code");
+                final List<Relation> relation = getPersistenceService().findAllBy("from Relation where isactive=true order by code");
                 if (relation == null)
                     value = index + "~" + ERROR;
                 else
@@ -1198,7 +1198,7 @@ public class CommonAction extends BaseFormAction {
             }
             else if (adt.getTablename().equalsIgnoreCase("ACCOUNTENTITYMASTER")) {
                 final List<AccountEntity> accountEntity = getPersistenceService().findAllBy(
-                        " from AccountEntity where isactive=1 order by code");
+                        " from AccountEntity where isactive=true order by code");
                 if (accountEntity == null)
                     value = index + "~" + ERROR;
                 else
@@ -1510,9 +1510,9 @@ public class CommonAction extends BaseFormAction {
                             "bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount, ")
                     .append(" paymentheader ph where  ")
                     .append(" ph.voucherheaderid=vh.id and vh.id  in (" + vouchersWithNewInstrumentsQuery.toString()
-                            + ") and bank.isactive=1  and bankBranch.isactive=1 ")
+                            + ") and bank.isactive=true  and bankBranch.isactive=true ")
                     .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
-                    .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=1 order by 2");
+                    .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
             final List<Object[]> bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
                     .setParameter("date", getAsOnDate())
                     .list();
@@ -1557,9 +1557,9 @@ public class CommonAction extends BaseFormAction {
                             "bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount, ")
                     .append(" paymentheader ph where  ")
                     .append(" ph.voucherheaderid=vh.id and vh.id  in (" + vouchersWithNewInstrumentsQuery.toString()
-                            + ") and bank.isactive=1  and bankBranch.isactive=1 ")
+                            + ") and bank.isactive=true  and bankBranch.isactive=true ")
                     .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
-                    .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=1 order by 2");
+                    .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
             final List<Object[]> bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
                     .setParameter("date", getAsOnDate())
                     .list();
@@ -1607,7 +1607,7 @@ public class CommonAction extends BaseFormAction {
                     .append("where ph.voucherheaderid=vh.id and coa.id=bankaccount.glcodeid and vh.id=eiv.VOUCHERHEADERID and ")
                     .append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' and ih.transactionNumber is not null")
                     .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque=1 ")
-                    .append(" and bank.isactive=1  and bankBranch.isactive=1 and bankaccount.isactive=1 ")
+                    .append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ")
                     .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
                             + branchId + "  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
 
@@ -1666,7 +1666,7 @@ public class CommonAction extends BaseFormAction {
                     .append("where ph.voucherheaderid=vh.id and coa.id=bankaccount.glcodeid and vh.id=eiv.VOUCHERHEADERID and ")
                     .append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' ")
                     .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque=1 ")
-                    .append(" and bank.isactive=1  and bankBranch.isactive=1 and bankaccount.isactive=1 ")
+                    .append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ")
                     .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
                             + branchId + "  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
 
@@ -1963,7 +1963,7 @@ public class CommonAction extends BaseFormAction {
             queryString = queryString.append(" and vh.name NOT IN ( '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE
                     + "','" + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "')");
             queryString = queryString.append("and vh.voucherdate <= :date1 )");
-            queryString = queryString.append("AND bank.id = bankBranch.bankid AND bank.isactive=1 AND bankBranch.isactive=1" +
+            queryString = queryString.append(" AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true " +
                     "AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
             if (fundId != null && fundId != 0 && fundId != -1)
                 queryString = queryString.append(" and bankaccount.fundid=" + fundId);
@@ -1996,7 +1996,7 @@ public class CommonAction extends BaseFormAction {
             queryString = queryString.append("  and vh.voucherdate <= :date2 " +
                     " and vh.name NOT IN ( '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "','"
                     + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' ) ) ");
-            queryString = queryString.append("AND bank.id = bankBranch.bankid AND bank.isactive=1 AND bankBranch.isactive=1" +
+            queryString = queryString.append(" AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true " +
                     "AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
             if (fundId != null && fundId != 0 && fundId != -1)
                 queryString = queryString.append(" and bankaccount.fundid=" + fundId);
@@ -2054,7 +2054,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and "
                             +
-                            "ph.voucherheaderid=vh.id and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and "
+                            "ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and "
                             +
                             "bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
@@ -2086,7 +2086,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
-                            "and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
+                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
                             "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
                             +
@@ -2154,7 +2154,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and "
                             +
-                            "ph.voucherheaderid=vh.id and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and "
+                            "ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and "
                             +
                             "bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
@@ -2185,7 +2185,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
-                            "and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
+                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
                             "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
                             +
@@ -2252,7 +2252,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and "
                             +
-                            "ph.voucherheaderid=vh.id and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and "
+                            "ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and "
                             +
                             "bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
@@ -2283,7 +2283,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
-                            "and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
+                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
                             "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
                             +
@@ -2352,7 +2352,7 @@ public class CommonAction extends BaseFormAction {
                             "and rem.paymentvhid=vh.id and rem.tdsid="
                             + recoveryId
                             +
-                            " and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=1  and bankBranch.isactive=1 "
+                            " and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
                             +
                             "and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')"
                             +
@@ -2382,7 +2382,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
-                            "and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
+                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
                             "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
                             +
@@ -2478,14 +2478,14 @@ public class CommonAction extends BaseFormAction {
                 bankAccounts = persistenceService.findAllBy("select p.bankaccount" +
                         " from Paymentheader p where p.voucherheader.voucherDate<='" + Constants.DDMMYYYYFORMAT2.format(asOnDate)
                         + "' and p.state.type='Paymentheader' " +
-                        " and p.bankaccount.bankbranch.bank.isactive=1  and p.bankaccount.bankbranch.isactive=1 " +
+                        " and p.bankaccount.bankbranch.bank.isactive=true  and p.bankaccount.bankbranch.isactive=true " +
                         "and p.bankaccount.fund.id=? and p.state.owner in (" + ownerIdList
                         + ") order by p.bankaccount.bankbranch.bank.name,p.bankaccount.bankbranch.branchname", fundId);
             } else
                 bankAccounts = persistenceService.findAllBy("select p.bankaccount" +
                         " from Paymentheader p where p.voucherheader.voucherDate<='" + Constants.DDMMYYYYFORMAT2.format(asOnDate)
                         + "' and p.state.type='Paymentheader' " +
-                        " and p.bankaccount.bankbranch.bank.isactive=1  and p.bankaccount.bankbranch.isactive=1 " +
+                        " and p.bankaccount.bankbranch.bank.isactive=true  and p.bankaccount.bankbranch.isactive=true " +
                         "and p.bankaccount.fund.id=? and p.state.value like '" + stateWithoutCondition
                         + "' order by p.bankaccount.bankbranch.bank.name,p.bankaccount.bankbranch.branchname", fundId);
 
@@ -2520,7 +2520,7 @@ public class CommonAction extends BaseFormAction {
     {
         final String qrySQL = "select pos_id from eg_eis_employeeinfo empinfo, eg_designation desg, functionary func   " +
                 " where empinfo.functionary_id=func.id and empinfo.DESIGNATIONID=desg.DESIGNATIONID " +
-                " and empinfo.isactive=1   " +
+                " and empinfo.isactive=true   " +
                 " and desg.DESIGNATION_NAME like '" + designationName + "' and func.NAME like '" + functionaryName + "' ";
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(qrySQL);
         final List<BigDecimal> result = query.list();
@@ -2597,7 +2597,7 @@ public class CommonAction extends BaseFormAction {
                                         + Constants.DDMMYYYYFORMAT2.format(asOnDate)
                                         + "' and p.state.type='Paymentheader' "
                                         +
-                                        " and p.bankaccount.isactive=1  and p.bankaccount.bankbranch.isactive=1 and  p.bankaccount.bankbranch.id=?"
+                                        " and p.bankaccount.isactive=true  and p.bankaccount.bankbranch.isactive=true and  p.bankaccount.bankbranch.id=?"
                                         +
                                         "and p.bankaccount.fund.id=? and p.state.owner in  ( " + ownerIdList
                                         + ") order by p.bankaccount.bankbranch.bank.name,p.bankaccount.bankbranch.branchname",
@@ -2611,7 +2611,7 @@ public class CommonAction extends BaseFormAction {
                                         + Constants.DDMMYYYYFORMAT2.format(asOnDate)
                                         + "' and p.state.type='Paymentheader' "
                                         +
-                                        " and p.bankaccount.isactive=1  and p.bankaccount.bankbranch.isactive=1 and  p.bankaccount.bankbranch.id=?"
+                                        " and p.bankaccount.isactive=true  and p.bankaccount.bankbranch.isactive=true and  p.bankaccount.bankbranch.id=?"
                                         +
                                         "and p.bankaccount.fund.id=? and p.state.value like '" + stateWithoutCondition
                                         + "' order by p.bankaccount.bankbranch.bank.name,p.bankaccount.bankbranch.branchname",
@@ -2649,9 +2649,9 @@ public class CommonAction extends BaseFormAction {
             StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
             queryString = queryString
-                    .append("SELECT  bankaccount.accountnumber AS accountnumber,  bankaccount.accounttype AS accounttype,"
+                    .append("SELECT  bankaccount.accountnumber AS accountnumber,  bank.name AS accounttype,"
                             +
-                            " CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode  FROM chartofaccounts coa, bankaccount bankaccount"
+                            " CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode  FROM chartofaccounts coa, bankaccount bankaccount ,bankbranch branch,bank bank "
                             +
                             " WHERE bankaccount.ID IN (SELECT DISTINCT PH.bankaccountnumberid  "
                             +
@@ -2663,21 +2663,21 @@ public class CommonAction extends BaseFormAction {
                             +
                             " AND iv.VOUCHERHEADERID   IS NULL AND vh.name NOT          IN ( 'Remittance Payment','Salary Bill Payment' ))"
                             +
-                            " AND coa.id                =bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS')"
+                            " AND coa.id = bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS')"
                             +
-                            " AND bankaccount.fundid    =" + fundId + " AND bankaccount.branchid  =" + branchId
-                            + " and bankaccount.isactive=1 ");
+                            " AND bankaccount.fundid    =" + fundId + " AND bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.branchid  =" + branchId
+                            + " and bankaccount.isactive=true ");
             // queryString =
             // queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"+FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT+"' and vh.name NOT IN ( '"+FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE+"','"+FinancialConstants.PAYMENTVOUCHER_NAME_SALARY+"' ) ");
             // query to fetch vouchers for which cheque has been assigned and surrendered
             queryString
-                    .append(" union select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
+                    .append(" union select bankaccount.accountnumber as accountnumber,bank.name as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
                             +
                             " from chartofaccounts coa, "
                             +
-                            " Bankaccount bankaccount"
+                            " Bankaccount bankaccount  ,bankbranch branch,bank bank "
                             +
-                            " where bankaccount.id in(SELECT DISTINCT PH.bankaccountnumberid  from  "
+                            " where bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.id in(SELECT DISTINCT PH.bankaccountnumberid  from  "
                             +
                             " egf_instrumentvoucher iv,voucherheader vh,"
                             +
@@ -2741,7 +2741,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Done | ajaxLoadBankAccountsWithApprovedPayments ");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccountsWithApprovedPayments.");
-        return "bankAccNum";
+        return "bankAccNum-bankName";
     }
 
     @SuppressWarnings("unchecked")
@@ -2764,7 +2764,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id_dept and vh.status=0 "
                             +
-                            " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=1  and bankBranch.isactive=1 "
+                            " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
                             +
                             "and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bankaccount.branchid="
                             + branchId +
@@ -2795,7 +2795,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vmis.departmentid= d.id_dept and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
-                            "and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
+                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
                             "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and bankaccount.branchid="
                             + branchId +
@@ -2859,7 +2859,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id_dept and vh.status=0 "
                             +
-                            " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=1  and bankBranch.isactive=1 "
+                            " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
                             +
                             "and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bankaccount.branchid="
                             + branchId +
@@ -2890,7 +2890,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vmis.departmentid= d.id_dept and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
-                            "and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
+                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
                             "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and bankaccount.branchid="
                             + branchId +
@@ -2956,7 +2956,7 @@ public class CommonAction extends BaseFormAction {
                             "and rem.paymentvhid=vh.id and rem.tdsid="
                             + recoveryId
                             +
-                            " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=1  and bankBranch.isactive=1 "
+                            " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
                             +
                             " and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bankaccount.branchid="
                             + branchId +
@@ -2989,7 +2989,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             " and vmis.departmentid= d.id_dept and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
-                            " and bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
+                            " and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
                             + branchId
                             +
                             " and  bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
@@ -3287,7 +3287,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("CommonAction | ajaxLoadBranchAccountNumbers");
         try {
             accNumList = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=1 order by ba.chartofaccounts.glcode", branchId);
+                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode", branchId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
         } catch (final HibernateException e) {
@@ -3403,7 +3403,7 @@ public class CommonAction extends BaseFormAction {
         else {
             String funCodeName = "%" + function.toLowerCase() + "%";
             functionCodesList = persistenceService.findAllBy("select f from CFunction f where" +
-                    " isActive = 1 and isNotLeaf = 0 and lower(name) like ? or lower(code) like ? ", funCodeName, funCodeName);
+                    " isActive = true and isNotLeaf = false and lower(name) like ? or lower(code) like ? ", funCodeName, funCodeName);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadFunctionCodes.");
@@ -3587,7 +3587,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             " paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh1 ON  vh1.id =iv.VOUCHERHEADERID"
                             +
-                            " WHERE ph.voucherheaderid=vh.id AND vh.status=0  AND bank.isactive=1  AND bankBranch.isactive=1 AND bank.id = bankBranch.bankid"
+                            " WHERE ph.voucherheaderid=vh.id AND vh.status=0  AND bank.isactive=true  AND bankBranch.isactive=true AND bank.id = bankBranch.bankid"
                             +
                             " AND bankBranch.id = bankaccount.branchid  AND  bankaccount.TYPE IN ('RECEIPTS_PAYMENTS','PAYMENTS')"
                             +
@@ -3617,9 +3617,9 @@ public class CommonAction extends BaseFormAction {
                             +
                             " AND max_rec.lastmodifieddate=ih1.lastmodifieddate) ih WHERE ph.voucherheaderid=vh.id AND vh.id= vmis.voucherheaderid"
                             +
-                            " AND vh.status=0  AND ph.voucherheaderid=vh.id 	AND bank.isactive=1 "
+                            " AND vh.status=0  AND ph.voucherheaderid=vh.id 	AND bank.isactive=true "
                             +
-                            " AND bankBranch.isactive=1 AND bank.id = bankBranch.bankid AND bankBranch.id = bankaccount.branchid "
+                            " AND bankBranch.isactive=true AND bank.id = bankBranch.bankid AND bankBranch.id = bankaccount.branchid "
                             +
                             " AND bankaccount.TYPE IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND  iv.voucherheaderid=vh.id AND iv.instrumentheaderid=ih.id "
                             +
@@ -3697,7 +3697,7 @@ public class CommonAction extends BaseFormAction {
                             " AND coa.id                =bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS'))"
                             +
                             bankaccountFundQuery +
-                            " AND bankaccount.branchid  =" + branchId + " and bankaccount.isactive=1 ");
+                            " AND bankaccount.branchid  =" + branchId + " and bankaccount.isactive=true ");
             // query to fetch vouchers for which cheque has been assigned and surrendered
             queryString
                     .append(" union select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "

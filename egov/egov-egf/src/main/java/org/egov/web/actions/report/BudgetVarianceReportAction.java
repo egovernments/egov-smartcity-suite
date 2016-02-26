@@ -57,6 +57,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
@@ -90,15 +91,16 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
+		@Result(name = "results", location = "budgetVarianceReport-results.jsp"),
+		@Result(name = "form", location = "budgetVarianceReport-form.jsp"),
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=BudgetVarianceReport.pdf" }),
                 @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                         "application/xls", "contentDisposition", "no-cache;filename=BudgetVarianceReport.xls" })
 })
-@Transactional(readOnly = true)
+ 
 @ParentPackage("egov")
 public class BudgetVarianceReportAction extends BaseFormAction {
     /**
@@ -127,9 +129,13 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     private BudgetService budgetService;
     String budgetType = Constants.BE;
     private final Map<String, Integer> queryParamMap = new HashMap<String, Integer>();
+    private Department department = new Department();
+    private CFunction function = new CFunction();
+    private Fund fund = new Fund();
 
-    @Override
     @ValidationErrorPage(value = "form")
+    @SkipValidation
+    @Override
     public String execute() throws Exception {
         return "form";
     }
@@ -139,30 +145,32 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         headerFields = budgetDetailConfig.getHeaderFields();
         gridFields = budgetDetailConfig.getGridFields();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
-        if (shouldShowHeaderField(Constants.EXECUTING_DEPARTMENT))
+        if (isFieldMandatory(Constants.EXECUTING_DEPARTMENT))
             addRelatedEntity("executingDepartment", Department.class);
-        if (shouldShowHeaderField(Constants.FUND))
+        if (isFieldMandatory(Constants.FUND))
             addRelatedEntity("fund", Fund.class);
-        if (shouldShowHeaderField(Constants.FUNCTION))
+        if (isFieldMandatory(Constants.FUNCTION))
             addRelatedEntity("function", CFunction.class);
-        if (shouldShowHeaderField(Constants.SCHEME))
+        if (isFieldMandatory(Constants.SCHEME))
             addRelatedEntity("scheme", Scheme.class);
-        if (shouldShowHeaderField(Constants.SUBSCHEME))
+        if (isFieldMandatory(Constants.SUBSCHEME))
             addRelatedEntity("subscheme", SubScheme.class);
-        if (shouldShowHeaderField(Constants.FUNCTIONARY))
+        if (isFieldMandatory(Constants.FUNCTIONARY))
             addRelatedEntity("functionary", Functionary.class);
-        if (shouldShowHeaderField(Constants.FUNDSOURCE))
+        if (isFieldMandatory(Constants.FUNDSOURCE))
             addRelatedEntity("fundsource", Fundsource.class);
-        if (shouldShowHeaderField(Constants.BOUNDARY))
+        if (isFieldMandatory(Constants.BOUNDARY))
             addRelatedEntity("boundary", Boundary.class);
         addRelatedEntity("budgetGroup", BudgetGroup.class);
     }
 
     @Override
     public void prepare() {
+    	 super.prepare();
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
-        super.prepare();
+       
+        mandatoryFields = budgetDetailConfig.getMandatoryFields();
         if (!parameters.containsKey("skipPrepare")) {
             accountTypeList.add(BudgetAccountType.REVENUE_EXPENDITURE.name());
             accountTypeList.add(BudgetAccountType.REVENUE_RECEIPTS.name());
@@ -170,33 +178,35 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             accountTypeList.add(BudgetAccountType.CAPITAL_RECEIPTS.name());
             final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
             addDropdownData("accountTypeList", accountTypeList);
+            
             dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
-            if (shouldShowHeaderField(Constants.EXECUTING_DEPARTMENT))
-                addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
-            if (shouldShowHeaderField(Constants.FUNCTION))
+            if (isFieldMandatory(Constants.EXECUTING_DEPARTMENT))
+                addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
+            if (isFieldMandatory(Constants.FUNCTION))
                 addDropdownData("functionList",
-                        persistenceService.findAllBy("from CFunction where isactive=1 and isnotleaf=0  order by name"));
+                        persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false  order by name"));
             if (shouldShowHeaderField(Constants.FUNCTIONARY))
                 addDropdownData("functionaryList",
-                        persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));
+                        persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
             if (shouldShowHeaderField(Constants.FUND))
                 addDropdownData("fundList",
-                        persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+                        persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
             if (shouldShowHeaderField(Constants.FIELD))
-                addDropdownData("fieldList",
+            addDropdownData("fieldList",
                         persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
-            if (shouldShowHeaderField(Constants.SCHEME))
+            if (isFieldMandatory(Constants.SCHEME))
                 addDropdownData("schemeList", Collections.EMPTY_LIST);
-            if (shouldShowHeaderField(Constants.SUBSCHEME))
+            if (isFieldMandatory(Constants.SUBSCHEME))
                 addDropdownData("subschemeList", Collections.EMPTY_LIST);
         }
     }
 
     @ValidationErrorPage(value = "form")
-    @Action(value = "/report/budgetVarianceReport-ajaxLoadData")
-    public String ajaxLoadData() {
+    @SkipValidation
+    @Action(value = "/report/budgetVarianceReport-loadData")
+    public String loadData() {
         populateData();
-        return "results";
+        return "form";
     }
 
     public boolean shouldShowHeaderField(final String fieldName) {
@@ -259,6 +269,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         return Constants.DDMMYYYYFORMAT2.format(date);
     }
 
+    @SkipValidation
     @Action(value = "/report/budgetVarianceReport-exportPdf")
     public String exportPdf() throws JRException, IOException {
         generateReport();
@@ -357,7 +368,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         if (budgetDetail.getBoundary() != null && budgetDetail.getBoundary().getId() != null
                 && budgetDetail.getBoundary().getId() != -1)
             query.append(" and boundary.id=").append(budgetDetail.getBoundary().getId());
-        if (!"".equals(accountType) && !"-1".equals(accountType))
+        if (!"".equalsIgnoreCase(accountType) && !"-1".equalsIgnoreCase(accountType))
             query.append(" and budgetGroup.accountType='").append(accountType).append("'");
         return query.toString();
     }
@@ -401,6 +412,10 @@ public class BudgetVarianceReportAction extends BaseFormAction {
                     + Constants.DDMMYYYYFORMAT2.format(asOnDate) + "'", formMiscQuery("bmis", "bdetail", "bmis"));
             extractData(resultForBill);
         }
+        else
+        {
+        	addActionError("no data found");
+        }
     }
 
     private void extractData(final List<Object[]> result) {
@@ -424,6 +439,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         }
     }
 
+    @SkipValidation
     @Action(value = "/report/budgetVarianceReport-exportXls")
     public String exportXls() throws JRException, IOException {
         populateData();
@@ -563,5 +579,29 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         appValue = appList.get(0).getValue();
         return "Y".equalsIgnoreCase(appValue);
     }
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
+
+	public CFunction getFunction() {
+		return function;
+	}
+
+	public void setFunction(CFunction function) {
+		this.function = function;
+	}
+
+	public Fund getFund() {
+		return fund;
+	}
+
+	public void setFund(Fund fund) {
+		this.fund = fund;
+	}
 
 }

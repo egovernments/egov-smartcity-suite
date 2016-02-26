@@ -124,8 +124,8 @@ public class BankBranchAction extends JQueryGridActionSupport {
         bankBranch.setBranchcode(request.getParameter("branchcode"));
         bankBranch.setBranchname(request.getParameter("branchname"));
         bankBranch.setBranchaddress1(request.getParameter("branchaddress1"));
-        bankBranch.setIsactive(request.getParameter("isActive").equals("Y") ? 1 : 0);
-        isActive = bankBranch.getIsactive() != 0 ? true : false;
+        bankBranch.setIsactive(request.getParameter("isActive").equals("Y") ? true : false);
+        isActive = bankBranch.getIsactive() ? true : false;
         bankBranch.setBranchaddress2(request.getParameter("branchaddress2"));
         bankBranch.setBranchcity(request.getParameter("branchcity"));
         bankBranch.setBranchstate(request.getParameter("branchstate"));
@@ -153,7 +153,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
                 jsonObject.put("contactperson", bankbranch.getContactperson());
                 jsonObject.put("branchphone", bankbranch.getBranchphone());
                 jsonObject.put("narration", bankbranch.getNarration());
-                jsonObject.put("isActive", bankbranch.getIsactive() == 1 ? "Y" : "N");
+                jsonObject.put("isActive", bankbranch.getIsactive() ? "Y" : "N");
                 jsonObjects.add(jsonObject);
             } catch (final JSONException e) {
                 sendAJAXResponse("error");

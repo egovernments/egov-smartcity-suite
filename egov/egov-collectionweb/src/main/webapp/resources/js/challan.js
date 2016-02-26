@@ -240,12 +240,11 @@ function validateSubLedgerDetail(){
 						var subledgerid = document.getElementById('subLedgerlist['+j+'].glcode.id');
 						var detailtypeid = document.getElementById('subLedgerlist['+j+'].detailType.id');
 						var detailKeyid = document.getElementById('subLedgerlist['+j+'].detailKeyId').value
-					
-							var subledgerAccCode =0;
+						var subledgerAccCode =0;
 						if(subledgerid!='null')
 							subledgerAccCode= subledgerid.options[subledgerid.selectedIndex].value;
 						
-						if( ( subledgerAccCode !=0) && (detailtypeid.value == "" || detailKeyid ==""))
+						if( ( subledgerAccCode !=0) && (detailtypeid.value == "" || detailtypeid.value == 0 || detailKeyid ==""))
 						{
 								document.getElementById('challan_error_area').innerHTML += "Please enter subledger details correctly<br>";
 								return false;
@@ -458,7 +457,7 @@ function createLongTextFieldFormatter(prefix,suffix,table){
     return function(el, oRecord, oColumn, oData) {
      var rec=billDetailTableIndex;
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"'  style='width:350px;' onfocus='autocompletecode(this,event)' onblur='fillNeibrAfterSplitGlcode(this)' />";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"'  style='width:350px;' onfocus='autocompletecode(this,event)' autocomplete='off'  onblur='fillNeibrAfterSplitGlcode(this)'/>";
 	}
 }
 
@@ -959,19 +958,20 @@ function fillNeibrAfterSplitFunction(obj)
 		temp1=temp1.split("`~`");
 		obj.value=temp1[0];
 		document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value=temp[1];
-	}else if(temp == ''){
+	} else if(temp == '') 
+	{
 		obj.value='';
 		document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value='';
 	}
-	
-	
 }
+
 function fillNeibrAfterSplitGlcode(obj)
 {
 
 	var temp = obj.value;
 	temp = temp.split("`-`");
 	var currRow=getRowIndex(obj);
+	var glcodeId = document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value;
 	if(temp.length>1)
 	{ 
 		obj.value=temp[0];
@@ -979,7 +979,8 @@ function fillNeibrAfterSplitGlcode(obj)
 		document.getElementById('billDetailslist['+currRow+'].glcodeDetail').value=temp[1];
 		check();
 	}
-	else{
+	else if(glcodeId==null || glcodeId=="")
+	{
 		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
 		document.getElementById('billDetailslist['+currRow+'].glcodeDetail').value="";
 		document.getElementById('billDetailslist['+currRow+'].accounthead').value="";
@@ -1180,7 +1181,7 @@ function validateDetailCode(obj)
 	var index = getRowIndex(obj);
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
-	var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
+	var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackCode, null);
 }
 var callbackCode = {
@@ -1374,7 +1375,7 @@ var callbackAutoCompleteEntities = {
 	var posSrc=findPos(src); 
 	
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]-40+"px";
 	target.style.width=650;	
 	      		
 	
@@ -1473,6 +1474,7 @@ function onElementFocused(e)
 
 
 function  populateService(serviceCategory){
+	dom.get('receiptMisc.fund.id').value="-1";
 	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
 }
 
@@ -1504,15 +1506,13 @@ success: function(o) {
 var result = o.responseText;
 
 if(null != result && result.length !=0){
-
 	 miscArray = result.split('~');
-		if(null != dom.get('fundId') ) {	
-				 dom.get('fundId').value = parseInt(miscArray[0]);		
-				 //setFundId();
+		if(null != dom.get('receiptMisc.fund.id') ) {	
+				 dom.get('receiptMisc.fund.id').value = parseInt(miscArray[0]);		
 		}
 		if(null != dom.get('schemeId') ){
 				var url= "/EGF/voucher/common-ajaxLoadSchemes.action";
-				var fundId = dom.get('fundId').value;
+				var fundId = dom.get('receiptMisc.fund.id').value;
 				makeJSONCall(["Text","Value"],url,{fundId:miscArray[0]},schemeDropDownSuccessHandler,schemeDropDownFailureHandler);
 		}
 		if(null != dom.get('subschemeId')  ){

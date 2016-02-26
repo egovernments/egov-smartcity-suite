@@ -93,7 +93,7 @@ public class RemitRecoveryService {
                 .
                 append(" and mis.voucherheaderid.id = vh.id  and vh.status=0  and vh.fundId.id=?  and  egr.gldtlamt - "
                         +
-                        " (select  case when sum(egd.remittedamt) = null then 0 else sum(egd.remittedamt) end  from EgRemittanceGldtl egr1,"
+                        " (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end  from EgRemittanceGldtl egr1,"
                         +
                         "EgRemittanceDetail egd,EgRemittance  eg,CVoucherHeader vh  where vh.status not in (1,2,4) and  eg.voucherheader.id=vh.id"
                         +
@@ -129,7 +129,7 @@ public class RemitRecoveryService {
                         +
                         " egr.GLDTLAMT      AS col_3_0_,  gld.DETAILTYPEID  AS col_4_0_,  gld.DETAILKEYID   AS col_5_0_,"
                         +
-                        " egr.ID            AS col_6_0_, (select  case when sum(egd.remittedamt) = null then 0 else sum(egd.remittedamt) end"
+                        " egr.ID            AS col_6_0_, (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end"
                         +
                         " from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh"
                         +
@@ -145,7 +145,7 @@ public class RemitRecoveryService {
                         .append(voucherHeader.getFundId().getId())
                         .append(" AND egr.GLDTLAMT-"
                                 +
-                                " (select  case when sum(egd.remittedamt) = null then 0 else sum(egd.remittedamt) end from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh"
+                                " (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh"
                                 +
                                 " where vh.status not in (1,2,4) and  eg.PAYMENTVHID=vh.id and egd.remittanceid=eg.id and egr1.id=egd.remittancegldtlid and egr1.id=egr.id)"
                                 +
@@ -182,7 +182,7 @@ public class RemitRecoveryService {
                         +
                         " egr.GLDTLAMT      AS col_3_0_,  gld.DETAILTYPEID  AS col_4_0_,  gld.DETAILKEYID   AS col_5_0_,"
                         +
-                        " egr.ID            AS col_6_0_, (select  case when sum(egd.remittedamt) = null then 0 else sum(egd.remittedamt) end"
+                        " egr.ID            AS col_6_0_, (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end"
                         +
                         " from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh"
                         +
@@ -198,7 +198,7 @@ public class RemitRecoveryService {
                         .append(voucherHeader.getFundId().getId())
                         .append(" AND egr.GLDTLAMT-"
                                 +
-                                " (select  case when sum(egd.remittedamt) = null then 0 else sum(egd.remittedamt) end from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh"
+                                " (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh"
                                 +
                                 " where vh.status not in (1,2,4) and  eg.PAYMENTVHID=vh.id and egd.remittanceid=eg.id and egr1.id=egd.remittancegldtlid and egr1.id=egr.id)"
                                 +

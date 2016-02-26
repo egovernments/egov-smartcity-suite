@@ -66,6 +66,7 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherTypeBean;
@@ -123,21 +124,21 @@ public class BillVoucherAction extends BaseVoucherAction {
         addDropdownData("expTypeList", listBillReg);
         return NEW;
     }
-
+    @ValidationErrorPage(NEW)
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/billVoucher-lists")
     public String lists() throws ValidationException {
         final StringBuffer query = new StringBuffer(300);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Expenditure Type selected :=" + expType);
-        final String statusid = getApprovalStatusForBills();
-        query.append("from EgBillregister br where br.status.id in(")
-        .append(statusid)
-        .append(")and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =? ))");
-        if (null != billNumber && StringUtils.isNotEmpty(billNumber))
-            query.append(" and br.billnumber='").append(billNumber).append("'");
 
         try {
+            final String statusid = getApprovalStatusForBills();
+            query.append("from EgBillregister br where br.status.id in(")
+                    .append(statusid)
+                    .append(")and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =? ))");
+            if (null != billNumber && StringUtils.isNotEmpty(billNumber))
+                query.append(" and br.billnumber='").append(billNumber).append("'");
             if (null != voucherHeader.getVouchermis().getDepartmentid())
                 query.append(" and br.egBillregistermis.egDepartment.id=").append(
                         voucherHeader.getVouchermis().getDepartmentid().getId());
@@ -148,6 +149,11 @@ public class BillVoucherAction extends BaseVoucherAction {
                 query.append(" and br.billdate<='").append(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
                         parse(voucherTypeBean.getVoucherDateTo()))).append("'");
             preApprovedVoucherList = persistenceService.findAllBy(query.toString(), 4);
+        } catch (final ValidationException e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final ParseException e) {
             throw new ValidationException(Arrays.asList(new ValidationError("not a valid date", "not a valid date")));
         }

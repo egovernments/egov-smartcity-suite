@@ -51,7 +51,7 @@ public class CFiscalPeriod {
 	private Integer parentId = 0;
 	private Date startingDate;
 	private Date endingDate;
-	private Integer isActive = 1;
+	private Boolean isActive;
 	private Date created;
 	private Timestamp lastModified;
 	private Integer modifiedBy = 0;
@@ -157,20 +157,6 @@ public class CFiscalPeriod {
 	}
 
 	/**
-	 * @return Returns the isActive.
-	 */
-	public Integer getIsActive() {
-		return isActive;
-	}
-
-	/**
-	 * @param isActive The isActive to set.
-	 */
-	public void setIsActive(Integer isActive) {
-		this.isActive = isActive;
-	}
-
-	/**
 	 * @return Returns the isActiveForPosting.
 	 */
 	public Integer getIsActiveForPosting() {
@@ -238,6 +224,14 @@ public class CFiscalPeriod {
 	 */
 	public void setStartingDate(Date startingDate) {
 		this.startingDate = startingDate;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }

@@ -265,5 +265,13 @@
         <put-attribute name="page-title" value="lbl.hdr.currInstDCB" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/curretInstDCB-form.jsp"/>
     </definition>
-    
+         <definition name="bcDailyCollectionReport-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.bcCollectorDaily.report.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/bcDailyCollectionReport-form.jsp"/>
+    </definition>
+
+<definition name="ulbWiseCollectionReport-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.ulbWiseDailyColl.report.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/ulbWiseCollectionReport-form.jsp"/>
+    </definition>
 </tiles-definitions> 

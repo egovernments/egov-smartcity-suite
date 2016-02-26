@@ -154,7 +154,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
             addDropdownData("fundDropDownList", masterCache.get("egi-fund"));
             addDropdownData("fieldList", masterCache.get("egi-ward"));
             addDropdownData("financialYearList",
-                    getPersistenceService().findAllBy("from CFinancialYear where isActive=1  order by finYearRange desc "));
+                    getPersistenceService().findAllBy("from CFinancialYear where isActive=true  order by finYearRange desc "));
         }
     }
 

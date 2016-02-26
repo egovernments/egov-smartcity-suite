@@ -157,7 +157,8 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
                 hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id",
                         advertisementPermitDetail.getAdvertisement().getRevenueInspector().getId()));
         }
-        hoardingCriteria.add(Restrictions.eq("permitStatus.code", AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
+        //TODO: commented . Check any particular reason for hard coding the status ?
+       // hoardingCriteria.add(Restrictions.eq("permitStatus.code", AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
         return hoardingCriteria.list();
 
     }
@@ -238,5 +239,48 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
         return hoardingCriteria.list();
 
     }
+    
+    
+    @Override
+    public List<AdvertisementPermitDetail> searchActiveAdvertisementPermitDetailBySearchParams(
+            final AdvertisementPermitDetail advertisementPermitDetail) {
 
+        final Criteria hoardingCriteria = entityManager.unwrap(Session.class)
+                .createCriteria(AdvertisementPermitDetail.class, "permit")
+                .createAlias("permit.advertisement", "advertisement")
+                .createAlias("advertisement.category", "category").createAlias("advertisement.subCategory", "subCategory")
+                .createAlias("advertisement.revenueInspector", "revenueInspector")
+                .createAlias("permit.status", "permitStatus");
+        if (advertisementPermitDetail.getAdvertisement() != null) {
+            if (advertisementPermitDetail.getAdvertisement() != null
+                    && advertisementPermitDetail.getAdvertisement().getAdvertisementNumber() != null
+                    && !advertisementPermitDetail.getAdvertisement().getAdvertisementNumber().isEmpty())
+                hoardingCriteria.add(Restrictions.eq("advertisement.advertisementNumber",
+                        advertisementPermitDetail.getAdvertisement().getAdvertisementNumber()));
+            if (advertisementPermitDetail.getAdvertisement().getLocality() != null)
+                hoardingCriteria.add(Restrictions.eq("advertisement.locality.id",
+                        advertisementPermitDetail.getAdvertisement().getLocality().getId()));
+            if (advertisementPermitDetail.getAdvertisement().getWard() != null)
+                hoardingCriteria.add(
+                        Restrictions.eq("advertisement.ward.id", advertisementPermitDetail.getAdvertisement().getWard().getId()));
+            if (advertisementPermitDetail.getAdvertisement().getCategory() != null)
+                hoardingCriteria.add(Restrictions.eq("advertisement.category.id",
+                        advertisementPermitDetail.getAdvertisement().getCategory().getId()));
+            if (advertisementPermitDetail.getAdvertisement().getSubCategory() != null)
+                hoardingCriteria.add(Restrictions.eq("advertisement.subCategory.id",
+                        advertisementPermitDetail.getAdvertisement().getSubCategory().getId()));
+            if (advertisementPermitDetail.getAgency() != null && advertisementPermitDetail.getAgency().getId() != null)
+                hoardingCriteria.add(Restrictions.eq("agency.id", advertisementPermitDetail.getAgency().getId()));
+            if (advertisementPermitDetail.getAdvertisement().getRevenueInspector() != null)
+                hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id",
+                        advertisementPermitDetail.getAdvertisement().getRevenueInspector().getId()));
+           
+            if (advertisementPermitDetail.getAdvertisement().getStatus()==null) {
+                hoardingCriteria.add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
+            }
+            
+        }
+
+        return hoardingCriteria.list();
+    }
 }

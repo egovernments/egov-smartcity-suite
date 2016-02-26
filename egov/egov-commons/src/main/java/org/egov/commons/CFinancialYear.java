@@ -51,13 +51,13 @@ public class CFinancialYear implements java.io.Serializable {
     private String finYearRange = "";
     private Date startingDate;
     private Date endingDate;
-    private Integer isActive = 1;
+    private Boolean isActive ;
     private Date created;
     private Timestamp lastModified;
-    private Integer modifiedBy = 0;
-    private Integer isActiveForPosting = 0;
-    private Integer isClosed = 0;
-    private Integer transferClosingBalance = 0;
+    private Integer modifiedBy  ;
+    private Boolean isActiveForPosting  ;
+    private Boolean isClosed  ;
+    private Boolean transferClosingBalance ;
 
     /**
      * @return Returns the created.
@@ -115,47 +115,7 @@ public class CFinancialYear implements java.io.Serializable {
         this.id = id;
     }
 
-    /**
-     * @return Returns the isActive.
-     */
-    public Integer getIsActive() {
-        return isActive;
-    }
-
-    /**
-     * @param isActive The isActive to set.
-     */
-    public void setIsActive(final Integer isActive) {
-        this.isActive = isActive;
-    }
-
-    /**
-     * @return Returns the isActiveForPosting.
-     */
-    public Integer getIsActiveForPosting() {
-        return isActiveForPosting;
-    }
-
-    /**
-     * @param isActiveForPosting The isActiveForPosting to set.
-     */
-    public void setIsActiveForPosting(final Integer isActiveForPosting) {
-        this.isActiveForPosting = isActiveForPosting;
-    }
-
-    /**
-     * @return Returns the isClosed.
-     */
-    public Integer getIsClosed() {
-        return isClosed;
-    }
-
-    /**
-     * @param isClosed The isClosed to set.
-     */
-    public void setIsClosed(final Integer isClosed) {
-        this.isClosed = isClosed;
-    }
+    
 
     /**
      * @return Returns the lastModified.
@@ -199,17 +159,37 @@ public class CFinancialYear implements java.io.Serializable {
         this.startingDate = startingDate;
     }
 
-    /**
-     * @return Returns the transferClosingBalance.
-     */
-    public Integer getTransferClosingBalance() {
-        return transferClosingBalance;
-    }
+	public Boolean getIsActive() {
+		return isActive;
+	}
 
-    /**
-     * @param transferClosingBalance The transferClosingBalance to set.
-     */
-    public void setTransferClosingBalance(final Integer transferClosingBalance) {
-        this.transferClosingBalance = transferClosingBalance;
-    }
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public Boolean getIsActiveForPosting() {
+		return isActiveForPosting;
+	}
+
+	public void setIsActiveForPosting(Boolean isActiveForPosting) {
+		this.isActiveForPosting = isActiveForPosting;
+	}
+
+	public Boolean getIsClosed() {
+		return isClosed;
+	}
+
+	public void setIsClosed(Boolean isClosed) {
+		this.isClosed = isClosed;
+	}
+
+	public Boolean getTransferClosingBalance() {
+		return transferClosingBalance;
+	}
+
+	public void setTransferClosingBalance(Boolean transferClosingBalance) {
+		this.transferClosingBalance = transferClosingBalance;
+	}
+
+    
 }

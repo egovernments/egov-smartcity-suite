@@ -140,7 +140,7 @@ var makeSubCategoryMappingDataTable= function() {
 		if (column.key == 'Delete') { 
 			// saved records should not be deleted
 			<s:if test="%{userMode=='edit'}">
-				if(dom.get("scDtlsId"+record.getId()).value!="" && dom.get("scDtlsId"+record.getId()).value!=null){
+				if(document.getElementById("scDtlsId"+record.getId()).value!="" && document.getElementById("scDtlsId"+record.getId()).value!=null){
 					alert("Existing row cannot be deleted.");
 					return false;
 				}
@@ -160,8 +160,8 @@ var makeSubCategoryMappingDataTable= function() {
 		} 
 		// once fee is defined for the subcategory, should not allow modification of existing record
 		<s:if test="%{userMode=='edit'}">
-		if(dom.get("scDtlsId"+record.getId()).value!="" && dom.get("scDtlsId"+record.getId()).value!=null){
-			if(dom.get("feeExists").value=='true'){
+		if(document.getElementById("scDtlsId"+record.getId()).value!="" && document.getElementById("scDtlsId"+record.getId()).value!=null){
+			if(document.getElementById("feeExists").value=='true'){
 				 if (column.key == 'FeeType' || column.key == 'Uom' || column.key == 'RateType') { 
 					alert("Fees defined. Cannot change the value.");
 					return false;
@@ -179,7 +179,7 @@ var makeSubCategoryMappingDataTable= function() {
     	    var selectedIndex=oArgs.target.selectedIndex; 
     		this.updateCell(record,this.getColumn('feeType'),feeTypeDropdownOptions[selectedIndex].value);
     		if(this.getRecordSet().getLength()>1){
-        		if(dom.get("feeType"+record.getId()).value!=0)
+        		if(document.getElementById("feeType"+record.getId()).value!=0)
     	   		 validateDuplicate(record,oArgs); 
     		}
         } else if(column.key=='Uom'){
@@ -191,11 +191,11 @@ var makeSubCategoryMappingDataTable= function() {
          }
 	}); 
 
- 	if(dom.get("userMode").value=='new'){
+ 	if(document.getElementById("userMode").value=='new'){
 	 	var defaultVal;
 	 	var defaultId;
 	 	for(i=0; i < feeTypeDropdownOptions.length; i++) {
-	        if (feeTypeDropdownOptions[i].label == dom.get("licenseFee").value) {
+	        if (feeTypeDropdownOptions[i].label == document.getElementById("licenseFee").value) {
 	        	defaultVal=i;
 	        	defaultId=feeTypeDropdownOptions[i].value;
 	        }
@@ -216,12 +216,12 @@ var makeSubCategoryMappingDataTable= function() {
 function validateDuplicate(record,oArgs){ 
     for(i=0;i<subCategoryMappingDataTable.getRecordSet().getLength();i++){ 
         var selectedIndex=oArgs.target.selectedIndex;
-	     if(dom.get("feeType"+record.getId())!= dom.get("feeType"+subCategoryMappingDataTable.getRecord(i).getId())){
-		       if(dom.get("feeType"+record.getId()).value==dom.get("feeType"+subCategoryMappingDataTable.getRecord(i).getId()).value){
+	     if(document.getElementById("feeType"+record.getId())!= document.getElementById("feeType"+subCategoryMappingDataTable.getRecord(i).getId())){
+		       if(document.getElementById("feeType"+record.getId()).value==document.getElementById("feeType"+subCategoryMappingDataTable.getRecord(i).getId()).value){
 		          document.getElementById("scDtl_error").innerHTML='The Fee Type "'+feeTypeDropdownOptions[selectedIndex].label+'" is already selected'; 
 		          document.getElementById("scDtl_error").style.display='';
 		          oArgs.target.selectedIndex=0;
-		          dom.get("feeType"+record.getId()).value=0;
+		          document.getElementById("feeType"+record.getId()).value=0;
 		          return;
 		       } 
 	     }

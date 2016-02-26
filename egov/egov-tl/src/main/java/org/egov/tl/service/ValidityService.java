@@ -39,16 +39,16 @@
 
 package org.egov.tl.service;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.Validity;
 import org.egov.tl.repository.ValidityRepository;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -59,15 +59,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class ValidityService {
 
     private final ValidityRepository validityRepository;
-   
+
     @Autowired
-    private  FinancialYearHibernateDAO financialYearHibernateDAO;
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Autowired
     public ValidityService(final ValidityRepository validityRepository) {
         this.validityRepository = validityRepository;
     }
- 
+
     @Transactional
     public Validity create(final Validity validity) {
         return validityRepository.save(validity);
@@ -96,50 +96,46 @@ public class ValidityService {
         else
             return validityRepository.findAll();
     }
-    /**
-     * 
-     * @param license
-     * if the renewal is happening in the previous financial year ie,before expire this code needs to be updated.
-     */
-    public void applyLicenseValidity(License license)
-    {
-    	Validity validity=null;
-    	List<Validity> validityList = validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(license.getBuildingType().getId(), license.getTradeName().getCategory().getId());
-    	
-    	if(validityList!=null && !validityList.isEmpty())
-    	{
-    		validity=validityList.get(0);
-    	}else
-    	{
-    		validityList=	validityRepository.findByNatureOfBusinessId(license.getBuildingType().getId());
-    	}
-    	if(validityList!=null && !validityList.isEmpty())
-    	{
-    		validity=validityList.get(0);
-    	}else 
-    	{
-    		throw new ApplicationRuntimeException("Validity is not defined for the application type");
-    	}
-    	
-    		if(validity.isBasedOnFinancialYear())
-    		{
-    			CFinancialYear financialYearByDate = financialYearHibernateDAO.getFinancialYearByDate(new Date());
-    			license.setDateOfExpiry(financialYearByDate.getEndingDate());
-    		}else
-    		{
-    			Calendar cal=Calendar.getInstance();
-    			cal.setTime(new Date());
-    			if(validity.getYear()!=null && validity.getYear().compareTo(0)>1)
-    			cal.add(Calendar.YEAR,   validity.getYear());
-    			if(validity.getMonth()!=null && validity.getMonth().compareTo(0)>1)
-        			cal.add(Calendar.MONTH,   validity.getMonth());
-    			if(validity.getWeek()!=null && validity.getWeek().compareTo(0)>1)
-        			cal.add(Calendar.DATE,   validity.getWeek()*7);
-    			if(validity.getDay()!=null && validity.getDay().compareTo(0)>1)
-        			cal.add(Calendar.DATE,   validity.getDay());
-    			license.setDateOfExpiry(cal.getTime());
-    		}
-    		
-    	}
-    
+
+    public void applyLicenseValidity(final License license) {
+
+        List<Validity> validityList = validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(
+                license.getBuildingType().getId(), license.getTradeName().getCategory().getId());
+
+        if (validityList.isEmpty())
+            validityList = validityRepository.findByNatureOfBusinessId(license.getBuildingType().getId());
+
+        if (validityList.isEmpty())
+            throw new ValidationException("TL-001", "License validity not defined.");
+        else {
+            final Validity validity = validityList.get(0);
+
+            if (validity.isBasedOnFinancialYear()) {
+                Date nextExpiryDate;
+                if (license.getDateOfExpiry() == null)
+                    nextExpiryDate = new Date();
+                else
+                    nextExpiryDate = new LocalDate(license.getDateOfExpiry()).plusDays(1).toDate();
+                final CFinancialYear currentFinancialYear = financialYearHibernateDAO.getFinancialYearByDate(nextExpiryDate);
+                license.setDateOfExpiry(currentFinancialYear.getEndingDate());
+            } else {
+                LocalDate nextExpiryDate;
+                if (license.getDateOfExpiry() == null)
+                    nextExpiryDate = new LocalDate();
+                else
+                    nextExpiryDate = new LocalDate(license.getDateOfExpiry());
+                if (validity.getYear() != null && validity.getYear() > 0)
+                    nextExpiryDate.plusYears(validity.getYear());
+                if (validity.getMonth() != null && validity.getMonth() > 0)
+                    nextExpiryDate.plusMonths(validity.getMonth());
+                if (validity.getWeek() != null && validity.getWeek() > 0)
+                    nextExpiryDate.plusWeeks(validity.getWeek());
+                if (validity.getDay() != null && validity.getDay() > 0)
+                    nextExpiryDate.plusDays(validity.getDay());
+                license.setDateOfExpiry(nextExpiryDate.toDate());
+            }
+        }
+
+    }
+
 }

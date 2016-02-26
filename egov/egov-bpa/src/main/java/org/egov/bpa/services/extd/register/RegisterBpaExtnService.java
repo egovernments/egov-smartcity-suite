@@ -360,7 +360,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 	
 	
 	private BuildingCategoryExtn getBuildingCategorybyId(Long buildingCategoryId) {
-		BuildingCategoryExtn buildingCategory= (BuildingCategoryExtn) persistenceService.find("from BuildingCategoryExtn BC where BC.isActive=1 and id=?",buildingCategoryId);
+		BuildingCategoryExtn buildingCategory= (BuildingCategoryExtn) persistenceService.find("from BuildingCategoryExtn BC where BC.isActive=true and id=?",buildingCategoryId);
 		return buildingCategory;
 	}
 	

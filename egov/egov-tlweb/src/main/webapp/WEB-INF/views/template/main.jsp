@@ -53,18 +53,16 @@
 	    <title><tiles:insertAttribute name="title"/></title>
 		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-	    <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'  context='/egi'/>">
+	    <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'  context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css'  context='/egi'/>" />
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 		
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-		<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
-        <script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script> 
 	    <!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -72,7 +70,7 @@
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
-	
+	<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 	</head>
     <body class="page-body" oncontextmenu="return false;">
         <div class="page-container">
@@ -103,5 +101,68 @@
 					</div>
 			</div>
 		</div>
+		<script>
+
+	    // jQuery plugin to prevent double submission of forms
+		jQuery.fn.preventDoubleSubmission = function() {
+		jQuery(this).on('submit',function(e){
+		    var $form = jQuery(this);
+		    if ($form.data('submitted') === true) {
+		      // Previously submitted - don't submit again
+		      e.preventDefault();
+		    } else {
+		      // Mark it so that the next submit can be ignored
+		      $form.data('submitted', true);
+		    }
+		  });
+		  // Keep chainability
+		  return this;
+		};
+
+		jQuery("form").submit(function( event ) {
+			jQuery('.loader-class').modal('show', {backdrop: 'static'});
+		});
+		
+		jQuery('form').preventDoubleSubmission();
+
+		try { 
+			jQuery(".datepicker").datepicker({
+				format: "dd/mm/yyyy",
+				autoclose: true 
+			}); 
+
+			var d = new Date();
+			var currDate = d.getDate();
+			var currMonth = d.getMonth();
+			var currYear = d.getFullYear();
+			var startDate = new Date(currYear,currMonth,currDate);
+			jQuery('.today').datepicker('setDate',startDate);
+
+			}catch(e){
+			console.warn("No Date Picker");
+		}
+
+		/*Restrict back button*/
+		history.pushState({ page: 1 }, "Title 1", "#no-back");
+		window.onhashchange = function (event) {
+		  window.location.hash = "no-back";
+		};
+
+		/*Restrict page refresh*/
+		window.document.onkeydown = function(event) { 
+		   	 switch (event.keyCode) { 
+		        case 116 : //F5 button
+		            event.returnValue = false;
+		            event.keyCode = 0;
+		            return false; 
+		        case 82 : //R button
+		            if (event.ctrlKey) { //Ctrl button
+		                event.returnValue = false; 
+		                event.keyCode = 0;  
+		                return false; 
+		            } 
+		    }
+		}
+	  </script>
     </body>
 </html>

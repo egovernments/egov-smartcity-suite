@@ -38,3 +38,15 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
+
+<properties>
+<!-- Configuration file for egf sql queries -->
+<sql>
+
+<egf-budgetGroup>
+	<type>hql</type>
+	<query>from BudgetGroup BG where isactive = '1' order by BG.id</query>
+</egf-budgetGroup> 
+</sql>
+</properties>
+

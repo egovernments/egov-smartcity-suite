@@ -42,11 +42,11 @@ package org.egov.ptis.domain.service.property;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_ERR_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_NOT_EXISTS;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,7 +54,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -158,7 +157,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 
 public class PropertyExternalService {
@@ -501,9 +499,9 @@ public class PropertyExternalService {
                 final String taxType = (String) data[0];
 
                 final String installment = (String) data[1];
-                final BigInteger dmd = (BigInteger) data[2];
+                final Double dmd = (Double) data[2];
                 final Double col = (Double) data[3];
-                final BigDecimal demand = BigDecimal.valueOf(dmd.intValue());
+                final BigDecimal demand = BigDecimal.valueOf(dmd.doubleValue());
                 final BigDecimal collection = BigDecimal.valueOf(col.doubleValue());
                 if (loopInstallment.isEmpty()) {
                     loopInstallment = installment;

@@ -29,7 +29,7 @@
         <property name="llevel" type="big_decimal">
             <column name="LLEVEL" precision="22" scale="0" not-null="true" />
         </property>
-        <property name="isactive" type="integer">
+        <property name="isactive" type="boolean">
             <column name="ISACTIVE" precision="1" scale="0" not-null="true" />
         </property>       
         <property name="created" type="date">

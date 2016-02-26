@@ -95,7 +95,7 @@ public class DishonoredChequeReportAction extends BaseFormAction {
 
     public void prepareNewForm() {
         super.prepare();
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside  Prepare ........");
 

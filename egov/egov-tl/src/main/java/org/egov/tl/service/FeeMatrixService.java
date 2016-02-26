@@ -40,200 +40,166 @@
 
 package org.egov.tl.service;
 
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseSubCategory;
-import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.repository.FeeMatrixRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-@Service 
+@Service
 @Transactional(readOnly = true)
-public class FeeMatrixService<T extends License>  {
+public class FeeMatrixService<T extends License> {
 
-	
-	private final FeeMatrixRepository feeMatrixRepository;
+    private final FeeMatrixRepository feeMatrixRepository;
 
-	@Autowired
-	private FeeTypeService feeTypeService;
-	
-	@Autowired
-	private FeeMatrixDetailService feeMatrixDetailService;
-	
+    @Autowired
+    private FeeTypeService feeTypeService;
 
-	@Autowired
-	public FeeMatrixService(final FeeMatrixRepository feeMatrixRepository) {
-		this.feeMatrixRepository = feeMatrixRepository;
-	}
-	
+    @Autowired
+    private FeeMatrixDetailService feeMatrixDetailService;
+
+    @Autowired
+    private AppConfigValueService appConfigValueService;
+
+    @Autowired
+    @Qualifier("entityQueryService")
+    private PersistenceService persistenceService;
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
+    
+    @Autowired
+    public FeeMatrixService(final FeeMatrixRepository feeMatrixRepository) {
+        this.feeMatrixRepository = feeMatrixRepository;
+    }
 
-	@Transactional
-	public FeeMatrix create(final FeeMatrix feeMatrix) {
-		
-		String genUniqueNo = feeMatrix.genUniqueNo();
-		feeMatrix.setUniqueNo(genUniqueNo);
-		if(!feeMatrix.getFeeMatrixDetail().isEmpty())
-		{
-			for(FeeMatrixDetail fd:feeMatrix.getFeeMatrixDetail())
-			{
-				fd.setFeeMatrix(feeMatrix);
-			}
-		}
-		return feeMatrixRepository.save(feeMatrix);
-	} 
-	@Transactional
-	public FeeMatrix update(final FeeMatrix feeMatrix) {
-		String genUniqueNo = feeMatrix.genUniqueNo();
-		feeMatrix.setUniqueNo(genUniqueNo);
-		return feeMatrixRepository.save(feeMatrix);
-	} 
-	public List<FeeMatrix> findAll() {
-		return feeMatrixRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
-	}
-	/*public FeeMatrix findByName(String name){
-		return feeMatrixRepository.findByName(name);
-	}*/
+    @Transactional
+    public FeeMatrix create(final FeeMatrix feeMatrix) {
+        feeMatrix.setUniqueNo(feeMatrix.genUniqueNo());
+        if (!feeMatrix.getFeeMatrixDetail().isEmpty())
+            for (final FeeMatrixDetail fd : feeMatrix.getFeeMatrixDetail())
+                fd.setFeeMatrix(feeMatrix);
+        return feeMatrixRepository.save(feeMatrix);
+    }
 
-	public FeeMatrix search(FeeMatrix feeMatrix) {
-		
-		return feeMatrixRepository.findByUniqueNo(feeMatrix.getUniqueNo());
-	}
-/**
- * 
- * @param license
- * @return
- * Will return the list of fees for the selected combination
- * 1.It will fetch all fee types  from the system
- * 2. Apply the rule and parameters for that 
- * 3. return it by adding to the feeMatrixDetailList
- * 4. Uses switch . So After adding feetype in the system 
- * it should be coded here to say how what parameter to be applied for the fetch  
- * 
- */
-	public List<FeeMatrixDetail> findFeeList(T license) {
-	
-		List<FeeType> allFees = feeTypeService.findAll();
-	 
-		
-	    Long uomId = license.getTradeName().getLicenseSubCategoryDetails().get(0).getUom().getId();
-	    // Make decision is charges for NEW and Renew Same
-	    
-	    // Make decision is charges for Permanent  and Temporary are Same
+    @Transactional
+    public FeeMatrix update(final FeeMatrix feeMatrix) {
+        feeMatrix.setUniqueNo(feeMatrix.genUniqueNo());
+        return feeMatrixRepository.save(feeMatrix);
+    }
 
-	    String uniqueNo = generateFeeMatirixUniqueNo(license);
-	    if(uniqueNo==null)
-	    {
-	    
-	    	
-	    }
-	    Date applicationDate = license.getApplicationDate();
-	    
-	    CFinancialYear financialYearByDate=financialYearDAO.getFinancialYearByDate(applicationDate);
-		
-	    BigDecimal totalFee=BigDecimal.ZERO;
-	    List<FeeMatrixDetail> feeMatrixDetailList=new ArrayList<FeeMatrixDetail>();
-	    FeeMatrixDetail feeMatrixDetail=null;
-	    FeeMatrix feeMatrix=null;
-	    for(FeeType fee:allFees)
-	    {
-	    	if(fee.getFeeProcessType().equals(FeeType.FeeProcessType.RANGE))
-	    	{
+    public List<FeeMatrix> findAll() {
+        return feeMatrixRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
 
-	    switchLoop:switch(fee.getCode())
-	    		{
-	    		//First find License Fee with UOM		
-	    		case "LF" : 
-	    			feeMatrix = feeMatrixRepository.findByUniqueNo(uniqueNo+"-"+fee.getId()+"-"+uomId+"-"+financialYearByDate.getId());
-	    			if(feeMatrix==null)
-	    			{
-	    				throw new ApplicationRuntimeException("License Fee Structure  is not defined for the selected combination");
-	    			}
-	    			feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTradeArea_weight(),license.getApplicationDate(),financialYearByDate.getId());
-	    			if(feeMatrixDetail==null)
-	    			{
-	    				throw new ApplicationRuntimeException("License Fee Structure range is not defined for the selected combination");
-	    			}
-	    			feeMatrixDetailList.add(feeMatrixDetail);
-	    			break switchLoop;
-	    			
-	    			
-	    		/**
-	    		 * Assuming the below fee types will have single UOM through out So exclude UOM and find
-	    		 */
-	    		/*case "MF":
-	    			if(license.getTotalHP()!=null && license.getTotalHP().compareTo(BigDecimal.ZERO)==1 )
-	    			{
-	    				feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%"+"-"+financialYearByDate.getId());
-	    				if(feeMatrix==null)
-	    				{
-	    					throw new ApplicationRuntimeException("Motor Fee Structure  is not defined for the selected combination");
-	    				}
-	    				feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTotalHP(),license.getApplicationDate(),financialYearByDate.getId());
-	    				if(feeMatrixDetail==null)
-	    				{
-	    					throw new ApplicationRuntimeException("Motor Fee Structure range is not defined for the entered capacity");
-	    				}
-	    				feeMatrixDetailList.add(feeMatrixDetail);
-	    			}
-	    			break switchLoop;
+    public FeeMatrix search(final FeeMatrix feeMatrix) {
 
-	    			//Find Work force fee    
-	    		case "WF" :
-	    			if(license.getWorkersCapacity()!=null && license.getWorkersCapacity().compareTo(BigDecimal.ZERO)>0 )
-	    			{
-	    			feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%"+"-"+financialYearByDate.getId());
-	    			if(feeMatrix==null)
-	    			{
-	    				throw new ApplicationRuntimeException("Workforce Fee Structure  is not defined for the selected combination");
-	    			}
-	    			feeMatrixDetail=feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getWorkersCapacity(),license.getApplicationDate(),financialYearByDate.getId());
-	    			if(feeMatrixDetail==null)
-	    			{
-	    				throw new ApplicationRuntimeException("Workforce Fee Structure range is not defined for the entered capacity");
-	    			}
-	    			
-	    		//	totalFee=	totalFee.add(feeMatrixDetail.getAmount());
-	    			feeMatrixDetailList.add(feeMatrixDetail);
-	    			}
-	    			break switchLoop;*/
-	    		}
-				
-				
-			  	
-			}
-		}     
-		
-	    return feeMatrixDetailList;	
-	}
+        return feeMatrixRepository.findByUniqueNo(feeMatrix.getUniqueNo());
+    }
 
-	private String generateFeeMatirixUniqueNo(T license) {
-		
-		    return license.getBuildingType().getId()+"-"+license.getLicenseAppType().getId()+"-"+license.getCategory().getId()
-		    +"-"+license.getTradeName().getId();
-		
-	}
-	
-	public  List<FeeMatrix> findBySubCategory(LicenseSubCategory subCategory){
-	    return feeMatrixRepository.findBySubCategory(subCategory);
-	}
+    /**
+     *
+     * @param license
+     * @return Will return the list of fees for the selected combination 1.It will fetch all fee types from the system 2. Apply
+     * the rule and parameters for that 3. return it by adding to the feeMatrixDetailList 4. Uses switch . So After adding feetype
+     * in the system it should be coded here to say how what parameter to be applied for the fetch
+     *
+     */
+    public List<FeeMatrixDetail> findFeeList(final T license) {
+
+        final List<FeeType> allFees = feeTypeService.findAll();
+        final Long uomId = license.getTradeName().getLicenseSubCategoryDetails().get(0).getUom().getId();
+        String uniqueNo = "";
+        final List<AppConfigValues> newRenewAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License",
+                "Is Fee For New and Renew Same");
+        final boolean isnew_renewfee_same = newRenewAppconfigList.get(0).getValue().equals("Y");
+
+        final List<AppConfigValues> permTempAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License",
+                "Is Fee For Permanent and Temporary Same");
+        final boolean ispermanent_temporaryfee_same = permTempAppconfigList.get(0).getValue().equals("Y");
+
+        final LicenseAppType newapp = (LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' ");
+        final NatureOfBusiness permanent = (NatureOfBusiness) persistenceService
+                .find("from org.egov.tl.entity.NatureOfBusiness where   name='Permanent'");
+        if (isnew_renewfee_same && ispermanent_temporaryfee_same)
+            uniqueNo = generateFeeMatirixUniqueNo(license, newapp, permanent);
+        else if (isnew_renewfee_same)
+            uniqueNo = generateFeeMatirixUniqueNo(license, newapp);
+        else if (ispermanent_temporaryfee_same)
+            uniqueNo = generateFeeMatirixUniqueNo(license, permanent);
+        else
+            uniqueNo = generateFeeMatirixUniqueNo(license);
+
+        final Date applicationDate = license.getApplicationDate();
+
+        final CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(applicationDate);
+
+        final List<FeeMatrixDetail> feeMatrixDetailList = new ArrayList<FeeMatrixDetail>();
+        FeeMatrixDetail feeMatrixDetail = null;
+        FeeMatrix feeMatrix = null;
+        for (final FeeType fee : allFees)
+            if (fee.getFeeProcessType().equals(FeeType.FeeProcessType.RANGE))
+                switchLoop: switch (fee.getCode()) {
+                // First find License Fee with UOM
+                case "LF":
+                    feeMatrix = feeMatrixRepository
+                            .findByUniqueNo(uniqueNo + "-" + fee.getId() + "-" + uomId + "-" + financialYearByDate.getId());
+                    if (feeMatrix == null)
+                        throw new ValidationException("TL-002", "TL-002");
+                    feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix, license.getTradeArea_weight(),
+                            license.getApplicationDate(), financialYearByDate.getId());
+                    if (feeMatrixDetail == null)
+                        throw new ValidationException("TL-003", "TL-003");
+                    feeMatrixDetailList.add(feeMatrixDetail);
+                    break switchLoop;
+
+                }
+
+        return feeMatrixDetailList;
+    }
+
+    public List<FeeMatrix> findBySubCategory(final LicenseSubCategory subCategory) {
+        return feeMatrixRepository.findBySubCategory(subCategory);
+    }
+    
+    private String generateFeeMatirixUniqueNo(final T license, final NatureOfBusiness permanent) {
+        return new StringBuilder().append(permanent.getId()).append("-").append(license.getLicenseAppType().getId())
+                .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
+    }
+
+    private String generateFeeMatirixUniqueNo(final T license) {
+        return new StringBuilder().append(license.getBuildingType().getId()).append("-")
+                .append(license.getLicenseAppType().getId()).append("-").append(license.getCategory().getId())
+                .append("-").append(license.getTradeName().getId()).toString();
+    }
+
+    private String generateFeeMatirixUniqueNo(final T license, final LicenseAppType apptype) {
+        return new StringBuilder().append(license.getBuildingType().getId()).append("-").append(apptype.getId())
+                .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
+    }
+
+    private String generateFeeMatirixUniqueNo(final T license, final LicenseAppType apptype,
+            final NatureOfBusiness natureOfBusiness) {
+        return new StringBuilder().append(natureOfBusiness.getId()).append("-").append(apptype.getId())
+                .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
+    }
 }

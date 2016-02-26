@@ -46,12 +46,13 @@ public class DCBReportResult {
         return boundaryName;
     }
 
-    public void setBoundaryName(final String boundaryName) {
+    public void setBoundaryName(final String boundaryName) { 
         this.boundaryName = boundaryName;
     }
 
     public BigDecimal getDmnd_arrearPT() {
-        return dmnd_arrearPT;
+        //return dmnd_arrearPT;
+        return dmnd_arrearPT.add(dmnd_arrearLC.add(dmnd_arrearEC).add(dmnd_arrearUPT));
     }
 
     public void setDmnd_arrearPT(final BigDecimal dmnd_arrearPT) {
@@ -67,11 +68,13 @@ public class DCBReportResult {
     }
 
     public BigDecimal getDmnd_arrearTotal() {
-        return getDmnd_arrearLC().add(getDmnd_arrearPT());
+       // return getDmnd_arrearLC().add(getDmnd_arrearPT());
+        return getDmnd_arrearPT().add(getDmnd_arrearPFT());
     }
 
     public BigDecimal getDmnd_currentPT() {
-        return dmnd_currentPT;
+        //return dmnd_currentPT;
+        return dmnd_currentPT.add(dmnd_currentLC.add(dmnd_currentEC).add(dmnd_currentUPT));
     }
 
     public void setDmnd_currentPT(final BigDecimal dmnd_currentPT) {
@@ -87,7 +90,8 @@ public class DCBReportResult {
     }
 
     public BigDecimal getDmnd_currentTotal() {
-        return getDmnd_currentLC().add(getDmnd_currentPT());
+        //return getDmnd_currentLC().add(getDmnd_currentPT());
+        return getDmnd_currentPT().add(getDmnd_currentPFT());
     }
 
     public BigDecimal getTotalDemand() {
@@ -95,7 +99,8 @@ public class DCBReportResult {
     }
 
     public BigDecimal getClctn_arrearPT() {
-        return clctn_arrearPT;
+        //return clctn_arrearPT;
+        return clctn_arrearPT.add(clctn_arrearLC.add(clctn_arrearEC).add(clctn_arrearUPT));
     }
 
     public void setClctn_arrearPT(final BigDecimal clctn_arrearPT) {
@@ -111,11 +116,13 @@ public class DCBReportResult {
     }
 
     public BigDecimal getClctn_arrearTotal() {
-        return getClctn_arrearLC().add(getClctn_arrearPFT().add(getClctn_arrearPT()));
+        //return getClctn_arrearLC().add(getClctn_arrearPFT().add(getClctn_arrearPT()));
+        return getClctn_arrearPFT().add(getClctn_arrearPT());
     }
 
     public BigDecimal getClctn_currentPT() {
-        return clctn_currentPT;
+        //return clctn_currentPT;
+        return clctn_currentPT.add(clctn_currentLC.add(clctn_currentEC).add(clctn_currentUPT));
     }
 
     public void setClctn_currentPT(final BigDecimal clctn_currentPT) {
@@ -131,7 +138,8 @@ public class DCBReportResult {
     }
 
     public BigDecimal getClctn_currentTotal() {
-        return getClctn_currentLC().add(getClctn_currentPFT().add(getClctn_currentPT()));
+        //return getClctn_currentLC().add(getClctn_currentPFT().add(getClctn_currentPT()));
+        return getClctn_currentPFT().add(getClctn_currentPT());
     }
 
     public BigDecimal getTotalCollection() {
@@ -141,13 +149,21 @@ public class DCBReportResult {
     public BigDecimal getBal_arrearPT() {
         return getDmnd_arrearPT().subtract(getClctn_arrearPT());
     }
+    
+    public BigDecimal getBal_arrearPFT() {
+        return getDmnd_arrearPFT().subtract(getClctn_arrearPFT());
+    }
 
     public BigDecimal getBal_currentPT() {
         return getDmnd_currentPT().subtract(getClctn_currentPT());
     }
+    
+    public BigDecimal getBal_currentPFT() {
+        return getDmnd_currentPFT().subtract(getClctn_currentPFT());
+    }
 
     public BigDecimal getTotalPTBalance() {
-        return getBal_arrearPT().add(getBal_currentPT());
+        return getBal_arrearPT().add(getBal_arrearPFT()).add(getBal_currentPT()).add(getBal_currentPFT());
     }
 
     public BigDecimal getDmnd_arrearEC() {
@@ -366,11 +382,11 @@ public class DCBReportResult {
         this.boundaryId = boundaryId;
     }
 
-	public String getHouseNo() {
-		return houseNo;
-	}
+        public String getHouseNo() {
+                return houseNo; 
+        }
 
-	public void setHouseNo(String houseNo) {
-		this.houseNo = houseNo;
-	}
+        public void setHouseNo(String houseNo) {
+                this.houseNo = houseNo;
+        }
 }

@@ -39,17 +39,21 @@
  */
 package org.egov.eis.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.commons.service.EntityTypeService;
+import org.egov.commons.utils.EntityType;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.eis.repository.DrawingOfficerRepository;
+import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class DrawingOfficerService {
+public class DrawingOfficerService implements EntityTypeService {
 
     private final DrawingOfficerRepository drawingOfficerRepository;
 
@@ -57,6 +61,12 @@ public class DrawingOfficerService {
     public DrawingOfficerService(final DrawingOfficerRepository drawingOfficerRepository) {
         this.drawingOfficerRepository = drawingOfficerRepository;
     }
+    
+    
+    public List<DrawingOfficer> getAllDrawingOfficers() {
+        return drawingOfficerRepository.findAll();
+    }
+    
     
     /**
      * Get drawing officer object by id
@@ -131,5 +141,33 @@ public class DrawingOfficerService {
     @Transactional
     public void delete(final DrawingOfficer officer) {
         drawingOfficerRepository.delete(officer);
+    }
+
+    @Override
+    public List<EntityType> getAllActiveEntities(Integer accountDetailTypeId) {
+        final List<EntityType> entities = new ArrayList<EntityType>();
+        final List<DrawingOfficer> drawingOfficers = getAllDrawingOfficers();
+        entities.addAll(drawingOfficers);
+        return entities;
+    }
+
+    @Override
+    public List<? extends EntityType> filterActiveEntities(String filterKey, int maxRecords, Integer accountDetailTypeId) {
+        return drawingOfficerRepository.findByNameLikeOrCodeLike(filterKey + "%", filterKey + "%");
+    }
+
+    @Override
+    public List getAssetCodesForProjectCode(Integer accountdetailkey) throws ValidationException {
+        return null;
+    }
+
+    @Override
+    public List<EntityType> validateEntityForRTGS(List<Long> idsList) throws ValidationException {
+        return null;
+    }
+
+    @Override
+    public List<EntityType> getEntitiesById(List<Long> idsList) throws ValidationException {
+        return null;
     }
 }

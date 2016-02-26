@@ -126,7 +126,7 @@ public class BudgetAction extends BaseFormAction {
         // consider isactiveforPosting since ui supports this one
 
         addDropdownData("financialYearList",
-                getPersistenceService().findAllBy("from CFinancialYear where isActive=1 order by finYearRange desc "));
+                getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
         addDropdownData("referenceBudgetList", Collections.EMPTY_LIST);
         setupDropdownDataExcluding("financialYear");
     }

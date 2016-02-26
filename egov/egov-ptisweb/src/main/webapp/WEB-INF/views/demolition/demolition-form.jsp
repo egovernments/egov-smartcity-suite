@@ -96,7 +96,7 @@ body
 						</div>
 						<form:hidden path="" name="mode" id="mode" value="${mode}" />
 						<table width="100%" border="0" cellspacing="0" cellpadding="0"
-							class="tablebottom" id="vacantLandTable">
+							class="table table-bordered" id="vacantLandTable">
 
 							<tbody>
 								<tr>
@@ -113,42 +113,58 @@ body
 								</tr>
 
 								<tr id="vacantLandRow">
-									<td class="blueborderfortd" align="center"><form:input
-											path="propertyDetail.surveyNumber" id="surveyNumber"
-											maxlength="15" /> <form:errors
-											path="propertyDetail.surveyNumber"
-											cssClass="add-margin error-msg" /></td>
-									<td class="blueborderfortd" align="center"><form:input
+									<td class="blueborderfortd" align="center">
+										<form:input
+												path="propertyDetail.surveyNumber" id="surveyNumber"
+												maxlength="15" cssClass="form-control" /> 
+										<form:errors
+												path="propertyDetail.surveyNumber"
+												cssClass="add-margin error-msg" />
+									</td>
+									<td class="blueborderfortd" align="center">
+									     <form:input
 											path="propertyDetail.pattaNumber" id="pattaNumber"
-											maxlength="15" /> <form:errors
+											maxlength="15" 
+											cssClass="form-control"/> 
+											<form:errors
 											path="propertyDetail.pattaNumber"
-											cssClass="add-margin error-msg" /></td>
-									<td class="blueborderfortd" align="center"><form:input
+											cssClass="add-margin error-msg" />
+									</td>
+									<td class="blueborderfortd" align="center">
+									    <form:input
 											type="text" path="propertyDetail.sitalArea.area"
 											maxlength="15" value="" id="vacantLandArea"
+											cssClass="form-control"
 											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');" />
 										<form:errors path="propertyDetail.sitalArea.area"
-											cssClass="add-margin error-msg" /></td>
-									<td class="blueborderfortd" align="center"><form:input
+											cssClass="add-margin error-msg" />
+									</td>
+									<td class="blueborderfortd" align="center">
+									      <form:input
 											type="text" path="propertyDetail.marketValue" maxlength="15"
 											value="" id="marketValue"
+											cssClass="form-control"
 											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
 										<form:errors path="propertyDetail.marketValue"
-											cssClass="add-margin error-msg" /></td>
+											cssClass="add-margin error-msg" />
+									</td>
 
-									<td class="blueborderfortd"><form:input type="text"
+									<td class="blueborderfortd">
+									    <form:input type="text"
 											path="propertyDetail.currentCapitalValue" maxlength="15"
 											value="" id="currentCapitalValue"
+											cssClass="form-control"
 											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');"
 											readonly="true" /> <form:errors
 											path="propertyDetail.currentCapitalValue"
-											cssClass="add-margin error-msg" /></td>
+											cssClass="add-margin error-msg" />
+									</td>
 
 								</tr>
 
 								<tr>
 									<td colspan="6"><br>
-										<table class="tablebottom" style="width: 100%;"
+										<table class="table table-bordered" style="width: 100%;"
 											id="boundaryData">
 											<tbody>
 												<tr>
@@ -158,27 +174,32 @@ body
 													<th class="bluebgheadtd">South<span class="mandatory"></span></th>
 												</tr>
 												<tr>
-													<td class="blueborderfortd" align="center"><form:input
+													<td class="blueborderfortd" align="center">
+													       <form:input
 															type="text" id="northBoundary"
 															path="basicProperty.propertyID.northBoundary"
+															cssClass="form-control"
 															maxlength="64"></form:input> <form:errors
 															path="basicProperty.propertyID.northBoundary"
 															cssClass="add-margin error-msg" /></td>
 													<td class="blueborderfortd" align="center"><form:input
 															type="text" id="eastBoundary"
 															path="basicProperty.propertyID.eastBoundary"
+															cssClass="form-control"
 															maxlength="64"></form:input> <form:errors
 															path="basicProperty.propertyID.eastBoundary"
 															cssClass="add-margin error-msg" /></td>
 													<td class="blueborderfortd" align="center"><form:input
 															type="text" id="westBoundary"
 															path="basicProperty.propertyID.westBoundary"
+															cssClass="form-control"
 															maxlength="64"></form:input> <form:errors
 															path="basicProperty.propertyID.northBoundary"
 															cssClass="add-margin error-msg" /></td>
 													<td class="blueborderfortd" align="center"><form:input
 															type="text" id="southBoundary"
 															path="basicProperty.propertyID.southBoundary"
+															cssClass="form-control"
 															maxlength="64"></form:input> <form:errors
 															path="basicProperty.propertyID.southBoundary"
 															cssClass="add-margin error-msg" /></td>

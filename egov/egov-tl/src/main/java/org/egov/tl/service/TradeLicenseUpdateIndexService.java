@@ -136,7 +136,7 @@ public class TradeLicenseUpdateIndexService
                 applicationIndexBuilder.closed(ClosureStatus.NO);
                 applicationIndexBuilder.approved(ApprovalStatus.UNKNOWN);
                 applicationIndex = applicationIndexBuilder.build();
-                if (!license.getIsActive())
+                if (license.getIsActive())
                     applicationIndexService.createApplicationIndex(applicationIndex);
             }
 

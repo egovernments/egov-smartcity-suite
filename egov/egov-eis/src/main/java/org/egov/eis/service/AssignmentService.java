@@ -42,6 +42,7 @@ import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -352,5 +353,14 @@ public class AssignmentService {
     
     public Set<User> getUsersByDesignations(final String [] designationNames){
         return assignmentRepository.getUsersByDesignations(designationNames);
+    }
+    
+    public Set<Role> getRolesForExpiredAssignmentsByEmpId(final Long empId){
+        return assignmentRepository.getRolesForExpiredAssignmentsByEmpId(empId);
+    }
+    
+    
+    public Set<Role> getRolesForActiveAssignmentsByEmpId(final Long empId){
+        return assignmentRepository.getRolesForActiveAssignmentsByEmpId(empId);
     }
 }

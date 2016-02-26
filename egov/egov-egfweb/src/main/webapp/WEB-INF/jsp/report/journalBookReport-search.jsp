@@ -129,7 +129,7 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="bluebox"><s:text name="journalBook.startDate" /><span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:textfield name="startDate"
 								id="startDate" cssStyle="width:100px" value='%{startDate}'
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -137,7 +137,7 @@
 							style="text-decoration: none"><img
 								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 						<td class="bluebox"><s:text name="journalBook.endDate" /><span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:textfield name="endDate" id="endDate"
 								cssStyle="width:100px" value='%{endDate}'
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -147,7 +147,7 @@
 					</tr>
 					<tr>
 						<td class="greybox"><s:text name="journalBook.fund" /><span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="greybox"><s:select name="fund_id" id="fund_id"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="" headerValue="----Choose----" /></td>
@@ -160,9 +160,9 @@
 
 					<tr>
 						<td class="bluebox"><s:text
-								name="journalBook.financingSource" /></td>
-						<td class="bluebox"><s:select name="fundSource_id"
-								id="fundSource_id" list="dropdownData.fundsourceList"
+								name="journalBook.function" /></td>
+						<td class="bluebox"><s:select name="functionId"
+								id="functionId" list="dropdownData.functionList"
 								listKey="id" listValue="name" headerKey=""
 								headerValue="----Choose----" /></td>
 						<td class="bluebox"><s:text name="journalBook.department" /></td>
@@ -185,7 +185,7 @@
 				</table>
 			</div>
 		</s:push>
-		<span class="mandatory">
+		<span class="mandatory1">
 			<div id="resultDiv" style="display: none;">
 				<jsp:include page="journalBookReport-result.jsp" />
 			</div>

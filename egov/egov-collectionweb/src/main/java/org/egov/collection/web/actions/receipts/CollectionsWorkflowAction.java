@@ -174,7 +174,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     public void setInboxItemDetails(final String inboxItemDetails) {
         final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        if (params.length == 5) {
+        if (params.length <= 6) {
             setWfAction(params[0]);
             setServiceCode(params[1]);
             setUserName(params[2]);
@@ -408,7 +408,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * @param workflowAction
      *            Work flow action code
      */
-    private void fetchReceipts(final String statusCode, final String workflowAction) {// Get
+    private void fetchReceipts(final String workflowAction) {// Get
         // all
         // receipts
         // that
@@ -416,7 +416,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         // currently logged in user from
         // his/her current counter and are in SUBMITTED status
         final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
-        receiptHeaders = receiptHeaderService.findAllByStatusUserCounterService(position.getId(), inboxItemDetails);
+        receiptHeaders = receiptHeaderService.findAllByPositionAndInboxItemDetails(position.getId(), inboxItemDetails);
 
         // Populate the selected receipt IDs with all receipt ids
         final int receiptCount = receiptHeaders.size();
@@ -435,15 +435,8 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * @return Next page to be displayed (index)
      */
     public String listSubmit() {
-        final Location counter = collectionsUtil.getLocationOfUser(getSession());
-        if (counter != null)
-            counterId = counter.getId();
-
-        // In SUBMIT mode fetch receipts for ALL billing services
-        // serviceCode = CollectionConstants.ALL;
-
         // Get all receipt headers to be submitted
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT);
+        fetchReceipts(CollectionConstants.WF_ACTION_SUBMIT);
         return INDEX;
     }
 
@@ -466,7 +459,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             serviceCode = CollectionConstants.ALL;
 
         // Get all receipt headers to be approved
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE);
+        fetchReceipts(CollectionConstants.WF_ACTION_APPROVE);
 
         // Add counter list and user list to drop down data
         addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getCollectionServiceList());

@@ -48,26 +48,26 @@
 	
 	var populateRecoveryDetailsForPayment = function() {
 	var recoveryDetailColumnsNew = [ 
-	{key:"serialNo",label:'Sl no',width:30,formatter:createLabelSamll(RECOVERYLIST,".serialNo")},				
-	{key:"voucherNumber",label:'<s:text name="remit.ref.number"/>',width:140, formatter:createLabelLarge(RECOVERYLIST,".voucherNumberLabel")}, 
+	{key:"serialNo",label:'Sl no',formatter:createLabelSamll(RECOVERYLIST,".serialNo")},				
+	{key:"voucherNumber",label:'<s:text name="remit.ref.number"/>', formatter:createLabelLarge(RECOVERYLIST,".voucherNumberLabel")}, 
 	{key:"voucherNumber",hidden:true,formatter:createHiddenField(RECOVERYLIST,".voucherNumber","hidden")}, 
-	{key:"voucherDate",label:'<s:text name="remit.date"/>',width:80, formatter:createLabelMed(RECOVERYLIST,".voucherDateLabel")},
+	{key:"voucherDate",label:'<s:text name="remit.date"/>', formatter:createLabelMed(RECOVERYLIST,".voucherDateLabel")},
 	{key:"voucherDate",hidden:true,formatter:createHiddenField(RECOVERYLIST,".voucherDate","hidden")}, 
-	{key:"voucherName",label:'<s:text name="remit.nature.deduction"/>',width:120, formatter:createLabelLarge(RECOVERYLIST,".voucherNameLable")},
+	{key:"voucherName",label:'<s:text name="remit.nature.deduction"/>', formatter:createLabelLarge(RECOVERYLIST,".voucherNameLable")},
 	{key:"voucherName",hidden:true,formatter:createHiddenField(RECOVERYLIST,".voucherName","hidden")}, 
-	{key:"partyName",label:'<s:text name="remit.party.name"/>',width:200, formatter:createLabelLarge(RECOVERYLIST,".partyNameLable")},
+	{key:"partyName",label:'<s:text name="remit.party.name"/>', formatter:createLabelLarge(RECOVERYLIST,".partyNameLable")},
 	{key:"partyName",hidden:true,formatter:createHiddenField(RECOVERYLIST,".partyName","hidden")}, 
-	{key:"partyCode",label:'<s:text name="remit.party.code"/>',width:100, formatter:createLabelLarge(RECOVERYLIST,".partyCodeLable")},
+	{key:"partyCode",label:'<s:text name="remit.party.code"/>', formatter:createLabelLarge(RECOVERYLIST,".partyCodeLable")},
 	{key:"partyCode",hidden:true,formatter:createHiddenField(RECOVERYLIST,".partyCode","hidden")}, 
-	{key:"panNo",label:'<s:text name="remit.party.panno"/>',width:60, formatter:createLabelMed(RECOVERYLIST,".panNoLable")},
+	{key:"panNo",label:'<s:text name="remit.party.panno"/>', formatter:createLabelMed(RECOVERYLIST,".panNoLable")},
 	{key:"panNo",hidden:true,formatter:createHiddenField(RECOVERYLIST,".panNo","hidden")},       
 	{key:"detailTypeId",hidden:true,formatter:createHiddenField(RECOVERYLIST,".detailTypeId","hidden")},
 	{key:"detailKeyid",hidden:true,formatter:createHiddenField(RECOVERYLIST,".detailKeyid","hidden")},
-	{key:"deductionAmount",label:'<s:text name="remit.deduction.amount"/>',width:80, formatter:createLabelMed(RECOVERYLIST,".deductionAmount")},
-	{key:"earlierPayment",label:'<s:text name="remit.earlier.payment"/>',width:90, formatter:createLabelMed(RECOVERYLIST,".earlierPayment")},
-	{key:"chkremit",label:'Amount',width:90, formatter:createAmount(RECOVERYLIST,".partialAmount")},
-	{key:"remittance_gl_dtlId",hidden:true,width:90, formatter:createTextFieldFormatter1(RECOVERYLIST,".remittance_gl_dtlId","hidden")},
-	{key:"remittanceId",hidden:true,width:90, formatter:createTextFieldFormatter1(RECOVERYLIST,".remittanceId","hidden")}
+	{key:"deductionAmount",label:'<s:text name="remit.deduction.amount"/>', formatter:createLabelMed(RECOVERYLIST,".deductionAmount")},
+	{key:"earlierPayment",label:'<s:text name="remit.earlier.payment"/>', formatter:createLabelMed(RECOVERYLIST,".earlierPayment")},
+	{key:"chkremit",label:'Amount', formatter:createAmount(RECOVERYLIST,".partialAmount")},
+	{key:"remittance_gl_dtlId",hidden:true, formatter:createTextFieldFormatter1(RECOVERYLIST,".remittance_gl_dtlId","hidden")},
+	{key:"remittanceId",hidden:true, formatter:createTextFieldFormatter1(RECOVERYLIST,".remittanceId","hidden")}
 	];
 	var recoveryDetailDSNew = new YAHOO.util.DataSource();   
    	var	recoveryDetailTableNew = new YAHOO.widget.DataTable("recoveryDetailsTableNew",recoveryDetailColumnsNew, new YAHOO.util.DataSource());
@@ -145,7 +145,7 @@ function createcheckbox(prefix,suffix){
 function createAmount(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+recoveryTableIndex+"]"+suffix+"' name='"+prefix+"["+recoveryTableIndex+"]"+suffix+"'   style='width:90px;text-align:right'  onblur='calcTotalForPayment()'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+recoveryTableIndex+"]"+suffix+"' name='"+prefix+"["+recoveryTableIndex+"]"+suffix+"'   style='width:90px;text-align:right' readonly='true' onblur='calcTotalForPayment()'/>";
 	}
 }
 

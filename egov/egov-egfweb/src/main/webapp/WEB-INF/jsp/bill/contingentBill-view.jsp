@@ -504,6 +504,9 @@ function load(){
 }
 function onSubmit()
 {
+	 var myform = jQuery('#cbill');
+		// re-disabled the set of inputs that you previously
+		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
 	document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-update.action';
     document.cbill.submit();
 			
@@ -512,7 +515,7 @@ function onSubmit()
 </script>
 </head>
 <body onload="load();">
-	<s:form action="contingentBill" theme="css_xhtml" name="cbill">
+	<s:form action="contingentBill" theme="css_xhtml" name="cbill" id = "cbill">
 		<s:token />
 		<s:push value="model">
 			<div class="formmainbox">
@@ -683,7 +686,7 @@ document.getElementById("billDetailTableNet").style.display="none";
 if(null != document.getElementById("topTableHeader")){
 	document.getElementById("topTableHeader").style.display="none";
 }
-disableAll();
+//disableAll();
 <s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
 	document.getElementById("departmentid").value= <s:property value="%{voucherHeader.vouchermis.departmentid.id}" /> 
 	<s:if test="%{isFieldMandatory('department')}"> 
@@ -694,26 +697,26 @@ disableAll();
 		document.getElementById("departmentid").disabled=false;
 	</s:else>
 </s:if>
-if(null != document.getElementById("approverUserId")){
+if(document.getElementById("approverUserId")){
 	document.getElementById("approverUserId").disabled=false;
 }
-if(null != document.getElementById("designationId")){
+if(document.getElementById("designationId")){
 	document.getElementById("designationId").disabled=false;
 }
-if(null != document.getElementById("comments")){
+if(document.getElementById("comments")){
 	document.getElementById("comments").disabled=false;
 }
-if(null != document.getElementById("nextLevel")){
+if(document.getElementById("nextLevel")){
 	document.getElementById("nextLevel").disabled=false;
 }
-if(null != document.getElementById("actionName")){
+if( document.getElementById("actionName")){
 	document.getElementById("actionName").disabled=false;
 }
-if(null != document.getElementById("billRegisterId")){
+if(document.getElementById("billRegisterId")){
 	document.getElementById("billRegisterId").disabled=false;
 }
 
-if(null != document.getElementById("print")){
+if(document.getElementById("print")){
 	document.getElementById("print").disabled=false;
 }
 
@@ -725,8 +728,47 @@ if(null != document.getElementById("print")){
 document.getElementById("apporoverSelection").style.display="block";
 
 //set the approver department to primary assignment department
-document.getElementById("departmentid").value=<s:property value="primaryDepartment" />;
+//document.getElementById("departmentid").value=<s:property value="primaryDepartment" />;
+var frmIndex=0;
+for(var i=0;i<document.forms[frmIndex].length;i++)
+document.forms[frmIndex].elements[i].disabled =true;
+disableYUIAddDeleteButtons(true);
 
+if(document.getElementById("approverComments"))
+	document.getElementById("approverComments").disabled=false;	
+if(null != document.getElementById("approverDepartment") ){
+	document.getElementById("approverDepartment").disabled=false;    
+	document.getElementById("approverDesignation").disabled=false;
+	document.getElementById("approverPositionId").disabled=false;
+	
+}
+if(document.getElementById("currentState"))
+	document.getElementById("currentState").disabled=false;		
+if(document.getElementById("currentDesignation"))
+	document.getElementById("currentDesignation").disabled=false;		
+if(document.getElementById("additionalRule"))
+	document.getElementById("additionalRule").disabled=false;		
+if(document.getElementById("amountRule"))
+	document.getElementById("amountRule").disabled=false;		
+if(document.getElementById("workFlowDepartment"))
+	document.getElementById("workFlowDepartment").disabled=false;		
+if(document.getElementById("pendingActions"))
+	document.getElementById("pendingActions").disabled=false;		
+if(document.getElementById("approverName"))
+	document.getElementById("approverName").disabled=false;		
+if(document.getElementById("workFlowAction"))
+	document.getElementById("workFlowAction").disabled=false;		
+if(document.getElementById("Forward"))
+	document.getElementById("Forward").disabled=false;	
+if(document.getElementById("Reject"))
+	document.getElementById("Reject").disabled=false;	
+if(document.getElementById("Cancel"))
+	document.getElementById("Cancel").disabled=false;	
+if(document.getElementById("Approve"))
+	document.getElementById("Approve").disabled=false;	
+if(document.getElementById("button2"))
+	document.getElementById("button2").disabled=false;		
+	  	
 </script>
 
 </body>

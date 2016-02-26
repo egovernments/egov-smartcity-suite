@@ -45,6 +45,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgfAccountcodePurpose;
 import org.egov.commons.Fund;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -56,7 +57,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation()
-@Transactional(readOnly = true)
 @Results({
     @Result(name = FundAction.NEW, location = "fund-" + FundAction.NEW + ".jsp"),
     @Result(name = "search", location = "fund-search.jsp"),
@@ -85,7 +85,7 @@ public class FundAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         dropdownData.put("fundList", persistenceService
-                .findAllBy("from Fund where isActive=1 order by name"));
+                .findAllBy("from Fund where isActive=true order by name"));
     }
 
     @SkipValidation
@@ -180,7 +180,7 @@ public class FundAction extends BaseFormAction {
                 }
 
             fundNameStr.append(fund.getCode());
-            fundOld.setName(fundNameStr.toString());
+            fundOld.setName(fund.getName());
             fundOld.setCode(fund.getCode());
             fundOld.setIdentifier(fund.getIdentifier());
             fundOld.setIsactive(fund.getIsactive());
@@ -275,9 +275,7 @@ public class FundAction extends BaseFormAction {
 
     @SkipValidation
     private BigDecimal getLoggedInUser() {
-        final Integer uid = (Integer) getSession().get("com.egov.user.LoginUserId");
-        final BigDecimal userId = new BigDecimal(uid.toString());
-        return userId;
+        return BigDecimal.valueOf(EgovThreadLocals.getUserId());
     }
 
     private void validatemandatoryFields() {

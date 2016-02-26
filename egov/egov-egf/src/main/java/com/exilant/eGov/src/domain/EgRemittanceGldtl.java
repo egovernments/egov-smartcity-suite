@@ -37,15 +37,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-/*
- * EgRemittanceGldtl.java Created on Oct 5, 2007
- *
- * Copyright 2005 eGovernments Foundation. All rights reserved.
- * EGOVERNMENTS PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-
 package com.exilant.eGov.src.domain;
 
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
@@ -70,9 +64,9 @@ public class EgRemittanceGldtl
     EGovernCommon cm = new EGovernCommon();
     private String id = null;
     private String gldtlId = null;
-    private String gldtlAmt = "0";
+    private double gldtlAmt =0;
     private String lastModifiedDate = "1-Jan-1900";
-    private String remittedAmt = null;
+    private double remittedAmt = 0;
     private String tdsId = null;
     private static final Logger LOGGER = Logger.getLogger(EgRemittanceGldtl.class);
     private static TaskFailedException taskExc;
@@ -85,7 +79,7 @@ public class EgRemittanceGldtl
         gldtlId = aGldtlId;
     }
 
-    public void setGldtlAmt(final String aGldtlAmt) {
+    public void setGldtlAmt(final double aGldtlAmt) {
         gldtlAmt = aGldtlAmt;
     }
 
@@ -93,7 +87,7 @@ public class EgRemittanceGldtl
         lastModifiedDate = aLastModifiedDate;
     }
 
-    public void setRemittedAmt(final String aRemittedAmt) {
+    public void setRemittedAmt(final double aRemittedAmt) {
         remittedAmt = aRemittedAmt;
     }
 
@@ -109,7 +103,7 @@ public class EgRemittanceGldtl
         return gldtlId;
     }
 
-    public String getGldtlAmt() {
+    public double getGldtlAmt() {
         return gldtlAmt;
     }
 
@@ -117,7 +111,7 @@ public class EgRemittanceGldtl
         return lastModifiedDate;
     }
 
-    public String getRemittedAmt() {
+    public double getRemittedAmt() {
         return remittedAmt;
     }
 
@@ -149,15 +143,16 @@ public class EgRemittanceGldtl
                 "VALUES (?,?,?, to_date(?,'dd-Mon-yyyy HH24:MI:SS'),?,?)";
 
         pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-        pstmt.setString(0, id);
-        pstmt.setString(1, gldtlId);
-        pstmt.setString(2, gldtlAmt);
+        pstmt.setBigInteger(0,new BigInteger(id));
+        pstmt.setBigInteger(1, new BigInteger(gldtlId));
+        pstmt.setDouble(2, gldtlAmt);
         pstmt.setString(3, lastModifiedDate);
-        pstmt.setString(4, remittedAmt);
-        pstmt.setString(5, tdsId);
-        /*
-         * pstmt.executeQuery(); pstmt.close();
-         */
+        pstmt.setDouble(4, remittedAmt);
+        if(tdsId!=null)
+            pstmt.setBigInteger(5, new BigInteger(tdsId));
+        else
+            pstmt.setBigInteger(5, null);
+
         pstmt.executeUpdate();
 
     }

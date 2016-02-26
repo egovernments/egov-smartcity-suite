@@ -45,11 +45,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Constants {
+        public static final String FILESTORE_MODULECODE = "TL";
         public static final String NEW = "new";
         public static final String EDIT = "edit";
         public static final String VIEW = "view";
         public static final String REQUIRED = "Required";
         public static final String UPGRADE = "upgrade";
+       
 
         public static final String TRADELICENSE_TRADECODE = "TRADELICENSE_TRADECODE";
         public static final String LICENSE_NUMBER = "LICENSE_NUMBER";
@@ -77,28 +79,26 @@ public class Constants {
         // Workflow states & actions
         public static final String WF_ACTION_FEE_COLLECTED = "FEE_COLLECTED";
         public static final String WF_ACTION_LICENSE_GENERATED = "LICENSE_GENERATION";
+        public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
         public static final String WF_ACTION_SAVE_DRAFT = "SAVE_DRAFT";
-        public static final String WF_ACTION_SAVE_NEW = "SAVE_NEW";
-        public static final String WF_ACTION_ENTER_TRADE = "ENTER_TRADE";
-        public static final String WF_ACTION_APPROVE_NEW = "APPROVE_NEW";
-        public static final String WF_ACTION_REJECT_NEW = "REJECT_NEW";
         public static final String WF_ACTION_RENEWAL = "RENEWAL";
         public static final String WORKFLOW_STATE_TYPE_END = "END";
-        public static final String WF_STATE_Fee_Collected = "Fee Collected";
-        public static final String WF_STATE_SI_Approval_Pending = "SI Approval Pending";
-        public static final String WF_STATE_AHO_Approval_Pending = "AHO Approval Pending";
-        public static final String WF_STATE_ARO_Approval_Pending_Health = "ARO Approval Pending Health";
-        public static final String WF_STATE_AEE_Approval_Pending = "AEE Approval Pending";
-        public static final String WF_STATE_ARO_Approval_Pending_Town_Planning = "ARO Approval Pending Town-Planning";
-        public static final String WF_STATE_ZO_Approval_Pending = "ZO Approval Pending";
+        public static final String WF_STATE_SO_APPROVED ="Create License:Sanitary inspector Approved";
         public static final String WF_STATE_COLLECTION_PENDING = "Create License:Commissioner Approved";
         public static final String WF_STATE_INSPECTION_PENDING="Create License:Sanitary inspector Approve pending";
+       public static final String WF_STATE_INSPECTION_APPROVED_STR="Sanitary inspector Approved";
+       public static final String WF_STATE_COMMISSIONER_APPROVED_STR="Commissioner Approved";
+
         public static final String WF_STATE_GENERATE_CERTIFICATE="Create License:generate Certificate";
         public static final String WF_STATE_LICENSE_NOT_APPROVED = "License Not Approved";
         public static final String WF_STATE_RENEWAL_PRINT_PENDING = "Renewal Print Pending";
+        public static final String WF_STATE_RENEWAL_COMM_APPROVED="Renewal License:Commissioner Approved";
         public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
-
+        public static final String WF_STATE_DIGITAL_SIGN_NEWTL="Create License:Collection Done";
+        public static final String WF_STATE_DIGITAL_SIGN_RENEWAL="Renewal License:Collection Done";
+        public static final String WF_STATE_DIGISIGN_STR="Collection Done";
         // JSP Pages
+       
         public static final String VIEW_RESULT_PAGE = "result";
         public static final String VIEW_LICENSE = "view";
         public static final String VIEW_ACK_NOTICE = "ack";
@@ -739,10 +739,11 @@ public class Constants {
         public static final String APPLICATION_STATUS_CREATED_CODE = "CREATED";
         public static final String APPLICATION_STATUS_INSPE_CODE = "INSPECTIONDONE";
         public static final String APPLICATION_STATUS_APPROVED_CODE = "APPROVED";
-        public static final String APPLICATION_STATUS_COLLECTION_CODE = "COLLECTIONAMOUNTPAID";
-        public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNUPDATED";
+        public static final String APPLICATION_STATUS_COLLECTION_CODE = "COLLECTIONPENDING";
+        public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNPENDING";
         public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
         public static final String STR_WITH_APPLICANT_NAME = " Dear ";
+        public static final String RENEWAL_LIC_APPTYPE ="Renew";
         
         public static final String STR_WITH_LICENCE_NUMBER=" Trade License with TIN No.";
         public static final String STR_FOR_SUBMISSION = "/- and the Amount is Collected  @ Rs. ";
@@ -765,5 +766,16 @@ public class Constants {
         public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
         public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
         public static final String BLOCK = "Block";
+        
+        public static final String PENALTY_DMD_REASON_CODE = "Penalty";
+        
+        public static final String APPROVAL_COMMENT = "approvalComment";
+        public static final String SIGNWORKFLOWACTION = "Sign";
+        public static final String WF_PREVIEW_BUTTON = "Preview";
+        public static final String APPLICATION_NUMBER = "applicationNumber";
+        public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
+        public static final String DIGITALSIGNINCLUDEINWORKFLOW =  "DIGITALSIGNINCLUDEINWORKFLOW";
+        public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
+        public static final String ROLE_COMMISSIONERDEPARTEMNT ="Health";
 }
 

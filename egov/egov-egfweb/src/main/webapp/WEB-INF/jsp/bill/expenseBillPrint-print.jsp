@@ -71,6 +71,15 @@
 	}
 }
 </style>
+<script>
+function exportXls(){
+	window.open('/EGF/bill/expenseBillPrint-exportXls.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+}
+
+function exportPdf(){
+	window.open('/EGF/bill/expenseBillPrint-exportPdf.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+}
+</script>
 
 <body>
 	<div id="container">
@@ -85,9 +94,9 @@
 				onclick="javascript:parent.report.print();" value="Print"
 				class="button" />
 			<s:submit cssClass="button" value="Save as PDF" method="exportPdf"
-				id="printPDF" />
+				id="printPDF" onclick="return exportPdf();" />
 			<s:submit cssClass="button" value="Save as Excel" method="exportXls"
-				id="printXLS" />
+				id="printXLS" onclick="return exportXls();" />
 		</div>
 	</s:form>
 </body>

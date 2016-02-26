@@ -41,25 +41,29 @@ package org.egov.pgr.service.reports;
 
 import java.util.Date;
 
-import org.egov.infstr.utils.HibernateUtil;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class AgeingReportService {
-    private static final Logger LOG = LoggerFactory.getLogger(AgeingReportService.class);
+
     private static final String COMPLAINTSTATUS_COMPLETED = "Completed";
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public SQLQuery getageingReportQuery(final DateTime fromDate, final DateTime toDate, final String typeofReport,
             final String complaintDateType, final String groupBy) {
 
-        final StringBuffer query = new StringBuffer();
+        final StringBuilder query = new StringBuilder();
 
         if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
             query.append("SELECT bndry.name as name, ");// TODO CHECK
@@ -69,18 +73,23 @@ public class AgeingReportService {
             query.append("SELECT dept.name as name, ");
 
         if (typeofReport != null && !"".equals(typeofReport)
-                && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED))
-            query.append(" COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) > :grtthn90 THEN 1 END) grtthn90, "
-                    + " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn45 AND :lsthn90 THEN 1 END) btw45to90, "
-                    + " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn15 AND :lsthn45 THEN 1 END) btw15to45, "
-                    + " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :zero AND :lsthn15 THEN 1 END) lsthn15 "
-                    + " FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype, eg_wf_states state, egpgr_complaint cd  ");
-        else
-            query.append(" COUNT(CASE WHEN cd.createddate < :grtthn90 THEN 1 END) grtthn90, "
-                    + " COUNT(CASE WHEN cd.createddate BETWEEN :lsthn90 AND :grtthn45 THEN 1 END) btw45to90, "
-                    + " COUNT(CASE WHEN cd.createddate BETWEEN :lsthn45 AND  :grtthn15 THEN 1 END) btw15to45, "
-                    + " COUNT(CASE WHEN cd.createddate BETWEEN :lsthn15 AND :currdate THEN 1 END) lsthn15 "
-                    + " FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype ,egpgr_complaint cd  ");
+                && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED)) {
+            query.append(
+                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) > :grtthn90 THEN 1 END) grtthn90, ");
+            query.append(
+                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn45 AND :lsthn90 THEN 1 END) btw45to90, ");
+            query.append(
+                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn15 AND :lsthn45 THEN 1 END) btw15to45, ");
+            query.append(
+                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :zero AND :lsthn15 THEN 1 END) lsthn15 ");
+            query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype, eg_wf_states state, egpgr_complaint cd  ");
+        } else {
+            query.append(" COUNT(CASE WHEN cd.createddate < :grtthn90 THEN 1 END) grtthn90, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn90 AND :grtthn45 THEN 1 END) btw45to90, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn45 AND  :grtthn15 THEN 1 END) btw15to45, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn15 AND :currdate THEN 1 END) lsthn15 ");
+            query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype ,egpgr_complaint cd  ");
+        }
 
         if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
             query.append("  left JOIN eg_boundary bndry on cd.location =bndry.id ");
@@ -98,7 +107,7 @@ public class AgeingReportService {
     }
 
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String typeofReport,
-            final String complaintDateType, final StringBuffer query) {
+            final String complaintDateType, final StringBuilder query) {
 
         if (typeofReport != null && !"".equals(typeofReport)
                 && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED)) {
@@ -125,7 +134,7 @@ public class AgeingReportService {
 
     private SQLQuery setParameterForAgeingReport(final String querykey, final String typeofReport, final DateTime fromDate,
             final DateTime toDate, final String complaintDateType) {
-        final SQLQuery qry = HibernateUtil.getCurrentSession().createSQLQuery(querykey);
+        final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if (typeofReport != null && !"".equals(typeofReport)
                 && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED)) {
@@ -163,7 +172,7 @@ public class AgeingReportService {
         else if (toDate != null)
             qry.setParameter("toDates", getEndOfDayByDate(toDate));
         return qry;
-      }
+    }
 
     private Date getEndOfDayByDate(final DateTime fromDate) {
         return fromDate.withTime(23, 59, 59, 999).toDate();

@@ -52,7 +52,8 @@
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js"></script>
-
+<script type="text/javascript"
+	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
 
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">

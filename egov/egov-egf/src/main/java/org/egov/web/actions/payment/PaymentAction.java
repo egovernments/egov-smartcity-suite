@@ -226,7 +226,7 @@ public class PaymentAction extends BasePaymentAction {
                     "bankbranchList",
                     persistenceService
                             .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and type in ('RECEIPTS_PAYMENTS','PAYMENTS') ) and br.isactive=1 order by br.bank.name asc",
+                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and type in ('RECEIPTS_PAYMENTS','PAYMENTS') ) and br.isactive=true order by br.bank.name asc",
                                     fund));
         }
         else
@@ -239,12 +239,12 @@ public class PaymentAction extends BasePaymentAction {
 
         if (getBankbranch() != null)
             addDropdownData("bankaccountList",
-                    persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=1 ", getBankbranch()));
+                    persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ", getBankbranch()));
         else if (parameters.get("paymentheader.bankaccount.bankbranch.id") != null
                 && !parameters.get("paymentheader.bankaccount.bankbranch.id")[0].equals("-1"))
             addDropdownData(
                     "bankaccountList",
-                    persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=1 ",
+                    persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ",
                             Integer.valueOf(parameters.get("paymentheader.bankaccount.bankbranch.id")[0])));
         else
             addDropdownData("bankaccountList", Collections.EMPTY_LIST);
@@ -254,7 +254,7 @@ public class PaymentAction extends BasePaymentAction {
                     "bankbranchList",
                     persistenceService
                             .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=1 order by br.bank.name asc",
+                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=true order by br.bank.name asc",
                                     billregister.getEgBillregistermis().getFund()));
         }
 
@@ -276,7 +276,7 @@ public class PaymentAction extends BasePaymentAction {
                         "bankbranchList",
                         persistenceService
                                 .findAllBy(
-                                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = 1 and type in (?,?) ) and br.isactive=1 and br.bank.isactive = 1 order by br.bank.name asc",
+                                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true and type in (?,?) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
                                         fund, BankAccountType.valueOf(strArray[0]),
                                         BankAccountType.valueOf(strArray[1])));
             } else
@@ -284,14 +284,14 @@ public class PaymentAction extends BasePaymentAction {
                         "bankbranchList",
                         persistenceService
                                 .findAllBy(
-                                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = 1 and type in (?) ) and br.isactive=1 and br.bank.isactive = 1 order by br.bank.name asc",
+                                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true and type in (?) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
                                         fund, typeOfAccount));
         } else
             addDropdownData(
                     "bankbranchList",
                     persistenceService
                             .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = 1) and br.isactive=1 and br.bank.isactive = 1 order by br.bank.name asc",
+                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
                                     fund));
         String bankCode = null;
 
@@ -311,7 +311,7 @@ public class PaymentAction extends BasePaymentAction {
                     "bankbranchList",
                     persistenceService
                             .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and type in ('RECEIPTS_PAYMENTS','PAYMENTS') ) and br.isactive=1 and br.bank.code = ? order by br.bank.name asc",
+                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and type in ('RECEIPTS_PAYMENTS','PAYMENTS') ) and br.isactive=true and br.bank.code = ? order by br.bank.name asc",
                                     fund, bankCode));
         }
         if (LOGGER.isDebugEnabled())
@@ -539,20 +539,18 @@ public class PaymentAction extends BasePaymentAction {
                     " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
 
             egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for financial expense bills
-            final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for external
-            // systems
-            final String cBillSql = cBillmainquery + " and bill.status in (?,?) " + sql.toString()
+            final String cBillSql = cBillmainquery + " and bill.status in (?) " + sql.toString()
                     + " order by bill.billdate desc";
-            final String cBillSql1 = cBillmainquery1 + " and bill.status in (?,?) " + sql.toString()
+            final String cBillSql1 = cBillmainquery1 + " and bill.status in (?) " + sql.toString()
                     + " order by bill.billdate desc";
             contingentBillList = getPersistenceService().findPageBy(cBillSql, 1, 500,
-                    FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList();
+                    FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList();
             if (contingentBillList != null)
                 contingentBillList.addAll(getPersistenceService().findPageBy(cBillSql1, 1, 500,
-                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList());
+                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList());
             else
                 contingentBillList = getPersistenceService().findPageBy(cBillSql1, 1, 500,
-                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList();
+                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList();
             final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(contingentBillList);
             contingentBillList.clear();
             contingentBillList.addAll(tempBillList);
@@ -1070,7 +1068,7 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.info("Bankbranch id = " + parameters.get("bankbranch")[0]);
         final Bankbranch bankbranch = (Bankbranch) persistenceService.find("from Bankbranch where id = ?",
                 Integer.parseInt(parameters.get("bankbranch")[0]));
-        bankaccountList = getPersistenceService().findAllBy(" FROM Bankaccount where bankbranch=? and isactive=1 ", bankbranch);
+        bankaccountList = getPersistenceService().findAllBy(" FROM Bankaccount where bankbranch=? and isactive=true ", bankbranch);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccounts.");
         return "bankaccount";
@@ -1193,10 +1191,10 @@ public class PaymentAction extends BasePaymentAction {
         }
         addDropdownData(
                 "bankaccountList",
-                persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=1 ", paymentheader
+                persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ", paymentheader
                         .getBankaccount().getBankbranch().getId()));
         // addDropdownData("bankbranchList",
-        // persistenceService.findAllBy("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=1 order by br.bank.name asc",paymentheader.getVoucherheader().getFundId()));
+        // persistenceService.findAllBy("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=true order by br.bank.name asc",paymentheader.getVoucherheader().getFundId()));
         loadbankBranch(paymentheader.getVoucherheader().getFundId());
         billList = paymentService.getMiscBillList(paymentheader);
         if (FinancialConstants.PAYMENTVOUCHER_NAME_SALARY.equalsIgnoreCase(paymentheader.getVoucherheader().getName()))
@@ -1221,7 +1219,7 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.debug("Starting modifyAdvancePayment...");
         paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where id=? ", paymentheader.getId());
         addDropdownData("bankaccountList", persistenceService.findAllBy(
-                " from Bankaccount where bankbranch.id=? and isactive=1 and fund.id=?", paymentheader.getBankaccount()
+                " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?", paymentheader.getBankaccount()
                         .getBankbranch().getId(), paymentheader.getBankaccount().getFund().getId()));
         loadbankBranch(paymentheader.getVoucherheader().getFundId());
         advanceRequisitionList.addAll(paymentActionHelper.getAdvanceRequisitionDetails(paymentheader));
@@ -1301,7 +1299,7 @@ public class PaymentAction extends BasePaymentAction {
                     "bankbranchList",
                     persistenceService
                             .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=1 order by br.bank.name asc",
+                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=true order by br.bank.name asc",
                                     paymentheader.getVoucherheader().getFundId()));
             throw new ValidationException(e.getErrors());
         } catch (final ApplicationRuntimeException e)
@@ -1336,7 +1334,7 @@ public class PaymentAction extends BasePaymentAction {
             paymentheader.setBankaccount((Bankaccount) persistenceService.find("from Bankaccount where id=?",
                     Integer.valueOf(parameters.get("paymentheader.bankaccount.id")[0])));
             addDropdownData("bankaccountList", persistenceService.findAllBy(
-                    " from Bankaccount where bankbranch.id=? and isactive=1 and fund.id=?", paymentheader.getBankaccount()
+                    " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?", paymentheader.getBankaccount()
                             .getBankbranch().getId(), paymentheader.getBankaccount().getFund().getId()));
             loadbankBranch(paymentheader.getBankaccount().getFund());
             if (getFieldErrors().isEmpty()) {
@@ -1359,13 +1357,13 @@ public class PaymentAction extends BasePaymentAction {
         } catch (final ValidationException e) {
             LOGGER.error("Error" + e.getMessage(), e);
             addDropdownData("bankaccountList", persistenceService.findAllBy(
-                    " from Bankaccount where bankbranch.id=? and isactive=1 and fund.id=?", paymentheader.getBankaccount()
+                    " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?", paymentheader.getBankaccount()
                             .getBankbranch().getId(), paymentheader.getBankaccount().getFund().getId()));
             loadbankBranch(paymentheader.getBankaccount().getFund());
             throw new ValidationException(e.getErrors());
         } catch (final Exception e) {
             addDropdownData("bankaccountList", persistenceService.findAllBy(
-                    " from Bankaccount where bankbranch.id=? and isactive=1 and fund.id=?", paymentheader.getBankaccount()
+                    " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?", paymentheader.getBankaccount()
                             .getBankbranch().getId(), paymentheader.getBankaccount().getFund().getId()));
             loadbankBranch(paymentheader.getBankaccount().getFund());
             LOGGER.error(e.getMessage(), e);

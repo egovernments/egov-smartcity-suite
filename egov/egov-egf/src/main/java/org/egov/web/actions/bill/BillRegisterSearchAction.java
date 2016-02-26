@@ -230,8 +230,8 @@ public class BillRegisterSearchAction extends BaseFormAction {
     private List<Object[]> getOwnersForWorkFlowState(final List<Long> stateIds)
     {
         List<Object[]> ownerNamesList = new ArrayList<Object[]>();
-        final String ownerNamesQueryStr = "select state.ownerUser.username,bill.state.id from User egusr,State state, EgBillregister bill"
-                + " where bill.state.id=state.id and bill.state.id in (:IDS)";
+        final String ownerNamesQueryStr = "select a.employee.username,bill.state.id from Assignment a,State state, EgBillregister bill"
+                + " where  bill.state.id=state.id and a.position.id = state.ownerPosition.id and bill.state.id in (:IDS)";
         int size = stateIds.size();
         if (size > 999)
         {

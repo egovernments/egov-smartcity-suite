@@ -100,7 +100,7 @@ public class BankAction extends BaseFormAction {
                 if (bank == null)
                     return "search";
                 else {
-                    if (bank.getIsactive() != 0)
+                    if (bank.getIsactive() != false)
                         isActive = true;
                     else
                         isActive = false;
@@ -126,9 +126,9 @@ public class BankAction extends BaseFormAction {
     public String save() {
         try {
             if (isActive)
-                bank.setIsactive(1);
+                bank.setIsactive(true);
             else
-                bank.setIsactive(0);
+                bank.setIsactive(false);
 
             if (bank.getId() == null) {
                 // TODO Dirty Code can be avoided by extending BaseModel for Bank
@@ -178,7 +178,7 @@ public class BankAction extends BaseFormAction {
     }
 
     public String getFundsJSON() {
-        final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", 1);
+        final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", true);
         final StringBuilder fundJson = new StringBuilder(":;");
         for (final Object[] fund : funds)
             fundJson.append(fund[0]).append(":").append(fund[1]).append(";");

@@ -54,7 +54,7 @@
 				</div>
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0"
-				class="tablebottom" id="vacantLandTable">
+				class="table table-bordered" id="vacantLandTable">
 
 				<tbody>
 					<tr>
@@ -76,7 +76,7 @@
 								var="ownerInfo">
 								<tr id="ownerDetailsRow">
 								
-									<td class="blueborderfortd" align="center"><c:out
+									<td class="blueborderfortd" align="center" ><c:out
 											default="N/A" value="${ownerInfo.owner.aadhaarNumber}"></c:out></td>
 									<td class="blueborderfortd" align="center"><c:out
 											default="N/A" value="${ownerInfo.owner.mobileNumber}"></c:out></td>

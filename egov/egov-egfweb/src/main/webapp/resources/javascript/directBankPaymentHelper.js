@@ -47,6 +47,11 @@ function validate() {
 		undoLoadingMask();
 		return false;
 	}
+	if(!balanceCheck()){
+		bootbox.alert("Insuffiecient Bank Balance. Do you want to process", function() { 
+			return true;
+		});
+	}
 	return true;
 }
 function updateAndCheckAmount() {
@@ -115,9 +120,11 @@ function populateAvailableBalance(accnumObj) {
 
 var callback = {
 	success : function(o) {
+		console.log("success");
 		document.getElementById('availableBalance').value = o.responseText;
 	},
 	failure : function(o) {
+		console.log("failed");
 	}
 }
 
@@ -161,18 +168,12 @@ function disableControls(frmIndex, isDisable) {
 		document.forms[frmIndex].elements[i].disabled = isDisable;
 }
 
-function balanceCheck(obj, name, value) {
+function balanceCheck() {
 
-	if (!validateAppoveUser(name, value))
-		return false;
-
-	if (obj.id == 'wfBtn1') // in case of Reject
-		return true;
-	if (document.getElementById('balanceAvl')
-			&& document.getElementById('balanceAvl').style.display == "block") {
+	if (document.getElementById('balanceAvl')) {
+		console.log("ins did");
 		if (parseFloat(document.getElementById('amount').value) > parseFloat(document
 				.getElementById('availableBalance').value)) {
-			bootbox.alert(insuffiecientBankBalance);
 			return false;
 		}
 	}

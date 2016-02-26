@@ -243,6 +243,7 @@ public class ContingentBillAction extends BaseBillAction {
         return NEW;
     }
 
+    @ValidationErrorPage(VIEW)
     @Transactional
     @SkipValidation
     @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-update")
@@ -308,7 +309,7 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     @Validations(requiredFields = { @RequiredFieldValidator(fieldName = "fundId", message = "", key = REQUIRED),
-            @RequiredFieldValidator(fieldName = "commonBean.billNumber", message = "", key = REQUIRED),
+            /* @RequiredFieldValidator(fieldName = "commonBean.billNumber", message = "", key = REQUIRED), */
             @RequiredFieldValidator(fieldName = "commonBean.billDate", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "commonBean.billSubType", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "commonBean.payto", message = "", key = REQUIRED)
@@ -324,6 +325,12 @@ public class ContingentBillAction extends BaseBillAction {
         try {
             voucherHeader.setVoucherDate(commonBean.getBillDate());
             voucherHeader.setVoucherNumber(commonBean.getBillNumber());
+            if (commonBean.getFunctionId() != null) {
+                CFunction function1 = (CFunction) getPersistenceService().find(" from CFunction where id=?",
+                        commonBean.getFunctionId().longValue());
+                
+                voucherHeader.getVouchermis().setFunction(function1);
+            }
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
             // update DirectBankPayment source path
             headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill-beforeView.action?billRegisterId=");
@@ -334,12 +341,7 @@ public class ContingentBillAction extends BaseBillAction {
             bill = checkBudgetandGenerateNumber(bill);
             // this code should be removed when we enable single function centre change
 
-            if (commonBean.getFunctionId() != null) {
-                CFunction function = (CFunction) getPersistenceService().find(" from CFunction where id=?",
-                        commonBean.getFunctionId().longValue());
-                // CFunction function = commonsService.getCFunctionById(commonBean.getFunctionId().longValue());
-                voucherHeader.getVouchermis().setFunction(function);
-            }
+            
 
             validateFields();
             if (!isBillNumberGenerationAuto())
@@ -589,8 +591,19 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     private EgBillregister checkBudgetandGenerateNumber(final EgBillregister bill) {
-        final ScriptContext scriptContext = ScriptService.createContext("voucherService", voucherService, "bill", bill);
-        scriptService.executeScript("egf.bill.budgetcheck", scriptContext);
+        try {
+            final ScriptContext scriptContext = ScriptService.createContext("voucherService", voucherService, "bill", bill);
+            scriptService.executeScript("egf.bill.budgetcheck", scriptContext);
+        } catch (final ValidationException e) {
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
+        }
+        catch (final Exception e) {
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
+        }
         return bill;
     }
 
@@ -1190,13 +1203,14 @@ public class ContingentBillAction extends BaseBillAction {
         String billNumber = null;
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(bill.getBilldate());
         final String year = financialYear != null ? financialYear.getFinYearRange() : "";
-        final Script billNumberScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,
-                "egf.bill.number.generator")
-                .get(0);
+        /*
+         * final Script billNumberScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,
+         * "egf.bill.number.generator") .get(0);
+         */
         final ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator", sequenceGenerator, "sItem", bill,
                 "year",
                 year);
-        billNumber = (String) scriptService.executeScript(billNumberScript.getName(), scriptContext);
+        billNumber = (String) scriptService.executeScript("egf.bill.number.generator", scriptContext);
         if (billNumber == null)
             throw new ValidationException(Arrays.asList(new ValidationError("unable.to.generate.bill.number",
                     "No Financial Year for bill date" + sdf.format(bill.getBilldate()))));

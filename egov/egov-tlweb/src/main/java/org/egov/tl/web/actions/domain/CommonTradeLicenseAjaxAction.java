@@ -64,6 +64,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
@@ -100,7 +101,7 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     private Long feeTypeId;
     private String searchParamValue;
     private String searchParamType;
-    private List<License> licenseList = new ArrayList<License>();
+    private List<TradeLicense> licenseList = new ArrayList<TradeLicense>();
 
     /**
      * Populate wards.
@@ -290,11 +291,11 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
         this.feeTypeId = feeTypeId;
     }
 
-    public List<License> getLicenseList() {
+    public List<TradeLicense> getLicenseList() {
         return licenseList;
     }
 
-    public void setLicenseList(List<License> licenseList) {
+    public void setLicenseList(List<TradeLicense> licenseList) {
         this.licenseList = licenseList;
     }
 

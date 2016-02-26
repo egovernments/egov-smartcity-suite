@@ -60,9 +60,9 @@ public class Fundsource {
 
 	private BigDecimal llevel;
 
-	private boolean isactive;
+	private Boolean isactive;
 
-	private boolean isnotleaf;
+	private Boolean isnotleaf;
 
 	private FinancingInstitution finInstId;
 

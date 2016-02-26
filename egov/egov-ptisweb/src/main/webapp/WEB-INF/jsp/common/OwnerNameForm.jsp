@@ -154,7 +154,7 @@
 			}).done(function(value) {
 				console.log('response received!')
 				var userInfoObj = jQuery.parseJSON(value);
-				if(userInfoObj.valid == true) {
+				if(userInfoObj.uid == aadharNo) {
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val(userInfoObj.name);
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").attr('readonly', true);
 					if(userInfoObj.gender == 'M' || userInfoObj.gender == 'Male') {
@@ -170,7 +170,7 @@
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId").attr('readonly', true);
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").attr('disabled', 'disabled');
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', true);
-				} else if(userInfoObj.valid == false) {
+				} else {
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.aadhaarNumber']").val("");
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val("");
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").attr('readonly', false);

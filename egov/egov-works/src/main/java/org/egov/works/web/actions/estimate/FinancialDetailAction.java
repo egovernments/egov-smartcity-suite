@@ -384,7 +384,7 @@ public class FinancialDetailAction extends BaseFormAction {
         final List departmentList = getPersistenceService().findAllBy("from DepartmentImpl");
         addDropdownData("userDepartmentList", departmentList);
         addDropdownData("executingDepartmentList", departmentList);
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1"));
+        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true"));
         final List<CFinancialYear> finYrList = worksService.getAllFinancialYearsForWorks();
         addDropdownData("finYearList", finYrList);
         finYearRangeStr = generateFinYrList(finYrList);

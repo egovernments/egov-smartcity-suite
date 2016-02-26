@@ -46,16 +46,17 @@
 <title><s:text name="fund.search" /></title>
 </head>
 <body>
-	<div class="formmainbox">
-		<div class="subheadnew">
-			<s:text name="fund.search" />
-		</div>
 
-		<br />
-		<br />
 
-		<s:form name="fundForm" action="fund" theme="simple">
-			<s:hidden name="showMode" />
+	<br />
+	<br />
+
+	<s:form name="fundForm" action="fund" theme="simple">
+		<s:hidden name="showMode" />
+		<div class="formmainbox">
+			<div class="subheadnew">
+				<s:text name="fund.search" />
+			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td class="greybox"></td>
@@ -66,75 +67,84 @@
 				</tr>
 
 			</table>
-			<div class="buttonbottom">
-				<s:submit method="search" value="Search" cssClass="buttonsubmit" />
-				<input type="submit" value="Close"
-					onclick="javascript:window.close()" class="button" />
-			</div>
-	</div>
-	<s:if test="%{fundSearchList.size!=0}">
-		<table width="100%" border="0" align="center" cellpadding="0"
-			cellspacing="0" class="tablebottom">
-
-			<tr>
-
-				<th class="bluebgheadtd" style="width: 2%; text-align: center"
-					align="center">Sl No.</th>
-				<th class="bluebgheadtd" style="width: 4%; text-align: center"
-					align="center">Code</th>
-				<th class="bluebgheadtd" style="width: 8%; text-align: center"
-					align="center">Name</th>
-				<th class="bluebgheadtd" style="width: 4%; text-align: center"
-					align="center">IsActive</th>
-			</tr>
-			<c:set var="trclass" value="greybox" />
-			<s:iterator var="fa" value="fundSearchList" status="f">
-				<tr>
-
-					<td class="<c:out value="${trclass}"/>" style="text-align: center"
-						align="center"><s:property value="#f.index+1" /></td>
-					<td class="<c:out value="${trclass}"/>" style="text-align: center"
-						align="center"><a href="#"
-						onclick="urlLoad('<s:property value="%{id}" />','<s:property value="%{showMode}" />');"
-						id="sourceLink" /> <s:label value="%{code}" /> </a></td>
-					<td class="<c:out value="${trclass}"/>" style="text-align: center"
-						align="center"><s:property value="name" /></td>
-
-					<td class="<c:out value="${trclass}"/>" style="text-align: center"
-						align="center"><s:property value="isactive" /></td>
-					<c:choose>
-						<c:when test="${trclass=='greybox'}">
-							<c:set var="trclass" value="bluebox" />
-						</c:when>
-						<c:when test="${trclass=='bluebox'}">
-							<c:set var="trclass" value="greybox" />
-						</c:when>
-					</c:choose>
-				</tr>
-			</s:iterator>
-
-		</table>
-	</s:if>
-	<s:if test="%{fundSearchList.size==0 && !fundSearchList.isEmpty}">
-		<div id="msgdiv" style="display: block">
-			<table align="center" class="tablebottom" width="80%">
-				<tr>
-					<th class="bluebgheadtd" colspan="7">No Records Found
-					</td>
-				</tr>
-			</table>
 		</div>
-	</s:if>
+		<div class="buttonbottom">
+			<s:submit value="Search" cssClass="buttonsubmit"
+				onclick="return submitForm()" />
+			<input type="submit" value="Close"
+				onclick="javascript:window.close()" class="button" />
+		</div>
+		<s:if test="%{fundSearchList.size!=0}">
+			<table width="100%" border="0" align="center" cellpadding="0"
+				cellspacing="0" class="tablebottom">
+
+				<tr>
+
+					<th class="bluebgheadtd" style="width: 2%; text-align: center"
+						align="center">Sl No.</th>
+					<th class="bluebgheadtd" style="width: 4%; text-align: center"
+						align="center">Code</th>
+					<th class="bluebgheadtd" style="width: 8%; text-align: center"
+						align="center">Name</th>
+					<th class="bluebgheadtd" style="width: 4%; text-align: center"
+						align="center">IsActive</th>
+				</tr>
+				<c:set var="trclass" value="greybox" />
+				<s:iterator var="fa" value="fundSearchList" status="f">
+					<tr>
+
+						<td class="<c:out value="${trclass}"/>" style="text-align: center"
+							align="center"><s:property value="#f.index+1" /></td>
+						<td class="<c:out value="${trclass}"/>" style="text-align: center"
+							align="center"><a href="#"
+							onclick="urlLoad('<s:property value="%{id}" />','<s:property value="%{showMode}" />');"
+							id="sourceLink" /> <s:label value="%{code}" /> </a></td>
+						<td class="<c:out value="${trclass}"/>" style="text-align: center"
+							align="center"><s:property value="name" /></td>
+
+						<td class="<c:out value="${trclass}"/>" style="text-align: center"
+							align="center"><s:property value="isactive" /></td>
+						<c:choose>
+							<c:when test="${trclass=='greybox'}">
+								<c:set var="trclass" value="bluebox" />
+							</c:when>
+							<c:when test="${trclass=='bluebox'}">
+								<c:set var="trclass" value="greybox" />
+							</c:when>
+						</c:choose>
+					</tr>
+				</s:iterator>
+
+			</table>
+		</s:if>
+		<s:if test="%{fundSearchList.size==0 && !fundSearchList.isEmpty}">
+			<div id="msgdiv" style="display: block">
+				<table align="center" class="tablebottom" width="80%">
+					<tr>
+						<th class="bluebgheadtd" colspan="7">No Records Found
+						</td>
+					</tr>
+				</table>
+			</div>
+		</s:if>
 
 	</s:form>
 	<script type="text/javascript">
-	function urlLoad(id,showMode) {
-		if(showMode=='edit')
-			 url = "../masters/fund!beforeModify.action?id="+id+"&showMode=edit";
-		else
-			 url = "../masters/fund!beforeModify.action?id="+id+"&showMode=view"; 
-		window.open(url,'FundView','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
-	}
+		function submitForm() {
+			document.fundForm.action = '/EGF/masters/fund-search.action';
+			document.fundForm.submit();
+		}
+		function urlLoad(id, showMode) {
+			if (showMode == 'edit')
+				url = "../masters/fund-beforeModify.action?id=" + id
+						+ "&showMode=edit";
+			else
+				url = "../masters/fund-beforeModify.action?id=" + id
+						+ "&showMode=view";
+			window
+					.open(url, 'FundView',
+							'resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
+		}
 	</script>
 </body>
 </html>

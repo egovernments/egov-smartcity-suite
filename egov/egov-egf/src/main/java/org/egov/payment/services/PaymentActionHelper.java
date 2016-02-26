@@ -3,21 +3,32 @@ package org.egov.payment.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.Fund;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.deduction.model.EgRemittance;
+import org.egov.deduction.model.EgRemittanceDetail;
+import org.egov.deduction.model.EgRemittanceGldtl;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -27,7 +38,9 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.Miscbilldetail;
+import org.egov.model.deduction.RemittanceBean;
 import org.egov.model.payment.Paymentheader;
+import org.egov.model.recoveries.Recovery;
 import org.egov.model.voucher.CommonBean;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
@@ -52,6 +65,8 @@ public class PaymentActionHelper {
     @Autowired
     @Qualifier("miscbilldetailService")
     private MiscbilldetailService miscbilldetailService;
+    @Autowired
+    private FinancialYearHibernateDAO financialYearDAO;
 
     private static final Logger LOGGER = Logger.getLogger(PaymentActionHelper.class);
 
@@ -105,6 +120,110 @@ public class PaymentActionHelper {
     }
 
     @Transactional
+    public Paymentheader createRemittancePayment(Paymentheader paymentheader, CVoucherHeader voucherHeader,
+            Integer accountNumberId, String modeOfPayment, BigDecimal totalAmount, List<RemittanceBean> listRemitBean,
+            Recovery recovery, RemittanceBean remittanceBean, String remittedTo, WorkflowBean workflowBean,
+            HashMap<String, Object> headerDetails, CommonBean commonBean) {
+        try {
+            voucherHeader = createVoucherAndLedger(voucherHeader, remittanceBean, recovery, commonBean, headerDetails,
+                    listRemitBean);
+            paymentheader = paymentService.createPaymentHeader(voucherHeader, accountNumberId,
+                    modeOfPayment, totalAmount);
+            updateEgRemittanceglDtl(paymentheader.getVoucherheader(), listRemitBean, recovery);
+            createMiscBillDetail(paymentheader.getVoucherheader(), remittanceBean, remittedTo);
+            paymentheader = sendForApproval(paymentheader, workflowBean);
+        } catch (final ValidationException e) {
+            LOGGER.error(e.getMessage(), e);
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
+        }
+        return paymentheader;
+    }
+
+    @Transactional
+    private CVoucherHeader createVoucherAndLedger(CVoucherHeader voucherHeader, RemittanceBean remittanceBean, Recovery recovery,
+            CommonBean commonBean, HashMap<String, Object> headerDetails, List<RemittanceBean> listRemitBean) {
+        headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/deduction/remitRecovery-beforeView.action?voucherHeader.id=");
+        HashMap<String, Object> detailMap = null;
+        final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
+        List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
+
+        detailMap = new HashMap<String, Object>();
+        detailMap.put(VoucherConstant.CREDITAMOUNT, remittanceBean.getTotalAmount().toString());
+        detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
+        final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                Long.valueOf(commonBean.getAccountNumberId()));
+        detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
+        accountdetails.add(detailMap);
+        detailMap = new HashMap<String, Object>();
+        detailMap.put(VoucherConstant.CREDITAMOUNT, ZERO);
+        detailMap.put(VoucherConstant.DEBITAMOUNT, remittanceBean.getTotalAmount().toString());
+        recovery = (Recovery) persistenceService.find("from Recovery where id=?", remittanceBean.getRecoveryId());
+        detailMap.put(VoucherConstant.GLCODE, recovery.getChartofaccounts().getGlcode());
+        accountdetails.add(detailMap);
+        subledgerDetails = addSubledgerGroupBy(subledgerDetails, recovery.getChartofaccounts().getGlcode(), listRemitBean);
+        voucherHeader = createVoucher.createPreApprovedVoucher(headerDetails, accountdetails, subledgerDetails);
+        return voucherHeader;
+    }
+
+    private List<HashMap<String, Object>> addSubledgerGroupBy(final List<HashMap<String, Object>> subledgerDetails,
+            final String glcode, List<RemittanceBean> listRemitBean) {
+        final Map<Integer, List<Integer>> detailTypesMap = new HashMap<Integer, List<Integer>>();
+        Integer detailTypeId = null;
+        final List<Integer> detailTypeList = new ArrayList<Integer>();
+        HashMap<String, Object> subledgertDetailMap = null;
+        for (final RemittanceBean rbean : listRemitBean)
+        {
+            detailTypeId = rbean.getDetailTypeId();
+            if (detailTypeList.contains(detailTypeId))
+            {
+                if (detailTypesMap.get(detailTypeId).contains(rbean.getDetailKeyid()))
+                    continue;
+                else
+                    detailTypesMap.get(detailTypeId).add(rbean.getDetailKeyid());
+
+            }
+            else
+            {
+                detailTypeList.add(detailTypeId);
+                detailTypesMap.put(detailTypeId, new ArrayList<Integer>());
+                detailTypesMap.get(detailTypeId).add(rbean.getDetailKeyid());
+
+            }
+
+        }
+        final Set<Entry<Integer, List<Integer>>> entrySet = detailTypesMap.entrySet();
+        final List<RemittanceBean> tempRemitBean = listRemitBean;
+        for (final Entry<Integer, List<Integer>> o : entrySet)
+        {
+            final List<Integer> value = o.getValue();
+            for (final Integer detailKey : value)
+            {
+                BigDecimal sumPerDetailKey = BigDecimal.ZERO;
+                // int lastIndexOf = tempRemitBean.lastIndexOf(detailKey);
+                for (final RemittanceBean remittanceBean2 : tempRemitBean)
+                    if (remittanceBean2.getDetailKeyid() != null && remittanceBean2.getDetailKeyid().equals(detailKey))
+                        sumPerDetailKey = sumPerDetailKey.add(remittanceBean2.getPartialAmount());
+                subledgertDetailMap = new HashMap<String, Object>();
+                subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT, sumPerDetailKey);
+                subledgertDetailMap.put(VoucherConstant.CREDITAMOUNT, BigDecimal.ZERO);
+                subledgertDetailMap.put(VoucherConstant.DETAILTYPEID, o.getKey().toString());
+                subledgertDetailMap.put(VoucherConstant.DETAILKEYID, detailKey);
+                subledgertDetailMap.put(VoucherConstant.GLCODE, glcode);
+                subledgerDetails.add(subledgertDetailMap);
+            }
+
+        }
+        return subledgerDetails;
+    }
+
+    @Transactional
     public Paymentheader sendForApproval(Paymentheader paymentheader, WorkflowBean workflowBean) {
         paymentService.transitionWorkFlow(paymentheader, workflowBean);
         paymentService.applyAuditing(paymentheader.getState());
@@ -142,6 +261,59 @@ public class PaymentActionHelper {
     protected Assignment getWorkflowInitiator(final Paymentheader paymentheader) {
         Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(paymentheader.getCreatedBy().getId());
         return wfInitiator;
+    }
+
+    @Transactional
+    private void updateEgRemittanceglDtl(final CVoucherHeader vh,
+            List<RemittanceBean> listRemitBean, Recovery recovery) {
+        final EgRemittance remit = new EgRemittance();
+        remit.setFund(vh.getFundId());
+        remit.setRecovery(recovery);
+        final CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(vh.getVoucherDate());
+        remit.setFinancialyear(financialYearByDate);
+        remit.setCreateddate(new Date());
+        remit.setCreatedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
+        remit.setLastmodifiedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
+        remit.setLastmodifieddate(new Date());
+        remit.setMonth(BigDecimal.valueOf(new Date().getMonth()));
+        remit.setVoucherheader(vh);
+        remit.setAsOnDate(vh.getVoucherDate());
+        final Set<EgRemittanceDetail> egRemittanceDetail = new HashSet<EgRemittanceDetail>();
+        EgRemittanceDetail remitDetail = null;
+        final Date currDate = new Date();
+        for (final RemittanceBean rbean : listRemitBean)
+        {
+            final EgRemittanceGldtl remittancegldtl = (EgRemittanceGldtl) persistenceService.find(
+                    "from EgRemittanceGldtl where id=?",
+                    rbean.getRemittance_gl_dtlId());
+            remittancegldtl.setRemittedamt(rbean.getPartialAmount());
+            persistenceService.persist(remittancegldtl);
+
+            remitDetail = new EgRemittanceDetail();
+            remitDetail.setEgRemittance(remit);
+            remitDetail.setEgRemittanceGldtl(remittancegldtl);
+            remitDetail.setRemittedamt(rbean.getPartialAmount());
+            remitDetail.setLastmodifieddate(currDate);
+            egRemittanceDetail.add(remitDetail);
+
+        }
+        remit.setEgRemittanceDetail(egRemittanceDetail);
+        persistenceService.persist(remit);
+    }
+
+    @Transactional
+    private void createMiscBillDetail(CVoucherHeader voucherHeader, RemittanceBean remittanceBean, String remittedTo) {
+        final Miscbilldetail miscbillDetail = new Miscbilldetail();
+        // miscbillDetail.setBillnumber(commonBean.getDocumentNumber());
+        // miscbillDetail.setBilldate(commonBean.getDocumentDate());
+        miscbillDetail.setBillamount(remittanceBean.getTotalAmount());
+        miscbillDetail.setPaidamount(remittanceBean.getTotalAmount());
+        miscbillDetail.setPassedamount(remittanceBean.getTotalAmount());
+        miscbillDetail.setPayVoucherHeader(voucherHeader);
+        // miscbillDetail.setBillVoucherHeader(vhid);
+        miscbillDetail.setPaidto(remittedTo);
+        persistenceService.persist(miscbillDetail);
+
     }
 
     @Transactional

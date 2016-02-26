@@ -208,7 +208,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
     {
         final String qrySQL = "select pos_id from eg_eis_employeeinfo empinfo, eg_designation desg, functionary func   " +
                 " where empinfo.functionary_id=func.id and empinfo.DESIGNATIONID=desg.DESIGNATIONID " +
-                " and empinfo.isactive=1   " +
+                " and empinfo.isactive=true   " +
                 " and desg.DESIGNATION_NAME like '" + designationName + "' and func.NAME like '" + functionaryName + "' ";
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(qrySQL);
         final List<BigDecimal> result = query.list();

@@ -42,6 +42,8 @@ package org.egov.tl.web.actions.masters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -55,10 +57,12 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.entity.LicenseType;
 import org.egov.tl.entity.RateTypeEnum;
 import org.egov.tl.service.FeeMatrixService;
 import org.egov.tl.service.FeeTypeService;
@@ -86,7 +90,9 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	public static final String VIEW = "view";
 	private Map<Long, String> licenseCategoryMap;
 	private Map<Long, String> licenseSubCategoryMap;
-
+	@Autowired
+	@Qualifier("persistenceService")
+	private PersistenceService persistenceService;
 	@Autowired
 	@Qualifier("licenseSubCategoryService")
 	private LicenseSubCategoryService licenseSubCategoryService;
@@ -128,7 +134,7 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
 		// In Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
-			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAll()));
+			setLicenseSubCategoryMap(Collections.EMPTY_MAP);
 		if (getId() != null){
 			subCategory = licenseSubCategoryService.findById(getId());
 			setCategoryId(subCategory.getCategory().getId());
@@ -212,6 +218,8 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 			if(categoryId!=null){
 				subCategory.setCategory(licenseCategoryService.findById(categoryId));
 			}
+			LicenseType licenseType=(LicenseType)persistenceService.find("from org.egov.tl.entity.LicenseType where name=?", Constants.TRADELICENSE);
+			subCategory.setLicenseType(licenseType);
 			subCategory.getLicenseSubCategoryDetails().clear();
 			populateSubCategoryDetails();
 			subCategory = licenseSubCategoryService.create(subCategory);

@@ -645,8 +645,8 @@ public class WaterConnectionDetailsService {
             else if (wfmatrix.getNextDesignation() != null
                     && (waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
-                            || waterConnectionDetails.getStatus().getCode()
-                                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)
+                            || (waterConnectionDetails.getLegacy().equals(false) && waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS))
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED)
                             || waterConnectionDetails.getStatus().getCode()
@@ -679,7 +679,9 @@ public class WaterConnectionDetailsService {
                             && (waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED) || waterConnectionDetails
                                     .getStatus().getCode()
-                                    .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS)))) {
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS)))
+                                    ||(waterConnectionDetails.getLegacy().equals(true) && waterConnectionDetails.getStatus().getCode()
+                                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS))) {
                 final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
                 if (posobj != null)
                     approvalPosition = posobj.getId();
@@ -795,6 +797,7 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
                 applicationIndex.setApproved(ApprovalStatus.UNKNOWN);
                 applicationIndex.setClosed(ClosureStatus.NO);
+                applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
                 else
@@ -831,7 +834,7 @@ public class WaterConnectionDetailsService {
                         .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED))
                 {
                     applicationIndex.setApproved(ApprovalStatus.REJECTED);
-                    applicationIndex.setClosed(ClosureStatus.NO);
+                    applicationIndex.setClosed(ClosureStatus.YES);
                 }
                 if (waterConnectionDetails.getConnection().getConsumerCode() != null)
                     applicationIndex.setConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());

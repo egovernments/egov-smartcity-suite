@@ -1883,7 +1883,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                         coaQry = coaQry + coa.get(i).getGlcode() + ")";
             }
             final String query = " from BudgetGroup bg where " + coaQry
-                    + " and bg in (select budgetGroup from BudgetDetail) and bg.isActive=1 order by bg.name";
+                    + " and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true order by bg.name";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadForGlcodeList detailcode query=====" + query);
             //persistenceService.setType(BudgetGroup.class);

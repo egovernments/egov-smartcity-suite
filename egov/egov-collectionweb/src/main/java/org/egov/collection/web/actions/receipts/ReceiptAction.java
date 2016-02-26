@@ -675,6 +675,7 @@ public class ReceiptAction extends BaseFormAction {
                     if (isBillSourcemisc()) {
                         receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_ADHOC);
                         receiptHeader.setVoucherDate(voucherDate);
+                        receiptHeader.setReceiptdate(voucherDate);
                         receiptHeader.setVoucherNum(voucherNum);
                         receiptHeader.setIsReconciled(Boolean.TRUE);
                         receiptHeader.setManualreceiptdate(manualReceiptDate);
@@ -1670,7 +1671,7 @@ public class ReceiptAction extends BaseFormAction {
             }
         }
         final List<CFinancialYear> list = persistenceService.findAllBy(
-                "from CFinancialYear where isActiveForPosting=1 and startingDate <= ? and endingDate >= ?",
+                "from CFinancialYear where isActiveForPosting=true and startingDate <= ? and endingDate >= ?",
                 getVoucherDate(), getVoucherDate());
         if (list.isEmpty()) {
             addActionError(getText("miscreciept.fYear.notActive"));

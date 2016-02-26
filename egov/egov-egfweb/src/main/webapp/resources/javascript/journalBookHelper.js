@@ -67,7 +67,7 @@
         doLoadingMask();
     	document.getElementById("resultDiv").style.display="none";
         var formObj = jQuery(document.getElementById("journalBookForm"));
-        var formURL = '/EGF/report/journalBookReport!ajaxSearch.action';
+        var formURL = '/EGF/report/journalBookReport-ajaxSearch.action';
         var formData = new FormData(document.getElementById("journalBookForm"));
         jQuery.ajax({
             url: formURL,
@@ -96,7 +96,7 @@
     }
 	
 	function viewVoucher(vid){
-		var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+vid;
+		var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+vid;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
 	

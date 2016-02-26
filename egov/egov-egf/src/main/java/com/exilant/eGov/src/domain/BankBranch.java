@@ -344,7 +344,7 @@ public class BankBranch {
      */
     public HashMap getBankBranch() throws TaskFailedException {
         final String query = "SELECT  CONCAT(CONCAT(bankBranch.bankId, '-'),bankBranch.ID) as \"bankBranchID\",concat(concat(bank.name , ' '),bankBranch.branchName) as \"bankBranchName\" FROM bank, bankBranch where"
-                + " bank.isactive=1 and bankBranch.isactive=1 and bank.ID = bankBranch.bankId order by bank.name";
+                + " bank.isactive=true and bankBranch.isactive=true and bank.ID = bankBranch.bankId order by bank.name";
         if (LOGGER.isInfoEnabled())
             LOGGER.info("  query   " + query);
         final Map hm = new LinkedHashMap<String, String>();
@@ -379,7 +379,7 @@ public class BankBranch {
         Query pst = null;
         List<Object[]> rs = null;
 
-        final String query = "SELECT  ID, accountNumber from bankAccount WHERE branchId= ? and isactive=1  ORDER BY ID";
+        final String query = "SELECT  ID, accountNumber from bankAccount WHERE branchId= ? and isactive=true  ORDER BY ID";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("  query   " + query);
         final Map hm = new HashMap();

@@ -59,6 +59,14 @@ background:none repeat scroll 0 0 #FFFFFF;
 	border-right-color: #E9E9E9;
 	border-bottom-color: #E9E9E9;
 }
+
+table.its tr td{
+	border: 1px solid #e9e9e9;
+	font-size:12px;
+    padding: 5px;
+}
+}
+
 a, a:link a:active {
 color:blue;
 text-decoration:none;

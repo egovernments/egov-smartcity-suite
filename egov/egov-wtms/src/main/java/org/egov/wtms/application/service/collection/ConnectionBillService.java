@@ -53,14 +53,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Installment;
+import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.BillServiceInterface;
 import org.egov.demand.interfaces.Billable;
+import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,8 +74,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ConnectionBillService extends BillServiceInterface {
 
+    private static final String STRING_WCMS_FUCNTION_CODE = "50515100";
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private EgBillDao egBillDAO;
+
+    @Autowired
+    private ApplicationContext context;
+
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -125,7 +141,9 @@ public class ConnectionBillService extends BillServiceInterface {
                 billdetail.setModifiedDate(currentDate);
                 billdetail.setOrderNo(i++);
                 billdetail.setDescription(
-                        reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription() + " # " + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription() ); 
+                        reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription() + " # "
+                                + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription());
+                billdetail.setFunctionCode(STRING_WCMS_FUCNTION_CODE);
                 billDetails.add(billdetail);
             }
         }
@@ -139,22 +157,28 @@ public class ConnectionBillService extends BillServiceInterface {
 
     }
 
-    EgBillDetails createBillDet(final Integer orderNo, final BigDecimal billDetAmt, final String glCode,
-            final String description, final Integer addlFlag) {
-        if (orderNo == null || billDetAmt == null || glCode == null)
-            throw new ApplicationRuntimeException("Exception in createBillDet....");
-        final EgBillDetails billdetail = new EgBillDetails();
-        billdetail.setFunctionCode("FUNCTION_CODE");
-        billdetail.setOrderNo(orderNo);
-        billdetail.setCreateDate(new Date());
-        billdetail.setModifiedDate(new Date());
-        billdetail.setCrAmount(billDetAmt);
-        billdetail.setDrAmount(BigDecimal.ZERO);
-        billdetail.setGlcode(glCode);
-        billdetail.setDescription(description);
-        billdetail.setAdditionalFlag(addlFlag);
-        LOGGER.info("Bill Detail object created with amount " + billDetAmt);
-        return billdetail;
+    public EgBill updateBillWithLatest(final Long billId) {
+        LOGGER.debug("updateBillWithLatest billId " + billId);
+        final EgBill bill = egBillDAO.findById(billId, false);
+        LOGGER.debug("updateBillWithLatest old bill " + bill);
+        if (bill == null)
+            throw new ApplicationRuntimeException("No bill found with bill reference no :"
+                    + billId);
+        bill.getEgBillDetails().clear();
+        final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
+                .getBean("waterConnectionBillable");
+
+        waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCodeAndStatus(
+                        bill.getConsumerId().trim().toUpperCase(), ConnectionStatus.ACTIVE));
+        final List<EgBillDetails> egBillDetails = getBilldetails(waterConnectionBillable);
+        for (final EgBillDetails billDetail : egBillDetails) {
+            bill.addEgBillDetails(billDetail);
+            billDetail.setEgBill(bill);
+        }
+        LOGGER.debug("Bill update with bill details for water charges " + bill.getConsumerId()
+                + " as billdetails " + egBillDetails);
+        return bill;
     }
 
 }

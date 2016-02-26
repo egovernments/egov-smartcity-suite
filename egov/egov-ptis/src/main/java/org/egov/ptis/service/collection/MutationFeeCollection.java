@@ -68,13 +68,13 @@ public class MutationFeeCollection extends TaxCollection {
 
     @Autowired
     private PropertyTransferService propertyTransferService;
-    
+
     @Autowired
     private PersistenceService<PropertyMutation, Long> propertyMutationService;
 
     @Autowired
     private EgBillDao egBillDAO;
-    
+
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
@@ -84,8 +84,9 @@ public class MutationFeeCollection extends TaxCollection {
         propertyMutation.setReceiptDate(bri.getReceiptDate());
         propertyMutation.setReceiptNum(bri.getReceiptNum());
         propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName()).withDateInfo(new Date())
-                .withOwner(propertyMutation.getState().getOwnerPosition()).withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)
-                .withNextAction(WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING);
+        .withOwner(propertyMutation.getState().getOwnerPosition())
+                .withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)
+        .withNextAction(WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING);
         propertyMutationService.persist(propertyMutation);
         propertyMutationService.getSession().flush();
     }
@@ -100,20 +101,20 @@ public class MutationFeeCollection extends TaxCollection {
     }
 
     @Override
-    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {
+    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber, final BigDecimal actualAmountPaid,
+            final List<ReceiptDetail> receiptDetailList) {
         // TODO Auto-generated method stub
         return null;
     }
-    
-    
+
     @Override
-    public String constructAdditionalInfoForReceipt(BillReceiptInfo billReceiptInfo) {
+    public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @Override
-    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+    public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
         return new ReceiptAmountInfo();
     }
 

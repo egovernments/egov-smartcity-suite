@@ -859,7 +859,7 @@ public class ChartOfAccounts {
                                         {
                                             egRemitGldtl = new EgRemittanceGldtl();
                                             egRemitGldtl.setGldtlId(String.valueOf(gLedgerDet.getId()));
-                                            egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt());
+                                            egRemitGldtl.setGldtlAmt(new Double(gLedgerDet.getDetailAmt()));
                                             if (tParam.getTdsId() != null)
                                                 egRemitGldtl.setTdsId(tParam.getTdsId());
                                             egRemitGldtl.insert();
@@ -982,7 +982,7 @@ public class ChartOfAccounts {
                                             egRemitGldtl = new EgRemittanceGldtl();
                                             // if(LOGGER.isInfoEnabled()) LOGGER.info("----------"+gLedger.getGlCodeId());
                                             egRemitGldtl.setGldtlId(String.valueOf(gLedgerDet.getId()));
-                                            egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt());
+                                            egRemitGldtl.setGldtlAmt(new Double(gLedgerDet.getDetailAmt()));
                                             if (tParam.getTdsId() != null)
                                                 egRemitGldtl.setTdsId(tParam.getTdsId());
                                             egRemitGldtl.insert();
@@ -1132,7 +1132,7 @@ public class ChartOfAccounts {
                                     {
                                         egRemitGldtl = new EgRemittanceGldtl();
                                         egRemitGldtl.setGldtlId(String.valueOf(gLedgerDet.getId()));
-                                        egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt());
+                                        egRemitGldtl.setGldtlAmt(new Double(gLedgerDet.getDetailAmt()));
                                         if (tParam.getTdsId() != null)
                                             egRemitGldtl.setTdsId(tParam.getTdsId());
                                         egRemitGldtl.insert();
@@ -1287,7 +1287,7 @@ public class ChartOfAccounts {
 
     private boolean validRecoveryGlcode(final String glcodeId) throws TaskFailedException {
         try {
-            final String query = "select id from tds where glcodeid= ? and isactive=1";
+            final String query = "select id from tds where glcodeid= ? and isactive=true";
             final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pst.setLong(0, Long.valueOf(glcodeId));
             if (LOGGER.isInfoEnabled())

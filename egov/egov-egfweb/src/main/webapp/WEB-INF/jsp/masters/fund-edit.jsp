@@ -47,27 +47,26 @@
 		<s:text name="fund.view" />
 	</s:if></title>
 <script type="text/javascript">
-		
 	function openSearch(obj, val) {
-							var a = new Array(3);
-							var str = "Search.html?purposeId=" + val;
-							var sRtn = showModalDialog(str, "",
-									"dialogLeft=300;dialogTop=210;dialogWidth=305pt;dialogHeight=300pt;status=no;");
+		var a = new Array(3);
+		var str = "Search.html?purposeId=" + val;
+		var sRtn = showModalDialog(str, "",
+				"dialogLeft=300;dialogTop=210;dialogWidth=305pt;dialogHeight=300pt;status=no;");
 
-							if (sRtn != '') {
-								a = sRtn.split("`~`");
+		if (sRtn != '') {
+			a = sRtn.split("`~`");
 
-								document.getElementById('chartofaccountsByPayglcodeid').value = a[2];
-								document.getElementById('pay_name').value = a[1];
+			document.getElementById('chartofaccountsByPayglcodeid').value = a[2];
+			document.getElementById('pay_name').value = a[1];
 
-				}
 		}
+	}
 
 	function disableControls(isDisable) {
-		for ( var i = 0; i < document.fundForm.length; i++)
+		for (var i = 0; i < document.fundForm.length; i++)
 			document.fundForm.elements[i].disabled = isDisable;
 		document.getElementById('Close').disabled = false;
-	}	
+	}
 
 	function onLoadTask() {
 		var close = '<s:property value="close"/>';
@@ -78,86 +77,93 @@
 
 		if (success == 'yes') {
 			bootbox.alert("Fund Modified Successfully");
-			} else if((success == 'no')){
-				bootbox.alert("Fund Could Not be Modified");
-				}
-		
+		} else if ((success == 'no')) {
+			bootbox.alert("Fund Could Not be Modified");
+		}
+
 		if (close == 'true') {
 			window.close();
 		}
-		
+
 		if (isactive == 'true') {
-			document.getElementById("isactive").checked="checked";
+			document.getElementById("isactive").checked = "checked";
 		}
-		
+
 		if (showMode == 'edit') {
 			disableControls(false);
 		} else {
 			disableControls(true);
 		}
-		
+
 		if (clearVal == 'true') {
 			document.getElementById('code').value = "";
 			document.getElementById('fundNameActual').value = "";
 			document.getElementById('fund.fund.id').value = "";
 			document.getElementById('identifier').value = "";
 			document.getElementById('chartofaccountsByPayglcodeid').value = "";
-			document.forms[0].isactive.checked=false;
+			document.forms[0].isactive.checked = false;
 		}
 	}
-	
-	function validate(){
-		if(document.getElementById('code').value == null || document.getElementById('code').value==''){
+
+	function validate() {
+		var code = document.getElementById('code').value;
+		var name = document.getElementById('name').value;
+		if ( code == '') {
 			bootbox.alert("Please enter Code");
 			return false;
 		}
-		if(document.getElementById('fundNameActual').value == null || document.getElementById('fundNameActual').value==''){
+		if ( name == '') {
 			bootbox.alert("Please enter Name");
 			return false;
 		}
+		document.fundForm.action = '/EGF/masters/fund-edit.action';
+		document.fundForm.submit();
 		return true;
 	}
 	function setClose() {
-		var close = document.getElementById('close');    
-		   close.value = true;
-		   return true;
-		}
+		var close = document.getElementById('close');
+		close.value = true;
+		return true;
+	}
 </script>
 
 </head>
 <body onload="onLoadTask();">
 	<s:actionmessage theme="simple" />
-	<div class="formmainbox">
-		<div class="subheadnew">
-			<s:if test="%{showMode=='edit'}">
-				<s:text name="fund.modify" />
-			</s:if>
-			<s:if test="%{showMode=='view'}">
-				<s:text name="fund.view" />
-			</s:if>
-		</div>
-	</div>
+
+
 	<s:actionerror />
 	<s:fielderror />
 	<s:form name="fundForm" action="fund" theme="simple">
-
-		<s:push value="model">
-			<s:hidden name="showMode" />
-			<s:hidden name="id" />
-			<%@include file="fund-viewform.jsp"%>
-			<div class="buttonbottom">
+		<div class="formmainbox">
+			<div class="subheadnew">
 				<s:if test="%{showMode=='edit'}">
-					<s:submit name="edit" value="Modify And View" method="edit"
-						cssClass="buttonsubmit" onclick="javascript: return validate();" />
-					<s:submit name="edit" value="Modify And Close" method="edit"
-						cssClass="buttonsubmit" onclick="validate();setClose();" />
-					<s:hidden name="close" id="close" />
+					<s:text name="fund.modify" />
 				</s:if>
-				<input type="button" id="Close" value="Close"
-					onclick="javascript:window.close()" class="button" />
+				<s:if test="%{showMode=='view'}">
+					<s:text name="fund.view" />
+				</s:if>
 			</div>
-		</s:push>
-		<s:token />
+			<s:push value="model">
+				<s:hidden name="showMode" />
+				<s:hidden name="id" />
+				<%@include file="fund-viewform.jsp"%>
+
+			</s:push>
+			<s:token />
+		</div>
+		<div class="buttonbottom">
+			<s:if test="%{showMode=='edit'}">
+				<s:submit name="edit" value="Modify And View" 
+					cssClass="buttonsubmit" onclick="return validate();" />
+				<s:submit name="edit" value="Modify And Close" 
+					cssClass="buttonsubmit" onclick="validate();setClose();" />
+				<s:hidden name="close" id="close" />
+			</s:if>
+			<input type="button" id="Close" value="Close"
+				onclick="javascript:window.close()" class="button" />
+		</div>
 	</s:form>
+
 </body>
 </html>

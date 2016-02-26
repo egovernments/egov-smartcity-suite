@@ -57,7 +57,7 @@ public class Fund implements java.io.Serializable {
 
     private BigDecimal llevel;
 
-    private int isactive;
+    private Boolean isactive;
 
     private Date lastmodified;
 
@@ -79,7 +79,7 @@ public class Fund implements java.io.Serializable {
     }
 
     public Fund(Integer id, String code, String name,BigDecimal llevel,
-           int isactive, Date created) {
+           Boolean isactive, Date created) {
         this.id = id;
         this.code = code;
         this.name = name;
@@ -90,7 +90,7 @@ public class Fund implements java.io.Serializable {
 
     public Fund(Integer id, Fund fund,
             EgfAccountcodePurpose egfAccountcodePurpose,String code,String name, BigDecimal llevel,
-             int isactive,Date lastmodified, Date created, BigDecimal modifiedby, BigDecimal createdby,
+             Boolean isactive,Date lastmodified, Date created, BigDecimal modifiedby, BigDecimal createdby,
             Boolean isnotleaf, Character identifier, Set voucherheaders,
             Set funds) {
         this.id = id;
@@ -223,11 +223,11 @@ public class Fund implements java.io.Serializable {
         this.createdby = createdby;
     }
 
-    public int getIsactive() {
+    public Boolean getIsactive() {
         return isactive;
     }
 
-    public void setIsactive(int isactive) {
+    public void setIsactive(Boolean isactive) {
         this.isactive = isactive;
     }
 

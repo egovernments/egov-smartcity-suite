@@ -160,6 +160,8 @@
 								<div class="form-group">
 									<div class="signin-title"><spring:message code="lbl.login"/></div>
 								</div>
+								<input style="display:none" type="text">
+								<input style="display:none" type="password" />
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
@@ -345,7 +347,7 @@
 		</div>
 		<script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
 		<script src="/egi/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
-		<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+		<script src="/egi/resources/global/js/jquery/plugins/jquery.validate.min.js"></script>
 		<script src="/egi/resources/js/app/login.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
 	</body>
 </html>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-07-07T17:08:04 -->
+<!-- 2016-02-10T11:54:22 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="4b290c7e-638d-4115-b638-21eedae5185f">
-	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.collection.constants.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/work/collections/reports/templates/"]]></defaultValueExpression>
 	</parameter>
@@ -115,14 +115,14 @@
 			</textField>
 			<image>
 				<reportElement x="10" y="10" width="60" height="60" uuid="e806626d-3d2f-4264-9b7c-66bc13608c85"/>
-				<imageExpression><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="142" y="10" width="291" height="43" uuid="8e6ba338-4031-49e0-bfb1-9427e5d4ff47"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="18" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{reports.title.corporation_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="20">

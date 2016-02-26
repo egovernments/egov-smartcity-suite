@@ -100,6 +100,29 @@ One can override any default settings available in `/egov/egov-egi/src/main/reso
  mvn clean package -s settings.xml -Ddb.user=<db_username> -Ddb.password=<db_password> -Ddb.driver=<driver_class_fqn> -Ddb.url=<jdbc_url>
  ```
 
+#### Redis Server Setup
+
+By default eGov suit uses embedded redis server (work only in Linux & OSx), to make eGov suit works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
+ 
+1. Installing redis server on Linux
+ 
+ ```bash
+ sudo apt-get install redis-server
+ ```
+2. Installing redis server on Windows :- There is no official installable avialable for Windows OS. To install redis on Windows OS, follow the instruction given in https://chocolatey.org/packages/redis-64
+
+3. Once installed, set the below property in ```egov-erp-override.properties``` or ```egov-erp-<username>.properties```. 
+
+ ```properties
+ redis.enable.embedded=false ## true by default
+ ```
+ to control the redis server host and port use the following property values (only required if installed with non default).
+
+ ```properties
+ redis.host.name=<your_redis_server_host> ## localhost by default
+ redis.host.port=<your_redis_server_port> ## 6379 by default
+ ```
+
 #### Deploying Application
 
 ##### Configuring JBoss Wildfly

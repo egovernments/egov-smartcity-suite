@@ -60,38 +60,77 @@
 	var leftPos=document.body.clientWidth;
 	window.open ("${pageContext.request.contextPath}"+"/receipts/challan-viewChallan.action?sourcePage=search&receiptId="+receiptId,"ViewChallan","resizable=yes,scrollbars=yes,left="+leftPos+",top=40, width=900, height=650"); 
 	}
+
+   function  populateService(serviceCategory){
+    	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
+    }
+
+   <jsp:useBean id="now" class="java.util.Date" />
+
+   <fmt:formatDate var = "currDate" pattern="dd/MM/yyyy" value="${now}" />
+   	var currDate = "${currDate}";
 	
 	function validate()
-{
-	if(dom.get("actionErrorMessages")!=null){
-		dom.get("actionErrorMessages").style.display="none";}
-	if(dom.get("actionMessages")!=null){
-		dom.get("actionMessages").style.display="none";}
-	var fromdate=dom.get("fromDate").value;
-	var todate=dom.get("toDate").value;
-	var deptId=dom.get("departmentId").value;
-	var challanNo=dom.get("challanNumber").value;
-	var serviceId=dom.get("serviceId").value;
-	var serviceCategoryId = dom.get("serviceCategoryId").value;
-	var status=dom.get("status").value;
-	if((deptId=="-1")&& (challanNo=="")&& (fromdate=="")&& (todate=="")&&(serviceId=="-1")&&(status=="-1")&&(serviceCategoryId=="-1")){
-		dom.get("errorMessages").style.display="block";
-		document.getElementById("errorMessages").innerHTML='<s:text name="searchchallan.selectonecriteria" />'+ '<br>';
-		return false;
-	
-	}
-	if(fromdate!="" && todate!="" && fromdate!=todate)
 	{
-		if(!checkFdateTdate(fromdate,todate))
-		{
+		if(dom.get("actionErrorMessages")!=null){
+			dom.get("actionErrorMessages").style.display="none";}
+		if(dom.get("actionMessages")!=null){
+			dom.get("actionMessages").style.display="none";}
+		var fromdate=dom.get("fromDate").value;
+		var todate=dom.get("toDate").value;
+		var deptId=dom.get("departmentId").value;
+		var challanNo=dom.get("challanNumber").value;
+		var serviceId=dom.get("serviceId").value;
+		var serviceCategoryId = dom.get("serviceCategoryId").value;
+		var status=dom.get("status").value;
+		if((deptId=="-1")&& (challanNo=="")&& (fromdate=="")&& (todate=="")&&(serviceId=="-1")&&(status=="-1")&&(serviceCategoryId=="-1")){
 			dom.get("errorMessages").style.display="block";
-			document.getElementById("errorMessages").innerHTML='<s:text name="common.comparedate.errormessage" />'+ '<br>';
+			document.getElementById("errorMessages").innerHTML='<s:text name="searchchallan.selectonecriteria" />'+ '<br>';
 			return false;
+		
 		}
-	}
-
-	doLoadingMask('#loadingMask');
+		var valSuccess = true;
+		document.getElementById("errorMessages").
+		innerHTML = "";
 	
+			if (fromdate == "") {
+				document.getElementById("errorMessages").style.display = "block";
+				document.getElementById("errorMessages").innerHTML += '<s:text name="common.datemandatory.fromdate" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+	
+			if (todate == "") {
+				document.getElementById("errorMessages").style.display = "block";
+				document.getElementById("errorMessages").innerHTML += '<s:text name="common.datemandatory.todate" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+	
+			if (fromdate != "" && todate != "" && fromdate != todate) {
+				if (!checkFdateTdate(fromdate, todate)) {
+					document.getElementById("errorMessages").style.display = "block";
+					document.getElementById("errorMessages").innerHTML += '<s:text name="common.comparedate.errormessage" />'
+							+ '<br>';
+					valSuccess = false;
+				}
+				if (!validateNotFutureDate(fromdate, currDate)) {
+					document.getElementById("errorMessages").style.display = "block";
+					document.getElementById("errorMessages").innerHTML += '<s:text name="reports.fromdate.futuredate.message" />'
+							+ '<br>';
+					valSuccess = false;
+				}
+				if (!validateNotFutureDate(todate, currDate)) {
+					document.getElementById("errorMessages").style.display = "block";
+					document.getElementById("errorMessages").innerHTML += '<s:text name="reports.todate.futuredate.message" />'
+							+ '<br>';
+					valSuccess = false;
+				}
+			}
+	
+			return valSuccess;
+	
+		doLoadingMask('#loadingMask');
 }
 	</script>
 </head>
@@ -147,7 +186,7 @@
 	 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
     <div class="buttonbottom">
       <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search"  onclick="document.searchChallanForm.action='searchChallan-search.action'; return validate();"/></label>&nbsp;
-      <label><s:submit type="submit" cssClass="button" value="Reset" method="reset"/></label>&nbsp;
+      <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchChallanForm.action='searchChallan-reset.action';"/></label>&nbsp;
       <input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
 </div>
 <logic:notEmpty name="results">
@@ -164,7 +203,7 @@
 </div>
 </display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="challan.challanDate" title="Challan Date" format="{0,date,dd/MM/yyyy}" style="width:10%;text-align: center" />
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Type" style="width:20%" ><div align="center"><s:hidden name="currentRow.challan.service.name" value="%{currentRow.challan.service.name}"/>  <c:if test="${not empty currentRow.challan.service.name}">   <c:out value="${currentRow.challan.service.name}"/></c:if>&nbsp;</div></display:column>
+<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Type" style="width:20%" ><div align="center"><s:hidden name="currentRow.service.name" value="%{currentRow.service.name}"/>  <c:if test="${not empty currentRow.service.name}">   <c:out value="${currentRow.service.name}"/></c:if>&nbsp;</div></display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptMisc.fund.name" title="Fund" style="width:20%;text-align: center" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptMisc.department.name" title="Department" style="width:20%;text-align: center" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="totalAmount" title="Amount (Rs.)" format="{0, number, #,##0.00}" style="width:20%;text-align: center" />

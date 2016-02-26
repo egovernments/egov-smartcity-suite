@@ -207,7 +207,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
             wfMatrixCriteria.add(Restrictions.eq("department", department));
 
         // Added restriction for amount rule
-        if (amountRule != null && !BigDecimal.ZERO.equals(amountRule)) {
+        if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
             final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
                     .add(Restrictions.ge("toQty", amountRule));
 
@@ -228,7 +228,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
             wfMatrixCriteria.add(Restrictions.eq("department", "ANY"));
 
     // Added restriction for amount rule
-    if (amountRule != null && !BigDecimal.ZERO.equals(amountRule)) {
+    if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
             final Criterion amount1st = Restrictions.conjunction()
                             .add(Restrictions.le("fromQty", amountRule))
                             .add(Restrictions.ge("toQty", amountRule));

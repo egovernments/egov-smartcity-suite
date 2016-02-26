@@ -61,6 +61,7 @@
 				<s:token />
 				<s:push value="model">
 					<s:hidden name="docNumber" />
+					<s:hidden name="actionName" value="renew" />
 					<s:hidden name="model.id" />
 					<s:hidden id="detailChanged" name="detailChanged"></s:hidden>
 					<s:hidden name="feeTypeId" id="feeTypeId" />
@@ -110,7 +111,7 @@
 			</s:form>
 		</div>
 	</div>
-	<script src="../resources/app/js/newtrade.js"></script>
+	<script src="../resources/js/app/newtrade.js"></script>
 	<script>
 	jQuery('#subCategory').change(function(){
 		jQuery.ajax({
@@ -131,7 +132,15 @@
 				bootbox.alert("No UOM mapped for SubCategory")
 			}
 		})});
-	
+	function onSubmitValidations() {
+		return true;
+	}
+	function onSubmit() {
+			//toggleFields(false,"");
+			document.renewForm.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-renewal.action';
+			//document.newTradeLicense.submit();
+		return true;
+	}
 	</script>
 </body>
 </html>

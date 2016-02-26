@@ -92,11 +92,11 @@
 											    <div class="col-sm-3 add-margin">
 											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="100" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
 											    </div>
-											    <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
+											    <%-- <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
 											     <div class="col-sm-3 add-margin">
 											      	<s:date name="dateOfCreation" id="dateOfCreationformat" format="dd/MM/yyyy" />
 													<s:textfield  name="dateOfCreation" id="dateOfCreation" class="form-control datepicker" data-date-end-date="0d" maxlength="10" size="10" value="%{dateOfCreationformat}" />
-											   </div> 
+											   </div>  --%>
 											</div>		
                                              <%@ include file='../common/licensee.jsp'%>
 	                                         <%@ include file='../common/address.jsp'%>
@@ -107,11 +107,12 @@
 											</div>
 											
 											<div class="col-md-12">
-											<table class="table table-bordered">
+											<table class="table table-bordered feedetails">
 												<thead>
 													<tr>
 														<th><s:text name='license.fin.year'/></th>
 														<th><s:text name='license.fee.amount'/></th>
+														<th class="text-center"><s:text name='license.fee.paid.y.n'/></th>
 													</tr>
 												</thead>
 												<tbody>
@@ -122,14 +123,17 @@
 														<s:if test="#stat.index == 0">
 															<c:set value="${finyear}" var="startfinyear"/>
 														</s:if>
-														<td><input type="text"  name="" class="form-control" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
-														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
+														<td><input type="text"  name="" class="form-control feeyear" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
+														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
+														<td class="text-center">
+														<s:checkbox name="legacyFeePayStatus[%{#attr.LIFee.key}]" class="case"></s:checkbox>
+														</td>
 													</tr>
 												</s:iterator>
 												</tbody>
 												<tfoot>
 													<tr>
-														<td class="error-msg" colspan="2">
+														<td class="error-msg" colspan="3">
 															<s:text  name="license.legacy.info">
 																<s:param>${startfinyear}</s:param>
 															</s:text>
@@ -166,7 +170,7 @@
 						autoclose: true 
 					}); 
 				</script>
-        <script src="../resources/app/js/newtrade.js"></script>
+        <script src="../resources/js/app/newtrade.js"></script>
         <script>
 
         	function initDetails(){
@@ -178,11 +182,11 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.oldlicensenumber.null" />');
 					document.getElementById("oldLicenseNumber").focus();
 					return false;
-				} else if (document.getElementById("dateOfCreation").value == '' || document.getElementById("dateOfCreation").value == null){
+				}/*  else if (document.getElementById("dateOfCreation").value == '' || document.getElementById("dateOfCreation").value == null){
 					showMessage('enterLicense_error', '<s:text name="newlicense.dateofcreation.null" />');
 					document.getElementById("dateOfCreation").focus();
 					return false;
-				} else if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
+				}  */else if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
 					showMessage('enterLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
 					document.getElementById("mobilePhoneNumber").focus();
 					return false;
@@ -247,14 +251,104 @@
 						 	showMessage('enterLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
 							window.scroll(0, 0);  
 							return false;
+					}else{
+						/*validate fee details*/
+						if(validate_feedetails()){
+							//checkbox checked
+							if(feedetails_checked()){
+								formsubmit();
+							}else{
+								return false;
+							}
+						}else{
+							return false;
+						}
 					}
 				} else{
-					clearMessage('enterLicense_error');
-					toggleFields(false,"");
-					document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
-					document.registrationForm.submit();
-
+					/*validate fee details*/
+					if(validate_feedetails()){
+						//checkbox checked
+						if(feedetails_checked()){
+							formsubmit();
+						}else{
+							return false;
+						}
+					}else{
+						return false;
 					}
+				}
+  			}
+
+			function validate_feedetails(){
+				
+				var validated = false;
+				var globalindex;
+				
+				jQuery("table.feedetails tbody tr").each(function (index) {
+					var rowval = jQuery(this).find("input.feeamount").val();
+					if(parseFloat(rowval) > 0){
+						globalindex = index;
+						validated = true;					
+					}else{
+						if(index == (globalindex+1)){
+							bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details amount is missing!');
+							validated = false;
+							return false;
+						}else{
+							if(jQuery(this).is(":last-child")){
+								bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details amount is mandatory!');
+								validated = false;
+								return false;
+							}
+						}
+					}
+				});
+				return validated;
+			}
+
+			function feedetails_checked(){
+				
+				var checkindex;
+				var validated = false;
+				
+				jQuery('.case:checked').each(function () {
+			        checkindex = jQuery(this).closest('tr').index();
+			    });
+
+				console.log('checkindex'+checkindex);
+				if(checkindex != undefined){
+					jQuery("table.feedetails tbody tr").each(function (index) {
+						if(index > checkindex){
+							validated = true;
+							return;
+						}else{
+							var rowval = jQuery(this).find("input.feeamount").val();	
+							if(parseFloat(rowval) > 0){
+								if(jQuery(this).is(":last-child")){
+									//leave it
+									validated = true;
+								}else{
+									if(jQuery(this).find('input[type=checkbox]:checked').val() == undefined){
+										bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details paid should be checked!');
+										validated = false;
+										return false;
+									}
+								}
+							}
+						}
+					});
+				}else{
+					validated = true;
+				}
+				return validated;
+			}
+
+  			function formsubmit(){
+  				/*submit the form*/
+				clearMessage('enterLicense_error');
+				toggleFields(false,"");
+				document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
+				document.registrationForm.submit();
   			}
 
 			// Calls propertytax REST api to retrieve property details for an assessment no
@@ -262,13 +356,11 @@
     		function callPropertyTaxRest(){
                	var propertyNo = jQuery("#propertyNo").val();
             	if(propertyNo!="" && propertyNo!=null){
-					console.log(propertyNo); 
 					jQuery.ajax({
 						url: "/ptis/rest/property/" + propertyNo,
 						type:"GET",
 						contentType:"application/x-www-form-urlencoded",
 						success:function(data){
-							console.log(JSON.stringify(data));
 							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
 								bootbox.alert(data.errorDetails.errorMessage);
 								jQuery('#propertyNo').val('');
@@ -289,9 +381,7 @@
 							bootbox.alert("Error getting property details");
 						}
 					});
-            	} else{
-					showMessage('enterLicense_error', '<s:text name="newlicense.propertyNo.null" />');
-                }
+            	}
             }
 
     		function showHideAgreement(){

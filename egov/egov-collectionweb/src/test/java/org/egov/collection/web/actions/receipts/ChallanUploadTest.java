@@ -158,7 +158,7 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		instrumentService = new InstrumentService(){
 			
 			public InstrumentType getInstrumentTypeByType(String type){
-				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=1",type);
+				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=true",type);
 			}
 		};
 		PersistenceService<InstrumentHeader, Long> iHeaderService= new PersistenceService<InstrumentHeader, Long>();
@@ -178,7 +178,7 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 				return new CVoucherHeader();
 			}
 			public InstrumentType getInstrumentTypeByType(String type){
-				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=1",type);
+				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=true",type);
 			}
 		};
 		financialsUtil.setInstrumentService(instrumentService);

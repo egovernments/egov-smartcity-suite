@@ -39,9 +39,12 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -49,18 +52,21 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Fundsource;
+import org.egov.commons.CFunction;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.FlushMode;
+import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.StringType;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
-import com.exilant.eGov.src.transactions.JbReport;
 import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -68,9 +74,9 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({
-    @Result(name = "result", location = "journalBookReport-result.jsp"),
-    @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "journalBookReport-"
-            + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp")
+        @Result(name = "result", location = "journalBookReport-result.jsp"),
+        @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "journalBookReport-"
+                + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp")
 })
 public class JournalBookReportAction extends BaseFormAction {
 
@@ -80,9 +86,8 @@ public class JournalBookReportAction extends BaseFormAction {
     private static final long serialVersionUID = -7540296344209825345L;
     private static final Logger LOGGER = Logger.getLogger(JournalBookReportAction.class);
     private GeneralLedgerBean journalBookReport = new GeneralLedgerBean();
-    private JbReport journalBook = new JbReport();
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    protected LinkedList journalBookDisplayList = new LinkedList();
+    private List<GeneralLedgerBean> journalBookDisplayList = new ArrayList<GeneralLedgerBean>();
     String heading = "";
 
     public JournalBookReportAction() {
@@ -95,11 +100,15 @@ public class JournalBookReportAction extends BaseFormAction {
     }
 
     public void prepareNewForm() {
+        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         super.prepare();
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
-        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+        addDropdownData("fundList",
+                persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("fundsourceList",
-                persistenceService.findAllBy(" from Fundsource where isactive=1 and isnotleaf=0 order by name"));
+                persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
+        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
+        addDropdownData("functionList", masterCache.get("egi-function"));
+
         addDropdownData("voucherNameList", VoucherHelper.VOUCHER_TYPE_NAMES.get(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside  Prepare ........");
@@ -122,21 +131,93 @@ public class JournalBookReportAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/report/journalBookReport-ajaxSearch")
     public String ajaxSearch() throws TaskFailedException {
-
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalBookAction | Search | start");
-        try {
-            journalBookDisplayList = journalBook.getJbReport(journalBookReport);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        journalBookReport.setUlbName(ReportUtil.getCityName());
+        prepareResultList();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalBookAction | list | End");
         heading = getGLHeading();
         prepareNewForm();
         return "result";
+    }
+
+    private void prepareResultList() {
+        String voucherDate = "", voucherNumber = "", voucherName = "", narration = "";
+        Query query = null;
+        query = HibernateUtil.getCurrentSession().createSQLQuery(getQuery())
+                .addScalar("voucherdate", StringType.INSTANCE)
+                .addScalar("vouchernumber", StringType.INSTANCE)
+                .addScalar("code", StringType.INSTANCE)
+                .addScalar("accName", StringType.INSTANCE)
+                .addScalar("narration", StringType.INSTANCE)
+                .addScalar("debitamount", StringType.INSTANCE)
+                .addScalar("creditamount", StringType.INSTANCE)
+                .addScalar("voucherName", StringType.INSTANCE)
+                .addScalar("vhId", StringType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(GeneralLedgerBean.class));
+        journalBookDisplayList = query.list();
+        for (GeneralLedgerBean bean : journalBookDisplayList) {
+            bean.setDebitamount(new BigDecimal(bean.getDebitamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            bean.setCreditamount(new BigDecimal(bean.getCreditamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            if (!voucherDate.equalsIgnoreCase("") && voucherDate.equalsIgnoreCase(bean.getVoucherdate())
+                    && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
+                bean.setVoucherdate("");
+            } else {
+                voucherDate = bean.getVoucherdate();
+            }
+            if (!voucherName.equalsIgnoreCase("") && voucherName.equalsIgnoreCase(bean.getVoucherName())
+                    && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
+                bean.setVoucherName("");
+            } else {
+                voucherName = bean.getVoucherName();
+            }
+            if (!voucherNumber.equalsIgnoreCase("") && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
+                bean.setVouchernumber("");
+            } else {
+                voucherNumber = bean.getVouchernumber();
+            }
+
+            if (narration!=null && !narration.equalsIgnoreCase("") && narration.equalsIgnoreCase(bean.getNarration())) {
+                bean.setNarration("");
+            } else {
+                narration = bean.getNarration();
+            }
+
+        }
+    }
+
+    private String getQuery() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        String startDate = "", endDate = "";
+        try {
+            startDate = formatter.format(sdf.parse(journalBookReport.getStartDate()));
+            endDate = formatter.format(sdf.parse(journalBookReport.getEndDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String query = "", subQuery = "";
+        if (journalBookReport.getFund_id() != null && !journalBookReport.getFund_id().equals(""))
+            subQuery = subQuery + " and f.id= " + journalBookReport.getFund_id() + " ";
+        if (journalBookReport.getVoucher_name() != null && !journalBookReport.getVoucher_name().equals(""))
+            subQuery = subQuery + " and vh.Name='" + journalBookReport.getVoucher_name() + "' ";
+        if (journalBookReport.getDept_name() != null && !journalBookReport.getDept_name().equals(""))
+            subQuery = subQuery + " and vmis.departmentid=" + journalBookReport.getDept_name() + " ";
+        if (journalBookReport.getFunctionId() != null && !journalBookReport.getFunctionId().equals(""))
+            subQuery = subQuery + " and vmis.functionid  =" + journalBookReport.getFunctionId() + " ";
+        query = "SELECT TO_CHAR(vh.voucherdate,'dd-Mon-yyyy') AS voucherdate,vh.vouchernumber AS vouchernumber,f.name AS fund,gl.glcode AS code,coa.name AS accName,"
+                + "vh.description AS narration,vh.isconfirmed AS isconfirmed,gl.debitamount AS debitamount, gl.creditamount AS creditamount,vh.name AS voucherName,vh.id AS vhId "
+                + " FROM voucherheader vh, generalledger gl,fund f,function fn ,vouchermis vmis,chartofaccounts coa WHERE vh.id = gl.voucherheaderid AND gl.glcodeid = coa.id AND vh.fundid = f.id"
+                + " AND vmis.functionid = fn.id AND vmis.voucherheaderid=vh.id AND vh.status NOT IN (4,5)"
+                + subQuery
+                + " and vh.voucherdate >='"
+                + startDate
+                + "' "
+                + " and vh.voucherdate<='"
+                + endDate + "'";
+        return query;
+
     }
 
     private String getGLHeading() {
@@ -145,16 +226,16 @@ public class JournalBookReportAction extends BaseFormAction {
         heading = "Journal Book Report under " + journalBookReport.getFundName() + " from " + journalBookReport.getStartDate()
                 + " to " + journalBookReport.getEndDate();
         Department dept = new Department();
-        Fundsource fundsource = new Fundsource();
+        CFunction function = new CFunction();
         if (checkNullandEmpty(journalBookReport.getDept_name())) {
             dept = (Department) persistenceService.find("from Department where  id = ?",
-                    Integer.parseInt(journalBookReport.getDept_name()));
+                    Long.parseLong(journalBookReport.getDept_name()));
             heading = heading + " and Department : " + dept.getName();
         }
-        if (checkNullandEmpty(journalBookReport.getFundSource_id())) {
-            fundsource = (Fundsource) persistenceService.find("from Fundsource where  id = ?",
-                    Integer.parseInt(journalBookReport.getFundSource_id()));
-            heading = heading + " and Financing Source :" + fundsource.getName();
+        if (checkNullandEmpty(journalBookReport.getFunctionId())) {
+            function = (CFunction) persistenceService.find("from CFunction where  id = ?",
+                    Long.parseLong(journalBookReport.getFunctionId()));
+            heading = heading + " and Financing Source :" + function.getName();
         }
         if (checkNullandEmpty(journalBookReport.getVoucher_name()))
             heading = heading + " and Voucher Type Name :" + journalBookReport.getVoucher_name();
@@ -186,19 +267,11 @@ public class JournalBookReportAction extends BaseFormAction {
         this.journalBookReport = journalBookReport;
     }
 
-    public JbReport getJournalBook() {
-        return journalBook;
-    }
-
-    public void setJournalBook(final JbReport journalBook) {
-        this.journalBook = journalBook;
-    }
-
-    public LinkedList getJournalBookDisplayList() {
+    public List<GeneralLedgerBean> getJournalBookDisplayList() {
         return journalBookDisplayList;
     }
 
-    public void setJournalBookDisplayList(final LinkedList journalBookDisplayList) {
+    public void setJournalBookDisplayList(List<GeneralLedgerBean> journalBookDisplayList) {
         this.journalBookDisplayList = journalBookDisplayList;
     }
 

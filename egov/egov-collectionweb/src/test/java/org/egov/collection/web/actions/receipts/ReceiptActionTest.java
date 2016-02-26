@@ -114,7 +114,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 				return new CVoucherHeader();
 			}
 			public InstrumentType getInstrumentTypeByType(String type){
-				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=1",type);
+				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=true",type);
 			}
 		};
 		financialsUtil.setInstrumentService(instrumentService);

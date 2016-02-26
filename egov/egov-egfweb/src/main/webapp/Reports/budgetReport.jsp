@@ -192,7 +192,7 @@ function onLoadTask()
 <%
 			 
 			Statement stmt1=conn.createStatement();
-			ResultSet rs1 = stmt1.executeQuery("SELECT ID,FINANCIALYEAR FROM FINANCIALYEAR where isactive=1 ");
+			ResultSet rs1 = stmt1.executeQuery("SELECT ID,FINANCIALYEAR FROM FINANCIALYEAR where isactive=true ");
 			finYear =new ArrayList();
 			while (rs1.next())
 			{

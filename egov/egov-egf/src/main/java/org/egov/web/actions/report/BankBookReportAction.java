@@ -60,18 +60,22 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -84,6 +88,7 @@ import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,6 +126,7 @@ public class BankBookReportAction extends BaseFormAction {
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
     private Fund fundId = new Fund();
+    private CFunction function=new CFunction();
     private Vouchermis vouchermis = new Vouchermis();
     private Long voucherId;
     private List<InstrumentHeader> chequeDetails = new ArrayList<InstrumentHeader>();
@@ -130,6 +136,7 @@ public class BankBookReportAction extends BaseFormAction {
     private Date todayDate;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private final List<String> voucherNo = new ArrayList<String>();
     private boolean isCreditOpeningBalance = false;
@@ -138,13 +145,28 @@ public class BankBookReportAction extends BaseFormAction {
     private Map<Long, List<Object[]>> voucherIdAndInstrumentMap = new HashMap<Long, List<Object[]>>();
     private Map<Long, List<Object[]>> InstrumentHeaderIdsAndInstrumentVouchersMap = new HashMap<Long, List<Object[]>>();
 
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     public void setReportHelper(final ReportHelper reportHelper) {
         this.reportHelper = reportHelper;
     }
 
     @Override
     public String execute() throws Exception {
+    	finYearDate();
         return "form";
+    }
+    public void finYearDate() {
+
+        final String financialYearId = financialYearDAO.getCurrYearFiscalId();
+        if (financialYearId == null || financialYearId.equals(""))
+        	startDate = new Date();
+        else
+        	startDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?",
+                    Long.parseLong(financialYearId));
+        endDate = null;
+        
+
     }
 
     public BankBookReportAction() {
@@ -169,19 +191,19 @@ public class BankBookReportAction extends BaseFormAction {
 
             getHeaderFields();
             if (headerFields.contains(Constants.DEPARTMENT))
-                addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+                addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
             if (headerFields.contains(Constants.FUNCTION))
                 addDropdownData("functionList",
-                        persistenceService.findAllBy("from CFunction where isactive=1 and isnotleaf=0  order by name"));
+                        persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false  order by name"));
             if (headerFields.contains(Constants.FUNCTIONARY))
                 addDropdownData("functionaryList",
-                        persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));
+                        persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
             if (headerFields.contains(Constants.FUND))
                 addDropdownData("fundList",
-                        persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+                        persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
             if (headerFields.contains(Constants.FUNDSOURCE))
                 addDropdownData("fundsourceList",
-                        persistenceService.findAllBy(" from Fundsource where isactive=1 and isnotleaf=0 order by name"));
+                        persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
             if (headerFields.contains(Constants.FIELD))
                 addDropdownData("fieldList",
                         persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
@@ -216,9 +238,21 @@ public class BankBookReportAction extends BaseFormAction {
         if (parameters.containsKey("bankAccount.id") && parameters.get("bankAccount.id")[0] != null) {
             startDate = parseDate("startDate");
             endDate = parseDate("endDate");
+            
+            CFinancialYear financialYear=financialYearDAO.getFinYearByDate(startDate);
+            Date endingDate=financialYear.getEndingDate();
+            
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String endFormat = formatter.format(endDate);
+            String endFormat1 = formatter.format(endingDate);
+            if(endFormat.compareTo(endFormat1)>0 ) 
+            {
+            	addActionError(getText("End date should be within a financial year"));
+            	return "results";
+            }
             setTodayDate(new Date());
             bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
-                    Integer.valueOf(parameters.get("bankAccount.id")[0]));
+                    Long.valueOf(parameters.get("bankAccount.id")[0]));
             final List<BankBookEntry> results = getResults(bankAccount.getChartofaccounts().getGlcode());
             final Map<String, BankBookEntry> voucherNumberAndEntryMap = new HashMap<String, BankBookEntry>();
             final List<String> multipleChequeVoucherNumber = new ArrayList<String>();
@@ -491,10 +525,10 @@ public class BankBookReportAction extends BaseFormAction {
 
     private void getInstrumentsByVoucherIds() {
         String mainQuery = "";
-        mainQuery = "SELECT vh1.id,ih.instrumentnumber,es1.code,ih.id,ih.instrumentdate, ih.transactionnumber, ih.transactiondate";
-        getInstrumentsByVoucherIdsQuery = " FROM VOUCHERHEADER vh1,egf_instrumentvoucher iv ,egf_instrumentheader ih ,egw_status es1 WHERE vh1.id = iv.voucherheaderid AND iv.instrumentheaderid=ih.id"
+        mainQuery = "SELECT vh2.id,ih2.instrumentnumber,es2.code,ih2.id as instrumentHeaderId ,ih2.instrumentdate, ih2.transactionnumber, ih2.transactiondate";
+        getInstrumentsByVoucherIdsQuery = " FROM VOUCHERHEADER vh2,egf_instrumentvoucher iv2 ,egf_instrumentheader ih2 ,egw_status es2 WHERE vh2.id = iv2.voucherheaderid AND iv2.instrumentheaderid=ih2.id"
                 +
-                " AND ih.id_status = es1.id AND vh1.id in (select vh.id " + queryFrom + ")";
+                " AND ih2.id_status = es2.id AND vh2.id in (select vh.id as vhId" + queryFrom + ")";
         mainQuery = mainQuery + getInstrumentsByVoucherIdsQuery;
 
         final List<Object[]> objs = HibernateUtil.getCurrentSession().createSQLQuery(mainQuery).list();
@@ -514,11 +548,11 @@ public class BankBookReportAction extends BaseFormAction {
         final List<Object[]> objs = HibernateUtil
                 .getCurrentSession()
                 .createSQLQuery(
-                        "SELECT ih.id,vh1.id"
+                        "SELECT ih.id,vh1.id as voucherHeaderId"
                                 +
-                                " FROM VOUCHERHEADER vh1,egf_instrumentvoucher iv ,egf_instrumentheader ih ,egw_status es1 WHERE vh1.id = iv.voucherheaderid AND iv.instrumentheaderid=ih.id"
+                                " FROM VOUCHERHEADER vh1,egf_instrumentvoucher iv ,egf_instrumentheader ih,egw_status es1 WHERE vh1.id = iv.voucherheaderid AND iv.instrumentheaderid=ih.id"
                                 +
-                                " AND ih.id_status = es1.id AND ih.id in (select ih.id " + getInstrumentsByVoucherIdsQuery + ")")
+                                " AND ih.id_status = es1.id AND ih.id in (select ih2.id as instrHeaderId " + getInstrumentsByVoucherIdsQuery + ")")
                                 .list();
 
         for (final Object[] obj : objs)
@@ -595,14 +629,14 @@ public class BankBookReportAction extends BaseFormAction {
     private List<BankBookEntry> getResults(final String glCode1) {
         final String miscQuery = getMiscQuery();
         String OrderBy = "";
-        final String voucherStatusToExclude = getAppConfigValueFor("finance", "statusexcludeReport");
+        final String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         final String query1 = "SELECT distinct vh.id as voucherId,vh.voucherDate AS voucherDate, vh.voucherNumber AS voucherNumber,"
                 +
                 " gl.glcode||' - '||case when gl.debitAmount  = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) else (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)  then gl.debitamount||'.00dr' else  gl.debitamount||'dr' 	 end ) end"
                 +
                 " AS particulars,case when gl1.debitAmount = 0 then gl1.creditamount else gl1.debitAmount end AS amount, case when gl1.debitAmount = 0 then 'Payment' else 'Receipt' end AS type,"
                 +
-                " case when (case when ch.instrumentnumber=NULL then ch.transactionnumber else ch.instrumentnumber  ||' , ' ||TO_CHAR(case when ch.instrumentdate = NULL THEN ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy'), ' , ')  = NULL then case when ch.instrumentnumber = NULL then ch.transactionnumber else ch.instrumentnumber end ||' , ' ||TO_CHAR(case when ch.instrumentdate = NULL then ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy') end"
+                " case when (case when ch.instrumentnumber is NULL then ch.transactionnumber else ch.instrumentnumber  ||' , ' ||TO_CHAR(case when ch.instrumentdate is NULL THEN ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy') end )  is NULL then case when ch.instrumentnumber is NULL then ch.transactionnumber else ch.instrumentnumber end ||' , ' ||TO_CHAR(case when ch.instrumentdate is NULL then ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy') end"
                 +
                 " AS chequeDetail,gl.glcode as glCode,ch.description as instrumentStatus  ";
         queryFrom = " FROM generalLedger gl,generalLedger gl1"
@@ -614,7 +648,7 @@ public class BankBookReportAction extends BaseFormAction {
                 "ih.id_status=es.id) ch on ch.voucherheaderid=vh.id  WHERE  gl.voucherHeaderId = vh.id  AND vmis.VOUCHERHEADERID=vh.id  "
                 +
                 "and gl.voucherheaderid  IN (SELECT voucherheaderid FROM generalledger gl WHERE glcode='" + glCode1
-                + "') AND gl.voucherheaderid = gl1.voucherheaderid AND gl.glcode! = '" + glCode1 + "' AND gl1.glcode = '"
+                + "') AND gl.voucherheaderid = gl1.voucherheaderid AND gl.glcode <> '" + glCode1 + "' AND gl1.glcode = '"
                 + glCode1 + "' and vh.voucherDate>='" + Constants.DDMMYYYYFORMAT1.format(startDate) + "' " +
                 "and vh.voucherDate<='" + Constants.DDMMYYYYFORMAT1.format(endDate) + "' and vh.status not in("
                 + voucherStatusToExclude + ") " + miscQuery + " ";
@@ -623,11 +657,11 @@ public class BankBookReportAction extends BaseFormAction {
             LOGGER.debug("Main query :" + query1 + queryFrom + OrderBy);
 
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(query1 + queryFrom + OrderBy)
-                .addScalar("voucherId")
+                .addScalar("voucherId",new BigDecimalType())
                 .addScalar("voucherDate")
                 .addScalar("voucherNumber")
                 .addScalar("particulars")
-                .addScalar("amount")
+                .addScalar("amount",new BigDecimalType())
                 .addScalar("type")
                 .addScalar("chequeDetail")
                 .addScalar("glCode")
@@ -668,16 +702,30 @@ public class BankBookReportAction extends BaseFormAction {
         if (getVouchermis() != null && getVouchermis().getDivisionid() != null && getVouchermis().getDivisionid().getId() != null
                 && getVouchermis().getDivisionid().getId() != -1)
             query.append(" and vmis.DIVISIONID =").append(getVouchermis().getDivisionid().getId().toString());
+       /* if (function != null && function.getId() != null && function.getId() != -1)
+            {
+        	query.append(" and vmis.FUNCTIONID=").append(function.getId().toString());
+            final CFunction func = (CFunction) persistenceService.find("from CFunction where id=?", function.getId());
+            header.append(" in " + func.getName() + " ");
+            }*/
+        if (getVouchermis() != null && getVouchermis().getFunction() != null
+                && getVouchermis().getFunction().getId() != null && getVouchermis().getFunction().getId() != -1) {
+            query.append(" and vmis.functionid=").append(getVouchermis().getFunction().getId());
+            final CFunction func = (CFunction) persistenceService.find("from CFunction where id=?", getVouchermis()
+                    .getFunction().getId());
+            header.append(" in " + func.getName() + " ");
+        }
+        
         return query.toString();
     }
 
-    public String getUlbName() {
+   /* public String getUlbName() {
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);
         return EMPTY_STRING;
-    }
+    }*/
 
     Date parseDate(final String stringDate) {
         if (parameters.containsKey(stringDate) && parameters.get(stringDate)[0] != null)
@@ -763,7 +811,7 @@ public class BankBookReportAction extends BaseFormAction {
 
     Map<String, Object> getParamMap() {
         final Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("ulbName", getUlbName());
+        paramMap.put("ulbName", ReportUtil.getCityName());
         final String name = bankAccount.getBankbranch().getBank().getName().concat("-")
                 .concat(bankAccount.getBankbranch().getBranchname()).concat("-")
                 .concat(bankAccount.getAccountnumber());
@@ -890,5 +938,30 @@ public class BankBookReportAction extends BaseFormAction {
             final Map<Long, List<Object[]>> instrumentHeaderIdsAndInstrumentVouchersMap) {
         InstrumentHeaderIdsAndInstrumentVouchersMap = instrumentHeaderIdsAndInstrumentVouchersMap;
     }
+
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
+
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
+	}
+
+	public CFunction getFunction() {
+		return function;
+	}
+
+	public void setFunction(CFunction function) {
+		this.function = function;
+	}
+    
+	 public FinancialYearDAO getFinancialYearDAO() {
+	        return financialYearDAO;
+	    }
+
+	    public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+	        this.financialYearDAO = financialYearDAO;
+	    }
 
 }

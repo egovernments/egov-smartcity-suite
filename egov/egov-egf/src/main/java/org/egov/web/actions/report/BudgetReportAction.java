@@ -83,7 +83,6 @@ import com.opensymphony.xwork2.util.ValueStack;
                         "application/xls", "contentDisposition", "no-cache;filename=BudgetReport.xls" })
 })
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 public class BudgetReportAction extends BaseFormAction {
     /**
      *
