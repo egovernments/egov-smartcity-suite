@@ -124,5 +124,7 @@
         </property>
         <property name="cacheSeconds" value="0"/>
     </bean>
+    
+    <bean class="org.egov.ptis.client.integration.utils.SpringBeanUtil" lazy-init="false"/>
 	
 </beans>

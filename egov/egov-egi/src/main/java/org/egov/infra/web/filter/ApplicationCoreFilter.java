@@ -80,7 +80,6 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareThreadLocal(final HttpServletRequest request, final HttpSession session) {
-        EgovThreadLocals.setServletContext(request.getServletContext());
         EgovThreadLocals.setCityCode((String) session.getAttribute("cityCode"));
         EgovThreadLocals.setCityName((String) session.getAttribute("cityname"));
         EgovThreadLocals.setMunicipalityName((String) session.getAttribute("citymunicipalityname"));
