@@ -49,6 +49,7 @@
 				<div class="panel-heading ">
 					<div class="panel-title" style="color: orange;" align="center">
 						<strong><spring:message code="msg.deacivate.record" /></strong>
+						<c:out value="${advertisementPermitDetail.applicationNumber}"></c:out>
 					</div>
 				</div>
 				<div class="row">

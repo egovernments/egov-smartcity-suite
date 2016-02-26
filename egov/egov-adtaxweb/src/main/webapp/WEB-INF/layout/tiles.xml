@@ -258,7 +258,7 @@
         <put-attribute name="body" value="/WEB-INF/views/hoarding/statuschange-search.jsp"/>
     </definition>
     
-    <definition name="statusChange-result" extends="base_layout">
+    <definition name="statusChange-deactivate" extends="base_layout">
     	<put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/statusChange-deactivate.jsp"/>
     </definition>

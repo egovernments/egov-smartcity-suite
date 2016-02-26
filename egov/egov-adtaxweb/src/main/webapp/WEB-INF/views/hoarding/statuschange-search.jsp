@@ -135,4 +135,4 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/app/js/searchadtax.js'/>"></script>
+<script src="<c:url value='/resources/app/js/deactivateAdvertisement.js'/>"></script>

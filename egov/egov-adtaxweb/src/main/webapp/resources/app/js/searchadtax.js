@@ -40,19 +40,6 @@ $(document).ready(function(){
    });*/
 	
 	
-	
-	var agency_typeahead=$('#agencyTypeAhead').typeahead({
-		hint : true,
-		highlight : true,
-		minLength : 1
-	}, {
-		displayKey : 'name',
-		source : agency.ttAdapter()
-	});
-	typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
-	
-	
-   
 	/*$('#subcategories').change(function(){
 		$("#subCategoryId").val($('#subcategories').val());    
 	});*/
@@ -249,87 +236,6 @@ $(document).ready(function(){
 	
 	});
 	
-	$('#demarcation_remarks').keypress(function(e){
-		
-		var k=e.charCode;
-		return ((k==0 || k==32 || k==46 || k >= 48 && k <= 57 ) || (k>=65 && k<=90) || (k>=97 && k<=122));
-			});
-	
-	$('#searchrecord').click(function(e){
-
-		oTable= $('#adtax_searchrecord');
-		if(prevdatatable)
-		{
-			prevdatatable.fnClearTable();
-			$('#adtax_searchrecord thead tr').remove();
-		}
-		
-		//oTable.fnClearTable();
-			prevdatatable = oTable.dataTable({
-			"sPaginationType": "bootstrap",
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"autoWidth": false,
-			"bDestroy": true,
-			"ajax": "/adtax/deactivate/search-activerecord-list?"+$("#activehoardingsearchform").serialize(),
-			"columns" : [
-						  { "data" : "advertisementNumber", "title":"Advertisement No."},
-						  { "data" : "applicationNumber", "title": "Application No."},
-						  { "data" : "applicationFromDate", "title": "Application Date"},
-						  { "data" : "agencyName", "title": "Agency"},
-						  { "data" : "pendingDemandAmount", "title": "Amount"},
-						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
-						  { "data" : "status", "title": "Hoarding Status"},
-						  
-						  { 
-							  "data" : "id",
-							  "render" : function(data, type, row, meta) {
-									return '<button class="btn btn-primary" onclick="window.open(\'/adtax/deactivate/result/'+ data +'\', \'\', \'width=800, height=600 , scrollbars=yes\');"> Change Status </button>';
-							   },
-							   "title": "Actions"
-						  }
-							  
-						  ],
-						  "aaSorting": [[4, 'asc']] 
-					});
-		e.stopPropagation();
-		e.preventDefault();
-
-	});
-	$('#deactivation').click(function(){
-		var pendingTax = document.getElementById('pendingTax').value;
-		if(pendingTax>0)
-		{
-			var deactivateForm=$(this).closest("form");
-			bootbox.confirm("You Have Pending Tax Of Rupees "+pendingTax+". Do You Want To Continue Deactivation?", function(result) { 
-				if(result)
-				{
-					deactivateForm.submit();
-				}
-			});
-			
-			return false;
-		}
-		return true;
-	});
-
-	$(document).on('click','.statuscheck' ,function(){
-		var applicationNumber=oTable.fnGetdata($(this).parent().parent(),1);
-	//	alert('Insider !!'+applicationNumber);
-		var url = '/adtax/deactivate/result/'+ applicationNumber;
-	});
-	
-	
-	//feb 17
-	
-	/*$('#searchagencywiserecord').click(function(){
-		var action = '/adtax/reports/getAgencyWiseDcb/' + $('#agencyTypeAhead').val();
-		$('#agencywisehoardingsearchform').attr('method','get');
-		$('#agencywisehoardingsearchform').attr('action',action);
-	});
-	*/
-	
-	
 
 	$('#searchagencywise').click(function(e){
 		oTable= $('#adtax_searchagencywiserecord');
@@ -372,30 +278,5 @@ $(document).ready(function(){
 
 	});
 	
-	//feb 17
-	
 });
 
-
-//feb 17
-/*function myJsFunction(){
-	alert("alert");
-}
-
-
-$(function() {
-    $('totalHoardingInAgency').click(function(event) {
-        event.preventDefault();
-        $.ajax({
-            url: 'http://www.google.com',
-            dataType :'json',
-            data : '{}',
-            success :  function(data){
-                // Your Code here
-
-                $('#agencywisehoardingsearchform').submit();
-            }
-        })
-   });
-});*/
-//feb 17

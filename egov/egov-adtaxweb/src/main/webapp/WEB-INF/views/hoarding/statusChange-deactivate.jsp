@@ -44,42 +44,41 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form  action="/adtax/deactivate/deactive" id="statusdeactivateform" method ="post" class="form-horizontal form-groups-bordered"  modelAttribute="advertisementPermitDetailStatus" commandName="advertisementPermitDetailStatus">
+		<form:form id="statusdeactivateform" name="statusdeactivateform" method ="get" class="form-horizontal form-groups-bordered"  modelAttribute="advertisementPermitDetailStatus" commandName="advertisementPermitDetailStatus">
 			<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-body custom-form">
-				<div class="panel-heading ">
-					<div class="panel-title" style="color: orange;" align="center">
-						<strong><spring:message code="lbl.demarcation.details" /></strong>
+				<div class="panel-body custom-form">
+					<div class="panel-heading ">
+						<div class="panel-title" style="color: orange;" align="center">
+							<strong><spring:message code="lbl.demarcation.details" /></strong>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right">
+							<spring:message code="lbl.demarcation.remarks"/>
+							<span class="mandatory"></span>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<form:textarea cssClass="form-control patternvalidation" path="deactivation_remarks"  id="deactivation_remarks" data-pattern="alphanumericwithspace" maxlength="100" required="required"/>
+				 		</div>
+						<form:hidden path="applicationNumber" id="applicationNumber" value="${advertisementPermitDetailStatus.applicationNumber}" />
+						<form:hidden path="id" id="id" value="${advertisementPermitDetailStatus.id}" />
+						<label class="col-sm-2 control-label"><spring:message code="lbl.demarcation.date"/><span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input type="text" class="form-control datepicker" id="deactivation_date" data-date-end-date="0d"  path="deactivation_date" required="required"/>
+						</div> 
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.demarcation.remarks"/>
-						<span class="mandatory"></span>
-					</label>
-					<div class="col-sm-3 add-margin">
-						<form:textarea cssClass="form-control patternvalidation" path="deactivation_remarks"  id="deactivation_remarks" rows="4" cols="30" required="required"/>
-				 	</div>
-					<form:hidden path="applicationNumber" id="applicationNumber" value="${advertisementPermitDetailStatus.applicationNumber}" />
-					<form:hidden path="id" id="id" value="${advertisementPermitDetailStatus.id}" />
-						 <label class="col-sm-2 control-label"><spring:message code="lbl.demarcation.date"/><span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control datepicker" id="deactivation_date" path="deactivation_date" required="required"/>
-						</div> 
-				</div>
-			</div>
-				<div class="form-group">
 					<div class="row add-border">
 	                	<div class="col-md-3 add-margin text-right"><spring:message code="lbl.pending.tax"/></div>
-	                	<div class="col-md-3 add-margin view-content">
-	                       	<%-- <c:out value="${advertisementPermitDetailStatus.advertisement.pendingTax}"></c:out> --%>
-	                       	<input type="text" id="pendingTax" style="border-collapse: collapse;" value="<c:out value="${advertisementPermitDetailStatus.advertisement.pendingTax}"/>">
+	                	<div class="col-md-3 add-margin view-content" id="ptax">
+	                	  ${advertisementPermitDetailStatus.advertisement.pendingTax}  
 	                    </div>
 	               	</div>
 				</div>
 				<div class="row">
        				<div class="text-center">
-       					<button type="submit" class="btn btn-primary"  id="deactivation"><spring:message code="lbl.deactivate"/></button>
+       					<button type="button" class="btn btn-primary" id="deactivation" /><spring:message code="lbl.deactivate"></spring:message></button>
           		    	<button type="reset" id="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
           		    	<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
           			</div>
@@ -97,4 +96,5 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/app/js/searchadtax.js'/>"></script>
+<script src="<c:url value='/resources/app/js/deactivateAdvertisement.js'/>"></script>
+
