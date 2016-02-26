@@ -52,6 +52,8 @@ var toDateStr="";
 	function validate(exportValue) {
 		document.getElementById('exportType').value=exportValue;
 		document.getElementById('error').innerHTML="";
+		var fromDate=document.getElementById('fromDate').value;
+		var toDate=document.getElementById('toDate').value;
 		
 		var reportType = document.getElementById('reportType').value;
 		//bootbox.alert(reportType);
@@ -72,12 +74,7 @@ today = dd+'/'+mm+'/'+yyyy;
 			}  if (document.getElementById('fundId').value == '') {
 				bootbox.alert('Please select Fund');
 				return false;
-			}  if(document.getElementById('toDate').value >today ) 
-				{
-
-				bootbox.alert("To date cannot be greater than current date");
-				return false;
-				}
+			}  
  
 			 if( compareDate(formatDate6(document.getElementById('fromDate').value),formatDate6(document.getElementById('toDate').value)) == -1 ){
 				bootbox.alert('Start Date cannot be greater than End Date');
