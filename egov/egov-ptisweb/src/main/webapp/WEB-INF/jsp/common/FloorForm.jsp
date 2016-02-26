@@ -49,6 +49,10 @@
 		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
+		
+		<th class="bluebgheadtd"><s:text name="unstructuredLand" /><span class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="plinthLength" /></th>
+		<th class="bluebgheadtd"><s:text name="plinthBreadth" /></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="drainage" /></th>
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
@@ -101,7 +105,7 @@
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:select headerKey="" headerValue="%{getText('default.select')}"
+					<s:select headerKey="" headerValue="%{getText('default.select')}" 
 						name="propertyDetail.floorDetailsProxy[0].propertyOccupation.id"
 						listKey="id" id="floorOccupation"
 						value="%{propertyDetail.floorDetailsProxy[0].propertyOccupation.id}"
@@ -132,8 +136,32 @@
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
+					<s:select name="propertyDetail.floorDetailsProxy[0].unstructuredLand" id="unstructuredLand"  list="#{'false':'No','true':'Yes' }" value="%{propertyDetail.floorDetailsProxy[0].unstructuredLand}"
+						onchange="enableDisableLengthBreadth(this);" cssClass="selectnew" data-optional="0" title="Unstructured Land">
+					</s:select>
+				</div>
+			</td>
+		<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="propertyDetail.floorDetailsProxy[0].builtUpArea.length" 
+						maxlength="10" size="10" readonly="true" id="builtUpArealength" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.length}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length'); calculatePlintArea(this);"
+						  cssStyle="width:100%" data-optional="1" data-errormsg="Length is mandatory!" title="Length" />
+				</div>
+			</td>
+		<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="propertyDetail.floorDetailsProxy[0].builtUpArea.breadth" 
+						maxlength="10" size="10" readonly="true" id="builtUpAreabreadth" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.breadth}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Breadth');checkZero(this,'Breadth'); calculatePlintArea(this);"
+						 cssStyle="width:100%" data-optional="1" data-errormsg="Breadth is mandatory!" title="Breadth"/>
+				</div>
+			</td>
+		
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].builtUpArea.area" 
-						maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[0].builtUpArea.area" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
+						maxlength="10" size="10" id="builtUpArea" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 						cssStyle="width:100%" data-optional="0" data-errormsg="Plinth area is mandatory!" title="Length X Width"/>
 				</div>
@@ -159,7 +187,7 @@
 			<td class="blueborderfortd" id="AddRemoveFloor">
 			
 			  <span id="addF" alt="AddF" class="tblactionicon add" 
-			        onclick="javascript:addFloor(); return false;">
+			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 			  </span>
 			  &nbsp;
@@ -260,11 +288,38 @@
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"  title="Tax effective from entered installment"></s:textfield>
 					</div>
 				</td>
+				
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:select name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].unstructuredLand" id="unstructuredLand"  list="#{'false':'No','true':'Yes' }" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].unstructuredLand}"
+						onchange="enableDisableLengthBreadth(this);" cssClass="selectnew" data-optional="0" title="Unstructured Land">
+					</s:select>
+				</div>
+			</td>
+			
+		<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.length" 
+						maxlength="10" size="10" readonly="true" id="builtUpArealength" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.length}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length'); calculatePlintArea(this);"
+						cssStyle="width:100%" data-optional="1" data-errormsg="Length is mandatory!" title="Length" />
+				</div>
+			</td>
+		<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.breadth" 
+						maxlength="10" size="10" readonly="true" id="builtUpAreabreadth" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.breadth}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Breadth');checkZero(this,'Breadth'); calculatePlintArea(this);"
+						cssStyle="width:100%" data-optional="1" data-errormsg="Breadth is mandatory!" title="Breadth"/>
+				</div>
+			</td> 
+		
+				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
 							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
-							maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
+							maxlength="10" size="10" id="builtUpArea"
 							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.area}"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 							cssStyle="width:100%"  title="Length X Width"/>
@@ -290,7 +345,7 @@
 				
 				<td class="blueborderfortd" id="AddRemoveFloor">
 				  <span id="addF" alt="AddF" class="tblactionicon add" 
-			        onclick="javascript:addFloor(); return false;">
+			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 				  </span>
 				  &nbsp;
