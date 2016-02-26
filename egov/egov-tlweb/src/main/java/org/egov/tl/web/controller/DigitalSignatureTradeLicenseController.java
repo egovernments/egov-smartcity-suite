@@ -132,8 +132,15 @@ public class DigitalSignatureTradeLicenseController {
                         .getId());
                 final DateTime currentDate = new DateTime();
                license= licenseUtils.applicationStatusChange(license, Constants.APPLICATION_STATUS_APPROVED_CODE);
-                final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
+                WorkFlowMatrix wfmatrix=null;
+               if (license.getLicenseAppType() != null
+                       && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+                   wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
+                           Constants.WF_STATE_RENEWAL_COMM_APPROVED, null);
+               }else{
+               wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                         Constants.WF_STATE_COLLECTION_PENDING, null);
+               }
 
                 license.transition(true).withSenderName(user.getName())
                         .withComments(Constants.WORKFLOW_STATE_COLLECTED).withStateValue(wfmatrix.getNextState())
