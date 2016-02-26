@@ -47,7 +47,7 @@
 	 	<c:if test="${not empty message}">
             <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
         </c:if>
-		<form:form id="updaterevenueinspectorform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="revenueInspectorRecord" commandName="revenueInspectorRecord">
+		<form:form id="updaterevenueinspectorform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="revenueInspector" commandName="revenueInspector">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading ">
 					<div class="panel-title">
@@ -56,14 +56,14 @@
 				</div>
 				<div class="panel-body"> 										
 					<div class="form-group"> 
-					    <form:hidden name="id" path="id" id="id" value="${revenueInspectorRecord.id}"/>
                     	<label class="col-sm-3 control-label text-right">
                     		<spring:message code="lbl.tpbo.name"/><span class="mandatory"></span>
                     	</label>
                     	<div class="col-sm-3 add-margin">
-                    		<form:input type="text" cssClass="form-control patternvalidation" 
+                    		 <form:input type="text" cssClass="form-control patternvalidation" 
                         	      data-pattern="alphanumericwithspace" maxlength="49" path="name" id="name" readonly="true"  required="required"/>
-                        	      	<form:errors path="name" cssClass="error-msg" />
+                        	 <form:hidden path="id" id="id" value="${revenueInspector.id}"/>
+                        	 <form:errors path="name" cssClass="error-msg" />
                     	</div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.rateClass.active"/><span class="mandatory"></span></label>
                         <div class="col-sm-3 add-margin">
@@ -100,7 +100,7 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/app/js/searchadvertisement.js'/>"></script>
+<script src="<c:url value='/resources/app/js/tpbo.js'/>"></script>
 
 
 
