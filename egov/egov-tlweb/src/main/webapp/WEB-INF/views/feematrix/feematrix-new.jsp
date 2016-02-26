@@ -40,7 +40,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<script src="<c:url value='/resources/js/app/feematrix.js' context='/tl'/>"></script>
+<script src="<c:url value='/resources/js/app/feematrix.js?rnd=${app_release_no}' context='/tl'/>"></script>
 <script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
 
 <div class="row">

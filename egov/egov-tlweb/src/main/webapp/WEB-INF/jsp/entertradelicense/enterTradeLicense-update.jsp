@@ -169,7 +169,7 @@
 						autoclose: true 
 					}); 
 				</script>
-        <script src="../resources/js/app/newtrade.js"></script>
+        <script src="../resources/js/app/newtrade.js?rnd=${app_release_no}"></script>
         <script>
 	
 			function validateForm() {
