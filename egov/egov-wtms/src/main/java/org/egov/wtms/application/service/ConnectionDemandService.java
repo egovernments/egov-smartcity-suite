@@ -386,12 +386,12 @@ public class ConnectionDemandService {
             instId = Integer.valueOf(listObj[1].toString());
             installment = (Installment) installmentDao.findById(instId, false);
             if (currInst.equals(installment)) {
-                if (listObj[3] != null && BigDecimal.ZERO.compareTo((BigDecimal) listObj[3]) == 1)
+                if (listObj[3] != null && ((BigDecimal)listObj[3]).compareTo(BigDecimal.ZERO) == 1)
                     currCollection = currCollection.add((BigDecimal) listObj[3]);
                 currDmd = currDmd.add((BigDecimal) listObj[2]);
             } else if (listObj[2] != null) {
                 arrDmd = arrDmd.add((BigDecimal) listObj[2]);
-                if (BigDecimal.ZERO.compareTo((BigDecimal) listObj[2]) == 1)
+                if (((BigDecimal) listObj[2]).compareTo(BigDecimal.ZERO) == 1)
                     arrColelection = arrColelection.add((BigDecimal) listObj[2]);
             }
         }
