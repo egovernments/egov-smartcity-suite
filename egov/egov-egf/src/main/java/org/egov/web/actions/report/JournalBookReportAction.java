@@ -178,7 +178,7 @@ public class JournalBookReportAction extends BaseFormAction {
                 voucherNumber = bean.getVouchernumber();
             }
 
-            if (!narration.equalsIgnoreCase("") && narration.equalsIgnoreCase(bean.getNarration())) {
+            if (narration!=null && !narration.equalsIgnoreCase("") && narration.equalsIgnoreCase(bean.getNarration())) {
                 bean.setNarration("");
             } else {
                 narration = bean.getNarration();

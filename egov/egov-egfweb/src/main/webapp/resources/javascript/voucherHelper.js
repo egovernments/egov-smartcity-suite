@@ -1013,7 +1013,7 @@ function fillNeibrAfterSplitGlcode(obj)
 	}else if (temp!="" &&(accCodeid==null || accCodeid=="")){
 		/*bootbox.alert("Invalid Account Code selected .Please select code from auto complete.");
 		obj.value="";*/
-		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
+		//document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
 	}
 	var currRow=getRowIndex(obj);
 	var funcObj = document.getElementById('billDetailslist['+currRow+'].functionDetail');
