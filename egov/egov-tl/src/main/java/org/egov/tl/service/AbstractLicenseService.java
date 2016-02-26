@@ -463,7 +463,7 @@ public abstract class AbstractLicenseService<T extends License> {
             pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
         final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-        license.reinitiateTransition().start().withSenderName(currentUser.getName())
+        license.reinitiateTransition().start().withSenderName(currentUser.getUsername() + "::" + currentUser.getName())
                 .withComments(workflowBean.getApproverComments())
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
                 .withNextAction(wfmatrix.getNextAction());
@@ -486,7 +486,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             if (wfInitiator.equals(userAssignment)) {
-                license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                license.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
                 if (license.getLicenseAppType() != null
                         && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
@@ -494,13 +494,13 @@ public abstract class AbstractLicenseService<T extends License> {
 
             } else {
                 final String stateValue = license.getCurrentState().getValue().split(":")[0] + ":" + WORKFLOW_STATE_REJECTED;
-                license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                license.transition(true).withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
             }
 
         } else if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            license.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
@@ -512,7 +512,7 @@ public abstract class AbstractLicenseService<T extends License> {
             if (null == license.getState()) {
                 final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
-                license.transition().start().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                license.transition().start().withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             } else if (license.getCurrentState().getNextAction().equalsIgnoreCase("END"))
@@ -521,7 +521,7 @@ public abstract class AbstractLicenseService<T extends License> {
             else {
                 final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
-                license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                license.transition(true).withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             }

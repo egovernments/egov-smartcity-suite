@@ -455,14 +455,14 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
                 wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
                         Constants.WF_STATE_DIGITAL_SIGN_RENEWAL, null);
-                licenseObj.transition(true).withSenderName(user.getName())
+                licenseObj.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                 .withComments(Constants.WORKFLOW_STATE_COLLECTED)
                 .withStateValue(Constants.WF_STATE_DIGITAL_SIGN_RENEWAL).withDateInfo(currentDate.toDate())
                 .withOwner(pos).withNextAction(wfmatrix.getNextAction());
             } else {
                 wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                         Constants.WF_STATE_DIGITAL_SIGN_NEWTL, null);
-                licenseObj.transition(true).withSenderName(user.getName())
+                licenseObj.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                 .withComments(Constants.WORKFLOW_STATE_COLLECTED)
                 .withStateValue(Constants.WF_STATE_DIGITAL_SIGN_NEWTL).withDateInfo(currentDate.toDate())
                 .withOwner(pos).withNextAction(wfmatrix.getNextAction());
@@ -476,7 +476,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             else
                 wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                         Constants.WF_STATE_COLLECTION_PENDING, null);
-            licenseObj.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
+            licenseObj.transition(true).withSenderName(user.getUsername() + "::" + user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
             .withNextAction(wfmatrix.getNextAction());
         }

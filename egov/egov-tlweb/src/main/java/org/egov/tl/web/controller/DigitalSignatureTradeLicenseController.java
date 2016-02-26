@@ -142,7 +142,7 @@ public class DigitalSignatureTradeLicenseController {
                         Constants.WF_STATE_COLLECTION_PENDING, null);
                }
 
-                license.transition(true).withSenderName(user.getName())
+                license.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(Constants.WORKFLOW_STATE_COLLECTED).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getNextAction());
