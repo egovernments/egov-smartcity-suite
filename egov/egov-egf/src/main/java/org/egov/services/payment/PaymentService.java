@@ -2863,7 +2863,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 paymentBean.setDeductionAmt(deductionAmtMap.get(paymentBean.getCsBillId()) == null ? BigDecimal.ZERO
                         : deductionAmtMap.get(paymentBean.getCsBillId()));
                 final BigDecimal passedamount = billregister.getPassedamount() == null ? BigDecimal.ZERO : billregister
-                        .getPassedamount();
+                        .getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
                 paymentBean.setNetAmt(passedamount.subtract(paymentBean.getDeductionAmt() == null ? BigDecimal.ZERO : paymentBean
                         .getDeductionAmt()));
                 paymentBean.setEarlierPaymentAmt(paidAmtMap.get(paymentBean.getCsBillId()) == null ? BigDecimal.ZERO
