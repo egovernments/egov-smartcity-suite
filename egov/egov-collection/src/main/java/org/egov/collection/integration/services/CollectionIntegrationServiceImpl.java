@@ -358,7 +358,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
          * LOGGER.error("Update to financial systems failed"); }
          */
 
-        collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
+        receiptHeaderService.updateBillingSystemWithReceiptInfo(receiptHeader);
         LOGGER.info("Billing system updated with receipt info");
 
         // Create Vouchers
@@ -635,7 +635,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
             // Update Billing System regarding cancellation of the existing
             // receipt(when the instrument is not deposited)
-            collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeaderToBeCancelled);
+            receiptHeaderService.updateBillingSystemWithReceiptInfo(receiptHeaderToBeCancelled);
 
             LOGGER.info("Receipt Cancelled with Receipt Number(saveOnCancel): "
                     + receiptHeaderToBeCancelled.getReceiptnumber() + "; Consumer Code: "

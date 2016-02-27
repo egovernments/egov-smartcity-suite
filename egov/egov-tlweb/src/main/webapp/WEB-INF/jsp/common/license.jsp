@@ -77,7 +77,7 @@ function getUom(){
     <div class="panel-title"><s:text name='license.details.lbl' /></div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.establishmentname' /></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.establishmentname' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
          	<s:textfield name="nameOfEstablishment" cssClass="form-control patternvalidation"  data-pattern="alphabetwithspace" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="250" onBlur="checkLength(this,32)"/>
     </div>
@@ -122,20 +122,34 @@ function getUom(){
     
 	<label class="col-sm-2 control-label text-right"><s:text name='license.startdate' /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-	<s:date name="startDate" id="formattedStartDate" format="dd/MM/yyyy" />
-	<s:textfield name="startDate" cssClass="form-control datepicker" required="true" data-date-end-date="0d" id="startDate"  maxlength="10" value="%{formattedStartDate}"/>
+	<s:date name="commencementDate" id="formattedStartDate" format="dd/MM/yyyy" />
+	<s:textfield name="commencementDate" cssClass="form-control datepicker" required="true" id="startDate"  maxlength="10" value="%{formattedStartDate}"/>
     </div>
 </div>
-<s:if test="%{feeAmount != 0}">
-	<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='Fee Amount' /></label>
-    <div class="col-sm-3 add-margin">
-         <s:textfield name="feeAmount" id="feeAmount" value="%{feeAmount}" class="form-control" readOnly="true"/>
-    </div></div>
-    </s:if>
-	
-
-
+<s:set value="outstandingFee" var="feeInfo"></s:set>
+<s:if test="%{#attr.feeInfo.size > 0}">
+<div class="panel-heading  custom_form_panel_heading subheadnew">
+    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
+</div>
+<table class="table table-bordered" style="width:97%;margin:0 auto;">
+	<thead>
+		<tr>
+			<th><s:text name='license.fee.type' /></th>
+			<th><s:text name='license.fee.current' /></th>
+			<th><s:text name='license.fee.arrears' /></th>
+		</tr>
+	</thead>
+	<tbody>
+		<s:iterator value="feeInfo" var="fee" status="status">
+			<tr>
+				<td>${fee.key}</td>
+				<td>${fee.value['current']}</td>
+				<td>${fee.value['arrear']}</td>
+			</tr>
+		</s:iterator>
+	</tbody>
+</table>
+</s:if>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.traderCheckbox.lbl' /></label>
     <div class="col-sm-3 add-margin">

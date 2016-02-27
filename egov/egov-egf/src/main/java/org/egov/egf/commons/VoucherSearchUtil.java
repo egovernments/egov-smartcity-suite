@@ -264,7 +264,7 @@ public class VoucherSearchUtil {
             sql = sql + " and vh.type='" + voucherHeader.getType() + "'";
 
         if (voucherHeader.getName() != null
-                && !voucherHeader.getName().equalsIgnoreCase("-1"))
+                && !voucherHeader.getName().equalsIgnoreCase("0") && !voucherHeader.getName().equalsIgnoreCase("-1"))
             sql = sql + " and vh.name='" + voucherHeader.getName() + "'";
         if (voucherHeader.getVoucherNumber() != null
                 && !voucherHeader.getVoucherNumber().equals(""))

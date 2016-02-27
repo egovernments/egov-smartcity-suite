@@ -105,7 +105,7 @@ public class FixedDepositAction extends BaseFormAction {
     @Override
     @SuppressWarnings("unchecked")
     public void prepare() {
-        bankBranchList = persistenceService.findAllBy("from Bankbranch br where br.isactive=1 order by br.bank.name asc ");
+        bankBranchList = persistenceService.findAllBy("from Bankbranch br where br.isactive=true order by br.bank.name asc ");
     }
 
     @Override
@@ -163,7 +163,7 @@ public class FixedDepositAction extends BaseFormAction {
 
         for (final FixedDeposit fd : fixedDepositList) {
             bankAccountListTemp = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=1 order by ba.chartofaccounts.glcode",
+                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
                     fd.getBankBranch().getId());
             fd.setBankAccountList(bankAccountListTemp);
             if (fd.getReceiptAmount() == null)

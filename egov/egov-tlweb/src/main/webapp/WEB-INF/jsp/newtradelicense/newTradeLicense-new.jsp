@@ -74,7 +74,12 @@
 					showMessage('newLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
 					window.scroll(0, 0); 
 					return false;
-				} else if (document.getElementById("address").value == '' || document.getElementById("address").value == null){
+				}else if (document.getElementById("nameOfEstablishment").value == '' || document.getElementById("nameOfEstablishment").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.tradeTitle.null" />');
+					window.scroll(0, 0); 
+					return false;
+				}  
+				else if (document.getElementById("address").value == '' || document.getElementById("address").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.licenseaddress.null" />');
 					window.scroll(0, 0);
 					return false;
@@ -143,9 +148,9 @@
 			function onBodyLoad(){
   				var currentState=document.getElementById("currentWfstate").value;
   				showHideAgreement();
-				if(currentState=='Create License:Commissioner Approved')	
+				if(document.getElementById("mode").value=='disableApprover')	
 					{
-					toggleFields(true,['Submit','Reject','button2','Approve','approverComments']); 
+					toggleFields(true,['Submit','Reject','button2','Approve','approverComments','Sign','Preview']); 
 					jQuery(".show-row").hide(); 
 					jQuery('#approverComments').removeAttr('<span class="mandatory"></span>');
 					jQuery('#approverDepartment').removeAttr('<span class="mandatory"></span>');
@@ -197,7 +202,7 @@
 
     		function onSubmit() {
         		var mode=document.getElementById("mode").value;
-    			<s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval') &&  mode!='editForReject' )}">
+    			<s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval' || mode== 'disableApprover') &&  mode!='editForReject' )}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
@@ -359,7 +364,7 @@
                     </div>
                 </div>
         <script	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>        
-        <script src="../resources/js/app/newtrade.js"></script>
-        <script src="../resources/js/app/searchTrade.js"></script>
+        <script src="../resources/js/app/newtrade.js?rnd=${app_release_no}"></script>
+        <script src="../resources/js/app/searchTrade.js?rnd=${app_release_no}"></script>
     </body>
 </html>

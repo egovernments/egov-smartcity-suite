@@ -70,7 +70,7 @@ public class FundHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List findAllActiveFunds() {
-		return getCurrentSession().createQuery("from Fund where isactive = 1 order by name").list();
+		return getCurrentSession().createQuery("from Fund where isactive = true order by name").list();
 
 	}
 
@@ -83,7 +83,7 @@ public class FundHibernateDAO extends GenericHibernateDAO {
 	 * @return a <code>List</code> of <code>Fund</code> objects.
 	 */
 	public List findAllActiveIsLeafFunds() {
-		return getCurrentSession().createQuery("from Fund where isactive = 1 and isnotleaf=0 order by name").list();
+		return getCurrentSession().createQuery("from Fund where isactive = true and isnotleaf=false order by name").list();
 	}
 
 	public Fund fundByCode(final String fundCode) {

@@ -76,13 +76,6 @@
 									</div>
 									<div class="row add-border">
 										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.hscpipesize.inches"/>  
-										</div>
-										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${propertyPipeSize.pipeSize.sizeInInch}"/>
-										</div>
-										
-										<div class="col-md-3 col-xs-6 add-margin">
 											<spring:message code="lbl.hscpipesize.mm"/>
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">

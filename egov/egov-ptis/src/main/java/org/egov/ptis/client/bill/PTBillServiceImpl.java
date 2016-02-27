@@ -41,6 +41,7 @@ package org.egov.ptis.client.bill;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_MUTATION_FEE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_FEE_STR;
@@ -267,7 +268,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         // In case of currentInstallment >12, then currentInstallment - 13 is
         // stored.
         billdetail.setEgInstallmentMaster(billDetailBean.getInstallment());
-
+        billdetail.setFunctionCode(FUNCTION_CODE);
         LOGGER.debug("Exiting from createBillDet");
         return billdetail;
     }

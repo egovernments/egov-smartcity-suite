@@ -928,7 +928,7 @@ public class ScheduledRemittanceService {
     private Map<Integer, String> getFunds() {
         @SuppressWarnings("unchecked")
         final List<Object[]> list = HibernateUtil.getCurrentSession()
-        .createSQLQuery("select id,code from Fund where isactive=1 order by code").list();
+        .createSQLQuery("select id,code from Fund where isactive=true order by code").list();
         final Map<Integer, String> fundMap = new HashMap<Integer, String>();
         for (final Object[] fund : list)
         {

@@ -41,24 +41,27 @@ package org.egov.pgr.service.reports;
 
 import java.util.Date;
 
-import org.egov.infstr.utils.HibernateUtil;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class ComplaintTypeWiseReportService {
-    private static final Logger LOG = LoggerFactory.getLogger(ComplaintTypeWiseReportService.class);
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
             final String complaintType, final String complaintDateType) {
 
-        final StringBuffer query = new StringBuffer();
+        final StringBuilder query = new StringBuilder();
 
         query.append(
                 "SELECT ctype.id as  complainttypeid, ctype.name as name,COUNT(CASE WHEN cs.name IN ('REGISTERED') THEN 1 END) registered ,  COUNT(CASE WHEN cs.name IN ('FORWARDED','PROCESSING','NOTCOMPLETED') THEN 1 END) inprocess,  COUNT(CASE WHEN cs.name IN ('COMPLETED','CLOSED') THEN 1 END) Completed, COUNT(CASE WHEN cs.name IN ('REOPENED') THEN 1 END) reopened,   COUNT(CASE WHEN cs.name IN ('WITHDRAWN','REJECTED') THEN 1 END) Rejected, ");
@@ -75,7 +78,7 @@ public class ComplaintTypeWiseReportService {
     }
 
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String complaintType,
-            final String complaintDateType, final StringBuffer query) {
+            final String complaintDateType, final StringBuilder query) {
 
         query.append(" WHERE cd.status = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id");
 
@@ -101,7 +104,7 @@ public class ComplaintTypeWiseReportService {
 
     private SQLQuery setParameterForComplaintTypeReportQuery(final String querykey, final DateTime fromDate,
             final DateTime toDate, final String complaintDateType) {
-        final SQLQuery qry = HibernateUtil.getCurrentSession().createSQLQuery(querykey);
+        final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
             qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(7).toDate());
@@ -136,7 +139,7 @@ public class ComplaintTypeWiseReportService {
     public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
             final String complaintDateType, final String complaintTypeWithStatus, final String status) {
 
-        final StringBuffer query = new StringBuffer();
+        final StringBuilder query = new StringBuilder();
 
         query.append(
                 " SELECT  distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name || ' - ' || childlocation.name as boundaryname, cd.citizenfeedback as feedback,");

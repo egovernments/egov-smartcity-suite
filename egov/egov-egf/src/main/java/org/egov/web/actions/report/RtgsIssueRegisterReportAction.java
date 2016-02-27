@@ -117,7 +117,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
 
-        addDropdownData("bankList", persistenceService.findAllBy("from Bank where isactive=1 order by upper(name)"));
+        addDropdownData("bankList", persistenceService.findAllBy("from Bank where isactive=true order by upper(name)"));
         addDropdownData("bankBranchList", Collections.EMPTY_LIST);
         addDropdownData("bankAccountList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);

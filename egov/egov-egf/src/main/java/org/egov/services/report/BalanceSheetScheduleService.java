@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -67,13 +68,16 @@ public class BalanceSheetScheduleService extends ScheduleService {
     private String removeEntrysWithZeroAmount = "";
     private static final Logger LOGGER = Logger.getLogger(BalanceSheetScheduleService.class);
 
+    
+    
+   
     public void setBalanceSheetService(final BalanceSheetService balanceSheetService) {
         this.balanceSheetService = balanceSheetService;
     }
-
+    
     public void populateDataForSchedule(final Statement balanceSheet, final String majorCode) {
         getAppConfigValueForRemoveEntrysWithZeroAmount();
-        voucherStatusToExclude = getAppConfigValueFor("finance", "statusexcludeReport");
+        voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         minorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_minorcode_length"));
         majorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
         final Date fromDate = balanceSheetService.getFromDate(balanceSheet);
@@ -112,7 +116,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         final List<Object[]> openingBalanceAmountList = query.list();
         for (final Object[] obj : openingBalanceAmountList)
             if (obj[0] != null && obj[1] != null) {
-                BigDecimal total = (BigDecimal) obj[0];
+                BigDecimal total = BigDecimal.valueOf((double) obj[0]);
                 if (L.equals(obj[3].toString()))
                     total = total.multiply(NEGATIVE);
                 for (final StatementEntry entry : balanceSheet.getEntries())
@@ -158,7 +162,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         for (final Object[] obj : openingBalanceAmountList)
             if (obj[0] != null && obj[1] != null) {
 
-                BigDecimal total = (BigDecimal) obj[0];
+                BigDecimal total = BigDecimal.valueOf((double) obj[0]);
 
                 if (L.equals(obj[2].toString()))
                     total = total.multiply(NEGATIVE);
@@ -172,7 +176,6 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     }
             }
     }
-
     private String getGlcodeForPurposeCode7() {
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
                 "select glcode from chartofaccounts where purposeid=7");
@@ -185,7 +188,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 
     private String getGlcodeForPurposeCode7MinorCode() {
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
-                "select substr(glcode,0," + minorCodeLength + ") from chartofaccounts where purposeid=7");
+                "select substr(glcode,1," + minorCodeLength + ") from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
         if (list.get(0) != null)
@@ -196,7 +199,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
     /* For Detailed */
     private String getGlcodeForPurposeCode7DetailedCode() {
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
-                "select substr(glcode,0," + detailCodeLength + ") from chartofaccounts where purposeid=7");
+                "select substr(glcode,1," + detailCodeLength + ") from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
         if (list.get(0) != null)
@@ -225,10 +228,10 @@ public class BalanceSheetScheduleService extends ScheduleService {
         if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != -1)
             qry.append(" and v.id= mis.voucherheaderid ");
         qry.append(" AND v.voucherdate <= '" + formattedToDate + "' and v.voucherdate >='"
-                + balanceSheetService.getFormattedDate(balanceSheetService.getPreviousYearFor(fromDate)) +
+                +balanceSheetService.getFormattedDate(balanceSheetService.getPreviousYearFor(fromDate)) +
                 "' and c.glcode in (select distinct coad.glcode from chartofaccounts coa2, schedulemapping s " +
                 ",chartofaccounts coad where s.id=coa2.scheduleid and coa2.classification=2 and s.reporttype = 'BS'" +
-                " and coa2.glcode=SUBSTR(coad.glcode,0," + minorCodeLength + ") and coad.classification=4 and coad.majorcode='"
+                " and coa2.glcode=SUBSTR(coad.glcode,1," + minorCodeLength + ") and coad.classification=4 and coad.majorcode='"
                 + majorCode + "')  and c.majorcode='" + majorCode + "' and c.classification=4 " + filterQuery
                 + " group by c.glcode");
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());
@@ -265,7 +268,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     if (!balanceSheet.containsBalanceSheetEntry(row[2].toString())) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = (BigDecimal) row[0];
+                            BigDecimal total = BigDecimal.valueOf((double) row[0]);
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(row[0] + "-----" + row[1] + "------------------------------" + total);
                             if (L.equalsIgnoreCase(type.toString()))
@@ -280,7 +283,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         balanceSheet.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double) row[0]), divisor);
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(row[0] + "-----" + row[1] + "------------------------------" + amount);
                             if (L.equalsIgnoreCase(type.toString()))
@@ -313,7 +316,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
     /* For detailed */
     public void populateDataForAllSchedulesDetailed(final Statement balanceSheet) {
         getAppConfigValueForRemoveEntrysWithZeroAmount();
-        voucherStatusToExclude = getAppConfigValueFor("finance", "statusexcludeReport");
+        voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         minorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_minorcode_length"));
         majorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
         detailCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_detailcode_length"));
@@ -340,7 +343,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 
     public void populateDataForAllSchedules(final Statement balanceSheet) {
         getAppConfigValueForRemoveEntrysWithZeroAmount();
-        voucherStatusToExclude = getAppConfigValueFor("finance", "statusexcludeReport");
+        voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         minorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_minorcode_length"));
         majorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
         detailCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_detailcode_length"));
@@ -383,13 +386,13 @@ public class BalanceSheetScheduleService extends ScheduleService {
         for (final Object[] obj : allGlCodes)
             for (final Object[] row : resultMap) {
                 final String glCode = row[2].toString();
-                if (glCode.substring(0, majorCodeLength).equals(obj[0].toString())) {
+                if (glCode.substring(1, majorCodeLength).equals(obj[0].toString())) {
                     final String type = obj[3].toString();
                     if (!balanceSheet.containsBalanceSheetEntry(row[2].toString()))
                         addRowToStatement(balanceSheet, row, glCode);
                     else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double)row[0]), divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -424,13 +427,13 @@ public class BalanceSheetScheduleService extends ScheduleService {
         for (final Object[] obj : allGlCodes)
             for (final Object[] row : resultMap) {
                 final String glCode = row[2].toString();
-                if (glCode.substring(0, majorCodeLength).equals(obj[0].toString())) {
+                if (glCode.substring(1, majorCodeLength).equals(obj[0].toString())) {
                     final String type = obj[3].toString();
                     if (!balanceSheet.containsBalanceSheetEntry(row[2].toString()))
                         addRowToStatement(balanceSheet, row, glCode);
                     else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double) row[0]), divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -460,7 +463,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     if (!balanceSheet.containsBalanceSheetEntry(glCode)) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = (BigDecimal) row[0];
+                            BigDecimal total = BigDecimal.valueOf((double) row[0]);
                             if (L.equalsIgnoreCase(type))
                                 total = total.multiply(NEGATIVE);
                             balanceSheetEntry.getFundWiseAmount().put(
@@ -472,7 +475,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         balanceSheet.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double) row[0]), divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -517,7 +520,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     if (!balanceSheet.containsBalanceSheetEntry(glCode)) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = (BigDecimal) row[0];
+                            BigDecimal total = BigDecimal.valueOf((double) row[0]);
                             if (L.equalsIgnoreCase(type))
                                 total = total.multiply(NEGATIVE);
                             balanceSheetEntry.getFundWiseAmount().put(
@@ -529,7 +532,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         balanceSheet.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double) row[0]), divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null

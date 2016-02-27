@@ -40,7 +40,7 @@
 <script language="javascript"
 	src="../resources/javascript/jsCommonMethods.js"></script>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-
+<h5 style="color: red"><s:actionerror /></h5>
 <s:if test="%{bankBookViewEntries.size()>0}">
 	<br />
 
@@ -50,13 +50,13 @@
 				<div>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<th class="subheadnew" colspan="14" bgcolor="#CCCCCC"><s:property
-									value="ulbName" /><br /> Bank Book for <s:property
+							<th class="subheadnew" colspan="14" bgcolor="#CCCCCC" ><center><s:property
+									value="ulbName" /><br /> Bank Book Report for <s:property
 									value="bankAccount.bankbranch.bank.name" />-<s:property
 									value="bankAccount.bankbranch.branchname" />-<s:property
 									value="bankAccount.accountnumber" /> <s:property value="header" />
 								from <s:property value="%{getFormattedDate(startDate)}" /> to <s:property
-									value="%{getFormattedDate(endDate)}" /></th>
+									value="%{getFormattedDate(endDate)}" /></center></th>
 						</tr>
 
 					</table>
@@ -171,4 +171,4 @@
 	</tr>
 	</table>
 </s:if>
-<s:else>No data found</s:else>
+<s:else><h5 style="color: red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No data found</h5></s:else>

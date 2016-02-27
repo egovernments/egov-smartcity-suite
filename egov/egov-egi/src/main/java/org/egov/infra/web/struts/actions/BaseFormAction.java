@@ -54,6 +54,8 @@ import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.SessionAware;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
@@ -72,6 +74,8 @@ public abstract class BaseFormAction extends ActionSupport
     public static final String VIEW = "view";
     
     public static final String TRANSACTIONSUCCESS = "transactionsuccess";
+    @Autowired
+    @Qualifier("persistenceService")
     protected PersistenceService persistenceService;
     protected Map<String, Object> request;
     protected Map<String, List> dropdownData = new HashMap<String, List>();

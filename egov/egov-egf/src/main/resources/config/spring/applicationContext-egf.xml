@@ -30,7 +30,7 @@
 	default-lazy-init="true">
 
 	<context:component-scan
-		base-package="org.egov.billsaccounting , org.egov.dao , org.egov.deduction , org.egov.egf , org.egov.masters , org.egov.model , org.egov.payment , org.egov.services , org.egov.utils , org.egov.web ,org.egov.report ,org.egov.commons,com.exilant" />
+		base-package="org.egov.billsaccounting.* , org.egov.dao.* , com.exilant.eGov.src.common.*,org.egov.deduction.* ,org.egov.model.service.*, org.egov.egf.* , org.egov.masters.* , org.egov.model , org.egov.payment.* , org.egov.services.*,  org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*" />
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 
 	<bean class="org.egov.infra.admin.master.service.AppConfigService"
@@ -162,12 +162,12 @@
 	</bean>
 
 
-	<bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService">
+	<!-- <bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService">
 		<constructor-arg index="0"
 			value="org.egov.model.recoveries.Recovery" />
 		<property name="egDeductionDetHibernateDao" ref="egDeductionDetHibernateDao" />
 		<property name="tdsHibernateDAO" ref="tdsHibernateDAO" />
-	</bean>
+	</bean> -->
 
 
 	<bean id="sharedFundSourceService" class="org.egov.commons.service.SharedFundSourceService">
@@ -219,6 +219,9 @@
 	</bean>
 	<bean id="bankAccountService" class="org.egov.commons.service.BankAccountService">
 		<constructor-arg index="0" value="org.egov.commons.Bankaccount" />
+	</bean>
+	<bean id="egPartyTypeService" class="org.egov.services.masters.EgPartyTypeService">
+		<constructor-arg index="0" value="org.egov.commons.EgPartytype" />
 	</bean>
 	<bean id="remittanceGeneralLedgerDetailService"
 		class="org.egov.services.deduction.RemittanceGeneralLedgerDetailService">

@@ -44,10 +44,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
@@ -261,38 +259,6 @@ public class CollectionCommon {
         }
 
         return newReceiptDetail;
-    }
-
-    /**
-     * Updates the billing system with receipt information
-     */
-    public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader)
-            throws ApplicationRuntimeException {
-
-        String serviceCode = null;
-        // ReceiptHeader rh =
-        // payeeDetails.getReceiptHeaders().iterator().next();
-        /**
-         * for each receipt created, send the details back to the billing system
-         */
-        LOGGER.info("$$$$$$ Update Billing system for Service Code :"
-                + receiptHeader.getService().getCode()
-                + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
-                        : ""));
-        final Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
-        billReceipts.add(new BillReceiptInfoImpl(receiptHeader));
-        if (serviceCode == null)
-            serviceCode = receiptHeader.getService().getCode();
-
-        if (receiptHeaderService.updateBillingSystem(serviceCode, billReceipts)) {
-            receiptHeader.setIsReconciled(true);
-            // the receipts should be persisted again
-            receiptHeaderService.persist(receiptHeader);
-        }
-        LOGGER.info("$$$$$$ Billing system updated for Service Code :"
-                + receiptHeader.getService().getCode()
-                + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
-                        : ""));
     }
 
     /**

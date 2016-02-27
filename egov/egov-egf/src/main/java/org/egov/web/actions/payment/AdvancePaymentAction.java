@@ -176,9 +176,9 @@ public class AdvancePaymentAction extends BasePaymentAction {
                 "bankBranchList",
                 persistenceService
                         .findAllBy(
-                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = 1 and type in (?,?) ) "
+                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true and type in (?,?) ) "
                                         +
-                                        " and br.isactive=1 and br.bank.isactive = 1 order by br.bank.name asc", fund,
+                                        " and br.isactive=true and br.bank.isactive = true order by br.bank.name asc", fund,
                                 FinancialConstants.TYPEOFACCOUNT_PAYMENTS, FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
     }
 
@@ -310,7 +310,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
     private void populateBankAccounts(final Integer bankBranchId, final Integer fundId) {
         addDropdownData("accountNumberList", persistenceService.findAllBy(
                 "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.type in (?,?) " +
-                        "and ba.isactive=1 order by ba.chartofaccounts.glcode", bankBranchId, fundId,
+                        "and ba.isactive=true order by ba.chartofaccounts.glcode", bankBranchId, fundId,
                         FinancialConstants.TYPEOFACCOUNT_PAYMENTS, FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
     }
 

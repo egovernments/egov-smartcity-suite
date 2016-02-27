@@ -94,10 +94,14 @@
 												</tr>
 											</c:forEach>
 										</c:when>
+										<c:otherwise>No records found</c:otherwise>
 									</c:choose>		
 								</table>
 								<div class="text-center">
+								<c:choose>
+										<c:when test="${!digitalSignatureReportList.isEmpty()}">
 									<button type="button" class="btn btn-primary" id="submitButton">Sign All</button>
+									</c:when></c:choose>
 									<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a> 
 								</div> 
 							</div>

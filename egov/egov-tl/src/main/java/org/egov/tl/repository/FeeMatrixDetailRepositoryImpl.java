@@ -47,45 +47,61 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.License;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
+public class FeeMatrixDetailRepositoryImpl implements FeeMatrixDetailRepositoryCustom {
+    @PersistenceContext
+    private EntityManager entityManager;
 
-public class FeeMatrixDetailRepositoryImpl implements FeeMatrixDetailRepositoryCustom{
-	@PersistenceContext
-	private EntityManager entityManager;
-	@Override
-	public List<FeeMatrixDetail> findFeeList(License license) {
-		CriteriaBuilder builder=entityManager.getCriteriaBuilder();
-		CriteriaQuery<FeeMatrixDetail> createQuery = builder.createQuery(FeeMatrixDetail.class);
-		Root<FeeMatrixDetail> from = createQuery.from(FeeMatrixDetail.class);
-		
-		// TODO Auto-generated method st
-		return null;
-	}
-	
-public	FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate,long financialYearId)
-	{
-	
-		FeeMatrixDetail fmd=null;
-	String qlString="select fd from  FeeMatrixDetail fd  where fd.feeMatrix=:feeMatrix and :uom >=uomFrom and :uom <=uomTo and fd.feeMatrix.financialYear.id=:financialYearId "
-			+ " order by fd.id desc";
-	List l=	entityManager.createQuery(qlString).setParameter("feeMatrix", feeMatrix)
-		.setParameter("uom", uom).setParameter("financialYearId", financialYearId).getResultList();
-	
-	
-	
-	if(!l.isEmpty())
-	fmd=(FeeMatrixDetail)l.get(0);
-	
-	return fmd;
-		
-		
-	
+    @Override
+    public List<FeeMatrixDetail> findFeeList(final License license) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<FeeMatrixDetail> createQuery = builder.createQuery(FeeMatrixDetail.class);
+        createQuery.from(FeeMatrixDetail.class);
 
-	}
+        // TODO Auto-generated method st
+        return null;
+    }
+
+    @Override
+    public FeeMatrixDetail findFeeDetailList(final FeeMatrix feeMatrix, final Integer uom, final Date appdate,
+            final long financialYearId) {
+
+        FeeMatrixDetail fmd = null;
+        final String qlString = "select fd from  FeeMatrixDetail fd  where fd.feeMatrix=:feeMatrix and :uom >=uomFrom and :uom <=uomTo and fd.feeMatrix.financialYear.id=:financialYearId "
+                + " order by fd.id desc";
+        final List l = entityManager.createQuery(qlString).setParameter("feeMatrix", feeMatrix)
+                .setParameter("uom", uom).setParameter("financialYearId", financialYearId).getResultList();
+
+        if (!l.isEmpty())
+            fmd = (FeeMatrixDetail) l.get(0);
+
+        return fmd;
+
+    }
+
+    @Override
+    public List<FeeMatrixDetail> findByParams(final Long licenseCategory, final Long subCategory, final Long financialYear) {
+        final Criteria feeMatrixDetailCriteria = entityManager.unwrap(Session.class)
+                .createCriteria(FeeMatrixDetail.class, "feeMatrixDetail")
+                .createAlias("feeMatrixDetail.feeMatrix", "feeMatrix")
+                .createAlias("feeMatrixDetail.feeMatrix.licenseCategory", "licenseCategory")
+                .createAlias("feeMatrixDetail.feeMatrix.subCategory", "subCategory")
+                .createAlias("feeMatrixDetail.feeMatrix.financialYear", "financialYear");
+        if (licenseCategory != null)
+            feeMatrixDetailCriteria.add(Restrictions.eq("licenseCategory.id", licenseCategory));
+        if (subCategory != null)
+            feeMatrixDetailCriteria.add(Restrictions.eq("subCategory.id", subCategory));
+        if (financialYear != null)
+            feeMatrixDetailCriteria.add(Restrictions.eq("financialYear.id", financialYear));
+
+        return feeMatrixDetailCriteria.list();
+    }
 
 }

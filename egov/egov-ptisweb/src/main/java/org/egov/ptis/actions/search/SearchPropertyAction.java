@@ -269,8 +269,13 @@ public class SearchPropertyAction extends BaseFormAction {
         }
         checkIsDemandActive(basicProperty.getProperty());
         if (!applicationType.equalsIgnoreCase(APPLICATION_TYPE_COLLECT_TAX)
-                && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_DEMAND_BILL)) {
-            if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
+                && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_DEMAND_BILL)
+                && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+
+            if (!isDemandActive) {
+                addActionError(getText("error.msg.demandInactive"));
+                return COMMON_FORM;
+            } else if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
                     .equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS)) {
                 addActionError(getText("EWSHS.transaction.error"));
                 return COMMON_FORM;

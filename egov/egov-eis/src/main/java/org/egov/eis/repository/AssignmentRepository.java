@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -162,4 +163,10 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     
     @Query("select assignment.employee from Assignment assignment where  assignment.employee.active=true and assignment.designation.name in (:designation)")
     public Set<User> getUsersByDesignations(@Param("designation") final String[] designation);
+    
+    @Query(" select distinct A.designation.roles from  Assignment A where A.fromDate<=current_date and A.toDate<current_date and A.employee.id =:empId")
+    public Set<Role> getRolesForExpiredAssignmentsByEmpId(@Param("empId") Long empId);
+    
+    @Query(" select distinct A.designation.roles from  Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.employee.id =:empId")
+    public Set<Role> getRolesForActiveAssignmentsByEmpId(@Param("empId") Long empId);
 }

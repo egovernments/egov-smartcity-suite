@@ -68,8 +68,6 @@
 
 	<bean id="licenseReportService" class="org.egov.tl.service.LicenseReportService" scope="prototype"/>
 
-	<bean id="contractorLicenseReportService" class="org.egov.tl.service.ContractorLicenseReportService" parent="licenseReportService" scope="prototype"/>
-
 	<bean id="tradeLicenseService" class="org.egov.tl.service.TradeLicenseService" parent="baseLicenseService">
 		<constructor-arg name="licensePersitenceService" ref="tradeLicensePersistenceService"/>
         <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>

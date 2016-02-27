@@ -419,7 +419,7 @@ function loadCoa(id){
 
 function loadDropDownCodes()
 {
-	var	url = path+"/commons/Process.jsp?type=getAllCoaCodes";
+	var	url = "/EGF/commons/Process.jsp?type=getAllCoaCodes";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -828,7 +828,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = path+"/commons/Process.jsp?type=getAllFunctionName";
+	var url = "/EGF/commons/Process.jsp?type=getAllFunctionName";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -1013,7 +1013,7 @@ function fillNeibrAfterSplitGlcode(obj)
 	}else if (temp!="" &&(accCodeid==null || accCodeid=="")){
 		/*bootbox.alert("Invalid Account Code selected .Please select code from auto complete.");
 		obj.value="";*/
-		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
+		//document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
 	}
 	var currRow=getRowIndex(obj);
 	var funcObj = document.getElementById('billDetailslist['+currRow+'].functionDetail');
@@ -1835,7 +1835,7 @@ function fillNeibrAfterSplitFunctionHeader(obj)
 	temp = temp.split("`~`");
 	if(temp.length>1)
 	{ 
-		obj.value=temp[0].split("`-`")[0];
+		obj.value=temp[0].split("`-`")[0]+'-'+temp[0].split("`-`")[1];
 		document.getElementById("commonBean.functionId").value=temp[1];
 	}
 }

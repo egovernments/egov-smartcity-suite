@@ -40,19 +40,6 @@ $(document).ready(function(){
    });*/
 	
 	
-	
-	var agency_typeahead=$('#agencyTypeAhead').typeahead({
-		hint : true,
-		highlight : true,
-		minLength : 1
-	}, {
-		displayKey : 'name',
-		source : agency.ttAdapter()
-	});
-	typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
-	
-	
-   
 	/*$('#subcategories').change(function(){
 		$("#subCategoryId").val($('#subcategories').val());    
 	});*/
@@ -247,7 +234,48 @@ $(document).ready(function(){
 
 		window.open("collectTaxByAgency/"+agencyName+"/"+hoardingIds+"/"+pendingAmount ,''+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	
-	  
+	});
+	
+
+	$('#searchagencywise').click(function(e){
+		oTable= $('#adtax_searchagencywiserecord');
+		if(prevdatatable)
+		{
+			prevdatatable.fnClearTable();
+			$('#adtax_searchagencywiserecord thead tr').remove();
+		}
+		//oTable.fnClearTable();
+			prevdatatable = oTable.dataTable({
+			"sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"autoWidth": false,
+			"bDestroy": true,
+			"ajax": "/adtax/reports/getAgencyWiseDcb?"+$("#agencywisehoardingsearchform").serialize(),
+				"columns" : [
+							  { "data" : "agencyName", "title": "Agency", "defaultContent":'<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View Demand and Collect</button>&nbsp;'},
+							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
+							  { "data" : "pendingDemandAmount", "title": "Total Amount"},
+							//  { "data" : "penaltyAmount", "title": "Penalty Amount"},
+							  { "data" : "collectedAmount", "title": "Collected Amount"},
+							  { "data" : "pendingAmount", "title": "Pending Amount"},
+							  { 
+								  "data" : "agencyName",
+								  "render" : function(data, type, row, meta) {
+										//return '<a href="window.open(\'/adtax/deactivate/result/'+ data +'\', \'\', \'width=800, height=600 , scrollbars=yes\');"></a> ';
+									  
+									  return '<a class="ajax" href="<url1>"></a>';
+								   },
+								   "title": "Actions"
+							  }
+							  
+							  
+							  ]
+					});
+		
+		e.stopPropagation();
+		e.preventDefault();
+
 	});
 	
 });

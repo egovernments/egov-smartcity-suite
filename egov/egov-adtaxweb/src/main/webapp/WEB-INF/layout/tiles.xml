@@ -252,4 +252,41 @@
     	<put-attribute name="page-title" value="title.adtax.renewal" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-newform.jsp"/>
     </definition>
+
+     <definition name="statuschange-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/statuschange-search.jsp"/>
+    </definition>
+    
+    <definition name="statusChange-deactivate" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/statusChange-deactivate.jsp"/>
+    </definition>
+    
+     <definition name="statusChange-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/statusChange-success.jsp"/>
+    </definition>
+    
+       <definition name="tpbo-create" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.createTpbo" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/tpbo/tpbo-create.jsp"/>
+    </definition>
+    
+    <definition name="tpbo-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.searchTpbo" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/tpbo/tpbo-search.jsp"/>
+    </definition>
+    
+     <definition name="tpbo/tpbo-searchSuccess" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.searchTpbo" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/tpbo/tpbo-search-success.jsp"/>
+    </definition>
+
+    <definition name="tpbo-update" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.updateTpbo" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/tpbo/tpbo-update.jsp"/>
+    </definition>
+    
+   
 </tiles-definitions>

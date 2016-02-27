@@ -61,7 +61,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.utils.EgovPaginatedList;
-import org.egov.infstr.security.utils.SecurityUtils;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.HibernateException;
@@ -443,13 +442,6 @@ public class CommonAssetsService {
      * @return PaginatedList.
      */
     public PaginatedList findAssetPage(final Map<String, Object> parameters, final int pageNumber, final int pageSize) {
-        for (final Object obj : parameters.values())
-            if (obj instanceof String[])
-                for (final String value : (String[]) obj)
-                    SecurityUtils.checkSQLInjection(value);
-            else
-                SecurityUtils.checkSQLInjection(obj.toString());
-
         final Map queryAndParam = findAssetQuery(parameters);
         final String query = (String) queryAndParam.get("query");
         final List<Object> params = (List<Object>) queryAndParam.get("params");
@@ -467,9 +459,6 @@ public class CommonAssetsService {
     private Map findAssetQuery(final Map<String, Object> parameters) {
         final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
         final List<Object> paramsList = new ArrayList<Object>();
-        for (final Map.Entry<String, Object> entry : parameters.entrySet())
-            SecurityUtils.checkSQLInjection(entry.getValue().toString());
-
         final StringBuilder sql = new StringBuilder(500);
         sql.append("from Asset asset where asset.code is not null ");
 

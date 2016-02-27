@@ -103,7 +103,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
 
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
-            final BigDecimal actualAmountPaid) {
+            final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -186,9 +186,8 @@ public class AdvertisementTaxCollection extends TaxCollection {
                 }
             }
             /**
-             * If for new application, commissioner approved record and payment
-             * collection is pending. If user using agency wise collection
-             * screen then we need to update workflow.
+             * If for new application, commissioner approved record and payment collection is pending. If user using agency wise
+             * collection screen then we need to update workflow.
              */
             if (agencyDtl.getDemand() != null)
                 updateWorkflowState(agencyDtl.getDemand());
@@ -241,7 +240,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
                                 0,
                                 recAccInfo.getDescription().indexOf(
                                         AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX))
-                        .trim();
+                                        .trim();
                 if (eventType.equals(EVENT_RECEIPT_CREATED))
                     totalAmountCollected = totalAmountCollected.add(createOrUpdateDemandDetails(demandMasterReasonDesc,
                             demand, billReceiptInfo, recAccInfo, totalAmount));
@@ -268,14 +267,14 @@ public class AdvertisementTaxCollection extends TaxCollection {
         String demandMasterReasonDesc = null;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                    && !rcptAccInfo.getIsRevenueAccount()) {
+            && !rcptAccInfo.getIsRevenueAccount()) {
                 demandMasterReasonDesc = billRcptInfo
                         .getDescription()
                         .substring(
                                 0,
                                 billRcptInfo.getDescription().indexOf(
                                         AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX))
-                        .trim();
+                                        .trim();
 
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (demandMasterReasonDesc.equalsIgnoreCase(demandDetail.getEgDemandReason()
@@ -288,7 +287,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
 
                     }
             }
@@ -322,9 +321,9 @@ public class AdvertisementTaxCollection extends TaxCollection {
             // updating the existing demand detail..
             for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                 if (demandDetail.getEgDemandReason() != null
-                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster() != null
-                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().trim()
-                                .equalsIgnoreCase(demandMasterReasonDesc)) {
+                && demandDetail.getEgDemandReason().getEgDemandReasonMaster() != null
+                && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().trim()
+                .equalsIgnoreCase(demandMasterReasonDesc)) {
                     // && (demandDetail.getAmount().compareTo(BigDecimal.ZERO) >
                     // 0)) {
 
@@ -347,8 +346,8 @@ public class AdvertisementTaxCollection extends TaxCollection {
                 // part of collection system.
                 final EgDemandDetails demandDetail = advertisementDemandService.createDemandDetails(recAccInfo
                         .getCrAmount(), advertisementDemandService.getDemandReasonByCodeAndInstallment(
-                                demandMasterReasonDesc, advertisementDemandService.getCurrentInstallment()),
-                        recAccInfo
+                        demandMasterReasonDesc, advertisementDemandService.getCurrentInstallment()),
+                                recAccInfo
                                 .getCrAmount());
                 demand.addEgDemandDetails(demandDetail);
                 getCurrentSession().flush();
@@ -391,18 +390,17 @@ public class AdvertisementTaxCollection extends TaxCollection {
     private void updateWorkflowState(final EgDemand demand) {
 
         if (demand != null) {
-            AdvertisementPermitDetail advertisementPermitDetail = advertisementService.getAdvertisementByDemand(demand)
+            final AdvertisementPermitDetail advertisementPermitDetail = advertisementService.getAdvertisementByDemand(demand)
                     .getActiveAdvertisementPermit();
             /**
-             * If the current status of advertisement permit is approved, then
-             * only call next level workflow. Assumption: Payment collection is
-             * pending in this stage.
+             * If the current status of advertisement permit is approved, then only call next level workflow. Assumption: Payment
+             * collection is pending in this stage.
              */
             if (advertisementPermitDetail != null
                     && advertisementPermitDetail.getState() != null
                     && advertisementPermitDetail.getStatus() != null
                     && advertisementPermitDetail.getStatus().getCode()
-                            .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
+                    .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
 
                 advertisementPermitDetailService.updateStateTransition(advertisementPermitDetail, Long.valueOf(0),
                         AdvertisementTaxConstants.COLLECTION_REMARKS, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE,
@@ -411,11 +409,10 @@ public class AdvertisementTaxCollection extends TaxCollection {
             }
         }
     }
-    
+
     @Override
-    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+    public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
         return new ReceiptAmountInfo();
     }
-
 
 }

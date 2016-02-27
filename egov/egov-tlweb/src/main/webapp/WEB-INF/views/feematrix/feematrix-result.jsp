@@ -90,5 +90,5 @@
     <button type="button" id="save" class="btn btn-primary">Save</button>
   </div>
 </div>
-<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/app/feematrix.js' context='/tl'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/feematrix.js?rnd=${app_release_no}' context='/tl'/>"></script>

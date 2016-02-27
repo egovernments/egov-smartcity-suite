@@ -142,7 +142,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         addDropdownData(
                 "bankList",
                 persistenceService
-                .findAllBy("select distinct b from Bank b , Bankbranch bb , Bankaccount ba WHERE bb.bank=b and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and b.isactive=1 order by upper(b.name)"));
+                .findAllBy("select distinct b from Bank b , Bankbranch bb , Bankaccount ba WHERE bb.bank=b and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and b.isactive=true order by upper(b.name)"));
         if (bankbranch == null)
             addDropdownData("bankBranchList", Collections.EMPTY_LIST);
         else
@@ -150,13 +150,13 @@ public class BankAdviceReportAction extends BaseFormAction {
                     "bankBranchList",
                     persistenceService
                     .findAllBy(
-                            "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.isactive=1",
+                            "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.isactive=true",
                             bank.getId()));
         if (bankaccount == null)
             addDropdownData("bankAccountList", Collections.EMPTY_LIST);
         else
             addDropdownData("bankAccountList",
-                    persistenceService.findAllBy("from Bankaccount where bankbranch.id=? and isactive=1", bankbranch.getId()));
+                    persistenceService.findAllBy("from Bankaccount where bankbranch.id=? and isactive=true", bankbranch.getId()));
         if (instrumentnumber == null)
             addDropdownData("chequeNumberList", Collections.EMPTY_LIST);
         else {

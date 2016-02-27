@@ -63,7 +63,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     {
         super.prepare();
         addDropdownData("bankBranchList",
-                persistenceService.findAllBy("select bb from Bankbranch bb where bb.isactive=1 order by bb.bank.name"));
+                persistenceService.findAllBy("select bb from Bankbranch bb where bb.isactive=true order by bb.bank.name"));
         final AjaxDishonoredAction ajaxDishonoredAction = new AjaxDishonoredAction();
         ajaxDishonoredAction.setPersistenceService(getPersistenceService());
         populateAccountCodes(ajaxDishonoredAction);

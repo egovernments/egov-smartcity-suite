@@ -114,7 +114,7 @@ public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
         final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         super.prepare();
         addDropdownData("fundDropDownList", masterCache.get("egi-fund"));
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1 " +
+        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true " +
                 "  and startingDate >='01-Apr-2010' order by finYearRange desc  "));
     }
 

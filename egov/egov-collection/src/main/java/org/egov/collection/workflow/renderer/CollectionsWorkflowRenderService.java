@@ -45,22 +45,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl;
 import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Render service for collections workflow. Groups the receipt headers based on user + counter + service
+ * Render service for collections workflow. Groups the receipt headers based on
+ * user + counter + service
  */
-public class CollectionsWorkflowRenderService extends
-        DefaultInboxRenderServiceImpl<ReceiptHeader> {
+public class CollectionsWorkflowRenderService extends DefaultInboxRenderServiceImpl<ReceiptHeader> {
 
     private PersistenceService persistenceService;
 
-    public CollectionsWorkflowRenderService(PersistenceService<ReceiptHeader, Long> stateAwarePersistenceService) {
+    public CollectionsWorkflowRenderService(final PersistenceService<ReceiptHeader, Long> stateAwarePersistenceService) {
         super(stateAwarePersistenceService);
     }
 
@@ -68,16 +66,22 @@ public class CollectionsWorkflowRenderService extends
      * TODO: Implement collections specific grouping logic
      */
     /**
-     * @param allItems Workflow Items from which grouped items are to be created
-     * @return Workflow items (receipt headers) grouped by service + counter + user
+     * @param allItems
+     *            Workflow Items from which grouped items are to be created
+     * @return Workflow items (receipt headers) grouped by service + counter +
+     *         user
      */
-    private List<ReceiptHeader> getGroupedWorkflowItems(List<ReceiptHeader> allItems) {
-        List<ReceiptHeader> receiptHeaderPerGroup = new ArrayList<ReceiptHeader>();
-        HashMap<String, Integer> assignedItems = new HashMap<String, Integer>();
-        for (StateAware nextItem : allItems) {
+    private List<ReceiptHeader> getGroupedWorkflowItems(final List<ReceiptHeader> allItems) {
+        final List<ReceiptHeader> receiptHeaderPerGroup = new ArrayList<ReceiptHeader>();
+        final HashMap<String, Integer> assignedItems = new HashMap<String, Integer>();
+        for (final StateAware nextItem : allItems)
             if (nextItem instanceof ReceiptHeader) {
-                ReceiptHeader nextReceipt = (ReceiptHeader) nextItem;
-                String groupingCriteria = nextReceipt.myLinkId();
+                final ReceiptHeader nextReceipt = (ReceiptHeader) nextItem;
+                String groupingCriteria = "";
+                if (nextReceipt.getReceipttype() == 'B')
+                    groupingCriteria = nextReceipt.myLinkId();
+                else 
+                    groupingCriteria = nextReceipt.myLinkIdForChallanMisc();
                 if (assignedItems.get(groupingCriteria) == null) {
                     // Group not created yet. Create it.
                     receiptHeaderPerGroup.add(nextReceipt);
@@ -85,47 +89,54 @@ public class CollectionsWorkflowRenderService extends
 
                 }
             }
-        }
         return receiptHeaderPerGroup;
     }
 
     @Override
-    public List<ReceiptHeader> getDraftWorkflowItems(Long userId, List<Long> owner) {
+    public List<ReceiptHeader> getDraftWorkflowItems(final Long userId, final List<Long> owner) {
         return getGroupedWorkflowItems(super.getDraftWorkflowItems(userId, owner));
     }
 
     /**
      * TODO: Implement collections specific grouping logic
      */
-/*
-    @Override
-    public List<ReceiptHeader> getFilteredWorkflowItems(final Long owner, final Long userId, final Long sender,
-            final Date fromDate,
-            final Date toDate) {
-        return Collections.emptyList();
-    }*/
+    /*
+     * @Override public List<ReceiptHeader> getFilteredWorkflowItems(final Long
+     * owner, final Long userId, final Long sender, final Date fromDate, final
+     * Date toDate) { return Collections.emptyList(); }
+     */
 
     /**
-     * Returns the assigned work flow items for given user. For collections, one item is returned for every unique combination of
-     * billing service, user and counter.
+     * Returns the assigned work flow items for given user. For collections, one
+     * item is returned for every unique combination of billing service, user
+     * and counter.
      *
-     * @param owner The owner for whom the assigned work flow items are to be returned
-     * @param userId The currently logged in user id (NEW items created by this user are excluded)
-     * @param order The field on which the items are to be sorted
-     * @return Assigned workflow items (receipt headers) grouped by service + counter + user
+     * @param owner
+     *            The owner for whom the assigned work flow items are to be
+     *            returned
+     * @param userId
+     *            The currently logged in user id (NEW items created by this
+     *            user are excluded)
+     * @param order
+     *            The field on which the items are to be sorted
+     * @return Assigned workflow items (receipt headers) grouped by service +
+     *         counter + user
      */
 
     @Override
-    public List<ReceiptHeader> getAssignedWorkflowItems(Long userId, List<Long> owner) {
+    public List<ReceiptHeader> getAssignedWorkflowItems(final Long userId, final List<Long> owner) {
         return getGroupedWorkflowItems(super.getAssignedWorkflowItems(userId, owner));
     }
 
     /**
-     * Returns the work flow items for given filter criteria. For collections, one item is returned for every unique combination
-     * of billing service, user and counter.
+     * Returns the work flow items for given filter criteria. For collections,
+     * one item is returned for every unique combination of billing service,
+     * user and counter.
      *
-     * @param criteria Filter criteria for fetching workflow items
-     * @return Filtered workflow items (receipt headers) grouped by service + counter + user
+     * @param criteria
+     *            Filter criteria for fetching workflow items
+     * @return Filtered workflow items (receipt headers) grouped by service +
+     *         counter + user
      */
 
     @Override
@@ -133,26 +144,7 @@ public class CollectionsWorkflowRenderService extends
         return getGroupedWorkflowItems(super.getWorkflowItems(criteria));
     }
 
-    @Override
-    public List<ReceiptHeader> getWorkflowItems(String arg0) {
-        String params[] = arg0.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        StringBuilder query = new StringBuilder(
-                "select receipt from org.egov.collection.entity.ReceiptHeader receipt where 1=1 and receipt.status.code = ? "
-                        +
-                        "and receipt.createdBy.userName = ? and receipt.location.id = ? and receipt.service.code = ? order by receipt.createdDate desc");
-        Object arguments[] = new Object[4];
-        if (params[0].equals(CollectionConstants.WF_ACTION_SUBMIT))
-            arguments[0] = CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED;
-        else if (params[0].equals(CollectionConstants.WF_ACTION_APPROVE))
-            arguments[0] = CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED;
-        arguments[1] = params[2];
-        arguments[2] = Integer.valueOf(params[3]);
-        arguments[3] = params[1];
-        return persistenceService.findAllBy(query.toString(),
-                arguments);
-    }
-
-    public void setPersistenceService(PersistenceService persistenceService) {
+    public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 

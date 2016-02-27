@@ -50,6 +50,7 @@ public interface FeeMatrixDetailRepositoryCustom {
 
     List<FeeMatrixDetail> findFeeList(License license);
 
-    FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate,long financialYearId);
+    FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate, long financialYearId);
 
+    List<FeeMatrixDetail> findByParams(Long licenseCategory, Long subCategory, Long financialYear);
 }

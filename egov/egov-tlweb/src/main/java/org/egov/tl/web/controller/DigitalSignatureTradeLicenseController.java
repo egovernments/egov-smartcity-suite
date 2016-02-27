@@ -43,7 +43,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.egov.commons.EgwStatus;
+import org.apache.commons.io.FileUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
@@ -68,6 +68,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
+import org.egov.tl.utils.LicenseUtils;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -106,6 +107,9 @@ public class DigitalSignatureTradeLicenseController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private LicenseUtils licenseUtils;
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
@@ -122,19 +126,23 @@ public class DigitalSignatureTradeLicenseController {
         for (final String fileStoreId : fileStoreIdArr) {
             final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
             if (null != applicationNumber && !applicationNumber.isEmpty()) {
-                final License license = (License) persistenceService.find("from License where applicationNumber=?",
+                License license = (License) persistenceService.find("from License where applicationNumber=?",
                         applicationNumber);
                 final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy()
                         .getId());
                 final DateTime currentDate = new DateTime();
-                final EgwStatus statusChange = (EgwStatus) persistenceService.find(
-                        "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
-                        Constants.APPLICATION_STATUS_DIGUPDATE_CODE);
-                license.setEgwStatus(statusChange);
-                final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
+               license= licenseUtils.applicationStatusChange(license, Constants.APPLICATION_STATUS_APPROVED_CODE);
+                WorkFlowMatrix wfmatrix=null;
+               if (license.getLicenseAppType() != null
+                       && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+                   wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
+                           Constants.WF_STATE_RENEWAL_COMM_APPROVED, null);
+               }else{
+               wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                         Constants.WF_STATE_COLLECTION_PENDING, null);
+               }
 
-                license.transition(true).withSenderName(user.getName())
+                license.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(Constants.WORKFLOW_STATE_COLLECTED).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getNextAction());
@@ -156,11 +164,13 @@ public class DigitalSignatureTradeLicenseController {
         response.setContentType("application/octet-stream");
         response.setHeader("content-disposition", "attachment; filename=\"" + (fileStoreMapper!=null ?fileStoreMapper.getFileName():null) + "\"");
         try {
-            final FileInputStream inStream = new FileInputStream(file);
-            final PrintWriter outStream = response.getWriter();
+            FileInputStream inStream = new FileInputStream(file);
+            OutputStream outStream = response.getOutputStream();
             int bytesRead = -1;
-            while ((bytesRead = inStream.read()) != -1)
-                outStream.write(bytesRead);
+            byte[] buffer = FileUtils.readFileToByteArray(file);
+            while ((bytesRead = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
             inStream.close();
             outStream.close();
         } catch (final FileNotFoundException fileNotFoundExcep) {

@@ -72,6 +72,43 @@ function validateFund(){
 	}
 	return true;
 }
+function populateAvailableBalance(accnumObj) 
+{
+			if (document.getElementById('voucherDate').value == '') {
+				bootbox.alert("Please Select the Voucher Date!!");
+				accnumObj.options.value = -1;
+				return;
+			}
+			if (accnumObj.options[accnumObj.selectedIndex].value == -1)
+				document.getElementById('availableBalance').value = '';
+			else
+				populateavailableBalance({
+					bankaccount : accnumObj.options[accnumObj.selectedIndex].value,
+					voucherDate : document.getElementById('voucherDate').value
+							+ '&date=' + new Date()
+				});
+
+}
+var callback = {
+		success : function(o) {
+		console.log("success");
+		document.getElementById('availableBalance').value = o.responseText;
+		},
+		failure : function(o) {
+			console.log("failed");
+		}
+}
+function balanceCheck() {
+
+	if (document.getElementById('availableBalance')) {
+		if(parseFloat(document.getElementById('totalAmount').value)>parseFloat(document.getElementById('availableBalance').value))
+		{
+			console.log("ins 44");
+			return false;
+		}
+	}
+	return true;
+}
 function checkLength(obj)
 {
 	if(obj.value.length>1024)
@@ -151,6 +188,7 @@ function populateUser(){
 		   document.getElementById('lblError').innerHTML='Please select Bank Account';
 		   return false;
 		   } 
+		  
 			return true;
 		}
 function onLoad(){
@@ -175,11 +213,25 @@ function onSubmit()
 		 var myform = jQuery('#remittanceForm');
 		// re-disabled the set of inputs that you previously
 		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
-		document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
-		document.remittanceForm.submit();
-	}else{
+		 if(!balanceCheck()){
+				bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
+					if(result)
+					  {
+						document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+						document.remittanceForm.submit();
+					  }
+				  else
+					  {
+					  console.log("else");
+					  }
+					}); 
+			}else{
+				document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+				document.remittanceForm.submit();
+				}
+		
+	}
 		return false;
-		}
 		
 	
 }
@@ -286,6 +338,7 @@ function onSubmit()
 																			name="commonBean.accountNumberId" id="bankaccount"
 																			list="dropdownData.accNumList" listKey="id"
 																			listValue="chartofaccounts.glcode+'--'+accountnumber+'--'+accounttype"
+																			onChange="populateAvailableBalance(this);"
 																			headerKey="-1" headerValue="----Choose----" /></td>
 																</tr>
 																<tr class="greybox">
@@ -300,9 +353,9 @@ function onSubmit()
 																		style="display: none" width="18%"><s:text
 																				name="balance.available" />&nbsp;</span></td>
 																	<td class="greybox"><span id="balanceAvl"
-																		style="display: none" width="32%"><s:textfield
+																		width="32%"><s:textfield
 																				name="commonBean.availableBalance"
-																				id="availableBalance" readonly="readonly"
+																				id="availableBalance" readonly="true"
 																				style="text-align:right"
 																				value="%{commonBean.availableBalance}" /></span></td>
 																</tr>

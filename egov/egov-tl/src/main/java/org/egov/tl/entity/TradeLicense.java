@@ -41,6 +41,7 @@ package org.egov.tl.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -103,10 +104,12 @@ public class TradeLicense extends License {
 
     @Override
     public String getStateDetails() {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         final StringBuffer details = new StringBuffer();
         if (getLicenseNumber() != null && !getLicenseNumber().isEmpty())
-            details.append(getLicenseNumber()).append(" / ");
-        details.append(getApplicationNumber());
+            details.append("TradeLicense Number " +getLicenseNumber() +" and ");
+       details.append(String.format(" Application Number %s with application date %s.", applicationNumber ,
+                (applicationDate!=null ?formatter.format(applicationDate):(formatter.format(new Date())))));
         return details.toString();
     }
     
@@ -122,8 +125,8 @@ public class TradeLicense extends License {
         if (getTradeName().isNocApplicable() != null && getTradeName().isNocApplicable()) {
             final Calendar instance = Calendar.getInstance();
             final Date newDate = new Date();
-            if (getDateOfCreation() != null) {
-                instance.setTime(getDateOfCreation());
+            if (getCommencementDate() != null) {
+                instance.setTime(getCommencementDate());
                 instance.add(Calendar.MONTH, 10);
                 if (newDate.before(instance.getTime()))
                     disablePrintCert = true;

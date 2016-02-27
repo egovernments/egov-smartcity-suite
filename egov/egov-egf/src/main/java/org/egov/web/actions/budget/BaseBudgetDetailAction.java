@@ -583,15 +583,15 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         if (shouldShowField(Constants.FUNCTION))
             dropdownData.put("functionList", masterCache.get("egi-function"));
         if (shouldShowField(Constants.SCHEME))
-            dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=1 order by name"));
+            dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
             dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
-            .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=1 order by name"));
+            .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
         if (shouldShowField(Constants.BOUNDARY))
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1 order by " +
+        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by " +
                 "finYearRange desc "));
         dropdownData.put("departmentList", masterCache.get("egi-department"));
         dropdownData.put("designationList", Collections.EMPTY_LIST);
@@ -943,7 +943,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     }
 
     public String ajaxLoadSubSchemes() {
-        subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=1 order by name", schemeId);
+        subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name", schemeId);
         return Constants.SUBSCHEMES;
     }
 

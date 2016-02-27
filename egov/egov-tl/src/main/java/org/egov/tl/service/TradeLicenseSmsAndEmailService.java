@@ -2,6 +2,7 @@ package org.egov.tl.service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import org.egov.infra.messaging.MessagingService;
@@ -10,12 +11,10 @@ import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.stereotype.Service;
 
 @Service
-@Transactional(readOnly = true)
 public class TradeLicenseSmsAndEmailService 
 {
     @Autowired
@@ -104,10 +103,29 @@ public class TradeLicenseSmsAndEmailService
                             cityname, getMunicipalityName() }, null);
             emailSubject= messageSource.getMessage("msg.newTradeLicensecancelled.email.subject", new String[] { license.getApplicationNumber() }, locale);
         } 
+        
         if (mobileNumber != null && smsMsg != null)
             sendSMSOnLicense(mobileNumber, smsMsg);
         if (email != null && emailSubject !=null && !"".equals(emailSubject)&& emailBody != null && !"".equals(emailBody))
            sendEmailOnLicense(email, emailBody, emailSubject);
+    }
+    public void sendSMsAndEmailOnCollection(License license,Date receiptDate,BigDecimal demandAmount)
+    {
+        final StringBuilder smsMsgColl = new StringBuilder();
+        final StringBuilder emailSubjectColl = new StringBuilder();
+        smsMsgColl.append(Constants.STR_WITH_APPLICANT_NAME).append(license.getLicensee().getApplicantName())
+            .append(",").append("\n").append(Constants.STR_WITH_LICENCE_NUMBER)
+                    .append(license.getLicenseNumber()).append(Constants.STR_FOR_SUBMISSION)
+                    .append(demandAmount).append(Constants.STR_FOR_SUBMISSION_DATE)
+                    .append(new SimpleDateFormat("dd/MM/yyyy").format(receiptDate))
+                    .append(Constants.STR_FOR_CITYMSG).append(EgovThreadLocals.getMunicipalityName());
+            emailSubjectColl.append(Constants.STR_FOR_EMAILSUBJECT).append(license.getLicenseNumber());
+            if (license.getLicensee().getMobilePhoneNumber() != null && smsMsgColl != null)
+                messagingService.sendSMS(license.getLicensee().getMobilePhoneNumber(), smsMsgColl.toString());
+            if (license.getLicensee().getEmailId() != null && smsMsgColl != null)
+                messagingService.sendEmail(license.getLicensee().getEmailId(), emailSubjectColl.toString(),
+                        smsMsgColl.toString());
+       
     }
     
   

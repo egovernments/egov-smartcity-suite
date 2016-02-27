@@ -44,6 +44,8 @@
 	src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+	<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
 </head>
 <script>
 var callback = {
@@ -63,10 +65,16 @@ function getData(){
 	var endDate =  document.getElementById('endDate').value;
 	var bankAccount = document.getElementById('accountNumber').value;
 	
-	isValid = validateData();
-	if(isValid == false)
+    
+
+	//var isDateValid =validateFromAndToDate(startDate,endDate);
+	isValid = validateDataa();
+	if(isValid == false )
+		{
 		return false;
-	doLoadingMask();
+		}
+	
+	//doLoadingMask();
 	var url = '/EGF/report/bankBookReport-ajaxLoadBankBook.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData();
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 }
@@ -134,7 +142,7 @@ function exportPdf(){
 	window.open('/EGF/report/bankBookReport-exportPdf.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
-function validateData(){
+function validateDataa(){
 	var bankAccount = document.getElementById('accountNumber').value;
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
@@ -145,18 +153,36 @@ function validateData(){
 		bootbox.alert("Please select a Bank Account")
 		return false;
 	}
-	var startDate =  Date.parse(document.getElementById('startDate').value);
-	if(isNaN(startDate)){
-		bootbox.alert("Please enter a valid start date")
+	
+	var startDate = document.getElementById('startDate').value;
+	if(startDate=='')
+		{ 
+		bootbox.alert("Please enter start date")
 		return false;
-	}
-	var endDate =  Date.parse(document.getElementById('endDate').value);
-	if(isNaN(endDate)){
-		bootbox.alert("Please enter a valid end date")
+		}
+	
+	var endDate = document.getElementById('endDate').value;
+	
+	if(endDate=='')
+		{ 
+		bootbox.alert("Please enter end date")
 		return false;
-	}
+		}
+
+	var fromdate= startDate.split('/');
+	startDate=new Date(fromdate[2],fromdate[1]-1,fromdate[0]);
+    var todate = endDate.split('/');
+    endDate=new Date(todate[2],todate[1]-1,todate[0]);
+	
+
+	if(startDate > endDate)
+	{ 
+		bootbox.alert("Start date should be less than end date.")
+		return false;
+		}
 	return true;
 }
+
 
 function validateFund(){
 	var fund = document.getElementById('fundId').value;
@@ -188,6 +214,9 @@ function showChequeDetails(voucherId){
 }
 </script>
 <body>
+
+ 
+ 
 	<div class="formmainbox">
 		<div class="formheading"></div>
 		<div class="subheadnew">Bank Book Report</div>
@@ -226,10 +255,12 @@ function showChequeDetails(voucherId){
 				<td style="width: 5%"></td>
 					<td class="greybox" width="10%">Start Date:<span
 						class="mandatory1">*</span></td>
+						<s:date name="startDate" format="dd/MM/yyyy" var="tempFromDate" />
 					<td class="greybox"><s:textfield name="startDate"
 							id="startDate" cssStyle="width:100px"
-							value='%{getFormattedDate(startDate)}'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+							
+							onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"
+							 /><a
 						href="javascript:show_calendar('bankBookReport.startDate');"
 						style="text-decoration: none">&nbsp;<img
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />

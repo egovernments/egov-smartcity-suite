@@ -169,7 +169,7 @@ public class ClosedPeriods
             // dateTyp = (Date)formatter.parse(date);
 
             chkqry = "SELECT id FROM financialYear " +
-                    "WHERE startingDate<='" + date + "'  AND endingDate>='" + date + "' AND isActiveForPosting=1";
+                    "WHERE startingDate<='" + date + "'  AND endingDate>='" + date + "' AND isActiveForPosting=true";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Before excuting " + chkqry);
             psmt = HibernateUtil.getCurrentSession().createSQLQuery(chkqry);

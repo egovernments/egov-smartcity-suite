@@ -60,6 +60,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -67,6 +68,7 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -134,6 +136,7 @@ public class BankBookReportAction extends BaseFormAction {
     private Date todayDate;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private final List<String> voucherNo = new ArrayList<String>();
     private boolean isCreditOpeningBalance = false;
@@ -142,13 +145,28 @@ public class BankBookReportAction extends BaseFormAction {
     private Map<Long, List<Object[]>> voucherIdAndInstrumentMap = new HashMap<Long, List<Object[]>>();
     private Map<Long, List<Object[]>> InstrumentHeaderIdsAndInstrumentVouchersMap = new HashMap<Long, List<Object[]>>();
 
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     public void setReportHelper(final ReportHelper reportHelper) {
         this.reportHelper = reportHelper;
     }
 
     @Override
     public String execute() throws Exception {
+    	finYearDate();
         return "form";
+    }
+    public void finYearDate() {
+
+        final String financialYearId = financialYearDAO.getCurrYearFiscalId();
+        if (financialYearId == null || financialYearId.equals(""))
+        	startDate = new Date();
+        else
+        	startDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?",
+                    Long.parseLong(financialYearId));
+        endDate = null;
+        
+
     }
 
     public BankBookReportAction() {
@@ -176,16 +194,16 @@ public class BankBookReportAction extends BaseFormAction {
                 addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
             if (headerFields.contains(Constants.FUNCTION))
                 addDropdownData("functionList",
-                        persistenceService.findAllBy("from CFunction where isactive=1 and isnotleaf=0  order by name"));
+                        persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false  order by name"));
             if (headerFields.contains(Constants.FUNCTIONARY))
                 addDropdownData("functionaryList",
-                        persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));
+                        persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
             if (headerFields.contains(Constants.FUND))
                 addDropdownData("fundList",
-                        persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+                        persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
             if (headerFields.contains(Constants.FUNDSOURCE))
                 addDropdownData("fundsourceList",
-                        persistenceService.findAllBy(" from Fundsource where isactive=1 and isnotleaf=0 order by name"));
+                        persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
             if (headerFields.contains(Constants.FIELD))
                 addDropdownData("fieldList",
                         persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
@@ -220,6 +238,18 @@ public class BankBookReportAction extends BaseFormAction {
         if (parameters.containsKey("bankAccount.id") && parameters.get("bankAccount.id")[0] != null) {
             startDate = parseDate("startDate");
             endDate = parseDate("endDate");
+            
+            CFinancialYear financialYear=financialYearDAO.getFinYearByDate(startDate);
+            Date endingDate=financialYear.getEndingDate();
+            
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String endFormat = formatter.format(endDate);
+            String endFormat1 = formatter.format(endingDate);
+            if(endFormat.compareTo(endFormat1)>0 ) 
+            {
+            	addActionError(getText("End date should be within a financial year"));
+            	return "results";
+            }
             setTodayDate(new Date());
             bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                     Long.valueOf(parameters.get("bankAccount.id")[0]));
@@ -926,6 +956,12 @@ public class BankBookReportAction extends BaseFormAction {
 		this.function = function;
 	}
     
-    
+	 public FinancialYearDAO getFinancialYearDAO() {
+	        return financialYearDAO;
+	    }
+
+	    public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+	        this.financialYearDAO = financialYearDAO;
+	    }
 
 }

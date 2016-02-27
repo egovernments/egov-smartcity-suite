@@ -41,14 +41,13 @@
   --%>
 <form:form role="form" action="search" modelAttribute="validity" id="validitysearchform"
   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-  <div class="main-content">
     <div class="row">
       <div class="col-md-12">
         <div class="panel panel-primary" data-collapsed="0">
           <div class="panel-heading">
             <div class="panel-title"><spring:message code="title.validity.search"/></div>
           </div>
-          <div class="panel-body">
+          <div class="panel-body custom-form">
             <div class="form-group">
               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofbusiness" /> </label>
               <div class="col-sm-3 add-margin">
@@ -72,20 +71,20 @@
               </div>
             </div>
             <input type="hidden" id="mode" name="mode" value="${mode}" />
-            <div class="form-group">
-              <div class="text-center">
-                <button type='button' class='btn btn-primary' id="btnsearch">
-                  <spring:message code='lbl.search' />
-                </button>
-                <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
-                    code='lbl.close' /></a>
-              </div>
-            </div>
+            
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="text-center">
+            <button type='button' class='btn btn-primary' id="btnsearch">
+              <spring:message code='lbl.search' />
+            </button>
+            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
+                code='lbl.close' /></a>
           </div>
         </div>
       </div>
     </div>
-  </div>
 </form:form>
 <div class="row display-hide report-section">
   <div class="col-md-12 table-header text-left"><spring:message code="title.validity.result"/></div>
@@ -124,4 +123,4 @@
   src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
   type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/js/app/validityHelper.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/validityHelper.js?rnd=${app_release_no}'/>"></script>

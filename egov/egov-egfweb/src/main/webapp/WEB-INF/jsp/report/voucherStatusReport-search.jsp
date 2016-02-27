@@ -238,9 +238,21 @@
 		
 		function validateSearch()
 		{
-
-			document.forms[0].action='${pageContext.request.contextPath}/report/voucherStatusReport-search.action';
+			var startDate=document.getElementById('fromDate').value;
+			var endDate=document.getElementById('toDate').value;
+			var fromdate= startDate.split('/');
+			startDate=new Date(fromdate[2],fromdate[1]-1,fromdate[0]);
+		    var todate = endDate.split('/');
+		    endDate=new Date(todate[2],todate[1]-1,todate[0]);
+		    if(startDate > endDate)
+			{ 
+				bootbox.alert("Start date should be less than end date.")
+				return false;
+				} 
+			
+ 			document.forms[0].action='/EGF/report/voucherStatusReport-search.action';
 			document.forms[0].submit();
+			return true;
 		}
 
 		function resetAndSubmit()

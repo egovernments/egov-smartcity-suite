@@ -462,10 +462,24 @@ public class ReceiptHeader extends StateAware implements Auditable {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         final StringBuilder linkId = new StringBuilder();
 
-        linkId.append(getCurrentState().getNextAction() + CollectionConstants.SEPARATOR_HYPHEN + service.getCode()
-                + CollectionConstants.SEPARATOR_HYPHEN + getCreatedBy().getUsername()
-                + CollectionConstants.SEPARATOR_HYPHEN + sdf.format(getReceiptdate())
-                + (location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId()));
+        linkId.append(getCurrentState().getNextAction()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(service.getCode()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(getCreatedBy().getUsername()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(sdf.format(getReceiptdate()))
+        .append(location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId())
+        .append(CollectionConstants.SEPARATOR_HYPHEN).append(receipttype);
+
+        return linkId.toString();
+    }
+
+    public String myLinkIdForChallanMisc() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        final StringBuilder linkId = new StringBuilder();
+
+        linkId.append(getCurrentState().getNextAction()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(getCreatedBy().getUsername()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(sdf.format(getReceiptdate()))
+        .append(location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId());
 
         return linkId.toString();
     }

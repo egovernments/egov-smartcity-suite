@@ -178,7 +178,31 @@ function validateDetailsBeforeSubmit(){
     }
     return true;
 }
+
+$( "#search" ).click(function( event ) {
+	$('#resultdiv').empty();
+	var valid = $('#penaltyform').validate().form();
+	if(!valid)
+		{
+		bootbox.alert("Please fill mandatory fields");
+		return false;
+		}
+	  var param="licenseAppType=";
+	  param=param+$('#licenseAppType').val();
+	   $.ajax({
+			url: "/tl/penaltyRates/search?"+param,
+			type: "GET",
+			//dataType: "json",
+			success: function (response) {
+				 $('#resultdiv').html(response);
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	 
+});
 </script>
 <script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/app/js/penaltyRates.js'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/app/js/penaltyRates.js?rnd=${app_release_no}'/>"></script>

@@ -147,17 +147,17 @@ public class RecoverySetupDelegate {
         if (rsf.getRecovRemitTo() != null && rsf.getRecovRemitTo().length() > 0)
             tds1.setRemitted(rsf.getRecovRemitTo());
 
-        if (rsf.getRecovBSRCode() != null && rsf.getRecovBSRCode().length() > 0)
+       /* if (rsf.getRecovBSRCode() != null && rsf.getRecovBSRCode().length() > 0)
             tds1.setBsrcode(rsf.getRecovBSRCode());
-
+*/
         if (rsf.getCapLimit() != null && rsf.getCapLimit().length() > 0)
             tds1.setCaplimit(new BigDecimal(rsf.getCapLimit()));
         // only for employees
-        if (rsf.getRecovRemitTo() != null && rsf.getRecovRemitTo().length() > 0)
+       /* if (rsf.getRecovRemitTo() != null && rsf.getRecovRemitTo().length() > 0)
             if (rsf.getIsEarning() != null && rsf.getIsEarning().length() > 0)
                 tds1.setIsEarning(rsf.getIsEarning());
             else
-                tds1.setIsEarning(null);
+                tds1.setIsEarning(null);*/
         if (rsf.getRecMode() != null && rsf.getRecMode().length() > 0)
             tds1.setRecoveryMode(rsf.getRecMode().toUpperCase().charAt(0));
 
@@ -179,10 +179,8 @@ public class RecoverySetupDelegate {
 
         tds1.setCalculationType(rsf.getCalculationType());
         tds1.setDescription(rsf.getDescription());
-        tds1.setSection(rsf.getSection());
+       // tds1.setSection(rsf.getSection());
 
-        tds1.setCreated(curDate);
-        tds1.setCreatedby(new BigDecimal(userId));
         tds1.setIsactive(true);
 
         if (LOGGER.isInfoEnabled())
@@ -299,18 +297,18 @@ public class RecoverySetupDelegate {
         if (rsf.getRecovRemitTo() != null && rsf.getRecovRemitTo().length() > 0)
             tds1.setRemitted(rsf.getRecovRemitTo());
 
-        if (rsf.getRecovBSRCode() != null && rsf.getRecovBSRCode().length() > 0)
-            tds1.setBsrcode(rsf.getRecovBSRCode());
+        /*if (rsf.getRecovBSRCode() != null && rsf.getRecovBSRCode().length() > 0)
+            tds1.setBsrcode(rsf.getRecovBSRCode());*/
 
         if (rsf.getCapLimit() != null && rsf.getCapLimit().length() > 0)
             tds1.setCaplimit(new BigDecimal(rsf.getCapLimit()));
         else
             tds1.setCaplimit(null);
 
-        if (rsf.getIsEarning() != null && rsf.getIsEarning().length() > 0)
+       /* if (rsf.getIsEarning() != null && rsf.getIsEarning().length() > 0)
             tds1.setIsEarning(rsf.getIsEarning());
         else
-            tds1.setIsEarning(null);
+            tds1.setIsEarning(null);*/
 
         if (rsf.getRecMode().equalsIgnoreCase("automatic")
                 || rsf.getRecMode().equalsIgnoreCase("manual") && rsf.getBankLoan().equalsIgnoreCase("off"))
@@ -329,11 +327,8 @@ public class RecoverySetupDelegate {
 
         tds1.setCalculationType(rsf.getCalculationType());
         tds1.setDescription(rsf.getDescription());
-        tds1.setSection(rsf.getSection());
+       // tds1.setSection(rsf.getSection());
         tds1.setRecoveryMode(rsf.getRecMode().toUpperCase().charAt(0));
-        tds1.setLastmodified(curDate);
-        tds1.setCreatedby(new BigDecimal(userId));
-        tds1.setModifiedby(userId.longValue());
         tds1.setIsactive(true);
 
         if (LOGGER.isInfoEnabled())
@@ -979,10 +974,10 @@ public class RecoverySetupDelegate {
         rsf.setRecovAppliedTo(tds.getEgPartytype().getId().toString());
         if (tds.getCaplimit() != null)
             rsf.setCapLimit(tds.getCaplimit().toString());
-        rsf.setIsEarning(tds.getIsEarning());
+        //rsf.setIsEarning(tds.getIsEarning());
 
         rsf.setCalculationType(tds.getCalculationType());
-        rsf.setSection(tds.getSection());
+       // rsf.setSection(tds.getSection());
         rsf.setDescription(tds.getDescription());
 
         final List<EgDeductionDetails> recoveryDetailList = recoveryService.findByTds(tds);
@@ -991,7 +986,7 @@ public class RecoverySetupDelegate {
             rsf.setRecMode("Automatic");
             rsf.setBankLoan("off");
             rsf.setRecovRemitTo(tds.getRemitted());
-            rsf.setRecovBSRCode(tds.getBsrcode());
+            //rsf.setRecovBSRCode(tds.getBsrcode());
 
             final String[] id = new String[listSize];
             final String[] appliedToHiddenId = new String[listSize];
@@ -1105,7 +1100,7 @@ public class RecoverySetupDelegate {
         else {
             rsf.setRecMode("Manual");
             rsf.setRecovRemitTo(tds.getRemitted());
-            rsf.setRecovBSRCode(tds.getBsrcode());
+            //rsf.setRecovBSRCode(tds.getBsrcode());
             if (tds.getBank() != null) {
                 rsf.setBankLoan("on");
                 rsf.setBank(tds.getBank().getId().toString());

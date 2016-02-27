@@ -62,7 +62,7 @@
             <column name="CREATEDDATE"  not-null="true" />
         </property>
         <property name="type" column="TYPE"  type="string"/>
-        <property name="isActive" column="ISACTIVE" type="string"/>  
+        <property name="isActive" column="ISACTIVE"/>  
         <set name="instrumentAccountCodes" cascade="all">
         <key>
                 <column name="instrumentType" precision="22" scale="0"/>

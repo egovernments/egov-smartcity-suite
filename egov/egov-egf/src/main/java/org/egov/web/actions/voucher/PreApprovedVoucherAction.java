@@ -109,7 +109,7 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @Results({
         @Result(name = "editVoucher", type = "redirectAction", location = "journalVoucherModify-beforeModify", params = { "namespace",
-                "/voucher"}),
+                "/voucher","voucherId", "${voucherId}"}),
         @Result(name = "view", location = "preApprovedVoucher-view.jsp"),
         @Result(name = PreApprovedVoucherAction.VOUCHEREDIT, location = "preApprovedVoucher-voucheredit.jsp"),
         @Result(name = "billview", location = "preApprovedVoucher-billview.jsp"),
@@ -177,7 +177,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private boolean showVoucherDate;
     private ScriptService scriptService;
     private String mode = "";
-
+    protected Long voucherId ;
     @Override
     public StateAware getModel() {
         return voucherHeader;
@@ -340,6 +340,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     {
         String result = null;
         voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(parameters.get(VHID)[0]));
+        voucherId = Long.valueOf(parameters.get(VHID)[0]);
         boolean ismodifyJv = false;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("voucherHeader==" + voucherHeader);
@@ -369,7 +370,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         getHeaderMandateFields();
         getSession().put("voucherId", parameters.get(VHID)[0]);
 
-        if (voucherHeader.getState() != null && voucherHeader.getState().getValue().contains("REJECTED"))
+        if (voucherHeader.getState() != null && voucherHeader.getState().getValue().contains("Rejected"))
             if (voucherHeader.getModuleId() == null) {
                 final EgBillregistermis billMis = (EgBillregistermis) persistenceService.find(
                         "from EgBillregistermis where voucherHeader.id=?", voucherHeader.getId());
@@ -396,8 +397,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             else
                 result = "voucherview";
 
-        // vhid = voucherHeader.getId();
-        /* } */return result;
+       return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -1124,7 +1124,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         if (adt.getTablename().equalsIgnoreCase("EG_EMPLOYEE"))
         {
             final PersonalInformation information = (PersonalInformation) getPersistenceService().find(
-                    " from PersonalInformation where employeeCode=? and isActive=1", code);
+                    " from PersonalInformation where employeeCode=? and isActive=true", code);
             if (information == null)
                 values = index + "~" + ERROR;
             else
@@ -1132,7 +1132,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         }
         else if (adt.getTablename().equalsIgnoreCase("RELATION"))
         {
-            final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=? and isactive=1", code);
+            final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=? and isactive=true", code);
             if (relation == null)
                 values = index + "~" + ERROR;
             else
@@ -1141,7 +1141,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         else if (adt.getTablename().equalsIgnoreCase("ACCOUNTENTITYMASTER"))
         {
             final AccountEntity accountEntity = (AccountEntity) getPersistenceService().find(
-                    " from AccountEntity where code=? and isactive=1 ", code);
+                    " from AccountEntity where code=? and isactive=true ", code);
             if (accountEntity == null)
                 values = index + "~" + ERROR;
             else
@@ -1388,6 +1388,14 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+    public Long getVoucherId() {
+        return voucherId;
+    }
+
+    public void setVoucherId(Long voucherId) {
+        this.voucherId = voucherId;
     }
 
 }

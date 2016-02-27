@@ -162,6 +162,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     @Qualifier("mastersService")
     private MastersService masters;
+    @Autowired
+    @Qualifier("eGovernCommon")
+    private EGovernCommon eGovernCommon;
     private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     public static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     @Autowired
@@ -173,6 +176,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
         super(voucherHeader);
     }
+
     public VoucherService() {
         super(CVoucherHeader.class);
     }
@@ -284,7 +288,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         final Map<String, Object> map = new HashMap<String, Object>();
         Designation designation = null;
         final Double grossAmount = getJVsGrassAmount(paymentheader);
-       // final Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName).get(0);
+        // final Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName).get(0);
         final List<String> list = (List<String>) scriptService.executeScript(scriptName,
                 ScriptService.createContext("eisCommonServiceBean", eisCommonService, "grossAmount", grossAmount, "userId",
                         EgovThreadLocals.getUserId().intValue(), "DATE", new Date(), "type", type, "vouDate", vouDate.getTime(),
@@ -487,6 +491,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     }
 
     @SuppressWarnings("deprecation")
+    @Transactional
     public CVoucherHeader updateVoucherHeader(final CVoucherHeader voucherHeader, final VoucherTypeBean voucherTypeBean) {
         String voucherNumType = voucherTypeBean.getVoucherNumType();
         if (voucherTypeBean.getVoucherNumType() == null)
@@ -494,6 +499,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         return updateVoucherHeader(voucherHeader, voucherNumType);
     }
 
+    @Transactional
     public CVoucherHeader updateVoucherHeader(final CVoucherHeader voucherHeader, final String voucherNumType) {
         CVoucherHeader existingVH = null;
         try {
@@ -512,6 +518,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             existingVH.getVouchermis().setFundsource(voucherHeader.getVouchermis().getFundsource());
             existingVH.setVoucherDate(voucherHeader.getVoucherDate());
             existingVH.setDescription(voucherHeader.getDescription());
+            applyAuditing(existingVH);
             update(existingVH);
         } catch (final HibernateException e) {
             LOGGER.error(e);
@@ -527,7 +534,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     public CVoucherHeader getUpdatedVNumCGVN(final CVoucherHeader existingVH, final CVoucherHeader voucherHeader,
             String voucherNumType) {
         // CommonMethodsI cmImpl=new CommonMethodsImpl();
-        final EGovernCommon eGovernCommon = new EGovernCommon();
+
         String autoVoucherType = null;
         if (voucherNumType.equalsIgnoreCase("Journal Voucher"))
             voucherNumType = "Journal";
@@ -568,10 +575,11 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(),
                         autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
                 existingVH.setVoucherNumber(strVoucherNumber);
-                final String vType = voucherHeader.getFundId().getIdentifier() + "/" + autoVoucherType + "/CGVN";
+                final String vType = voucherHeader.getFundId().getIdentifier().toString() + "/"
+                        + getCgnType(voucherHeader.getType()) + "/CGVN";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Voucher type  : " + vType);
-                String eg_voucher = eGovernCommon.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
+                String eg_voucher = voucherHelper.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
                 for (int i = eg_voucher.length(); i < 10; i++)
                     eg_voucher = "0" + eg_voucher;
                 existingVH.setCgvn(vType + eg_voucher);
@@ -601,10 +609,11 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                     final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(),
                             autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
                     existingVH.setVoucherNumber(strVoucherNumber);
-                    final String vType = voucherHeader.getFundId().getIdentifier() + "/" + autoVoucherType + "/CGVN";
+                    final String vType = voucherHeader.getFundId().getIdentifier().toString() + "/"
+                            + getCgnType(voucherHeader.getType()) + "/CGVN";
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Voucher type  : " + vType);
-                    String eg_voucher = eGovernCommon.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
+                    String eg_voucher = voucherHelper.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
                     for (int i = eg_voucher.length(); i < 10; i++)
                         eg_voucher = "0" + eg_voucher;
                     existingVH.setCgvn(vType + eg_voucher);
@@ -632,6 +641,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         return existingVH;
     }
 
+    @Transactional
     public void deleteGLDetailByVHId(final Object voucherHeaderId) {
         voucherHibDAO.deleteGLDetailByVHId(voucherHeaderId);
     }
@@ -1173,6 +1183,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
      * @return egBillregister - the updated bill register object.
      * @throws ValidationException
      */
+    @Transactional
     public EgBillregister updateBillForVSubType(final List<VoucherDetails> billDetailslist,
             final List<VoucherDetails> subLedgerlist,
             final CVoucherHeader voucherHeader,

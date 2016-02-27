@@ -69,7 +69,7 @@ public class FunctionaryDAO extends GenericHibernateDAO {
 	}
 
 	public List<Functionary> findAllActiveFunctionary() {
-		return getCurrentSession().createQuery("from Functionary f where isactive=1").list();
+		return getCurrentSession().createQuery("from Functionary f where isactive=true").list();
 	}
 
 	public Functionary functionaryById(final Integer id) {

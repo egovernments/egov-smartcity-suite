@@ -62,7 +62,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericHibDao;
-import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
@@ -71,12 +70,12 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -199,7 +198,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 Constants.APPLICATION_STATUS_CREATED_CODE);
         license.setEgwStatus(statusChange);
         license.setApplicationNumber(applicationNumberGenerator.generate());
-        setAuditEntries(license);
+        this.licensePersitenceService.applyAuditing(license);
         this.processAndStoreDocument(license.getDocuments());
         this.transitionWorkFlow(license, workflowBean);
         license.getState().setCreatedBy(license.getCreatedBy());
@@ -220,15 +219,16 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.getApplicationDate());
         ld.setIsHistory("N");
         ld.setEgInstallmentMaster(installment);
-        ld.setCreateDate(new Date());
         ld.setLicense(license);
         ld.setIsLateRenewal('0');
+        ld.setCreateDate(new Date());
         LOGGER.debug("calculating FEE          ...............................................");
         Set<EgDemandDetails> demandDetails = null;
         if (ld.getEgDemandDetails().isEmpty() || ld.getEgDemandDetails() == null)
             demandDetails = new LinkedHashSet<EgDemandDetails>();
         else
             demandDetails = ld.getEgDemandDetails();
+
         for (final FeeMatrixDetail fm : feeList) {
             final EgDemandReasonMaster reasonMaster = demandGenericDao
                     .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), moduleName);
@@ -244,110 +244,152 @@ public abstract class AbstractLicenseService<T extends License> {
                 demandDetails.add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
                 totalAmount = totalAmount.add(fm.getAmount());
             }
-
         }
 
-        ld.setEgDemandDetails(demandDetails);
-        ld.setBaseDemand(totalAmount);
-        license.setLicenseDemand(ld);
+        setLicenseDemandObj(license, ld, totalAmount, demandDetails);
         return totalAmount;
     }
 
-    @Transactional
-    public BigDecimal recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
-        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
-        final EgDemand licenseDemand = license.getCurrentDemand();
+    // NOTE: Updating Demand Once Trade_Area field gets change in Sanitory Officer inbox...
+    public License updateDemandForChangeTradeArea(final T license) {
+        final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
+        final LicenseDemand ld = null != license && null != license.getLicenseDemand() ? license.getLicenseDemand()
+                : new LicenseDemand();
         BigDecimal totalAmount = BigDecimal.ZERO;
-        final Set<EgDemandDetails> egDemandDetails = licenseDemand.getEgDemandDetails();
-        for (final EgDemandDetails dmd : egDemandDetails)
+        final Module moduleName = getModuleName();
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(moduleName,
+                license.getApplicationDate());
+        ld.setEgInstallmentMaster(installment);
+        ld.setLicense(license);
+        ld.setIsLateRenewal('0');
+        LOGGER.debug("updating Demand FEE          ...............................................");
+        final Set<EgDemandDetails> demandDetails = ld.getEgDemandDetails();
+        for (final EgDemandDetails dmd : demandDetails)
             for (final FeeMatrixDetail fm : feeList)
                 if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()))
                     if (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
                         dmd.setAmount(fm.getAmount());
                         totalAmount = totalAmount.add(fm.getAmount());
+                        dmd.setModifiedDate(new Date());
+                        demandDetails.add(dmd);
+                    }
+        setLicenseDemandObj(license, ld, totalAmount, demandDetails);
+        return license;
+
+    }
+
+    private void setLicenseDemandObj(final T license, final LicenseDemand ld, final BigDecimal totalAmount,
+            final Set<EgDemandDetails> demandDetails) {
+        ld.setEgDemandDetails(demandDetails);
+        ld.setBaseDemand(totalAmount);
+        license.setLicenseDemand(ld);
+    }
+
+    @Transactional
+    public BigDecimal recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        final LicenseDemand licenseDemand = license.getCurrentDemand();
+        for (final EgDemandDetails dmd : licenseDemand.getEgDemandDetails())
+            for (final FeeMatrixDetail fm : feeList)
+                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()))
+                    if (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                            .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
+                        final BigDecimal oldDemandAmt = dmd.getAmount();
+                        final BigDecimal recalculatedDemand = fm.getAmount();
+                        dmd.setAmount(recalculatedDemand);
+                        licenseDemand.setBaseDemand(licenseDemand.getBaseDemand().subtract(oldDemandAmt).add(recalculatedDemand));
+                        totalAmount = totalAmount.add(fm.getAmount());
                     }
         return totalAmount;
     }
 
-    private void setAuditEntries(final T license) {
-        if (license.getId() == null) {
-            license.setCreatedBy(securityUtils.getCurrentUser());
-            license.setCreatedDate(new Date());
-        }
-        license.setLastModifiedBy(securityUtils.getCurrentUser());
-        license.setLastModifiedDate(new Date());
-
-    }
-
     @Transactional
-    public void createLegacyLicense(final T license, final Map<Integer, Double> legacyInstallmentwiseFees) {
+    public void createLegacyLicense(final T license, final Map<Integer, Double> legacyInstallmentwiseFees,
+            final Map<Integer, Boolean> legacyFeePayStatus) {
         if (!this.licensePersitenceService.findAllBy("from License where oldLicenseNumber = ?", license.getOldLicenseNumber())
                 .isEmpty())
-            throw new ApplicationRuntimeException("license.number.exist");
-        addLegacyDemand(legacyInstallmentwiseFees, license);
+            throw new ValidationException("TL-001", "TL-001", license.getOldLicenseNumber());
+        addLegacyDemand(legacyInstallmentwiseFees, legacyFeePayStatus, license);
         this.processAndStoreDocument(license.getDocuments());
         license.setLicenseAppType((LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' "));
         license.getLicensee().setLicense(license);
         license.updateStatus((LicenseStatus) persistenceService.find("from org.egov.tl.entity.LicenseStatus where name=? ",
                 Constants.LICENSE_STATUS_ACTIVE));
         license.setApplicationNumber(applicationNumberGenerator.generate());
-        setAuditEntries(license);
         license.setLegacy(true);
         license.setActive(true);
+        this.licensePersitenceService.applyAuditing(license);
         license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
         validityService.applyLicenseValidity(license);
         this.licensePersitenceService.persist(license);
     }
 
-    private void addLegacyDemand(final Map<Integer, Double> legacyInstallmentwiseFees, final T license) {
+    private void addLegacyDemand(final Map<Integer, Double> legacyInstallmentwiseFees,
+            final Map<Integer, Boolean> legacyFeePayStatus,
+            final T license) {
+        final LicenseDemand licenseDemand = new LicenseDemand();
+        licenseDemand.setIsHistory("N");
+        licenseDemand.setCreateDate(new Date());
+        licenseDemand.setLicense(license);
+        licenseDemand.setIsLateRenewal('0');
         final Module module = getModuleName();
-        LicenseDemand licenseDemand = null;
         for (final Map.Entry<Integer, Double> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
             if (legacyInstallmentwiseFee.getValue() != null && legacyInstallmentwiseFee.getValue() > 0) {
                 final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
                         legacyInstallmentwiseFee.getKey());
-                if (licenseDemand == null) {
-                    licenseDemand = new LicenseDemand();
-                    licenseDemand.setIsHistory("N");
-                    licenseDemand.setCreateDate(new Date());
-                    licenseDemand.setLicense(license);
-                    licenseDemand.setIsLateRenewal('0');
-                    licenseDemand.setEgInstallmentMaster(installment);
-                    license.setLicenseDemand(licenseDemand);
-                }
+
+                licenseDemand.setEgInstallmentMaster(installment);
                 final BigDecimal demandAmount = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue());
+                final BigDecimal amtCollected = legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) == null
+                        || !legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) ? BigDecimal.ZERO : demandAmount;
                 licenseDemand.getEgDemandDetails().add(
                         EgDemandDetails.fromReasonAndAmounts(demandAmount,
                                 demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                                         demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
                                         installment, module),
-                                BigDecimal.ZERO));
+                                amtCollected));
                 licenseDemand.setBaseDemand(demandAmount.add(licenseDemand.getBaseDemand()));
+                licenseDemand.setAmtCollected(amtCollected.add(licenseDemand.getAmtCollected()));
             }
+        license.setLicenseDemand(licenseDemand);
 
     }
 
     @Transactional
-    public void updateLegacyLicense(final T license, final Map<Integer, Double> updatedInstallmentFees) {
-        updateLegacyDemand(license, updatedInstallmentFees);
+    public void updateLegacyLicense(final T license, final Map<Integer, Double> updatedInstallmentFees,
+            final Map<Integer, Boolean> legacyFeePayStatus) {
+        updateLegacyDemand(license, updatedInstallmentFees, legacyFeePayStatus);
+        this.licensePersitenceService.applyAuditing(license);
         this.processAndStoreDocument(license.getDocuments());
-        setAuditEntries(license);
         this.licensePersitenceService.persist(license);
     }
 
-    private void updateLegacyDemand(final T license, final Map<Integer, Double> updatedInstallmentFees) {
+    private void updateLegacyDemand(final T license, final Map<Integer, Double> updatedInstallmentFees,
+            final Map<Integer, Boolean> legacyFeePayStatus) {
         final LicenseDemand licenseDemand = license.getCurrentDemand();
         for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
             final Integer installmentNumber = demandDetail.getEgDemandReason().getEgInstallmentMaster()
                     .getInstallmentNumber();
             final Double updatedFee = updatedInstallmentFees.get(installmentNumber);
-            if (updatedFee != null && updatedFee.doubleValue() != demandDetail.getAmount().doubleValue()) {
+            final Boolean feePaymentStatus = legacyFeePayStatus.get(installmentNumber);
+            if (updatedFee != null) {
+                final BigDecimal updatedDemandAmt = BigDecimal.valueOf(updatedFee);
                 final BigDecimal previousDemandAmt = demandDetail.getAmount();
-                demandDetail.setAmount(BigDecimal.valueOf(updatedFee));
+                demandDetail.setAmount(updatedDemandAmt);
                 licenseDemand.setBaseDemand(
-                        licenseDemand.getBaseDemand().subtract(previousDemandAmt).add(BigDecimal.valueOf(updatedFee)));
+                        licenseDemand.getBaseDemand().subtract(previousDemandAmt).add(updatedDemandAmt));
+                if (feePaymentStatus != null && feePaymentStatus)
+                    demandDetail.setAmtCollected(updatedDemandAmt);
+                else
+                    demandDetail.setAmtCollected(BigDecimal.ZERO);
+            } else {
+                demandDetail.setAmount(BigDecimal.ZERO);
+                licenseDemand.setBaseDemand(BigDecimal.ZERO);
+                demandDetail.setAmtCollected(BigDecimal.ZERO);
             }
+
             updatedInstallmentFees.put(installmentNumber, 0d);
         }
 
@@ -357,22 +399,16 @@ public abstract class AbstractLicenseService<T extends License> {
                 final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
                         updatedInstallmentFee.getKey());
                 final BigDecimal demandAmount = BigDecimal.valueOf(updatedInstallmentFee.getValue());
+                final BigDecimal amtCollected = legacyFeePayStatus.get(updatedInstallmentFee.getKey()) == null
+                        || !legacyFeePayStatus.get(updatedInstallmentFee.getKey()) ? BigDecimal.ZERO : demandAmount;
                 licenseDemand.getEgDemandDetails().add(
                         EgDemandDetails.fromReasonAndAmounts(demandAmount,
                                 demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                                         demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
                                         installment, module),
-                                BigDecimal.ZERO));
+                                amtCollected));
                 licenseDemand.setBaseDemand(demandAmount.add(licenseDemand.getBaseDemand()));
             }
-    }
-
-    public LicenseDemand getCurrentYearDemand(final T license) {
-        final Date currDate = new Date();
-        final LicenseDemand currLicenseDemand = (LicenseDemand) persistenceService
-                .find("from LicenseDemand ld where ld.license.id=? and (ld.egInstallmentMaster.fromDate <= ? and ld.egInstallmentMaster.toDate >=?)",
-                        license.getId(), currDate, currDate);
-        return currLicenseDemand;
     }
 
     public List<Installment> getCurrAndPreviousInstallment() {
@@ -427,10 +463,11 @@ public abstract class AbstractLicenseService<T extends License> {
             pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
         final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-        license.reinitiateTransition().start().withSenderName(currentUser.getName())
+        license.reinitiateTransition().start().withSenderName(currentUser.getUsername() + "::" + currentUser.getName())
                 .withComments(workflowBean.getApproverComments())
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
                 .withNextAction(wfmatrix.getNextAction());
+        this.licensePersitenceService.applyAuditing(license);
         licensePersitenceService.persist(license);
         this.sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         this.updateIndexService.updateTradeLicenseIndexes(license);
@@ -449,7 +486,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             if (wfInitiator.equals(userAssignment)) {
-                license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                license.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
                 if (license.getLicenseAppType() != null
                         && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
@@ -457,13 +494,13 @@ public abstract class AbstractLicenseService<T extends License> {
 
             } else {
                 final String stateValue = license.getCurrentState().getValue().split(":")[0] + ":" + WORKFLOW_STATE_REJECTED;
-                license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                license.transition(true).withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
             }
 
         } else if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            license.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
@@ -475,7 +512,7 @@ public abstract class AbstractLicenseService<T extends License> {
             if (null == license.getState()) {
                 final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
-                license.transition().start().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                license.transition().start().withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             } else if (license.getCurrentState().getNextAction().equalsIgnoreCase("END"))
@@ -484,7 +521,7 @@ public abstract class AbstractLicenseService<T extends License> {
             else {
                 final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
-                license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                license.transition(true).withSenderName(user.getUsername() + "::" + user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             }
@@ -568,4 +605,13 @@ public abstract class AbstractLicenseService<T extends License> {
         return outstandingFee;
 
     }
+
+    public TradeLicenseUpdateIndexService getUpdateIndexService() {
+        return updateIndexService;
+    }
+
+    public void setUpdateIndexService(final TradeLicenseUpdateIndexService updateIndexService) {
+        this.updateIndexService = updateIndexService;
+    }
+
 }

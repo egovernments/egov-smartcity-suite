@@ -52,7 +52,6 @@
 		<discriminator column="LICENSE_TYPE" type="string" />
 		<property name="licenseNumber" column="LICENSE_NUMBER" />
 		<property name="oldLicenseNumber" column="OLD_LICENSE_NUMBER" />
-		<property name="dateOfCreation" column="DATEOFCREATION" />
 		<property name="dateOfExpiry" column="DATEOFEXPIRY" />
 		<property name="licenseCheckList" column="CHECKLIST" />
 		<property name="applicationNumber" column="APPL_NUM" />
@@ -68,7 +67,7 @@
 		<property name="tempLicenseNumber" column="TEMP_LICENSE_NUMBER" />
 		<property name="officeEmailId" column="OFFICE_EMAILID"/>
 		<property name="propertyNo" column="PROPERTY_NO" type="java.lang.String"/>
-		<property name="startDate" column="STARTDATE" />
+		<property name="commencementDate" column="COMMENCEMENTDATE" />
 		<property name="ownershipType" column="OWNERSHIP_TYPE" type="java.lang.String" not-null="true" />
 		<many-to-one name="category" class="org.egov.tl.entity.LicenseCategory" fetch="select" not-null="true" >
 			<column name="ID_CATEGORY" precision="22" scale="0" />

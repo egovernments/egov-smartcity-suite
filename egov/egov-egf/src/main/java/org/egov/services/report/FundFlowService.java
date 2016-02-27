@@ -126,7 +126,7 @@ public class FundFlowService extends PersistenceService {
                             +
                             " eg_designation desg, functionary func "
                             +
-                            " where ph.state_id =state.id and empinfo.pos_id= state.owner and empinfo.functionary_id=func.id  and empinfo.isactive=1 "
+                            " where ph.state_id =state.id and empinfo.pos_id= state.owner and empinfo.functionary_id=func.id  and empinfo.isactive=true "
                             +
                             " and empinfo.DESIGNATIONID=desg.DESIGNATIONID and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid"
                             +
@@ -235,7 +235,7 @@ public class FundFlowService extends PersistenceService {
                 +
                 "from Chartofaccounts  coa,  fund fd, bankaccount ba left outer join bankbranch bb  on ba.branchid=bb.id left outer "
                 +
-                "join bank b on bb.bankid=b.id where  coa.id=ba.glcodeid and ba.fundid= fd.id and ba.isactive=1 and ba.type in ('PAYMENTS','RECEIPTS_PAYMENTS') ");
+                "join bank b on bb.bankid=b.id where  coa.id=ba.glcodeid and ba.fundid= fd.id and ba.isactive=true and ba.type in ('PAYMENTS','RECEIPTS_PAYMENTS') ");
         if (fundId != null && fundId != -1)
             allPaymentAccounts.append("and ba.fundid=" + fundId);
         else
@@ -266,7 +266,7 @@ public class FundFlowService extends PersistenceService {
                 +
                 " from Chartofaccounts  coa, fund fd, bankaccount ba left outer join bankbranch bb  on ba.branchid=bb.id left outer "
                 +
-                " join bank b on bb.bankid=b.id where coa.id=ba.glcodeid and ba.fundid= fd.id and ba.isactive=1 and ba.type in ('RECEIPTS') ");
+                " join bank b on bb.bankid=b.id where coa.id=ba.glcodeid and ba.fundid= fd.id and ba.isactive=true and ba.type in ('RECEIPTS') ");
         if (fundId != null && fundId != -1)
             allAccounts.append(" and ba.fundid=" + fundId);
         else

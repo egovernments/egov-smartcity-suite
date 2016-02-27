@@ -134,12 +134,15 @@
 		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-create.jsp" />
 	</definition>
 	
-	<definition name="penaltyRates-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true" />
-		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-result.jsp" />
-	</definition>
+	<definition name="penaltyRates-result" template="/WEB-INF/views/penaltyRates/penaltyRates-result.jsp"/>
+	
 	 <definition name="digitalSignature-success" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/digitalSignature/digitalSignature-success.jsp"/>
      </definition>
+     
+     <definition name="feematrix-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.feematrix.view" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-view.jsp" />
+	</definition>
 </tiles-definitions>

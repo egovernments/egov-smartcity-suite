@@ -58,7 +58,26 @@ jQuery(document).ready(function() {
     	 doLoadingMask();
     });
      doLoadingMask();
+
+
+     jQuery("#instrumentDate").datepicker({ 
+     	 format: 'dd/mm/yyyy',
+     	 autoclose:true,
+         onRender: function(date) {
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+      }).on('changeDate', function(ev) {
+     	  var string=jQuery(this).val();
+     	  if(!(string.indexOf("_") > -1)){
+     		  isDatepickerOpened=false; 
+           	  checkForCurrentDate(this);
+     	  }
+     	  
+      }).data('datepicker');
+      
  });
+
+
 
 jQuery(window).load(function () {
 	undoLoadingMask();
@@ -1092,7 +1111,7 @@ function validate()
 					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate" class="datepicker"  onblur="checkForCurrentDate(this);"  onfocus = "checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox2"><input type ="text" id="instrumentDate" data-inputmask="'mask': 'd/m/y'" name="instrumentProxyList[0].instrumentDate"  onblur="checkForCurrentDate(this);"  onfocus = "checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
@@ -1142,7 +1161,7 @@ function validate()
 					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[%{#instrstatus.index}].instrumentNumber" size="18" /></td>
 					    <td class="bluebox2new" width="18%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[%{#instrstatus.index}].instrumentDate" onblur="checkForCurrentDate(this);" class="datepicker"  onfocus = "checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[%{#instrstatus.index}].instrumentDate" data-inputmask="'mask': 'd/m/y'" onblur="checkForCurrentDate(this);"  onfocus = "checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
@@ -1230,7 +1249,10 @@ var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of swit
 bobexample.collapsePrevious(true) //Only one content open at any given time
 bobexample.init()
 </script>
-
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script>
+jQuery(":input").inputmask();
+</script>
 </s:push>
 </s:form>
 </body>

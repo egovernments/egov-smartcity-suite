@@ -54,7 +54,7 @@
 <script type="text/javascript"
 	src="/EGF/resources/javascript/dateValidation.js"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/javascript/jquery.min.js"></script>
+	src="/EGF/resources/javascript/jquery.min.js"></script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 
@@ -79,13 +79,14 @@
 		<br>
 		<table border="0" width="100%">
 			<tr>
+				<td class="greybox"></td>
 				<td class="greybox">Fund</td>
 				<td class="greybox"><s:select name="fundId" id="fundId"
 						list="dropdownData.fundList" listKey="id" listValue="name"
 						headerKey="-1" headerValue="----Choose----"
 						onChange="loadBank(this);" /></td>
 				<egov:ajaxdropdown id="bankbranchId" fields="['Text','Value']"
-					dropdownId="bankbranchId" url="voucher/common!ajaxLoadBanks.action" />
+					dropdownId="bankbranchId" url="voucher/common-ajaxLoadBanks.action" />
 				<td class="greybox">Bank</td>
 				<td class="greybox"><s:select name="bankbranchId"
 						id="bankbranchId" list="dropdownData.bankList" listKey="id"
@@ -93,9 +94,10 @@
 						onChange="loadBankAccount(this);" /></td>
 			</tr>
 			<tr>
+				<td class="bluebox"></td>
 				<egov:ajaxdropdown id="bankAccId" fields="['Text','Value']"
 					dropdownId="bankAccId"
-					url="voucher/common!ajaxLoadBankAccounts.action" />
+					url="voucher/common-ajaxLoadBankAccounts.action" />
 				<td class="bluebox">Account Number</td>
 				<td class="bluebox"><s:select name="bankAccId" id="bankAccId"
 						list="dropdownData.accNumList" listKey="id" listValue="name"
@@ -133,7 +135,7 @@
 			return false;
 		}
 		var bankAccId = document.getElementById('bankAccId').value; 
-		window.location = "../masters/accountCheque!manipulateCheques.action?bankAccId="+bankAccId;
+		window.location = "../masters/accountCheque-manipulateCheques.action?bankAccId="+bankAccId;
 		
 	}
 

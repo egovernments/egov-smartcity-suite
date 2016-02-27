@@ -114,7 +114,7 @@ public class CollectionObjectFactory {
 		Bankaccount bankaccount = new Bankaccount();
 		bankaccount.setAccountnumber("123456789");
 		bankaccount.setAccounttype("NATIONALISED BANKS");
-		bankaccount.setIsactive(1);
+		bankaccount.setIsactive(true);
 		bankaccount.setFund(createFund("testFund"));
 		bankaccount.setChartofaccounts(createCOA(this.getRandomNumber(99999999)+""));
 		bankaccount.setBankbranch(createBankBranch());
@@ -128,7 +128,7 @@ public class CollectionObjectFactory {
 		bankbranch.setBranchname("test  branch");
 		bankbranch.setBranchaddress1("test branch address");
 		bankbranch.setBranchcity("branch city");
-		bankbranch.setIsactive(1);
+		bankbranch.setIsactive(true);
 		bankbranch.setBank(createBank());
 		bankbranch.setCreated(new Date());
 		bankbranch.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
@@ -142,7 +142,7 @@ public class CollectionObjectFactory {
 		Bank bank = new Bank();
 		bank.setCode("TEST" + getRandomNumber());
 		bank.setName("Test Bank" + getRandomNumber());
-		bank.setIsactive(1);
+		bank.setIsactive(true);
 		bank.setCreated(new Date());
 		bank.setLastmodified(new Date());
 		bank.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
@@ -469,7 +469,7 @@ public class CollectionObjectFactory {
 		function.setName(name);
 		function.setCode(name + getRandomNumber());
 		function.setIsActive(true);
-		function.setIsNotLeaf(0);
+		function.setIsNotLeaf(false);
 		function.setLevel(1);
 		function.setType(name);
 		session.saveOrUpdate(function);
@@ -481,7 +481,7 @@ public class CollectionObjectFactory {
 		function.setName(name);
 		function.setCode(code);
 		function.setIsActive(true);
-		function.setIsNotLeaf(0);
+		function.setIsNotLeaf(false);
 		function.setLevel(1);
 		function.setType(name);
 		session.saveOrUpdate(function);
@@ -1053,7 +1053,7 @@ public class CollectionObjectFactory {
 		fund.setName(code);
 		fund.setCode(code + getRandomNumber());
 		fund.setLlevel(BigDecimal.valueOf(0));
-		fund.setIsactive(1);
+		fund.setIsactive(true);
 		fund.setCreated(new Date());
 		session.saveOrUpdate(fund);
 		return fund;
@@ -1365,7 +1365,7 @@ public class CollectionObjectFactory {
 		subscheme.setValidfrom(new Date());
 		subscheme.setValidto(new Date());
 		subscheme.setScheme(scheme);
-		subscheme.setIsactive("1");
+		subscheme.setIsactive(true);
 		subscheme.setLastmodifieddate(new Date());
 		session.saveOrUpdate(subscheme);
 		return subscheme;

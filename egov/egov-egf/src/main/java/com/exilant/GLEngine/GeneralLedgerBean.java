@@ -59,7 +59,7 @@ public class GeneralLedgerBean
     private String runningDrCr;
     private String startDate;
     private String endDate;
-    // private String fund_id;
+    private String functionId;
     private String fundSource_id;
     private String code;
     private String accName;
@@ -825,6 +825,14 @@ public class GeneralLedgerBean
 
     public void setSubLedgerTypeName(final String subLedgerTypeName) {
         this.subLedgerTypeName = subLedgerTypeName;
+    }
+
+    public String getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(String functionId) {
+        this.functionId = functionId;
     }
 
 }

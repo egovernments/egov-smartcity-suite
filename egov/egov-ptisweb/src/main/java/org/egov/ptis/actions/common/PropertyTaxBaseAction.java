@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -405,17 +405,30 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 || floor.getStructureClassification().getId() == null
                                 || floor.getStructureClassification().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.constType", msgParams));
+                        
+                        if (floor.getUnstructuredLand())
+                        {
+                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getLength() == null
+                                    || floor.getBuiltUpArea().getLength().equals("")) {
+                                addActionError(getText("mandatory.assbleLength",msgParams));
+                            }
+                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getBreadth() == null
+                                    || floor.getBuiltUpArea().getBreadth().equals("")) {
+                                addActionError(getText("mandatory.assbleWidth",msgParams));
+                            }                          
+                        }
 
-                        if (floor.getDrainage() && null == floor.getNoOfSeats())
+                       if (floor.getDrainage() && null == floor.getNoOfSeats())
                             addActionError(getText("mandatory.noofseats"));
+                                              
                         if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
                                 || floor.getPropertyUsage().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.usage", msgParams));
 
                         if (floor.getFirmName() == null || floor.getFirmName().isEmpty()
                                 || floor.getFirmName().equals("")) {
-                            if (floor.getPropertyUsage() != null || null != floor.getPropertyUsage().getId()
-                                    || !floor.getPropertyUsage().getId().toString().equals("-1")) {
+                            if (floor.getPropertyUsage() != null && null != floor.getPropertyUsage().getId()
+                                    && !floor.getPropertyUsage().getId().toString().equals("-1")) {  
                                 final PropertyUsage pu = propertyUsageService.findById(Long.valueOf(floor
                                         .getPropertyUsage().getId()));
                                 if (pu != null && !pu.getUsageName().equalsIgnoreCase(NATURE_OF_USAGE_RESIDENCE))
@@ -876,7 +889,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return wfErrorMsg;
     }
 
-    public void setWfErrorMsg(String wfErrorMsg) {
+    public void setWfErrorMsg(String wfErrorMsg) { 
         this.wfErrorMsg = wfErrorMsg;
 
     }

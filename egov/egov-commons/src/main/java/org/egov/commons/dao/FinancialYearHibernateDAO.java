@@ -163,11 +163,11 @@ public class FinancialYearHibernateDAO extends GenericHibernateDAO implements Fi
         return (CFinancialYear)query.uniqueResult();
     }
 	public List<CFinancialYear> getAllActiveFinancialYearList() {
-		Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=1 order by finYearRange desc");       
+		Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=true order by finYearRange desc");       
         return query.list();
 	}
    public List<CFinancialYear> getAllActivePostingFinancialYear(){
-	   Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=1 and isActiveForPosting=1 order by startingDate desc");
+	   Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=true and isActiveForPosting=true order by startingDate desc");
        return query.list();
    }
 public CFinancialYear getFinancialYearById(Long id) {
@@ -199,7 +199,7 @@ public CFinancialYear getFinancialYearById(Long id) {
     	 logger.info("Obtained session");
  	    String result="";
  	    Query query=HibernateUtil.getCurrentSession().createQuery("" +
- 	    		" from CFinancialYear cfinancialyear where   cfinancialyear.isActiveForPosting=0 and cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  ");
+ 	    		" from CFinancialYear cfinancialyear where   cfinancialyear.isActiveForPosting=false and cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  ");
  	    query.setDate("sDate", fromDate);
  	    query.setDate("eDate", toDate);
  	    ArrayList list= (ArrayList)query.list();
@@ -215,7 +215,7 @@ public CFinancialYear getFinancialYearById(Long id) {
 	    CFinancialYear cFinancialYear = null;
 	    logger.info("Obtained session");
 	    String result="";
-	    Query query=HibernateUtil.getCurrentSession().createQuery(" from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  and cfinancialyear.isActiveForPosting=1");
+	    Query query=HibernateUtil.getCurrentSession().createQuery(" from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  and cfinancialyear.isActiveForPosting=true");
 	    query.setDate("sDate", date);
 	    query.setDate("eDate", date);
 	    ArrayList list= (ArrayList)query.list();

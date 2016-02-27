@@ -183,7 +183,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
                     Integer.valueOf(request.getParameter("fundname")));
             bankAccount.setFund(fund);
         }
-        bankAccount.setIsactive(request.getParameter("active").equals("Y") ? 1 : 0);
+        bankAccount.setIsactive(request.getParameter("active").equals("Y") ? true : false);
         bankAccount.setNarration(request.getParameter("narration"));
         if (org.apache.commons.lang.StringUtils.isNotBlank(request.getParameter("typename"))) {
             final BankAccountType type = BankAccountType.valueOf(request.getParameter("typename"));
@@ -207,7 +207,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
                 jsonObject.put("narration", bankaccount.getNarration());
                 jsonObject.put("payto", bankaccount.getPayTo());
                 jsonObject.put("typename", bankaccount.getType() == null ? "" : bankaccount.getType().name());
-                jsonObject.put("active", bankaccount.getIsactive() == 1 ? "Y" : "N");
+                jsonObject.put("active", bankaccount.getIsactive() ? "Y" : "N");
                 glCode = (String) persistenceService
                         .find("select glcode from CChartOfAccounts where id=(select chartofaccounts.id from Bankaccount where accountnumber = ?)",
                                 bankaccount.getAccountnumber());

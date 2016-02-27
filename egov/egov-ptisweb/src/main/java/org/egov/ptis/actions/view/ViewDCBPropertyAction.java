@@ -82,7 +82,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.ptis.client.model.PropertyArrearBean;
 import org.egov.ptis.client.util.DCBUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -91,12 +90,12 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -137,8 +136,10 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PtDemandDao ptDemandDAO;
+    
     @Autowired
-    private ApplicationContextBeanProvider beanProvider;
+    private ApplicationContext beanProvider;
+    
     @Autowired
     private DCBService dcbService;
     @Autowired

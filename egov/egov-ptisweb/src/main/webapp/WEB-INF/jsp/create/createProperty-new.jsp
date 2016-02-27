@@ -176,6 +176,7 @@
 			populateBoundaries();
 			loadDesignationFromMatrix();
 			showHideFirmName();
+			showHideLengthBreadth();
 		}
 
 		function onSubmit() {
@@ -205,11 +206,69 @@
 			}
 		}  
 
+		
+		function calculatePlintArea(obj){ 
+			var rIndex = getRow(obj).rowIndex;
+			var tbl = document.getElementById('floorDetails');
+			var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+			if(getControlInBranch(tbl.rows[rIndex],'unstructuredLand').value=='true'){
+				if(obj.value!=null && obj.value!=""){
+					var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+					var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
+					  
+					if(buildLength.value!=null && buildLength.value!="" && buildbreadth.value!=null && buildbreadth.value!="")
+						builtUpArea.value=buildLength.value * buildbreadth.value;
+					else
+						builtUpArea.value="";
+				}else
+					builtUpArea.value="";
+			}
+		}
+		
+		function enableDisableLengthBreadth(obj){ 
+			var selIndex = obj.selectedIndex;
+			if(obj.value=='true'){
+					obj.value='true';
+					obj.options[selIndex].selected = true;
+			}
+			else{
+				obj.value='false';
+				obj.options[selIndex].selected = true;
+			}
+			
+			if(selIndex != undefined){
+				var selText = obj.options[selIndex].text; 
+				var rIndex = getRow(obj).rowIndex;
+				var tbl = document.getElementById('floorDetails');
+				var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+				var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');  
+				var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+				if(selText!=null && selText=='No'){
+					buildLength.value="";
+					buildLength.readOnly = true;      
+					buildbreadth.value="";
+					buildbreadth.readOnly = true;
+					builtUpArea.readOnly = false;
+				} else{
+					buildLength.readOnly = false; 
+					buildbreadth.readOnly = false;
+					builtUpArea.readOnly = true;
+				}
+			}
+		}
 		function showHideFirmName(){
 			var tbl=document.getElementById("floorDetails");
             var tabLength = (tbl.rows.length)-1;
             for(var i=1;i<=tabLength;i++){
                  enableDisableFirmName(getControlInBranch(tbl.rows[i],'floorUsage'));
+            }
+		}
+
+		function showHideLengthBreadth(){
+			var tbl=document.getElementById("floorDetails");
+            var tabLength = (tbl.rows.length)-1;
+            for(var i=1;i<=tabLength;i++){
+                 enableDisableLengthBreadth(getControlInBranch(tbl.rows[i],'unstructuredLand'));
             }
 		}
 				

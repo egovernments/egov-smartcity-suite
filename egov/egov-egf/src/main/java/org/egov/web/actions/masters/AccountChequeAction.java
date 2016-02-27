@@ -42,7 +42,6 @@
  */
 package org.egov.web.actions.masters;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,28 +54,26 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.cheque.AccountCheques;
 import org.egov.model.cheque.ChequeDeptMapping;
 import org.egov.model.masters.ChequeDetail;
+import org.egov.services.cheque.AccountChequesService;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author manoranjan
  *
  */
-@Transactional(readOnly = true)
 @Results({
-    @Result(name = "new", location = "accountCheque-new.jsp"),
-    @Result(name = "manipulateCheques", location = "accountCheque-manipulateCheques.jsp")
+        @Result(name = "new", location = "accountCheque-new.jsp"),
+        @Result(name = "manipulateCheques", location = "accountCheque-manipulateCheques.jsp")
 })
 public class AccountChequeAction extends BaseFormAction {
 
@@ -86,8 +83,9 @@ public class AccountChequeAction extends BaseFormAction {
     private List<ChequeDeptMapping> chequeList;
     private Bankaccount bankaccount;
     private List<ChequeDetail> chequeDetailsList;
-    private PersistenceService<AccountCheques, Long> accChqSer;
-    private PersistenceService<ChequeDeptMapping, Long> chqDeptSer;
+    @Autowired
+    @Qualifier("accountChequesService")
+    private AccountChequesService accountChequesService;
     private String deletedChqDeptId;
 
     public AccountChequeAction() {
@@ -124,7 +122,7 @@ public class AccountChequeAction extends BaseFormAction {
     public String manipulateCheques() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("AccountChequeAction | manipulateCheques | Start");
-        final Integer bankAccId = Integer.valueOf(parameters.get("bankAccId")[0]);
+        final Long bankAccId = Long.valueOf(parameters.get("bankAccId")[0]);
         bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id = " + bankAccId);
 
         // Get cheque leafs presents for this particular account number
@@ -148,9 +146,9 @@ public class AccountChequeAction extends BaseFormAction {
             chequeDetail.setFromChqNo(chequeDeptMapping.getAccountCheque().getFromChequeNumber());
             chequeDetail.setToChqNo(chequeDeptMapping.getAccountCheque().getToChequeNumber());
             chequeDetail.setDeptName(chequeDeptMapping.getAllotedTo().getName());
-            // chequeDetail.setDeptId(chequeDeptMapping.getAllotedTo().getId());
+            chequeDetail.setDeptId(chequeDeptMapping.getAllotedTo().getId().intValue());
             chequeDetail
-            .setReceivedDate(Constants.DDMMYYYYFORMAT2.format(chequeDeptMapping.getAccountCheque().getReceivedDate()));
+                    .setReceivedDate(Constants.DDMMYYYYFORMAT2.format(chequeDeptMapping.getAccountCheque().getReceivedDate()));
             chequeDetail.setSerialNo(chequeDeptMapping.getAccountCheque().getSerialNo());
             if (null != chequeDeptMapping.getAccountCheque().getIsExhausted()
                     && chequeDeptMapping.getAccountCheque().getIsExhausted())
@@ -180,52 +178,14 @@ public class AccountChequeAction extends BaseFormAction {
         ChequeDeptMapping chqDept;
         removeEmptyRows();
         bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id ="
-                + Integer.valueOf(parameters.get("bankAccId")[0]));
+                + Long.valueOf(parameters.get("bankAccId")[0]));
         if (null == chequeDetailsList) {
-            deleteRecords();
+            accountChequesService.deleteRecords(deletedChqDeptId, bankaccount);
             addActionMessage("Cheque Master deleted Successfully : No cheque leafs available");
             return "manipulateCheques";
         }
-        for (final ChequeDetail chequeDetail : chequeDetailsList)
-            // modify the existing cheque that are not used and insert new cheque leaf.
-            if (chequeDetail.getNextChqPresent().equalsIgnoreCase("No") && chequeDetail.getIsExhusted().equalsIgnoreCase("No")) {
-
-                if (chequeDetail.getAccountChequeId() != null
-                        && null == chequeIdMap.get(chequeDetail.getAccountChequeId().toString())) {
-                    session.createQuery(
-                            "delete from ChequeDeptMapping where accountCheque.id=" + chequeDetail.getAccountChequeId())
-                            .executeUpdate();
-                    session.createQuery("delete from AccountCheques where id=" + chequeDetail.getAccountChequeId())
-                    .executeUpdate();
-                    chequeIdMap.put(chequeDetail.getAccountChequeId().toString(), chequeDetail.getAccountChequeId().toString());
-
-                }
-                if (null == chequeMap.get(chequeDetail.getFromChqNo() + chequeDetail.getToChqNo() + chequeDetail.getSerialNo())) {
-                    accountCheques = new AccountCheques();
-                    accountCheques.setBankAccountId(bankaccount);
-                    accountCheques.setFromChequeNumber(chequeDetail.getFromChqNo());
-                    accountCheques.setToChequeNumber(chequeDetail.getToChqNo());
-                    accountCheques.setSerialNo(chequeDetail.getSerialNo());
-                    try {
-                        accountCheques.setReceivedDate(Constants.DDMMYYYYFORMAT2.parse(chequeDetail.getReceivedDate()));
-                    } catch (final ParseException e) {
-                        LOGGER.error("ERROR" + e.getMessage(), e);
-                    }
-                    accChqSer.persist(accountCheques);
-                    chequeMap.put(
-                            accountCheques.getFromChequeNumber() + accountCheques.getToChequeNumber()
-                            + accountCheques.getSerialNo(), accountCheques);
-                } else
-                    accountCheques = chequeMap.get(chequeDetail.getFromChqNo() + chequeDetail.getToChqNo()
-                            + chequeDetail.getSerialNo());
-                chqDept = new ChequeDeptMapping();
-                chqDept.setAccountCheque(accountCheques);
-                final Department dept = (Department) persistenceService.find("from Department where id="
-                        + chequeDetail.getDeptId());
-                chqDept.setAllotedTo(dept);
-                chqDeptSer.persist(chqDept);
-            }
-        deleteRecords();
+        accountChequesService.createCheques(chequeDetailsList, chequeIdMap, chequeMap, bankaccount, deletedChqDeptId);
+        accountChequesService.deleteRecords(deletedChqDeptId, bankaccount);
         // Get cheque leafs presents for this particular account number
         final StringBuffer query = new StringBuffer(200);
         query.append("select cd from ChequeDeptMapping cd where accountCheque.bankAccountId.id =? ");
@@ -234,30 +194,6 @@ public class AccountChequeAction extends BaseFormAction {
             prepareChequeDetails(chequeList);
         addActionMessage("Cheque Master updated Successfully");
         return "manipulateCheques";
-    }
-
-    // delete the record from chequedeptmapping and accountcheques if all the departments that are mapped for that cheque leaf is
-    // deleted by user.
-    private void deleteRecords() {
-
-        final Session session = HibernateUtil.getCurrentSession();
-
-        if (null != deletedChqDeptId && !deletedChqDeptId.equalsIgnoreCase("")) {
-            final Query qry = session.createQuery("delete from ChequeDeptMapping where id in (" + deletedChqDeptId + ")");
-            qry.executeUpdate();
-        }
-
-        // delete the cheque leafs that are not mapped to any department.
-        final StringBuffer accChqDelquery = new StringBuffer();
-        accChqDelquery.append("delete from AccountCheques where id in ( select id from AccountCheques where id not in").
-        append("( select ac.id from AccountCheques ac,ChequeDeptMapping cd where ac.id=cd.accountCheque.id ").
-        append(" and ac.bankAccountId.id=:bankAccId) and bankAccountId.id=:bankAccId)");
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("AccountChequeAction | save | accChqDelquery " + accChqDelquery.toString());
-        final Query delqry = session.createQuery(accChqDelquery.toString());
-        delqry.setInteger("bankAccId", bankaccount.getId().intValue());
-        delqry.executeUpdate();
-
     }
 
     private void removeEmptyRows() {
@@ -305,14 +241,6 @@ public class AccountChequeAction extends BaseFormAction {
 
     public void setChequeDetailsList(final List<ChequeDetail> chequeDetailsList) {
         this.chequeDetailsList = chequeDetailsList;
-    }
-
-    public void setAccChqSer(final PersistenceService<AccountCheques, Long> accChqSer) {
-        this.accChqSer = accChqSer;
-    }
-
-    public void setChqDeptSer(final PersistenceService<ChequeDeptMapping, Long> chqDeptSer) {
-        this.chqDeptSer = chqDeptSer;
     }
 
     public String getDeletedChqDeptId() {

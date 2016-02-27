@@ -40,7 +40,6 @@
 package org.egov.ptis.domain.service.property;
 
 import static java.lang.Boolean.FALSE;
-
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
@@ -402,6 +401,7 @@ public class PropertyService {
         LOGGER.debug("Entered into createFloors");
         LOGGER.debug("createFloors: Property: " + property + ", mutationCode: " + mutationCode + ", propUsageId: "
                 + propUsageId + ", propOccId: " + propOccId);
+        
         final Area totBltUpArea = new Area();
         Float totBltUpAreaVal = new Float(0);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
@@ -452,6 +452,8 @@ public class PropertyService {
                     property.getPropertyDetail().getFloorDetails().add(floor);
                     // setting total builtup area.
                     totBltUpArea.setArea(totBltUpAreaVal);
+                    totBltUpArea.setLength( floor.getBuiltUpArea().getLength());
+                    totBltUpArea.setBreadth(floor.getBuiltUpArea().getBreadth());
                     property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
 
                 }
@@ -2457,8 +2459,9 @@ public class PropertyService {
         if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(reason)) {
             if (parentBifurcated && !childrenCreated)
                 errorMsg = "error.child.not.created";
-            else
-                errorMsg = validateArea(propertyModel, basicProperty.getActiveProperty(), children);
+         // commented as child property extent of site can be greater than parent property 
+          /*  else 
+                errorMsg = validateArea(propertyModel, basicProperty.getActiveProperty(), children); */
         }
         /**
          * Reason For Modification is Alteration of Assessment
@@ -2479,7 +2482,8 @@ public class PropertyService {
                 parentProperty = getLatestHistoryProperty(basicProperty.getUpicNo());
             else
                 parentProperty = basicProperty.getActiveProperty();
-            errorMsg = validateArea(propertyModel, parentProperty, children);
+          // commented as child property extent of site can be greater than parent property
+          //  errorMsg = validateArea(propertyModel, parentProperty, children);
         }
         return errorMsg;
     }

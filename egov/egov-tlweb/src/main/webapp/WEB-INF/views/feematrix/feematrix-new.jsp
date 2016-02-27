@@ -40,7 +40,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<script src="<c:url value='/resources/js/app/feematrix.js' context='/tl'/>"></script>
+<script src="<c:url value='/resources/js/app/feematrix.js?rnd=${app_release_no}' context='/tl'/>"></script>
 <script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
 
 <div class="row">
@@ -270,4 +270,33 @@ function validateDetailsBeforeSubmit(){
     }
     return true;
 }
+
+$( "#search" ).click(function( e ) {
+	$('#resultdiv').empty();
+	var valid = $('#feematrix-new').validate().form();
+	if(!valid)
+		{
+		bootbox.alert("Please fill mandatory fields");
+		return false;
+		}
+	  var param="uniqueNo=";
+	  param=param+$('#natureOfBusiness').val()+"-";
+	  param=param+$('#licenseAppType').val()+"-";
+	  param=param+$('#licenseCategory').val()+"-";
+	  param=param+$('#subCategory').val()+"-";
+	  param=param+$('#feeType').val()+"-";
+	  param=param+$('#unitOfMeasurement').val()+"-";
+	  param=param+$('#financialYear').val(); 
+	   $.ajax({
+			url: "/tl/feematrix/search?"+param,
+			type: "GET",
+			//dataType: "json",
+			success: function (response) {
+				 $('#resultdiv').html(response);
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+});
 </script>
