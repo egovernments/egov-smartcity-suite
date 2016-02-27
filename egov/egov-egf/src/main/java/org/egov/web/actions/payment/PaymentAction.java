@@ -194,6 +194,7 @@ public class PaymentAction extends BasePaymentAction {
     private String bank_account;
     private ScriptService scriptService;
     private Map<Integer, String> monthMap = new LinkedHashMap<Integer, String>();
+    private String attributes = "";
     private FinancialYearHibernateDAO financialYearDAO;
     @Autowired
     private PaymentActionHelper paymentActionHelper;
@@ -831,7 +832,7 @@ public class PaymentAction extends BasePaymentAction {
     private String populateBillListFor(final List<PaymentBean> list, String ids) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting populateBillListFor...");
-        String attributes = "";
+       
         String tempAttributes = "";
         if (list != null) {
             for (final PaymentBean bean : list)
