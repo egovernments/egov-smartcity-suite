@@ -960,7 +960,7 @@ public class PaymentAction extends BasePaymentAction {
     public String getComments() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getComments...");
-        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount().toPlainString() });
+        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
     }
 
     @SkipValidation
