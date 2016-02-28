@@ -110,6 +110,8 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.services.bills.BillsService;
+import org.egov.services.voucher.GeneralLedgerDetailService;
+import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
@@ -206,7 +208,7 @@ public class CreateVoucher {
     private FunctionDAO functionDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
-
+    @Autowired
     private VoucherHeaderDAO voucherHeaderDAO;
 
     private BankaccountHibernateDAO bankAccountDAO;
@@ -251,19 +253,12 @@ public class CreateVoucher {
     PersistenceService<EgBillregistermis, Integer> billMisSer;
     PersistenceService<EgBilldetails, Integer> billDetailSer;
     PersistenceService<Fund, Integer> fundService;
-
-    public void setGeneralLedgerService(
-            final PersistenceService<CGeneralLedger, Long> generalLedgerService) {
-        this.generalLedgerService = generalLedgerService;
-    }
-
-    public void setGeneralLedgerDetailService(
-            final PersistenceService<CGeneralLedgerDetail, Long> generalLedgerDetailService) {
-        this.generalLedgerDetailService = generalLedgerDetailService;
-    }
-
-    PersistenceService<CGeneralLedger, Long> generalLedgerService;
-    PersistenceService<CGeneralLedgerDetail, Long> generalLedgerDetailService;
+    @Autowired
+    @Qualifier("generalLedgerService")
+    private GeneralLedgerService generalLedgerService;
+    @Autowired
+    @Qualifier("generalLedgerDetailService")
+    private GeneralLedgerDetailService generalLedgerDetailService;
 
     private Fund fundByCode;
     private PersonalInformationDAO personalInformationDAO;
@@ -2417,8 +2412,6 @@ public class CreateVoucher {
                 reversalVoucherObj.setVoucherDate((Date) paramMap.get(REVERSAL_VOUCHER_DATE));
             }
         }
-        final PersistenceService persistenceService = new PersistenceService();
-        // persistenceService.setSessionFactory(new SessionFactory());
         originalVocher = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?",
                 reversalVoucherObj.getOriginalvcId());
         if (LOGGER.isDebugEnabled())
@@ -2446,8 +2439,6 @@ public class CreateVoucher {
         final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
 
         try {
-            final PersistenceService persistenceService = new PersistenceService();
-            // persistenceService.setSessionFactory(new SessionFactory());
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("original voucher is " + reversalVoucher.getOriginalvcId());
             originalVocher = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?",

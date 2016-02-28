@@ -1317,7 +1317,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     && !receiptHeader.getState().getValue().equals(CollectionConstants.WF_STATE_END)) {
                 endReceiptWorkFlowOnCancellation(receiptHeader);
             }
-            updateBillingSystemWithReceiptInfo(receiptHeader);
+            if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
+                updateBillingSystemWithReceiptInfo(receiptHeader);
+            }
         }
         return super.persist(receiptHeader);
     }
