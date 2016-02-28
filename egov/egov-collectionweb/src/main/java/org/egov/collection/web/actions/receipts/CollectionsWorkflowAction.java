@@ -43,12 +43,9 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.admin.master.entity.Location;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -139,10 +136,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     private String receiptDate;
-    protected String approverName;
-    @Autowired
-    protected AssignmentService assignmentService;
-
+    private String approverName;
     /**
      * Result for cash submission report (redirects to the cash collection
      * report)
@@ -387,16 +381,15 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             // Get the next receipt that is to be updated
             final ReceiptHeader receiptHeader = receiptHeaderService.findById(receiptId, false);
             receiptHeaderService.performWorkflow(wfAction, receiptHeader, remarks);
-            final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(receiptHeader.getState()
-                    .getOwnerPosition().getId());
-            approverName = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
-                    .concat("~").concat(assignment.getPosition().getName());
+            approverName = collectionsUtil.getApproverName(receiptHeader.getState().getOwnerPosition());
         }
         // Add the selected receipt ids to sereceiptHeader
         // Need to find a better mechanism to achieve this.
         getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS, receiptIds);
         return SUCCESS;
     }
+
+
 
     /**
      * Fetches all receipts for set user-counter combination and given status
