@@ -435,7 +435,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         BigDecimal tax = BigDecimal.ZERO;
         BigDecimal collection = BigDecimal.ZERO;
         BigDecimal balance = BigDecimal.ZERO;
-        setIsNagarPanchayat(PropertyTaxUtil.checkIsNagarPanchayat());
+        setIsNagarPanchayat(Boolean.FALSE);
 
         if (getLevyPenalty()) {
             final EgDemand currentDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
