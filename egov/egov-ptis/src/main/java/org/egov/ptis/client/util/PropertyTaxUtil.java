@@ -2427,7 +2427,7 @@ public class PropertyTaxUtil {
      * Method to check for Nagar Panchayats as Grade
      * @return boolean
      */
-    public boolean checkIsNagarPanchayat() {
+    public static boolean checkIsNagarPanchayat() {
         HttpServletRequest request = ServletActionContext.getRequest();
         String grade=(request.getSession().getAttribute("cityGrade")!=null?
                 request.getSession().getAttribute("cityGrade").toString():null);
