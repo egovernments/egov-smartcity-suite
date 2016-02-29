@@ -54,7 +54,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -108,10 +107,6 @@ public abstract class AbstractLicenseService<T extends License> {
     protected static final Logger LOGGER = Logger.getLogger(AbstractLicenseService.class);
 
     @Autowired
-    @Qualifier("feeService")
-    protected FeeService feeService;
-
-    @Autowired
     @Qualifier("entityQueryService")
     protected PersistenceService persistenceService;
 
@@ -147,7 +142,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected DemandGenericHibDao demandGenericDao;
 
     @Autowired
-    ValidityService validityService;
+    protected ValidityService validityService;
 
     protected SimpleWorkflowService<T> licenseWorkflowService;
 
@@ -191,7 +186,7 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void create(final T license, final WorkflowBean workflowBean) {
         license.setLicenseAppType((LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' "));
-        this.raiseNewDemand(feeMatrixService.findFeeList(license), license);
+        this.raiseNewDemand(license);
         license.getLicensee().setLicense(license);
         license.updateStatus((LicenseStatus) persistenceService.find("from org.egov.tl.entity.LicenseStatus where name=? ",
                 Constants.LICENSE_STATUS_ACKNOWLEDGED));
@@ -213,7 +208,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     }
 
-    private BigDecimal raiseNewDemand(final List<FeeMatrixDetail> feeList, final T license) {
+    private BigDecimal raiseNewDemand(final T license) {
         final LicenseDemand ld = new LicenseDemand();
         final Module moduleName = getModuleName();
         BigDecimal totalAmount = ZERO;
@@ -224,13 +219,8 @@ public abstract class AbstractLicenseService<T extends License> {
         ld.setLicense(license);
         ld.setIsLateRenewal('0');
         ld.setCreateDate(new Date());
-        Set<EgDemandDetails> demandDetails = null;
-        if (ld.getEgDemandDetails().isEmpty() || ld.getEgDemandDetails() == null)
-            demandDetails = new LinkedHashSet<EgDemandDetails>();
-        else
-            demandDetails = ld.getEgDemandDetails();
-
-        for (final FeeMatrixDetail fm : feeList) {
+        List<FeeMatrixDetail> feeMatrixDetails = feeMatrixService.findFeeList(license);
+        for (final FeeMatrixDetail fm : feeMatrixDetails) {
             final EgDemandReasonMaster reasonMaster = demandGenericDao
                     .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), moduleName);
             final EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster, installment,
@@ -239,42 +229,35 @@ public abstract class AbstractLicenseService<T extends License> {
                 continue;
 
             if (reason != null) {
-                demandDetails.add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, ZERO));
+                ld.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, ZERO));
                 totalAmount = totalAmount.add(fm.getAmount());
             }
         }
 
-        ld.setEgDemandDetails(demandDetails);
         ld.setBaseDemand(totalAmount);
         license.setLicenseDemand(ld);
         return totalAmount;
     }
 
     public License updateDemandForChangeTradeArea(final T license) {
-        final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
-        final LicenseDemand ld = null != license && null != license.getLicenseDemand() ? license.getLicenseDemand()
-                : new LicenseDemand();
-        BigDecimal totalAmount = ZERO;
+        final LicenseDemand licenseDemand = license.getLicenseDemand();
         final Module moduleName = getModuleName();
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(moduleName,
                 license.getApplicationDate());
-        ld.setEgInstallmentMaster(installment);
-        ld.setLicense(license);
-        ld.setIsLateRenewal('0');
-        final Set<EgDemandDetails> demandDetails = ld.getEgDemandDetails();
-        for (final EgDemandDetails dmd : demandDetails)
-            for (final FeeMatrixDetail fm : feeList)
-                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()))
+        final Set<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails();
+        final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
+        for (final EgDemandDetails dmd : demandDetails) {
+            for (final FeeMatrixDetail fm : feeList) {
+                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId())) {
                     if (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
                         dmd.setAmount(fm.getAmount());
-                        totalAmount = totalAmount.add(fm.getAmount());
                         dmd.setModifiedDate(new Date());
-                        demandDetails.add(dmd);
                     }
-        ld.setEgDemandDetails(demandDetails);
-        ld.setBaseDemand(totalAmount);
-        license.setLicenseDemand(ld);
+                }
+            }
+        }
+        recalculateBaseDemand(licenseDemand);
         return license;
 
     }

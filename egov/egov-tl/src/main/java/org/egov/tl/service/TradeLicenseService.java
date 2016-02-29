@@ -53,7 +53,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
@@ -130,8 +129,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Transactional
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
-
-       
         licensePersitenceService().persist(license);
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
         updateIndexService.updateTradeLicenseIndexes(license);

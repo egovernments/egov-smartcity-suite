@@ -50,10 +50,6 @@
 
 	<context:component-scan base-package="org.egov.tl" />
 
-	<bean id="feeService" class="org.egov.tl.service.FeeService">
-		<constructor-arg name="entityType" value="org.egov.tl.entity.FeeMatrix"/>
-	</bean>
-
 	<bean id="workflowBean" class="org.egov.tl.entity.WorkflowBean" scope="prototype" />
 
     <bean id="tradeLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
