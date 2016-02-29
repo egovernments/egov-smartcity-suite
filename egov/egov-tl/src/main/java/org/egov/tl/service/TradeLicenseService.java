@@ -131,7 +131,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Transactional
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
 
-        if(null !=license && null !=license.getState() && license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
+        if(null !=license && null !=license.getState() && license.getState().getValue().contains(Constants.WF_STATE_INSPECTION_APPROVED_STR)){
            updateDemandForChangeTradeArea(license);
          }
         licensePersitenceService().persist(license);
