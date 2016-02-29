@@ -54,8 +54,8 @@
 				style="text-align: center; width: 98%;">
 				<b><s:property value="%{heading}" /></b>
 				<div align="left" style="text-align: left; width: 98%;">
-					Total Vouchers
-					<s:property value="%{dayBookReport.totalCount}" />
+					Total Vouchers : 
+					<s:property value="%{dayBookDisplayList.size/2}" />
 					
 				</div>
 			</div>
