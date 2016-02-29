@@ -768,9 +768,11 @@ public class CollectionsUtil {
         ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
         final ServiceDetails billingService = receiptHeader.getService();
 
+        String instrumentType="";
+        if(!receiptHeader.getReceiptInstrument().isEmpty())
+            instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
         final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(receiptHeader.getReceiptdate(),
-                receiptHeader.getReceiptnumber(), billingService.getName(), receiptHeader.getReceiptInstrument()
-                .iterator().next().getInstrumentType().getType(), receiptHeader.getTotalAmount(),
+                receiptHeader.getReceiptnumber(), billingService.getName(), instrumentType , receiptHeader.getTotalAmount(),
                 receiptHeader.getSource(),
                 receiptHeader.getStatus().getDescription()
                 );
