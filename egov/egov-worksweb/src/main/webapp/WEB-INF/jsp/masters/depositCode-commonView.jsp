@@ -37,4 +37,49 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="subledgerCode-new.jsp"%> 
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading"></div>
+			<div class="panel-body">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<s:text name="depositCode.work.name" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<s:property value="%{codeName}" />
+					</div>
+					<div class="col-xs-3 add-margin">
+						<s:text name="depositCode.work.description" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<s:property value="%{description}" />
+					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<s:text name="subledgerCode.financialYear" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<s:property value="%{financialYear.finYearRange}" />
+					</div>
+					<div class="col-xs-3 add-margin">
+						<s:text name="subledgerCode.fund" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<s:property value="%{fund.name}" />
+					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<s:text name="subledgerCode.fundSource.name" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<s:property value="%{fundSource.name}" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

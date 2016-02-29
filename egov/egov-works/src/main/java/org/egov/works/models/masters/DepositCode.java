@@ -85,7 +85,7 @@ public class DepositCode extends BaseModel implements EntityType {
     private Fundsource fundSource;
     private EgwTypeOfWork typeOfWork;
     private EgwTypeOfWork subTypeOfWork;
-    private Boolean isActive;
+    private Integer isActive;
 
     @Override
     public String getCode() {
@@ -200,12 +200,12 @@ public class DepositCode extends BaseModel implements EntityType {
         this.fundSource = fundSource;
     }
 
-    public Boolean getIsActive() {
+    public Integer getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(final Boolean isActive) {
-        this.isActive = isActive;
+    public void setIsActive(final Integer isactive) {
+        this.isActive = isactive;
     }
 
     public EgwTypeOfWork getTypeOfWork() {

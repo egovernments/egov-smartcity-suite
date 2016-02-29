@@ -37,35 +37,36 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
+<%@ include file="/includes/taglibs.jsp"%>
 <html>
-<title>
-<s:if test="%{isProjectClose}">
-<s:text name='page.title.projectCompletionReport'/>
-</s:if>
-<s:else>
-Generate Deposit works/ project code
-</s:else> 
-</title>
 <body>
-<align="center">
-<br>
-<s:if test="%{(depositCode && depCode==true) && !isProjectClose}">
-	<h4><s:text name="slDepositCode.success"><s:param  name="value" value="%{code}" /></s:text><br></h4>
-</s:if>
-<s:if test="%{(projectCode && prjctCode==true) && !isProjectClose}">
-	<h4><s:text name="slProjectCode.success"><s:param name="value" value="%{projectCode.getCode()}" /></s:text><br></h4>
-</s:if>
-<br>
-<s:if test="%{isProjectClose}">
-	<h4><s:text name="projectCompletionReport.project.close"><s:param name="value" value="%{projectCode.getCode()}" /></s:text><br></h4>
-</s:if>
-<!-- To Show Back Button -->
-<s:if test="%{!isProjectClose}">
-	<div class="buttonholderwk">
-		<input type="button" class="buttonfinal" value="BACK" id="button" name="button" onclick="self.close();window.open('${pageContext.request.contextPath}/masters/subledgerCode!newform.action?depCode=true','', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
-    </div>
-</s:if> 
-</align>
+<div class="panel-body no-margin-bottom">
+	<div class="form-group">
+		<table width="150%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover" style="cursor: default;">
+			<thead>
+				<tr>
+					<th class="tablesubheadwk"><s:text name="depositCode.work.name" /></th>
+					<th class="tablesubheadwk"><s:text name="depositCode.work.name" /></th>
+					<th class="tablesubheadwk"><s:text name="depositCode.work.description" /></th>
+					<th class="tablesubheadwk"><s:text name="subledgerCode.financialYear" /></th>
+					<th class="tablesubheadwk"><s:text name="subledgerCode.fund" /></th>
+					<th class="tablesubheadwk"><s:text name="subledgerCode.fundSource.name" /></th>
+				</tr>
+			</thead>
+			<tbody class="no-pointer">
+				<s:iterator id="depositCodeIterator" value="depositCodeList" status="rate_row_status" var="currentRow">
+					<tr>
+						<td><s:property value="%{code}" /></td>
+						<td><s:property value="%{codeName}" /></td>
+						<td><s:property value="%{description}" /></td>
+						<td><s:property value="%{financialYear.finYearRange}" /></td>
+						<td><s:property value="%{fund.name}" /></td>
+						<td><s:property value="%{fundSource.name}" /></td>
+					</tr>
+				</s:iterator>
+			</tbody>
+			</table>
+	</div>
+</div>
 </body>
-</html>   
+</html>
