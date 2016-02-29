@@ -321,7 +321,7 @@ public class ConnectionDemandService {
             for (final WaterConnection connection : waterConnections) 
                 if (connection.getConsumerCode() != null) {
                     final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                            .findByConnection(connection);
+                            .findByConsumerCodeAndConnectionStatus(connection.getConsumerCode(),ConnectionStatus.ACTIVE);
 
                     waterTaxDue = getDueInfo(waterConnectionDetails);
                     waterTaxDue.setPropertyID(propertyIdentifier);
@@ -391,7 +391,7 @@ public class ConnectionDemandService {
             } else if (listObj[2] != null) {
                 arrDmd = arrDmd.add(new BigDecimal((Double) listObj[2]));
                 if (new BigDecimal((Double) listObj[2]).compareTo(BigDecimal.ZERO) == 1)
-                    arrColelection = arrColelection.add((BigDecimal) listObj[2]);
+                    arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
             }
         }
         retMap.put(WaterTaxConstants.CURR_DMD_STR, currDmd);
