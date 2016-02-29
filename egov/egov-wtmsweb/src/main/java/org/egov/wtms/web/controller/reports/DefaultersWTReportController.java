@@ -143,6 +143,9 @@ public class DefaultersWTReportController {
 	        	}
 	        }
 	        List<EgDemandDetails> egdemandlist = new ArrayList<EgDemandDetails>(egdemandtemplist);
+	        if (egdemandlist.isEmpty())
+	        	return "";
+	        else
 	        Collections.sort(egdemandlist, demandComparatorByOrderId);
 	    	return egdemandlist.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
 	    }

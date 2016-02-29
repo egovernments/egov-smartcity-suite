@@ -77,19 +77,19 @@ public class DefaultersWTReportService {
     	
     	final StringBuilder queryStr = new StringBuilder(500);
     	queryStr.append(
-                "select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",boundary.name as \"wardName\","
-                + "dcbinfo.houseno as \"houseNo\" , boundary.localname as \"locality\", dcbinfo.mobileno as \"mobileNumber\", "
+                "select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",wardboundary.name as \"wardName\","
+                + "dcbinfo.houseno as \"houseNo\" , localboundary.localname as \"locality\", dcbinfo.mobileno as \"mobileNumber\", "
                 + "dcbinfo.arr_balance as \"arrearsDue\" ,  dcbinfo.curr_balance as \"currentDue\" , dcbinfo.arr_balance+dcbinfo.curr_balance as \"totalDue\"  "
                 + "from egwtr_mv_dcb_view dcbinfo"
-                + " INNER JOIN eg_boundary boundary on dcbinfo.locality = boundary.id ");
+                + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
     	
     	if ( Double.parseDouble(toAmount) == 0)
     		queryStr.append(" where dcbinfo.arr_balance >="+ fromAmount);
     	else 
-    		queryStr.append(" where dcbinfo.arr_balance >="+ fromAmount+"and dcbinfo.arr_balance <"+toAmount);
+    		queryStr.append(" where dcbinfo.arr_balance >="+ fromAmount+" and dcbinfo.arr_balance <"+toAmount);
     	if (ward != null && !ward.isEmpty())
-    		queryStr.append(" and boundary.name = "+"'" +ward+ "'");
-    	if(topDefaulters != null && topDefaulters.equals(" "))
+    		queryStr.append(" and wardboundary.name = "+"'" +ward+ "'");
+    	if(!topDefaulters.isEmpty())
     		queryStr.append(" limit "+ topDefaulters);
     	final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
