@@ -55,7 +55,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="bluebox" colspan="4"><strong><s:text
+						<td class="bluebox" colspan="2"><strong><s:text
 									name="report.run.date" />:<s:date name="todayDate"
 									format="dd/MM/yyyy" /></strong></td>
 						<td colspan="12">
