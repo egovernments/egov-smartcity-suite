@@ -334,8 +334,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             miscBillList = new ArrayList<Miscbilldetail>();
 
             prepareVoucherdetails(contractorids, parameters, worksBillGlcodeList, billList);
-            if (contractorids != null)
-                conBillIdlength = contractorids.length;
+            /*if (contractorids != null)
+                conBillIdlength = contractorids.length;*/
             prepareVoucherdetails(supplierids, parameters, purchaseBillGlcodeList, billList);
             prepareVoucherdetails(contingencyIds, parameters, contingentBillGlcodeList, billList);
             prepareVoucherdetails(salaryids, parameters, salaryBillGlcodeList, billList);
