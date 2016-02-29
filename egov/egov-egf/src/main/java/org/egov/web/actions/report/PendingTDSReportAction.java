@@ -85,13 +85,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/pdf", "contentDisposition", "no-cache;filename=PendingTDSReport.pdf" }),
+                "application/pdf", "contentDisposition", "no-cache;filename=DeductionDetailedReport.pdf" }),
         @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/xls", "contentDisposition", "no-cache;filename=PendingTDSReport.xls" }),
+                "application/xls", "contentDisposition", "no-cache;filename=DeductionDetailedReport.xls" }),
         @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=TdsSummaryReport.pdf" }),
+                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=DeductionsRemittanceSummary.pdf" }),
         @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                "contentType", "application/xls", "contentDisposition", "no-cache;filename=TdsSummaryReport.xls" }),
+                "contentType", "application/xls", "contentDisposition", "no-cache;filename=DeductionsRemittanceSummary.xls" }),
         @Result(name = "results", location = "pendingTDSReport-results.jsp"),
         @Result(name = "entities", location = "pendingTDSReport-entities.jsp"),
         @Result(name = "summaryForm", location = "pendingTDSReport-summaryForm.jsp"),
