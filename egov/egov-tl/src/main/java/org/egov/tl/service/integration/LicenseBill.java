@@ -65,23 +65,29 @@ import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
 
-    @Autowired
-    private LicenseUtils licenseUtils;
+    private static final Logger LOG = LoggerFactory.getLogger(LicenseBill.class);
+
+   
     private License license;
     private String moduleName;
     private String serviceCode;
-    @Autowired
-    private EgBillDao egBillDao;
     private String referenceNumber;
     private Boolean isCallbackForApportion = Boolean.FALSE;
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     private String transanctionReferenceNumber;
+    
+    @Autowired
+    private LicenseUtils licenseUtils;
     @Autowired
     private PenaltyRatesService penaltyRatesService;
+    @Autowired
+    private EgBillDao egBillDao;
 
     public License getLicense() {
         return license;
@@ -167,12 +173,12 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getFundCode() {
-        return "01";// TODO Change according to TL
+        return "01";
     }
 
     @Override
     public String getFundSourceCode() {
-        return "01";// TODO Change according to TL
+        return "01";
     }
 
     @Override
@@ -261,24 +267,26 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getConsumerId() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public BigDecimal calculateLPPenaltyForPeriod(final Date fromDate, final Date toDate, final BigDecimal amount) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public BigDecimal calculatePenalty(final Date commencementDate, final Date collectionDate, final BigDecimal amount) {
-        // FIXME check dateOfCreation/startDate or what ever to be used to calculate penality
         if (commencementDate != null) {
-            final int days = Days.daysBetween(new LocalDate(commencementDate.getTime()), new LocalDate(collectionDate.getTime()))
+            final int paymentDueDays = Days.daysBetween(new LocalDate(commencementDate.getTime()), new LocalDate(collectionDate.getTime()))
                     .getDays();
-            final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(days),
+            final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(paymentDueDays),
                     license.getLicenseAppType());
+            if (penaltyRates == null) {
+                LOG.warn("License payment due since {} days, There is no penatlity rate definied for License Type {}", paymentDueDays,
+                        license.getLicenseAppType().getName());
+                return BigDecimal.ZERO;
+            }
             return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
         }
         return BigDecimal.ZERO;
