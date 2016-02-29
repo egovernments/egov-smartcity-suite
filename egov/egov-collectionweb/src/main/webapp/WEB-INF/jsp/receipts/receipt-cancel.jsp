@@ -163,10 +163,10 @@ function warningInfo()
 
 						<s:if test="cramount!=0">
 						<tr>
-							<td class="blueborderfortd"><div align="center">1<s:property value="%{function.name}" /></div></td>
-							<td class="blueborderfortd"><div align="center">2<s:property value="%{accounthead.glcode}" /></div></td>
-							<td class="blueborderfortd"><div align="center">3<s:property value="%{accounthead.name}" /></div></td>						<fmt:formatNumber var="newcramount" value='${cramount}' pattern='#0.00' />
-							<td class="blueborderfortd"><div align="center">4${newcramount}</div></td>
+							<td class="blueborderfortd"><div align="center"><s:property value="%{function.name}" /></div></td>
+							<td class="blueborderfortd"><div align="center"><s:property value="%{accounthead.glcode}" /></div></td>
+							<td class="blueborderfortd"><div align="center"><s:property value="%{description}" /></div></td>						<fmt:formatNumber var="newcramount" value='${cramount}' pattern='#0.00' />
+							<td class="blueborderfortd"><div align="center">${newcramount}</div></td>
 						</tr>
 						</s:if>
 						<s:if test="dramount!=0 && !isRevenueAccountHead(accounthead)">
@@ -196,7 +196,7 @@ function warningInfo()
 						<tr>
 							<td class="blueborderfortd"><div align="center"><s:property value="%{function.name}" /></div></td>
 							<td class="blueborderfortd"><div align="center"><s:property value="%{accounthead.glcode}" /></div></td>
-							<td class="blueborderfortd"><div align="center"><s:property value="%{accounthead.name}" /></div></td>						<fmt:formatNumber var="newdramount" value='${dramount}' pattern='#0.00' />
+							<td class="blueborderfortd"><div align="center"><s:property value="%{description}" /></div></td>						<fmt:formatNumber var="newdramount" value='${dramount}' pattern='#0.00' />
 							<td class="blueborderfortd"><div align="center">${newdramount}</div></td>
 						</tr>
 						
