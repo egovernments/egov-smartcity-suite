@@ -40,8 +40,10 @@
 package org.egov.services.voucher;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +76,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+
 @Transactional(readOnly = true)
 @Service
 public class JournalVoucherActionHelper {
@@ -95,7 +100,10 @@ public class JournalVoucherActionHelper {
     @Autowired
     @Qualifier("createVoucher")
     private CreateVoucher createVoucher;
-
+    @Autowired
+    @Qualifier("chartOfAccounts")
+    private ChartOfAccounts chartOfAccounts;
+    
     @Transactional
     public CVoucherHeader createVoucher(List<VoucherDetails> billDetailslist, List<VoucherDetails> subLedgerlist,
             CVoucherHeader voucherHeader, VoucherTypeBean voucherTypeBean, WorkflowBean workflowBean) throws Exception {
@@ -114,7 +122,62 @@ public class JournalVoucherActionHelper {
             voucherHeader = transitionWorkFlow(voucherHeader, workflowBean);
             voucherService.applyAuditing(voucherHeader.getState());
             voucherService.create(voucherHeader);
-        } catch (final Exception e) {
+        }
+        catch (final ValidationException e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
+        }catch (final Exception e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
+        }
+        return voucherHeader;
+    }
+    @Transactional
+    public CVoucherHeader editVoucher(List<VoucherDetails> billDetailslist, List<VoucherDetails> subLedgerlist,CVoucherHeader voucherHeader, VoucherTypeBean voucherTypeBean, WorkflowBean workflowBean,String totaldbamount) throws Exception {
+        try {
+            voucherHeader = voucherService.updateVoucherHeader(voucherHeader, voucherTypeBean);
+
+            voucherService.deleteGLDetailByVHId(voucherHeader.getId());
+            voucherHeader.getGeneralLedger().removeAll(voucherHeader.getGeneralLedger());
+            final List<Transaxtion> transactions = voucherService.postInTransaction(billDetailslist, subLedgerlist,
+                    voucherHeader);
+
+            Transaxtion txnList[] = new Transaxtion[transactions.size()];
+            txnList = transactions.toArray(txnList);
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
+            {
+                final List<ValidationError> errors = new ArrayList<ValidationError>();
+                errors.add(new ValidationError("exp", "Engine Validation failed"));
+                throw new ValidationException(errors);
+            }
+            else {
+                if (!"JVGeneral".equalsIgnoreCase(voucherHeader.getName())) {
+                    final String totalamount = totaldbamount;
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("Journal Voucher Modify Action | Bill modify | voucher name = "
+                                + voucherHeader.getName());
+                    // cancelBill(voucherHeader.getId());
+                    voucherService.updateBillForVSubType(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean,
+                            new BigDecimal(totalamount));
+                }
+                voucherHeader.setStatus(FinancialConstants.PREAPPROVEDVOUCHERSTATUS);
+                
+            }
+            voucherHeader = transitionWorkFlow(voucherHeader, workflowBean);
+            voucherService.applyAuditing(voucherHeader.getState());
+            voucherService.persist(voucherHeader);
+        }
+        catch (final ValidationException e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
+        }catch (final Exception e) {
             e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
@@ -126,7 +189,7 @@ public class JournalVoucherActionHelper {
     public CVoucherHeader transitionWorkFlow(final CVoucherHeader voucherHeader, WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(),new Date()).get(0);
         Position pos = null;
         Assignment wfInitiator = null;
         if (null != voucherHeader.getId())
@@ -179,7 +242,7 @@ public class JournalVoucherActionHelper {
     }
 
     private Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
-        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(voucherHeader.getCreatedBy().getId());
+        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(voucherHeader.getCreatedBy().getId(),new Date()).get(0);
         return wfInitiator;
     }
 

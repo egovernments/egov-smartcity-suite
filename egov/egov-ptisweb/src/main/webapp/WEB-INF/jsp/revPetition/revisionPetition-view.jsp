@@ -82,6 +82,7 @@
 		//toggleFloorDetailsView();
 		<s:if test="(objection.egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED))" >
 			showHideFirmName();
+			showHideLengthBreadth();
 		</s:if>
 		loadDesignationFromMatrix();
 	}
@@ -249,6 +250,70 @@
 		}
 	} 
 
+
+	function showHideLengthBreadth(){
+		var tbl=document.getElementById("floorDetails");
+        var tabLength = (tbl.rows.length)-1;
+        if(tabLength==1){
+            enableDisableLengthBreadth(getControlInBranch(tbl.rows[1],'unstructuredLand'));
+        }else{
+        	for(var i=0;i<tabLength;i++){
+                	enableDisableLengthBreadth(getControlInBranch(tbl.rows[i+1],'unstructuredLand'));
+                } 
+            }
+	} 
+
+	function calculatePlintArea(obj){ 
+		var rIndex = getRow(obj).rowIndex;
+		var tbl = document.getElementById('floorDetails');
+		var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+		if(getControlInBranch(tbl.rows[rIndex],'unstructuredLand').value=='true'){
+			if(obj.value!=null && obj.value!=""){
+				var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+				var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
+				  
+				if(buildLength.value!=null && buildLength.value!="" && buildbreadth.value!=null && buildbreadth.value!="")
+					builtUpArea.value=buildLength.value * buildbreadth.value;
+				else
+					builtUpArea.value="";
+			}else
+				builtUpArea.value="";
+		}
+	}
+	
+	function enableDisableLengthBreadth(obj){ 
+		var selIndex = obj.selectedIndex;
+		if(obj.value=='true'){
+				obj.value='true';
+				obj.options[selIndex].selected = true;
+		}
+		else{
+			obj.value='false';
+			obj.options[selIndex].selected = true;
+		}
+		
+		if(selIndex != undefined){
+			var selText = obj.options[selIndex].text; 
+			var rIndex = getRow(obj).rowIndex;
+			var tbl = document.getElementById('floorDetails');
+			var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+			var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');  
+			var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+			if(selText!=null && selText=='No'){
+				buildLength.value="";
+				buildLength.readOnly = true;      
+				buildbreadth.value="";
+				buildbreadth.readOnly = true;
+				builtUpArea.readOnly = false;
+			} else{
+				buildLength.readOnly = false; 
+				buildbreadth.readOnly = false;
+				builtUpArea.readOnly = true;
+			}
+		}
+	}
+
+
 		
 </script>
 <script
@@ -341,7 +406,9 @@
 								test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
 							">
+							    <div class="formmainbox" style="box-shadow:none;">
 								<jsp:include page="recordInspecationDetails.jsp" />
+								</div>
 							</s:elseif>
 							<s:elseif
 								test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
@@ -360,7 +427,7 @@
 				</s:if>
 				<tr>
 					<td>
-						<div id="approval_header">
+						<div id="approval_header" class="formmainbox" style="box-shadow:none;">
 							<div id="wfHistoryDiv">
 								<%--    <jsp:include page="../workflow/workflowHistory.jsp"/>
 	  		 --%>

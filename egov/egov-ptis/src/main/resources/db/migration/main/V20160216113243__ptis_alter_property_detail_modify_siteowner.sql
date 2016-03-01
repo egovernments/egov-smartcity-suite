@@ -1,0 +1,1 @@
+alter table egpt_property_detail alter column siteowner type character varying(60);

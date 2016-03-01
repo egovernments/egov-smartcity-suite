@@ -58,6 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author mani
  *
  */
+@Deprecated
 @Transactional(readOnly = true)
 public class AccountEntityService extends PersistenceService<AccountEntity, Integer> implements EntityTypeService {
     

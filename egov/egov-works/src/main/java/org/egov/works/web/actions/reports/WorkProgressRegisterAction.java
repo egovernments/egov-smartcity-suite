@@ -208,7 +208,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                         .findAllBy(
                                 "select distinct wo.workOrderPreparedBy from WorkOrder wo where wo.workOrderPreparedBy.employeeName is not null"));
         addDropdownData("schemeList",
-                getPersistenceService().findAllBy("from org.egov.commons.Scheme sc where sc.isactive=1"));
+                getPersistenceService().findAllBy("from org.egov.commons.Scheme sc where sc.isactive=true"));
         final AjaxWorkProgressAction ajaxWorkProgressAction = new AjaxWorkProgressAction();
         populateSubSchemeList(ajaxWorkProgressAction, getScheme() != null);
         prepareMilestoneStatuses();
@@ -796,7 +796,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
             }
 
             if (getScheme() != null && getScheme() != -1) {
-                final Scheme sch = (Scheme) getPersistenceService().find("from Scheme where isactive=1 and id=?",
+                final Scheme sch = (Scheme) getPersistenceService().find("from Scheme where isactive=true and id=?",
                         getScheme());
                 srchCrit.append(" under Scheme " + sch.getName());
                 query.append(" and woe.estimate.financialDetails[0].scheme.id=?");

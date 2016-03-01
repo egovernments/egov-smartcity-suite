@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_NIL;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_PARTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -93,6 +94,7 @@ public class CommonServices {
 		Map<String, String> noticeTypeMap = new HashMap<String, String>();
 		noticeTypeMap.put(NOTICE_TYPE_BILL, NOTICE_TYPE_BILL);
 		noticeTypeMap.put(NOTICE_TYPE_SPECIAL_NOTICE, NOTICE_TYPE_SPECIAL_NOTICE);
+		noticeTypeMap.put(NOTICE_TYPE_MUTATION_CERTIFICATE, NOTICE_TYPE_MUTATION_CERTIFICATE);
 		return noticeTypeMap;
 	}
 

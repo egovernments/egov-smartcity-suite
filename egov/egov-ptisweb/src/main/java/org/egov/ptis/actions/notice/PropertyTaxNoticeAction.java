@@ -562,7 +562,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             floorInfo.setBuildingClassification(floor.getStructureClassification().getTypeName());
             floorInfo.setNatureOfUsage(floor.getPropertyUsage().getUsageName());
             floorInfo.setPlinthArea(new BigDecimal(floor.getBuiltUpArea().getArea()));
-            floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
+            floorInfo.setBuildingAge(floor.getDepreciationMaster() !=null ? floor.getDepreciationMaster().getDepreciationName() 
+                    : "N/A");           
             floorInfo.setMonthlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getMrv()
                     : BigDecimal.ZERO);
             floorInfo.setYearlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getAlv()

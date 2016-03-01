@@ -40,6 +40,7 @@
 package org.egov.ptis.web.controller.reports;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -66,13 +67,14 @@ public class DailyCollectionReportAdaptor implements JsonSerializer<DailyCollect
         jsonObject.addProperty("status", dailyCollectionReportResult.getStatus());
         jsonObject.addProperty("fromDate", dailyCollectionReportResult.getFromInstallment());
         jsonObject.addProperty("toDate", dailyCollectionReportResult.getToInstallment());
-        jsonObject.addProperty("arrearAmt", dailyCollectionReportResult.getArrearAmount());
-        jsonObject.addProperty("currAmt", dailyCollectionReportResult.getCurrentAmount());
-        jsonObject.addProperty("totalPenalty", dailyCollectionReportResult.getTotalPenalty());
-        jsonObject.addProperty("arrearLibCess", dailyCollectionReportResult.getArrearLibCess());
-        jsonObject.addProperty("currLibCess", dailyCollectionReportResult.getCurrentLibCess()); 
-        jsonObject.addProperty("totalLibCess", dailyCollectionReportResult.getTotalLibCess());
-        jsonObject.addProperty("totalCollection", dailyCollectionReportResult.getTotalCollection());
+        jsonObject.addProperty("arrearAmt", dailyCollectionReportResult.getArrearAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("currAmt", dailyCollectionReportResult.getCurrentAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("totalPenalty", dailyCollectionReportResult.getTotalPenalty().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("arrearLibCess", dailyCollectionReportResult.getArrearLibCess().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("currLibCess", dailyCollectionReportResult.getCurrentLibCess().setScale(2, BigDecimal.ROUND_HALF_UP)); 
+        jsonObject.addProperty("totalLibCess", dailyCollectionReportResult.getTotalLibCess().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("totalCollection", dailyCollectionReportResult.getTotalCollection().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("ward",dailyCollectionReportResult.getWard());
         return jsonObject;
     }
 

@@ -56,6 +56,7 @@ import org.egov.adtax.search.contract.HoardingDcbReport;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
+import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
@@ -66,6 +67,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class AdvertisementService {
 
     @Autowired
@@ -164,6 +166,17 @@ public class AdvertisementService {
     public List<Object[]> searchBySearchType(final Advertisement hoarding, final String searchType) {
         return advertisementRepository.fetchAdvertisementBySearchType(hoarding, searchType);
     }
+    
+    public int getActivePermanentAdvertisementsByCurrentInstallment(Installment installment) {
+        return advertisementRepository.findActivePermanentAdvertisementsByCurrentInstallment(installment);
+    }
+    @Transactional
+    public List<Advertisement> findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
+            Installment installment, int noOfResultToFetch) {
+        return advertisementRepository.findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
+                installment, noOfResultToFetch);
+    }
+    
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public Advertisement getHoardingByAdvertisementNumber(final String hoardingNumber) {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);

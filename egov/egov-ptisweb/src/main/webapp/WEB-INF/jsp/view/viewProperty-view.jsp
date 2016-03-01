@@ -137,6 +137,8 @@
 							onclick="window.location='../property/transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
 						<input type="button" class="buttonsubmit" name="taxExemption" id="taxExemption" value="Tax Exemption"
 							onclick="window.location='/ptis/exemption/form/<s:property value="%{basicProperty.upicNo}" />';" />
+							<input type="button" class="buttonsubmit" name="btnGRPProperty" id="btnGRPProperty" value="General Revision Petition"
+							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=GRP&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 							
 						<s:if test="%{!property.getIsExemptedFromTax()
 							 && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code) && !basicProperty.underWorkflow

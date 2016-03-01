@@ -87,6 +87,7 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -106,6 +107,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.FlushMode;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
@@ -185,6 +187,13 @@ public class PropertyTransferService {
     @Autowired
     private NoticeService noticeService;
 
+    @Autowired
+    @Qualifier("waterChargesIntegrationServiceImpl")
+    private WaterChargesIntegrationService waterChargesIntegrationService;
+
+    @Autowired
+    private PtDemandDao ptDemandDAO;
+    
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
@@ -214,6 +223,8 @@ public class PropertyTransferService {
             basicProperty.getPropertyOwnerInfo().add(propertyOwnerInfo);
         }
         propertyMutation.setMutationDate(new Date());
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        waterChargesIntegrationService.updateConsumerIndex(propertyService.loadAssessmentDetails(basicProperty));
         basicPropertyService.persist(basicProperty);
     }
 
@@ -350,7 +361,7 @@ public class PropertyTransferService {
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
-            noticeBean.setNewOwnerParentName(propertyMutation.getFullTransfereeGuardianName());
+            noticeBean.setNewOwnerGuardianRelation(propertyMutation.getTransfereeGuardianRelation());
             noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
             noticeBean.setRegDocNo(propertyMutation.getDeedNo());
             noticeBean.setAssessmentNo(basicProp.getUpicNo());

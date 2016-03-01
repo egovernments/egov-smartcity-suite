@@ -109,6 +109,7 @@
 									<form:errors path="username" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
+							<input style="display:none" type="password">
 							<div class="row form-group" id="wrap">
 								<div class="col-md-6" style="margin:0">
 									<div class="input-group">
@@ -219,6 +220,7 @@
 		                                        <div class="input-group-addon style-label">
 		                                            <i class="entypo-key theme-color style-color"></i>
 		                                        </div>
+		                                        <input style="display:none" type="password">
 		                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" />
 		                                    </div>
 		                                </div>

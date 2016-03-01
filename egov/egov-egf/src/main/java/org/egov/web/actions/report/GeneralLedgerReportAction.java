@@ -127,11 +127,11 @@ public class GeneralLedgerReportAction extends BaseFormAction {
                                 +
                                 " and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') " +
                                 " and ca.isActiveForPosting=true and ca.classification=4  and ca.glcode like ?", glCode + "%");
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
-        addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));
+        addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
         addDropdownData("fundsourceList",
-                persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=0 order by name"));
+                persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
         addDropdownData("fieldList", persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside  Prepare ........");
@@ -200,8 +200,19 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         if (checkNullandEmpty(generalLedgerReportBean.getGlCode1()) && checkNullandEmpty(generalLedgerReportBean.getGlCode1())) {
             glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?",
                     generalLedgerReportBean.getGlCode1());
+            if(generalLedgerReportBean.getFund_id().isEmpty())
+            {
+            	fund = (Fund) persistenceService.find("from Fund where id = ?", 0);
+            }
+            else
             fund = (Fund) persistenceService.find("from Fund where id = ?", Integer.parseInt(generalLedgerReportBean.getFund_id()));
         }
+        if(fund==null)
+        {
+        	heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() 
+                    + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
+        }
+        else
         heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() + " for " + fund.getName()
                 + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
         if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId()))

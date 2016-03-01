@@ -50,6 +50,7 @@ import java.util.Map;
 
 
 
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.Installment;
@@ -63,6 +64,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.CurrentDcbService;
@@ -150,7 +152,7 @@ public class CurrentViewDcbController {
                     .getBean("waterConnectionBillable");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                    PropertyExternalService.FLAG_FULL_DETAILS);
+                    PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
             waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
             waterConnectionBillable.setAssessmentDetails(assessmentDetails);
             dcbdemandService.setBillable(waterConnectionBillable);

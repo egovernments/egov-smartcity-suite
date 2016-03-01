@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -84,7 +85,7 @@ public class CloserConnectionService {
         final WaterConnectionDetails inWorkflow = waterConnectionDetailsRepository.getConnectionDetailsInWorkflow(
                 propertyID, ConnectionStatus.INPROGRESS);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
             validationMessage = messageSource.getMessage("err.validate.primary.connection.holding", new String[] {
                     parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
@@ -131,16 +132,16 @@ public class CloserConnectionService {
     @Transactional
     public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+            final String workFlowAction,final String sourceChannel) {
         
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails,workFlowAction,"");
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails,workFlowAction,"",sourceChannel);
        final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
        
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails, approvalPosition,
                 approvalComent, additionalRule, workFlowAction);
-        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails);
+        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails,sourceChannel);
         return savedwaterConnectionDetails;
     }
 }

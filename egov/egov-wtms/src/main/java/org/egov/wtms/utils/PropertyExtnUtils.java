@@ -40,6 +40,7 @@
 package org.egov.wtms.utils;
 
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.wtms.PropertyIntegrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -52,9 +53,9 @@ public class PropertyExtnUtils {
     @Qualifier("propertyIntegrationServiceImpl")
     private PropertyIntegrationService propertyIntegrationService;
 
-    public AssessmentDetails getAssessmentDetailsForFlag(final String asessmentNumber, final Integer flagDetail) {
+    public AssessmentDetails getAssessmentDetailsForFlag(final String asessmentNumber, final Integer flagDetail,final BasicPropertyStatus status) {
         final AssessmentDetails assessmentDetails = propertyIntegrationService.getAssessmentDetailsForFlag(asessmentNumber,
-                flagDetail);
+                flagDetail,status);
         return assessmentDetails;
     }
 

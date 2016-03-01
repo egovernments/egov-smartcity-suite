@@ -67,7 +67,12 @@
 				<security:filter-chain pattern="/view/viewDCBProperty-displayPropInfo.action" filters="none" /> 
 				<security:filter-chain pattern="/view/viewDCBProperty-displayHeadwiseDcb.action" filters="none" />
 				<security:filter-chain pattern="/view/viewDCBProperty-showMigData.action" filters="none" />
-				<security:filter-chain pattern="/citizen/collection/**" filters="none" /> 
+				<security:filter-chain pattern="/citizen/collection/**" filters="none" />
+				<security:filter-chain pattern="/reports/billcollectorDailyCollectionReport-form" filters="none" />  
+				<security:filter-chain pattern="/reports/billcollectorDailyCollectionReportList" filters="none" />  
+				<security:filter-chain pattern="/reports/getRegionHeirarchyByType" filters="none" />
+				<security:filter-chain pattern="/reports/ulbWiseCollectionReport-form" filters="none" />  
+				<security:filter-chain pattern="/reports/ulbWiseCollectionList" filters="none" />  
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

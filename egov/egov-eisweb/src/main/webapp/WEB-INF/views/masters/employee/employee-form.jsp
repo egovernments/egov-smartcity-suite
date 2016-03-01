@@ -132,11 +132,13 @@
 									</div>
 
 									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.mobile"/><span class="mandatory"></span></label>
-										
+										<label class="col-sm-3 control-label"><spring:message code="lbl.mobile"/><span class="mandatory"></span></label>
 										<div class="col-sm-2 add-margin">
-											<form:input type="text" path="mobileNumber" id="mobileNumber" data-inputmask="'mask': '9999999999'" 
+											<div class="input-group">
+												<span class="input-group-addon">+91</span>
+												  	<form:input type="text" path="mobileNumber" id="mobileNumber" data-inputmask="'mask': '9999999999'" 
 											required="required" cssClass="form-control" maxlength="10" placeholder="Mobile Number"/>
+											</div>
 											<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 										</div>
 										

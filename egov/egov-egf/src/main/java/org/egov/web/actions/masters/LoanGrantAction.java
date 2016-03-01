@@ -136,18 +136,18 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         setFundId(loanGrantHeader.getSubScheme().getScheme().getFund().getId());
         setBank_branch(account.getBankAccount().getBankbranch().getId());
         final List<Bankaccount> accNumList = persistenceService.findAllBy(
-                "from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=1 order by ba.chartofaccounts.glcode",
+                "from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=true order by ba.chartofaccounts.glcode",
                 bank_branch, fundId);
         setBankaccount(account.getBankAccount().getId().intValue());
 
         addDropdownData("bankaccountList", accNumList);
         final List<Bankbranch> branchList = persistenceService
                 .findAllBy(
-                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=? ) and br.isactive=1 order by br.bank.name asc",
+                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=? ) and br.isactive=true order by br.bank.name asc",
                         fundId);
         addDropdownData("bankbranchList", branchList);
         fundingAgencyList = new ArrayList<FundingAgency>();
-        fundingAgencyList.addAll(persistenceService.findAllBy(" from FundingAgency where isActive=1 order by name"));
+        fundingAgencyList.addAll(persistenceService.findAllBy(" from FundingAgency where isActive=true order by name"));
         schemeId = loanGrantHeader.getSubScheme().getScheme().getId();
         subSchemeId = loanGrantHeader.getSubScheme().getId();
         projectCodeList = new ArrayList<LoanGrantBean>();
@@ -256,7 +256,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         revisedAmountLGDetails.add(new LoanGrantDetail());
         //persistenceService.setType(FundingAgency.class);
         fundingAgencyList = new ArrayList<FundingAgency>();
-        fundingAgencyList.addAll(persistenceService.findAllBy(" from FundingAgency where isActive=1 order by name"));
+        fundingAgencyList.addAll(persistenceService.findAllBy(" from FundingAgency where isActive=true order by name"));
         loanGrantHeader.getReceiptList().add(new LoanGrantReceiptDetail());
         return "new";
     }

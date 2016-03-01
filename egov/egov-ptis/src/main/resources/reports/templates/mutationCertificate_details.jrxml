@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-01-21T13:06:57 -->
+<!-- 2016-02-02T16:25:13 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mutationCertificate_details" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a002afff-59b5-4b48-b40a-06d60ceff39d">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -12,7 +12,7 @@
 	<parameter name="newOwnerName" class="java.lang.String"/>
 	<parameter name="oldOwnerName" class="java.lang.String"/>
 	<parameter name="oldOwnerParentName" class="java.lang.String"/>
-	<parameter name="newOwnerParentName" class="java.lang.String"/>
+	<parameter name="newOwnerGuardianRelation" class="java.lang.String"/>
 	<parameter name="regDocNo" class="java.lang.String"/>
 	<parameter name="regDocDate" class="java.lang.String"/>
 	<parameter name="ownerAddress" class="java.lang.String"/>
@@ -244,7 +244,7 @@
 				<textElement textAlignment="Left" markup="none">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{newOwnerName}+", "+$P{newOwnerParentName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{newOwnerGuardianRelation}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="474" width="510" height="40" uuid="9ff7be09-66c6-4157-8446-6b345b7a833f"/>

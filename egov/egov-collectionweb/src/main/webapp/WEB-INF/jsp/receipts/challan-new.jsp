@@ -42,7 +42,6 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/challan.js?rnd=${app_release_no}"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/MiscReceiptsService.js"></script>
 <style type="text/css">
 	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
@@ -91,6 +90,7 @@ var currDate = "${currDate}";
 function onBodyLoad(){
 	if(document.getElementById('challanDate').value==""){
 		document.getElementById("challanDate").value=currDate;
+		document.getElementById("challanDate").disabled=true;
 	}
 	
 	if('<s:property value="designationId"/>'!=null && '<s:property value="designationId"/>'!="")
@@ -109,7 +109,7 @@ function onBodyLoad(){
 	}
 	
 	// page has to be disabled when view through search option/ when challan has to be modified -->
-	<s:if test="%{sourcePage=='search' || (model.id!=null && model.challan.state.value=='CREATED') || (sourcePage=='inbox' && model.challan.state.value!='REJECTED')}">
+	<s:if test="%{sourcePage=='search' || (model.id!=null && model.challan.state.value=='CREATED' && sourcePage!='inbox')}">
 			setAsViewPage();
 	</s:if>
 	return true;
@@ -158,7 +158,7 @@ function setAsViewPage(){
 			}
 		}
 	</s:if>
-	document.getElementById('calendarLink').style.display="none";
+	//document.getElementById('calendarLink').style.display="none";
 	document.getElementById('receiptId').disabled=false;
 	document.getElementById('actionName').disabled=false;
 	document.getElementById('sourcePage').disabled=false;
@@ -222,6 +222,21 @@ function validate(obj){
 			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.challanDate.errormessage" />'+ "<br>";
 			valid=false;
 		}
+	 	 if(null != document.getElementById('payeeName') && document.getElementById('payeeName').value == ""){
+
+             document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.error.payeename" />'+ "<br>";
+             valid=false;
+         }
+	 	 if(null != document.getElementById('serviceCategoryId') && document.getElementById('serviceCategoryId').value == -1){
+
+             document.getElementById("challan_error_area").innerHTML+='<s:text name="error.select.service.category" />'+ "<br>";
+             valid=false;
+         }
+         if(null != document.getElementById('serviceId') && document.getElementById('serviceId').value == -1){
+
+             document.getElementById("challan_error_area").innerHTML+='<s:text name="error.select.service.type" />'+ "<br>";
+             valid=false;
+         }
 		 
 		 <s:if test="%{isFieldMandatory('fund')}"> 
 	 	 	if(null != document.getElementById('receiptMisc.fund.id') && document.getElementById('receiptMisc.fund.id').value == -1){
@@ -562,7 +577,7 @@ function populatepositionuseronload()
     <div class="blankspace">&nbsp;</div>
 </s:if>
 
-<s:form theme="simple" name="challan" action="challan">
+<s:form theme="simple" name="challan">
 <s:token/>
 <s:push value="model">
 
@@ -571,7 +586,7 @@ function populatepositionuseronload()
 	<s:text name="challan.title.create"/>
 </s:if>
 <s:elseif test="%{sourcePage=='inbox' && model.challan.state.value=='CREATED'}">
-	<s:text name="challan.title.check"/>
+	<s:text name="challan.title.validate"/>
 </s:elseif>
 <s:elseif test="%{sourcePage=='inbox' && model.challan.state.value=='CHECKED'}">
 	<s:text name="challan.title.approve"/>
@@ -605,9 +620,7 @@ function populatepositionuseronload()
 	      		  <s:date name="challan.challanDate" var="cdFormat" format="dd/MM/yyyy"/>
 	      <td width="24%" class="bluebox">
 	      		<s:textfield id="challanDate" name="challan.challanDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-	      		<a  id="calendarLink" href="javascript:show_calendar('forms[0].challanDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
-	      		<img src="/../../egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
-	      		</a><div class="highlight2" style="width:80px">DD/MM/YYYY</div>				
+	      		<div class="highlight2" style="width:80px">DD/MM/YYYY</div>				
 	      </td>
 	        
    		<s:if test="%{shouldShowHeaderField('billNumber')}">
@@ -621,28 +634,25 @@ function populatepositionuseronload()
  		
 	    </tr>
 	    <tr> <td width="4%" class="bluebox2">&nbsp;</td>
-	    <td width="21%" class="bluebox2"><s:text name="challan.payeename"/></td>
-	    <td width="24%" class="bluebox2"><s:textfield name="receiptPayeeDetails.payeename" id="receiptPayeeDetails.payeeName" value="%{receiptPayeeDetails.payeename}" maxlength="100"/></td>
+	    <td width="21%" class="bluebox2"><s:text name="challan.payeename"/><span class="mandatory"/></td>
+	    <td width="24%" class="bluebox2"><s:textfield name="payeeName" id="payeeName" value="%{payeeName}" maxlength="100"/></td>
 	     <td width="21%" class="bluebox2"><s:text name="challan.payeeAddress"/></td>
-	    <td width="24%" class="bluebox2"><s:textarea name="receiptPayeeDetails.payeeAddress" id="receiptPayeeDetails.payeeAddress" value="%{receiptPayeeDetails.payeeAddress}" cols="18" rows="1" maxlength="1024" onkeyup="return ismaxlength(this)"/></td>
-
+	    <td width="24%" class="bluebox2"><s:textarea name="payeeAddress" id="payeeAddress" value="%{payeeAddress}" cols="18" rows="1" maxlength="1024" onkeyup="return ismaxlength(this)"/></td>
 	    </tr>
 	  <tr> 
 	      	<td width="4%" class="bluebox">&nbsp;</td>
 		    <td width="21%" class="bluebox"><s:text name="challan.narration"/></td>
 		    <td width="24%" class="bluebox"><s:textarea name="referenceDesc" id="referenceDesc" value="%{referenceDesc}" cols="18" rows="1" maxlength="250" onkeyup="return ismaxlength(this)"/></td>
-		    <td width="21%" class="bluebox"><s:text name="challan.voucherNumber"/></td>
-		    <td width="24%" class="bluebox"><s:textarea name="voucherNumber" id="voucherNumber" value="%{voucherNumber}" cols="18" rows="1" maxlength="25" /><a href="#" onclick="openVoucherSearch();">Search For Voucher</a></td>
 	    </tr>
 	    <tr>
         <td width="4%" class="bluebox">&nbsp;</td>
          
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /><span class="mandatory"/> </td>
-        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory.id" id="serviceCategoryid" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategory.id}" onChange="populateService(this);" />
+        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategoryId" id="serviceCategoryId" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategoryId}" onChange="populateService(this);" />
        	<egov:ajaxdropdown id="service"fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /><span class="mandatory"/> </td>
-        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="service.id" id="serviceId" cssClass="selectwk"
-			list="dropdownData.serviceList" listKey="id" listValue="code" value="%{service.id}" onchange="loadFinDetails(this);"/>
+        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceId" id="serviceId" cssClass="selectwk"
+			list="dropdownData.serviceList" listKey="id" listValue="code" value="%{serviceId}" onchange="loadFinDetails(this);"/>
         </td>
          
        
@@ -744,7 +754,7 @@ function populatepositionuseronload()
 		</s:if>
 		<!--  Designation and Position has to be displayed for Challan Create/Check/Modify -->
 		<!--  Designation and Position should not be displayed when invoked from search -->
-		<s:if test="%{model.id==null || (sourcePage=='inbox' && model.challan.state.value=='CREATED' || model.challan.state.value=='REJECTED' || model.challan.state.value=='CHECKED')}">
+		<s:if test="%{model.id==null || (model.challan.state.value=='REJECTED' || model.challan.state.value=='CHECKED')}">
 		<tr> 
 		<div class="subheadnew">
 			<s:text name="approval.authority.information"/>
@@ -784,9 +794,9 @@ onChange="onChangeDeparment(this.value)" />
 	 <div class="buttonbottom" align="center" id="printButton">
 		<!-- Action Buttons should be displayed only in case of Create New Challan or 
 		     If page is opened from inbox -->
-		<s:if test="%{model.id==null || sourcePage=='inbox' || (actionName=='CHALLAN_MODIFY' && hasErrors()) || (actionName=='CHALLAN_VALIDATE' && hasErrors())}" >
+			<s:if test="%{model.id==null || (sourcePage=='inbox' && !hasActionMessages()) || (actionName=='CHALLAN_MODIFY' && hasErrors()) || (actionName=='CHALLAN_VALIDATE' && hasErrors())}" >
 			<s:iterator value="%{validActions}">
-				<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="actionButton" method="save" onclick="document.challan.actionName.value='%{name}';return validate(this);"/>
+				<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="actionButton" onclick="document.challan.actionName.value='%{name}';document.challan.action='challan-save.action'; return validate(this);"/>
 		    </s:iterator>	
 	    </s:if>
 	   
@@ -796,7 +806,7 @@ onChange="onChangeDeparment(this.value)" />
 	    </s:if>
 	    <s:if test="%{model.id!=null}" >
 				
-				<s:submit type="submit" cssClass="buttonsubmit" id="buttonprint" value="Print" method="printChallan" /> 			
+				<s:submit type="submit" cssClass="buttonsubmit" id="buttonprint" value="Print" onclick="document.challan.action='challan-printChallan.action'" /> 			
 	    </s:if>
 	    &nbsp;<input name="button" type="button" class="button" id="buttonclose2" value="Close" onclick="window.close();" />
     </div>
@@ -807,5 +817,6 @@ onChange="onChangeDeparment(this.value)" />
 </s:push>
 </s:form>
 </div>
+<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 

@@ -39,9 +39,13 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -50,16 +54,17 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Fund;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
+import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.StringType;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.exilant.eGov.src.reports.DayBookList;
+import com.exilant.GLEngine.DayBook;
 import com.exilant.eGov.src.reports.DayBookReportBean;
 import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
@@ -68,9 +73,9 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({
-    @Result(name = "result", location = "dayBookReport-result.jsp"),
-    @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "dayBookReport-"
-            + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp")
+        @Result(name = "result", location = "dayBookReport-result.jsp"),
+        @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "dayBookReport-"
+                + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp")
 })
 public class DayBookReportAction extends BaseFormAction {
 
@@ -80,9 +85,8 @@ public class DayBookReportAction extends BaseFormAction {
     private static final long serialVersionUID = 641276108961752283L;
     private static final Logger LOGGER = Logger.getLogger(DayBookReportAction.class);
     private DayBookReportBean dayBookReport = new DayBookReportBean();
-    private DayBookList dayBook = new DayBookList();
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    protected LinkedList dayBookDisplayList = new LinkedList();
+    protected List<DayBook> dayBookDisplayList = new ArrayList<DayBook>();
     String heading = "";
 
     public DayBookReportAction() {
@@ -98,7 +102,8 @@ public class DayBookReportAction extends BaseFormAction {
         super.prepare();
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+        addDropdownData("fundList",
+                persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside  Prepare ........");
@@ -116,26 +121,95 @@ public class DayBookReportAction extends BaseFormAction {
     @Validations(requiredFields = {
             @RequiredFieldValidator(fieldName = "startDate", message = "", key = FinancialConstants.REQUIRED),
             @RequiredFieldValidator(fieldName = "endDate", message = "", key = FinancialConstants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "fundId", message = "", key = FinancialConstants.REQUIRED),})
+            @RequiredFieldValidator(fieldName = "fundId", message = "", key = FinancialConstants.REQUIRED), })
     @ValidationErrorPage(value = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH)
     @Action(value = "/report/dayBookReport-ajaxSearch")
     public String ajaxSearch() throws TaskFailedException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("dayBookAction | Search | start");
-        try {
-            dayBookDisplayList = dayBook.getDayBookList(dayBookReport);
-        } catch (final ValidationException e) {
-            throw new ValidationException(e.getErrors());
-        } catch (final Exception e)
-        {
-            throw new ApplicationRuntimeException(e.getMessage());
-        }
+        prepareResultList();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("dayBookAction | list | End");
         heading = getGLHeading();
         prepareNewForm();
+
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
         return "result";
+    }
+
+    private String getQuery() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        String startDate = "", endDate = "", fundId = "";
+        fundId = dayBookReport.getFundId();
+        try {
+            startDate = sdf.format(formatter.parse(dayBookReport.getStartDate()));
+            endDate = sdf.format(formatter.parse(dayBookReport.getEndDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String query = "SELECT voucherdate as vdate, TO_CHAR(voucherdate, 'dd-Mon-yyyy')  AS  voucherdate, vouchernumber as vouchernumber , gd.glcode AS glcode,ca.name AS particulars ,vh.name ||' - '|| vh.TYPE AS type"
+                + ", CASE WHEN vh.description is null THEN ' ' ELSE vh.description END AS narration, CASE  WHEN status=0 THEN ( 'Approved') ELSE ( case WHEN status=1 THEN 'Reversed' else (case WHEN status=2 THEN 'Reversal' else ' ' END) END ) END as status , debitamount  , "
+                + " creditamount,vh.CGVN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID "
+                + " AND ca.GLCODE=gd.GLCODE AND voucherdate >= '"
+                + startDate
+                + "' and voucherdate <= '"
+                + endDate
+                + "' and vh.status not in (4,5)  and vh.fundid = " + fundId + " ORDER BY vdate,vouchernumber";
+        return query;
+    }
+
+    private void prepareResultList() {
+        String voucherDate = "", voucherNumber = "", voucherType = "", narration = "", status = "";
+        Query query = null;
+        query = HibernateUtil.getCurrentSession().createSQLQuery(getQuery())
+                .addScalar("voucherdate", StringType.INSTANCE)
+                .addScalar("vouchernumber", StringType.INSTANCE)
+                .addScalar("glcode", StringType.INSTANCE)
+                .addScalar("particulars", StringType.INSTANCE)
+                .addScalar("type", StringType.INSTANCE)
+                .addScalar("narration", StringType.INSTANCE)
+                .addScalar("status", StringType.INSTANCE)
+                .addScalar("creditamount", StringType.INSTANCE)
+                .addScalar("debitamount", StringType.INSTANCE)
+                .addScalar("vhId", StringType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(DayBook.class));
+        dayBookDisplayList = query.list();
+        for (DayBook bean : dayBookDisplayList) {
+            bean.setDebitamount(new BigDecimal(bean.getDebitamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            bean.setCreditamount(new BigDecimal(bean.getCreditamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            if (voucherDate != null && !voucherDate.equalsIgnoreCase("") && voucherDate.equalsIgnoreCase(bean.getVoucherdate())
+                    && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
+                bean.setVoucherdate("");
+            } else {
+                voucherDate = bean.getVoucherdate();
+            }
+            if (voucherType != null && !voucherType.equalsIgnoreCase("") && voucherType.equalsIgnoreCase(bean.getType())
+                    && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
+                bean.setType("");
+            } else {
+                voucherType = bean.getType();
+            }
+            if (status != null && !status.equalsIgnoreCase("") && status.equalsIgnoreCase(bean.getStatus())
+                    && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
+                bean.setStatus("");
+            } else {
+                status = bean.getStatus();
+            }
+            if (voucherNumber != null && !voucherNumber.equalsIgnoreCase("")
+                    && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
+                bean.setVouchernumber("");
+            } else {
+                voucherNumber = bean.getVouchernumber();
+            }
+
+            if (narration != null && !narration.equalsIgnoreCase("") && narration.equalsIgnoreCase(bean.getNarration())) {
+                bean.setNarration("");
+            } else {
+                narration = bean.getNarration();
+            }
+
+        }
+
     }
 
     private String getGLHeading() {
@@ -166,16 +240,12 @@ public class DayBookReportAction extends BaseFormAction {
         this.dayBookReport = dayBookReport;
     }
 
-    public DayBookList getDayBook() {
-        return dayBook;
-    }
-
-    public void setDayBook(final DayBookList dayBook) {
-        this.dayBook = dayBook;
-    }
-
-    public LinkedList getDayBookDisplayList() {
+    public List<DayBook> getDayBookDisplayList() {
         return dayBookDisplayList;
+    }
+
+    public void setDayBookDisplayList(List<DayBook> dayBookDisplayList) {
+        this.dayBookDisplayList = dayBookDisplayList;
     }
 
     public void setDayBookDisplayList(final LinkedList dayBookDisplayList) {

@@ -90,7 +90,7 @@ function generateReport(){
 	if(isValid == false)
 		return false;
 		
-	var url = '../report/budgetAppropriationRegisterReport!search.action?asOnDate='+asOnDate+'&department.id='+department+'&function.id='+functionId+'&budgetGroup.id='+budgetHeadId+'&fund.id='+fundId;
+	var url = '../report/budgetAppropriationRegisterReport-search.action?asOnDate='+asOnDate+'&department.id='+department+'&function.id='+functionId+'&budgetGroup.id='+budgetHeadId+'&fund.id='+fundId;
 	window.open(url, 'Search','resizable=no,scrollbars=yes,left=300,top=40, width=1200, height=700');
 }
 </script>
@@ -107,7 +107,7 @@ function generateReport(){
 					<td class="bluebox">&nbsp;</td>
 					<td class="bluebox"><s:text name="report.department" />
 						<s:if test="%{isFieldMandatory('executingDepartment')}">
-							<span class="mandatory">*</span>
+							<span class="mandatory1">*</span>
 						</s:if></td>
 					<td class="bluebox"><s:select
 							list="dropdownData.executingDepartmentList" listKey="id"
@@ -115,7 +115,7 @@ function generateReport(){
 							headerValue="--- Select ---" value="department.id"
 							id="department"></s:select></td>
 					<td class="bluebox"><s:text name="report.budged.head" /><span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="bluebox"><s:select
 							list="dropdownData.budgetGroupList" listKey="id" listValue="name"
 							name="budgetGroup.id" headerKey="0" headerValue="--- Select ---"
@@ -126,12 +126,12 @@ function generateReport(){
 					<td class="greybox">&nbsp;</td>
 					<td class="greybox"><s:text name="report.function.center" />
 						<s:if test="%{isFieldMandatory('function')}">
-							<span class="mandatory">*</span>
+							<span class="mandatory1">*</span>
 						</s:if></td>
 					<td class="greybox"><s:select list="dropdownData.functionList"
 							listKey="id" listValue="name" name="function.id" headerKey="0"
 							headerValue="--- Select ---" value="function.id" id="function"></s:select></td>
-					<td class="greybox">As on Date:<span class="mandatory">*</span></td>
+					<td class="greybox">As on Date:<span class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield name="asOnDate" id="asOnDate"
 							cssStyle="width:100px"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -145,7 +145,7 @@ function generateReport(){
 					<td class="bluebox">&nbsp;</td>
 					<td class="bluebox"><s:text name="report.fund" />
 						<s:if test="%{isFieldMandatory('fund')}">
-							<span class="mandatory">*</span>
+							<span class="mandatory1">*</span>
 						</s:if></td>
 					<td class="bluebox"><s:select list="dropdownData.fundList"
 							listKey="id" listValue="name" name="fund" headerKey="0"
@@ -155,7 +155,7 @@ function generateReport(){
 			<br />
 			<br />
 			<div class="subheadsmallnew"></div>
-			<div align="left" class="mandatory">* Mandatory Fields</div>
+			<div align="left" class="mandatory1">* Mandatory Fields</div>
 
 			<div class="buttonbottom">
 				<input type="button" value="Submit" class="buttonsubmit"

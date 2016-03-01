@@ -56,7 +56,6 @@ public final class CollectionConstants {
     public static final String SERVICE_TYPE_BILLING = "B";
     public static final String SERVICE_TYPE_COLLECTION = "C";
     public static final String SERVICE_TYPE_PAYMENT = "P";
-    public static final String CHALLAN_SERVICE_TYPE = "H";
 
     // Dropdown data
     public static final String DROPDOWN_DATA_SERVICE_LIST = "serviceList";
@@ -463,6 +462,7 @@ public final class CollectionConstants {
     public static final String COLLECTION_DEPARTMENT_COLLMODES = "COLLECTIONDEPARTMENTCOLLMODES";
     public static final String COLLECTION_DEPARTMENTFORWORKFLOWAPPROVER = "COLLECTIONDEPARTMENTFORWORKFLOWAPPROVER";
     public static final String COLLECTION_DESIGNATIONFORAPPROVER = "COLLECTIONDESIGNATIONFORAPPROVER";
+    public static final String COLLECTION_DESIG_CHALLAN_WORKFLOW = "COLLECTIONDESIGCHALLANWORKFLOW";
 
     // AXIS payment gateway variables name
     public static final String ONLINE_PAYMENT_AXIS_MERCHANTID = "TESTEPAYCDMA";

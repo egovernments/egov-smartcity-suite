@@ -1264,16 +1264,17 @@ function addFloor()
 {		
 	var tbl = document.getElementById('floorDetails');
     var rowO=tbl.rows.length;
-   //bootbox.alert("rowO="+rowO);
-    if(rowO<11)
+     // bootbox.alert("rowO="+rowO);
+    if(rowO<=50)
     {
+    	// bootbox.alert("rowO1="+rowO);
     	if(document.getElementById('Floorinfo') != null)
     	{
 	    		//get Next Row Index to Generate
 	    		var nextIdx = tbl.rows.length-1;
 	    		
 	    		//validate status variable for exiting function
-	    		var isValid=1;//for default have success value 0
+	    		var isValid=1;//for default have success value 0  
 	    		
 	    		//validate existing rows in table
 	    		jQuery("#floorDetails tr:not(:first)").find('input, select').each(function(){

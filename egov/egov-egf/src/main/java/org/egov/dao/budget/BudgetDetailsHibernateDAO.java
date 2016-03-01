@@ -48,6 +48,7 @@ package org.egov.dao.budget;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,6 +74,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
@@ -112,8 +114,9 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     private PersistenceService service;
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    private String budgetFinalStatus = null;
-    protected ScriptService scriptExecutionService;
+    @Autowired
+    protected ScriptService scriptService;
+    @Autowired
     protected SequenceGenerator sequenceGenerator;
     private BudgetService budgetService;
     private FinancialYearDAO financialYearDAO;
@@ -642,14 +645,8 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         if (boundaryid != null && boundaryid != 0)
             query = query + getQuery(Boundary.class, boundaryid, " and bd.boundary=");
 
-        final List<AppConfigValues> appconfiglist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-                "budget_final_approval_status");
-        if (appconfiglist.isEmpty())
-            throw new ValidationException(EMPTY_STRING, "budget_final_approval_status is not defined in AppConfig");
 
-        budgetFinalStatus = appconfiglist.get(0).getValue();
-        return " and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
-        + budgetFinalStatus + "' )" + query;
+        return " and bd.budget.status in (from org.egov.commons.EgwStatus where moduletype='BUDGET' and description='Approved' )" + query;
     }
 
     private String prepareQuery(final Integer departmentid, final Long functionid, final Integer functionaryid,
@@ -672,7 +669,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     if (departmentid == null || departmentid == 0)
                         throw new ValidationException(EMPTY_STRING, "Department is required");
                     else
-                        query = query + getQuery(Department.class, departmentid, " and bd.executingDepartment=");
+                        query = query + getQuery(Department.class, departmentid.longValue(), " and bd.executingDepartment=");
                 }
                 else if (value.equals("function"))
                 {
@@ -714,19 +711,12 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     if (boundaryid == null || boundaryid == 0)
                         throw new ValidationException(EMPTY_STRING, "Boundary is required");
                     else
-                        query = query + getQuery(Boundary.class, boundaryid, " and bd.boundary=");
+                        query = query + getQuery(Boundary.class, boundaryid.longValue(), " and bd.boundary=");
                 }
                 else
                     throw new ValidationException(EMPTY_STRING, "budgetaryCheck_groupby_values is not matching=" + value);
         }
-        final List<AppConfigValues> appconfiglist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-                "budget_final_approval_status");
-        if (appconfiglist.isEmpty())
-            throw new ValidationException(EMPTY_STRING, "budget_final_approval_status is not defined in AppConfig");
-
-        budgetFinalStatus = appconfiglist.get(0).getValue();
-        return " and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
-        + budgetFinalStatus + "' )" + query;
+        return " and bd.budget.status in (from org.egov.commons.EgwStatus where moduletype='BUDGET' and description='Approved' )"+ query;
     }
 
     private Object findById(final Class clazz, final Serializable id) throws ValidationException {
@@ -988,7 +978,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     @Override
     public BigDecimal getActualBudgetUtilizedForBudgetaryCheck(final Map<String, Object> paramMap) throws ValidationException
     {
-        Integer deptid = null;
+        Long deptid = null;
         Long functionid = null;
         Integer functionaryid = null;
         Integer schemeid = null;
@@ -1003,7 +993,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         try
         {
             if (paramMap.get(Constants.DEPTID) != null)
-                deptid = (Integer) paramMap.get(Constants.DEPTID);
+                deptid = (Long) paramMap.get(Constants.DEPTID);
             if (paramMap.get(Constants.FUNCTIONID) != null)
                 functionid = (Long) paramMap.get(Constants.FUNCTIONID);
             if (paramMap.get(Constants.FUNCTIONARYID) != null)
@@ -1161,7 +1151,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
      */
     @Override
     public BigDecimal getBudgetedAmtForYear(final Map<String, Object> paramMap) throws ValidationException {
-        Integer deptid = null;
+        Long deptid = null;
         Long functionid = null;
         Integer functionaryid = null;
         Integer schemeid = null;
@@ -1175,7 +1165,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         try
         {
             if (paramMap.get(Constants.DEPTID) != null)
-                deptid = (Integer) paramMap.get(Constants.DEPTID);
+                deptid = (Long) paramMap.get(Constants.DEPTID);
             if (paramMap.get(Constants.FUNCTIONID) != null)
                 functionid = (Long) paramMap.get(Constants.FUNCTIONID);
             if (paramMap.get(Constants.FUNCTIONARYID) != null)
@@ -1198,7 +1188,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                         + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid + ",budgetheadids "
                         + budgetHeadList + ",financialyearid " + financialyearid);
 
-            query = prepareQuery(deptid, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid);
+            query = prepareQuery(deptid.intValue(), functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid);
 
             // handle the list
 
@@ -1226,7 +1216,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             if (bdList == null || bdList.size() == 0)
                 return BigDecimal.ZERO;
             else
-                return getApprovedAmt(bdList, budgetFinalStatus);
+                return getApprovedAmt(bdList);
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getBudgetedAmtForYear==" + v.getErrors());
             throw new ValidationException(v.getErrors());
@@ -1311,7 +1301,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             if (bdList == null || bdList.size() == 0)
                 return BigDecimal.ZERO;
             else
-                return getApprovedAmtAsOnDate(bdList, budgetFinalStatus, asOnDate);
+                return getApprovedAmtAsOnDate(bdList, asOnDate);
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getBudgetedAmtForYear==" + v.getErrors());
             throw new ValidationException(v.getErrors());
@@ -1474,7 +1464,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             if (bdList == null || bdList.size() == 0)
                 return retMap;
             else
-                return getApprovedAmtDeptwise(bdList, budgetFinalStatus);
+                return getApprovedAmtDeptwise(bdList);
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getAggregateBudgetedAmtForYear ==" + v.getErrors());
             throw new ValidationException(v.getErrors());
@@ -1484,7 +1474,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         }
     }
 
-    private BigDecimal getApprovedAmt(final List<BudgetDetail> bdList, final String finalStatus) throws ValidationException {
+    private BigDecimal getApprovedAmt(final List<BudgetDetail> bdList) throws ValidationException {
         BigDecimal approvedAmt = BigDecimal.ZERO;
         for (final BudgetDetail bd : bdList) {
             if (bd.getApprovedAmount() != null)
@@ -1494,7 +1484,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         return approvedAmt;
     }
 
-    private BigDecimal getApprovedAmtAsOnDate(final List<BudgetDetail> bdList, final String finalStatus, final Date asOnDate)
+    private BigDecimal getApprovedAmtAsOnDate(final List<BudgetDetail> bdList, final Date asOnDate)
             throws ValidationException {
         BigDecimal approvedAmt = BigDecimal.ZERO;
         for (final BudgetDetail bd : bdList) {
@@ -1505,7 +1495,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         return approvedAmt;
     }
 
-    private Map<String, BigDecimal> getApprovedAmtDeptwise(final List<BudgetDetail> bdList, final String finalStatus)
+    private Map<String, BigDecimal> getApprovedAmtDeptwise(final List<BudgetDetail> bdList)
             throws ValidationException {
         BigDecimal approvedAmt = BigDecimal.ZERO;
         String deptName = null;
@@ -1605,8 +1595,9 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             }
         } catch (final ValidationException v)
         {
-            LOGGER.error("Exp in budgetary check API()=" + v.getErrors());
-            throw new ValidationException(v.getErrors());
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", v.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e)
         {
             LOGGER.error("Exp in budgetary check API()=" + e.getMessage());
@@ -1753,8 +1744,9 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 return true;
         } catch (final ValidationException v)
         {
-            LOGGER.error("Exp in checkCondition API()=" + v.getErrors());
-            throw new ValidationException(v.getErrors());
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", v.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e)
         {
             LOGGER.error("Exp in checkCondition API==" + e.getMessage());
@@ -1769,10 +1761,9 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     public String getBudgetApprNumber(final Map<String, Object> paramMap) {
         final CFinancialYear financialyear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?",
                 (Long) paramMap.get("financialyearid"));
-        final ScriptContext scriptContext = ScriptService
-                .createContext("wfItem", financialyear, "sequenceGenerator", sequenceGenerator);
-        final String budgetApprNumber = (String) scriptExecutionService.executeScript("egf.reappropriation.sequence.generator",
-                scriptContext);
+        ScriptContext scriptContext = ScriptService.createContext("wfItem", financialyear, "sequenceGenerator", sequenceGenerator);
+    //    final Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "egf.reappropriation.sequence.generator").get(0);
+        final String budgetApprNumber = (String) scriptService.executeScript("egf.reappropriation.sequence.generator",scriptContext);
         return budgetApprNumber;
     }
 
@@ -1852,8 +1843,9 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 return bgList;
         } catch (final ValidationException v)
         {
-            LOGGER.error("Exp in getBudgetHeadByGlcode API()=" + v.getErrors());
-            throw new ValidationException(v.getErrors());
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", v.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e)
         {
             LOGGER.error("Exception in getBudgetHeadByGlcode API=" + e.getMessage());
@@ -1891,7 +1883,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                         coaQry = coaQry + coa.get(i).getGlcode() + ")";
             }
             final String query = " from BudgetGroup bg where " + coaQry
-                    + " and bg in (select budgetGroup from BudgetDetail) and bg.isActive=1 order by bg.name";
+                    + " and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true order by bg.name";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadForGlcodeList detailcode query=====" + query);
             //persistenceService.setType(BudgetGroup.class);
@@ -2141,7 +2133,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     @Override
     public BigDecimal getBillAmountForBudgetCheck(final Map<String, Object> paramMap) throws ValidationException
     {
-        Integer deptid = null;
+        Long deptid = null;
         Long functionid = null;
         Integer functionaryid = null;
         Integer schemeid = null;
@@ -2158,7 +2150,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         try
         {
             if (paramMap.get(Constants.DEPTID) != null)
-                deptid = (Integer) paramMap.get(Constants.DEPTID);
+                deptid = (Long) paramMap.get(Constants.DEPTID);
             if (paramMap.get(Constants.FUNCTIONID) != null)
                 functionid = (Long) paramMap.get(Constants.FUNCTIONID);
             if (paramMap.get(Constants.FUNCTIONARYID) != null)
@@ -2404,7 +2396,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             if (bdList == null || bdList.size() == 0)
                 return BigDecimal.ZERO;
             else
-                return getApprovedAmt(bdList, budgetFinalStatus);
+                return getApprovedAmt(bdList);
         } catch (final ValidationException v)
         {
             LOGGER.error("Exp in getBudgetedAmtForYear==" + v.getErrors());
@@ -2616,13 +2608,6 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             return false;
     }
 
-    public ScriptService getScriptExecutionService() {
-        return scriptExecutionService;
-    }
-
-    public void setScriptExecutionService(final ScriptService scriptExecutionService) {
-        this.scriptExecutionService = scriptExecutionService;
-    }
 
     public SequenceGenerator getSequenceGenerator() {
         return sequenceGenerator;

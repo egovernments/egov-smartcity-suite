@@ -519,7 +519,7 @@ public class FileUploadAction extends BaseFormAction {
         }
         else {
             final CChartOfAccounts account = (CChartOfAccounts) persistenceService.find(
-                    "from CChartOfAccounts  where glcode=? and isActiveForPosting=1", inputArray[8]);
+                    "from CChartOfAccounts  where glcode=? and isActiveForPosting=true", inputArray[8]);
             if (account == null) {
                 errorMsgs += getErrorMsg(errorMsgs, "Incorrect value for Account Code ", inputArray[8]);
                 LOGGER.debug("Incorrect value for Account Code ");
@@ -528,7 +528,7 @@ public class FileUploadAction extends BaseFormAction {
             else {
                 final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) persistenceService.find(
                         " from CChartOfAccountDetail" +
-                                " where glCodeId=(select id from CChartOfAccounts where glcode=? and isActiveForPosting=1)",
+                                " where glCodeId=(select id from CChartOfAccounts where glcode=? and isActiveForPosting=true)",
                         inputArray[8]);
                 if (null != chartOfAccountDetail && (inputArray[10] == null || CollectionConstants.BLANK.equals(inputArray[10]))) {
                     errorMsgs += getErrorMsg(errorMsgs, "No Subledger Data provided for account Code", inputArray[8]);
@@ -823,7 +823,7 @@ public class FileUploadAction extends BaseFormAction {
          * ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
          * receiptPayee.addReceiptHeader(receiptHeader); receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);
          */
-        receiptHeaderService.persistChallan(receiptHeader);
+        //receiptHeaderService.persistChallan(receiptHeader);
         receiptHeaderService.getSession().flush();
         LOGGER.info("Persisted Challan and Created Receipt In Pending State For the Challan");
 
@@ -904,7 +904,7 @@ public class FileUploadAction extends BaseFormAction {
         // Start work flow for all newly created receipts This might internally
         // create vouchers also based on configuration
 
-        receiptHeaderService.startWorkflow(receiptHeader, Boolean.TRUE);
+        receiptHeaderService.startWorkflow(receiptHeader);
         LOGGER.info("Workflow started for newly created receipts");
 
         // transition the receipt header workflow to Approved state
@@ -1222,7 +1222,7 @@ public class FileUploadAction extends BaseFormAction {
     public void createCreditDetailslist(final String[] inputArray) {
         final ReceiptDetailInfo vd = new ReceiptDetailInfo();
         final CChartOfAccounts account = (CChartOfAccounts) persistenceService.find(
-                "from CChartOfAccounts  where glcode=? and isActiveForPosting=1", inputArray[8]);
+                "from CChartOfAccounts  where glcode=? and isActiveForPosting=true", inputArray[8]);
         if (account != null) {
             vd.setAccounthead(account.getName());
             vd.setCreditAmountDetail(new BigDecimal(inputArray[9]));
@@ -1256,7 +1256,7 @@ public class FileUploadAction extends BaseFormAction {
         final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
                 "from Accountdetailtype  where upper(name)=? ", inputArray[10].toUpperCase());
         final CChartOfAccounts account = (CChartOfAccounts) persistenceService.find(
-                "from CChartOfAccounts  where glcode=? and isActiveForPosting=1", inputArray[8]);
+                "from CChartOfAccounts  where glcode=? and isActiveForPosting=true", inputArray[8]);
         if (accountdetailtype != null && account != null) {
             final String table = accountdetailtype.getFullQualifiedName();
             final Class<?> service = Class.forName(table);
@@ -1307,7 +1307,7 @@ public class FileUploadAction extends BaseFormAction {
             if (receiptHeader.getReceiptVoucher().isEmpty()) {
 
                 try {
-                    receiptHeaderService.createVoucherForReceipt(receiptHeader, Boolean.TRUE);
+                    receiptHeaderService.createVoucherForReceipt(receiptHeader);
                     // If vouchers are created during work flow step, add them to
                     // the list
 

@@ -40,6 +40,7 @@
 package org.egov.collection.integration.services;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -59,6 +60,8 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ReconciliationService {
     private static final Logger LOGGER = Logger.getLogger(ReconciliationService.class);
@@ -67,29 +70,37 @@ public class ReconciliationService {
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
     private CollectionCommon collectionCommon;
+    @Autowired
+    private ApplicationContext beanProvider;
 
     /**
-     * This method processes the success message arriving from the payment gateway. The receipt status is changed from PENDING to
-     * APPROVED and the online transaction status is changed from PENDING to SUCCCESS. The authorization status for success(0300)
-     * for the online transaction is also persisted. An instrument of type 'ONLINE' is created with the transaction details and
-     * are persisted along with the receipt details. Voucher for the receipt is created and the Financial System is updated. The
-     * billing system is updated about the receipt creation. In case update to financial systems/billing system fails, the receipt
-     * creation is rolled back and the receipt/payment status continues to be in PENDING state ( and will be reconciled manually).
+     * This method processes the success message arriving from the payment
+     * gateway. The receipt status is changed from PENDING to APPROVED and the
+     * online transaction status is changed from PENDING to SUCCCESS. The
+     * authorization status for success(0300) for the online transaction is also
+     * persisted. An instrument of type 'ONLINE' is created with the transaction
+     * details and are persisted along with the receipt details. Voucher for the
+     * receipt is created and the Financial System is updated. The billing
+     * system is updated about the receipt creation. In case update to financial
+     * systems/billing system fails, the receipt creation is rolled back and the
+     * receipt/payment status continues to be in PENDING state ( and will be
+     * reconciled manually).
      *
      * @param onlinePaymentReceiptHeader
      * @param paymentResponse
      */
+    @Transactional
     public void processSuccessMsg(final ReceiptHeader onlinePaymentReceiptHeader, final PaymentResponse paymentResponse) {
 
-        final BillingIntegrationService billingService = collectionsUtil.getBillingService(onlinePaymentReceiptHeader
-                .getService().getCode());
+        final BillingIntegrationService billingService = (BillingIntegrationService) beanProvider
+                .getBean(onlinePaymentReceiptHeader.getService().getCode()
+                        + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
 
         onlinePaymentReceiptHeader.getReceiptDetails().clear();
         receiptHeaderService.persist(onlinePaymentReceiptHeader);
-        receiptHeaderService.getSession().flush();
-
         final List<ReceiptDetail> receiptDetailList = billingService.reconstructReceiptDetail(
-                onlinePaymentReceiptHeader.getReferencenumber(), onlinePaymentReceiptHeader.getTotalAmount());
+                onlinePaymentReceiptHeader.getReferencenumber(), onlinePaymentReceiptHeader.getTotalAmount(),
+                new ArrayList(onlinePaymentReceiptHeader.getReceiptDetails()));
         if (receiptDetailList != null) {
             LOGGER.debug("Reconstructed receiptDetailList : " + receiptDetailList.toString());
             for (final ReceiptDetail receiptDetail : receiptDetailList) {
@@ -110,7 +121,9 @@ public class ReconciliationService {
         boolean updateToSystems = true;
 
         try {
-            receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader, Boolean.FALSE);
+            Boolean createVoucherForBillingService = collectionsUtil.checkVoucherCreation(onlinePaymentReceiptHeader);
+            if(createVoucherForBillingService)
+            receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader);
             LOGGER.debug("Updated financial systems and created voucher.");
         } catch (final ApplicationRuntimeException ex) {
             updateToSystems = false;
@@ -128,16 +141,18 @@ public class ReconciliationService {
         if (updateToSystems) {
             onlinePaymentReceiptHeader.setIsReconciled(true);
             receiptHeaderService.persist(onlinePaymentReceiptHeader);
-            receiptHeaderService.getSession().flush();
             LOGGER.debug("Updated billing system : " + onlinePaymentReceiptHeader.getService().getName());
         } else
             LOGGER.debug("Rolling back receipt creation transaction as update to billing system/financials failed.");
     }
 
     /**
-     * @param receipts - list of receipts which have to be processed as successful payments. For payments created as a response
-     * from TECHPRO, size of the array will be 1.
+     * @param receipts
+     *            - list of receipts which have to be processed as successful
+     *            payments. For payments created as a response from TECHPRO,
+     *            size of the array will be 1.
      */
+    @Transactional
     private void createSuccessPayment(final ReceiptHeader receipt, final Date transactionDate,
             final String transactionId, final String authStatusCode, final String remarks) {
         final EgwStatus receiptStatus = collectionsUtil
@@ -163,18 +178,20 @@ public class ReconciliationService {
     }
 
     /**
-     * This method processes the failure message arriving from the payment gateway. The receipt and the online transaction are
-     * both cancelled. The authorization status for reason of failure is also persisted. The reason for payment failure is
-     * displayed back to the user
+     * This method processes the failure message arriving from the payment
+     * gateway. The receipt and the online transaction are both cancelled. The
+     * authorization status for reason of failure is also persisted. The reason
+     * for payment failure is displayed back to the user
      *
      * @param onlinePaymentReceiptHeader
      * @param paymentResponse
      */
-    public void processFailureMsg(final ReceiptHeader onlinePaymentReceiptHeader, final PaymentResponse paymentResponse) {
+    @Transactional
+    public void processFailureMsg(final ReceiptHeader receiptHeader, final PaymentResponse paymentResponse) {
 
         final EgwStatus receiptStatus = collectionsUtil
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
-        onlinePaymentReceiptHeader.setStatus(receiptStatus);
+        receiptHeader.setStatus(receiptStatus);
         EgwStatus paymentStatus;
         if (CollectionConstants.AXIS_ABORTED_STATUS_CODE.equals(paymentResponse.getAuthStatus()))
             paymentStatus = egwStatusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
@@ -182,17 +199,17 @@ public class ReconciliationService {
         else
             paymentStatus = egwStatusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
-
-        onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
-        onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(paymentResponse.getAuthStatus());
-
-        receiptHeaderService.persist(onlinePaymentReceiptHeader);
+        receiptHeader.getOnlinePayment().setStatus(paymentStatus);
+        receiptHeader.getOnlinePayment().setAuthorisationStatusCode(paymentResponse.getAuthStatus());
+        receiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+        receiptHeaderService.persist(receiptHeader);
 
         LOGGER.debug("Cancelled receipt after receiving failure message from the payment gateway");
     }
 
     /**
-     * This method looks up the bean to communicate with the billing system and updates the billing system.
+     * This method looks up the bean to communicate with the billing system and
+     * updates the billing system.
      */
     public Boolean updateBillingSystem(final String serviceCode, final BillReceiptInfo billReceipt,
             final BillingIntegrationService billingService) {

@@ -94,19 +94,21 @@ public class UsageTypeMasterController {
         if (resultBinder.hasErrors())
             return "usage-type-master";
         WaterPropertyUsage waterpropertyUsage = new WaterPropertyUsage();
+        UsageType usageTypeObj = usageTypeService.findByNameIgnoreCase(waterPropertyUsage.getUsageType().getName().toUpperCase()
+                .trim());
+        if (usageTypeObj!=null)
         waterpropertyUsage = waterPropertyUsageService.findByPropertyTypeAndUsageType(
                 waterPropertyUsage.getPropertyType(),
-                waterPropertyUsage.getUsageType().getName().toUpperCase()
-                        .trim());
+                usageTypeObj);
+        else
+            waterpropertyUsage = null;
         if (waterpropertyUsage != null) {
             redirectAttrs.addFlashAttribute("waterPropertyUsage", waterpropertyUsage);
             model.addAttribute("message", "Entered Usage Type for the Chosen Property Type is already Exists");
         } else {
             UsageType usagetype = new UsageType();
             usagetype = waterPropertyUsage.getUsageType();
-            UsageType usagetypeobj = new UsageType();
-            usagetypeobj= usageTypeService.findByNameIgnoreCase(usagetype.getName().trim());
-            if (usagetypeobj == null)
+            if (usageTypeObj == null)
             {
                 usagetype.setName(usagetype.getName().trim());
                 usagetype.setActive(true);
@@ -119,7 +121,7 @@ public class UsageTypeMasterController {
             {
                 WaterPropertyUsage  waterpropertyusage = new WaterPropertyUsage();
                 waterpropertyusage.setPropertyType(waterPropertyUsage.getPropertyType());
-                waterpropertyusage.setUsageType(usagetypeobj);
+                waterpropertyusage.setUsageType(usageTypeObj);
                 waterPropertyUsageService.createPropertyCategory(waterpropertyusage);
                 redirectAttrs.addFlashAttribute("waterPropertyUsage", waterpropertyusage);
             }

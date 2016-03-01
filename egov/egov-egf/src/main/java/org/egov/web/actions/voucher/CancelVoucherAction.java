@@ -466,12 +466,12 @@ public class CancelVoucherAction extends BaseFormAction {
         if (headerFields.contains("department"))
             addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));
+            addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
+            addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         if (headerFields.contains("fundsource"))
             addDropdownData("fundsourceList",
-                    persistenceService.findAllBy(" from Fundsource where isactive=1 and isnotleaf=0 order by name"));
+                    persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
         if (headerFields.contains("field"))
             addDropdownData("fieldList",
                     persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));

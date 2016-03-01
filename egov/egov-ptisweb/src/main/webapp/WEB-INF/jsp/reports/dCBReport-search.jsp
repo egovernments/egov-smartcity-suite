@@ -92,46 +92,55 @@
 						<thead>
                             <tr>
                              <th rowspan="2">Name</th>
-                             <th colspan="7">Demand</th>
-                             <th colspan="9">Collection</th>
-                             <th colspan="3">Balance</th>
+                             <th colspan="8">Demand</th>
+                             <th colspan="8">Collection</th>
+                             <th colspan="5">Balance</th>
                             </tr>
 
 							<tr>
 							    <th>Door No</th>
 								<th>Arrear
 									Property Tax</th>
-								<th>Arrear
-									LibraryCess</th>
+								<th>Penalty
+									On Arrear</th>
+								<!-- <th>Arrear
+									LibraryCess</th> -->
 								<th>Arrear
 									Total</th>
 								<th>Current
 									Property Tax</th>
-								<th>Current
-									LibraryCess</th>
+								<th>Penalty
+									On Current</th>
+								<!-- <th>Current
+									LibraryCess</th> -->
 								<th>Current Total</th>
 								<th>Total
 									Demand</th>
 								<th>Arrear
 									Property Tax</th>
-								<th>Arrear
-									LibraryCess</th>
+								<!-- <th>Arrear
+									LibraryCess</th> -->
 								<th>Penalty
 									On Arrear</th>
 								<th>Arrear
 									Total</th>
 								<th>Current
 									Property Tax</th>
-								<th>Current
-									LibraryCess</th>
-								<th>Position</th>
+								<!-- <th>Current
+									LibraryCess</th> -->
+								<th>Penalty
+									On Current</th>
 								<th>Current
 									Total</th>
 								<th>Total
 									Collection</th>
 								<th>Arrear
 									Property Tax</th>
+								<th>Penalty
+									On Arrear</th>
 								<th>Current Property Tax</th>
+								<th>Penalty
+									On Current</th>
 								<th>Total PropertyTax Balance</th>
 							</tr>
 						</thead>
@@ -158,6 +167,10 @@
 								<td></td>
 								<td></td>
 								<td></td>
+							<!-- 	<td></td>
+								<td></td>
+								<td></td>
+								<td></td> -->
 							</tr>
 						</tfoot> 
 					</table>
@@ -181,5 +194,5 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/javascript/dCBReport.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/dCBReport.js?rnd=${app_release_no}'/>"></script>
 </html>

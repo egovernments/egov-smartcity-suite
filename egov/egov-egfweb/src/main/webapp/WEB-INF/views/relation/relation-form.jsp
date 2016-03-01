@@ -3,7 +3,7 @@
     <div class="col-md-12">
       <div class="panel panel-primary" data-collapsed="0">
         <div class="panel-heading">
-          <div class="panel-title">Relation</div>
+          <div class="panel-title">Supplier</div>
         </div>
         <div class="panel-body">
           <div class="form-group">

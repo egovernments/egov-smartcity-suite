@@ -200,7 +200,7 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
 
     private void getRecoveryCOA()
     {
-        final String queryString = "select c.glcode, c.glcode || '-' || c.name from Recovery r join r.chartofaccounts c where r.isactive=1 and r.remittanceMode='A'  order by c.glcode ";
+        final String queryString = "select c.glcode, c.glcode || '-' || c.name from Recovery r join r.chartofaccounts c where r.isactive=true and r.remittanceMode='A'  order by c.glcode ";
         final Query query = HibernateUtil.getCurrentSession().createQuery(queryString);
         final List chartList = query.list();
         final Iterator itr = chartList.iterator();

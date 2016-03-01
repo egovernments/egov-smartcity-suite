@@ -90,7 +90,7 @@ public class FunctionAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         dropdownData.put("functionList", persistenceService
-                .findAllBy("from CFunction where isActive=1 order by name"));
+                .findAllBy("from CFunction where isActive=true order by name"));
     }
 
     @SkipValidation
@@ -100,15 +100,15 @@ public class FunctionAction extends BaseFormAction {
     }
 
     @SkipValidation
-    private int getParentIsNotLeaf(final CFunction function) {
-        int isNotLeaf = 0;
+    private Boolean getParentIsNotLeaf(final CFunction function) {
+        Boolean isNotLeaf=false;
 
         if (function.getFunction() != null && function.getFunction().getId() != null) {
             final List<CFunction> funcList = new ArrayList<CFunction>(persistenceService.findAllBy(
                     "from CFunction where parentId=?",
                     function.getFunction().getId()));
             if (funcList.size() != 0)
-                isNotLeaf = 1;
+                isNotLeaf = true;
         }
         return isNotLeaf;
     }
@@ -132,13 +132,13 @@ public class FunctionAction extends BaseFormAction {
             funcNameStr.append(function.getCode()).append("-").append(function.getName());
 
             function.setName(funcNameStr.toString());
-            function.setIsNotLeaf(0);
+            function.setIsNotLeaf(false);
             function.setFunction(parentFunc);
             if (function.getFunction() != null && function.getFunction().getId() != null) {
                 parentFunc = (CFunction) persistenceService.find("from CFunction where id=?", function.getFunction()
                         .getId());
                 parentLevel = parentFunc.getLevel() + new Integer(1);
-                parentFunc.setIsNotLeaf(1);
+                parentFunc.setIsNotLeaf(true);
             }
 
             //persistenceService.setType(CFunction.class);
@@ -196,7 +196,7 @@ public class FunctionAction extends BaseFormAction {
             // Reading the parentFunc value at the start and then updating at the end due to StaleObjectException
             if (function.getFunction() != null && function.getFunction().getId() != null)
                 // setting the new parent function isNotLeaf value
-                parentFunc.setIsNotLeaf(1);
+                parentFunc.setIsNotLeaf(true);
             funcOld.setFunction(parentFunc);
 
             setFunction(funcOld);

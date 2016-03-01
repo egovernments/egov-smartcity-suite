@@ -40,5 +40,5 @@
 package org.egov.tl.entity;
 
 public enum RateTypeEnum {
-    PERCENTAGE, UNIT, FLAT, RANGE;
+    Flat_by_Range, Percentage, Unit_by_Range;
 }

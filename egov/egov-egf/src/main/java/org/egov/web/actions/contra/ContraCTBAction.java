@@ -59,13 +59,17 @@ import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.services.contra.ContraService;
+import org.egov.services.instrument.InstrumentHeaderService;
+import org.egov.services.instrument.InstrumentOtherDetailsService;
 import org.egov.services.instrument.InstrumentService;
+import org.egov.services.instrument.InstrumentVoucherService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.hibernate.search.annotations.CharFilterDef;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
@@ -73,7 +77,7 @@ import com.exilant.GLEngine.Transaxtion;
 
 @Transactional(readOnly = true)
 @Results({
-    @Result(name = ContraCTBAction.NEW, location = "contraCTB-" + ContraCTBAction.NEW + ".jsp")
+        @Result(name = ContraCTBAction.NEW, location = "contraCTB-" + ContraCTBAction.NEW + ".jsp")
 })
 public class ContraCTBAction extends BaseVoucherAction
 {
@@ -88,7 +92,16 @@ public class ContraCTBAction extends BaseVoucherAction
     private boolean close;
     private InstrumentService instrumentService;
     @Autowired
-	private ChartOfAccounts chartOfAccounts;
+    @Qualifier("instrumentHeaderService")
+    private InstrumentHeaderService instrumentHeaderService;
+    @Autowired
+    @Qualifier("instrumentVoucherService")
+    private InstrumentVoucherService instrumentVoucherService;
+    @Autowired
+    @Qualifier("instrumentOtherDetailsService")
+    private InstrumentOtherDetailsService instrumentOtherDetailsService;
+    @Autowired
+    private ChartOfAccounts chartOfAccounts;
 
     public InstrumentService getInstrumentService() {
         return instrumentService;
@@ -170,9 +183,9 @@ public class ContraCTBAction extends BaseVoucherAction
                             instrHeader);
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("cash deposit amount : = " + instrHeader.getInstrumentAmount());
-                    instrumentService.instrumentHeaderService.update(instrHeader);
-                    instrumentService.instrumentVouherService.update(iVoucher);
-                    instrumentService.instrumentOtherDetailsService.update(iOther);
+                    instrumentHeaderService.update(instrHeader);
+                    instrumentVoucherService.update(iVoucher);
+                    instrumentOtherDetailsService.update(iOther);
                     contraService.updateIntoContraJournal(voucherHeader, contraBean);
                     contraService.updateBankreconciliation(instrHeader, contraBean);
                     voucherService.deleteGLDetailByVHId(voucherHeader.getId());

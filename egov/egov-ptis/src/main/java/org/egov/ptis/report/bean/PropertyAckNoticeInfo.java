@@ -62,6 +62,8 @@ public class PropertyAckNoticeInfo {
     private BigDecimal existingARV = BigDecimal.ZERO;
     private String bldngFloorNo;
     private String meesevaNo;
+    private String newOwnerGuardianRelation;
+    private String oldOwnerGuardianRelation;
     
 
 	public String getCreationReason() {
@@ -526,5 +528,21 @@ public class PropertyAckNoticeInfo {
 
 	public void setExistingARV(BigDecimal existingARV) {
 		this.existingARV = existingARV;
+	}
+
+	public String getNewOwnerGuardianRelation() {
+		return newOwnerGuardianRelation;
+	}
+
+	public void setNewOwnerGuardianRelation(String newOwnerGuardianRelation) {
+		this.newOwnerGuardianRelation = newOwnerGuardianRelation;
+	}
+
+	public String getOldOwnerGuardianRelation() {
+		return oldOwnerGuardianRelation;
+	}
+
+	public void setOldOwnerGuardianRelation(String oldOwnerGuardianRelation) {
+		this.oldOwnerGuardianRelation = oldOwnerGuardianRelation;
 	}
 }

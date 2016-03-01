@@ -126,7 +126,7 @@ public class GeneralLedger {
                 LOGGER.info(insertQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
             pst.setBigInteger(0, BigInteger.valueOf(Long.valueOf(id)));
-            pst.setBigInteger(1,voucherLineId.equalsIgnoreCase("null")?BigInteger.ZERO:BigInteger.valueOf(Long.valueOf(voucherLineId)));
+            pst.setBigInteger(1,voucherLineId == null ?BigInteger.ZERO:BigInteger.valueOf(Long.valueOf(voucherLineId)));
             pst.setTimestamp(2, dt);
             pst.setBigInteger(3, glCodeId.equalsIgnoreCase("null") ? null : BigInteger.valueOf(Long.valueOf(glCodeId)));
             pst.setString(4, glCode);

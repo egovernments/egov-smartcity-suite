@@ -52,6 +52,8 @@ var toDateStr="";
 	function validate(exportValue) {
 		document.getElementById('exportType').value=exportValue;
 		document.getElementById('error').innerHTML="";
+		var fromDate=document.getElementById('fromDate').value;
+		var toDate=document.getElementById('toDate').value;
 		
 		var reportType = document.getElementById('reportType').value;
 		//bootbox.alert(reportType);
@@ -72,12 +74,7 @@ today = dd+'/'+mm+'/'+yyyy;
 			}  if (document.getElementById('fundId').value == '') {
 				bootbox.alert('Please select Fund');
 				return false;
-			}  if(document.getElementById('toDate').value >today ) 
-				{
-
-				bootbox.alert("To date cannot be greater than current date");
-				return false;
-				}
+			}  
  
 			 if( compareDate(formatDate6(document.getElementById('fromDate').value),formatDate6(document.getElementById('toDate').value)) == -1 ){
 				bootbox.alert('Start Date cannot be greater than End Date');
@@ -95,7 +92,7 @@ today = dd+'/'+mm+'/'+yyyy;
 			      
 		}
 		 if(exportValue=='html'){
-				doAfterSubmit();
+				//doAfterSubmit();
 		} 
 
 		//doAfterSubmit();
@@ -160,21 +157,22 @@ today = dd+'/'+mm+'/'+yyyy;
 </script>
 </head>
 <body onload="onLoad();">
-	<div class="subheadnew">Trial Balance</div>
+	
 	<s:form name="trialBalance" action="trialBalance" theme="simple">
+	<div class="formmainbox">
+	<div class="subheadnew">Trial Balance</div>
 		<s:push value="model">
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value='trialbalancereport' />
 			</jsp:include>
-			<span class="mandatory" id="error"> <s:actionerror /> <s:fielderror />
+			<span class="mandatory1" id="error"> <s:actionerror /> <s:fielderror />
 				<s:actionmessage />
 			</span>
-			<div class="subheadsmallnew">
 				<span class="subheadnew"><s:property value="ulbName" /></span>
-			</div>
 			<table id="header" width="100%" cellpadding="0" cellspacing="0"
 				border="0">
 				<tr>
+					<td class="bluebox"></td>
 					<td class="bluebox"><s:text name="reporttype" />
 					<td class="bluebox"><s:select name="reportType"
 							id="reportType"
@@ -183,6 +181,7 @@ today = dd+'/'+mm+'/'+yyyy;
 					<td colspan="2" class="bluebox"></td>
 				</tr>
 				<tr>
+					<td class="greybox"></td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
 					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />
 					<td class="greybox"><div id="fromDatelbl">
@@ -209,6 +208,7 @@ today = dd+'/'+mm+'/'+yyyy;
 					</td>
 				</tr>
 				<tr>
+					<td class="bluebox"></td>
 					<td class="bluebox"><div id="fundlbl">
 							<s:text name="voucher.fund" />
 							<span id="fundStar" class="mandatory1">*</span>
@@ -223,6 +223,7 @@ today = dd+'/'+mm+'/'+yyyy;
 							value="departmentId" /></td>
 				</tr>
 				<tr>
+					<td class="greybox"></td>
 					<td class="greybox"><s:text name="voucher.function" />
 					<td class="greybox"><s:select name="functionId"
 							id="functionId" list="dropdownData.functionList" listKey="id"
@@ -236,6 +237,7 @@ today = dd+'/'+mm+'/'+yyyy;
 							style="width:180px" /></td>
 				</tr>
 				<tr>
+					<td class="bluebox"></td>	
 					<td class="bluebox"><s:text name="voucher.field" />
 					<td class="bluebox"><s:select name="divisionId"
 							id="divisionId" list="dropdownData.fieldList" listKey="id"
@@ -243,7 +245,10 @@ today = dd+'/'+mm+'/'+yyyy;
 							value="divisionId" /></td>
 				</tr>
 			</table>
-			<div class="buttonbottom">
+			
+		</s:push>
+		</div>
+		<div class="buttonbottom">
 				<s:hidden name="exportType" id="exportType" />
 				<s:submit value="View HTML" method="search" cssClass="button"
 					onClick="return validate('html');" />
@@ -254,22 +259,12 @@ today = dd+'/'+mm+'/'+yyyy;
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
-		</s:push>
-		<div id="loading" class="loading"
-			style="width: 700; height: 700; display: none" align="center">
-			<blink style="color: red">Searching processing, Please
-				wait...</blink>
-		</div>
 	</s:form>
 	<s:if test="%{al.size!=0}">
 
 		<script>
 			document.getElementById('loading').style.display ='none';
 		</script>
-		<table width="100%" border="0" align="center" cellpadding="0"
-			cellspacing="0" class="tablebottom">
-			<td>
-				<div align="center">
 					<br />
 					<table border="0" cellspacing="0" cellpadding="0"
 						class="tablebottom" width="100%">
@@ -292,7 +287,6 @@ today = dd+'/'+mm+'/'+yyyy;
 								</div>
 							</td>
 						</tr>
-						</div>
 						<s:if test='%{reportType == "daterange"}'>
 							<tr>
 								<th class="bluebgheadtd">Sl.No.</th>
@@ -306,8 +300,14 @@ today = dd+'/'+mm+'/'+yyyy;
 							</tr>
 							<s:iterator var="p" value="al" status="s">
 								<tr>
-									<td style="text-align: center" class="blueborderfortd"><s:property
-											value="#s.index+1" /></td>
+								
+									<td style="text-align: center" class="blueborderfortd"><s:if 	test='%{accCode != "   Total  "}'>
+									<s:property value="#s.index+1" />
+											</s:if>
+											<s:else>
+											<s:property value="" />
+											</s:else></td>
+											
 									<td style="text-align: center" class="blueborderfortd"><s:if
 											test='%{accCode != "   Total  "}'>
 											<a href="javascript:void(0);"
@@ -344,8 +344,12 @@ today = dd+'/'+mm+'/'+yyyy;
 
 							<s:iterator var="p" value="al" status="s">
 								<tr>
-									<td style="text-align: center" class="blueborderfortd"><s:property
-											value="#s.index+1" /></td>
+									<td style="text-align: center" class="blueborderfortd"><s:if 	test='%{accCode != "Total"}'>
+									<s:property value="#s.index+1" />
+											</s:if>
+											<s:else>
+											<s:property value="" />
+											</s:else></td>
 									<td style="text-align: center" class="blueborderfortd"><s:if
 											test='%{accCode != "Total"}'>
 											<a href="javascript:void(0);"

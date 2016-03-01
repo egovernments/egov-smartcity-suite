@@ -260,7 +260,7 @@ public class BudgetSearchAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("done findApprovedBudgetsForFY");
             dropdownData.put("financialYearList",
-                    persistenceService.findAllBy("from CFinancialYear where isActive=1 order by finYearRange desc"));
+                    persistenceService.findAllBy("from CFinancialYear where isActive=true order by finYearRange desc"));
             if (shouldShowField(Constants.SUB_SCHEME))
                 dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
             if (shouldShowField(Constants.FUNCTIONARY))
@@ -268,14 +268,14 @@ public class BudgetSearchAction extends BaseFormAction {
             if (shouldShowField(Constants.FUNCTION))
                 dropdownData.put("functionList", masterCache.get("egi-function"));
             if (shouldShowField(Constants.SCHEME))
-                dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=1 order by name"));
+                dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
             if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
                 dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
             if (shouldShowField(Constants.BOUNDARY))
                 dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
             if (shouldShowField(Constants.FUND))
                 dropdownData.put("fundList",
-                        persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=1 order by name"));
+                        persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
         }
     }
 

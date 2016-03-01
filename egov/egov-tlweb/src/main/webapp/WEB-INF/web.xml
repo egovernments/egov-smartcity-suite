@@ -192,7 +192,7 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>struts2Prepare</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>sitemesh</filter-name>
@@ -203,7 +203,7 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>struts2Execute</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	
 	<!-- Listeners Starts -->

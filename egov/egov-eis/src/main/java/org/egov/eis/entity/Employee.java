@@ -222,7 +222,7 @@ public class Employee extends User implements EntityType {
 
     @Override
     public String getEntityDescription() {
-        return null;
+        return this.getName();
     }
 
     @Override

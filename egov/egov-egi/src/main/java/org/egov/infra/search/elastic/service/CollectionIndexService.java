@@ -51,11 +51,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service for the Application Index
- *
- * @author rishi
- */
 @Service
 @Transactional(readOnly = true)
 public class CollectionIndexService {
@@ -75,8 +70,10 @@ public class CollectionIndexService {
     public CollectionIndex createCollectionIndex(final CollectionIndex collectionIndex) {
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
         collectionIndex.setUlbName(cityWebsite.getName());
-        collectionIndex.setDistrictName(cityWebsite.getDistrictName());
-        collectionIndex.setRegionName(cityWebsite.getRegionName());
+        if (cityWebsite.getDistrictName() != null)
+            collectionIndex.setDistrictName(cityWebsite.getDistrictName());
+        if (cityWebsite.getRegionName() != null)
+            collectionIndex.setRegionName(cityWebsite.getRegionName());
         collectionIndexRepository.save(collectionIndex);
         return collectionIndex;
     }

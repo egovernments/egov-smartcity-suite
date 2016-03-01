@@ -1546,6 +1546,7 @@ label.error {
   cursor: pointer;
   background: #6b4f2c;
   border: 1px solid #6b4f2c;
+  color: #fff;
 }
 .form-group .input-group .input-group-addon i {
   color: #6b4f2c;
@@ -1680,6 +1681,9 @@ label.error {
   background: #f7f7f7;
   cursor: pointer;
 }
+.table tbody.no-pointer tr:hover {
+  cursor: default;
+}
 @media (max-width: 768px) {
   table.dataTable {
     display: block;
@@ -1711,16 +1715,13 @@ table.dataTable tbody {
   }
 }
 table.dataTable thead th {
-  position: relative;
   background-image: none !important;
+  border: 1px solid #ccc;
 }
 table.dataTable thead th.sorting:after,
 table.dataTable th.sorting_asc:after,
 table.dataTable th.sorting_desc:after {
-  position: absolute;
-  top: 12px;
-  right: 8px;
-  display: block;
+  float: right;
   font-family: FontAwesome;
 }
 table.dataTable#official_inbox thead th.sorting:not(:last-child):after,

@@ -78,6 +78,7 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPEADDCONNESTNOTICE = "addconnestnotice";
     public static final String DONATIONMASTER = "DONATIONMASTER";
     public static final String REVENUE_WARD = "WARD";
+    public static final String SYSTEM = "SYSTEM";
     
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
@@ -173,6 +174,9 @@ public class WaterTaxConstants {
     public static final String SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE = "CLOSURECONNECTION";
     public static final String SEARCH_MENUTREE_APPLICATIONTYPE_METERED = "METERENTRY";
     public static final String SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX = "COLLECTTAX";
+    public static final String APPLICATION_STATUS_CLOSER = "Close Connection By AE";
+    public static final String APPLICATION_STATUS_RE_CONN = "ReConnection By AE";
+    
 
     // appconfig key
     public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";

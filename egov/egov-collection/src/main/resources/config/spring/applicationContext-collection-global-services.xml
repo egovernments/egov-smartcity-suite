@@ -59,12 +59,12 @@
 		<property name="sequenceGenerator" ref="sequenceNumberGenerator" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 	</bean>
-	<bean class="org.egov.collection.repository.ServiceCategoryRepository" id="serviceCategoryRepository" />
 
 	<bean class="org.egov.collection.service.ReceiptHeaderService"
 		id="receiptHeaderService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.ReceiptHeader" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
+		<property name="challanService" ref="challanService" />
 		<property name="financialsUtil" ref="financialsUtil" />
 		<property name="collectionsNumberGenerator" ref="collectionsNumberGenerator" />
 		<property name="persistenceService" ref="persistenceService" />
@@ -80,7 +80,7 @@
 		<property name="receiptHeaderService" ref="receiptHeaderService" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 		<property name="financialsUtil" ref="financialsUtil" />
-		<!-- <property name="egovCommon" ref="egovCommon" /> -->
+		<property name="egovCommon" ref="egovCommon" />
 	</bean>
 	
 	<bean id="financialsUtil" class="org.egov.collection.utils.FinancialsUtil" scope="prototype">
@@ -117,6 +117,11 @@
     <bean id="ReceiptHeaderInboxRenderService" class="org.egov.collection.workflow.renderer.CollectionsWorkflowRenderService">
          <constructor-arg index="0" ref="receiptHeaderPersistenceService"/>
    </bean>
+   
+    <bean id="ChallanInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="challanPersistenceService"/>
+   </bean>
+   
    <bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.Challan" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
@@ -137,9 +142,14 @@
 	   
    <bean id="WTCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
    </bean>
+   
+   <bean id="WESCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
+   </bean>
 
 	 <bean id="TLCollectionsInterface" class="org.egov.tl.service.integration.LicenseBillService" scope="prototype" >
 			<property name="licenseUtils" ref="licenseUtils" />
+			<property name="updateIndexService" ref="updateIndexService" />
+			<property name="tradeLicenseSmsAndEmailService" ref="tradeLicenseSmsAndEmailService" />
 	</bean>
 	
 	<bean id=" BDPGIPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.BillDeskAdaptor" />

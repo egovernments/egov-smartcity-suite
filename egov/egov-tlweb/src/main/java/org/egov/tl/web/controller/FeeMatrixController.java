@@ -40,15 +40,16 @@
 
 package org.egov.tl.web.controller;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.log4j.Logger;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -57,9 +58,13 @@ import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.service.FeeMatrixDetailService;
 import org.egov.tl.service.FeeMatrixService;
-import org.egov.tl.service.FeeTypeService;
+import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.web.adaptor.FeeMatrixAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -68,123 +73,132 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/feematrix/")
 public class FeeMatrixController {
-	private final static String FEEMATRIX_NEW = "feematrix-new";
-	private final static String FEEMATRIX_RESULT = "feematrix-result";
-	private final static String FEEMATRIX_EDIT = "feematrix-edit";
-	private final static String FEEMATRIX_VIEW = "feematrix-view";
-	@Autowired
-	private FeeMatrixService feeMatrixService;
-	@Autowired
-	@Qualifier("persistenceService")
-	public PersistenceService persistenceService;
-	@Autowired
-	private FinancialYearDAO financialYearDAO;
+    private final static String FEEMATRIX_NEW = "feematrix-new";
+    private final static String FEEMATRIX_RESULT = "feematrix-result";
+    private final static String FEEMATRIX_EDIT = "feematrix-edit";
+    private final static String FEEMATRIX_VIEW = "feematrix-view";
 
-	@Autowired
-	private FeeTypeService feeTypeService;
+    @Autowired
+    private FeeMatrixService feeMatrixService;
 
-	@Autowired
-	private AppConfigValueService appConfigValueService;
-	/* to log errors and debugging information */
-	private final Logger LOGGER = Logger.getLogger(getClass());
+    @Autowired
+    private FeeMatrixDetailService feeMatrixDetailService;
 
-	private void prepareForNewForm(Model model, String fee) {
+    @Autowired
+    @Qualifier("persistenceService")
+    public PersistenceService persistenceService;
 
-		List<UnitOfMeasurement> uomList = new ArrayList<UnitOfMeasurement>();
-		List<FeeType> feeTypeList = new ArrayList<FeeType>();
-		model.addAttribute(
-				"licenseCategorys",
-				persistenceService
-						.findAllBy("select  c from LicenseCategory c order by name asc"));
-		model.addAttribute(
-				"natureOfBusinesss",
-				persistenceService
-						.findAllBy("select n from org.egov.tl.entity.NatureOfBusiness n order by name asc"));
-		model.addAttribute("financialYears",
-				financialYearDAO
-						.getAllActiveFinancialYearList());
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
-		List<AppConfigValues> permTempAppconfigList = appConfigValueService
-				.getConfigValuesByModuleAndKey("Trade License",
-						"Is Fee For Permanent and Temporary Same");
-		if (permTempAppconfigList.get(0).getValue().equals("Y")) {
-			model.addAttribute("hideTemporary", true);
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
-		}
+    @Autowired
+    private LicenseCategoryService licenseCategoryService;
 
-		List<AppConfigValues> newRenewAppconfigList = appConfigValueService
-				.getConfigValuesByModuleAndKey("Trade License",
-						"Is Fee For New and Renew Same");
-		if (newRenewAppconfigList.get(0).getValue().equals("Y")) {
-			model.addAttribute("hideRenew", true);
+    private void prepareForNewForm(final Model model, final String fee) {
 
-		}
-		model.addAttribute("feeMatrix", new FeeMatrix());
-		model.addAttribute("subCategorys", Collections.EMPTY_LIST);
-		model.addAttribute("feeTypes", Collections.EMPTY_LIST);
-		model.addAttribute("unitOfMeasurements", Collections.EMPTY_LIST);
-		model.addAttribute(
-				"licenseAppTypes",
-				persistenceService
-						.findAllBy("select a from LicenseAppType a order by name asc"));
-	}
+        new ArrayList<UnitOfMeasurement>();
+        new ArrayList<FeeType>();
+        model.addAttribute("licenseCategorys", licenseCategoryService.findAllOrderByName());
+        model.addAttribute("natureOfBusinesss",
+                persistenceService.findAllBy("select n from org.egov.tl.entity.NatureOfBusiness n order by name asc"));
+        model.addAttribute("financialYears", financialYearDAO.getAllActiveFinancialYearList());
 
-	@RequestMapping(value = "create", method = RequestMethod.GET)
-	public String newForm(final Model model,
-			@RequestParam(required = false) String fee) {
-		prepareForNewForm(model, fee);
-		return FEEMATRIX_NEW;
-	}
+        final List<AppConfigValues> permTempAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License",
+                "Is Fee For Permanent and Temporary Same");
+        if (permTempAppconfigList.get(0).getValue().equals("Y"))
+            model.addAttribute("hideTemporary", true);
 
-	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String create(@Valid @ModelAttribute FeeMatrix feeMatrix,
-			final BindingResult errors, final Model model,
-			HttpServletRequest request) {
-		if (errors.hasErrors())
-			return FEEMATRIX_RESULT;
-		feeMatrixService.create(feeMatrix);
-		model.addAttribute("feeMatrix", feeMatrix);
-		return FEEMATRIX_RESULT;
-	}
+        final List<AppConfigValues> newRenewAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License",
+                "Is Fee For New and Renew Same");
+        if (newRenewAppconfigList.get(0).getValue().equals("Y"))
+            model.addAttribute("hideRenew", true);
+        model.addAttribute("feeMatrix", new FeeMatrix());
+        model.addAttribute("subCategorys", Collections.EMPTY_LIST);
+        model.addAttribute("feeTypes", Collections.EMPTY_LIST);
+        model.addAttribute("unitOfMeasurements", Collections.EMPTY_LIST);
+        model.addAttribute("licenseAppTypes", persistenceService.findAllBy("select a from LicenseAppType a order by name asc"));
+    }
 
-	@RequestMapping(value = "search", method = RequestMethod.GET)
-	public String search(@ModelAttribute final FeeMatrix feeMatrix,
-			final BindingResult errors, final Model model) {
-		if (errors.hasErrors())
-			return FEEMATRIX_RESULT;
-		FeeMatrix searchfeeMatrix = feeMatrixService.search(feeMatrix);
-		if (searchfeeMatrix == null) {
-			searchfeeMatrix = new FeeMatrix();
+    @RequestMapping(value = "create", method = RequestMethod.GET)
+    public String newForm(final Model model, @RequestParam(required = false) final String fee) {
+        prepareForNewForm(model, fee);
+        return FEEMATRIX_NEW;
+    }
 
-		}
-		for (FeeMatrixDetail fd : searchfeeMatrix.getFeeMatrixDetail()) {
-			LOGGER.debug(fd.getUomFrom());
-		}
-		model.addAttribute("feeMatrix", searchfeeMatrix);
-		return FEEMATRIX_RESULT;
-	}
+    @RequestMapping(value = "create", method = RequestMethod.POST)
+    public String create(@Valid @ModelAttribute final FeeMatrix feeMatrix, final BindingResult errors, final Model model,
+            final HttpServletRequest request) {
+        if (errors.hasErrors())
+            return FEEMATRIX_RESULT;
+        feeMatrixService.create(feeMatrix);
+        model.addAttribute("feeMatrix", feeMatrix);
+        return FEEMATRIX_RESULT;
+    }
 
-	@RequestMapping(value = "edit/{id}", method = RequestMethod.POST)
-	public String edit(@PathVariable("id") final String id) {
-		return FEEMATRIX_EDIT;
-	}
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    public String search(@ModelAttribute final FeeMatrix feeMatrix, final BindingResult errors, final Model model) {
+        if (errors.hasErrors())
+            return FEEMATRIX_RESULT;
+        FeeMatrix searchfeeMatrix = feeMatrixService.search(feeMatrix);
+        if (searchfeeMatrix == null)
+            searchfeeMatrix = new FeeMatrix();
+        model.addAttribute("feeMatrix", searchfeeMatrix);
+        return FEEMATRIX_RESULT;
+    }
 
-	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute final FeeMatrix feeMatrix,
-			final BindingResult errors, final Model model) {
-		if (errors.hasErrors())
-			return FEEMATRIX_RESULT;
-		feeMatrixService.update(feeMatrix);
-		return FEEMATRIX_RESULT;
-	}
+    @RequestMapping(value = "edit/{id}", method = RequestMethod.POST)
+    public String edit(@PathVariable("id") final String id) {
+        return FEEMATRIX_EDIT;
+    }
 
-	@RequestMapping(value = "view/{id}", method = RequestMethod.POST)
-	public String view(@PathVariable("id") final String id) {
-		return FEEMATRIX_VIEW;
-	}
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final FeeMatrix feeMatrix, final BindingResult errors, final Model model) {
+        if (errors.hasErrors())
+            return FEEMATRIX_RESULT;
+        feeMatrixService.update(feeMatrix);
+        return FEEMATRIX_RESULT;
+    }
 
+    @RequestMapping(value = "view/{id}", method = RequestMethod.POST)
+    public String view(@PathVariable("id") final String id) {
+        return FEEMATRIX_VIEW;
+    }
+
+    @RequestMapping(value = "view-feematrix", method = RequestMethod.GET)
+    public String viewForm(final Model model, @RequestParam(required = false) final String fee) {
+        model.addAttribute("feeMatrix", new FeeMatrix());
+        model.addAttribute("financialYears", financialYearDAO.getAllActiveFinancialYearList());
+        model.addAttribute("licenseCategorys", licenseCategoryService.findAllOrderByName());
+        model.addAttribute("subCategorys", Collections.EMPTY_LIST);
+        return "feematrix-view";
+    }
+
+    @RequestMapping(value = "viewresult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String viewresult(@RequestParam(required = false) final Long category,
+            @RequestParam(required = false) final Long subCategory, @RequestParam(required = false) final Long finyear,
+            final HttpServletResponse response)
+            throws IOException, ParseException {
+        final List<FeeMatrixDetail> feeMatrixDetails = feeMatrixDetailService.searchFeeMatrix(category, subCategory, finyear);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(feeMatrixDetails)).append("}")
+                .toString();
+        return result;
+    }
+
+    public Object toSearchResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(FeeMatrixDetail.class, new FeeMatrixAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 }

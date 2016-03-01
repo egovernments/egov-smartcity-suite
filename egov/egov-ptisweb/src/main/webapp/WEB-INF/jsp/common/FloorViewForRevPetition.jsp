@@ -48,6 +48,9 @@
 		<th class="bluebgheadtd"><s:text name="Occupancy"/></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname"/></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /></th>
+		<th class="bluebgheadtd"><s:text name="unstructuredLand" /</th>
+		<th class="bluebgheadtd"><s:text name="plinthLength" /></th>
+		<th class="bluebgheadtd"><s:text name="plinthBreadth" /></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /></th>
 		<th class="bluebgheadtd"><s:text name="drainage" /></th>
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
@@ -92,6 +95,21 @@
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    <s:date name="occupancyDate" var="cdFormat" format="dd/MM/yyyy"/>
 	    <span class="bold"><s:property default="N/A" value="%{cdFormat}"/></span>
+	    </td>
+	    
+	    <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center">
+			<s:if test="%{unstructuredLand}">Yes</s:if> 
+			<s:else>No</s:else>
+			</div></span>
+	    </td>
+	    
+	     <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{builtUpArea.length}" /></div></span>
+	    </td>
+	    
+	     <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{builtUpArea.breadth}" /></div></span>
 	    </td>
 	   
         <td class="blueborderfortd" style="padding: 2px 2px">

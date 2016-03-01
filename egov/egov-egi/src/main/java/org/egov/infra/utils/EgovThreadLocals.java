@@ -39,13 +39,10 @@
  */
 package org.egov.infra.utils;
 
-import javax.servlet.ServletContext;
-
 public class EgovThreadLocals {
 
     private static ThreadLocal<String> domainName = new ThreadLocal<>();
     private static ThreadLocal<Long> userId = new ThreadLocal<>();
-    private static ThreadLocal<ServletContext> servletContext = new ThreadLocal<>();
     private static ThreadLocal<String> tenantID = new ThreadLocal<>();
     private static ThreadLocal<String> cityCode = new ThreadLocal<>();
     private static ThreadLocal<String> cityName = new ThreadLocal<>();
@@ -91,14 +88,6 @@ public class EgovThreadLocals {
         userId.set(userid);
     }
 
-    public static ServletContext getServletContext() {
-        return servletContext.get();
-    }
-
-    public static void setServletContext(final ServletContext servlContext) {
-        servletContext.set(servlContext);
-    }
-
     public static String getMunicipalityName() {
         return municipalityName.get();
     }
@@ -108,7 +97,6 @@ public class EgovThreadLocals {
     }
 
     public static void clearValues() {
-        servletContext.remove();
         domainName.remove();
         userId.remove();
         tenantID.remove();

@@ -84,12 +84,14 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.mobileNo"/><span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.mobileNo"/><span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin">
-							<form:input path="complainant.mobile" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number"/>
+							<div class="input-group">
+								<span class="input-group-addon">+91</span>
+								  	<form:input path="complainant.mobile" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number"/>
+							</div>
 							<form:errors path="complainant.mobile" cssClass="add-margin error-msg"/>
 						</div>
-						
 						<div class="col-sm-1">
 							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
 						</div>

@@ -164,11 +164,11 @@
 	padding-left: 11px;*/
 }
 
-table.tabs-tableparent > tbody > tr:not(:first-child) > td > div
+/* table.tabs-tableparent > tbody > tr:not(:first-child) > td > div
 {
 	border:1px solid #F2851F;
 }
-
+*/
 
 #Tabs li.Last a {
 	

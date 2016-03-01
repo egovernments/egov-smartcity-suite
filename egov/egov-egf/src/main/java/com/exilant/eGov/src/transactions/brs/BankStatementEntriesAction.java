@@ -89,11 +89,15 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.instrument.InstrumentType;
 import org.egov.model.instrument.InstrumentVoucher;
+import org.egov.services.instrument.InstrumentHeaderService;
+import org.egov.services.instrument.InstrumentOtherDetailsService;
 import org.egov.services.instrument.InstrumentService;
+import org.egov.services.instrument.InstrumentVoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.domain.BankBranch;
@@ -123,8 +127,19 @@ public class BankStatementEntriesAction extends DispatchAction {
     Date dt;
     EGovernCommon cm = new EGovernCommon();
     String alertMessage = null;
-    InstrumentService instrumentService;
+    @Autowired
+    @Qualifier("instrumentService")
+    private InstrumentService instrumentService;
     PersistenceService persistenceService;
+    @Autowired
+    @Qualifier("instrumentHeaderService")
+    private InstrumentHeaderService instrumentHeaderService;
+    @Autowired
+    @Qualifier("instrumentVoucherService")
+    private InstrumentVoucherService instrumentVoucherService;
+    @Autowired
+    @Qualifier("instrumentOtherDetailsService")
+    private InstrumentOtherDetailsService instrumentOtherDetailsService;
 
     /*
      * get list of bankbranches
@@ -286,7 +301,6 @@ public class BankStatementEntriesAction extends DispatchAction {
             final String instruments[] = (String[]) bankRecForm.get("instrumentHeaderId");
             BankEntries be;
             List<InstrumentHeader> instrumentList = null;
-            setInstrumentRelatedServices();
 
             final int userId = ((Integer) req.getSession().getAttribute("com.egov.user.LoginUserId")).intValue();
             for (int i = 0; i < refNo.length; i++)
@@ -548,35 +562,35 @@ public class BankStatementEntriesAction extends DispatchAction {
     private InstrumentHeader updateInstrumentHeader(final String ihId, final String refNo, final String amount, final int accId2,
             final String isPaycheck,
             final Date dt2) {
-        final InstrumentHeader ih = instrumentService.instrumentHeaderService.find("from InstrumentHeader where id=?",
+        final InstrumentHeader ih = instrumentHeaderService.find("from InstrumentHeader where id=?",
                 Long.valueOf(ihId));
         ih.setInstrumentNumber(refNo);
         ih.setInstrumentDate(dt2);
-        final Bankaccount bankacc = (Bankaccount) instrumentService.persistenceService
+        final Bankaccount bankacc = (Bankaccount) persistenceService
                 .find("from Bankaccount where id=?", accId2);
         ih.setBankAccountId(bankacc);
         ih.setIsPayCheque(isPaycheck);
-        instrumentService.instrumentHeaderService.persist(ih);
+        instrumentHeaderService.persist(ih);
         HibernateUtil.getCurrentSession().flush();
         return ih;
 
     }
 
     private InstrumentHeader depositInstrument(final String ihId) {
-        final InstrumentHeader ih = instrumentService.instrumentHeaderService.find("from InstrumentHeader where id=?",
+        final InstrumentHeader ih = instrumentHeaderService.find("from InstrumentHeader where id=?",
                 Long.valueOf(ihId));
         final EgwStatus status = (EgwStatus) persistenceService.find(
                 "from EgwStatus where upper(moduletype)=upper('Instrument') and upper(description)=upper(?)",
                 FinancialConstants.INSTRUMENT_DEPOSITED_STATUS);
         ih.setStatusId(status);
-        instrumentService.instrumentHeaderService.persist(ih);
+        instrumentHeaderService.persist(ih);
         final InstrumentVoucher iv = new InstrumentVoucher();
         iv.setInstrumentHeaderId(ih);
-        instrumentService.instrumentVouherService.persist(iv);
+        instrumentVoucherService.persist(iv);
         final InstrumentOtherDetails io = new InstrumentOtherDetails();
         io.setInstrumentStatusDate(ih.getInstrumentDate());
         io.setInstrumentHeaderId(ih);
-        instrumentService.instrumentOtherDetailsService.persist(io);
+        instrumentOtherDetailsService.persist(io);
         HibernateUtil.getCurrentSession().flush();
         return ih;
 
@@ -587,12 +601,12 @@ public class BankStatementEntriesAction extends DispatchAction {
      * @param voucherheaderId
      */
     private void updateInstrumentReference(final InstrumentHeader instrumentHeader, final Long voucherheaderId) {
-        final CVoucherHeader voucherHeader = (CVoucherHeader) instrumentService.persistenceService.find(
+        final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService.find(
                 "from CVoucherHeader where id=?", voucherheaderId);
-        final InstrumentVoucher iv = instrumentService.instrumentVouherService.find(
+        final InstrumentVoucher iv = instrumentVoucherService.find(
                 "from InstrumentVoucher where instrumentHeaderId=?", instrumentHeader);
         iv.setVoucherHeaderId(voucherHeader);
-        instrumentService.instrumentVouherService.persist(iv);
+        instrumentVoucherService.persist(iv);
         instrumentService.addToBankReconcilation(voucherHeader, instrumentHeader);
         HibernateUtil.getCurrentSession().flush();
 
@@ -620,32 +634,6 @@ public class BankStatementEntriesAction extends DispatchAction {
         HibernateUtil.getCurrentSession().flush();
 
         return instrumentList;
-    }
-
-    /**
-     *
-     */
-    private void setInstrumentRelatedServices() {
-        instrumentService = new InstrumentService();
-        persistenceService = new PersistenceService();
-        instrumentService.setPersistenceService(persistenceService);
-
-        final PersistenceService<InstrumentHeader, Long> iHeaderService = new PersistenceService<InstrumentHeader, Long>();
-        //iHeaderService.setType(InstrumentHeader.class);
-        instrumentService.setInstrumentHeaderService(iHeaderService);
-
-        final PersistenceService<InstrumentType, Long> iTypeService = new PersistenceService<InstrumentType, Long>();
-        //iTypeService.setType(InstrumentType.class);
-        instrumentService.setInstrumentTypeService(iTypeService);
-        final PersistenceService<InstrumentVoucher, Long> iVoucherService = new PersistenceService<InstrumentVoucher, Long>();
-       // iVoucherService.setType(InstrumentVoucher.class);
-        instrumentService.setInstrumentVouherService(iVoucherService);
-        final PersistenceService<Bankreconciliation, Integer> bankreconciliationService = new PersistenceService<Bankreconciliation, Integer>();
-        //bankreconciliationService.setType(Bankreconciliation.class);
-        instrumentService.setBankreconciliationService(bankreconciliationService);
-        final PersistenceService<InstrumentOtherDetails, Long> iOtherDetailsService = new PersistenceService<InstrumentOtherDetails, Long>();
-        //iOtherDetailsService.setType(InstrumentOtherDetails.class);
-        instrumentService.setInstrumentOtherDetailsService(iOtherDetailsService);
     }
 
 }

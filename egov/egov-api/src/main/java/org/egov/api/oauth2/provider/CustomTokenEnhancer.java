@@ -21,6 +21,7 @@ public class CustomTokenEnhancer extends TokenEnhancerChain{
         info.put("name", su.getUser().getName());
         info.put("mobileNumber", su.getUser().getMobileNumber());
         info.put("emailId", su.getUser().getEmailId());
+        info.put("userType", su.getUser().getType());
         token.setAdditionalInformation(info);
         return super.enhance(token, authentication);
     }

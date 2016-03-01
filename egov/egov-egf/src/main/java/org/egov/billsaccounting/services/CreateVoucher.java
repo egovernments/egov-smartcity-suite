@@ -110,6 +110,8 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.services.bills.BillsService;
+import org.egov.services.voucher.GeneralLedgerDetailService;
+import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
@@ -206,7 +208,7 @@ public class CreateVoucher {
     private FunctionDAO functionDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
-
+    @Autowired
     private VoucherHeaderDAO voucherHeaderDAO;
 
     private BankaccountHibernateDAO bankAccountDAO;
@@ -251,19 +253,12 @@ public class CreateVoucher {
     PersistenceService<EgBillregistermis, Integer> billMisSer;
     PersistenceService<EgBilldetails, Integer> billDetailSer;
     PersistenceService<Fund, Integer> fundService;
-
-    public void setGeneralLedgerService(
-            final PersistenceService<CGeneralLedger, Long> generalLedgerService) {
-        this.generalLedgerService = generalLedgerService;
-    }
-
-    public void setGeneralLedgerDetailService(
-            final PersistenceService<CGeneralLedgerDetail, Long> generalLedgerDetailService) {
-        this.generalLedgerDetailService = generalLedgerDetailService;
-    }
-
-    PersistenceService<CGeneralLedger, Long> generalLedgerService;
-    PersistenceService<CGeneralLedgerDetail, Long> generalLedgerDetailService;
+    @Autowired
+    @Qualifier("generalLedgerService")
+    private GeneralLedgerService generalLedgerService;
+    @Autowired
+    @Qualifier("generalLedgerDetailService")
+    private GeneralLedgerDetailService generalLedgerDetailService;
 
     private Fund fundByCode;
     private PersonalInformationDAO personalInformationDAO;
@@ -322,8 +317,6 @@ public class CreateVoucher {
                 LOGGER.debug(" ---------------Generating Voucher for Bill-------");
             EgBillregister egBillregister = null;
             egBillregister = billsService.getBillRegisterById(Integer.valueOf(billId));
-            final PersistenceService persistenceService = new PersistenceService();
-            // persistenceService.setSessionFactory(new SessionFactory());
             /*
              * identify the bill type and delegate get the fund and fundsource check for mandatory fields for implementation if
              * missing throw exception department is mandatory for implementation type fund is mandatory for all implementations
@@ -333,7 +326,7 @@ public class CreateVoucher {
             try {
                 CVoucherHeader result;
                 if (billMis.getVoucherHeader() != null) {
-                    result = (CVoucherHeader) persistenceService.find(
+                    result = (CVoucherHeader) voucherService.find(
                             "select vh from CVoucherHeader vh where vh.id = ? and vh.status!=?", billMis.getVoucherHeader()
                                     .getId(), FinancialConstants.CANCELLEDVOUCHERSTATUS);
                     if (result != null)
@@ -535,7 +528,9 @@ public class CreateVoucher {
 
         } catch (final ValidationException e) {
             LOGGER.error(e.getErrors());
-            throw new ValidationException(e.getErrors());
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e)
         {
             LOGGER.error("Error in create voucher from bill" + e.getMessage());
@@ -723,6 +718,7 @@ public class CreateVoucher {
      * @return voucherheader object in case of success and null in case of fail.
      * @throws ApplicationRuntimeException
      */
+    @Transactional
     public CVoucherHeader createPreApprovedVoucher(final HashMap<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails)
             throws ApplicationRuntimeException, ValidationException {
@@ -741,7 +737,9 @@ public class CreateVoucher {
         } catch (final ValidationException ve)
         {
             LOGGER.error(ERR, ve);
-            throw ve;
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", ve.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e) {
             LOGGER.error(ERR, e);
             throw new ApplicationRuntimeException(e.getMessage());
@@ -1145,8 +1143,9 @@ public class CreateVoucher {
 
         catch (final ValidationException ve)
         {
-            LOGGER.error(ERR, ve);
-            throw ve;
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", ve.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e) {
             LOGGER.error(ERR, e);
             throw new ApplicationRuntimeException(e.getMessage());
@@ -2413,8 +2412,6 @@ public class CreateVoucher {
                 reversalVoucherObj.setVoucherDate((Date) paramMap.get(REVERSAL_VOUCHER_DATE));
             }
         }
-        final PersistenceService persistenceService = new PersistenceService();
-        // persistenceService.setSessionFactory(new SessionFactory());
         originalVocher = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?",
                 reversalVoucherObj.getOriginalvcId());
         if (LOGGER.isDebugEnabled())
@@ -2442,8 +2439,6 @@ public class CreateVoucher {
         final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
 
         try {
-            final PersistenceService persistenceService = new PersistenceService();
-            // persistenceService.setSessionFactory(new SessionFactory());
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("original voucher is " + reversalVoucher.getOriginalvcId());
             originalVocher = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?",

@@ -53,14 +53,18 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Expense Bill -Approval" />
 		</jsp:include>
-		<span class="mandatory"> <s:actionmessage />
+		<div align="center">
+		<span class="mandatory1"> <s:actionmessage />
 		</span>
+		</div>
 		<br />
+		<div class="buttonbottom" align="center">
 		<input type="submit" value="Close" onclick="javascript:window.close()"
 			class="button" />
 
 		<input type="button" id="print" value="Print Preview"
 			onclick="printPreview()" class="button" />
+			</div>
 	</s:form>
 	<script>
 	function refreshInbox()

@@ -61,9 +61,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.egov.commons.CGeneralLedger;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.Vouchermis;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.search.annotations.DocumentId;
@@ -89,6 +87,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @GeneratedValue(generator = SEQ_EG_BILLREGISTER, strategy = GenerationType.SEQUENCE)
     private Long id;
     @NotNull
+    @Length(min=1)
     private String billnumber;
     @NotNull
     private Date billdate;

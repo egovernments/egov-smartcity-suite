@@ -59,7 +59,7 @@
 	<script>
 
 	function bodyOnLoad(){
-		if(dom.get("userMode").value=='view'  || dom.get("userMode").value=='success'){
+		if(document.getElementById("userMode").value=='view'  || document.getElementById("userMode").value=='success'){
 			 for(i=0;i<document.licenseSubCategoryForm.elements.length;i++){ 
 					if(document.licenseSubCategoryForm.elements[i].id!='btnclose'){
 					document.licenseSubCategoryForm.elements[i].disabled=true;
@@ -79,9 +79,9 @@
 	}
 
 	function validateFormAndSubmit(){
-		var code= dom.get("code").value;
-		var name= dom.get("name").value;
-		var categoryId= dom.get("categoryId").value;
+		var code= document.getElementById("code").value;
+		var name= document.getElementById("name").value;
+		var categoryId= document.getElementById("categoryId").value;
 		if (categoryId == '-1'){
 			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategoryid.null" />');
 			return false;
@@ -106,8 +106,8 @@
 	   	for(var i=0;i<subCategoryMappingDataTable.getRecordSet().getLength();i++)
 	   	{
 	   	  	var record = subCategoryMappingDataTable.getRecord(i);
-	   		 if(dom.get("feeType"+record.getId()).value==0 || dom.get("rateType"+record.getId()).value==0 ||
-	   				dom.get("uom"+record.getId()).value==0){
+	   		 if(document.getElementById("feeType"+record.getId()).value==0 || document.getElementById("rateType"+record.getId()).value==0 ||
+	   				document.getElementById("uom"+record.getId()).value==0){
 	   			document.getElementById("scDtl_error").innerHTML='Please select all the details for '+(i+1)+' row.'; 
 	            document.getElementById("scDtl_error").style.display='';
 	            return false;
@@ -140,9 +140,9 @@
 		    if(!(results[0].errorMsg=="" || results[0].errorMsg==null)){
 		    	showMessage('subcategory_error',results[0].errorMsg);
 		    	if(results[0].paramType=="name")
-			    	dom.get("name").value="";
+			    	document.getElementById("name").value="";
 		    	else if(results[0].paramType=="code")
-			    	dom.get("code").value="";
+			    	document.getElementById("code").value="";
 	 			return false;
 	     	} 
 	    }

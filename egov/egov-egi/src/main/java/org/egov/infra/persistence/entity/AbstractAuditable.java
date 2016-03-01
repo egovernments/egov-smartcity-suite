@@ -51,6 +51,7 @@ import javax.persistence.TemporalType;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.search.domain.Searchable;
+import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -99,6 +100,7 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
         this.createdDate = createdDate;
     }
 
+    @Audited
     public User getLastModifiedBy() {
         return lastModifiedBy;
     }
@@ -107,6 +109,7 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    @Audited
     public Date getLastModifiedDate() {
         return lastModifiedDate;
     }

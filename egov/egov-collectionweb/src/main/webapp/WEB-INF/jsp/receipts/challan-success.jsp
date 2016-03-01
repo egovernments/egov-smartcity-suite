@@ -43,19 +43,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script>
-function refreshInbox() {
-        var x=opener.top.opener;
-        if(x==null){
-            x=opener.top;
-        }
-        x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
-	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-}
-</script>
 <title><s:text name="challan.title.workflowsuccess" /></title>
 </head>
-<body onLoad="refreshInbox();">
+<body>
 
 <s:form theme="simple" name="challan">
 <s:push value="model">
@@ -84,6 +74,7 @@ function refreshInbox() {
 				</table>
 				 <!--  copy end -->
 	</s:if>
+		<s:hidden id="sourcePage" name="sourcePage" value="%{sourcePage}"/>
     <s:if test="%{sourcePage==null || sourcePage=='inbox' }"> 
 		<s:if test="%{challan.state.value=='CHECKED'}">
 			<s:text name="challan.checksuccess.message" />
@@ -91,13 +82,13 @@ function refreshInbox() {
 		<s:elseif test="%{challan.state.value=='APPROVED'}">
 			<s:text name="challan.approvesucces.message" />
 		</s:elseif>
-		<s:elseif test="%{challan.state.value=='END' && challan.state.previous.value=='VALIDATED' && sourcePage!='cancelReceipt'}">
+		<s:elseif test="%{challan.state.value=='END'  && challan.status.code=='VALIDATED' && sourcePage!='cancelReceipt'}">
 			<s:text name="challan.validatesuccess.message" />
 		</s:elseif> 
 		<s:elseif test="%{challan.state.value=='REJECTED'}">
-			<s:text name="challan.rejectsuccess.message" />
+			<s:text name="challan.rejectsuccess.message" /> <s:property value="%{approverName}" />
 		</s:elseif>
-		<s:elseif test="%{challan.state.value=='END' && challan.state.previous.value=='CANCELLED'}">
+		<s:elseif test="%{challan.state.value=='END' && challan.status.code=='CANCELLED'}">
 			<s:text name="challan.cancelsuccess.message" />
 		</s:elseif>
 		</s:if>
@@ -111,5 +102,6 @@ function refreshInbox() {
 	</div>
 </s:push>
 </s:form>
+<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 </html>

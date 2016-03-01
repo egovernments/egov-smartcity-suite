@@ -41,43 +41,36 @@ package org.egov.tl.web.actions.search;
 
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.displaytag.pagination.PaginatedList;
-import org.displaytag.properties.SortOrderEnum;
-import org.displaytag.tags.TableTagParameters;
-import org.displaytag.util.ParamEncoder;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.web.utils.EgovPaginatedList;
-import org.egov.infstr.services.Page;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.objection.Notice;
+import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseUtils;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.LogicalExpression;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
@@ -88,266 +81,119 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Results({ @Result(name = NEW, location = "searchTrade-new.jsp") })
 public class SearchTradeAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
-    private PaginatedList pagedResults;
-    private int page;
-    private int reportSize;
     private final SearchForm searchForm = new SearchForm();
-    private LicenseUtils licenseUtils;
-    private final List<String> noticelist = new ArrayList<String>();
     private String roleName;
-    @Autowired
-    private SecurityUtils securityUtils; 
+    private String applicationNumber;
+    private String licenseNumber;
+    private String oldLicenseNumber;
+    private Long categoryId;
+    private Long subCategoryId;
+    private String tradeTitle;
+    private String tradeOwnerName;
+    private String propertyAssessmentNo;
+    private String mobileNo;
 
-    @Action(value="/search/searchTrade-newForm")
-    public String newForm() {
-        return BaseFormAction.NEW;
-    }
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    @Qualifier("licenseCategoryService")
+    protected LicenseCategoryService licenseCategoryService;
+
+    @Autowired
+    private TradeLicenseService tradeLicenseService;
 
     @Override
     public Object getModel() {
         return searchForm;
     }
 
-    public int getPage() {
-        return page;
-    }
-
-    public PaginatedList getPagedResults() {
-        return pagedResults;
-    }
-
-    public int getReportSize() {
-        return reportSize;
-    }
-
     @Override
     public void prepare() {
-        noticelist.add(Constants.DROPDOWN_PRENOTICE);
-        noticelist.add(Constants.DROPDOWN_SCNOTICE);
-        noticelist.add(Constants.DROPDOWN_SUSNOTICE);
-        noticelist.add(Constants.DROPDOWN_CANNOTICE);
         super.prepare();
-        addDropdownData(Constants.DROPDOWN_AREA_LIST_LICENSE, new ArrayList<Boundary>());
-        addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, new ArrayList<Boundary>());
-       // addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
-        addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, licenseUtils.getAllTradeNames("TradeLicense"));
-        addDropdownData(Constants.DROPDOWN_NOTICE_LIST, noticelist);
-        final Long userId = securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            setRoleName(licenseUtils.getRolesForUserId(userId));
+        addDropdownData("categoryList", licenseCategoryService.findAll());
+        addDropdownData("subCategoryList", Collections.emptyList());
+        setRoleName(securityUtils.getCurrentUser().getRoles().toString());
     }
 
-    @SkipValidation
-@Action(value="/search/searchTrade-search")
-    public String search() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        final Criteria criteria = createSearchQuery();
-        if (page == 0) {
-            criteria.setProjection(Projections.rowCount());
-            Object uniqueResult = criteria.uniqueResult();
-            if(uniqueResult!=null)
-            {
-            reportSize = ((Long)uniqueResult).intValue();
-            }else
-            {
-            	reportSize=0;
-            }
-        }
-        //criteria.addOrder(Order.desc("createdDate"));
-        final ParamEncoder paramEncoder = new ParamEncoder("license");
-        final boolean isReport = parameters.get(paramEncoder.encodeParameterName(TableTagParameters.PARAMETER_EXPORTTYPE)) != null;
-        final Page page = new Page(createSearchQuery(), isReport ? 1 : this.page, isReport ? null : 20);
-        pagedResults = new EgovPaginatedList(page, reportSize, "createdDate", SortOrderEnum.DESCENDING);
-        request.setAttribute("hasResult", !page.getList().isEmpty());
+    @Action(value = "/search/searchTrade-newForm")
+    public String newForm() {
         return BaseFormAction.NEW;
     }
 
-    private Criteria createSearchQuery() {
-        Criteria criteria;
-        if (searchForm != null && searchForm.getNoticeNumber().equals("") &&
-                searchForm.getDocNumber().equals("") && searchForm.getNoticeType().equals("-1")
-                && searchForm.getNoticeFromDate() == null && searchForm.getNoticeToDate() == null) {
-            criteria = getPersistenceService().getSession().createCriteria(TradeLicense.class);
-            if (StringUtils.isNotBlank(searchForm.getLicenseNumber()))
-                criteria.add(Restrictions.ilike("licenseNumber", "%" + searchForm.getLicenseNumber() + "%"));
-            else {
-                if (StringUtils.isNotBlank(searchForm.getApplNumber()))
-                    criteria.add(Restrictions.ilike("applicationNumber", "%" + searchForm.getApplNumber() + "%"));
-                if (StringUtils.isNotBlank(searchForm.getApplicantName())) {
-                    criteria.createAlias("licensee", "lsncy");
-                    criteria.add(Restrictions.ilike("lsncy.applicantName", "%" + searchForm.getApplicantName() + "%"));
-                }
-                if (searchForm.getApplicationFromDate() != null)
-                    criteria.add(Restrictions.ge("applicationDate", searchForm.getApplicationFromDate()));
-                if (searchForm.getApplicationToDate() != null)
-                    criteria.add(Restrictions.le("applicationDate", searchForm.getApplicationToDate()));
-                if (StringUtils.isNotBlank(searchForm.getEstablishmentName()))
-                    criteria.add(Restrictions.ilike("nameOfEstablishment", "%" + searchForm.getEstablishmentName() + "%"));
-                if (StringUtils.isNotBlank(searchForm.getOldLicenseNumber()))
-                    criteria.add(Restrictions.ilike("oldLicenseNumber", "%" + searchForm.getOldLicenseNumber() + "%"));
-                if (StringUtils.isNotBlank(searchForm.getTradeName()) && !searchForm.getTradeName().equals("-1")) {
-                    criteria.createAlias("tradeName", "trdname");
-                    criteria.add(Restrictions.eq("trdname.id", Long.valueOf(searchForm.getTradeName())));
-                }
-                if (searchForm.getLicenseFeeFrom() != null)
-                    criteria.add(Restrictions.ge("totalLicenseFee", searchForm.getLicenseFeeFrom()));
-                if (searchForm.getLicenseFeeTo() != null)
-                    criteria.add(Restrictions.le("totalLicenseFee", searchForm.getLicenseFeeTo()));
-                if (StringUtils.isNotBlank(searchForm.getZone()) && !searchForm.getZone().equals("-1")) {
-                    /* To solve hibernate query problem */
-                    criteria.createAlias("boundary", "bndry");
-                    criteria.createAlias("boundary.parent", "parentBndry");
-
-                    final Criterion ct1 = Restrictions.eq("parentBndry.id", Integer.valueOf(searchForm.getZone()));
-                    final Criterion ct2 = Restrictions.eq("bndry.id", Integer.valueOf(searchForm.getZone()));
-                    criteria.add(Restrictions.or(ct1, ct2));
-                    addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE,
-                            licenseUtils.getChildBoundaries(searchForm.getZone()));
-                }
-                if (StringUtils.isNotBlank(searchForm.getDivision()) && !searchForm.getDivision().equals("-1"))
-                    criteria.add(Restrictions.eq("bndry.id", Integer.valueOf(searchForm.getDivision())));
-                if (searchForm.isMotorInstalled())
-                    criteria.add(Restrictions.eq("motorInstalled", searchForm.isMotorInstalled()));
-                criteria.createAlias("status", "sts");
-                if (searchForm.isLicenseCancelled())
-                    criteria.add(Restrictions.eq("sts.statusCode", "CAN"));
-                else if (searchForm.isLicenseObjected())
-                    criteria.add(Restrictions.eq("sts.statusCode", "OBJ"));
-                else if (searchForm.isLicenseRejected())
-                    criteria.add(Restrictions.eq("sts.statusCode", "REJ"));
-                else if (searchForm.isLicenseexpired())
-                    criteria.add(Restrictions.eq("sts.statusCode", "EXP"));
-                else if (searchForm.isLicenseSuspended())
-                    criteria.add(Restrictions.eq("sts.statusCode", "SUS"));
-                else {
-                    final Criterion actstat = Restrictions.eq("sts.statusCode", "ACT");
-                    final Criterion ackstat = Restrictions.eq("sts.statusCode", "ACK");
-                    final Criterion uwfstat = Restrictions.eq("sts.statusCode", "UWF");
-                    final LogicalExpression orExp = Restrictions.or(actstat, ackstat);
-                    final LogicalExpression orExp2 = Restrictions.or(orExp, uwfstat);
-                    // criteria.add(orExp);
-                    criteria.add(orExp2);
-                }
-
-            }
-            
-            return criteria;
-        }
-        // Search for notices of license
-        else {
-            // this.getPersistenceService().setType(Notice.class);
-            criteria = getPersistenceService().getSession().createCriteria(Notice.class);
-            criteria.createAlias("objection", "object");
-            criteria.createAlias("object.license", "objl");
-            if (StringUtils.isNotBlank(searchForm.getLicenseNumber()))
-                criteria.add(Restrictions.ilike("objl.licenseNumber", "%" + searchForm.getLicenseNumber() + "%"));
-            if (StringUtils.isNotBlank(searchForm.getApplNumber()))
-                criteria.add(Restrictions.ilike("objl.applicationNumber", "%" + searchForm.getApplNumber() + "%"));
-            if (StringUtils.isNotBlank(searchForm.getApplicantName())) {
-                criteria.createAlias("objl.licensee", "lsncy");
-                criteria.add(Restrictions.ilike("lsncy.applicantName", "%" + searchForm.getApplicantName() + "%"));
-            }
-            if (searchForm.getApplicationFromDate() != null)
-                criteria.add(Restrictions.ge("objl.applicationDate", searchForm.getApplicationFromDate()));
-
-            if (searchForm.getApplicationToDate() != null)
-                criteria.add(Restrictions.le("objl.applicationDate", searchForm.getApplicationToDate()));
-
-            if (StringUtils.isNotBlank(searchForm.getEstablishmentName()))
-                criteria.add(Restrictions.ilike("objl.nameOfEstablishment", "%" + searchForm.getEstablishmentName() + "%"));
-
-            if (StringUtils.isNotBlank(searchForm.getOldLicenseNumber()))
-                criteria.add(Restrictions.ilike("objl.oldLicenseNumber", "%" + searchForm.getOldLicenseNumber() + "%"));
-            if (StringUtils.isNotBlank(searchForm.getTradeName()) && !searchForm.getTradeName().equals("-1")) {
-                criteria.createAlias("objl.tradeName", "trdname");
-                criteria.add(Restrictions.eq("trdname.id", Long.valueOf(searchForm.getTradeName())));
-            }
-
-            if (searchForm.getLicenseFeeFrom() != null)
-                criteria.add(Restrictions.ge("objl.totalLicenseFee", searchForm.getLicenseFeeFrom()));
-            if (searchForm.getLicenseFeeTo() != null)
-                criteria.add(Restrictions.le("objl.totalLicenseFee", searchForm.getLicenseFeeTo()));
-            if (StringUtils.isNotBlank(searchForm.getZone()) && !searchForm.getZone().equals("-1")) {
-                /* To solve hibernate query problem */
-                criteria.createAlias("objl.boundary", "bndry");
-                criteria.createAlias("objl.boundary.parent", "parentBndry");
-
-                criteria.add(Restrictions.eq("parentBndry.id", Integer.valueOf(searchForm.getZone())));
-                addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, licenseUtils.getChildBoundaries(searchForm.getZone()));
-            }
-            if (StringUtils.isNotBlank(searchForm.getDivision()) && !searchForm.getDivision().equals("-1"))
-                criteria.add(Restrictions.eq("bndry.id", Integer.valueOf(searchForm.getDivision())));
-            if (searchForm.isMotorInstalled())
-                criteria.add(Restrictions.eq("objl.motorInstalled", searchForm.isMotorInstalled()));
-
-            if (StringUtils.isNotBlank(searchForm.getNoticeNumber()))
-                criteria.add(Restrictions.ilike("noticeNumber", "%" + searchForm.getNoticeNumber() + "%"));
-            if (StringUtils.isNotBlank(searchForm.getDocNumber()))
-                criteria.add(Restrictions.ilike("docNumber", "%" + searchForm.getDocNumber() + "%"));
-            if (StringUtils.isNotBlank(searchForm.getNoticeType()) && !searchForm.getNoticeType().equals("-1"))
-                criteria.add(Restrictions.ilike("noticeType", "%" + searchForm.getNoticeType() + "%"));
-            if (searchForm.getNoticeFromDate() != null)
-                criteria.add(Restrictions.ge("noticeDate", searchForm.getNoticeFromDate()));
-            if (searchForm.getNoticeToDate() != null)
-                criteria.add(Restrictions.le("noticeDate", searchForm.getNoticeToDate()));
-
-            criteria.createAlias("object.license.status", "sts");
-            if (searchForm.isLicenseCancelled())
-                criteria.add(Restrictions.eq("sts.statusCode", "CAN"));
-            else if (searchForm.isLicenseObjected())
-                criteria.add(Restrictions.eq("sts.statusCode", "OBJ"));
-            else if (searchForm.isLicenseRejected())
-                criteria.add(Restrictions.eq("sts.statusCode", "REJ"));
-            else if (searchForm.isLicenseexpired())
-                criteria.add(Restrictions.eq("sts.statusCode", "EXP"));
-            else if (searchForm.isLicenseSuspended())
-                criteria.add(Restrictions.eq("sts.statusCode", "SUS"));
-            else {
-                final Criterion actstat = Restrictions.eq("sts.statusCode", "ACT");
-                final Criterion ackstat = Restrictions.eq("sts.statusCode", "ACK");
-                final Criterion uwfstat = Restrictions.eq("sts.statusCode", "UWF");
-                final Criterion objstat = Restrictions.eq("sts.statusCode", "OBJ");
-                final Criterion rejstat = Restrictions.eq("sts.statusCode", "REJ");
-                final Criterion expstat = Restrictions.eq("sts.statusCode", "EXP");
-                final Criterion susstat = Restrictions.eq("sts.statusCode", "SUS");
-                final LogicalExpression orExp = Restrictions.or(actstat, ackstat);
-                final LogicalExpression orExp2 = Restrictions.or(orExp, uwfstat);
-                final LogicalExpression orExp3 = Restrictions.or(orExp2, objstat);
-                final LogicalExpression orExp4 = Restrictions.or(orExp3, rejstat);
-                final LogicalExpression orExp5 = Restrictions.or(orExp4, expstat);
-                final LogicalExpression orExp6 = Restrictions.or(orExp5, susstat);
-                // criteria.add(orExp);
-                criteria.add(orExp6);
-            }
-            return criteria;
-        }
-
+    @SuppressWarnings("unchecked")
+    @Action(value = "/search/searchTrade-search")
+    public void search() throws IOException {
+        List<SearchForm> resultList = new ArrayList<SearchForm>();
+        String result = null;
+        List<TradeLicense> licenses = tradeLicenseService
+                .searchTradeLicense(applicationNumber, licenseNumber, oldLicenseNumber, categoryId, subCategoryId,
+                        tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo);
+        resultList = prepareOutput(licenses);
+        // for converting resultList to JSON objects.
+        // Write back the JSON Response.
+        result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
+        final HttpServletResponse response = ServletActionContext.getResponse();
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(result, response.getWriter());
     }
 
-    @SkipValidation
-@Action(value="/search/searchTrade-searchPortal")
-    public String searchPortal() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        final Criteria criteria = createSearchQueryPortal();
-        if (page == 0) {
-            criteria.setProjection(Projections.rowCount());
-            reportSize = (Integer) criteria.uniqueResult();
-        }
-
-        final ParamEncoder paramEncoder = new ParamEncoder("license");
-        final boolean isReport = parameters.get(paramEncoder.encodeParameterName(TableTagParameters.PARAMETER_EXPORTTYPE)) != null;
-        final Page page = new Page(createSearchQueryPortal(), isReport ? 1 : this.page, isReport ? null : 20);
-        pagedResults = new EgovPaginatedList(page, reportSize, null, null);
-        request.setAttribute("hasResult", !page.getList().isEmpty());
-        return "portal";
+    /**
+     * @param object
+     * @return
+     */
+    private Object toJSON(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(SearchForm.class,
+                new SearchTradeResultHelperAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
     }
 
-    private Criteria createSearchQueryPortal() {
-        final Criteria criteria = getPersistenceService().getSession().createCriteria(TradeLicense.class);
-        criteria.add(Restrictions.isNull("licenseNumber"));
-        criteria.add(Restrictions.isNull("state"));
-        criteria.addOrder(Order.desc("createdDate"));
-        return criteria;
+    /**
+     * @param licenseList
+     * @return
+     */
+    private List<SearchForm> prepareOutput(final List<? extends License> licenseList) {
+        final List<SearchForm> finalList = new LinkedList<SearchForm>();
+        SearchForm searchFormInfo;
+        List<String> licenseActions;
+        for (final License license : licenseList) {
+            searchFormInfo = new SearchForm();
+            searchFormInfo.setLicenseId(license.getId());
+            searchFormInfo.setApplicationNumber(license.getApplicationNumber());
+            searchFormInfo.setLicenseNumber(license.getLicenseNumber());
+            searchFormInfo.setOldLicenseNumber(license.getOldLicenseNumber());
+            searchFormInfo.setCategoryName(license.getCategory().getName());
+            searchFormInfo.setSubCategoryName(license.getTradeName().getName());
+            searchFormInfo.setTradeTitle(license.getNameOfEstablishment());
+            searchFormInfo.setTradeOwnerName(license.getLicensee().getApplicantName());
+            searchFormInfo.setPropertyAssessmentNo(license.getPropertyNo());
+            searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
+            licenseActions = new ArrayList<String>();
+            licenseActions.add("View Trade");
+            //FIXME EgwStatus usage should be removed from here
+            if (license.getEgwStatus() != null) {
+                if ((roleName.contains(Constants.ROLE_BILLCOLLECTOR)) && !license.isPaid() && !license.isStateRejected()
+                         && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+                    licenseActions.add("Collect Fees");
+                else if ( license.getStatus() != null
+                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE) && !(roleName.contains(Constants.ROLE_BILLCOLLECTOR)))
+                    licenseActions.add("Print Certificate");
+            } else if (license.isLegacy() && !license.isPaid())
+                licenseActions.add("Modify Legacy License");
+            if (roleName.contains(Constants.TL_CREATOR_ROLENAME) || roleName.contains(Constants.TL_APPROVER_ROLENAME))
+                if (!license.isPaid() && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
+                        && license.getStatus() != null
+                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE))
+                    licenseActions.add("Renew License");
+            if (roleName.contains(Constants.TL_APPROVER_ROLENAME))
+                if (license.getDateOfExpiry() != null && checkForRenewalNotice(license.getDateOfExpiry()))
+                    licenseActions.add("Renewal Notice");
+            searchFormInfo.setActions(licenseActions);
+            finalList.add(searchFormInfo);
+        }
+        return finalList;
     }
 
     @Override
@@ -369,58 +215,83 @@ public class SearchTradeAction extends BaseFormAction {
         return readyForRenewal;
     }
 
-    // need to fix for Repeating
-    public boolean isRenewable(final Long licenseId)
-    {
-        final License license = (License) persistenceService.find("from License where id=?", licenseId);
-        boolean isRenewable = false;
-        final String dateDiffToExpiryDate = license.getDateDiffToExpiryDate(new Date());
-        if (dateDiffToExpiryDate != null)
-        {
-            boolean isExpired;
-            final String[] split = dateDiffToExpiryDate.split("/");
-            isExpired = split[0].equalsIgnoreCase("false") ? false : true;
-            final int noOfMonths = Integer.parseInt(split[1]);
-
-            if (isExpired == false && noOfMonths >= -1 && noOfMonths <= 1)
-                isRenewable = true;
-            else if (isExpired == true && noOfMonths <= 6)
-                isRenewable = true;
-            else
-                isRenewable = false;
-        }
-        return isRenewable;
-    }
-
-    public boolean isNocApplicable(final Long licenseId)
-    {
-        final License license = (License) persistenceService.find("from License where id=?", licenseId);
-        boolean isNocApplicable = false;
-        isNocApplicable = license.getTradeName().isNocApplicable();
-        return isNocApplicable;
-    }
-
-    public void setLicenseUtils(final LicenseUtils licenseUtils) {
-        this.licenseUtils = licenseUtils;
-    }
-
-    public void setPage(final int page) {
-        this.page = page;
-    }
-
-    public void setPagedResults(final PaginatedList pagedResults) {
-        this.pagedResults = pagedResults;
-    }
-
-    public void setReportSize(final int reportSize) {
-        this.reportSize = reportSize;
-    }
-
     public String getRoleName() {
         return roleName;
     }
 
     public void setRoleName(final String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(final String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(final String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+
+    public String getOldLicenseNumber() {
+        return oldLicenseNumber;
+    }
+
+    public void setOldLicenseNumber(final String oldLicenseNumber) {
+        this.oldLicenseNumber = oldLicenseNumber;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(final Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(final Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    public String getTradeTitle() {
+        return tradeTitle;
+    }
+
+    public void setTradeTitle(final String tradeTitle) {
+        this.tradeTitle = tradeTitle;
+    }
+
+    public String getTradeOwnerName() {
+        return tradeOwnerName;
+    }
+
+    public void setTradeOwnerName(final String tradeOwnerName) {
+        this.tradeOwnerName = tradeOwnerName;
+    }
+
+    public String getPropertyAssessmentNo() {
+        return propertyAssessmentNo;
+    }
+
+    public void setPropertyAssessmentNo(final String propertyAssessmentNo) {
+        this.propertyAssessmentNo = propertyAssessmentNo;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(final String mobileNo) {
+        this.mobileNo = mobileNo;
     }
 }

@@ -57,9 +57,14 @@
 	
 	<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 	<link href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
+	<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	rel="stylesheet" type="text/css" />
 		
 	<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
 	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	
+<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
 	<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/ajax-script.js?${app_release_no}"></script>
 	
@@ -80,9 +85,9 @@
 	<script type="text/javascript" src="<c:url value='/resources/js/helper.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/collections.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/calender.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
+<%-- 	<script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.22.custom.css' context='/egi'/>" />
-    
+     --%>
     <decorator:head/>
     </head>
     
@@ -157,6 +162,11 @@
                     if ((e.which || e.keyCode) == 82)
                             e.preventDefault();
     	};
+
+    	jQuery(document).ready(function(){
+    		jQuery( ".datepicker" ).datepicker({ autoclose:true, dateFormat: 'dd/mm/yy' }).val();
+        });
+    	
     	jQuery(document).on("keydown", disableRefresh);
 
     	window.location.hash = "no-back-button";

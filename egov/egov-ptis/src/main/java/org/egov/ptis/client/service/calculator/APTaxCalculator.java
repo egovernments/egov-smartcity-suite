@@ -371,9 +371,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
             final Long usageId, final Date occupancyDate, final Long classification) throws TaxCalculatorExeption {
         List<BoundaryCategory> categories = new ArrayList<BoundaryCategory>();
-
         categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(), usageId,
-                classification, occupancyDate, installment.getToDate());
+                    classification, occupancyDate,  installment.getToDate());
 
         LOGGER.debug("baseRentOfUnit - Installment : " + installment);
         

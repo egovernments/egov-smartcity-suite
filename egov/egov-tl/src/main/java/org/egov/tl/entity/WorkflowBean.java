@@ -47,6 +47,7 @@ import org.egov.pims.commons.Designation;
 
 public class WorkflowBean {
     private String actionName;
+    private String additionaRule;
     private String actionState;
     private List<User> appoverUserList;
     private Long approverUserId;
@@ -171,5 +172,14 @@ public class WorkflowBean {
         str.append("}");
         return str.toString();
     }
+
+    public String getAdditionaRule() {
+        return additionaRule;
+    }
+
+    public void setAdditionaRule(String additionaRule) {
+        this.additionaRule = additionaRule;
+    }
+    
 
 }

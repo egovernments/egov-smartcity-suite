@@ -40,10 +40,6 @@
 
 <%@ include file="/includes/taglibs.jsp" %>
 <head>
- 	 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-	 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-  	 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  	 <link rel="stylesheet" href="/resources/demos/style.css" />
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#bankcodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
@@ -62,19 +58,34 @@ jQuery(document).ready(function() {
     	 doLoadingMask();
     });
      doLoadingMask();
+
+
+     jQuery("#instrumentDate").datepicker({ 
+     	 format: 'dd/mm/yyyy',
+     	 autoclose:true,
+         onRender: function(date) {
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+      }).on('changeDate', function(ev) {
+     	  var string=jQuery(this).val();
+     	  if(!(string.indexOf("_") > -1)){
+     		  isDatepickerOpened=false; 
+           	  checkForCurrentDate(this);
+     	  }
+     	  
+      }).data('datepicker');
+      
  });
+
+
 
 jQuery(window).load(function () {
 	undoLoadingMask();
 });
 
-$(function() {
-	 	      $( "#instrumentDate" ).datepicker({ dateFormat: 'dd/mm/yy' }).val();
-	  });
-
 function getReceipt()
 {
-    document.challanReceiptForm.action="challan!createReceipt.action";
+    document.challanReceiptForm.action="challan-createReceipt.action";
 	document.challanReceiptForm.submit();
 }
 
@@ -111,16 +122,16 @@ function showInstrumentDetails(obj){
 }
 
 function clearCashDetails(){
-	dom.get('instrHeaderCash.instrumentAmount').value="0.0";
+	dom.get('instrHeaderCash.instrumentAmount').value="";
 	
-	dom.get("totalamountdisplay").value="0.0";
+	dom.get("totalamountdisplay").value="";
 }
 
 function clearChequeDDDetails(){
 	var table=document.getElementById('chequegrid');
 	var len=table.rows.length;
 	
-	dom.get("totalamountdisplay").value="0.0";
+	dom.get("totalamountdisplay").value="";
 	
 	for(var j=0;j<len;j++)
 	{
@@ -155,12 +166,11 @@ function clearChequeDDDetails(){
 	    //clear date
 	    if(getControlInBranch(table.rows[j],'instrumentDate')!=null){
 	    	getControlInBranch(table.rows[j],'instrumentDate').value="";
-	    	waterMarkInitialize('instrumentDate','DD/MM/YYYY');
 	    }
 
 	    //clear instrument amount
 	    if(getControlInBranch(table.rows[j],'instrumentChequeAmount')!=null){
-	    	getControlInBranch(table.rows[j],'instrumentChequeAmount').value="0.0";
+	    	getControlInBranch(table.rows[j],'instrumentChequeAmount').value="";
 	    }
 	    
 	    //clear branch name 
@@ -176,11 +186,11 @@ function clearChequeDDDetails(){
 }
 
 function clearCardDetails(){
-	dom.get('instrHeaderCard.instrumentAmount').value="0.0";
+	dom.get('instrHeaderCard.instrumentAmount').value="";
 	dom.get('instrHeaderCard.transactionNumber').value="";
 	dom.get('instrHeaderCard.instrumentNumber').value="";
 	
-	dom.get("totalamountdisplay").value="0.0";
+	dom.get("totalamountdisplay").value="";
 }
 <jsp:useBean id="now" class="java.util.Date" />
 
@@ -212,10 +222,9 @@ function addChequeGrid(tableId,trId1,trId2,trId3,trId4,obj,trId5)
 		document.forms[0].instrumentCount.value=count;
 		document.forms[0].instrumentChequeNumber[0].value="";
 		document.forms[0].instrumentDate[0].value="";
-		waterMarkInitialize('instrumentDate','DD/MM/YYYY');
 		document.forms[0].instrumentBranchName[0].value="";
 		document.forms[0].bankName[0].value="";
-		document.forms[0].instrumentChequeAmount[0].value="0.0";
+		document.forms[0].instrumentChequeAmount[0].value="";
 		document.forms[0].bankID[0].value="-1";
 		document.forms[0].bankID[0].name="instrumentProxyList["+count+"].bankId.id";
 		document.forms[0].bankName[0].name="instrumentProxyList["+count+"].bankId.name";
@@ -469,7 +478,7 @@ function checkForCurrentDate(obj)
 {
    if(validateDateFormat(obj))
    {
-	   trim(obj,obj.value);
+	   //trim(obj,obj.value);
 	   dom.get("challan_dateerror_area").style.display="none";
 	   document.getElementById("challan_dateerror_area").innerHTML="";
 	   var currDate = "${currDate}";
@@ -502,18 +511,15 @@ function onBodyLoad()
 			getControlInBranch(chequetable.rows[4],'deletechequerow').style.display="none";
 		
 		if(document.getElementById('instrHeaderCash.instrumentAmount').value==""){
-			document.getElementById('instrHeaderCash.instrumentAmount').value="0.0";
+			document.getElementById('instrHeaderCash.instrumentAmount').value="";
 		}
 		if(document.getElementById('instrHeaderCard.instrumentAmount').value==""){
-			document.getElementById('instrHeaderCard.instrumentAmount').value="0.0";
+			document.getElementById('instrHeaderCard.instrumentAmount').value="";
 		}
 		if(document.getElementById('instrumentChequeAmount').value==""){
-			document.getElementById('instrumentChequeAmount').value="0.0";
+			document.getElementById('instrumentChequeAmount').value="";
 		}
 		
-		if(document.getElementById('instrumentDate').value==""){
-			waterMarkInitialize('instrumentDate','DD/MM/YYYY');
-		}
 		displayPaytModes();
 		displayPaymentDetails();
 		loadchequedetails();
@@ -525,7 +531,7 @@ function onBodyLoad()
 
 function displayPaymentDetails(){
 
-	if(dom.get("instrHeaderCard.instrumentAmount")!=null && dom.get("instrHeaderCard.instrumentAmount").value!="0.0"){
+	if(dom.get("instrHeaderCard.instrumentAmount")!=null && dom.get("instrHeaderCard.instrumentAmount").value!=""){
 		document.getElementById('cardradiobutton').checked=true;
 		document.getElementById('carddetails').style.display='block';
        		document.getElementById('instrumentTypeCashOrCard').value="card";
@@ -536,7 +542,7 @@ function displayPaymentDetails(){
 	for(var m=0;m<chequetablelen1;m++)
 	{
 		var chequeAmt=getControlInBranch(chequetable.rows[m],'instrumentChequeAmount');
-		if(chequeAmt!=null && chequeAmt.value!="0.0")
+		if(chequeAmt!=null && chequeAmt.value!="")
 		{
 			document.getElementById('chequeradiobutton').checked=true;
 			document.getElementById('chequeDDdetails').style.display='block';
@@ -593,7 +599,7 @@ function loadchequegrid(tableId,trId1,trId2,trId3,trId4,trId5){
 		if(chequeNo!=null&&chequeNo.value!=""){
 			chqNumberArray=chequeNo.value.split(',');
 		}
-		if(chequeAmt!=null&&chequeAmt.value!="0.0"){
+		if(chequeAmt!=null&&chequeAmt.value!=""){
 			chqAmtArray=chequeAmt.value.split(',');
 		}
 		if(chequeDate!=null&&chequeDate.value!="DD/MM/YYYY"){
@@ -694,7 +700,9 @@ function checkreset()
 	clearCardDetails();
 	clearChequeDDDetails();
 	displayPaytModes();
-	document.getElementById('paidBy').value='<s:property value="%{modelPayeeList[0].payeename}"/>';
+	var paidby =  '<s:property value="%{payeeName}" escapeJavaScript="true"/>';
+	paidby = paidby.replace('&amp;','&');
+	document.getElementById('paidBy').value=paidby;
 	<s:if test="%{isBillSourcemisc()}"> 
 		//To load the account codes if only a misc receipt request
 		if(resetMisc){
@@ -746,7 +754,7 @@ var bankfuncObj;
 var bankArray;
 function loadDropDownCodesBank()
 {
-	var url = "${pageContext.request.contextPath}"+"/commons/Process.jsp?type=getAllBankName";
+	var url = "/EGF/commons/Process.jsp?type=getAllBankName";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -774,7 +782,7 @@ function autocompletecodeBank(obj,myEvent)
 	var target = document.getElementById('bankcodescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0];	
-	target.style.top=posSrc[1]+22;
+	target.style.top=posSrc[1]-35;
 	target.style.width=450;	
 		
 	var coaCodeObj=obj;
@@ -922,12 +930,12 @@ function validate()
 	if(validation==true){
   //  Validating instrument date for cash payment
 		var instrDate = document.getElementById('instrumentDate').value;
-    	if(instrDate==null || instrDate=="" || instrDate=="DD/MM/YYYY"){
+    	if(instrDate==null || instrDate==""){
     		document.getElementById('instrumentDate').value="";
     	}
 
     	doLoadingMask('#loadingMask');
-		document.challanReceiptForm.action="challan!saveOrupdate.action";
+		document.challanReceiptForm.action="challan-saveOrupdate.action";
 		document.challanReceiptForm.submit();
 	}
 	return validation;
@@ -939,6 +947,7 @@ function validate()
 <title><s:text name="challan.pagetitle"/>
 </title>
 </head>
+<body onload="onBodyLoad();">
 
 <div class="errorstyle" id="challan_error_area" style="display:none;"></div>
 
@@ -957,7 +966,6 @@ function validate()
   </li>
 </span>
 
-<body onLoad="onBodyLoad();">
 <s:if test="%{hasErrors()}">
     <div id="actionErrors" class="errorstyle">
       <s:actionerror/>
@@ -970,7 +978,7 @@ function validate()
     </div>
 </s:if>
 
-<s:form theme="simple" name="challanReceiptForm" action="challan!createReceipt.action">
+<s:form theme="simple" name="challanReceiptForm">
 <s:token/>
 <s:push value="model">
 
@@ -979,26 +987,23 @@ function validate()
 <s:hidden label="chequeDDAllowed" id="chequeDDAllowed" value="%{chequeDDAllowed}" name="chequeDDAllowed"/>
 <s:hidden id="receiptId" name="receiptId" value='%{model.id}'/>
 
+<div class="subheadnew"><s:text name="challan.title.createReceipt"/></div>
 
 <div class="formmainbox">
 
-<div class="subheadnew"><s:text name="challan.title.createReceipt"/></div>
 
 <s:if test="%{sourcePage!='cancelReceipt'}" >
 	<div class="subheadsmallnew"><span class="subheadnew"><s:text name="challan.title.findChallan"/></span></div>
 	<div class="boxnew">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 			<tr>
-			    <td width="40%" class="bluebox" style="text-align:right;"><s:text name="challan.challanNumber"/></td>
-			    <td width="55%" class="bluebox"><s:textfield name="challanNumber" id="challanNumber" value="%{challanNumber}"  onblur="getReceipt();" /></td>
+			    <td class="bluebox" style="text-align:center;"><s:text name="challan.challanNumber"/> &nbsp;&nbsp; <s:textfield name="challanNumber" id="challanNumber" value="%{challanNumber}"  onblur="getReceipt();" /></td>
 		    </tr>
 			<tr>
-				<td class="bluebox">&nbsp;</td>
-				<td class="bluebox" style="padding-left:50px;"><b>OR</b></td>
+				<td class="bluebox" style="text-align:center;"><b>OR</b></td>
 			</tr>
 			<tr>
-			    <td class="bluebox">&nbsp;</td>
-				<td class="bluebox"><input name="button32" type="button" class="button" id="searchChallan" value="Search " onclick="searchReceipt()"/></td>
+				<td class="bluebox" style="text-align:center;"><input name="button32" type="button" class="button" id="searchChallan" value="Search" onclick="searchReceipt()"/></td>
 			</tr>
 		</table>
 	 	<div class="highlight2"><s:text name="challan.findchallan.message" /></div>
@@ -1052,21 +1057,21 @@ function validate()
     
      	<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
 	      <tr>
-	        <td class="greyboxwithlink" width="20%" ><s:text name="billreceipt.payment.mode"/>:<span class="mandatory">*</span></td>
+	        <td class="blueboxnew" width="18%" ><s:text name="billreceipt.payment.mode"/>:<span class="mandatory1">*</span></td>
 	        <div class="errorstyle" id="challan_dateerror_area" style="display:none;"></div>
-	        <td class="greyboxwithlink" width="84%" >
+	        <td class="blueboxnew" width="84%" >
         		<table width="100%" border="0" cellspacing="0" cellpadding="0">
             		<tr>
               		<td >
               		<span style="float:left;" id="cashradiobuttonspan">
-					<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cashradiobutton"  name="paytradiobutton"/>Cash
-					<s:hidden name="instrumentTypeCashOrCard" id="instrumentTypeCashOrCard" value="cash" />
-					</span>
+						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cashradiobutton"  name="paytradiobutton"/> Cash&nbsp;&nbsp;
+						<s:hidden name="instrumentTypeCashOrCard" id="instrumentTypeCashOrCard" value="cash" />
+					</span> 
 					<span style="float:left;"  id="chequeradiobuttonspan">
-					<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="chequeradiobutton" name="paytradiobutton"/>Cheque/DD
+					<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="chequeradiobutton" name="paytradiobutton"/>Cheque/DD&nbsp;&nbsp;
 					</span>
 					<span style="float:left;" id="cardradiobuttonspan">
-					<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cardradiobutton" name="paytradiobutton"/>Credit  card
+					<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cardradiobutton" name="paytradiobutton"/>Credit  card&nbsp;&nbsp;
                 	</span>
                 	</td>
             		</tr>
@@ -1078,8 +1083,8 @@ function validate()
       <table border="0" width="100%" align="center" cellspacing="0" cellpadding="0">
 		<!--for cash-->
 			<tr id="cashdetails" >
-			    <td width="1%" class="blueboxnew"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory">*</span></td>
-			    <td class="blueboxnew" width="6%"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" onblur="setCashInstrumentDetails(this);"/></td>
+			    <td width="1%" class="blueboxnew"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
+			    <td class="bluebox" width="6%"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" placeholder="0.0" cssClass="amount" onblur="setCashInstrumentDetails(this);"/></td>
 		     </tr>
 		<!--for cash-->
 		
@@ -1103,14 +1108,14 @@ function validate()
 					</tr>
 					<!-- This row captures the cheque/DD No and the cheque/DD date -->
 					<tr id="chequedetailsrow"> 
-					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory">*</span></td>
+					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
-					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory">*</span></td>
-					    <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onblur="checkForCurrentDate(this);"  onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
+					    <td class="bluebox2"><input type ="text" id="instrumentDate" data-inputmask="'mask': 'd/m/y'" name="instrumentProxyList[0].instrumentDate"  onblur="checkForCurrentDate(this);"  onfocus = "checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
-				       	<td class="blueboxnew"><s:text name="billreceipt.payment.bankname"/><span class="mandatory">*</span></td>
+				       	<td class="blueboxnew"><s:text name="billreceipt.payment.bankname"/><span class="mandatory1">*</span></td>
 				       	<td class="bluebox">
 					   			<s:textfield id="bankName" type="text" name="instrumentProxyList[0].bankId.name"  onkeyup='autocompletecodeBank(this,event)' onblur='fillAfterSplitBank(this)' />
 					   			<s:hidden id="bankID" name="instrumentProxyList[0].bankId.id" />
@@ -1121,8 +1126,8 @@ function validate()
 		       		</tr>
 		       		<!-- This row captures the cheque/DD Amount -->
 		       		<tr id="chequeamountrow">
-						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory">*</span></td>
-						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" onblur="setChequeInstrumentDetails(this);"/></td>
+						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
+						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  placeholder="0.0" size="18"  cssClass="amount" onblur="setChequeInstrumentDetails(this);"/></td>
 						<td class="bluebox2">&nbsp;</td>
 						<td class="bluebox2">&nbsp;</td>
 					</tr>
@@ -1131,12 +1136,12 @@ function validate()
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="<egov:url path='/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="<egov:url id="deletechequeimg" path='/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="../../egi/images/delete.png" id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -1145,34 +1150,34 @@ function validate()
 					  <s:iterator value="(instrumentProxyList.size).{#this}" status="instrstatus">
 					<tr id="chequetyperow">
 			   			<td class="blueboxcheckbox" width="19%">
-			   				<INPUT TYPE="CHECKBOX" NAME="cheque" onclick="setinstrumenttypevalue(this);" value="cheque" id="instrumenttypecheque">Cheque
-			   				<INPUT TYPE="CHECKBOX" NAME="dd" onclick="setinstrumenttypevalue(this);" value="dd" id="instrumenttypedd">DD<BR>
+			   				<INPUT TYPE="CHECKBOX" NAME="cheque" onclick="setinstrumenttypevalue(this);" value="cheque" id="instrumenttypecheque">Cheque &nbsp;&nbsp;
+			   				<INPUT TYPE="CHECKBOX" NAME="dd" onclick="setinstrumenttypevalue(this);" value="dd" id="instrumenttypedd">DD &nbsp;&nbsp;<BR>
 			   				<s:hidden label="instrumentType" id="instrumentType" name="instrumentProxyList[%{#instrstatus.index}].instrumentType.type"/>
 			   			</td>
 			       		<td class="bluebox" colspan="3">&nbsp;</td>
 					</tr>
 					<!-- This row captures the cheque/DD No and the cheque/DD date -->
 					<tr id="chequedetailsrow"> 
-					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory">*</span></td>
+					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[%{#instrstatus.index}].instrumentNumber" size="18" /></td>
-					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory">*</span></td>
-					    <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[%{#instrstatus.index}].instrumentDate" onblur="checkForCurrentDate(this);"  onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox2new" width="18%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
+					    <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[%{#instrstatus.index}].instrumentDate" data-inputmask="'mask': 'd/m/y'" onblur="checkForCurrentDate(this);"  onfocus = "checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
-				       	<td class="blueboxnew"><s:text name="billreceipt.payment.bankname"/><span class="mandatory">*</span></td>
+				       	<td class="blueboxnew"><s:text name="billreceipt.payment.bankname"/><span class="mandatory1">*</span></td>
 				       	<td class="bluebox">
 					   			<s:textfield id="bankName" type="text" name="instrumentProxyList[%{#instrstatus.index}].bankId.name"  onkeyup='autocompletecodeBank(this,event)' onblur='fillAfterSplitBank(this)' />
 					   			<s:hidden id="bankID" name="instrumentProxyList[%{#instrstatus.index}].bankId.id" />
 		   						<div id="bankcodescontainer"></div>
 		       			</td>
-		       			<td class="bluebox"><s:text name="billreceipt.payment.branchname"/></td>
+		       			<td class="bluebox2new" width="18%"><s:text name="billreceipt.payment.branchname"/></td>
 		       			<td class="bluebox"><s:textfield label="instrumentBranchName" id="instrumentBranchName" maxlength="50" name="instrumentProxyList[%{#instrstatus.index}].bankBranchName" size="18" /></td>
 		       		</tr>
 		       		<!-- This row captures the cheque/DD Amount -->
 		       		<tr id="chequeamountrow">
-						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory">*</span></td>
-						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" onblur="setChequeInstrumentDetails(this);"/></td>
+						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
+						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18" placeholder="0.0" cssClass="amount" onblur="setChequeInstrumentDetails(this);"/></td>
 						<td class="bluebox2">&nbsp;</td>
 						<td class="bluebox2">&nbsp;</td>
 					</tr>
@@ -1181,12 +1186,12 @@ function validate()
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="<egov:url path='/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/images/add.png"  id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="<egov:url id="deletechequeimg" path='/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+									<img src="../../egi/images/delete.png"  id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -1205,12 +1210,12 @@ function validate()
 		        <td class="bluebox2cheque" width="11%">
 		        	<table width="100%" border="0" cellspacing="0" cellpadding="0" name="cardgrid" id="cardgrid">
 				  		<tr id="carddetailsrow">
-				            <td width="18%" class="blueboxnew"><s:text name="billreceipt.payment.cardno"/><span class="mandatory">*</span></td>
+				            <td width="18%" class="blueboxnew"><s:text name="billreceipt.payment.cardno"/><span class="mandatory1">*</span></td>
 				            <td class="blueboxnew"><s:textfield label="instrHeaderCard.instrumentNumber" id="instrHeaderCard.instrumentNumber" maxlength="4" name="instrHeaderCard.instrumentNumber" value="%{instrHeaderCard.instrumentNumber}" size="18" /></td>
-					        <td class="blueboxnew"><s:text name="billreceipt.payment.transactionnumber"/><span class="mandatory">*</span></td>
+					        <td class="blueboxnew"><s:text name="billreceipt.payment.transactionnumber"/><span class="mandatory1">*</span></td>
 							<td class="blueboxnew"><s:textfield label="instrHeaderCard.transactionNumber" id="instrHeaderCard.transactionNumber" maxlength="14" name="instrHeaderCard.transactionNumber" size="18" value="%{instrHeaderCard.transactionNumber}"/></td>
-							<td class="blueboxnew"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory">*</span></td>
-				           <td class="blueboxnew"><s:textfield label="instrHeaderCard.instrumentAmount" id="instrHeaderCard.instrumentAmount" maxlength="14" name="instrHeaderCard.instrumentAmount" size="18"  cssClass="amount" onblur="setCardInstrumentDetails(this);"/></td>
+							<td class="blueboxnew"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
+				           <td class="blueboxnew"><s:textfield label="instrHeaderCard.instrumentAmount" id="instrHeaderCard.instrumentAmount" maxlength="14" name="instrHeaderCard.instrumentAmount" size="18"   placeholder="0.0" cssClass="amount" onblur="setCardInstrumentDetails(this);"/></td>
 				        </tr>
 		            </table> <!-- End of table 'cardgrid' -->
 		        </td>
@@ -1223,10 +1228,10 @@ function validate()
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
 <!-- </div> --> <!--  supposed to end of div tag for formmainbox -->
 
- <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="${pageContext.request.contextPath}/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+ <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
   	 
 <div class="buttonbottom" align="center">
-      <label><input align="center" type="button"  class="buttonsubmit" id="button2" value="Create"  onclick="return validate();"/></label>
+      <label><input align="center" type="button"  class="buttonsubmit" id="button2" value="Pay"  onclick="return validate();"/></label>
       &nbsp;
    <!--     <s:submit type="submit" cssClass="buttonsubmit" id="button" value="Reset" method="resetChallanReceipt" /> -->
       <input name="button" type="button" class="button" id="button" value="Reset" onclick="checkreset();"/> 
@@ -1244,7 +1249,10 @@ var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of swit
 bobexample.collapsePrevious(true) //Only one content open at any given time
 bobexample.init()
 </script>
-
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script>
+jQuery(":input").inputmask();
+</script>
 </s:push>
 </s:form>
 </body>

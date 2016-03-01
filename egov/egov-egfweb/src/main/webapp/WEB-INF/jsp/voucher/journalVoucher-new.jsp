@@ -56,8 +56,6 @@
 	content="text/html; charset=windows-1252">
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
-<script type="text/javascript"
-	src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <title>Journal voucher Create</title>
 </head>
 
@@ -66,15 +64,6 @@
 
 	<s:form action="journalVoucher" theme="simple" name="jvcreateform">
 		<s:token />
-		<div id="loading"
-			style="position: absolute; left: 25%; top: 70%; padding: 2px; z-index: 20001; height: auto; width: 500px; display: none;">
-			<div class="loading-indicator"
-				style="background: white; color: #444; font: bold 13px tohoma, arial, helvetica; padding: 10px; margin: 0; height: auto;">
-				<img src="/egi/resources/erp2/images/loading.gif" width="32"
-					height="32" style="margin-right: 8px; vertical-align: top;" />
-				Loading...
-			</div>
-		</div>
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Journal voucher Create" />
 		</jsp:include>
@@ -235,8 +224,8 @@
 	function onSubmit()
 	{
 		if(validateJV()){
-				document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucher-create.action';
-	    		document.forms[0].submit();
+				document.jvcreateform.action='/EGF/voucher/journalVoucher-create.action';
+	    		document.jvcreateform.submit();
 				
 			}else{
 				return false;
@@ -265,7 +254,27 @@
 				return false;
 			}
 		}
-		
+		var billDate = document.getElementById("billDate").value;
+	    var date = billDate.substring(0, 2);
+	    var month = billDate.substring(3, 5);
+	    var year = billDate.substring(6, 10);
+	    var myBillDate = new Date(year, month - 1, date);
+	    var today = new Date();
+
+	    if (myBillDate > today) {
+	        bootbox.alert("Bill date is greater than today's date ");
+	        return false
+	    }
+	    var partyBillDate = document.getElementById("partyBillDate").value;
+	    var partydate = partyBillDate.substring(0, 2);
+	    var partymonth = partyBillDate.substring(3, 5);
+	    var partyyear = partyBillDate.substring(6, 10);
+	    var myPartyBillDate = new Date(partyyear, partymonth - 1, partydate);
+
+	    if (myPartyBillDate > today) {
+	        bootbox.alert("Party bill date is greater than today's date ");
+	        return false
+	    }
 		
 	// Javascript validation of the MIS Manadate attributes.
 		<s:if test="%{isFieldMandatory('vouchernumber')}"> 
@@ -384,7 +393,9 @@ function onloadtask(){
 		document.getElementById('voucherTypeBean.voucherSubType').value = "JVGeneral";
 	</s:if>
 	if(message == null || message == '')
-		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.	
+		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.
+	if(document.getElementById('approverDepartment'))
+		document.getElementById('approverDepartment').value = "-1";
   }
 function showMessage(message){
 	var buttonValue = '<s:property value="buttonValue"/>';

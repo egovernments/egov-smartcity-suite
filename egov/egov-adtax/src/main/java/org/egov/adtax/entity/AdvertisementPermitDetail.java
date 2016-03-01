@@ -152,7 +152,11 @@ public class AdvertisementPermitDetail extends StateAware {
     private Double width;
     private Double breadth;
     private Double totalHeight;
-
+    
+    private String deactivation_remarks;
+    
+    private Date deactivation_date;
+    
     @Transient
     private Long approvalDepartment;
 
@@ -367,5 +371,23 @@ public class AdvertisementPermitDetail extends StateAware {
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
+
+    public String getDeactivation_remarks() {
+        return deactivation_remarks;
+    }
+
+    public void setDeactivation_remarks(String deactivation_remarks) {
+        this.deactivation_remarks = deactivation_remarks;
+    }
+
+    public Date getDeactivation_date() {
+        return deactivation_date;
+    }
+
+    public void setDeactivation_date(Date deactivation_date) {
+        this.deactivation_date = deactivation_date;
+    }
+
+ 
 
 }

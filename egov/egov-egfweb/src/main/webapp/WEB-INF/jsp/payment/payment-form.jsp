@@ -51,7 +51,7 @@
 
 </script>
 </head>
-<body>
+<body onload="onLoadTask();">
 	<br>
 	<s:form action="payment" theme="simple">
 		<s:token />
@@ -59,7 +59,8 @@
 			<jsp:param name="heading" value="Bill Payment" />
 		</jsp:include>
 
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="subheadnew">Bill Payment</div>
 		<div id="budgetSearchGrid" style="display: block; width: 100%;">
@@ -86,8 +87,8 @@
 																	name="billregister.id" /></td>
 															<s:if test="%{shouldShowHeaderField('fund')}">
 																<td width="12%" class="bluebox"><strong><s:text
-																			name="voucher.fund" /></strong>
-																<s:if test="%{isFieldMandatory('fund')}">
+																			name="voucher.fund" /></strong> <s:if
+																		test="%{isFieldMandatory('fund')}">
 																		<span class="bluebox"><span class="mandatory1">*</span></span>
 																	</s:if></td>
 																<td width="20%" class="bluebox"><s:property
@@ -95,8 +96,8 @@
 															</s:if>
 															<s:if test="%{shouldShowHeaderField('fundsource')}">
 																<td width="17%" class="bluebox"><strong><s:text
-																			name="voucher.fundsource" /></strong>
-																<s:if test="%{isFieldMandatory('fundsource')}">
+																			name="voucher.fundsource" /></strong> <s:if
+																		test="%{isFieldMandatory('fundsource')}">
 																		<span class="bluebox"><span class="mandatory1">*</span></span>
 																	</s:if></td>
 																<td width="33%" class="bluebox"><s:property
@@ -107,8 +108,8 @@
 															<td class="greybox">&nbsp;</td>
 															<s:if test="%{shouldShowHeaderField('department')}">
 																<td class="greybox"><strong><s:text
-																			name="voucher.department" /></strong>
-																<s:if test="%{isFieldMandatory('department')}">
+																			name="voucher.department" /></strong> <s:if
+																		test="%{isFieldMandatory('department')}">
 																		<span class="bluebox"><span class="mandatory1">*</span></span>
 																	</s:if></td>
 																<td class="greybox"><s:property
@@ -116,8 +117,8 @@
 															</s:if>
 															<s:if test="%{shouldShowHeaderField('functionary')}">
 																<td class="greybox"><strong><s:text
-																			name="voucher.functionary" /></strong>
-																<s:if test="%{isFieldMandatory('functionary')}">
+																			name="voucher.functionary" /></strong> <s:if
+																		test="%{isFieldMandatory('functionary')}">
 																		<span class="bluebox"><span class="mandatory1">*</span></span>
 																	</s:if></td>
 																<td class="greybox" colspan="4"><s:property
@@ -128,8 +129,8 @@
 															<td class="bluebox">&nbsp;</td>
 															<s:if test="%{shouldShowHeaderField('scheme')}">
 																<td class="bluebox"><strong><s:text
-																			name="voucher.scheme" /></strong>
-																<s:if test="%{isFieldMandatory('scheme')}">
+																			name="voucher.scheme" /></strong> <s:if
+																		test="%{isFieldMandatory('scheme')}">
 																		<span class="mandatory1">*</span>
 																	</s:if></td>
 																<td class="bluebox"><s:property
@@ -137,8 +138,8 @@
 															</s:if>
 															<s:if test="%{shouldShowHeaderField('subscheme')}">
 																<td class="bluebox"><strong><s:text
-																			name="voucher.subscheme" /></strong>
-																<s:if test="%{isFieldMandatory('subscheme')}">
+																			name="voucher.subscheme" /></strong> <s:if
+																		test="%{isFieldMandatory('subscheme')}">
 																		<span class="mandatory1">*</span>
 																	</s:if></td>
 																<td class="bluebox"><s:property
@@ -149,8 +150,8 @@
 															<td class="greybox">&nbsp;</td>
 															<s:if test="%{shouldShowHeaderField('function')}">
 																<td class="greybox"><strong><s:text
-																			name="voucher.function" /></strong>
-																<s:if test="%{isFieldMandatory('function')}">
+																			name="voucher.function" /></strong> <s:if
+																		test="%{isFieldMandatory('function')}">
 																		<span class="mandatory1">*</span>
 																	</s:if></td>
 																<td class="greybox"><s:property
@@ -160,8 +161,8 @@
 															<td class="greybox">&nbsp;</td>
 															<s:if test="%{shouldShowHeaderField('field')}">
 																<td class="greybox"><strong><s:text
-																			name="voucher.field" /></strong>
-																<s:if test="%{isFieldMandatory('field')}">
+																			name="voucher.field" /></strong> <s:if
+																		test="%{isFieldMandatory('field')}">
 																		<span class="mandatory1">*</span>
 																	</s:if></td>
 																<td class="greybox" colspan="4"><s:property
@@ -245,9 +246,21 @@
 																		list="dropdownData.bankaccountList" listKey="id"
 																		listValue="accountnumber+'---'+accounttype"
 																		headerKey="-1" headerValue="----Choose----"
+																		onChange="populateAvailableBalance(this);"
 																		value="%{bankaccount}" /></td>
-																<egov:updatevalues id="balance" fields="['Text']"
+																<egov:updatevalues id="availableBalance"
+																	fields="['Text']"
 																	url="payment/payment-ajaxGetAccountBalance.action" />
+															</tr>
+															<tr id="bankbalanceRow">
+																<td class="bluebox">&nbsp;</td>
+																<td class="bluebox">&nbsp;</td>
+																<td class="bluebox">&nbsp;</td>
+																<td class="bluebox" width="15%"><strong><s:text
+																			name="payment.balance" />(Rs)</strong></td>
+																<td class="bluebox" colspan="4"><s:textfield
+																		name="availableBalance" id="availableBalance"
+																		readonly="true" style="text-align:right" /></td>
 															</tr>
 														</s:else>
 														<tr>
@@ -329,8 +342,8 @@
 																							name="billList[%{#s.index}].csBillId"
 																							id="csBillId%{#s.index}" value="%{csBillId}" />
 																						<s:hidden name="billList[%{#s.index}].billNumber"
-																							id="billNumber" value="%{billNumber}" />
-																						<s:property value="%{billNumber}" /></td>
+																							id="billNumber" value="%{billNumber}" /> <s:property
+																							value="%{billNumber}" /></td>
 																					<td style="text-align: center"
 																						class="blueborderfortdnew"><s:hidden
 																							name="billList[%{#s.index}].billDate"
@@ -339,23 +352,23 @@
 																					<td style="text-align: center"
 																						class="blueborderfortdnew"><s:hidden
 																							name="billList[%{#s.index}].expType"
-																							id="expType%{#s.index}" value="%{expType}" />
-																						<s:hidden name="billList[%{#s.index}].payTo"
-																							id="payTo%{#s.index}" value="%{payTo}" />
-																						<s:property value="%{payTo}" /></td>
+																							id="expType%{#s.index}" value="%{expType}" /> <s:hidden
+																							name="billList[%{#s.index}].payTo"
+																							id="payTo%{#s.index}" value="%{payTo}" /> <s:property
+																							value="%{payTo}" /></td>
 																					<td style="text-align: right"
 																						class="blueborderfortdnew"><s:hidden
 																							name="billList[%{#s.index}].netAmt"
-																							id="netAmt%{#s.index}" value="%{netAmt}" />
-																						<s:text name="payment.format.number">
+																							id="netAmt%{#s.index}" value="%{netAmt}" /> <s:text
+																							name="payment.format.number">
 																							<s:param value="%{netAmt}" />
 																						</s:text></td>
 																					<td style="text-align: right"
 																						class="blueborderfortdnew"><s:hidden
 																							name="billList[%{#s.index}].earlierPaymentAmt"
 																							id="earlierPaymentAmt%{#s.index}"
-																							value="%{earlierPaymentAmt}" />
-																						<s:text name="payment.format.number">
+																							value="%{earlierPaymentAmt}" /> <s:text
+																							name="payment.format.number">
 																							<s:param value="%{earlierPaymentAmt}" />
 																						</s:text></td>
 																					<td style="text-align: right"
@@ -470,7 +483,11 @@
 			else
 				document.getElementById('hiddenText').value=obj.value;
 		}
-		
+		function onLoadTask()
+		{
+			if(document.getElementById('approverDepartment'))
+				document.getElementById('approverDepartment').value = "-1";
+			}
 		function calcGrandTotal(obj)
 		{
 			var vBillListSize = document.getElementById('billListSize').value;
@@ -497,9 +514,49 @@
 			document.getElementById('grandTotal').value = vFinalGrandTotal.toFixed(vFixedDecimal);
 			document.getElementById('paymentAmountspan').innerHTML = document.getElementById('grandTotal').value;
 		}
-		
-		
-		
+
+
+		function populateAvailableBalance(accnumObj) 
+		{
+					if (document.getElementById('voucherdate').value == '') {
+						bootbox.alert("Please Select the Voucher Date!!");
+						accnumObj.options.value = -1;
+						return;
+					}
+					if (accnumObj.options[accnumObj.selectedIndex].value == -1)
+						document.getElementById('availableBalance').value = '';
+					else
+						populateavailableBalance({
+							bankaccount : accnumObj.options[accnumObj.selectedIndex].value,
+							voucherDate : document.getElementById('voucherdate').value
+									+ '&date=' + new Date()
+						});
+
+		}
+		var callback = {
+				success : function(o) {
+				console.log("success");
+				document.getElementById('availableBalance').value = o.responseText;
+				},
+				failure : function(o) {
+					console.log("failed");
+				}
+		}
+		function balanceCheck() {
+
+			if (document.getElementById('availableBalance')) {
+				console.log("ins did");
+				console.log(parseFloat(document.getElementById('grandTotal').value));
+				console.log(parseFloat(document.getElementById('availableBalance').value));
+				
+				if(parseFloat(document.getElementById('grandTotal').value)>parseFloat(document.getElementById('availableBalance').value))
+				{
+					console.log("ins 44");
+					return false;
+				}
+			}
+			return true;
+		}
 		function onSubmit()
 		{
 			if(dom.get('vouchernumber') && dom.get('vouchernumber').value=='')
@@ -543,9 +600,24 @@
 					}
 				}
 			</s:if>
-			document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
-			document.forms[0].submit();
-			return true;
+			if(!balanceCheck()){
+				bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
+					  if(result)
+						  {
+						  	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+							document.forms[0].submit();
+						  }
+					  else
+						  {
+						  console.log("else");
+						  }
+					}); 
+			}else{
+				document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+				document.forms[0].submit();
+				}
+			
+			return false;
 		}
 		function checkLength(obj)
 		{

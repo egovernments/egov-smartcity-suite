@@ -49,24 +49,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class LicenseCategoryService{
+public class LicenseCategoryService {
 
-    
     @Autowired
     private LicenseCategoryRepository licenseCategoryRepository;
-    
+
     @Transactional
-    public LicenseCategory create(LicenseCategory licenseCategory){
-        return  licenseCategoryRepository.save(licenseCategory);
+    public LicenseCategory create(final LicenseCategory licenseCategory) {
+        return licenseCategoryRepository.save(licenseCategory);
     }
-    
+
     /**
      * @Description returns category object that matches param name
      * @param name
      * @return
      */
     public LicenseCategory findCategoryByName(final String name) {
-        return licenseCategoryRepository.findByNameContainingIgnoreCase(name); 
+        return licenseCategoryRepository.findByNameIgnoreCase(name);
     }
 
     /**
@@ -75,16 +74,19 @@ public class LicenseCategoryService{
      * @return
      */
     public LicenseCategory findCategoryByCode(final String code) {
-        return licenseCategoryRepository.findByCodeContainingIgnoreCase(code);
+        return licenseCategoryRepository.findByCodeIgnoreCase(code);
     }
-    
-    
-    public LicenseCategory findById(Long categoryId){
+
+    public LicenseCategory findById(final Long categoryId) {
         return licenseCategoryRepository.findOne(categoryId);
     }
-    
-    public List<LicenseCategory> findAll(){
+
+    public List<LicenseCategory> findAll() {
         return licenseCategoryRepository.findAll();
+    }
+
+    public List<LicenseCategory> findAllOrderByName() {
+        return licenseCategoryRepository.findAllByOrderByNameAsc();
     }
 
 }

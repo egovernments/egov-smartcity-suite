@@ -1,54 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pendingTDSReport" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pendingTDSReport" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="30f6656c-896e-4500-acf8-3c7c0d945ab6">
 	<property name="net.sf.jasperreports.export.pdf.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.html.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
+	<property name="ireport.zoom" value="0.75"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="departmentName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="recoveryName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="fundName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="partyName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="asOnDate" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="remittedTDS" class="java.util.List"/>
+	<parameter name="inWorkflowTDS" class="java.util.List"/>
 	<parameter name="remittedTDSJasper" class="java.io.InputStream"/>
+	<parameter name="inWorkflowTDSJasper" class="java.io.InputStream"/>
 	<parameter name="fromDate" class="java.lang.String"/>
 	<parameter name="heading" class="java.lang.String"/>
 	<parameter name="asOnDateText" class="java.lang.String"/>
@@ -68,7 +34,7 @@
 	<title>
 		<band height="99" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="79" width="752" height="20"/>
+				<reportElement x="0" y="79" width="752" height="20" uuid="6bf728ff-d409-46a8-8bc7-f0576aab2adf"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -82,90 +48,84 @@
 				<text><![CDATA[Pending TDS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="25" width="89" height="14"/>
+				<reportElement x="10" y="25" width="89" height="14" uuid="25064206-46bb-4942-a96e-6a47fc9b8454"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Recovery Code:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="39" width="89" height="14"/>
+				<reportElement x="10" y="39" width="89" height="14" uuid="282652d0-eac7-4237-8317-e60b8a34a976"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fund:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="435" y="53" width="73" height="14"/>
+				<reportElement x="435" y="53" width="73" height="14" uuid="f7c6c0ef-f935-40bc-bd24-1d4b73daffd3"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Department:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="53" width="89" height="15"/>
+				<reportElement x="10" y="53" width="89" height="15" uuid="e5ab6fba-fb13-495f-be91-4eb21065ab90"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Party Name:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="99" y="25" width="210" height="14"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{recoveryName}]]></textFieldExpression>
+				<reportElement x="99" y="25" width="210" height="14" uuid="ecbe79f4-5258-49a0-a83d-7759866cca16"/>
+				<textFieldExpression><![CDATA[$P{recoveryName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="99" y="39" width="210" height="14"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{fundName}]]></textFieldExpression>
+				<reportElement x="99" y="39" width="210" height="14" uuid="9a783fcc-d4c7-4494-83f2-6c7eef67e21c"/>
+				<textFieldExpression><![CDATA[$P{fundName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="508" y="39" width="156" height="14"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{asOnDate}]]></textFieldExpression>
+				<reportElement x="508" y="39" width="156" height="14" uuid="0fa37260-56e3-4f0c-a54e-82c69ff7919b"/>
+				<textFieldExpression><![CDATA[$P{asOnDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="508" y="53" width="156" height="14"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{departmentName}]]></textFieldExpression>
+				<reportElement x="508" y="53" width="156" height="14" uuid="1e328c0d-e717-4b5b-8081-c97083bce405"/>
+				<textFieldExpression><![CDATA[$P{departmentName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="99" y="53" width="210" height="15"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{partyName}]]></textFieldExpression>
+				<reportElement x="99" y="53" width="210" height="15" uuid="7f0169c4-98b5-4eb1-ae2e-45f778c2d2c9"/>
+				<textFieldExpression><![CDATA[$P{partyName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="10" y="0" width="731" height="25"/>
+				<reportElement x="10" y="0" width="731" height="25" uuid="ba8b1fa1-b518-4130-af47-9325a96ff8ce"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{heading}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{heading}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="435" y="39" width="73" height="14"/>
+				<reportElement x="435" y="39" width="73" height="14" uuid="c89eeed6-f2b9-4acd-b6a2-e5c5a5b37c27"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[As On Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="435" y="25" width="73" height="14"/>
+				<reportElement x="435" y="25" width="73" height="14" uuid="57d61aa8-eba4-41c4-8192-48751f2c8d05"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="508" y="25" width="156" height="14"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromDate}]]></textFieldExpression>
+				<reportElement x="508" y="25" width="156" height="14" uuid="9e15e36d-3c97-4f47-8ca3-89c3ca4e08f1"/>
+				<textFieldExpression><![CDATA[$P{fromDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<columnHeader>
 		<band height="40" splitType="Stretch">
 			<staticText>
-				<reportElement x="677" y="0" width="75" height="40"/>
+				<reportElement x="677" y="0" width="75" height="40" uuid="d6c4d1c1-a174-40a4-9012-2dda0e3b406a"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -179,7 +139,7 @@
 				<text><![CDATA[Amount(Rs)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="243" y="0" width="79" height="40"/>
+				<reportElement x="243" y="0" width="79" height="40" uuid="44e438ed-155e-4000-a712-616e6b1f31b5"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -193,7 +153,7 @@
 				<text><![CDATA[Voucher Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="39" y="0" width="103" height="40"/>
+				<reportElement x="39" y="0" width="103" height="40" uuid="01625e6a-61af-44e2-ae91-7efcd754c641"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -207,7 +167,7 @@
 				<text><![CDATA[Nature Of Deduction]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="39" height="40"/>
+				<reportElement x="0" y="0" width="39" height="40" uuid="12ed4cd5-9af9-4791-9483-9658aa9ca56e"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -221,7 +181,7 @@
 				<text><![CDATA[SL No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="142" y="0" width="101" height="40"/>
+				<reportElement x="142" y="0" width="101" height="40" uuid="f65ce08d-6c74-4a02-9e78-2a5e9405f160"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -235,7 +195,7 @@
 				<text><![CDATA[Reference Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="323" y="20" width="127" height="20"/>
+				<reportElement x="323" y="20" width="127" height="20" uuid="d7c3f3cf-5e1b-43c0-bd5f-75f701c9ae36"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -249,7 +209,7 @@
 				<text><![CDATA[Party Name/Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="450" y="20" width="75" height="20"/>
+				<reportElement x="450" y="20" width="75" height="20" uuid="7ed4c98a-be7a-4d4c-8dbd-a23f5ed06dad"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -263,7 +223,7 @@
 				<text><![CDATA[PAN Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="323" y="0" width="202" height="20"/>
+				<reportElement x="323" y="0" width="202" height="20" uuid="64b50169-b2d2-47e7-a9f5-a34908ecf05c"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -277,7 +237,7 @@
 				<text><![CDATA[Party Details]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="525" y="0" width="77" height="40"/>
+				<reportElement x="525" y="0" width="77" height="40" uuid="46217f3c-d6d7-4f89-8d3c-67881cd5a7d8"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -291,7 +251,7 @@
 				<text><![CDATA[Toal Deduction(Rs)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="602" y="0" width="75" height="40"/>
+				<reportElement x="602" y="0" width="75" height="40" uuid="fb3ddf4a-6a13-4b46-b8f7-093c40dfd512"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -309,7 +269,7 @@
 	<detail>
 		<band height="40" splitType="Stretch">
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="677" y="0" width="75" height="40"/>
+				<reportElement x="677" y="0" width="75" height="40" uuid="c75a5e1a-110a-480a-a15a-235a577c8c4b"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -318,10 +278,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="243" y="0" width="79" height="40"/>
+				<reportElement x="243" y="0" width="79" height="40" uuid="1d3880c3-205d-4440-941d-07ed4a078d23"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -330,10 +290,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{voucherDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{voucherDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="39" y="0" width="103" height="40"/>
+				<reportElement x="39" y="0" width="103" height="40" uuid="fc01aa59-36d0-484a-9c20-a05855f53773"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -342,10 +302,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{voucherName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{voucherName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="0" width="39" height="40"/>
+				<reportElement x="0" y="0" width="39" height="40" uuid="fabb1ff7-13d4-4f17-9166-0167d906fb8a"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -354,10 +314,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="323" y="0" width="127" height="40"/>
+				<reportElement x="323" y="0" width="127" height="40" uuid="1f0822ed-5b5c-4b8e-80a6-6a8803a84e91"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -366,10 +326,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{partyName}+"/"+$F{partyCode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{partyName}+"/"+$F{partyCode}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="142" y="0" width="101" height="40"/>
+				<reportElement x="142" y="0" width="101" height="40" uuid="760ee88a-b10e-4833-882e-73fff7fe637c"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -378,10 +338,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{voucherNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{voucherNumber}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="450" y="0" width="75" height="40"/>
+				<reportElement x="450" y="0" width="75" height="40" uuid="69a9dc20-d07e-4baf-b4c5-aa2fee8400ba"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -390,10 +350,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{panNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{panNo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="525" y="0" width="77" height="40"/>
+				<reportElement x="525" y="0" width="77" height="40" uuid="71af24c7-bb7d-4295-b803-49088a44387f"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -402,10 +362,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{deductionAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{deductionAmount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="602" y="0" width="75" height="40"/>
+				<reportElement x="602" y="0" width="75" height="40" uuid="1fe27e85-32bf-4fdb-bbcb-1bcdf43a3451"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -414,7 +374,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{earlierPayment}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{earlierPayment}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -425,11 +385,16 @@
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch">
+		<band height="69" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="18" width="752" height="24" uuid="3c85f61c-8be7-4d8e-811d-61616f38a9fe"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{inWorkflowTDS})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{inWorkflowTDSJasper}]]></subreportExpression>
+			</subreport>
 			<subreport>
-				<reportElement positionType="Float" x="0" y="18" width="752" height="24"/>
+				<reportElement positionType="Float" x="0" y="42" width="752" height="24" uuid="e09f1472-3473-4f81-bcf0-fe3bf2db130f"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{remittedTDS})]]></dataSourceExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[$P{remittedTDSJasper}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{remittedTDSJasper}]]></subreportExpression>
 			</subreport>
 		</band>
 	</summary>

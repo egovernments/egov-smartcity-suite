@@ -139,6 +139,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private BigDecimal mutationFee;
     private String mutationApplicationNo;
     private String transanctionReferenceNumber;
+    private Boolean isNagarPanchayat;
 
     @Autowired
     private RebatePeriodService rebatePeriodService;
@@ -272,7 +273,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             final List instVsAmt = propertyDAO.getDmdCollAmtInstWise(currentDemand);
             for (final Object object : instVsAmt) {
                 final Object[] ddObject = (Object[]) object;
-                final BigDecimal dmdAmt = (BigDecimal) ddObject[1];
+                final BigDecimal dmdAmt = (new BigDecimal((Double) ddObject[1]));
                 BigDecimal collAmt = BigDecimal.ZERO;
                 if (ddObject[2] != null)
                     collAmt = new BigDecimal((Double) ddObject[2]);
@@ -434,6 +435,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         BigDecimal tax = BigDecimal.ZERO;
         BigDecimal collection = BigDecimal.ZERO;
         BigDecimal balance = BigDecimal.ZERO;
+        setIsNagarPanchayat(Boolean.FALSE);
 
         if (getLevyPenalty()) {
             final EgDemand currentDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
@@ -450,6 +452,9 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             // Returns the installment in which the assessment date falls
             final Installment assessmentEffecInstallment = installmentDao.getInsatllmentByModuleForGivenDate(getModule(),
                     basicProperty.getAssessmentdate());
+            DateTime nagarPanchayatPenDate = DateTime.now().withDate(2016, 1, 1);
+            final Installment nagarPanchayatPenEndInstallment  = installmentDao.getInsatllmentByModuleForGivenDate(getModule(),
+                    nagarPanchayatPenDate.toDate());
             
             for (final Map.Entry<Installment, BigDecimal> mapEntry : instWiseDmdMap.entrySet()) {
 
@@ -464,10 +469,14 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                 if (thereIsBalance) {
                     penaltyAndRebate = new PenaltyAndRebate();
                     penaltyAndRebate.setRebate(calculateEarlyPayRebate(tax));
-
+                    Date penaltyEffectiveDate = null;
                     if (existingPenaltyDemandDetail == null) {
-                        final Date penaltyEffectiveDate = getPenaltyEffectiveDate(installment,
-                                assessmentEffecInstallment, basicProperty.getAssessmentdate(),currentInstall);
+                        if (isNagarPanchayat && installment.compareTo(nagarPanchayatPenEndInstallment) <= 0) {
+                            penaltyEffectiveDate = nagarPanchayatPenDate.toDate();
+                        } else {
+                            penaltyEffectiveDate = getPenaltyEffectiveDate(installment,
+                                    assessmentEffecInstallment, basicProperty.getAssessmentdate(), currentInstall);
+                        }
                         if (penaltyEffectiveDate.before(new Date()))
                             penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate, balance));
                     } else
@@ -480,8 +489,8 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
         return installmentPenaltyAndRebate;
     }
-  
-  private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
+
+    private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
           final Date assmentDate, final Installment curInstallment) {
       Date penaltyEffDate = null;
       /**
@@ -619,4 +628,13 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setModuleDao(ModuleService moduleDao) {
         this.moduleDao = moduleDao;
     }
+
+    public Boolean getIsNagarPanchayat() {
+        return isNagarPanchayat;
+    }
+
+    public void setIsNagarPanchayat(Boolean isNagarPanchayat) {
+        this.isNagarPanchayat = isNagarPanchayat;
+    }
+    
 }

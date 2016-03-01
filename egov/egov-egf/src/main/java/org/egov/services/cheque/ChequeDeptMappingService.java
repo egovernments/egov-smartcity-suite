@@ -50,4 +50,8 @@ public class ChequeDeptMappingService extends PersistenceService<ChequeDeptMappi
     public ChequeDeptMappingService(final Class<ChequeDeptMapping> chequeDeptMapping) {
         this.type = chequeDeptMapping;
     }
+
+    public ChequeDeptMappingService() {
+
+    }
 }

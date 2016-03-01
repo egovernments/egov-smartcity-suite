@@ -187,7 +187,7 @@ public class CloserConnectionController extends GenericConnectionController {
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
-
+        String sourceChannel = request.getParameter("Source");
         String workFlowAction = "";
 
         if (request.getParameter("mode") != null)
@@ -229,7 +229,7 @@ public class CloserConnectionController extends GenericConnectionController {
         waterConnectionDetails.setApplicationType(applicationTypeService
                 .findByCode(WaterTaxConstants.CLOSINGCONNECTION));
         final WaterConnectionDetails savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
-                waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction);
+                waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction,sourceChannel);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());

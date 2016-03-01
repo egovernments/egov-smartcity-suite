@@ -45,6 +45,7 @@ package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +54,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -88,6 +92,8 @@ public class GeneralLedgerReport {
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private ReportEngine engine;
+    @Autowired
+    private FinancialYearHibernateDAO financialYearDAO;
 
     public GeneralLedgerReport() {
     }
@@ -149,8 +155,11 @@ public class GeneralLedgerReport {
             }
 
             if (startDate.equalsIgnoreCase("null")) {
-                final String finId = cmnFun.getFYID(formendDate);
-                startDate = cmnFun.getStartDate(Integer.parseInt(finId));
+            	CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
+            	if(finYearByDate!=null)
+            	{
+                		startDate =formatter1.format(finYearByDate.getStartingDate());
+            	}
                 // SETTING START DATE IN reportBean
                 reportBean.setStartDate(startDate);
                 final Date dtOBj = sdf.parse(startDate);
@@ -176,7 +185,23 @@ public class GeneralLedgerReport {
             throw taskExc;
         }
         setDates(startDate, endDate);
-        final String fyId = cmnFun.getFYID(endDate);
+        Date dd = new Date();
+         
+        final String endDateformat = endDate;
+        
+			try {
+				dd = formatter1.parse(endDateformat);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dd);
+	    	
+	    	final String fyId = finYearByDate.getId().toString();
+	    	
+		
+        
+        
         if (fyId.equalsIgnoreCase("")) {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Financial Year Not Valid");
@@ -953,9 +978,9 @@ public class GeneralLedgerReport {
             accEntityCondition = "accountDetailTypeid=? AND accountDetailKey=? AND ";
         if (!StringUtils.isEmpty(functionId))
             functionCondition = " functionid=? AND ";
-        final String queryYearOpBal = "SELECT CASE WHEN sum(openingDebitBalance) = null THEN 0 ELSE sum(openingDebitBalance) END AS \"openingDebitBalance\", "
+        final String queryYearOpBal = "SELECT CASE WHEN sum(openingDebitBalance) is null THEN 0 ELSE sum(openingDebitBalance) END AS \"openingDebitBalance\", "
                 +
-                "CASE WHEN sum(openingCreditBalance) = null THEN 0 ELSE sum(openingCreditBalance) END AS \"openingCreditBalance\" "
+                "CASE WHEN sum(openingCreditBalance) is null THEN 0 ELSE sum(openingCreditBalance) END AS \"openingCreditBalance\" "
                 +
                 "FROM transactionSummary WHERE "
                 + fundCondition
@@ -1048,8 +1073,8 @@ public class GeneralLedgerReport {
                     + " gl.CREDITamount>0) AS \"creditAmount\" FROM chartofaccounts coa WHERE 	coa.glcode IN (?)";
 
         } else
-            queryTillDateOpBal = "SELECT CASE WHEN sum(gl.debitAmount) = null THEN 0 ELSE sum(gl.debitAmount) END AS \"debitAmount\", "
-                    + " CASE WHEN sum(gl.creditAmount) = null THEN 0 ELSE sum(gl.creditAmount) END AS \"creditAmount\" "
+            queryTillDateOpBal = "SELECT CASE WHEN sum(gl.debitAmount) is null THEN 0 ELSE sum(gl.debitAmount) END AS \"debitAmount\", "
+                    + " CASE WHEN sum(gl.creditAmount) is null THEN 0 ELSE sum(gl.creditAmount) END AS \"creditAmount\" "
                     + " FROM generalLedger gl, voucherHeader vh "
                     + deptFromCondition
                     + " WHERE vh.id = gl.voucherHeaderId AND "
@@ -1244,11 +1269,23 @@ public class GeneralLedgerReport {
         {
             final String query = "select name  as \"name\" from fund where id=?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setLong(0, Long.valueOf(fundId));
-             List list = pst.list();
+            if(fundId.isEmpty())
+            {
+            pst.setInteger(0, 0);
+            }
+            else
+            {
+            	pst.setInteger(0, Integer.valueOf(fundId));
+            }
+             List<Object[]> list = pst.list();
             System.err.println(000);
            Object[] objects = list.toArray();
            System.err.println(111);
+           if(objects.length==0)
+           {
+        	   fundName="";
+           }
+           else
            fundName=objects[0].toString();
           
         } catch (final Exception e)

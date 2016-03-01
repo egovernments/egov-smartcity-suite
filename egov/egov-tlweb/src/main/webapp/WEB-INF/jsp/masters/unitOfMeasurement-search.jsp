@@ -48,8 +48,8 @@
 	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 	function validateFormAndSubmit(mode){
-			var uomId= dom.get("uomId").value;
-			dom.get("userMode").value=mode;
+			var uomId= document.getElementById("uomId").value;
+			document.getElementById("userMode").value=mode;
 			 if (uomId == "-1"){
 				showMessage('uom_error', '<s:text name="tradelic.uommaster.uom.null" />');
 				return false;
@@ -61,7 +61,7 @@
 		}
 
 	function reload(){
-		dom.get("uomId").value="-1";
+		document.getElementById("uomId").value="-1";
 		clearMessage('uom_error');
 	}
 	</script>

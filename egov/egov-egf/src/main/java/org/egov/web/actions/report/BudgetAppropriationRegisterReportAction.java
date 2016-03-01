@@ -42,6 +42,7 @@ package org.egov.web.actions.report;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,17 +74,22 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.search.domain.resource.DateType;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
+		@Result(name = "result", location = "budgetAppropriationRegisterReport-result.jsp"),
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
         "no-cache;filename=BudgetAppropriationRegisterRepor.pdf" }),
@@ -178,7 +184,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             isReDefined = false;
         }
         // -- Consider RE if RE is present & approved for the current yr.
-        if (budgetService.hasApprovedReForYear(Long.parseLong(financialYearId)))
+        if (budgetService.hasApprovedReForYear(financialYear.getId()))
         {
             reAmount = getBudgetBEorREAmt("RE");
             if (getConsiderReAppropriationAsSeperate())
@@ -186,7 +192,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             else
                 totalGrant = reAmount;
         }
-        else if (budgetService.hasApprovedBeForYear(Long.parseLong(financialYearId)))
+        else if (budgetService.hasApprovedBeForYear(financialYear.getId()))
         {
             isReDefined = false;
             totalGrant = beAmount.add(addtionalAppropriationForBe);
@@ -196,8 +202,10 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     }
 
     private void generateReport() {
+    	CFinancialYear financialYr=new CFinancialYear();
+    	financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
         CFinancialYear financialYear = null;
-        financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYearId));
+        financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
         finYearRange = financialYear.getFinYearRange();
         final Date dStartDate = financialYear.getStartingDate();
         final String strAODate = Constants.DDMMYYYYFORMAT1.format(dtAsOnDate);
@@ -228,15 +236,15 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     +
                     " union "
                     +
-                    " select distinct bmis.budgetary_appnumber as bdgApprNumber, vh.vouchernumber as VoucherNumber, vh.voucherdate as voucherDate , "
+                    " select distinct bmis.budgetary_appnumber as bdgApprNumber, vh1.vouchernumber as VoucherNumber, vh1.voucherdate as  voucherDate , "
                     +
                     " br.narration as description, br.billnumber as billNumber, br.billdate as billDate,   bd.debitamount as debitAmount, bd.creditamount as creditAmount  "
                     +
-                    " from eg_billdetails bd, eg_billregistermis bmis, eg_billregister br, voucherHeader vh where br.id = bd.billid and br.id = bmis.billid and  bd.glcodeid = "
+                    " from eg_billdetails bd, eg_billregistermis bmis, eg_billregister br, voucherHeader vh1 where br.id = bd.billid and br.id = bmis.billid and  bd.glcodeid = "
                     + budgetGroup.getMinCode().getId()
                     + " and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
                     +
-                    " and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and (vh.id = bmis.voucherheaderid )  and br.billdate  between '"
+                    " and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and (vh1.id = bmis.voucherheaderid )  and br.billdate  between '"
                     + strStDate
                     + "' and '"
                     + strAODate
@@ -249,36 +257,36 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     +
                     " union "
                     +
-                    " select distinct bmis.budgetary_appnumber as bdgApprNumber, null as VoucherNumber, null as voucherDate , "
+                    " select distinct bmis1.budgetary_appnumber as bdgApprNumber, null as VoucherNumber,cast( null as date) voucherDate , "
                     +
-                    " br.narration as description, br.billnumber as billNumber, br.billdate as billDate,   bd.debitamount as debitAmount, bd.creditamount as creditAmount from eg_billdetails bd, eg_billregistermis bmis, eg_billregister br  "
+                    " br.narration as description, br.billnumber as billNumber, br.billdate as billDate,   bd1.debitamount as debitAmount, bd1.creditamount as creditAmount from eg_billdetails bd1, eg_billregistermis bmis1, eg_billregister br  "
                     +
-                    " where br.id = bd.billid and br.id = bmis.billid and  bd.glcodeid = "
+                    " where br.id = bd1.billid and br.id = bmis1.billid and  bd1.glcodeid = "
                     + budgetGroup.getMinCode().getId()
-                    + " and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
+                    + " and (bmis1.budgetary_appnumber != 'null' and bmis1.budgetary_appnumber is not null) "
                     +
-                    " and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and bmis.voucherheaderid is null and br.billdate   between '"
+                    " and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and bmis1.voucherheaderid is null and br.billdate   between '"
                     + strStDate
                     + "' and '"
                     + strAODate
                     + "' "
-                    + getFunctionQuery("bd.functionid")
-                    + getDepartmentQuery("bmis.departmentid") +
-                    getFundQuery("bmis.fundid") + "  order by bdgApprNumber ";
+                    + getFunctionQuery("bd1.functionid")
+                    + getDepartmentQuery("bmis1.departmentid") +
+                    getFundQuery("bmis1.fundid") + "  order by bdgApprNumber ";
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strQuery...." + strQuery);
 
             query = HibernateUtil.getCurrentSession().createSQLQuery(strQuery)
                     .addScalar("bdgApprNumber")
-                    .addScalar("voucherDate")
-                    .addScalar("billDate")
-                    .addScalar("creditAmount")
+                    .addScalar("voucherDate",StandardBasicTypes.DATE)
+                    .addScalar("billDate",StandardBasicTypes.DATE)
+                    
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount")
-                    .addScalar("creditAmount")
+                    .addScalar("debitAmount",BigDecimalType.INSTANCE)
+                    .addScalar("creditAmount",BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
         }
         budgetAppropriationRegisterList = query.list();
@@ -313,14 +321,14 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
             query = HibernateUtil.getCurrentSession().createSQLQuery(strsubQuery)
                     .addScalar("bdgApprNumber")
-                    .addScalar("voucherDate")
-                    .addScalar("billDate")
-                    .addScalar("creditAmount")
+                    .addScalar("voucherDate",StandardBasicTypes.DATE)
+                    .addScalar("billDate",StandardBasicTypes.DATE)
+                    
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount")
-                    .addScalar("creditAmount")
+                    .addScalar("debitAmount",BigDecimalType.INSTANCE)
+                    .addScalar("creditAmount",BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
             budgetApprRegNewList = query.list();
             if (budgetApprRegNewList.size() > 0) {
@@ -461,7 +469,10 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private BigDecimal getBudgetBEorREAmt(final String type) {
         BigDecimal approvedAmount = new BigDecimal(0.0);
         try {
-            final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYearId));
+        	CFinancialYear financialYr=new CFinancialYear();
+        	financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
+        	final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
+        	
             List<BudgetDetail> budgedDetailList = new ArrayList<BudgetDetail>();
             String query = " from BudgetDetail bd where bd.budget.isbere=? and bd.budgetGroup=? and bd.budget.financialYear=? ";
             if (department.getId() != null && department.getId() != -1)

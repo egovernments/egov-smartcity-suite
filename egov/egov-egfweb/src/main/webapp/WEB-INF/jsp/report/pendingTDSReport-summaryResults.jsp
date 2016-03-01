@@ -47,34 +47,34 @@
 		<tr>
 			<td colspan="7">
 				<div class="subheadsmallnew">
-					<strong>TDS Summary Report as on <s:property
+					<strong>Deductions remittance summary as on <s:property
 							value="%{getFormattedDate(asOnDate)}" /></strong>
 				</div>
 			</td>
 		</tr>
 		<tr>
-			<td class="blueborderfortd">
+			<td style ="border-right-width:1px ;border-left-style : solid;padding-left:5px;border-left-color:#E9E9E9" class="blueborderfortd">
 				<div>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0"
 						class="tablebottom">
 						<tr>
 							<th class="bluebgheadtd">Sl No</th>
-							<th class="bluebgheadtd">Nature Of deduction</th>
+							<th class="bluebgheadtd">Voucher Type</th>
 							<th class="bluebgheadtd">Month</th>
 							<th class="bluebgheadtd">Total Deduction(Rs)</th>
 							<th class="bluebgheadtd">Total Remitted(Rs)</th>
 						</tr>
 						<s:iterator value="remittedTDS" status="stat" var="p">
 							<tr>
-								<td class="blueborderfortd"><div align="left">
+								<td class="blueborderfortd"><div align="center">
 										<s:property value="#stat.index+1" />
 										&nbsp;
 									</div></td>
-								<td class="blueborderfortd"><div align="left">
+								<td class="blueborderfortd"><div align="center">
 										<s:property value="natureOfDeduction" />
 										&nbsp;
 									</div></td>
-								<td class="blueborderfortd"><div align="left">
+								<td class="blueborderfortd"><div align="center">
 										<s:property value="month" />
 										&nbsp;
 									</div></td>
@@ -115,4 +115,4 @@
 	</div>
 
 </s:elseif>
-<s:else>No TDS found</s:else>
+<s:else>No records found</s:else>

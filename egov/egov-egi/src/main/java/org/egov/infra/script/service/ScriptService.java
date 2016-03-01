@@ -216,6 +216,10 @@ public class ScriptService  {
         } catch (final ScriptException e) {
             LOG.error("script error for " + script.getType() + ":" + script.getName() + ":" + script.getScript(), e);
             throw new ApplicationRuntimeException("script.error", e);
+        } catch (final  ValidationException e) {
+            if(e.getErrors()!=null && !e.getErrors().isEmpty())
+            LOG.error(e.getErrors().get(0).getMessage());
+            throw e;
         }
         catch (final  Exception e) {
             LOG.error("Exception  for " + script.getType() + ":" + script.getName() + ":" + script.getScript(), e);

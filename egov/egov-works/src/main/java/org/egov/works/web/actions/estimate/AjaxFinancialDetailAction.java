@@ -87,7 +87,7 @@ public class AjaxFinancialDetailAction extends BaseFormAction {
     public String loadSchemes() {
         schemes = getPersistenceService()
                 .findAllBy(
-                        "from org.egov.commons.Scheme sc where sc.isactive=1 and sc.fund.id=? and ? between validfrom and validto",
+                        "from org.egov.commons.Scheme sc where sc.isactive=true and sc.fund.id=? and ? between validfrom and validto",
                         fundId, estimateDate);
         return SCHEMES;
     }

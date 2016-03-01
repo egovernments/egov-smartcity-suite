@@ -39,11 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
+import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -58,11 +60,13 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.bean.DefaultersInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,51 +81,51 @@ import com.google.gson.GsonBuilder;
 @Results({ @Result(name = DefaultersReportAction.RESULT_SEARCH, location = "reports/defaultersReport-search.jsp") })
 public class DefaultersReportAction extends BaseFormAction {
 
-	private static final Logger LOGGER = Logger.getLogger(DefaultersReportAction.class);
-	public static final String RESULT_SEARCH = "search";
-	private Long wardId;
-	private String fromDemand;
+    private static final Logger LOGGER = Logger.getLogger(DefaultersReportAction.class);
+    public static final String RESULT_SEARCH = "search";
+    private Long wardId;
+    private String fromDemand;
     private String toDemand;
     private Integer limit;
-	@Autowired
+    @Autowired
     private BoundaryService boundaryService;
-	@Autowired
+    @Autowired
     public PropertyTaxUtil propertyTaxUtil;
 
-	@Override
-	public Object getModel() {
-		return null;
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public void prepare() {
-		if (LOGGER.isDebugEnabled())
+    @Override
+    @SuppressWarnings("unchecked")
+    public void prepare() {
+        if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into prepare method");
         super.prepare();
-		final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
+        final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
                 REVENUE_HIERARCHY_TYPE);
         addDropdownData("wardList", wardList);
         addDropdownData("limitList", buildLimitList());
-	}
+    }
 
-	@SkipValidation
-	@Action(value = "/defaultersReport-search")
-	public String search() {
-		return RESULT_SEARCH;
-	}
-	
-	private List<Integer> buildLimitList(){
-		List<Integer> limitList = new ArrayList<Integer>();
-		limitList.add(10);
-		limitList.add(50);
-		limitList.add(100);
-		limitList.add(500);
-		limitList.add(1000);
-		return limitList;
-	}
-	
-	/**
+    @SkipValidation
+    @Action(value = "/defaultersReport-search")
+    public String search() {
+        return RESULT_SEARCH;
+    }
+
+    private List<Integer> buildLimitList() {
+        List<Integer> limitList = new ArrayList<Integer>();
+        limitList.add(10);
+        limitList.add(50);
+        limitList.add(100);
+        limitList.add(500);
+        limitList.add(1000);
+        return limitList;
+    }
+
+    /**
      * Invoked by Defaulters Report. Shows list of defaulters
      */
     @SuppressWarnings("unchecked")
@@ -129,8 +133,7 @@ public class DefaultersReportAction extends BaseFormAction {
     public void getDefaultersList() {
         List<DefaultersInfo> resultList = new ArrayList<DefaultersInfo>();
         String result = null;
-        final Query query = propertyTaxUtil
-                .prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit);
+        final Query query = propertyTaxUtil.prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit);
         resultList = prepareOutput(query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
@@ -151,73 +154,95 @@ public class DefaultersReportAction extends BaseFormAction {
      */
     private Object toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DefaultersInfo.class,
-                new DefaultersReportHelperAdaptor()).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(DefaultersInfo.class, new DefaultersReportHelperAdaptor())
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     /**
      * @param propertyViewList
      * @return List of Defaulters
      */
     private List<DefaultersInfo> prepareOutput(final List<PropertyMaterlizeView> propertyViewList) {
-    	List<DefaultersInfo> defaultersList = new ArrayList<DefaultersInfo>();
-    	DefaultersInfo defaultersInfo = null;
-    	BigDecimal totalDue = BigDecimal.ZERO;
-    	int count=0;
-    	for (final PropertyMaterlizeView propView : propertyViewList){
-    		defaultersInfo = new DefaultersInfo();
-    		totalDue = BigDecimal.ZERO;
-    		count++;
-    		defaultersInfo.setSlNo(count);
-    		defaultersInfo.setAssessmentNo(propView.getPropertyId());
-    		defaultersInfo.setOwnerName(propView.getOwnerName().contains(",")?propView.getOwnerName().replace(",", " & "):propView.getOwnerName());
-    		defaultersInfo.setWardName(propView.getWard().getName());
-    		defaultersInfo.setHouseNo(propView.getHouseNo());
-    		defaultersInfo.setLocality(propView.getLocality().getName());
-    		defaultersInfo.setMobileNumber((StringUtils.isNotBlank(propView.getMobileNumber())?propView.getMobileNumber():"NA"));
-    		defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
-    		defaultersInfo.setCurrentDue(propView.getAggrCurrDmd().subtract(propView.getAggrCurrColl()));
-    		totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue());
-    		defaultersInfo.setTotalDue(totalDue);
-    		defaultersList.add(defaultersInfo);
-    	}
-    	
-    	return defaultersList;
-    	
+        List<DefaultersInfo> defaultersList = new ArrayList<DefaultersInfo>();
+        DefaultersInfo defaultersInfo = null;
+        BigDecimal totalDue = BigDecimal.ZERO;
+        int count = 0;
+        Installment curInstallment = propertyTaxUtil.getCurrentInstallment();
+        for (final PropertyMaterlizeView propView : propertyViewList) {
+            defaultersInfo = new DefaultersInfo();
+            totalDue = BigDecimal.ZERO;
+            count++;
+            defaultersInfo.setSlNo(count);
+            defaultersInfo.setAssessmentNo(propView.getPropertyId());
+            defaultersInfo.setOwnerName(propView.getOwnerName().contains(",") ? propView.getOwnerName().replace(",",
+                    " & ") : propView.getOwnerName());
+            defaultersInfo.setWardName(propView.getWard().getName());
+            defaultersInfo.setHouseNo(propView.getHouseNo());
+            defaultersInfo.setLocality(propView.getLocality().getName());
+            defaultersInfo.setMobileNumber((StringUtils.isNotBlank(propView.getMobileNumber()) ? propView
+                    .getMobileNumber() : "NA"));
+            defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
+            defaultersInfo.setCurrentDue(propView.getAggrCurrDmd().subtract(propView.getAggrCurrColl()));
+            defaultersInfo
+                    .setAggrArrearPenalyDue((propView.getAggrArrearPenaly() != null ? propView.getAggrArrearPenaly() : ZERO)
+                            .subtract(propView.getAggrArrearPenalyColl() != null ? propView.getAggrArrearPenalyColl() : ZERO));
+            defaultersInfo.setAggrCurrPenalyDue((propView.getAggrCurrPenaly() != null ? propView.getAggrCurrPenaly() : ZERO)
+                    .subtract((propView.getAggrCurrPenalyColl() != null ? propView.getAggrCurrPenalyColl() : ZERO)));
+            totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue())
+                    .add(defaultersInfo.getAggrArrearPenalyDue()).add(defaultersInfo.getAggrCurrPenalyDue());
+            defaultersInfo.setTotalDue(totalDue);
+            if(propView.getInstDmdColl().size()!=0 && !propView.getInstDmdColl().isEmpty()){
+                defaultersInfo.setArrearsFrmInstallment(propView.getInstDmdColl().iterator().next().getInstallment().getDescription());
+                final Iterator itr = propView.getInstDmdColl().iterator();
+                InstDmdCollMaterializeView idc = new InstDmdCollMaterializeView();
+                InstDmdCollMaterializeView lastElement = new InstDmdCollMaterializeView(); 
+                while(itr.hasNext()) {
+                    idc =(InstDmdCollMaterializeView) itr.next();
+                    if(!idc.getInstallment().equals(curInstallment))
+                        lastElement = idc;
+                }
+                if(lastElement!=null && lastElement.getInstallment()!=null)  
+                    defaultersInfo.setArrearsToInstallment(lastElement.getInstallment().getDescription());
+            }
+           defaultersList.add(defaultersInfo);   
+        } 
+
+        return defaultersList;
+
     }
 
-	public Long getWardId() {
-		return wardId;
-	}
+    public Long getWardId() {
+        return wardId;
+    }
 
-	public void setWardId(Long wardId) {
-		this.wardId = wardId;
-	}
+    public void setWardId(Long wardId) {
+        this.wardId = wardId;
+    }
 
-	public String getFromDemand() {
-		return fromDemand;
-	}
+    public String getFromDemand() {
+        return fromDemand;
+    }
 
-	public void setFromDemand(String fromDemand) {
-		this.fromDemand = fromDemand;
-	}
+    public void setFromDemand(String fromDemand) {
+        this.fromDemand = fromDemand;
+    }
 
-	public String getToDemand() {
-		return toDemand;
-	}
+    public String getToDemand() {
+        return toDemand;
+    }
 
-	public void setToDemand(String toDemand) {
-		this.toDemand = toDemand;
-	}
+    public void setToDemand(String toDemand) {
+        this.toDemand = toDemand;
+    }
 
-	public Integer getLimit() {
-		return limit;
-	}
+    public Integer getLimit() {
+        return limit;
+    }
 
-	public void setLimit(Integer limit) {
-		this.limit = limit;
-	}
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
 
 }

@@ -171,7 +171,7 @@ function getData(){
 	isValid = validateData();
 	if(isValid == false)
 		return false;
-	var url = '/EGF/report/pendingTDSReport!ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+
+	var url = '/EGF/report/pendingTDSReport-ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+
 							department+'&fund.id='+fund+'&partyName='+partyName+'&recovery.id='+recovery+'&detailKey='+detailKey+'&showRemittedEntries='+showRemittedEntries;
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 	//loadWaitingImage();
@@ -195,7 +195,7 @@ function exportXls(){
 		showRemittedEntries = true;
 	else
 		showRemittedEntries = false;
-	window.open('/EGF/report/pendingTDSReport!exportXls.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+department+'&fund.id='+fund+
+	window.open('/EGF/report/pendingTDSReport-exportXls.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+department+'&fund.id='+fund+
 	'&recovery.id='+recovery+'&detailKey='+detailKey+'&showRemittedEntries='+showRemittedEntries+'&partyName='+partyName,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
@@ -216,20 +216,11 @@ function exportPdf(){
 		showRemittedEntries = true;
 	else
 		showRemittedEntries = false;
-	window.open('/EGF/report/pendingTDSReport!exportPdf.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+department+'&fund.id='+
+	window.open('/EGF/report/pendingTDSReport-exportPdf.action?skipPrepare=true&asOnDate='+asOnDate+'&fromDate='+fromDate+'&department.id='+department+'&fund.id='+
 	fund+'&recovery.id='+recovery+'&detailKey='+detailKey+'&showRemittedEntries='+showRemittedEntries+'&partyName='+partyName,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 </script>
 <body onload="loadEntities();">
-	<div id="loading"
-		style="position: absolute; left: 25%; top: 70%; padding: 2px; z-index: 20001; height: auto; width: 500px; display: none;">
-		<div class="loading-indicator"
-			style="background: white; color: #444; font: bold 13px tohoma, arial, helvetica; padding: 10px; margin: 0; height: auto;">
-			<img src="/egi/resources/erp2/images/loading.gif" width="32"
-				height="32" style="margin-right: 8px; vertical-align: top;" />
-			Searching...
-		</div>
-	</div>
 	<jsp:include page="pendingTDSReport-form.jsp"></jsp:include>
 </body>
 </html>

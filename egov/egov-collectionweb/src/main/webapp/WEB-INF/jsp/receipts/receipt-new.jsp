@@ -43,10 +43,7 @@
 <head>
 <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
-<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
-	rel="stylesheet" type="text/css" />
-<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
+
 
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
@@ -77,12 +74,15 @@ jQuery(document).ready(function() {
     	 format: 'dd/mm/yyyy',
     	 autoclose:true,
          onRender: function(date) {
-             console.log(date);
       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
       	  }
 	  }).on('changeDate', function(ev) {
-		  isDatepickerOpened=false; 
-       	  checkForCurrentDate(this);
+		  var string=jQuery(this).val();
+		  if(!(string.indexOf("_") > -1)){
+			  isDatepickerOpened=false; 
+	       	  checkForCurrentDate(this);
+		  }
+		  
 	  }).data('datepicker');
 
      jQuery( "#manualReceiptDate" ).datepicker({ 
@@ -92,9 +92,12 @@ jQuery(document).ready(function() {
        	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
        	  }
 	  }).on('changeDate', function(ev) {
-		  isDatepickerOpened=false; 
-       	  checkForCurrentDate(this);
-		  validateManualReceiptDate(this);
+		  var string=jQuery(this).val();
+		  if(!(string.indexOf("_") > -1)){
+			  isDatepickerOpened=false; 
+	       	  checkForCurrentDate(this);
+			  validateManualReceiptDate(this);
+		  }
 	  }).data('datepicker');
  });
 
@@ -1309,8 +1312,6 @@ function onBodyLoad()
 	var headertable=document.getElementById('billsheaderinfotable');
 	var headertablelength=headertable.rows.length;
 	var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
-	
-	
 	if(null != document.getElementById('asteriskId')){
 		document.getElementById('asteriskId').style.display="";
 	}
@@ -1493,7 +1494,6 @@ function checkandcalculatecredittotal(index,elem){
 function validateChallanDate(obj)
 {
 	if(validateDateFormat(obj)){
-		trim(obj,obj.value);
 		document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   	if(obj.value!="");
@@ -1575,8 +1575,8 @@ function validateManualReceiptDate(obj)
 function checkForCurrentDate(obj)
 {
 	var receiptDate;
-	if(validateDateFormat(obj))
-	   {
+	/* if(validateDateFormat(obj))
+	   { */
 	   document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   //trim(obj,obj.value);
@@ -1632,7 +1632,7 @@ function checkForCurrentDate(obj)
 		   scrolltop();
 	       return false;
 		   }
-	   }
+	   /* } */
 	   }
 }
 
@@ -1989,7 +1989,7 @@ function showHideMandataryMark(obj){
 					    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 					    <td class="bluebox" ><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');"  data-inputmask="'mask': 'd/m/y'" /><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');" onblur="checkForCurrentDate(this);"  data-inputmask="'mask': 'd/m/y'" /></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
@@ -2162,7 +2162,7 @@ function showHideMandataryMark(obj){
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
-		
+		<table id="manualreceipt" style="display:none">
 		<s:if test="%{!isBillSourcemisc()}">
 					<tr>
 					<td class="bluebox" width="3%" ></td>
@@ -2180,8 +2180,7 @@ function showHideMandataryMark(obj){
 					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate" cssClass="datepicker"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
 				</tr>
 		 </s:if>
-		
-		
+		</table>
 		</table>
 			
 
@@ -2221,10 +2220,8 @@ function showHideMandataryMark(obj){
          </tr>
          <tr>
            <td class="bluebox">&nbsp;</td>
-           <td class="bluebox"><s:text name="billreceipt.counter.operator"/></td>
-           <td class="bluebox"><b><s:property value="%{receiptCreatedByCounterOperator.userName}"/> </b></td>
-           <td class="bluebox"><s:text name="billreceipt.service"/></td>
-           <td class="bluebox"><b><s:property value="%{serviceName}"/></b></td>
+           <td class="bluebox"><s:text name="billreceipt.counter.operator"/>&nbsp;&nbsp;&nbsp; <b><s:property value="%{receiptCreatedByCounterOperator.name}"/> </b></td>
+           <td class="bluebox"><s:text name="billreceipt.service"/>&nbsp;&nbsp;&nbsp; <b><s:property value="%{serviceName}"/></b></td>
           </tr>
 
           <tr>

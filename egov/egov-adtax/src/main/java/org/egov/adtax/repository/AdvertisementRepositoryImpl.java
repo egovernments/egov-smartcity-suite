@@ -48,15 +48,21 @@ import javax.persistence.PersistenceContext;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseResult;
+import org.egov.adtax.entity.enums.AdvertisementStatus;
+import org.egov.adtax.entity.enums.AdvertisementStructureType;
 import org.egov.adtax.search.contract.HoardingSearch;
+import org.egov.commons.Installment;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("all")
+@Transactional(readOnly = true)
 public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCustom {
 
     @PersistenceContext
@@ -123,7 +129,36 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
             criteria.add(Restrictions.eq("revenueInspector.id", hoarding.getRevenueInspector().getId()));
         return criteria.list();
     }
+  
+    @Override
+    public int findActivePermanentAdvertisementsByCurrentInstallment(Installment installment) {
+        final Criteria advtCriteria = entityManager.unwrap(Session.class)
+                .createCriteria(Advertisement.class, "advertise").createAlias("advertise.demandId", "demand");
+                //.createAlias("demand.egInstallmentMaster", "installment");
 
+        advtCriteria.add(Restrictions.eq("status", AdvertisementStatus.ACTIVE));
+        advtCriteria.add(Restrictions.eq("type", AdvertisementStructureType.PERMANENT));
+        if (installment != null)
+            advtCriteria.add(Restrictions.eq("demand.egInstallmentMaster.id", installment.getId()));
+
+        return advtCriteria.list().size();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
+    public List<Advertisement> findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
+            Installment installment, int noOfResultToFetch) {
+        final Criteria advtCriteria = entityManager.unwrap(Session.class)
+                .createCriteria(Advertisement.class, "advertise").createAlias("advertise.demandId", "demand");
+               // .createAlias("demand.egInstallmentMaster", "installment");
+
+        advtCriteria.add(Restrictions.eq("status", AdvertisementStatus.ACTIVE));
+        advtCriteria.add(Restrictions.eq("type", AdvertisementStructureType.PERMANENT));
+        if (installment != null)
+            advtCriteria.add(Restrictions.eq("demand.egInstallmentMaster.id", installment.getId()));
+        advtCriteria.setMaxResults(noOfResultToFetch);
+        return advtCriteria.list();
+    }
     @Override
     public List<Advertisement> fetchAdvertisementBySearchParams(final Advertisement hoarding) {
 
@@ -134,7 +169,7 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
         
           
         if (null != hoarding.getAdvertisementNumber() && !hoarding.getAdvertisementNumber().isEmpty())
-            hoardingCriteria.add(Restrictions.eq("hoarding.advertisementNumber", hoarding.getAdvertisementNumber()));
+            hoardingCriteria.add(Restrictions.eq("advertisement.advertisementNumber", hoarding.getAdvertisementNumber()));
         if (null != hoarding.getLocality())
             hoardingCriteria.add(Restrictions.eq("locality.id", hoarding.getLocality().getId()));
         if (null != hoarding.getWard())
@@ -146,7 +181,7 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
     /*    if (null != hoarding.getAgency() && null!=hoarding.getAgency().getId())
             hoardingCriteria.add(Restrictions.eq("agency.id", hoarding.getAgency().getId()));
     */    if (null != hoarding.getStatus())
-            hoardingCriteria.add(Restrictions.eq("hoarding.status", hoarding.getStatus()));
+            hoardingCriteria.add(Restrictions.eq("advertisement.status", hoarding.getStatus()));
         if (null != hoarding.getRevenueInspector())
             hoardingCriteria.add(Restrictions.eq("revenueInspector.id", hoarding.getRevenueInspector().getId()));
 

@@ -44,10 +44,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
@@ -100,7 +98,9 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class CollectionCommon {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionCommon.class);
@@ -262,37 +262,6 @@ public class CollectionCommon {
     }
 
     /**
-     * Updates the billing system with receipt information
-     */
-    public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader) {
-
-        String serviceCode = null;
-        // ReceiptHeader rh =
-        // payeeDetails.getReceiptHeaders().iterator().next();
-        /**
-         * for each receipt created, send the details back to the billing system
-         */
-        LOGGER.info("$$$$$$ Update Billing system for Service Code :"
-                + receiptHeader.getService().getCode()
-                + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
-                        : ""));
-        final Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
-        billReceipts.add(new BillReceiptInfoImpl(receiptHeader));
-        if (serviceCode == null)
-            serviceCode = receiptHeader.getService().getCode();
-
-        if (receiptHeaderService.updateBillingSystem(serviceCode, billReceipts)) {
-            receiptHeader.setIsReconciled(true);
-            // the receipts should be persisted again
-            receiptHeaderService.persist(receiptHeader);
-        }
-        LOGGER.info("$$$$$$ Billing system updated for Service Code :"
-                + receiptHeader.getService().getCode()
-                + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
-                        : ""));
-    }
-
-    /**
      * This method initialises the model, a list of <code>ReceiptPayeeDetails</code> objects with the information contained in the
      * unmarshalled <code>BillCollection</code> instance.
      */
@@ -406,8 +375,10 @@ public class CollectionCommon {
             }
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
-                final String additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
-                        new BillReceiptInfoImpl(receiptHeader));
+                String additionalMessage = null;
+                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL)
+                    additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
+                            new BillReceiptInfoImpl(receiptHeader));
                 if (additionalMessage != null)
                     receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage));
                 else
@@ -432,8 +403,7 @@ public class CollectionCommon {
      */
     public Integer generateChallan(final ReceiptHeader receipt, final Map<String, Object> session, final boolean flag) {
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
-        // receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new
-        // ReceiptHeader()));
+        receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader()));
 
         final String templateName = CollectionConstants.CHALLAN_TEMPLATE_NAME;
         final Map reportParams = new HashMap<String, Object>();
@@ -443,7 +413,7 @@ public class CollectionCommon {
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
         reportInput.setPrintDialogOnOpenReport(flag);
-
+        session.remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         return ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), session);
     }
 
@@ -587,7 +557,7 @@ public class CollectionCommon {
                 oldReceiptHeader.getReceiptMisc().getFund(), null, null, oldReceiptHeader.getReceiptMisc()
                 .getDepartment(), newReceiptHeader, null, null, null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
-
+        newReceiptHeader.setReceiptdate(new Date());
         final List<CChartOfAccounts> bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
 
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
@@ -626,7 +596,7 @@ public class CollectionCommon {
      * @param receiptHeader the <code>ReceiptHeader</code> instance which has to be cancelled
      * @param cancelInstrument a boolean value indicating if the instrument should be cancelled
      */
-
+    @Transactional
     public void cancelChallanReceipt(final ReceiptHeader receiptHeader, final boolean cancelInstrument) {
         String instrumentType = "";
         /**
@@ -674,7 +644,8 @@ public class CollectionCommon {
     public InstrumentHeader validateAndConstructCashInstrument(final PaymentInfoCash paytInfoCash) {
         if (paytInfoCash.getInstrumentAmount() == null
                 || paytInfoCash.getInstrumentAmount().compareTo(BigDecimal.ZERO) == 0)
-            throw new ApplicationRuntimeException("Invalid Cash Instrument Amount[" + paytInfoCash.getInstrumentAmount() + "]");
+            throw new ApplicationRuntimeException("Invalid Cash Instrument Amount["
+                    + paytInfoCash.getInstrumentAmount() + "]");
 
         final InstrumentHeader instrHeaderCash = new InstrumentHeader();
         instrHeaderCash.setInstrumentType(financialsUtil
@@ -820,10 +791,16 @@ public class CollectionCommon {
 
     public ArrayList<ReceiptDetail> apportionBillAmount(final BigDecimal actualAmountPaid,
             final ArrayList<ReceiptDetail> receiptDetails) {
+        BigDecimal totalCreditAmount = BigDecimal.ZERO;
         final ReceiptHeader receiptHeader = receiptDetails.get(0).getReceiptHeader();
         final BillingIntegrationService billingService = (BillingIntegrationService) collectionsUtil
                 .getBean(receiptHeader.getService().getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         billingService.apportionPaidAmount(receiptHeader.getReferencenumber(), actualAmountPaid, receiptDetails);
+        for (final ReceiptDetail receiptDetail : receiptDetails)
+            totalCreditAmount = totalCreditAmount.add(receiptDetail.getCramount());
+        if (totalCreditAmount.intValue() == 0)
+            new ApplicationRuntimeException("Apportioning Failed at the Billing System: " + receiptHeader.getService().getCode()
+                    + ", for bill number: " + receiptHeader.getReferencenumber());
         return receiptDetails;
     }
 

@@ -65,6 +65,7 @@ import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Fund;
@@ -111,16 +112,54 @@ public class ReportHelper {
     public InputStream exportXls(InputStream inputStream, final String jasperPath, final Map<String, Object> paramMap,
             final List<Object> dataSource)
             throws JRException, IOException {
-        JasperExportManager.exportReportToXmlStream(setUpAndGetJasperPrint(jasperPath, paramMap, dataSource), outputBytes);
-        inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
+    	
+    	  JasperPrint jasperPrint = setUpAndGetJasperPrint(jasperPath, paramMap, dataSource);
+    	 ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
+         JRXlsExporter exporter = new JRXlsExporter();
+         //exporter.setExporterInput(jasperPrint);
+         exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+         exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, xlsReport);
+         exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET,
+                 Boolean.FALSE);
+         exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE,
+                 Boolean.TRUE);
+         exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND,
+                 Boolean.FALSE);
+         exporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS,
+                 Boolean.FALSE);
+         exporter.exportReport();
+        // return xlsReport;
+         
+         inputStream = new ByteArrayInputStream(xlsReport.toByteArray());
+    	
+        //JasperExportManager.exportReportToXmlStream(setUpAndGetJasperPrint(jasperPath, paramMap, dataSource), outputBytes);
+       // inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
         closeStream(reportStream);
         return inputStream;
     }
 
     public InputStream exportXls(InputStream inputStream, final JasperPrint jasperPrint) throws JRException, IOException {
         outputBytes = new ByteArrayOutputStream(1 * MB);
-        JasperExportManager.exportReportToXmlStream(jasperPrint, outputBytes);
-        inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
+        //JasperExportManager.exportReportToXmlStream(jasperPrint, outputBytes);
+        
+        
+        ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
+        JRXlsExporter exporter = new JRXlsExporter();
+        //exporter.setExporterInput(jasperPrint);
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, xlsReport);
+        exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET,
+                Boolean.FALSE);
+        exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE,
+                Boolean.TRUE);
+        exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND,
+                Boolean.FALSE);
+        exporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS,
+                Boolean.FALSE);
+        exporter.exportReport();
+       // return xlsReport;
+        
+        inputStream = new ByteArrayInputStream(xlsReport.toByteArray());
         closeStream(reportStream);
         return inputStream;
     }
@@ -1046,7 +1085,7 @@ public class ReportHelper {
              
             dr = drb.build();
             
-            JRXlsExporter exporter = new JRXlsExporter();
+          // JRXlsExporter exporter = new JRXlsExporter();
             ds = new JRBeanCollectionDataSource(al);
             return DynamicJasperHelper.generateJasperPrint(dr,
                     new ClassicLayoutManager(), ds);

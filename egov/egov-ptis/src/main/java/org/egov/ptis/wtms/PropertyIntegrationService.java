@@ -40,6 +40,7 @@
 package org.egov.ptis.wtms;
 
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 
 /**
  * Interface to access Property Information
@@ -47,6 +48,6 @@ import org.egov.ptis.domain.model.AssessmentDetails;
  */
 public interface PropertyIntegrationService {
 
-    public AssessmentDetails getAssessmentDetailsForFlag(final String asessmentNumber, final Integer flagDetail);
+    public AssessmentDetails getAssessmentDetailsForFlag(final String asessmentNumber, final Integer flagDetail,final BasicPropertyStatus status);
 
 }

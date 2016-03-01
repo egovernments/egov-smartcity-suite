@@ -14,4 +14,5 @@ public	Accountdetailtype findByName(String name);
 public List<Accountdetailtype> findByNameContainingIgnoreCaseAndDescriptionContainingIgnoreCase(String name,String description);
 public List<Accountdetailtype> findByNameContainingIgnoreCase(String name);
 public List<Accountdetailtype> findByDescriptionContainingIgnoreCase(String description);
+public List<Accountdetailtype>  findByFullQualifiedName(String fullQualifiedName);
 }

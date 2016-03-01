@@ -53,11 +53,6 @@
 <title><s:text name="bill.register.report" /></title>
 
 </head>
-<script>
-	function doAfterSubmit(){
-		document.getElementById('loading').style.display ='block';
-	}
-</script>
 <body>
 	<s:form action="billRegisterReport" name="billRegisterReport"
 		theme="simple" method="post" onsubmit="javascript:doAfterSubmit()">
@@ -130,11 +125,6 @@
 				onclick="javascript:window.close()" class="button" />
 
 		</div>
-		<div id="loading" class="loading"
-			style="width: 700; height: 700; display: none" align="center">
-			<blink style="color: red">Searching processing, Please
-				wait...</blink>
-		</div>
 		<br>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 
@@ -179,12 +169,12 @@
 								property="paymentVoucherNumber" />
 							<display:column title="Cheque No and Date"
 								style="width:11%;text-align:center" property="chequeNumAndDate" />
-							<%-- <display:column title="Remittance Payment voucher number"
+							 <display:column title="Remittance Payment voucher number"
 								style="width:11%;text-align:center"
 								property="remittanceVoucherNumber" />
 							<display:column title="Remittance Cheque No and Date"
 								style="width:11%;text-align:center"
-								property="remittanceChequeNumberAndDate" /> --%>
+								property="remittanceChequeNumberAndDate" /> 
 							<display:column title="Status"
 								style="width:10%;text-align:center" property="status" />
 							<display:caption media="pdf">

@@ -104,6 +104,7 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.services.cheque.ChequeAssignmentService;
 import org.egov.services.cheque.ChequeService;
+import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.services.report.FundFlowService;
 import org.egov.services.voucher.VoucherService;
@@ -113,6 +114,7 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -150,7 +152,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     private static final String TRANSACTION_FAILED = "Transaction failed";
     private List<HashMap<String, Object>> accountcodedetails = null;
     private List<HashMap<String, Object>> subledgerdetails = null;
+    @Autowired
+    @Qualifier("instrumentService")
     private InstrumentService instrumentService;
+    @Autowired
+    @Qualifier("instrumentHeaderService")
+    private InstrumentHeaderService instrumentHeaderService;
+    @Autowired
+    @Qualifier("chequeService")
     private ChequeService chequeService;
     private User user = null;
     private int conBillIdlength = 0;
@@ -325,8 +334,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             miscBillList = new ArrayList<Miscbilldetail>();
 
             prepareVoucherdetails(contractorids, parameters, worksBillGlcodeList, billList);
-            if (contractorids != null)
-                conBillIdlength = contractorids.length;
+            /*if (contractorids != null)
+                conBillIdlength = contractorids.length;*/
             prepareVoucherdetails(supplierids, parameters, purchaseBillGlcodeList, billList);
             prepareVoucherdetails(contingencyIds, parameters, contingentBillGlcodeList, billList);
             prepareVoucherdetails(salaryids, parameters, salaryBillGlcodeList, billList);
@@ -381,7 +390,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     }
 
     protected Assignment getWorkflowInitiator(final Paymentheader paymentheader) {
-        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(paymentheader.getCreatedBy().getId());
+        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(paymentheader.getCreatedBy().getId(), new Date())
+                .get(0);
         return wfInitiator;
     }
 
@@ -389,7 +399,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public Paymentheader transitionWorkFlow(final Paymentheader paymentheader, WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date()).get(0);
         Position pos = null;
         Assignment wfInitiator = null;
 
@@ -480,6 +490,13 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         final HashMap<String, BigDecimal> tmpsublegDetailMap = new HashMap<String, BigDecimal>();
         HashMap<String, Object> accdetailsMap = null;
         HashMap<String, Object> sublegDetailMap = null;
+        List<PaymentBean> tempBillList = new ArrayList<PaymentBean>();
+        if (ids != null && billList != null)
+            for (PaymentBean bean : billList)
+                for (String billId : ids)
+                    if (bean.getBillId().toString().equalsIgnoreCase(billId))
+                        tempBillList.add(bean);
+
         // String disableExp =parameters.get("disableExpenditureType")==null?"false":parameters.get("disableExpenditureType")[0];
         final String changePartyName = parameters.get("changePartyName") == null ? "false" : parameters.get("changePartyName")[0];
         final String newPartyName = parameters.get("newPartyName") == null ? "" : parameters.get("newPartyName")[0];
@@ -490,33 +507,36 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 egBillregister = (EgBillregister) persistenceService.find("from EgBillregister where id = ? ",
                         Long.valueOf(ids[i]));
                 if ("true".equalsIgnoreCase(changePartyName))
-                    generateMiscBillForSalary(egBillregister, billList.get(i + conBillIdlength).getPaymentAmt(),
-                            billList.get(i + conBillIdlength).getNetAmt(), newPartyName);
+                    generateMiscBillForSalary(egBillregister, tempBillList.get(i + conBillIdlength).getPaymentAmt(),
+                            tempBillList.get(i + conBillIdlength).getNetAmt(), newPartyName);
                 else
-                    generateMiscBill(egBillregister, billList.get(i + conBillIdlength).getPaymentAmt(),
-                            billList.get(i + conBillIdlength).getNetAmt());
+                    generateMiscBill(egBillregister, tempBillList.get(i + conBillIdlength).getPaymentAmt(),
+                            tempBillList.get(i + conBillIdlength).getNetAmt());
                 gl = getPayableAccount(ids[i], glcodeList, "getGeneralLedger");
-                if(gl==null)
-                throw new ValidationException("Voucher is created with invalid netpayble code so payment is not allowed for this bill ","Voucher is created with invalid netpayble code so payment is not allowed for this bill");
+                if (gl == null)
+                    throw new ValidationException(
+                            "Voucher is created with invalid netpayble code so payment is not allowed for this bill ",
+                            "Voucher is created with invalid netpayble code so payment is not allowed for this bill");
                 tmp = gl.getGlcodeId().getGlcode() + DELIMETER + gl.getGlcodeId().getName();
                 if (tmpaccdetailsMap.get(tmp) == null)
-                    tmpaccdetailsMap.put(tmp, billList.get(i + conBillIdlength).getPaymentAmt());
+                    tmpaccdetailsMap.put(tmp, tempBillList.get(i + conBillIdlength).getPaymentAmt());
                 else
-                    tmpaccdetailsMap.put(tmp, tmpaccdetailsMap.get(tmp).add(billList.get(i + conBillIdlength).getPaymentAmt()));
+                    tmpaccdetailsMap.put(tmp, tmpaccdetailsMap.get(tmp)
+                            .add(tempBillList.get(i + conBillIdlength).getPaymentAmt()));
                 // if for a ledger row more than one ledgerdetail -then it is having multiple subledger
                 // amount is not same as ledger amount then it is partial payment
                 // in such condition throw error saying partial payment is not allowed for this
                 if (gl.getGeneralLedgerDetails().size() > 1
                         &&
-                        billList.get(i + conBillIdlength).getPaymentAmt().compareTo(BigDecimal.valueOf(gl.getCreditAmount())) != 0)
+                        tempBillList.get(i + conBillIdlength).getPaymentAmt().compareTo(BigDecimal.valueOf(gl.getCreditAmount())) != 0)
                     throw new ValidationException(Arrays.asList(new ValidationError
                             ("partial.payment.not.allowed.for", "Partial payment not allowed for "
-                                    + billList.get(i + conBillIdlength).getBillNumber())));
+                                    + tempBillList.get(i + conBillIdlength).getBillNumber())));
                 // partial payment and multple subledger ends
                 final Iterator it = gl.getGeneralLedgerDetails().iterator();
                 while (it.hasNext()) {
                     ledgerDetail = (CGeneralLedgerDetail) it.next();
-                    if ("Salary".equalsIgnoreCase(billList.get(i + conBillIdlength).getExpType()))
+                    if ("Salary".equalsIgnoreCase(tempBillList.get(i + conBillIdlength).getExpType()))
                         tmp = gl.getId() + DELIMETER + gl.getGlcodeId().getGlcode() + DELIMETER + ledgerDetail.getDetailTypeId()
                                 + DELIMETER + ledgerDetail.getDetailKeyId();
                     else
@@ -528,23 +548,23 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                     {
                         if (gl.getGeneralLedgerDetails().size() > 1
                                 &&
-                                billList.get(i + conBillIdlength).getPaymentAmt()
+                                tempBillList.get(i + conBillIdlength).getPaymentAmt()
                                         .compareTo(BigDecimal.valueOf(gl.getCreditAmount())) == 0)
                             tmpsublegDetailMap.put(tmp, ledgerDetail.getAmount());
                         else
-                            tmpsublegDetailMap.put(tmp, billList.get(i + conBillIdlength).getPaymentAmt());
+                            tmpsublegDetailMap.put(tmp, tempBillList.get(i + conBillIdlength).getPaymentAmt());
 
-                    } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT.equalsIgnoreCase(billList.get(
+                    } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT.equalsIgnoreCase(tempBillList.get(
                             i + conBillIdlength).getExpType()))
                         tmpsublegDetailMap.put(tmp, tmpsublegDetailMap.get(tmp).add(ledgerDetail.getAmount()));
                     else if (gl.getGeneralLedgerDetails().size() > 1
                             &&
-                            billList.get(i + conBillIdlength).getPaymentAmt()
+                            tempBillList.get(i + conBillIdlength).getPaymentAmt()
                                     .compareTo(BigDecimal.valueOf(gl.getCreditAmount())) == 0)
                         tmpsublegDetailMap.put(tmp, tmpsublegDetailMap.get(tmp).add(ledgerDetail.getAmount()));
                     else
                         tmpsublegDetailMap.put(tmp,
-                                tmpsublegDetailMap.get(tmp).add(billList.get(i + conBillIdlength).getPaymentAmt()));
+                                tmpsublegDetailMap.get(tmp).add(tempBillList.get(i + conBillIdlength).getPaymentAmt()));
                 }
             }
 
@@ -1009,10 +1029,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         final List<CChartOfAccounts> list = glCodeList.get(type);
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Calling getDeductionAmt..................................$$$$$$$$$$$$$$$$$$$$$$ " + list.size());
-        if (LOGGER.isDebugEnabled())
-            for (final CChartOfAccounts coa : list)
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("#################################" + coa.getGlcode() + ":::::" + coa.getPurposeId());
+        for (final CChartOfAccounts coa : list)
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("#################################" + coa.getGlcode() + ":::::" + coa.getPurposeId());
         populateDeductionData(billList, deductionAmtMap, type, glCodeList.get(type));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed getDeductionAmt.");
@@ -1034,8 +1053,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             if (dedList != null && dedList.size() != 0)
                 for (final Object[] obj : dedList) {
                     final BigInteger id = ((BigInteger) obj[0]);
-                    if (billIds.contains(id))
-                        deductionAmtMap.put(id.longValue(), obj[1] == null ? BigDecimal.ZERO : (BigDecimal) obj[1]);
+                    if (billIds.contains(id.longValue()))
+                        deductionAmtMap.put(id.longValue(),
+                                obj[1] == null ? BigDecimal.ZERO : BigDecimal.valueOf((Double) obj[1]));
                 }
         }
         if (LOGGER.isDebugEnabled())
@@ -1094,10 +1114,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             paidList = getEarlierPaymentAmtList(type);
             if (paidList != null && paidList.size() != 0)
                 for (final Object[] obj : paidList) {
-                    final long id = ((BigDecimal) obj[0]).longValue();
+                    final long id = ((BigInteger) obj[0]).longValue();
                     if (billIds.contains(id))
-                        paymentAmtMap.put(((BigDecimal) obj[0]).longValue(), obj[1] == null ? BigDecimal.ZERO
-                                : (BigDecimal) obj[1]);
+                        paymentAmtMap.put(((BigInteger) obj[0]).longValue(), obj[1] == null ? BigDecimal.ZERO
+                                : BigDecimal.valueOf((Double) obj[1]));
                 }
         }
         if (LOGGER.isDebugEnabled())
@@ -1504,8 +1524,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                 +
                                 " where mb.payvhid=" + header.getVoucherheader().getId()
                                 + " and br.id= mis.billid and mis.voucherheaderid=billvhid order by mb.paidto,mb.BILLDATE")
-                .addScalar("billId").addScalar("billNumber").addScalar("billDate").addScalar("payTo").addScalar("netAmt")
-                .addScalar("passedAmt").addScalar("paymentAmt").addScalar("expType")
+                .addScalar("billId", BigDecimalType.INSTANCE).addScalar("billNumber").addScalar("billDate").addScalar("payTo")
+                .addScalar("netAmt", BigDecimalType.INSTANCE)
+                .addScalar("passedAmt", BigDecimalType.INSTANCE).addScalar("paymentAmt", BigDecimalType.INSTANCE)
+                .addScalar("expType")
                 .setResultTransformer(Transformers.aliasToBean(PaymentBean.class));
         paymentBeanList = query.list();
         BigDecimal earlierAmt;
@@ -2469,7 +2491,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("selectedPaymentList===" + selectedPaymentVHList);
-        final Bankaccount account = (Bankaccount) persistenceService.find(" from Bankaccount where  id=?", bankaccount);
+        final Bankaccount account = (Bankaccount) persistenceService.find(" from Bankaccount where  id=?",
+                bankaccount.longValue());
         // get voucherList
         final List<CVoucherHeader> voucherList = persistenceService.findAllByNamedQuery("getVoucherList", selectedPaymentVHList);
 
@@ -2582,6 +2605,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         return instHeaderList;
     }
 
+    @Transactional
     public List<InstrumentHeader> reassignInstrument(final List<ChequeAssignment> chequeAssignmentList, final String paymentMode,
             final Integer bankaccount, final Map<String, String[]> parameters, final Department dept)
             throws ApplicationRuntimeException, Exception
@@ -2739,7 +2763,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         return instrumentHeaderMap;
     }
 
-    protected InstrumentHeader reassignInstrumentHeader(final Bankaccount account, final String chqNo, final String instType,
+    @Transactional
+    public InstrumentHeader reassignInstrumentHeader(final Bankaccount account, final String chqNo, final String instType,
             final String partyName, final BigDecimal amount, final Date date, final String key, final String serialNo)
     {
         if (LOGGER.isDebugEnabled())
@@ -2767,7 +2792,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed reassignInstrumentHeader.");
-        return instrumentService.instrumentHeaderService.persist(ih);
+        return instrumentHeaderService.persist(ih);
     }
 
     protected Map<String, Object> preapreInstrumentVoucher(final CVoucherHeader voucherHeader, final Bankaccount account,
@@ -2801,7 +2826,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         return instrumentVoucherMap;
     }
 
-    protected Map<String, Object> reassignInstrumentVoucher(final CVoucherHeader voucherHeader, final Bankaccount account,
+    @Transactional
+    public Map<String, Object> reassignInstrumentVoucher(final CVoucherHeader voucherHeader, final Bankaccount account,
             final String chqNo, final String paidTo, final String serailNo)
     {
         if (LOGGER.isDebugEnabled())
@@ -2855,7 +2881,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 paymentBean.setDeductionAmt(deductionAmtMap.get(paymentBean.getCsBillId()) == null ? BigDecimal.ZERO
                         : deductionAmtMap.get(paymentBean.getCsBillId()));
                 final BigDecimal passedamount = billregister.getPassedamount() == null ? BigDecimal.ZERO : billregister
-                        .getPassedamount();
+                        .getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
                 paymentBean.setNetAmt(passedamount.subtract(paymentBean.getDeductionAmt() == null ? BigDecimal.ZERO : paymentBean
                         .getDeductionAmt()));
                 paymentBean.setEarlierPaymentAmt(paidAmtMap.get(paymentBean.getCsBillId()) == null ? BigDecimal.ZERO

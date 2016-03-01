@@ -42,100 +42,105 @@
 <head>
 <title><s:text name="page.title.renewtrade" /></title>
 <sx:head />
-<script>
-	function closethis() {
-		if (confirm("Do you want to close this window ?")) {
-			window.close();
-		}
-	}
-
-  /* function validateWorkFlowApprover(name,errorDivId) {
-    document.getElementById("workFlowAction").value=name;
-      var approverPosId = document.getElementById("approverPositionId");
-      if(approverPosId) {
-      var approver = approverPosId.options[approverPosId.selectedIndex].text; 
-      document.getElementById("approverName").value= approver.split('~')[0];
-    }     
-     return  onSubmit();
-  } */
-
-  function onSubmitValidations() {
-   return true;
-	  //  return validateForm(this);
-  }
-  
-	function printthis() {
-		if (confirm("Do you want to print this screen ?")) {
-			var html = "<html>";
-			html += document.getElementById('content').innerHTML;
-			html += "</html>";
-
-			var printWin = window
-					.open('', '',
-							'left=0,top=0,width=1,height=1,toolbar=0,scrollbars=0,status=0');
-			printWin.document.write(html);
-			printWin.document.close();
-			printWin.focus();
-			printWin.print();
-			printWin.close();
-		}
-	}
-
-	function onSubmit() {
-		document.forms[0].action = 'newTradeLicense-renewal.action';
-		document.forms[0].submit;
-	}
-</script>
 </head>
 <body>
-  <div id="content">
-    <table align="center" width="100%">
-      <tbody>
-        <tr>
-          <td>
-            <div align="center">
-                <div class="formmainbox">
-                  <div class="headingbg" id="headingdiv">
-                    <s:text name="page.title.renewtrade" />
-                  </div>
-                  <table>
-                    <tr>
-                      <td align="left" style="color: #FF0000"><s:actionerror cssStyle="color: #FF0000" /> <s:fielderror />
-                        <s:actionmessage /></td>
-                    </tr>
-                  </table>
-                  <s:form action="newTradeLicense" theme="css_xhtml" name="renewForm">
-                    <s:token />
-                    <s:push value="model">
-                      <s:hidden name="docNumber" />
-                      <s:hidden name="model.id" />
-                      <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
-                      <c:set var="trclass" value="greybox" />
-                        <%@ include file='../common/view.jsp'%>
-                        <c:choose>
-                          <c:when test="${trclass=='greybox'}">
-                            <c:set var="trclass" value="bluebox" />
-                          </c:when>
-                          <c:when test="${trclass=='bluebox'}">
-                            <c:set var="trclass" value="greybox" />
-                          </c:when>
-                        </c:choose>
-                        
-
-                        <div>
-                          <%@ include file='../common/commonWorkflowMatrix.jsp'%>
-                          <%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
-                        </divr>
-                    </s:push>
-                  </s:form>
-                </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="mandatory1" style="font-size: 11px;" align="left">* Mandatory Fields</div>
+	<div class="row">
+		<div class="col-md-12">
+			<s:if test="%{hasErrors()}">
+				<div align="center" class="error-msg">
+					<s:actionerror />
+					<s:fielderror />
+				</div>
+			</s:if>
+			<s:if test="%{hasActionMessages()}">
+				<div class="messagestyle">
+					<s:actionmessage theme="simple" />
+				</div>
+			</s:if>
+			<s:form action="newTradeLicense-renewal" theme="simple" name="renewForm" cssClass="form-horizontal form-groups-bordered">
+				<s:token />
+				<s:push value="model">
+					<s:hidden name="docNumber" />
+					<s:hidden name="actionName" value="renew" />
+					<s:hidden name="model.id" />
+					<s:hidden id="detailChanged" name="detailChanged"></s:hidden>
+					<s:hidden name="feeTypeId" id="feeTypeId" />
+					<div class="panel panel-primary" data-collapsed="0">
+                            <div class="panel-heading">
+								<div class="panel-title" style="text-align:center"> 
+									<s:text name="page.title.renewtrade" />
+								</div>
+                            </div>
+                            
+							<%@ include file='../common/view.jsp'%>
+							
+							<div class="panel-heading custom_form_panel_heading">
+    							<div class="panel-title">Editable <s:text name='license.details.lbl' /></div>
+							</div>
+							<div class="form-group">
+							    <label class="col-sm-3 control-label text-right"><s:text name='license.category.lbl' /><span class="mandatory"></span></label>
+							    <div class="col-sm-3 add-margin">
+							        <s:select name="category" id="category" list="dropdownData.categoryList"
+								listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{category.id}" class="form-control" onChange="setupAjaxSubCategory(this);" />
+								<egov:ajaxdropdown id="populateSubCategory" fields="['Text','Value']" dropdownId='subCategory' url='domain/commonTradeLicenseAjax-populateSubCategory.action' />
+							    </div>
+							    
+							    <label class="col-sm-2 control-label text-right"><s:text name='license.subCategory.lbl' /><span class="mandatory"></span></label>
+							    <div class="col-sm-3 add-margin">
+							        <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList"
+								listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control"/>
+							    </div> 
+							</div>
+							
+							<div class="form-group">
+							    <label class="col-sm-3 control-label text-right"><s:text name='license.uom.lbl' /><span class="mandatory"></span></label>
+							     <div class="col-sm-3 add-margin">
+							        <s:textfield name="uom" maxlength="8" id="uom" value="%{tradeName.licenseSubCategoryDetails[0].uom.name}"  readOnly="true" class="form-control"  />
+							    </div>
+							    <label class="col-sm-2 control-label text-right"><s:text name='license.premises.lbl' /><span class="mandatory"></span></label>
+							    <div class="col-sm-3 add-margin">
+							        <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight" value="%{tradeArea_weight}" cssClass="form-control patternvalidation"  data-pattern="number"  />
+							    </div>
+							</div>
+							<div>
+								<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+								<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
+							</div>
+						</div>
+				</s:push>
+			</s:form>
+		</div>
+	</div>
+	<script src="../resources/js/app/newtrade.js?rnd=${app_release_no}"></script>
+	<script>
+	jQuery('#subCategory').change(function(){
+		jQuery.ajax({
+			url: "../domain/commonTradeLicenseAjax-ajaxLoadUomName.action", 
+			type: "GET",
+			data: {
+				subCategoryId : jQuery('#subCategory').val(),
+				feeTypeId :  jQuery('#feeTypeId').val()
+			},
+			cache: false,
+			dataType: "json",
+			success: function (response) {
+				jQuery('#uom').val(response.uom);
+			}, 
+			error: function (response) {
+				console.log("failed");
+				jQuery('#uom').val('');
+				bootbox.alert("No UOM mapped for SubCategory")
+			}
+		})});
+	function onSubmitValidations() {
+		return true;
+	}
+	function onSubmit() {
+			//toggleFields(false,"");
+			document.renewForm.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-renewal.action';
+			//document.newTradeLicense.submit();
+		return true;
+	}
+	</script>
 </body>
 </html>

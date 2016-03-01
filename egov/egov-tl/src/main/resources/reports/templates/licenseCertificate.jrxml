@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-01-29T12:52:28 -->
+<!-- 2016-02-25T10:51:56 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -81,7 +81,7 @@
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["               Trade License is issued to "+$P{applicantName}+" to carry on the Trade / Operation of M/s "+$P{nameOfTradeSubCat}+ " "+$P{subCategory}+ "at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+$P{licencenumber}+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["               Trade License is issued to "+$P{applicantName}+" to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " "+$P{subCategory}+ "at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+$P{licencenumber}+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="17" width="68" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
@@ -147,7 +147,7 @@
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["               License Fee Rs: "+$P{demandTotalamt}+" is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ "of Trade License for the financial year " +$P{installMentYear}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["               License Fee Rs: "+$P{demandTotalamt}+" is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="133">
@@ -166,12 +166,19 @@
 				<text><![CDATA[5.	This license is only for TRADE PURPOSE. It does not confer any power of permission for either temporary or permanent exemption from the provisions of any other section of the A.P. Municipal Corporation Act, 1994 (Formerly GHMC Act), bye-laws or rules in force.]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1" y="60" width="555" height="30" uuid="a6796b42-7083-4ff4-a936-7cece08d1895"/>
+				<reportElement x="269" y="73" width="173" height="17" uuid="a6796b42-7083-4ff4-a936-7cece08d1895"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["4.     The License is invalid if the building structure is un-authorisedly constructed / effecting the road widening or not fulfilling the provisions or rules of the " +$P{carporationulbType}==true ? "A.P. Municipal Corporations Act, 1994 (Formerly GHMC Act, 1955)" :"APM Act, 1965"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{carporationulbType}==true ? "A.P. Municipal Corporations Act, 1994 (Formerly GHMC Act, 1955)" :"APM Act, 1965"]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="1" y="60" width="542" height="30" isPrintInFirstWholeBand="true" uuid="f0479c58-0694-4926-b6ac-81743971eda3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[4.     	The License is invalid if the building structure is un-authorisedly constructed / effecting the road widening or not fulfilling the provisions or rules of the ]]></text>
+			</staticText>
 		</band>
 		<band height="91">
 			<staticText>

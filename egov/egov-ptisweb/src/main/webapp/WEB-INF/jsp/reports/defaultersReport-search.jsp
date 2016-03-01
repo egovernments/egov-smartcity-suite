@@ -131,8 +131,12 @@
 								<th>Door No</th>
 								<th>Locality</th>
 								<th>Mobile Number</th>
+								<th>Arrears From Installment</th>
+								<th>Arrears To Installment</th>
 								<th>Arrears Amount</th>
+								<th>Arrears Penalty</th>
 								<th>Current Amount</th>
+								<th>Current Penalty</th>
 								<th>Total</th>
 							</tr>
 						</thead>

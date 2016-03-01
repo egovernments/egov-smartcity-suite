@@ -175,7 +175,8 @@ public class JournalVoucherAction extends BaseVoucherAction
                     voucherTypeBean.setTotalAmount(parameters.get("totaldbamount")[0]);
                 }
                 populateWorkflowBean();
-                voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean, workflowBean);
+                voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader,
+                        voucherTypeBean, workflowBean);
                 message = "Voucher  "
                         + voucherHeader.getVoucherNumber()
                         + " Created Sucessfully"
@@ -194,13 +195,17 @@ public class JournalVoucherAction extends BaseVoucherAction
             }
 
             catch (final ValidationException e) {
-                clearMessages();
+                // clearMessages();
                 if (subLedgerlist.size() == 0)
                     subLedgerlist.add(new VoucherDetails());
                 voucherHeader.setVoucherNumber(voucherNumber);
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
-                throw new ValidationException(errors);
+                if (e.getErrors().get(0).getMessage() != null && e.getErrors().get(0).getMessage() != "")
+                    throw new ValidationException(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage());
+                else
+                    throw new ValidationException("Voucher creation failed", "Voucher creation failed");
+
             } catch (final Exception e) {
                 e.printStackTrace();
                 clearMessages();

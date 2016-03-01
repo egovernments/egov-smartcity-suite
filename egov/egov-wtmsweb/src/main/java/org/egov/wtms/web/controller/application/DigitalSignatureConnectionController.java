@@ -71,6 +71,7 @@ import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
@@ -132,6 +133,7 @@ public class DigitalSignatureConnectionController {
         final String fileStoreIds = request.getParameter("fileStoreId");
         final String[] fileStoreIdArr = fileStoreIds.split(",");
         HttpSession session = request.getSession();
+        String sourceChannel = request.getParameter("Source");
         Long approvalPosition = (Long)session.getAttribute(WaterTaxConstants.APPROVAL_POSITION);
         String approvalComent = (String)session.getAttribute(WaterTaxConstants.APPROVAL_COMMENT);
         Map<String, String> appNoFileStoreIdsMap = (Map<String, String>)session.getAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER);
@@ -150,7 +152,7 @@ public class DigitalSignatureConnectionController {
                 }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), WaterTaxConstants.SIGNWORKFLOWACTION, "",
-                        null);
+                        null,sourceChannel);
             }
         }
         model.addAttribute("successMessage", "Digitally Signed Successfully");
@@ -319,7 +321,7 @@ public class DigitalSignatureConnectionController {
         String ownerName =  "";
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         if(null != assessmentDetails && null != assessmentDetails.getOwnerNames()) {
             Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
             if (ownerNameItr.hasNext()) {
@@ -334,7 +336,7 @@ public class DigitalSignatureConnectionController {
         String propAddress =  "";
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         if(null != assessmentDetails) {
             propAddress = assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : propAddress;
         }

@@ -39,14 +39,9 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%!
-       int count = -1;
-   %>
-<tr>
 <tr>
 	<td class="greybox"></td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
-	<% count++; %>
 		<td class="greybox"><s:text name="voucher.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
@@ -57,12 +52,7 @@
 				onChange="populateSchemes(this);loadBank(this);"
 				value="%{fundId.id}" /></td>
 	</s:if>
-	<%if(count % 2 == 1) {%>
-</tr>
-<tr>
-	<%} %>
 	<s:if test="%{shouldShowHeaderField('scheme')}">
-	<% count++; %>
 		<egov:ajaxdropdown id="scheme" fields="['Text','Value']"
 			dropdownId="schemeid" url="voucher/common-ajaxLoadSchemes.action" />
 
@@ -76,15 +66,10 @@
 				onChange="populatesubSchemes(this)"
 				value="voucherHeader.vouchermis.schemeid.id" /></td>
 	</s:if>
-<%if(count % 2 == 1) {%>
 </tr>
 <tr>
 <td class="bluebox"></td>
-	<%} %>
-	
-
 	<s:if test="%{shouldShowHeaderField('subscheme')}">
-	<% count++; %>
 		<egov:ajaxdropdown id="subscheme" fields="['Text','Value']"
 			dropdownId="subschemeid"
 			url="voucher/common-ajaxLoadSubSchemes.action" />
@@ -98,12 +83,7 @@
 				value="voucherHeader.vouchermis.subschemeid.id"
 				onChange="populateFundSource(this)" /></td>
 	</s:if>
-<%if(count % 2 == 1) {%>
-</tr>
-<tr>
-	<%} %>
 	<s:if test="%{shouldShowHeaderField('fundsource')}">
-	<% count++; %>
 		<egov:ajaxdropdown id="fundsource" fields="['Text','Value']"
 			dropdownId="fundsourceId"
 			url="voucher/common-ajaxLoadFundSource.action" />
@@ -116,14 +96,11 @@
 				listValue="name" headerKey="-1" headerValue="----Choose----"
 				value="voucherHeader.vouchermis.fundsource.id" /></td>
 	</s:if>
-<%if(count % 2 == 1) {%>
 </tr>
 <tr>
 <td class="greybox"></td>
-	<%} %>
 	
 	<s:if test="%{shouldShowHeaderField('department')}">
-	<% count++; %>
 		<td class="greybox"><s:text name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
@@ -135,12 +112,7 @@
 				value="voucherHeader.vouchermis.departmentid.id"
 				onChange="populateApproverDept(this);" /></td>
 	</s:if>
-	<%if(count % 2 == 1) {%>
-</tr>
-<tr>
-	<%} %>
 	<s:if test="%{shouldShowHeaderField('field')}">
-	<% count++; %>
 		<td class="greybox"><s:text name="voucher.field" /> <s:if
 				test="%{isFieldMandatory('field')}">
 				<span class="mandatory1">*</span>
@@ -151,14 +123,11 @@
 				headerValue="----Choose----"
 				value="voucherHeader.vouchermis.divisionid.id" /></td>
 	</s:if>
-<%if(count % 2 == 1) {%>
 </tr>
 <tr>
 <td class="bluebox"></td>
-	<%} %>
 	
 	<s:if test="%{shouldShowHeaderField('functionary')}">
-	<% count++; %>
 		<td class="bluebox"><s:text name="voucher.functionary" /> <s:if
 				test="%{isFieldMandatory('functionary')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
@@ -169,12 +138,7 @@
 				headerValue="----Choose----"
 				value="voucherHeader.vouchermis.functionary.id" style="width:180px" /></td>
 	</s:if>
-	<%if(count % 2 == 1) {%>
-</tr>
-<tr>
-	<%} %>
 	<s:if test="%{shouldShowHeaderField('function')}">
-	<% count++; %>
 		<td class="bluebox"><s:text name="voucher.function" /> <s:if
 				test="%{isFieldMandatory('function')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
@@ -185,13 +149,7 @@
 				headerValue="----Choose----" value="%{vouchermis.function.id}" /></td>
 	</s:if>
 
-<%if(count % 2 == 1) {%>
 </tr>
-<%} else {%>
-<td></td>
-<td></td>
-</tr>
-<%} %>
 
 
 <script>

@@ -55,12 +55,14 @@
 	src="/EGF/resources/javascript/RemitRecoveryHelper.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"> </script>
 <title><s:text name="remit.recovery.create.title" /></title>
 <script>
 
 function showHistory(stateId)
 {
-var url="../voucher/common!showHistory.action?stateId="+stateId;
+var url="../voucher/common-showHistory.action?stateId="+stateId;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 
@@ -123,19 +125,9 @@ function populateUser(){
 	designationId:desgId,functionaryName:functionary})
 		
 }
-function validateApproveUser(name,value){
-	document.getElementById("actionName").value= name;
-<s:if test="%{wfitemstate !='END'}">
-	 if( (value == 'Approve' || value=='Send for Approval' || value == 'Forward' || value == 'Save And Forward') && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-		bootbox.alert("Please Select the user");
-		return false;
-	}
-</s:if>
-	return true;
-}
 
 function printVoucher(){
-	document.forms[0].action='../report/billPaymentVoucherPrint!print.action?id=<s:property value="paymentheader.id"/>';
+	document.forms[0].action='../report/billPaymentVoucherPrint-print.action?id=<s:property value="paymentheader.id"/>';
 	document.forms[0].submit();
 }
 	function validate(obj,name,value)
@@ -156,20 +148,31 @@ function printVoucher(){
 				}
 				}
 			}  
-			if(!validateApproveUser(name,value))    
-				return false;
+		
 			return true;
 		}
-
+	function onSubmit()
+	{
+		if(validate()){
+			 var myform = jQuery('#remittanceForm');
+			// re-disabled the set of inputs that you previously
+			var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
+			document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-sendForApproval.action';
+			document.remittanceForm.submit();
+		}
+		return true;
+	}
 </script>
 </head>
 <body>
-	<s:form action="remitRecovery" theme="simple" name="remittanceForm">
+	<s:form action="remitRecovery" theme="simple" name="remittanceForm"
+		id="remittanceForm">
 		<s:push value="model">
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="Remittance Recovery" />
 			</jsp:include>
-			<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+			<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+				<s:actionmessage />
 				<div align="center" class="error-block" id="lblError"
 					style="font: bold; text-align: center"></div>
 			</span>
@@ -204,11 +207,11 @@ function printVoucher(){
 																<tr>
 																	<td class="bluebox">&nbsp;</td>
 																	<td class="bluebox"><s:text name="voucher.number" /><span
-																		class="mandatory">*</span></td>
+																		class="mandatory1">*</span></td>
 																	<td class="bluebox"><s:textfield
 																			name="voucherNumber" id="vouchernumber" /></td>
 																	<td class="bluebox" width="18%"><s:text
-																			name="voucher.date" /><span class="mandatory">*</span></td>
+																			name="voucher.date" /><span class="mandatory1">*</span></td>
 																	<s:date name='voucherDate' id="voucherDateId"
 																		format='dd/MM/yyyy' />
 																	<td class="bluebox" width="34%">
@@ -233,10 +236,10 @@ function printVoucher(){
 																<tr>
 																	<td class="greybox"></td>
 																	<td class="greybox"><s:text name="bank" /> <span
-																		class="greybox"><span class="mandatory">*</span></span></td>
+																		class="greybox"><span class="mandatory1">*</span></span></td>
 																	<egov:ajaxdropdown id="bankId"
 																		fields="['Text','Value']" dropdownId="bankId"
-																		url="/voucher/common!ajaxLoadBanksByFundAndType.action" />
+																		url="/voucher/common-ajaxLoadBanksByFundAndType.action" />
 																	<td class="greybox"><s:select
 																			name="commonBean.bankId" id="bankId"
 																			list="dropdownData.bankList" listKey="bankBranchId"
@@ -245,10 +248,10 @@ function printVoucher(){
 																			onChange="populateAccNum(this);" /></td>
 																	<egov:ajaxdropdown id="accountNumber"
 																		fields="['Text','Value']" dropdownId="accountNumber"
-																		url="voucher/common!ajaxLoadBankAccounts.action" />
+																		url="voucher/common-ajaxLoadBankAccounts.action" />
 																	<td class="greybox" width="22%"><s:text
 																			name="account.number" /><span class="bluebox"><span
-																			class="mandatory">*</span></span></td>
+																			class="mandatory1">*</span></span></td>
 																	<td class="greybox" width="22%"><s:select
 																			name="commonBean.accountNumberId" id="accountNumber"
 																			list="dropdownData.accNumList" listKey="id"
@@ -265,7 +268,7 @@ function printVoucher(){
 																		id="remitAmount" /></td>
 																	<egov:updatevalues id="availableBalance"
 																		fields="['Text']"
-																		url="/payment/payment!ajaxGetAccountBalance.action" />
+																		url="/payment/payment-ajaxGetAccountBalance.action" />
 																	<td class="bluebox" id="balanceText"
 																		style="display: none" width="18%"><s:text
 																			name="balance.available" /></td>
@@ -325,7 +328,7 @@ function printVoucher(){
 
 																			<table align="center" id="totalAmtTable">
 																				<tr>
-																					<td width="514"></td>
+																					<td width="800"></td>
 																					<td>Total Amount</td>
 																					<td><s:textfield
 																							name="remittanceBean.totalAmount"
@@ -372,6 +375,7 @@ function printVoucher(){
 																					<th class="bluebgheadtdnew">Party Code
 																					</td>
 																					<th class="bluebgheadtdnew">Cheque Amount(Rs)
+																					
 																					</td>
 																					<th class="bluebgheadtdnew">Cheque Status
 																					</td>
@@ -433,63 +437,23 @@ function printVoucher(){
 						</tr>
 					</table>
 				</div>
-			</div>
-			<s:if test="%{wfitemstate !='END'}">
 
-				<%@include file="../voucher/workflowApproval.jsp"%>
-			</s:if>
 			</div>
-			</div>
-			<table>
-				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox">Comments</td>
-					<td class="bluebox" colspan="4"><s:textarea name="comments"
-							id="comments" cols="100" rows="3" onblur="checkLength(this)"
-							value="%{getComments()}" /></td>
-				</tr>
-			</table>
-
-			<s:if test="%{showApprove}">
-				<s:if test="%{paymentheader.state.value != 'NEW'}">
-					<s:if test="%{paymentheader.state.id!=null}">
-						<div id="labelAD" align="center">
-							<h5>
-								<a href="#"
-									onclick="showHistory(<s:property value='paymentheader.state.id'/>); ">Show
-									History</a>
-							</h5>
-						</div>
-					</s:if>
-				</s:if>
-			</s:if>
 			<div class="buttonbottom" id="buttondiv">
 				<s:hidden name="paymentid" value="%{paymentheader.id}" />
-
 				<s:hidden name="actionname" id="actionName" value="%{action}" />
-				<s:if test="%{showButtons}">
-
-					<s:iterator value="%{getValidActions()}" var="p" status="s">
-						<s:submit type="submit" cssClass="buttonsubmit"
-							value="%{description}" id="wfBtn%{#s.index}" name="%{name}"
-							method="sendForApproval"
-							onclick="return validate(this,'%{name}','%{description}')" />
-					</s:iterator>
-				</s:if>
-				<s:if test="%{wfitemstate !='END'}">
+				<s:if test="%{showMode!='view'}">
+					<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
+					<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
+					<s:submit cssClass="button" id="printPreview" value="Print Preview"
+						onclick="printVoucher()" />
 				</s:if>
 				<s:else>
 					<s:submit cssClass="button" id="printPreview" value="Print Preview"
 						onclick="printVoucher()" />
+					<input type="button" name="button2" id="button2" value="Close"
+						class="button" onclick="window.close();" />
 				</s:else>
-				<s:if test="%{showCancel}">
-					<s:submit type="submit" cssClass="buttonsubmit"
-						value="Cancel Payment" id="cancelPayment" name="cancel"
-						method="sendForApproval"
-						onclick="document.getElementById('actionName').value='cancelPayment';" />
-				</s:if>
-				<input type="submit" id="closeButtonNew" value="Close"
-					onclick="javascript:window.close()" class="button" />
 			</div>
 			<script type="text/javascript">
 	//bootbox.alert('<s:property value="fund.id"/>');                               
@@ -515,13 +479,41 @@ function printVoucher(){
 		if(document.getElementById("printPreview"))
 			document.getElementById("printPreview").disabled=false;
 		if(document.getElementById("cancelPayment"))
-			document.getElementById("cancelPayment").disabled=false;		
-		if(null != document.getElementById("departmentid") ){
-			document.getElementById("departmentid").disabled=false;    
-			document.getElementById("designationId").disabled=false;
-			document.getElementById("approverUserId").disabled=false;
+			document.getElementById("cancelPayment").disabled=false;	
+		if(document.getElementById("approverComments"))
+			document.getElementById("approverComments").disabled=false;	
+		if(null != document.getElementById("approverDepartment") ){
+			document.getElementById("approverDepartment").disabled=false;    
+			document.getElementById("approverDesignation").disabled=false;
+			document.getElementById("approverPositionId").disabled=false;
 			
 		}
+		if(document.getElementById("currentState"))
+			document.getElementById("currentState").disabled=false;		
+		if(document.getElementById("currentDesignation"))
+			document.getElementById("currentDesignation").disabled=false;		
+		if(document.getElementById("additionalRule"))
+			document.getElementById("additionalRule").disabled=false;		
+		if(document.getElementById("amountRule"))
+			document.getElementById("amountRule").disabled=false;		
+		if(document.getElementById("workFlowDepartment"))
+			document.getElementById("workFlowDepartment").disabled=false;		
+		if(document.getElementById("pendingActions"))
+			document.getElementById("pendingActions").disabled=false;		
+		if(document.getElementById("approverName"))
+			document.getElementById("approverName").disabled=false;		
+		if(document.getElementById("workFlowAction"))
+			document.getElementById("workFlowAction").disabled=false;		
+		if(document.getElementById("Forward"))
+			document.getElementById("Forward").disabled=false;	
+		if(document.getElementById("Reject"))
+			document.getElementById("Reject").disabled=false;	
+		if(document.getElementById("Cancel"))
+			document.getElementById("Cancel").disabled=false;	
+		if(document.getElementById("Approve"))
+			document.getElementById("Approve").disabled=false;	
+		if(document.getElementById("button2"))
+			document.getElementById("button2").disabled=false;		
 			  	
 	<s:if test="%{showMode!='view'}">	
 		

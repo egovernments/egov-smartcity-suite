@@ -42,6 +42,7 @@ package org.egov.infra.utils;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.joda.time.format.DateTimeFormat;
@@ -101,5 +102,10 @@ public class DateUtils {
         final DateTime eDate = new DateTime(endDate);
         return Months.monthsBetween(sDate.withDayOfMonth(sDate.getDayOfMonth()), eDate.withDayOfMonth(eDate.getDayOfMonth()))
                 .getMonths();
+    }
+    
+    public static int noOfDays(final Date startDate, final Date endDate) {
+      return (int)( (endDate.getTime() - startDate.getTime())
+                / (1000 * 60 * 60 * 24) );
     }
 }

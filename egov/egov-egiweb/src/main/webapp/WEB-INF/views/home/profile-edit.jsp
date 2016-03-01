@@ -78,9 +78,12 @@
 					</div>
 					
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.mobile"/></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.mobile"/></label>
 						<div class="col-sm-2 add-margin">
-							<form:input path="mobileNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="mobileNumber" placeholder="Mobile Number" maxlength="10"/>
+							<div class="input-group">
+								<span class="input-group-addon">+91</span>
+								  	<form:input path="mobileNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="mobileNumber" placeholder="Mobile Number" maxlength="10"/>
+							</div>
 							<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 						</div>
 						

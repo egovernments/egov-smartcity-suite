@@ -129,6 +129,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         final WaterConnectionDetails parent = waterConnectionDetailsService.getParentConnectionDetails(
                 connectionUnderChange.getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         final String message = changeOfUseService.validateChangeOfUseConnection(parent);
+        String sourceChannel = request.getParameter("Source");
         String consumerCode = "";
         if (!message.isEmpty() && !"".equals(message)) {
             if (changeOfUse.getConnection().getParentConnection() != null)
@@ -206,7 +207,7 @@ public class ChangeOfUseController extends GenericConnectionController {
 
         changeOfUse.setApplicationDate(new Date());
         changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
-                .getApplicationType().getCode(), workFlowAction);
+                .getApplicationType().getCode(), workFlowAction,sourceChannel);
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
         String nextDesign = "";

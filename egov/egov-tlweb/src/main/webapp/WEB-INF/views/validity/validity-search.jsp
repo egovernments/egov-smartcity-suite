@@ -41,79 +41,70 @@
   --%>
 <form:form role="form" action="search" modelAttribute="validity" id="validitysearchform"
   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-  <div class="main-content">
     <div class="row">
       <div class="col-md-12">
         <div class="panel panel-primary" data-collapsed="0">
           <div class="panel-heading">
-            <div class="panel-title">SearchValidity</div>
+            <div class="panel-title"><spring:message code="title.validity.search"/></div>
           </div>
-          <div class="panel-body">
+          <div class="panel-body custom-form">
             <div class="form-group">
               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofbusiness" /> </label>
               <div class="col-sm-3 add-margin">
-                <form:select path="natureOfBusiness.id" id="natureOfBusiness.id" cssClass="form-control"
+                <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control"
                   cssErrorClass="form-control error">
                   <form:option value="">
                     <spring:message code="lbl.select" />
                   </form:option>
                   <form:options items="${natureOfBusinesss}" itemValue="id" itemLabel="name" />
                 </form:select>
-                <form:errors path="natureOfBusiness" cssClass="error-msg" />
               </div>
-              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
+              <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
               <div class="col-sm-3 add-margin">
-                <form:select path="licenseCategory.id" id="licenseCategory.id" cssClass="form-control"
+                <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control"
                   cssErrorClass="form-control error">
                   <form:option value="">
                     <spring:message code="lbl.select" />
                   </form:option>
                   <form:options items="${licenseCategorys}" itemValue="id" itemLabel="name" />
                 </form:select>
-                <form:errors path="licenseCategory" cssClass="error-msg" />
               </div>
             </div>
             <input type="hidden" id="mode" name="mode" value="${mode}" />
-            <div class="form-group">
-              <div class="text-center">
-                <button type='button' class='btn btn-primary' id="btnsearch">
-                  <spring:message code='lbl.search' />
-                </button>
-                <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
-                    code='lbl.close' /></a>
-              </div>
-            </div>
+            
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="text-center">
+            <button type='button' class='btn btn-primary' id="btnsearch">
+              <spring:message code='lbl.search' />
+            </button>
+            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
+                code='lbl.close' /></a>
           </div>
         </div>
       </div>
     </div>
-  </div>
 </form:form>
 <div class="row display-hide report-section">
-  <div class="col-md-12 table-header text-left">Validity Search Result</div>
+  <div class="col-md-12 table-header text-left"><spring:message code="title.validity.result"/></div>
   <div class="col-md-12 form-group report-table-container">
     <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
       <thead>
         <tr>
           <th><spring:message code="lbl.natureofbusiness" /></th>
           <th><spring:message code="lbl.licensecategory" /></th>
+          <th><spring:message code="lbl.basedon.finyear" /></th>
           <th><spring:message code="lbl.day" /></th>
           <th><spring:message code="lbl.week" /></th>
           <th><spring:message code="lbl.month" /></th>
           <th><spring:message code="lbl.year" /></th>
+          <th>&nbsp;</th>
         </tr>
       </thead>
     </table>
   </div>
 </div>
-<script>
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"
@@ -132,4 +123,4 @@
   src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
   type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/app/js/validityHelper.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/validityHelper.js?rnd=${app_release_no}'/>"></script>

@@ -59,6 +59,8 @@
 		}else{
 			document.getElementById('print').disabled=false;
 		}
+		if(document.getElementById('approverDepartment'))
+			document.getElementById('approverDepartment').value = "-1";
 	}
 	
 	function checkLength(obj){
@@ -85,17 +87,16 @@ function openSource(){
 	}
 	window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
 }
-function validateApproverUserAndSubmitForm(name,value){
-	
-	document.getElementById("actionName").value= name;
-	<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
-		if(!validateUser(name,value)){
+function onSubmit()
+{
+	var voucherdate =document.getElementById('voucherDate').value ;
+	if(voucherdate!=null && voucherdate!=""){
+		document.preApprovedVoucher.action='${pageContext.request.contextPath}/voucher/preApprovedVoucher-save.action';
+		document.preApprovedVoucher.submit();
+	}else{
+		bootbox.alert("Please select voucher date");
 		return false;
 		}
-	</s:if>
-	document.preApprovedVoucher.action='${pageContext.request.contextPath}/voucher/preApprovedVoucher-save.action';
-	document.preApprovedVoucher.submit();
-	
 }
 </script>
 <body onload="checkBillIdBillview()">
@@ -252,17 +253,17 @@ function validateApproverUserAndSubmitForm(name,value){
 						<br />
 					</table>
 				</div>
+				<s:if test="%{!mode.equalsIgnoreCase('save')}">
+					<%@ include file='../workflow/commonWorkflowMatrix.jsp'%>
+					<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
+				</s:if>
+				<s:else>
+					<div class="buttonbottom" align="center">
+						<input type="button" name="button2" id="button2" value="Close"
+							class="button" onclick="window.close();" />
+					</div>
+				</s:else>
 				<div class="buttonbottom" align="center" id="buttondiv">
-					<s:iterator value="%{getValidActions('')}" var="p">
-						<s:if test="%{description !='Cancel'}">
-							<s:submit type="submit" cssClass="buttonsubmit"
-								value="%{description}" id="%{name}" name="%{name}" method="save"
-								onclick="return validateApproverUser('%{name}','%{description}')" />
-						</s:if>
-					</s:iterator>
-					<s:submit type="submit" cssClass="buttonsubmit"
-						value="Send for Approval" id="%aa_approve" name="aa_approve"
-						onclick="return validateApproverUserAndSubmitForm('aa_approve','Send for Approval')" />
 					<s:if
 						test="%{egBillregister.expendituretype == finConstExpendTypeContingency}">
 						<input type="button" class="button" id="print"
@@ -272,8 +273,7 @@ function validateApproverUserAndSubmitForm(name,value){
 						<input type="button" class="button" id="print"
 							value="Print Preview" onclick="printJV()" />
 					</s:else>
-					<input type="button" id="Close" value="Close"
-						onclick="javascript:window.close()" class="button" />
+
 				</div>
 
 			</div>

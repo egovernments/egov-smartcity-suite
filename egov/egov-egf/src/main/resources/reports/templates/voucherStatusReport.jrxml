@@ -1,44 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report2" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-02-04T12:50:35 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report2" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="35aac265-3ad2-4f0b-a915-db67bc4047b1">
 	<parameter name="fund" class="java.lang.String"/>
 	<parameter name="deptName" class="java.lang.String"/>
 	<parameter name="status" class="java.lang.String"/>
@@ -58,88 +21,74 @@
 	<title>
 		<band height="141" splitType="Stretch">
 			<staticText>
-				<reportElement x="312" y="0" width="249" height="32"/>
+				<reportElement x="240" y="0" width="249" height="32" uuid="3f5d59bc-8c34-482e-8bf3-e1cff46dd4bf"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="17"/>
 				</textElement>
 				<text><![CDATA[Voucher Status Report]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="541" y="46" width="81" height="20"/>
-				<textElement/>
+				<reportElement x="541" y="46" width="81" height="20" uuid="11f5ac17-4140-4380-8588-91c716ccae95"/>
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="46" width="81" height="20"/>
-				<textElement/>
+				<reportElement x="0" y="46" width="81" height="20" uuid="8cf3f9a5-6aa3-47fa-b5e9-16528295bf1d"/>
 				<text><![CDATA[Fund:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="66" width="81" height="20"/>
-				<textElement/>
+				<reportElement x="0" y="66" width="81" height="20" uuid="c4a2919f-ff06-449e-ad36-8677c654f0c1"/>
 				<text><![CDATA[Department:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="541" y="66" width="81" height="20"/>
-				<textElement/>
+				<reportElement x="541" y="66" width="81" height="20" uuid="519114ba-62f6-40fe-bb06-e388d3e016d0"/>
 				<text><![CDATA[To Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="541" y="86" width="81" height="20"/>
-				<textElement/>
+				<reportElement x="541" y="86" width="81" height="20" uuid="0b11c9f7-8b9c-42b8-b113-00d6d36f8509"/>
 				<text><![CDATA[Voucher Name:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="622" y="46" width="122" height="20"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
+				<reportElement x="622" y="46" width="122" height="20" uuid="28677c53-2a79-486c-bc7c-31e832a80e7f"/>
+				<textFieldExpression><![CDATA[$P{fromDate}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="622" y="66" width="122" height="20"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+				<reportElement x="622" y="66" width="122" height="20" uuid="09f70185-c98a-4d78-99b5-c78728bc575b"/>
+				<textFieldExpression><![CDATA[$P{toDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="81" y="46" width="157" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{fund}==null?"":$P{fund}]]></textFieldExpression>
+				<reportElement x="81" y="46" width="157" height="20" uuid="edc45a5c-d9db-44aa-8c92-f6dc06a47e31"/>
+				<textFieldExpression><![CDATA[$P{fund}==null?"":$P{fund}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="622" y="86" width="130" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{voucherName}=="-1"?"":$P{voucherName}]]></textFieldExpression>
+				<reportElement x="622" y="86" width="130" height="20" uuid="4112047f-079e-4ce5-8705-b44c39d345c8"/>
+				<textFieldExpression><![CDATA[$P{voucherName}=="-1"?"":$P{voucherName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="81" y="66" width="188" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{deptName}==null?"":$P{deptName}]]></textFieldExpression>
+				<reportElement x="81" y="66" width="188" height="20" uuid="5b1ee9c5-95c1-46b4-8004-df32b1f97789"/>
+				<textFieldExpression><![CDATA[$P{deptName}==null?"":$P{deptName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="86" width="81" height="20"/>
-				<textElement/>
+				<reportElement x="0" y="86" width="81" height="20" uuid="f2e4c643-fa23-4063-bf4a-084f5739b632"/>
 				<text><![CDATA[Voucher Type:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="81" y="86" width="269" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{voucherType}=="-1"?"":$P{voucherType}]]></textFieldExpression>
+				<reportElement x="81" y="86" width="269" height="20" uuid="66b82808-fe56-4247-ba6c-d15f8358f9ce"/>
+				<textFieldExpression><![CDATA[$P{voucherType}=="-1"?"":$P{voucherType}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="106" width="81" height="20"/>
-				<textElement/>
+				<reportElement x="0" y="106" width="81" height="20" uuid="f116bd98-6dee-4e69-9b14-6cd93d62186f"/>
 				<text><![CDATA[Status:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="81" y="106" width="157" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{status}==null?"":$P{status}]]></textFieldExpression>
+				<reportElement x="81" y="106" width="157" height="20" uuid="80f85a1e-fbca-4b34-a8e0-1b731dad72ba"/>
+				<textFieldExpression><![CDATA[$P{status}==null?"":$P{status}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<columnHeader>
 		<band height="30" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="41" height="30"/>
+				<reportElement x="0" y="0" width="41" height="30" uuid="b4a014f6-e65e-41dd-85d4-64c4524017d2"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -151,7 +100,7 @@
 				<text><![CDATA[Sl No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="137" y="0" width="91" height="30"/>
+				<reportElement x="120" y="0" width="91" height="30" uuid="e7ea9896-6074-497a-9bee-f17cbbbb61b8"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -163,7 +112,7 @@
 				<text><![CDATA[Voucher Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="228" y="0" width="74" height="30"/>
+				<reportElement x="211" y="0" width="74" height="30" uuid="db25e16f-f86c-4cc8-b8d5-dae0265487a3"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -175,7 +124,7 @@
 				<text><![CDATA[Voucher Type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="302" y="0" width="90" height="30"/>
+				<reportElement x="285" y="0" width="90" height="30" uuid="2ade8427-580a-4b37-97e1-9784aa7a16bc"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -187,7 +136,7 @@
 				<text><![CDATA[Voucher Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="392" y="0" width="63" height="30"/>
+				<reportElement x="375" y="0" width="80" height="30" uuid="3e2e27ce-4f98-4bae-86a7-b7e54f93efb2"/>
 				<box topPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -199,7 +148,7 @@
 				<text><![CDATA[Voucher Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="455" y="0" width="62" height="30"/>
+				<reportElement x="455" y="0" width="62" height="30" uuid="4c16f44c-e3be-4361-8c4e-00a01d115f23"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -211,7 +160,7 @@
 				<text><![CDATA[Source]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="517" y="0" width="92" height="30"/>
+				<reportElement x="517" y="0" width="92" height="30" uuid="16b12472-c309-490b-8bca-8a2c5244430c"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -223,7 +172,7 @@
 				<text><![CDATA[Amount(Rs.)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="680" y="0" width="72" height="30"/>
+				<reportElement x="680" y="0" width="72" height="30" uuid="b8d93760-bbc0-40a0-9e55-573a561354a4"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -235,7 +184,7 @@
 				<text><![CDATA[Status]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="41" y="0" width="96" height="30"/>
+				<reportElement x="41" y="0" width="79" height="30" uuid="17b5b157-419d-4593-adf9-520fab626122"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -247,7 +196,7 @@
 				<text><![CDATA[Department]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="609" y="0" width="71" height="30"/>
+				<reportElement x="609" y="0" width="71" height="30" uuid="db01efa9-1af9-47da-baef-81d196e8f2d0"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -263,7 +212,7 @@
 	<detail>
 		<band height="35" splitType="Stretch">
 			<textField>
-				<reportElement x="302" y="0" width="90" height="35"/>
+				<reportElement x="285" y="0" width="90" height="35" uuid="32147f46-fd71-45d4-8a8b-21decd21751a"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -272,10 +221,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{voucherName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{voucherName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="392" y="0" width="63" height="35"/>
+				<reportElement x="375" y="0" width="80" height="35" uuid="d01a601b-b6d7-4585-84e6-15d58a25a168"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -284,10 +233,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{voucherDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{voucherDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="455" y="0" width="62" height="35"/>
+				<reportElement x="455" y="0" width="62" height="35" uuid="36cf08ad-e63a-452f-acf0-0746c1b0e10f"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -296,10 +245,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{source}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{source}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="680" y="0" width="72" height="35"/>
+				<reportElement x="680" y="0" width="72" height="35" uuid="b32f3fdc-dd88-4706-80fe-714b0937bf88"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -308,10 +257,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{status}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="137" y="0" width="91" height="35"/>
+				<reportElement x="120" y="0" width="91" height="35" uuid="7b6887e3-ea94-4b3c-8fed-f18012fd96bb"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -320,10 +269,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{voucherNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{voucherNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="517" y="0" width="92" height="35"/>
+				<reportElement x="517" y="0" width="92" height="35" uuid="b1923470-b463-44e8-bf7a-0b720bb9ef85"/>
 				<box topPadding="7" rightPadding="10">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -332,10 +281,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="228" y="0" width="74" height="35"/>
+				<reportElement x="211" y="0" width="74" height="35" uuid="0ac0dc62-08e5-4b77-a7ba-b2fb19bde796"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -344,10 +293,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{voucherType}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{voucherType}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="41" y="0" width="96" height="35"/>
+				<reportElement x="41" y="0" width="79" height="35" uuid="a93e32b5-b152-42f6-b7b6-d89b813d43ee"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -356,10 +305,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{deptName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{deptName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="609" y="0" width="71" height="35"/>
+				<reportElement x="609" y="0" width="71" height="35" uuid="b64f1e8c-6b7a-4295-ae3e-aa05b7ab402d"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -368,10 +317,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{owner}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{owner}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="41" height="35"/>
+				<reportElement x="0" y="0" width="41" height="35" uuid="e368cd0b-cfa4-469f-b51d-6ed624006f70"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -380,7 +329,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

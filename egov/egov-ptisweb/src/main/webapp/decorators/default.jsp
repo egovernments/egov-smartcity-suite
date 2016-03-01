@@ -174,6 +174,21 @@
         window.onhashchange = function() {
             window.location.hash = "no-back-button";
         }
+        function reCalculateTotalFooterWhenExport(tableIdWithOutPrefix)
+        {
+        	
+        	console.log('length ->'+jQuery("#"+tableIdWithOutPrefix+" tfoot tr").length);
+        	jQuery("#"+tableIdWithOutPrefix+" tfoot td").each(function( index ) {
+           		 if(index!==0)
+           		 {
+           			 var totals=jQuery(this).html().split("(");
+        	    		 var str=""+totals[1];
+        	    		 str=str.slice(0,-1);
+        	    		 jQuery(this).html(str);
+           		 }
+           	 });
+             setTimeout(function(){ jQuery('select[name="'+ tableIdWithOutPrefix +'_length"]').trigger('change'); }, 10);
+        }
 	  </script>
 	  
 	   

@@ -42,6 +42,7 @@ package org.egov.model.budget;
 import java.util.Date;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
@@ -66,7 +67,7 @@ public class Budget extends StateAware {
     private String materializedPath;
     private Budget referenceBudget;
     private Long documentNumber;
-
+    private EgwStatus status;
     @Override
     public Long getId() {
         return id;
@@ -202,6 +203,14 @@ public class Budget extends StateAware {
     @Override
     public String myLinkId() {
         return getId().toString();
+    }
+
+    public EgwStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EgwStatus status) {
+        this.status = status;
     }
 
 }

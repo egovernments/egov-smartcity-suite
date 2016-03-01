@@ -61,7 +61,9 @@ public class DCBReport {
 	private BigDecimal totalColLpayPnlty;
 	private BigDecimal totalRebate;
 	private BigDecimal totalBalance;
+	private BigDecimal totalAdvance;
 	private String TAX = "TAX";
+	private String ADVANCE ="Advance Collection";
 	private String WTTAX = "Water Charges"; 
 	private String PENALTY = "PENALTY";
 	private String FINES = "FINES";
@@ -176,6 +178,7 @@ public class DCBReport {
 			totalRebate = BigDecimal.ZERO;
 			totalLpayPnlty = BigDecimal.ZERO;
 			totalColLpayPnlty = BigDecimal.ZERO;
+			totalAdvance = BigDecimal.ZERO;
 			for (Map.Entry<Installment, DCBRecord> record : records.entrySet()) {
 				for (String fieldName : fieldNames) {
 					if (record.getKey() != null) {
@@ -206,6 +209,11 @@ public class DCBReport {
 									.getValue().getDemands().get(fieldName));
 							totalColLpayPnlty = totalColLpayPnlty.add(record.getValue()
 									.getCollections().get(fieldName));
+						}
+						if (fieldName.equals(ADVANCE)) {
+							totalAdvance = totalAdvance.add(record
+									.getValue().getCollections().get(fieldName));
+							
 						}
 					}
 				}
@@ -278,6 +286,14 @@ public class DCBReport {
 
 	public void setTotalColPnlty(BigDecimal totalColPnlty) {
 		this.totalColPnlty = totalColPnlty;
+	}
+
+	public BigDecimal getTotalAdvance() {
+		return totalAdvance;
+	}
+
+	public void setTotalAdvance(BigDecimal totalAdvance) {
+		this.totalAdvance = totalAdvance;
 	}
 
 	public BigDecimal getTotalColLpayPnlty() {

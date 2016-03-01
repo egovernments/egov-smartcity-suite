@@ -237,7 +237,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
         paramMap.put("voucherDate", getVoucherDate());
         paramMap.put("voucherDescription", getVoucherDescription());
         if (voucher != null && voucher.getState() != null)
-            loadHistory(voucher.getState().getId());
+            loadHistory(voucher.getState());
         paramMap.put("workFlowHistory", inboxHistory);
         paramMap.put("workFlowJasper",
                 reportHelper.getClass().getResourceAsStream("/reports/templates/workFlowHistoryReport.jasper"));
@@ -300,8 +300,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
                 .getVoucherDate());
     }
 
-    private void loadHistory(final Long stateId) {
-        final State state = null;// inboxService.getStateById(stateId);
+    private void loadHistory(State state) {
         loadInboxHistoryData(state);
     }
 
@@ -318,12 +317,12 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
                 // WorkflowTypes workflowTypes = inboxService.getWorkflowType(state.getType());
                 final String pos = state.getSenderName().concat(" / ").concat(state.getSenderName());
-                final String nextAction = getNextAction(state);
+                final String nextAction = state.getNextAction();
                 if (!"NEW".equalsIgnoreCase(state.getValue())) {
                     final WorkFlowHistoryItem inboxHistoryItem = new WorkFlowHistoryItem(getFormattedDate(state.getCreatedDate(),
                             "dd/MM/yyyy hh:mm a"), pos,
-                            "", state.getValue().concat(nextAction.equals("") ? "" : "~" + nextAction),
-                            state.getExtraInfo() != null ? removeSpecialCharacters(state.getExtraInfo()) : "");
+                            nextAction, state.getValue(),
+                            state.getComments() != null ? removeSpecialCharacters(state.getComments()) : "");
                     inboxHistory.add(inboxHistoryItem);
                 }
             }

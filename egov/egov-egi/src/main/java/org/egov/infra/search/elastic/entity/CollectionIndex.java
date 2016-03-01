@@ -119,9 +119,8 @@ public class CollectionIndex extends AbstractAuditable {
     private String paymentGateway;
 
     @Searchable(name = "billnumber", group = Searchable.Group.CLAUSES)
-    private Long billNumber;
+    private String billNumber;
 
-    @NotNull
     @Length(max = 50)
     @Searchable(name = "consumercode", group = Searchable.Group.CLAUSES)
     private String consumerCode;
@@ -131,20 +130,36 @@ public class CollectionIndex extends AbstractAuditable {
     @Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
     private String ulbName;
 
-    @NotNull
     @Length(max = 250)
     @Searchable(name = "districtname", group = Searchable.Group.CLAUSES)
     private String districtName;
 
-    @NotNull
     @Length(max = 250)
     @Searchable(name = "regionname", group = Searchable.Group.CLAUSES)
     private String regionName;
 
     @NotNull
     @Length(max = 50)
-    @Searchable(group = Searchable.Group.CLAUSES)
+    @Searchable(name = "status", group = Searchable.Group.CLAUSES)
     private String status;
+
+    @Searchable(name = "latepaymentcharges", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal latePaymentCharges;
+
+    @Searchable(name = "arrearcess", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal arrearCess;
+
+    @Searchable(name = "currentcess", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal currentCess;
+
+    @Searchable(name = "installmentfrom", group = Searchable.Group.SEARCHABLE)
+    private String installmentFrom;
+
+    @Searchable(name = "installmentto", group = Searchable.Group.SEARCHABLE)
+    private String installmentTo;
+
+    @Searchable(name = "payeename", group = Searchable.Group.SEARCHABLE)
+    private String payeeName;
 
     @Override
     public Long getId() {
@@ -244,11 +259,11 @@ public class CollectionIndex extends AbstractAuditable {
         this.paymentGateway = paymentGateway;
     }
 
-    public Long getBillNumber() {
+    public String getBillNumber() {
         return billNumber;
     }
 
-    public void setBillNumber(final Long billNumber) {
+    public void setBillNumber(final String billNumber) {
         this.billNumber = billNumber;
     }
 
@@ -290,6 +305,66 @@ public class CollectionIndex extends AbstractAuditable {
 
     public void setStatus(final String status) {
         this.status = status;
+    }
+
+    public BigDecimal getLatePaymentCharges() {
+        return latePaymentCharges;
+    }
+
+    public void setLatePaymentCharges(final BigDecimal latePaymentCharges) {
+        this.latePaymentCharges = latePaymentCharges;
+    }
+
+    public BigDecimal getArrearCess() {
+        return arrearCess;
+    }
+
+    public void setArrearCess(final BigDecimal arrearCess) {
+        this.arrearCess = arrearCess;
+    }
+
+    public BigDecimal getCurrentCess() {
+        return currentCess;
+    }
+
+    public void setCurrentCess(final BigDecimal currentCess) {
+        this.currentCess = currentCess;
+    }
+
+    public String getPayeeName() {
+        return payeeName;
+    }
+
+    public void setPayeeName(final String payeeName) {
+        this.payeeName = payeeName;
+    }
+
+    /**
+     * @return the installmentFrom
+     */
+    public String getInstallmentFrom() {
+        return installmentFrom;
+    }
+
+    /**
+     * @param installmentFrom the installmentFrom to set
+     */
+    public void setInstallmentFrom(final String installmentFrom) {
+        this.installmentFrom = installmentFrom;
+    }
+
+    /**
+     * @return the installmentTo
+     */
+    public String getInstallmentTo() {
+        return installmentTo;
+    }
+
+    /**
+     * @param installmentTo the installmentTo to set
+     */
+    public void setInstallmentTo(final String installmentTo) {
+        this.installmentTo = installmentTo;
     }
 
 }

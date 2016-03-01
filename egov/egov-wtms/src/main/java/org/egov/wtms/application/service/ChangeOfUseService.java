@@ -32,10 +32,12 @@ package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
 
+
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -90,7 +92,7 @@ public class ChangeOfUseService {
                 .findByConnection_ConsumerCodeAndConnectionStatus(
                         consumerCode, ConnectionStatus.INPROGRESS);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
             validationMessage = messageSource.getMessage("err.validate.primary.connection.holding", new String[] {
                     parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
@@ -152,7 +154,7 @@ public class ChangeOfUseService {
     @Transactional
     public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails changeOfUse,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+            final String workFlowAction,final String sourceChannel) {
         if (changeOfUse.getApplicationNumber() == null)
             changeOfUse.setApplicationNumber(applicationNumberGenerator.generate());
 
@@ -169,7 +171,7 @@ public class ChangeOfUseService {
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedChangeOfUse, approvalPosition,
                 approvalComent, additionalRule, workFlowAction);
-        waterConnectionDetailsService.updateIndexes(savedChangeOfUse);
+        waterConnectionDetailsService.updateIndexes(savedChangeOfUse,sourceChannel);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(changeOfUse, workFlowAction);
         return savedChangeOfUse;
     }

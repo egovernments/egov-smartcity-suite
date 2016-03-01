@@ -171,7 +171,8 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors) {
-
+        String sourceChannel = request.getParameter("Source");
+        System.out.println("sourceChannel"+sourceChannel);
         validatePropertyID(waterConnectionDetails, resultBinder);
         waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
@@ -243,11 +244,11 @@ public class NewConnectionController extends GenericConnectionController {
                 waterConnectionDetails.setSource(Source.MEESEVA);
                 waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
-                        meesevaParams);
+                        meesevaParams,sourceChannel);
             }
         } else
             waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                    approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
+                    approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,sourceChannel);
         if (LOG.isDebugEnabled())
             LOG.debug("createNewWaterConnection is completed ");
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils

@@ -48,6 +48,7 @@ public interface AdvertisementPermitDetailRepositoryCustom {
     List<AdvertisementPermitDetail> searchAdvertisementPermitDetailLike(HoardingSearch hoarding,String hoardingType);
     List<AdvertisementPermitDetail> searchAdvertisementPermitDetailBySearchParams(AdvertisementPermitDetail advertisementPermitDetail);
     List<AdvertisementPermitDetail> searchAdvertisementPermitDetailBySearchParamsAndStatusApproved(AdvertisementPermitDetail advertisementPermitDetail);
-
+    List<AdvertisementPermitDetail> renewalSearchAdvertisementPermitDetailBySearchParams(AdvertisementPermitDetail advertisementPermitDetail);
+    List<AdvertisementPermitDetail> searchActiveAdvertisementPermitDetailBySearchParams(AdvertisementPermitDetail advertisementPermitDetail);
     
 }

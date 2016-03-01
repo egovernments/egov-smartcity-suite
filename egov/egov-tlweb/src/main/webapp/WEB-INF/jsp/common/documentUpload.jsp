@@ -123,10 +123,10 @@
 				</s:iterator>	
 			</s:else>
 			<form:errors path="documents[%{#status.index}].files" cssClass="add-margin error-msg" />
-			<div class="add-margin error-msg text-left" ><font size="2"><s:text name="lbl.mesg.document"/></font></div>
+			<%-- <div class="add-margin error-msg text-left" ><font size="2"><s:text name="lbl.mesg.document"/></font></div> --%>
        	</div>
    	</div>
 </s:iterator>
 </table>
 
-<script src="<c:url value='/resources/app/js/documentupload.js'/>"></script> 
+<script src="<c:url value='/resources/js/app/documentupload.js?rnd=${app_release_no}'/>"></script> 

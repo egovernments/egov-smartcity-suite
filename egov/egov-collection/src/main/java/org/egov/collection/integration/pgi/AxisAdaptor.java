@@ -82,6 +82,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
 
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
+    public static final BigDecimal PAISE_RUPEE_CONVERTER = new BigDecimal(100);
 
     /**
      * This method invokes APIs to frame request object for the payment service
@@ -112,9 +113,9 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         fields.put(CollectionConstants.AXIS_RETURN_URL, returnUrl.toString());
         final BigDecimal amount = receiptHeader.getTotalAmount();
         final float rupees = Float.parseFloat(amount.toString());
-        final Integer mantisa = (int) rupees;
-        final Float exponent = rupees - (float) mantisa;
-        final Integer paise = (int) (mantisa * 100 + exponent * 100);
+        final Integer rupee = (int) rupees;
+        final Float exponent = rupees - (float) rupee;
+        final Integer paise = (int) (rupee * PAISE_RUPEE_CONVERTER.intValue() + exponent * PAISE_RUPEE_CONVERTER.intValue());
         fields.put(CollectionConstants.AXIS_AMOUNT, paise.toString());
         final String axisSecureSecret = collectionApplicationProperties.axisSecureSecret();
         if (axisSecureSecret != null) {
@@ -213,7 +214,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         axisResponse.setErrorDescription(fields.get(CollectionConstants.AXIS_RESP_MESSAGE));
         axisResponse.setAdditionalInfo6(receiptHeader.getConsumerCode());
         axisResponse.setReceiptId(receiptId);
-        axisResponse.setTxnAmount(new BigDecimal(fields.get(CollectionConstants.AXIS_AMOUNT)));
+        axisResponse.setTxnAmount(new BigDecimal(fields.get(CollectionConstants.AXIS_AMOUNT)).divide(PAISE_RUPEE_CONVERTER));
         axisResponse.setTxnReferenceNo(fields.get(CollectionConstants.AXIS_TXN_NO));
 
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
@@ -378,7 +379,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, onlinePayment.getReceiptHeader().getId().toString());
             formData.add(CollectionConstants.AXIS_OPERATOR_ID, collectionApplicationProperties.axisOperator());
             formData.add(CollectionConstants.AXIS_PASSWORD, collectionApplicationProperties.axisPassword());
-            LOGGER.debug("formData: " + formData);
+            LOGGER.info("formData: " + formData);
             final String responseAxis = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(String.class,
                     formData);
             final Map<String, String> responseAxisMap = new LinkedHashMap<String, String>();
@@ -394,15 +395,11 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             }
             axisResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
                     .replace("/", ""));
-            LOGGER.debug("ResponseAXIS: " + responseAxis.toString());
+            LOGGER.info("ResponseAXIS: " + responseAxis.toString());
             if (null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
                     && !"".equals(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE))) {
-                axisResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
-                axisResponse.setAuthStatus(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
-                axisResponse.setErrorDescription(responseAxisMap.get(CollectionConstants.AXIS_RESP_MESSAGE));
-            } else {
                 axisResponse.setAuthStatus(null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
-                        && responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE).equals("0") ? "0300"
+                        && responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE).equals("0") ? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS
                                 : responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
                 axisResponse.setErrorDescription(responseAxisMap.get(CollectionConstants.AXIS_RESP_MESSAGE));
                 axisResponse.setReceiptId(responseAxisMap.get(CollectionConstants.AXIS_MERCHANT_TXN_REF));
@@ -416,7 +413,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                         axisResponse.setTxnDate(transactionDate);
                     } catch (final ParseException e) {
                         LOGGER.error(
-                                "Error occured in parsing the transaction date [" + responseAxisMap.get("vpc_BatchNo")
+                                "Error occured in parsing the transaction date [" + responseAxisMap.get(CollectionConstants.AXIS_BATCH_NO)
                                 + "]", e);
                         throw new ApplicationException(".transactiondate.parse.error", e);
                     }

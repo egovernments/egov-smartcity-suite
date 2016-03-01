@@ -46,9 +46,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.Installment;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.LatePayPenaltyCalculator;
 import org.egov.demand.model.AbstractBillable;
@@ -57,21 +60,34 @@ import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.entity.PenaltyRates;
+import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.utils.LicenseUtils;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
 
-    @Autowired
-    private LicenseUtils licenseUtils;
+    private static final Logger LOG = LoggerFactory.getLogger(LicenseBill.class);
+
+   
     private License license;
     private String moduleName;
     private String serviceCode;
-    @Autowired
-    private EgBillDao egBillDao;
     private String referenceNumber;
     private Boolean isCallbackForApportion = Boolean.FALSE;
+    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     private String transanctionReferenceNumber;
+    
+    @Autowired
+    private LicenseUtils licenseUtils;
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
+    @Autowired
+    private EgBillDao egBillDao;
 
     public License getLicense() {
         return license;
@@ -101,22 +117,20 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getBillAddress() {
-        return license.getLicensee().getAddress().toString() + "\nPh : "
-                + defaultString(license.getLicensee().getPhoneNumber());
+        return license.getLicensee().getAddress() + (StringUtils.isNotBlank(license.getLicensee().getPhoneNumber())
+                ? "\nPh : " + license.getLicensee().getPhoneNumber() : "");
     }
 
     @Override
     public EgDemand getCurrentDemand() {
-        final Set<LicenseDemand> demands = license.getDemandSet();
-        for (final EgDemand demand : demands)
-            if (demand.getIsHistory().equals("N"))
-                return demand;
-        return null;
+        return license.getCurrentDemand();
     }
 
     @Override
     public List<EgDemand> getAllDemands() {
-        return new ArrayList<EgDemand>(license.getDemandSet());
+        final List<EgDemand> demands = new ArrayList<>();
+        demands.add(license.getLicenseDemand());
+        return demands;
 
     }
 
@@ -149,22 +163,22 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getDepartmentCode() {
-        return "H";// TODO Change according to TL
+        return licenseUtils.getDepartmentCodeForBillGenerate();
     }
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        return BigDecimal.ZERO;
+        return new BigDecimal(DEFAULT_FUNCTIONARY_CODE);
     }
 
     @Override
     public String getFundCode() {
-        return "01";// TODO Change according to TL
+        return "01";
     }
 
     @Override
     public String getFundSourceCode() {
-        return "01";// TODO Change according to TL
+        return "01";
     }
 
     @Override
@@ -253,37 +267,53 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getConsumerId() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public BigDecimal calculateLPPenaltyForPeriod(final Date fromDate, final Date toDate, final BigDecimal amount) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public BigDecimal calculatePenalty(final Date latestCollectedRcptDate, final Date fromDate, final BigDecimal amount) {
-        // TODO Auto-generated method stub
-        return null;
+    public BigDecimal calculatePenalty(final Date commencementDate, final Date collectionDate, final BigDecimal amount) {
+        if (commencementDate != null) {
+            final int paymentDueDays = Days.daysBetween(new LocalDate(commencementDate.getTime()), new LocalDate(collectionDate.getTime()))
+                    .getDays();
+            final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(paymentDueDays),
+                    license.getLicenseAppType());
+            if (penaltyRates == null) {
+                LOG.warn("License payment due since {} days, There is no penatlity rate definied for License Type {}", paymentDueDays,
+                        license.getLicenseAppType().getName());
+                return BigDecimal.ZERO;
+            }
+            return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
+        }
+        return BigDecimal.ZERO;
     }
-    
+
     @Override
     public String getReferenceNumber() {
         return referenceNumber;
     }
-    
+
     public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
+
     @Override
     public String getTransanctionReferenceNumber() {
         return transanctionReferenceNumber;
     }
 
-    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+    public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 
+    public Map<Installment, BigDecimal> getCalculatedPenalty(final Date commencementDate, final Date collectionDate,
+            final BigDecimal amount, final Installment currentInstallment) {
+        final Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
+        installmentPenalty.put(currentInstallment, calculatePenalty(commencementDate, collectionDate, amount));
+        return installmentPenalty;
+    }
 }

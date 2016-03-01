@@ -88,7 +88,9 @@
 		<many-to-one name="constructionTypeSet" class="org.egov.ptis.domain.entity.property.PropertyUsage" column="ID_USG_MSTR"/>
 		-->	
 		<component name="builtUpArea" class="org.egov.commons.Area">
-			<property name="area" column="BUILTUP_AREA"/>	
+			<property name="area" column="BUILTUP_AREA"/>
+			<property name="length" column="BUILTUP_LENGTH"/>	
+			<property name="breadth" column="BUILTUP_BREADTH"/>		
 		</component>
 		
 		<component name="floorArea" class="org.egov.commons.Area">
@@ -102,6 +104,8 @@
 		<property name="waterRate" column="WATER_RATE" />
 		<property name="noOfSeats" column="no_of_seats"	type="integer" />
 		<property name="drainage" column="drainage"	type="boolean" />
+		<property name="unstructuredLand" column="unstructuredLand"	type="boolean" />
+		
 		<property name="firmName" column="firmname" type="java.lang.String"/> 
 		<!--
 		EXTRA_FIELD1 varchar

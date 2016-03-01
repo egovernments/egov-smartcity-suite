@@ -74,7 +74,12 @@
 					showMessage('newLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
 					window.scroll(0, 0); 
 					return false;
-				} else if (document.getElementById("address").value == '' || document.getElementById("address").value == null){
+				}else if (document.getElementById("nameOfEstablishment").value == '' || document.getElementById("nameOfEstablishment").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.tradeTitle.null" />');
+					window.scroll(0, 0); 
+					return false;
+				}  
+				else if (document.getElementById("address").value == '' || document.getElementById("address").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.licenseaddress.null" />');
 					window.scroll(0, 0);
 					return false;
@@ -102,13 +107,23 @@
 					showMessage('newLicense_error', '<s:text name="newlicense.startDate.null" />');
 					window.scroll(0, 0);  
 					return false;
-				}	
+				}	else if(document.getElementById("showAgreementDtl").checked){
+					 if (document.getElementById("agreementDate").value == '' || document.getElementById("agreementDate").value == null){
+							showMessage('newLicense_error', '<s:text name="newlicense.agreementDate.null" />');
+							window.scroll(0, 0);  
+							return false;
+					 } else if(document.getElementById("agreementDocNo").value == '' || document.getElementById("agreementDocNo").value == null){
+						 	showMessage('newLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
+							window.scroll(0, 0);  
+							return false;
+					}
+				} 
 				if(!verifyDocAttachment()){
 					return false;
 				}
-    			if(validateForm_newTradeLicense()==false) { 
+    			/* if(validateForm_newTradeLicense()==false) { 
     				return false;
-    			} else { 
+    			}  */else { 
 					return true;    	              
     			 } 
   			}
@@ -132,9 +147,10 @@
 
 			function onBodyLoad(){
   				var currentState=document.getElementById("currentWfstate").value;
-				if(currentState=='Create License:Commissioner Approved')	
+  				showHideAgreement();
+				if(document.getElementById("mode").value=='disableApprover')	
 					{
-					toggleFields(true,['Submit','Reject','button2','Approve','approverComments']); 
+					toggleFields(true,['Submit','Reject','button2','Approve','approverComments','Sign','Preview']); 
 					jQuery(".show-row").hide(); 
 					jQuery('#approverComments').removeAttr('<span class="mandatory"></span>');
 					jQuery('#approverDepartment').removeAttr('<span class="mandatory"></span>');
@@ -143,10 +159,24 @@
 					jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
 					}	
 				
-				if(dom.get("mode").value=='view'){
+				if(document.getElementById("mode").value=='view'){
+					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
+					                     'Forward','Reject','button2','Approve','Sign','Preview']); 
+	                  //remove onclick event for propertyno search button
+					  jQuery("#searchImg").removeAttr("onclick");
+					  // remove onclick event for add and delete button having class = add-padding
+					  jQuery('.add-padding').attr('onclick','').unbind('click');
+					  // renaming approver remarks label for second level of workflow
+					  <s:if test="%{getNextAction()!='END'}">
+					 	 jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+					</s:if>
+				} 
+				if(document.getElementById("mode").value=='editForApproval'){
 					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
 					                     'Forward','Reject','button2','Approve']); 
 	                  //remove onclick event for propertyno search button
+	                  document.getElementById("tradeArea_weight").disabled=false;
 					  jQuery("#searchImg").removeAttr("onclick");
 					  // remove onclick event for add and delete button having class = add-padding
 					  jQuery('.add-padding').attr('onclick','').unbind('click');
@@ -171,24 +201,33 @@
         	}
 
     		function onSubmit() {
-    			<s:if test="%{mode!=null && mode=='view'}">
+        		var mode=document.getElementById("mode").value;
+    			<s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval' || mode== 'disableApprover') &&  mode!='editForReject' )}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
-					document.newTradeLicense.submit();
+					//document.newTradeLicense.submit();
 				</s:if>
+				<s:elseif  test="%{mode!=null && mode=='editForReject'}">
+				clearMessage('newLicense_error');
+				toggleFields(false,"");
+				document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
+				//document.newTradeLicense.submit();
+			</s:elseif>
 				<s:elseif test="%{mode!=null && mode=='edit'}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action = '${pageContext.request.contextPath}//newtradelicense/editTradeLicense-edit.action';
-					document.newTradeLicense.submit;
+					//document.newTradeLicense.submit();
 				</s:elseif>
 				<s:else>   
 					clearMessage('newLicense_error'); 
 					toggleFields(false,"");
 	    			document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
-			    	document.newTradeLicense.submit();
+			    	//document.newTradeLicense.submit();
 				</s:else>
+
+				return true;
         	} 
 
 			// Calls propertytax REST api to retrieve property details for an assessment no
@@ -196,7 +235,6 @@
     		function callPropertyTaxRest(){
                	var propertyNo = jQuery("#propertyNo").val();
             	if(propertyNo!="" && propertyNo!=null){
-					console.log(propertyNo); 
 					jQuery.ajax({
 						url: "/ptis/rest/property/" + propertyNo,
 						type:"GET",
@@ -204,26 +242,25 @@
 						success:function(data){
 							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
 								bootbox.alert(data.errorDetails.errorMessage);
+								jQuery('#propertyNo').val('');
+								jQuery('#boundary, #address').prop("disabled", false);
 							} else{
 								if(data.boundaryDetails!=null){
-									jQuery("#boundary").val(data.boundaryDetails.localityId)
+									jQuery("#boundary").val(data.boundaryDetails.localityId);
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
+									jQuery('#parentBoundary').val(data.boundaryDetails.wardId);
 									jQuery("#address").val(data.propertyAddress);
 								}
 							}
 						},
 						error:function(e){
-							console.log('error:'+e.message);
 							document.getElementById("propertyNo").value="";
 							resetOnPropertyNumChange();
 							bootbox.alert("Error getting property details");
 						}
 					});
-            	} else{
-					showMessage('newLicense_error', '<s:text name="newlicense.propertyNo.null" />');
-            		document.getElementById("propertyNo").focus();
-                }
+            	}
             }
 
             function resetOnPropertyNumChange(){
@@ -240,6 +277,16 @@
             	document.getElementById("wardName").value="";
             	document.getElementById("address").value="";
             }
+
+            function showHideAgreement(){
+				if(document.getElementById("showAgreementDtl").checked){
+					document.getElementById("agreementSec").style.display="";
+				} else {
+					document.getElementById("agreementSec").style.display="none";
+					document.getElementById("agreementDate").value="";
+					document.getElementById("agreementDocNo").value="";
+				}
+            } 
         	
  		</script>
  		
@@ -275,7 +322,6 @@
 							<s:hidden id="currentWfstate" name="currentWfstate" value="%{state.value}" />
 							<s:hidden name="id" id="id" />
 							<s:hidden name="feeTypeId" id="feeTypeId" />
-							<s:hidden name="parentBndryId" id="parentBndryId" value="%{parentBndryId}" />
 							
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
@@ -290,26 +336,25 @@
 								</div>
 							</s:else>
                             
-                                <!-- <ul class="nav nav-tabs" id="settingstab">
+                                 <ul class="nav nav-tabs" id="settingstab">
                                     <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
                                     <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
-                                </ul> -->
+                                </ul>
                             </div>
                             
-                             <div class="panel-body custom-form">
-                                <div class="">
-                                    <div class="" id="">
+                             <div class="panel-body">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="tradedetails">
 	                                         <%@ include file='../common/licensee.jsp'%>
 	                                          <%@ include file='../common/address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
 												
-											<div>
-												<%@include file="../common/documentUpload.jsp" %>
-											</div>
 											<%@ include file='../common/commonWorkflowMatrix.jsp'%>
 											<%@ include file='../common/commonWorkflowMatrix-button.jsp'%> 
                                     </div>
-                                    
+                                    <div class="tab-pane fade" id="tradeattachments"> 
+                                    	<%@include file="../common/documentUpload.jsp" %>
+                                    </div>
                             	</div>
                             </div>
                         </div> 
@@ -318,7 +363,8 @@
                     </s:form> 
                     </div>
                 </div>
-        <script src="../resources/app/js/newtrade.js"></script>
-        <script src="../resources/javascript/license/searchTrade.js"></script>
+        <script	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>        
+        <script src="../resources/js/app/newtrade.js?rnd=${app_release_no}"></script>
+        <script src="../resources/js/app/searchTrade.js?rnd=${app_release_no}"></script>
     </body>
 </html>

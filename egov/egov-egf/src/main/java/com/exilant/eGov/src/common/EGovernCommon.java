@@ -60,16 +60,20 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.LabelValueBean;
-import org.egov.infstr.utils.seqgen.DatabaseSequence;
-import org.egov.infstr.utils.seqgen.DatabaseSequenceFirstTimeException;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
+import org.hibernate.exception.SQLGrammarException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.VoucherHeader;
@@ -85,6 +89,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  * This class contains the common methods used for E-Governments applciation
  */
 @Transactional(readOnly = true)
+@Service
 public class EGovernCommon extends AbstractTask {
     private static String vouNumber;
     private static String vouNumberCess;
@@ -95,7 +100,14 @@ public class EGovernCommon extends AbstractTask {
     private static TaskFailedException taskExc;
     private static final String FUNDIDNSQL = "SELECT identifier as \"fund_identi\" from fund where id=?";
     private static final String EXILRPERROR = "exilRPError";
+    @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
+    @Autowired
+    private DBSequenceGenerator dbSequenceGenerator;
+    @Autowired
+    private SequenceNumberGenerator sequenceNumberGenerator;
 
     @Override
     public void execute(final String taskName,
@@ -261,7 +273,7 @@ public class EGovernCommon extends AbstractTask {
             final SimpleDateFormat sdf = sdfFormatddMMyyyy;
             final SimpleDateFormat formatter = dtFormat;// new SimpleDateFormat("dd-MMM-yyyy");
             final String vDate = formatter.format(sdf.parse(vdt));
-            final String qry = "select code,name from scheme where isactive=1 and  validFrom<=? and validTo>=? and id= ?";
+            final String qry = "select code,name from scheme where isactive=true and  validFrom<=? and validTo>=? and id= ?";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("validating scheme" + qry);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(qry);
@@ -605,7 +617,7 @@ public class EGovernCommon extends AbstractTask {
      */
     public boolean isUniqueVN(final DataCollection datacol, final String vcNoField, final String vcDateField)
             throws TaskFailedException,
-    Exception, ParseException {
+            Exception, ParseException {
         final String vcNum = vcNoField;
         String vcDate = datacol.getValue(vcDateField);
         final SimpleDateFormat sdf = sdfFormatddMMyyyy;
@@ -706,7 +718,7 @@ public class EGovernCommon extends AbstractTask {
      */
     public boolean isUniqueChequeNo(final String Chequeno, final String BankAccId, final DataCollection datacol)
             throws TaskFailedException,
-    Exception {
+            Exception {
         boolean isUnique = true;
         Query pst = null;
         List<Object[]> rs = null;
@@ -780,7 +792,7 @@ public class EGovernCommon extends AbstractTask {
      */
     public boolean isChqNoWithinRange(final String Chequeno, final String BankAccId, final DataCollection datacol)
             throws TaskFailedException,
-    Exception {
+            Exception {
         boolean isWithinRange = false;
         Query pst = null;
         List<Object[]> rs = null;
@@ -849,13 +861,13 @@ public class EGovernCommon extends AbstractTask {
             final String[] dt1 = VDate.split("/");
             final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1 : Integer.parseInt(dt2[2]) < Integer
                     .parseInt(dt1[2]) ? -1 : Integer.parseInt(dt2[1]) > Integer.parseInt(dt1[1]) ? 1 : Integer
-                            .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
-                                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
-                                            .parseInt(dt1[0]) ? -1 : 0;
-                                    if (ret == -1)
-                                        datacol.addMessage(EXILRPERROR, "Date Should be within the today date");
-                                    else
-                                        isCurDate = 1;
+                    .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
+                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
+                            .parseInt(dt1[0]) ? -1 : 0;
+            if (ret == -1)
+                datacol.addMessage(EXILRPERROR, "Date Should be within the today date");
+            else
+                isCurDate = 1;
 
         } catch (final Exception ex) {
             datacol.addMessage(EXILRPERROR, "DataBase Error(iscurDate) : " + ex.toString());
@@ -880,13 +892,13 @@ public class EGovernCommon extends AbstractTask {
             final String[] dt2 = RVDate.split("/");
             final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1 : Integer.parseInt(dt2[2]) < Integer
                     .parseInt(dt1[2]) ? -1 : Integer.parseInt(dt2[1]) > Integer.parseInt(dt1[1]) ? 1 : Integer
-                            .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
-                                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
-                                            .parseInt(dt1[0]) ? -1 : 0;
-                                    if (ret == -1)
-                                        datacol.addMessage(EXILRPERROR, "Date Should be more than original voucher date");
-                                    else
-                                        isCurDate = 1;
+                    .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
+                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
+                            .parseInt(dt1[0]) ? -1 : 0;
+            if (ret == -1)
+                datacol.addMessage(EXILRPERROR, "Date Should be more than original voucher date");
+            else
+                isCurDate = 1;
         } catch (final Exception ex) {
             datacol.addMessage(EXILRPERROR, "DataBase Error(isValidDate) : " + ex.toString());
             throw taskExc;
@@ -910,12 +922,12 @@ public class EGovernCommon extends AbstractTask {
             final String[] dt2 = RVDate.split("/");
             final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1 : Integer.parseInt(dt2[2]) < Integer
                     .parseInt(dt1[2]) ? -1 : Integer.parseInt(dt2[1]) > Integer.parseInt(dt1[1]) ? 1 : Integer
-                            .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
-                                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
-                                            .parseInt(dt1[0]) ? -1 : 0;
-                                    if (ret == -1)
-                                        throw new TaskFailedException("Date Should be more than original voucher date");
-                                    isCurDate = 1;
+                    .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
+                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
+                            .parseInt(dt1[0]) ? -1 : 0;
+            if (ret == -1)
+                throw new TaskFailedException("Date Should be more than original voucher date");
+            isCurDate = 1;
         } catch (final Exception ex)
         {
             LOGGER.error("Inside the isValidDate.. " + ex.getMessage());
@@ -938,16 +950,18 @@ public class EGovernCommon extends AbstractTask {
             LOGGER.debug(" In EGovernCommon :getEg_Voucher method ");
         final CFiscalPeriod fiscalPeriod = (CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",
                 Long.parseLong(fiscalPeriodIdStr));
-        Long cgvn = null;
+        BigInteger cgvn = null;
+        String sequenceName = "";
         // Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and fiscalPeriodIdStr 7
         try {
-            final String sequenceName = VoucherHelper.sequenceNameFor(vouType, fiscalPeriod.getName());
-            cgvn = DatabaseSequence.named(sequenceName, HibernateUtil.getCurrentSession()).createIfNecessary().nextVal();
+            sequenceName   = VoucherHelper.sequenceNameFor(vouType, fiscalPeriod.getName());
+            cgvn = (BigInteger)sequenceNumberGenerator.getNextSequence(sequenceName);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("----- CGVN : " + cgvn);
 
-        } catch (final DatabaseSequenceFirstTimeException e)
+        } catch (final SQLGrammarException e)
         {
+            cgvn = (BigInteger)dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             LOGGER.error("Error in generating CGVN" + e);
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         } catch (final Exception e)
@@ -1455,7 +1469,7 @@ public class EGovernCommon extends AbstractTask {
             final String schemeid,
             final String subschemeid, final String vdt, final String departmentId, final String functionary,
             final String sourcepath)
-                    throws TaskFailedException
+            throws TaskFailedException
     {
         if (schemeid != null && schemeid.length() > 0)
             validateScheme(vdt, schemeid);
@@ -1564,26 +1578,26 @@ public class EGovernCommon extends AbstractTask {
              * egfstatus.setEffectiveDate(formatter.format(sdf.parse( today ))); egfstatus.setStatus("4");
              * egfstatus.setVoucherheaderId(voucherHeaderId); egfstatus.update();
              */if (LOGGER.isDebugEnabled())
-                 LOGGER.debug("Update the original voucher");
-             vh.setStatus("" + 4);
-             vh.update();
+                LOGGER.debug("Update the original voucher");
+            vh.setStatus("" + 4);
+            vh.update();
 
-             // Check if there is any related vouchers
-             ps.setString(0, voucherHeaderId);
-             rs = ps.list();
-             for (final Object[] element : rs) {
-                 // egfRecordStatus egfstatusRef= new egfRecordStatus();
-                 final String refVhid = element[0].toString();
-                 vh.setId(refVhid);
-                 /*
-                  * egfstatusRef.setEffectiveDate(formatter.format(sdf.parse( today ))); egfstatusRef.setStatus("4");
-                  * egfstatusRef.setVoucherheaderId(refVhid); egfstatusRef.update();
-                  */
-                 vh.setStatus("" + 4);
-                 if (LOGGER.isDebugEnabled())
-                     LOGGER.debug("before voucher update");
-                 vh.update();
-             }
+            // Check if there is any related vouchers
+            ps.setString(0, voucherHeaderId);
+            rs = ps.list();
+            for (final Object[] element : rs) {
+                // egfRecordStatus egfstatusRef= new egfRecordStatus();
+                final String refVhid = element[0].toString();
+                vh.setId(refVhid);
+                /*
+                 * egfstatusRef.setEffectiveDate(formatter.format(sdf.parse( today ))); egfstatusRef.setStatus("4");
+                 * egfstatusRef.setVoucherheaderId(refVhid); egfstatusRef.update();
+                 */
+                vh.setStatus("" + 4);
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("before voucher update");
+                vh.update();
+            }
         } catch (final Exception e) {
             throw taskExc;
         }
@@ -1895,7 +1909,7 @@ public class EGovernCommon extends AbstractTask {
             fundCondition = " and branch.id in(select branchid from bankaccount where fundid=" + fundId + ")";
 
         query = "select branch.ID as \"bankBranchId\", concat(concat(ba.name, ' - '),branch.branchName) as \"bankBranchName\" "
-                + " FROM bank ba, bankBranch branch WHERE branch.bankId=ba.ID AND ba.isActive=1 AND branch.isActive = 1 "
+                + " FROM bank ba, bankBranch branch WHERE branch.bankId=ba.ID AND ba.isActive=true AND branch.isActive = true "
                 + fundCondition + " order by LOWER(ba.name) ";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query:" + query);

@@ -141,6 +141,7 @@ public class MeterReadingController {
     public String updateMeterEntry(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
+        String sourceChannel = request.getParameter("Source");
         final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date givenDate = null;
         try {
@@ -167,7 +168,7 @@ public class MeterReadingController {
                 meterReadingConnectionDeatilObj, previousReading, dateFormat);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-        waterConnectionDetailsService.updateIndexes(savedWaterConnectionDetails);
+        waterConnectionDetailsService.updateIndexes(savedWaterConnectionDetails,sourceChannel);
         return "redirect:/application/meterdemandnotice?pathVar="
         + savedWaterConnectionDetails.getConnection().getConsumerCode();
     }

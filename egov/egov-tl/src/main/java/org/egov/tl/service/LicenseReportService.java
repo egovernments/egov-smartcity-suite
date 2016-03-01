@@ -39,7 +39,6 @@
  */
 package org.egov.tl.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,10 +53,10 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.tl.utils.Constants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class LicenseReportService {
     @Autowired
@@ -86,7 +85,7 @@ public class LicenseReportService {
     private EgovPaginatedList populateZoneWiseReport(final String pageNo,
             final String licenseType, final Installment installment) {
         query = constructQuery(Constants.ZONE, null, licenseType, installment).toString();
-        final Query hibQuery = HibernateUtil.getCurrentSession().createSQLQuery(String.valueOf(query));
+        final Query hibQuery = persistenceService.getSession().createSQLQuery(query);
         if (pageNo == null)
             pageNum = 1;
         else
@@ -141,7 +140,7 @@ public class LicenseReportService {
     private EgovPaginatedList populateZoneWiseReport(final Integer zoneId,
             final String pageNo, final String licenseType, final Installment installment) {
         query = constructQuery(Constants.DIVISION, zoneId, licenseType, installment).toString();
-        final Query hibQuery = HibernateUtil.getCurrentSession().createSQLQuery(String.valueOf(query));
+        final Query hibQuery = persistenceService.getSession().createSQLQuery(query);
         if (pageNo == null)
             pageNum = 1;
         else
@@ -251,7 +250,7 @@ public class LicenseReportService {
     private EgovPaginatedList populateTradeWiseReport(final String pageNo, final String moduleName,
             final String licenseType, final String type, final Installment installment) {
         query = constructQueryForTradeList(moduleName, licenseType, installment, type).toString();
-        final Query hibQuery = HibernateUtil.getCurrentSession().createSQLQuery(String.valueOf(query));
+        final Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
         if (pageNo == null)
             pageNum = 1;
         else
@@ -357,7 +356,7 @@ public class LicenseReportService {
     private EgovPaginatedList populateLateRenewalsReport(final String pageNo,
             final String licenseType, final Installment installment) {
         query = constructQueryForLateRenewalsList(licenseType, installment).toString();
-        final Query hibQuery = HibernateUtil.getCurrentSession().createSQLQuery(String.valueOf(query));
+        final Query hibQuery = persistenceService.getSession().createSQLQuery(query);
         if (pageNo == null)
             pageNum = 1;
         else
@@ -475,7 +474,7 @@ public class LicenseReportService {
             final String licenseType, final Installment currentInstallment) {
         query = constructQueryForLateRenewalsList(licenseType, currentInstallment).toString();
         query = "Select sum(lateren) from(" + query + ")";
-        final Query hibQuery = HibernateUtil.getCurrentSession().createSQLQuery(String.valueOf(query));
+        final Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
         final List result = hibQuery.list();
 
         HashMap<String, Object> totalHashMap;
@@ -495,7 +494,7 @@ public class LicenseReportService {
     }
 
     private List<Map<String, Object>> populateTotalList(final String licenseType, final Installment installment) {
-        final Query hibQuery = HibernateUtil.getCurrentSession().createSQLQuery(String.valueOf(query));
+        final Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
         final List result = hibQuery.list();
         Object[] objects;
         final Iterator iterator = result.iterator();
@@ -546,7 +545,7 @@ public class LicenseReportService {
             query.append(" and lic.id_sub_category=").append(subcategoryId);
         query.append(" )");
 
-        final Query hibQuery = HibernateUtil.getCurrentSession().createSQLQuery(String.valueOf(query));
+        final Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
         hibQuery.setDate(0, date);
         hibQuery.setDate(1, date);
         hibQuery.setDate(2, date);

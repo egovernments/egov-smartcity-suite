@@ -53,6 +53,8 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -69,6 +71,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -79,11 +82,13 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.entity.Script;
+import org.egov.infra.search.elastic.entity.CollectionIndex;
+import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.admin.master.entity.Location;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -103,7 +108,6 @@ public class CollectionsUtil {
     @Autowired
     private UserService userService;
     private CommonsService commonsService;
-    private PersistenceService<Script, Long> scriptService;
     @Autowired
     private ModuleService moduleService;
     @Autowired
@@ -218,7 +222,7 @@ public class CollectionsUtil {
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
         try {
-            location = this.getLocationById(Long.valueOf((String) sessionMap
+            location = getLocationById(Long.valueOf((String) sessionMap
                     .get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID)));
             if (location == null)
                 throw new ApplicationRuntimeException("Unable to fetch the location of the logged in user ["
@@ -262,7 +266,7 @@ public class CollectionsUtil {
      */
     public List getChallanServiceList() {
         return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
-                CollectionConstants.CHALLAN_SERVICE_TYPE);
+                CollectionConstants.SERVICE_TYPE_COLLECTION);
     }
 
     /**
@@ -308,7 +312,7 @@ public class CollectionsUtil {
         if (isEmp && dept == null) {
             final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        } else if (!isEmp || (dept != null && !deptCodes.isEmpty() && deptCodes.contains(dept.getCode()))) {
+        } else if (!isEmp || dept != null && !deptCodes.isEmpty() && deptCodes.contains(dept.getCode())) {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         } else {
@@ -404,7 +408,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                .get(0);
+                                .get(0);
     }
 
     /**
@@ -440,7 +444,6 @@ public class CollectionsUtil {
     }
 
     public void setScriptService(final PersistenceService<Script, Long> scriptService) {
-        this.scriptService = scriptService;
     }
 
     /**
@@ -544,7 +547,7 @@ public class CollectionsUtil {
                     Long.valueOf(boundaryId), functionaryId);
         } catch (final Exception e) {
             final String errorMsg = "Could not get PersonalInformation";
-            LOGGER.error("Could not get PersonalInformation", e);
+            LOGGER.error(errorMsg, e);
             throw new ApplicationRuntimeException(errorMsg, e);
         }
         return personalInformation;
@@ -574,7 +577,9 @@ public class CollectionsUtil {
                     if (!employeeView.getAssignment().getPrimary())
                         departmentlist.add(employeeView.getAssignment().getDepartment());
         } catch (final Exception e) {
-            LOGGER.error("Could not get list of assignments", e);
+            final String errorMsg = "Could not get list of assignments";
+            LOGGER.error(errorMsg, e);
+            throw new ApplicationRuntimeException(errorMsg, e);
         }
 
         return departmentlist;
@@ -592,29 +597,38 @@ public class CollectionsUtil {
 
     public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId,
             final ReceiptHeader receiptHeaderObj) {
-        List<Designation> designations = new ArrayList();
+        List<Designation> designations = new ArrayList<Designation>(0);
         designations = designationService.getAllDesignationByDepartment(Long.valueOf(departmentId), new Date());
-        return designations;
+        final List<Designation> designation = new ArrayList<Designation>(0);
+
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DESIG_CHALLAN_WORKFLOW);
+        for (final Designation desig : designations)
+            for (final AppConfigValues app : appConfigValue)
+                if (desig.getName().equals(app.getValue()))
+                    designation.add(desig);
+        return designation;
     }
 
     public List<Department> getDepartmentsAllowedForChallanApproval(final User loggedInUser,
             final ReceiptHeader receiptHeaderObj) {
-        List<Department> departments = new ArrayList();
-      /*  Department department;
-        if (receiptHeaderObj.getChallan().getState()==null)
-                department=getDepartmentOfUser(loggedInUser);
-        else
-                department=receiptHeaderObj.getReceiptMisc().getDepartment();*/
-        departments.addAll(departmentService.getAllDepartments());
-        return departments; 
+        final List<Department> departments = new ArrayList<Department>(0);
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DESIG_CHALLAN_WORKFLOW);
+        if (null != appConfigValue && !appConfigValue.isEmpty())
+            for (final AppConfigValues app : appConfigValue) {
+                final List<Assignment> assignments = assignmentService.findPrimaryAssignmentForDesignationName(app
+                        .getValue());
+                for (final Assignment assign : assignments)
+                    if (!departments.contains(assign.getDepartment()))
+                        departments.add(assign.getDepartment());
+            }
+        return departments;
     }
 
     public List<Department> getDepartmentsAllowedForBankRemittanceApproval(final User loggedInUser) {
-        /*
-         * scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDEPARTMENTS); return
-         * (List<Department>) scripts.get(0).eval( Script.createContext("loggedInUser", loggedInUser, "collUtil", this,
-         * "persistanceService", persistenceService, "contraJournalVoucherObj", new ContraJournalVoucher()));
-         */
         List<Department> departments;
         Department department;
         final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
@@ -628,10 +642,6 @@ public class CollectionsUtil {
             else
                 departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", "CAF");
         } else
-            /*
-             * departments = persistenceService.findAllBy(
-             * "select dept from Department dept where dept.billingLocation= ? order by dept.name " , '0');
-             */
             departments = persistenceService.findAllBy("select dept from Department dept order by dept.name ");
 
         return departments;
@@ -646,24 +656,24 @@ public class CollectionsUtil {
         if (contraJournalVoucherObj.getVoucherHeaderId() == null) {
             if (department.getCode().equals('R'))
                 designations = persistenceService
-                        .findAllBy(
-                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
-                                departmentId, "REVENUE INSPECTOR");
+                .findAllBy(
+                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
+                        departmentId, "REVENUE INSPECTOR");
             else
                 designations = persistenceService
-                        .findAllBy(
-                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                                departmentId);
+                .findAllBy(
+                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                        departmentId);
         } else if (department.getCode().equals("CAF"))
             designations = persistenceService
-                    .findAllBy(
-                            "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
-                            "CAF", "SENIOR GRADE CLERK");
+            .findAllBy(
+                    "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
+                    "CAF", "SENIOR GRADE CLERK");
         else
             designations = persistenceService
-                    .findAllBy(
-                            "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                            departmentId);
+            .findAllBy(
+                    "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                    departmentId);
         return designations;
     }
 
@@ -712,21 +722,6 @@ public class CollectionsUtil {
 
     }
 
-    public BillingIntegrationService getBillingService(final String code) {
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
-                "classpath*:org/egov/infstr/beanfactory/globalApplicationContext.xml",
-                "classpath*:org/egov/infstr/beanfactory/egiApplicationContext.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-pims.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-egf.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-eportal.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-ptis.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-erpcollections.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-bpa.xml" });
-        final BillingIntegrationService billingService = (BillingIntegrationService) applicationContext.getBean(code
-                + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
-        return billingService;
-    }
-
     /**
      * @param consumerCode
      * @return last three online transaction for the consumerCode
@@ -757,11 +752,6 @@ public class CollectionsUtil {
         return userService.getUserById(userId);
     }
 
-    /*
-     * public Location getLocationByUser(final Long userId) { final User user = userService.getUserById(userId); return (Location)
-     * persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER, user.getUsername()); }
-     */
-
     public void setUserService(final UserService userService) {
         this.userService = userService;
     }
@@ -772,6 +762,72 @@ public class CollectionsUtil {
 
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
+    }
+
+    public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
+        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+        final ServiceDetails billingService = receiptHeader.getService();
+
+        String instrumentType="";
+        if(!receiptHeader.getReceiptInstrument().isEmpty())
+            instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
+        final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(receiptHeader.getReceiptdate(),
+                receiptHeader.getReceiptnumber(), billingService.getName(), instrumentType , receiptHeader.getTotalAmount(),
+                receiptHeader.getSource(),
+                receiptHeader.getStatus().getDescription()
+                );
+
+        collectionIndexBuilder.consumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode() : "");
+        collectionIndexBuilder.billNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() : "");
+        collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment()
+                .getService().getName() : "");
+        collectionIndexBuilder.payeeName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "");
+
+        if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
+            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService.getCode()
+                    + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+            try {
+                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader));
+            } catch (final Exception e) {
+                final String errMsg = "Exception while constructing collection index for receipt number ["
+                        + receiptHeader.getReceiptnumber() + "]!";
+                LOGGER.error(errMsg, e);
+                throw new ApplicationRuntimeException(errMsg, e);
+            }
+        }
+        collectionIndexBuilder.arrearAmount(receiptAmountInfo.getArrearsAmount());
+        collectionIndexBuilder.advanceAmount(receiptAmountInfo.getAdvanceAmount());
+        collectionIndexBuilder.currentAmount(receiptAmountInfo.getCurrentInstallmentAmount());
+        collectionIndexBuilder.penaltyAmount(receiptAmountInfo.getPenaltyAmount());
+        collectionIndexBuilder.arrearCess(receiptAmountInfo.getArrearCess());
+        collectionIndexBuilder.latePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges());
+        collectionIndexBuilder.currentCess(receiptAmountInfo.getCurrentCess());
+        if (receiptAmountInfo.getInstallmentFrom() != null)
+            collectionIndexBuilder.installmentFrom(receiptAmountInfo.getInstallmentFrom());
+        if (receiptAmountInfo.getInstallmentTo() != null)
+            collectionIndexBuilder.installmentTo(receiptAmountInfo.getInstallmentTo());
+
+        return collectionIndexBuilder.build();
+    }
+
+    public Boolean checkVoucherCreation(final ReceiptHeader receiptHeader) {
+        Boolean createVoucherForBillingService = Boolean.FALSE;
+        if (receiptHeader.getService().getVoucherCutOffDate() != null
+                && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
+            if (receiptHeader.getService().getVoucherCreation()!= null)
+                createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
+        } else if (receiptHeader.getService().getVoucherCutOffDate() == null)
+            if (receiptHeader.getService().getVoucherCreation()!= null)
+                createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
+        return createVoucherForBillingService;
+    }
+    
+    public String getApproverName(Position position) {
+        String approver;
+        final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(position.getId());
+        approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
+                .concat("~").concat(assignment.getPosition().getName());
+        return approver;
     }
 
 }

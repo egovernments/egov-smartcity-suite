@@ -73,8 +73,12 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
+import org.egov.services.instrument.InstrumentHeaderService;
+import org.egov.services.instrument.InstrumentOtherDetailsService;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.utils.FinancialConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.domain.BankBranch;
@@ -93,8 +97,16 @@ public class BankReconciliationAction extends DispatchAction {
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
     Date dt;
     EGovernCommon cm = new EGovernCommon();
-    InstrumentService instrumentService;
+    @Autowired
+    @Qualifier("instrumentService")
+    private InstrumentService instrumentService;
     PersistenceService persistenceService;
+    @Autowired
+    @Qualifier("instrumentHeaderService")
+    private InstrumentHeaderService instrumentHeaderService;
+    @Autowired
+    @Qualifier("instrumentOtherDetailsService")
+    private InstrumentOtherDetailsService instrumentOtherDetailsService;
 
     /**
      * @param persistenceService the persistenceService to set
@@ -176,7 +188,7 @@ public class BankReconciliationAction extends DispatchAction {
      */
     public ActionForward getAccountNumbersForRS(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req,
             final HttpServletResponse res)
-                    throws Exception
+            throws Exception
     {
 
         try {
@@ -381,19 +393,6 @@ public class BankReconciliationAction extends DispatchAction {
             final Date reconcileDate = dt;
             formatter.format(dt);
             new BankReconciliation();
-            instrumentService = new InstrumentService();
-            persistenceService = new PersistenceService();
-            // persistenceService.setSessionFactory(new SessionFactory());
-            instrumentService.setPersistenceService(persistenceService);
-
-            final PersistenceService<InstrumentHeader, Long> iHeaderService = new PersistenceService<InstrumentHeader, Long>();
-            //iHeaderService.setType(InstrumentHeader.class);
-            // iHeaderService.setSessionFactory(new SessionFactory());
-            instrumentService.setInstrumentHeaderService(iHeaderService);
-            final PersistenceService<InstrumentOtherDetails, Long> iOtherDetailsService = new PersistenceService<InstrumentOtherDetails, Long>();
-            //iOtherDetailsService.setType(InstrumentOtherDetails.class);
-            // iOtherDetailsService.setSessionFactory(new SessionFactory());
-            instrumentService.setInstrumentOtherDetailsService(iOtherDetailsService);
 
             for (int i = 0; i < instrumentId.length; i++)
             {
@@ -404,11 +403,11 @@ public class BankReconciliationAction extends DispatchAction {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("formatter.format(dt)   " + formatter.format(dt));
 
-                final InstrumentHeader ih = instrumentService.instrumentHeaderService.find("from InstrumentHeader where id=?",
+                final InstrumentHeader ih = instrumentHeaderService.find("from InstrumentHeader where id=?",
                         Long.valueOf(instrumentId[i]));
                 ih.setStatusId(instrumentService.getStatusId(FinancialConstants.INSTRUMENT_RECONCILED_STATUS));
-                instrumentService.instrumentHeaderService.persist(ih);
-                InstrumentOtherDetails io = instrumentService.instrumentOtherDetailsService.find(
+                instrumentHeaderService.persist(ih);
+                InstrumentOtherDetails io = instrumentOtherDetailsService.find(
                         "from InstrumentOtherDetails where instrumentHeaderId=?", ih);
                 if (io == null)
                 {
@@ -421,7 +420,7 @@ public class BankReconciliationAction extends DispatchAction {
                 io.setInstrumentStatusDate(dt);
                 io.setReconciledAmount(ih.getInstrumentAmount());
                 io.setReconciledOn(reconcileDate);
-                instrumentService.instrumentOtherDetailsService.persist(io);
+                instrumentOtherDetailsService.persist(io);
 
             }
 

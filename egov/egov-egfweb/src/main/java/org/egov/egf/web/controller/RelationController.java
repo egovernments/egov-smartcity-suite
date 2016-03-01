@@ -10,6 +10,7 @@ import org.egov.commons.Relation;
 import org.egov.commons.service.RelationJpaService;
 import org.egov.egf.web.adaptor.RelationJsonAdaptor;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.services.masters.AccountdetailkeyService;
 import org.egov.services.masters.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -43,6 +44,8 @@ public class RelationController {
 	private SecurityUtils securityUtils;
 	@Autowired
 	private BankService bankService;
+	
+	
 
 	private void prepareNewForm(Model model) {
 		model.addAttribute("banks", bankService.findAll());
@@ -66,6 +69,8 @@ public class RelationController {
 	//this code is to handle non jpa object save since it dont have version once moved bank to jpa remove this
 		if(relation.getBank()!=null && relation.getBank().getId()!=null)
 			relation.setBank(bankService.findById(relation.getBank().getId(), false));
+		else
+			relation.setBank(null);
 		relation.setCreatedby(securityUtils.getCurrentUser().getId());
 		relation.setCreateddate(new Date());
 		relation.setModifiedby(securityUtils.getCurrentUser().getId());
@@ -95,6 +100,7 @@ public class RelationController {
 		relation.setModifiedby(securityUtils.getCurrentUser().getId());
 		relation.setLastmodifieddate(new Date());
 		relationJpaService.update(relation);
+		
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.relation.success", null, null));
 		return "redirect:/relation/result/" + relation.getId();

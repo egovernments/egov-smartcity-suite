@@ -75,6 +75,7 @@ import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentNoRequest;
@@ -126,7 +127,7 @@ public class AssessmentService {
         AssessmentNoRequest assessmentNoReq = (AssessmentNoRequest) getObjectFromJSONRequest(assessmentNoRequest,
                 AssessmentNoRequest.class);
         AssessmentDetails assessmentDetail = propertyExternalService
-                .loadAssessmentDetails(assessmentNoReq.getAssessmentNo(), PropertyExternalService.FLAG_FULL_DETAILS);
+                .loadAssessmentDetails(assessmentNoReq.getAssessmentNo(), PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
         return getJSONResponse(assessmentDetail);
     }
 

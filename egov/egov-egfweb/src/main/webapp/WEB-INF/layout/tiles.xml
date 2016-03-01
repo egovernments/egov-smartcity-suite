@@ -132,5 +132,55 @@
 	<put-attribute name="body" value="/WEB-INF/views/relation/relation-search.jsp"/>
 </definition>
 
+<definition name="accountentity-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-new.jsp"/>
+</definition>
+
+<definition name="accountentity-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-view.jsp"/>
+</definition>
+
+<definition name="accountentity-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-edit.jsp"/>
+</definition>
+
+<definition name="accountentity-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-result.jsp"/>
+</definition>
+
+<definition name="accountentity-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountentity.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-search.jsp"/>
+</definition>
+
+<definition name="recovery-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.recovery.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-new.jsp"/>
+</definition>
+
+<definition name="recovery-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.recovery.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-view.jsp"/>
+</definition>
+
+<definition name="recovery-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.recovery.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-edit.jsp"/>
+</definition>
+
+<definition name="recovery-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.recovery.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-result.jsp"/>
+</definition>
+
+<definition name="recovery-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.recovery.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-search.jsp"/>
+</definition>
+
 
 </tiles-definitions>

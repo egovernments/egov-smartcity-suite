@@ -40,7 +40,6 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <link href="/EGF/resources/css/budget.css" rel="stylesheet"
 	type="text/css" />
-<link href="/EGF/css/commonegov.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
 @media print {
 	#non-printable {
@@ -70,6 +69,13 @@ function disableAsOnDate(){
 }
 
 function validateMandatoryFields(){
+
+	if(document.getElementById('period').value=="Select")
+	{
+		bootbox.alert('Please select Period');
+		return false;
+	}
+		
 	if(document.getElementById('period').value!="Date"){
 		if(document.getElementById('financialYear').value==0){
 			bootbox.alert('Please select a Financial year');
@@ -85,7 +91,7 @@ function validateMandatoryFields(){
 function getData(){
 	if(validateMandatoryFields()){
 		doLoadingMask();
-		var url = '/EGF/report/incomeExpenditureReport!ajaxPrintIncomeExpenditureReport.action?showDropDown=false&model.period='+document.getElementById('period').value+'&model.currency='+document.getElementById('currency').value+'&model.financialYear.id='+document.getElementById('financialYear').value+'&model.department.id='+document.getElementById('department').value+'&model.function.id='+document.getElementById('function').value+'&model.field.id='+document.getElementById('field').value+'&model.functionary.id='+document.getElementById('functionary').value+'&model.asOndate='+document.getElementById('asOndate').value+'&model.fund.id='+document.getElementById('fund').value;
+		var url = '/EGF/report/incomeExpenditureReport-ajaxPrintIncomeExpenditureReport.action?showDropDown=false&model.period='+document.getElementById('period').value+'&model.currency='+document.getElementById('currency').value+'&model.financialYear.id='+document.getElementById('financialYear').value+'&model.department.id='+document.getElementById('department').value+'&model.function.id='+document.getElementById('function').value+'&model.field.id='+document.getElementById('field').value+'&model.functionary.id='+document.getElementById('functionary').value+'&model.asOndate='+document.getElementById('asOndate').value+'&model.fund.id='+document.getElementById('fund').value;
 		YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 		return true;
     }
@@ -94,14 +100,14 @@ function getData(){
 }
 function showAllMinorSchedules(){
 	if(validateMandatoryFields()){
-		window.open('/EGF/report/incomeExpenditureReport!generateScheduleReport.action?showDropDown=false&model.period='+document.getElementById('period').value+'&model.currency='+document.getElementById('currency').value+'&model.financialYear.id='+document.getElementById('financialYear').value+'&model.department.id='+document.getElementById('department').value+'&model.function.id='+document.getElementById('function').value+'&model.field.id='+document.getElementById('field').value+'&model.functionary.id='+document.getElementById('functionary').value+'&model.asOndate='+document.getElementById('asOndate').value+'&model.fund.id='+document.getElementById('fund').value,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		window.open('/EGF/report/incomeExpenditureReport-generateScheduleReport.action?showDropDown=false&model.period='+document.getElementById('period').value+'&model.currency='+document.getElementById('currency').value+'&model.financialYear.id='+document.getElementById('financialYear').value+'&model.department.id='+document.getElementById('department').value+'&model.function.id='+document.getElementById('function').value+'&model.field.id='+document.getElementById('field').value+'&model.functionary.id='+document.getElementById('functionary').value+'&model.asOndate='+document.getElementById('asOndate').value+'&model.fund.id='+document.getElementById('fund').value,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 	return true;
     }
 	return false;
 }
 function showAllSchedules(){
 	if(validateMandatoryFields()){
-		window.open('/EGF/report/incomeExpenditureReport!generateDetailCodeReport.action?showDropDown=false&model.period='+document.getElementById('period').value+'&model.currency='+document.getElementById('currency').value+'&model.financialYear.id='+document.getElementById('financialYear').value+'&model.department.id='+document.getElementById('department').value+'&model.function.id='+document.getElementById('function').value+'&model.field.id='+document.getElementById('field').value+'&model.functionary.id='+document.getElementById('functionary').value+'&model.asOndate='+document.getElementById('asOndate').value+'&model.fund.id='+document.getElementById('fund').value,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		window.open('/EGF/report/incomeExpenditureReport-generateDetailCodeReport.action?showDropDown=false&model.period='+document.getElementById('period').value+'&model.currency='+document.getElementById('currency').value+'&model.financialYear.id='+document.getElementById('financialYear').value+'&model.department.id='+document.getElementById('department').value+'&model.function.id='+document.getElementById('function').value+'&model.field.id='+document.getElementById('field').value+'&model.functionary.id='+document.getElementById('functionary').value+'&model.asOndate='+document.getElementById('asOndate').value+'&model.fund.id='+document.getElementById('fund').value,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 	return true;
     }
 	return false;
@@ -109,7 +115,7 @@ function showAllSchedules(){
 
 function showSchedule(majorCode, scheduleNo){
 	if(validateMandatoryFields()){
-		window.open('/EGF/report/incomeExpenditureReport!generateIncomeExpenditureSubReport.action?showDropDown=false&model.period='+document.getElementById('period').value+'&model.currency='+document.getElementById('currency').value+'&model.financialYear.id='+document.getElementById('financialYear').value+'&model.department.id='+document.getElementById('department').value+'&model.asOndate='+document.getElementById('asOndate').value+'&majorCode='+majorCode+'&scheduleNo='+scheduleNo+'&model.function.id='+document.getElementById('function').value+'&model.field.id='+document.getElementById('field').value+'&model.functionary.id='+document.getElementById('functionary').value+'&endDate='+document.getElementById('asOndate').value+'&asOnDateRange='+document.getElementById('asOndate').value+'&model.fund.id='+document.getElementById('fund').value,'','height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		window.open('/EGF/report/incomeExpenditureReport-generateIncomeExpenditureSubReport.action?showDropDown=false&model.period='+document.getElementById('period').value+'&model.currency='+document.getElementById('currency').value+'&model.financialYear.id='+document.getElementById('financialYear').value+'&model.department.id='+document.getElementById('department').value+'&model.asOndate='+document.getElementById('asOndate').value+'&majorCode='+majorCode+'&scheduleNo='+scheduleNo+'&model.function.id='+document.getElementById('function').value+'&model.field.id='+document.getElementById('field').value+'&model.functionary.id='+document.getElementById('functionary').value+'&endDate='+document.getElementById('asOndate').value+'&asOnDateRange='+document.getElementById('asOndate').value+'&model.fund.id='+document.getElementById('fund').value,'','height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 	return true;
     }
 	return false;
@@ -137,13 +143,13 @@ th.bluebgheadtd {
 				<tr>
 					<td width="10%" class="bluebox">&nbsp;</td>
 					<td width="15%" class="bluebox"><s:text name="report.period" />:<span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td width="22%" class="bluebox"><s:select name="period"
 							id="period"
 							list="#{'Select':'---Choose---','Date':'Date','Yearly':'Yearly','Half Yearly':'Half Yearly'}"
 							onclick="disableAsOnDate()" value="%{model.period}" /></td>
 					<td class="bluebox" width="12%"><s:text
-							name="report.financialYear" />:<span class="mandatory">*</span></td>
+							name="report.financialYear" />:<span class="mandatory1">*</span></td>
 					<td width="41%" class="bluebox"><s:select name="financialYear"
 							id="financialYear" list="dropdownData.financialYearList"
 							listKey="id" listValue="finYearRange" headerKey="0"
@@ -160,7 +166,7 @@ th.bluebgheadtd {
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
 					</td>
 					<td class="greybox"><s:text name="report.rupees" />:<span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="greybox"><s:select name="currency" id="currency"
 							list="#{'Rupees':'Rupees','Thousands':'Thousands','Lakhs':'Lakhs'}"
 							value="%{model.currency}" /></td>
@@ -203,7 +209,7 @@ th.bluebgheadtd {
 					<td></td>
 				</tr>
 			</table>
-			<div align="left" class="mandatory">
+			<div align="left" class="mandatory1">
 				*
 				<s:text name="report.mandatory.fields" />
 			</div>

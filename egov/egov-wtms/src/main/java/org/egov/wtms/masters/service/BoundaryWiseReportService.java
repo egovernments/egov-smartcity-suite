@@ -40,14 +40,18 @@
 package org.egov.wtms.masters.service;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class BoundaryWiseReportService {
+    @Qualifier("entityQueryService")
+    private @Autowired PersistenceService entityQueryService;
 
     public SQLQuery getDrillDownReportQuery(final String ward, final String block) {
 
@@ -81,7 +85,7 @@ public class BoundaryWiseReportService {
     }
 
     private SQLQuery setParameterForDrillDownReportQuery(final String querykey, final String ward, final String block) {
-        final SQLQuery qry = HibernateUtil.getCurrentSession().createSQLQuery(querykey);
+        final SQLQuery qry = entityQueryService.getSession().createSQLQuery(querykey);
         if (StringUtils.isNotBlank(ward))
             qry.setLong("ward", Long.valueOf(ward));
         if (StringUtils.isNotBlank(block))

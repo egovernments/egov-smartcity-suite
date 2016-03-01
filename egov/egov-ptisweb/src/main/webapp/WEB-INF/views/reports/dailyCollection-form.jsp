@@ -130,6 +130,17 @@ body
 								<form:options items="${status}"  itemValue="id" itemLabel="description" />
 							</form:select>
 						</div>
+						
+						<label for="field-1" class="col-sm-2 control-label"><spring:message code="lbl.ward" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select name="ward" id="ward" path=""
+								cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.default.all" />
+								</form:option>
+								<form:options items="${wards}" itemValue="id" itemLabel="name" />
+							</form:select>
+						</div>
 				</div>
 				</div>
 			</div>
@@ -158,6 +169,7 @@ body
 		   
 			<tfoot id="report-footer">
 							<tr>
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>

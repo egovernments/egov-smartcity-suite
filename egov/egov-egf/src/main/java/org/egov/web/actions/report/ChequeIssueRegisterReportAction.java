@@ -66,24 +66,27 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.model.instrument.InstrumentHeader;
+import org.egov.search.domain.resource.DateType;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
+		@Result(name = "result", location = "chequeIssueRegisterReport-result.jsp"),
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
         "no-cache;filename=ChequeIssueRegister.pdf" }),
@@ -91,7 +94,6 @@ import org.springframework.transaction.annotation.Transactional;
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
         "no-cache;filename=ChequeIssueRegister.xls" })
 })
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 public class ChequeIssueRegisterReportAction extends BaseFormAction {
     /**
@@ -173,16 +175,16 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
                                 " and vmis.voucherheaderid=vh.id " + createQuery()
                                 + " order by ih.instrumentDate,ih.instrumentNumber ")
                                 .addScalar("chequeNumber")
-                                .addScalar("chequeDate")
-                                .addScalar("chequeAmount")
+                                .addScalar("chequeDate",StandardBasicTypes.DATE)
+                                .addScalar("chequeAmount",BigDecimalType.INSTANCE)
                                 .addScalar("voucherNumber")
-                                .addScalar("voucherDate")
+                                .addScalar("voucherDate",StandardBasicTypes.DATE)
                                 .addScalar("voucherName")
                                 .addScalar("payTo")
                                 .addScalar("billNumber")
-                                .addScalar("billDate")
+                                .addScalar("billDate",StandardBasicTypes.DATE)
                                 .addScalar("type")
-                                .addScalar("vhId")
+                                .addScalar("vhId",BigDecimalType.INSTANCE)
                                 .addScalar("serialNo")
                                 .addScalar("chequeStatus")
                                 .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
@@ -382,7 +384,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     }
 
     private String getExcludeVoucherStatues() {
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("finance",
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "statusexcludeReport");
         String statusExclude = "-1";
         statusExclude = appList.get(0).getValue();
@@ -390,10 +392,8 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     }
 
     private void populateUlbName() {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
-        final List<String> result = query.list();
-        if (result != null)
-            setUlbName(result.get(0));
+        
+            setUlbName(ReportUtil.getCityName());
     }
 
     public void setUlbName(final String ulbName) {
@@ -435,4 +435,14 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     public String getChequeFromNumber() {
         return chequeFromNumber;
     }
+
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
+
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
+	}
+    
 }

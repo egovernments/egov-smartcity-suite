@@ -58,24 +58,24 @@
 	<script>
 
 	function bodyOnLoad(){
-		if(dom.get("userMode").value=='view' || dom.get("userMode").value=='success'){
-			 dom.get("code").readOnly=true;
-			 dom.get("name").readOnly=true;
+		if(document.getElementById("userMode").value=='view' || document.getElementById("userMode").value=='success'){
+			 document.getElementById("code").readOnly=true;
+			 document.getElementById("name").readOnly=true;
 			 jQuery("span").remove(".mandatory");
 		} 
 	}
 
 	function reload(){
-		dom.get("code").value="";
-		dom.get("name").value="";
+		document.getElementById("code").value="";
+		document.getElementById("name").value="";
 		document.licenseCategoryForm.action='${pageContext.request.contextPath}/masters/licenseCategory-newform.action';
     	document.licenseCategoryForm.submit();
 		
 	}
 
 	function validateFormAndSubmit(){
-		var code= dom.get("code").value;
-		var name= dom.get("name").value;
+		var code= document.getElementById("code").value;
+		var name= document.getElementById("name").value;
 		if (name == '' || name == null){
 			showMessage('category_error', '<s:text name="tradelic.master.tradecategoryname.null" />');
 			return false;
@@ -114,9 +114,9 @@
 		    if(!(results[0].errorMsg=="" || results[0].errorMsg==null)){
 		    	showMessage('category_error',results[0].errorMsg);
 		    	if(results[0].paramType=="name")
-			    	dom.get("name").value="";
+			    	document.getElementById("name").value="";
 		    	else if(results[0].paramType=="code")
-			    	dom.get("code").value="";
+			    	document.getElementById("code").value="";
 	 			return false;
 	     	} 
 	    }

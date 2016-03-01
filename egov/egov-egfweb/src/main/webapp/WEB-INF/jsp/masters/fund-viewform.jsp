@@ -41,13 +41,13 @@
 	<tr>
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox" width="20%"><strong><s:text
-					name="fund.code" /><span class="mandatory">*</span></strong></td>
+					name="fund.code" /><span class="mandatory1">*</span></strong></td>
 		<td class="bluebox"><s:textfield id="code" name="code"
 				value="%{code}" /></td>
 		<td class="bluebox" width="20%"><strong><s:text
-					name="fund.fundNameActual" /><span class="mandatory">*</span></strong></td>
-		<td class="bluebox"><s:textfield id="fundNameAcual"
-				name="fundNameActual" value="%{fundNameActual}" /></td>
+					name="fund.fundNameActual" /><span class="mandatory1">*</span></strong></td>
+		<td class="bluebox"><s:textfield id="name"
+				name="name" value="%{name}" /></td>
 	</tr>
 	<tr>
 		<td class="greybox">&nbsp;</td>
@@ -77,7 +77,7 @@
 			border=0></td>
 		<td class="bluebox" width="20%"><strong><s:text
 					name="fund.active" /></strong></td>
-		<td class="bluebox"><s:checkbox name="isactive" id="isactive" />
+		<td class="bluebox"><s:checkbox name="isactive" id="isactive"  />
 		</td>
 	</tr>
 </table>

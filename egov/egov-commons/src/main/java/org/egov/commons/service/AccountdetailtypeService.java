@@ -44,6 +44,12 @@ public class AccountdetailtypeService  {
 	public Accountdetailtype findOne(Integer id){
 		return accountdetailtypeRepository.findOne(id);
 	}
+	public List<Accountdetailtype> findByFullQualifiedName(String fullQualifiedName)
+	{
+		return accountdetailtypeRepository.findByFullQualifiedName(fullQualifiedName);
+	}
+	
+	
 	public List<Accountdetailtype> search(Accountdetailtype accountdetailtype){
 		if(accountdetailtype.getName()!=null && accountdetailtype.getDescription()!=null)
 		{

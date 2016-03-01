@@ -245,10 +245,10 @@ public class RestWaterConnectionController {
 
         if (applicationCode.equals(WaterTaxConstants.CHANGEOFUSE))
             waterConnectionDetails = changeOfUseService.createChangeOfUseApplication(waterConnectionDetails,
-                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null);
+                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null,null);
         else
             waterConnectionDetails = waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails,
-                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null);
+                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null,null);
         return waterConnectionDetails;
 
     }

@@ -55,11 +55,10 @@ jQuery(document).ready(function() {
 	jQuery('#btnsearch').click(function(e) {
 		dom.get("dcbError").style.display='none';
         dom.get("dcbError").innerHTML='';
-        jQuery('#mode').val("ward");
 		if(jQuery('#wardId').val()=="-1"){
 			dom.get("dcbError").style.display='';
-	        dom.get("dcbError").innerHTML='Please select ward';
-	        dom.get('wardId').focus();
+	        dom.get("dcbError").innerHTML='Please select ward'; 
+	        dom.get('wardId').focus(); 
 			return false;
 		}
 		callAjaxByBoundary();
@@ -70,23 +69,25 @@ jQuery(document).ready(function() {
 		var valArray=temp.split('-');
 		if(jQuery('#mode').val()=='property'){
 			if(valArray.length>0){
-				var propVal=valArray[2].split('~');
+				var propVal=valArray[1].split('~');
 				if(propVal.length>0){
 					jQuery('#mode').val(propVal[0]);
 					jQuery('#boundaryId').val(propVal[1]);
 				}
-				jQuery('#selectedModeBndry').val(valArray[0]+"-"+valArray[1]);
+				jQuery('#selectedModeBndry').val(valArray[0]);
 			}
 		} else if(jQuery('#mode').val()=='block'){
 			if(valArray.length>0){
-				var blockVal=valArray[1].split('~');
+				var blockVal=valArray[0].split('~');
 				if(blockVal.length>0){
 					jQuery('#mode').val(blockVal[0]);
 					jQuery('#boundaryId').val(blockVal[1]);
 				}
-				jQuery('#selectedModeBndry').val(valArray[0]);
+				jQuery('#selectedModeBndry').val('');
 			}
-		} else if(jQuery('#mode').val()=='ward'){
+		} 
+		//Commented as part of PHOENIX-2373 fix and for WardWise DCB
+		/*else if(jQuery('#mode').val()=='ward'){
 			if(valArray.length>0){
 				var wardVal=valArray[0].split('~');
 				if(wardVal.length>0){
@@ -95,7 +96,7 @@ jQuery(document).ready(function() {
 				}
 				jQuery('#selectedModeBndry').val('');
 			}
-		} 
+		} */
 		callAjaxByBoundary(); 
 	});
 
@@ -135,6 +136,7 @@ function callAjaxByBoundary() {
 	}
 	jQuery('.report-section').removeClass('display-hide');
 	jQuery('#report-footer').show();
+
 	
 	reportdatatable = drillDowntableContainer
 			.dataTable({
@@ -151,7 +153,22 @@ function callAjaxByBoundary() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : [ 
+					               {
+						             "sExtends": "pdf",
+	                                 "sTitle": "DCB Report",
+					                },
+					                {
+							             "sExtends": "xls",
+		                                 "sTitle": "DCB Report",
+		                                 "fnClick": function ( nButton, oConfig, oFlash ) {
+	                            	    	 reCalculateTotalFooterWhenExport('tbldcbdrilldown');
+	                            		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
+	                            		 }
+						             },{
+							             "sExtends": "print",
+		                                 "sTitle": "DCB Report"
+						               }],
 				},
 				columns : [{
 							"data" : function(row, type, set, meta){
@@ -176,18 +193,24 @@ function callAjaxByBoundary() {
 							"data" : "dmnd_arrearPT",
 							"sTitle" : "Arrear Property Tax"
 						}, {
+							"data" : "dmnd_arrearPFT",
+							"sTitle" : "Penalty On Arrear"
+						},/*{
 							"data" : "dmnd_arrearLC",
 							"sTitle" : "Arrear LibraryCess"
-						}, {
+						},*/ {
 							"data" : "dmnd_arrearTotal",
 							"sTitle" : "Arrear Total"
 						}, {
 							"data" : "dmnd_currentPT",
 							"sTitle" : "Current Property Tax"
 						}, {
+							"data" : "dmnd_currentPFT",
+							"sTitle" : "Penalty On Current"
+						},/*{
 							"data" : "dmnd_currentLC",
 							"sTitle" : "Current LibraryCess"
-						}, {
+						},*/ {
 							"data" : "dmnd_currentTotal",
 							"sTitle" : "Current Total"
 						}, {
@@ -196,10 +219,10 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "clctn_arrearPT",
 							"sTitle" : "Arrear Property Tax"
-						}, {
+						}, /*{
 							"data" : "clctn_arrearLC",
 							"sTitle" : "Arrear LibraryCess"
-						}, {
+						},*/ {
 							"data" : "clctn_arrearPFT",
 							"sTitle" : "Penalty On Arrear"
 						}, {
@@ -208,10 +231,10 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "clctn_currentPT",
 							"sTitle" : "Current Property Tax"
-						}, {
+						}, /*{
 							"data" : "clctn_currentLC",
 							"sTitle" : "Current LibraryCess"
-						}, {
+						},*/ {
 							"data" : "clctn_currentPFT",
 							"sTitle" : "Penalty On Current"
 						}, {
@@ -224,8 +247,14 @@ function callAjaxByBoundary() {
 							"data" : "bal_arrearPT",
 							"sTitle" : "Arrear Property Tax"
 						}, {
+							"data" : "bal_arrearPFT",
+							"sTitle" : "Penalty On Arrear"
+						}, {
 							"data" : "bal_currentPT",
 							"sTitle" : "Current Property Tax"
+						}, {
+							"data" : "bal_currentPFT",
+							"sTitle" : "Penalty On Current"
 						}, {
 							"data" : "totalPTBalance",
 							"sTitle" : "Total PropertyTax Balance"
@@ -243,9 +272,9 @@ function callAjaxByBoundary() {
 						  updateTotalFooter(i, api);	
 						}
 					}
-				},
+				}, 
 				"aoColumnDefs" : [ {
-					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], 
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}

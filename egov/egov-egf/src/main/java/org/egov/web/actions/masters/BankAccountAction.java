@@ -127,10 +127,10 @@ public class BankAccountAction extends JQueryGridActionSupport {
         if (COA == null)
             throw new ApplicationRuntimeException("Given glcode does not exist");
         if (glCode != null) {
-            List<CGeneralLedger> glList = (List<CGeneralLedger>) persistenceService
+            CGeneralLedger glList = (CGeneralLedger) persistenceService
                     .find("select gl from CGeneralLedger gl where gl.glcodeId.glcode=? and gl.voucherHeaderId.status not in (4) ",
                             glCode);
-            if (glList != null && glList.isEmpty())
+            if (glList != null )
                 throw new ApplicationRuntimeException("Transaction already exist for given glcode");
 
         }
@@ -176,14 +176,14 @@ public class BankAccountAction extends JQueryGridActionSupport {
     private void populateBankAccountDetail(final Bankaccount bankAccount) {
         final HttpServletRequest request = ServletActionContext.getRequest();
         bankAccount.setAccountnumber(request.getParameter("accountnumber"));
-        bankAccount.setAccounttype(request.getParameter("accounttype").equalsIgnoreCase("") ? null : request.getParameter(
-                "accounttype").split("#")[1]);
+        /*bankAccount.setAccounttype(request.getParameter("accounttype").equalsIgnoreCase("") ? null : request.getParameter(
+                "accounttype").split("#")[1]);*/
         if (org.apache.commons.lang.StringUtils.isNotBlank(request.getParameter("fundname"))) {
             final Fund fund = (Fund) persistenceService.getSession().load(Fund.class,
                     Integer.valueOf(request.getParameter("fundname")));
             bankAccount.setFund(fund);
         }
-        bankAccount.setIsactive(request.getParameter("active").equals("Y") ? 1 : 0);
+        bankAccount.setIsactive(request.getParameter("active").equals("Y") ? true : false);
         bankAccount.setNarration(request.getParameter("narration"));
         if (org.apache.commons.lang.StringUtils.isNotBlank(request.getParameter("typename"))) {
             final BankAccountType type = BankAccountType.valueOf(request.getParameter("typename"));
@@ -207,7 +207,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
                 jsonObject.put("narration", bankaccount.getNarration());
                 jsonObject.put("payto", bankaccount.getPayTo());
                 jsonObject.put("typename", bankaccount.getType() == null ? "" : bankaccount.getType().name());
-                jsonObject.put("active", bankaccount.getIsactive() == 1 ? "Y" : "N");
+                jsonObject.put("active", bankaccount.getIsactive() ? "Y" : "N");
                 glCode = (String) persistenceService
                         .find("select glcode from CChartOfAccounts where id=(select chartofaccounts.id from Bankaccount where accountnumber = ?)",
                                 bankaccount.getAccountnumber());

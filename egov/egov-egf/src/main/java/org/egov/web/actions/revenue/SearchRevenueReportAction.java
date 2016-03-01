@@ -80,7 +80,7 @@ public class SearchRevenueReportAction extends BaseRevenueAction {
         grantTypeList.add(Constants.GRANT_TYPE_SD);
         grantTypeList.add(Constants.GRANT_TYPE_SFC);
         addDropdownData("finanYearList",
-                persistenceService.findAllBy("from CFinancialYear  where isActive=1 order by finYearRange desc"));
+                persistenceService.findAllBy("from CFinancialYear  where isActive=true order by finYearRange desc"));
         addDropdownData("grtTypeList", grantTypeList);
         addDropdownData("deptList", persistenceService.findAllBy("from Department order by deptName "));
 

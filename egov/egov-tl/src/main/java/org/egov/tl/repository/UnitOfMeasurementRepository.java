@@ -51,9 +51,9 @@ import org.springframework.stereotype.Repository;
 @Repository 
 public interface UnitOfMeasurementRepository extends JpaRepository<UnitOfMeasurement,Long> {
 
-UnitOfMeasurement findByNameContainingIgnoreCase(String name);
+UnitOfMeasurement findByNameIgnoreCase(String name);
 
-UnitOfMeasurement findByCodeContainingIgnoreCase(String code);
+UnitOfMeasurement findByCodeIgnoreCase(String code);
 
 List<UnitOfMeasurement> findAllByActiveTrue();
 }

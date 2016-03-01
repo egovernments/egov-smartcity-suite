@@ -46,6 +46,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="classpath*:config/spring/applicationContext-adtax.xml"/>
+    <import resource="applicationQuartzContext-adtax.xml"/>
 	<import resource="applicationSecurityContext-adtax.xml"/>
 	<context:property-placeholder />
     <context:component-scan base-package="org.egov.adtax.web">

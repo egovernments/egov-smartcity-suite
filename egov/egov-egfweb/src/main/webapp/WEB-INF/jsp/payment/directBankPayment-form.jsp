@@ -69,14 +69,16 @@
 			list="dropdownData.accNumList" listKey="id"
 			listValue="accountnumber+'-'+accounttype" headerKey=""
 			headerValue="----Choose----"
-			onChange="populateNarration(this);" />
+			onChange="populateNarration(this);populateAvailableBalance(this);" />
 		<s:textfield name="accnumnar" id="accnumnar"
 			value="%{commonBean.accnumnar}" readonly="true" tabindex="-1" /></td>
-	<td class="bluebox" id="balanceText" style="display: none" width="18%"><s:text
+	<egov:updatevalues id="availableBalance" fields="['Text']"
+		url="/payment/payment-ajaxGetAccountBalance.action" />
+	<td class="bluebox" id="balanceText" ><s:text
 			name="balance.available" /></td>
-	<td class="bluebox" id="balanceAvl" style="display: none" width="32%"><s:textfield
+	<td class="bluebox" id="balanceAvl" ><s:textfield
 			name="commonBean.availableBalance" id="availableBalance"
-			readonly="readonly" style="text-align:right"
+			readonly="true" style="text-align:right"
 			value="%{commonBean.availableBalance}" /></td>
 
 
@@ -99,8 +101,8 @@
 			name="commonBean.linkReferenceNumber"
 			id="commonBean.linkReferenceNumber" size="25" /> <img
 		src="/egi/resources/erp2/images/searchicon.gif"
-		onclick="openViewVouchers()" /> <s:hidden name="commonBean.documentId"
-			id="commonBean.documentId" /></td>
+		onclick="openViewVouchers()" /> <s:hidden
+			name="commonBean.documentId" id="commonBean.documentId" /></td>
 	<TD></TD>
 	<TD></TD>
 </tr>
@@ -166,9 +168,10 @@
 						<div class="yui-skin-sam" align="center">
 							<div id=billDetailTable></div>
 						</div> <script>
-	    makeVoucherDetailTable();
-		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="100%";
-	 </script>
+							makeVoucherDetailTable();
+							document.getElementById('billDetailTable')
+									.getElementsByTagName('table')[0].width = "100%";
+						</script>
 					</td>
 				</tr>
 			</tbody>
@@ -198,9 +201,10 @@
 
 
 								<script>
-		makeSubLedgerTable();
-		document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="100%"
-		</script>
+									makeSubLedgerTable();
+									document.getElementById('subLedgerTable')
+											.getElementsByTagName('table')[0].width = "100%"
+								</script>
 						</td>
 					</tr>
 				</tbody>

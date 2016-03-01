@@ -53,8 +53,7 @@ public class CollectionIndexBuilder {
     private final CollectionIndex collectionIndex;
 
     public CollectionIndexBuilder(final Date receiptDate, final String receiptNumber, final String billingService,
-            final String paymentMode, final BigDecimal totalAmount, final String channel, final String consumerCode,
-            final String status) {
+            final String paymentMode, final BigDecimal totalAmount, final String channel, final String status) {
 
         collectionIndex = new CollectionIndex();
         collectionIndex.setReceiptDate(receiptDate);
@@ -63,8 +62,12 @@ public class CollectionIndexBuilder {
         collectionIndex.setPaymentMode(paymentMode);
         collectionIndex.setTotalAmount(totalAmount);
         collectionIndex.setChannel(channel);
-        collectionIndex.setConsumerCode(consumerCode);
         collectionIndex.setStatus(status);
+    }
+
+    public CollectionIndexBuilder consumerCode(final String consumerCode) {
+        collectionIndex.setConsumerCode(consumerCode);
+        return this;
     }
 
     public CollectionIndexBuilder arrearAmount(final BigDecimal arrearAmount) {
@@ -92,8 +95,38 @@ public class CollectionIndexBuilder {
         return this;
     }
 
-    public CollectionIndexBuilder billNumber(final Long billNumber) {
+    public CollectionIndexBuilder billNumber(final String billNumber) {
         collectionIndex.setBillNumber(billNumber);
+        return this;
+    }
+
+    public CollectionIndexBuilder latePaymentChargesAmount(final BigDecimal latePaymentCharges) {
+        collectionIndex.setLatePaymentCharges(latePaymentCharges);
+        return this;
+    }
+
+    public CollectionIndexBuilder arrearCess(final BigDecimal arrearCess) {
+        collectionIndex.setArrearCess(arrearCess);
+        return this;
+    }
+
+    public CollectionIndexBuilder currentCess(final BigDecimal currentCess) {
+        collectionIndex.setCurrentCess(currentCess);
+        return this;
+    }
+
+    public CollectionIndexBuilder installmentFrom(final String installmentFrom) {
+        collectionIndex.setInstallmentFrom(installmentFrom);
+        return this;
+    }
+
+    public CollectionIndexBuilder installmentTo(final String installmentTo) {
+        collectionIndex.setInstallmentTo(installmentTo);
+        return this;
+    }
+
+    public CollectionIndexBuilder payeeName(final String payeeName) {
+        collectionIndex.setPayeeName(payeeName);
         return this;
     }
 
@@ -113,8 +146,6 @@ public class CollectionIndexBuilder {
             throw new ApplicationRuntimeException("Total Amount is mandatory");
         if (collectionIndex.getChannel() == null)
             throw new ApplicationRuntimeException("Channel is mandatory");
-        if (collectionIndex.getConsumerCode() == null)
-            throw new ApplicationRuntimeException("Consumer Code is mandatory");
         if (collectionIndex.getStatus() == null)
             throw new ApplicationRuntimeException("Receipt Status is mandatory");
     }

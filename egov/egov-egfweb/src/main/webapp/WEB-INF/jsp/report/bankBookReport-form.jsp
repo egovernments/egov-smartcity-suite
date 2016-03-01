@@ -44,6 +44,8 @@
 	src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+	<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
 </head>
 <script>
 var callback = {
@@ -62,23 +64,33 @@ function getData(){
 	var startDate =  document.getElementById('startDate').value;
 	var endDate =  document.getElementById('endDate').value;
 	var bankAccount = document.getElementById('accountNumber').value;
-	isValid = validateData();
-	if(isValid == false)
+	
+    
+
+	//var isDateValid =validateFromAndToDate(startDate,endDate);
+	isValid = validateDataa();
+	if(isValid == false )
+		{
 		return false;
-	doLoadingMask();
-	var url = '/EGF/report/bankBookReport!ajaxLoadBankBook.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData();
+		}
+	
+	//doLoadingMask();
+	var url = '/EGF/report/bankBookReport-ajaxLoadBankBook.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData();
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 }
 
 
 function getMiscData(){
-	var fund,department,functionary,field,scheme,subscheme,data="";
+	var fund,department,functionary,field,scheme,subscheme,data,function1="";
 	fund = document.getElementById('fundId').value;
 	//fund1 = document.getElementById('fund').value;
 	
 	department = document.getElementById('vouchermis.departmentid').value;
+	
+	function1=document.getElementById('vouchermis.function').value;
 	if(fund != undefined)
 		data = data+"&fundId.id="+fund;
+	
 	if(department != undefined)
 		data = data+"&vouchermis.departmentid.id="+department;
 	if(functionary != undefined)
@@ -89,6 +101,8 @@ function getMiscData(){
 		data = data+"&vouchermis.schemeid.id="+scheme;
 	if(subscheme != undefined)
 		data = data+"&vouchermis.subschemeid.id="+subscheme;
+	if(function1 != undefined)
+		data = data+"&vouchermis.function.id="+function1;
 	
 	return data;
 }
@@ -117,7 +131,7 @@ function exportXls(){
 	var startDate = document.getElementById('startDate').value;
 	var endDate = document.getElementById('endDate').value;
 	//var fund2 = document.getElementById('fund').value;
-	window.open('/EGF/report/bankBookReport!exportXls.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	window.open('/EGF/report/bankBookReport-exportXls.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
 function exportPdf(){
@@ -125,10 +139,10 @@ function exportPdf(){
 	var startDate = document.getElementById('startDate').value;
 	var endDate = document.getElementById('endDate').value;
 	//var fund2 = document.getElementById('fund').value;
-	window.open('/EGF/report/bankBookReport!exportPdf.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	window.open('/EGF/report/bankBookReport-exportPdf.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData(),'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
-function validateData(){
+function validateDataa(){
 	var bankAccount = document.getElementById('accountNumber').value;
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
@@ -139,18 +153,36 @@ function validateData(){
 		bootbox.alert("Please select a Bank Account")
 		return false;
 	}
-	var startDate =  Date.parse(document.getElementById('startDate').value);
-	if(isNaN(startDate)){
-		bootbox.alert("Please enter a valid start date")
+	
+	var startDate = document.getElementById('startDate').value;
+	if(startDate=='')
+		{ 
+		bootbox.alert("Please enter start date")
 		return false;
-	}
-	var endDate =  Date.parse(document.getElementById('endDate').value);
-	if(isNaN(endDate)){
-		bootbox.alert("Please enter a valid end date")
+		}
+	
+	var endDate = document.getElementById('endDate').value;
+	
+	if(endDate=='')
+		{ 
+		bootbox.alert("Please enter end date")
 		return false;
-	}
+		}
+
+	var fromdate= startDate.split('/');
+	startDate=new Date(fromdate[2],fromdate[1]-1,fromdate[0]);
+    var todate = endDate.split('/');
+    endDate=new Date(todate[2],todate[1]-1,todate[0]);
+	
+
+	if(startDate > endDate)
+	{ 
+		bootbox.alert("Start date should be less than end date.")
+		return false;
+		}
 	return true;
 }
+
 
 function validateFund(){
 	var fund = document.getElementById('fundId').value;
@@ -172,16 +204,19 @@ function validateBank(){
 }
 
 function viewVoucher(vid){
-	var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+ vid;
+	var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+ vid;
 	window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 
 function showChequeDetails(voucherId){
-	var url = '../report/bankBookReport!showChequeDetails.action?skipPrepare=true&voucherId='+ voucherId;
+	var url = '../report/bankBookReport-showChequeDetails.action?skipPrepare=true&voucherId='+ voucherId;
 	window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 </script>
 <body>
+
+ 
+ 
 	<div class="formmainbox">
 		<div class="formheading"></div>
 		<div class="subheadnew">Bank Book Report</div>
@@ -189,15 +224,18 @@ function showChequeDetails(voucherId){
 
 		<s:form action="bankBookReport" theme="simple" name="bankBookReport">
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
-				<tr>
+			
+			<tr>
 					<jsp:include page="../voucher/vouchertrans-filter.jsp" />
 				</tr>
+				
 				<tr>
 					<egov:ajaxdropdown id="bank" fields="['Text','Value']"
-						dropdownId="bank" url="voucher/common!ajaxLoadAllBanks.action" />
+						dropdownId="bank" url="voucher/common-ajaxLoadAllBanks.action" />
 
+                    <td style="width: 5%"></td>
 					<td class="bluebox" width="10%">Bank Name:<span
-						class="bluebox"><span class="mandatory">*</span></span></td>
+						class="bluebox"><span class="mandatory1">*</span></span></td>
 					<td class="bluebox"><s:select name="bank" id="bank"
 							list="dropdownData.bankList" listKey="bankBranchId"
 							listValue="bankBranchName" headerKey="-1"
@@ -205,27 +243,30 @@ function showChequeDetails(voucherId){
 							onChange="populateAccNumbers(this);" /></td>
 					<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
 						dropdownId="accountNumber"
-						url="voucher/common!ajaxLoadAccountNumbers.action" />
+						url="voucher/common-ajaxLoadAccountNumbers.action" />
 					<td class="bluebox" width="10%">Account Number:<span
-						class="bluebox"><span class="mandatory">*</span></span></td>
+						class="bluebox"><span class="mandatory1">*</span></span></td>
 					<td class="bluebox"><s:select name="bankAccount"
 							id="accountNumber" list="dropdownData.accNumList" listKey="id"
 							listValue="accountnumber" headerKey="-1"
 							headerValue="----Choose----" onclick="validateBank()" /></td>
 				</tr>
 				<tr>
+				<td style="width: 5%"></td>
 					<td class="greybox" width="10%">Start Date:<span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
+						<s:date name="startDate" format="dd/MM/yyyy" var="tempFromDate" />
 					<td class="greybox"><s:textfield name="startDate"
 							id="startDate" cssStyle="width:100px"
-							value='%{getFormattedDate(startDate)}'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+							
+							onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"
+							 /><a
 						href="javascript:show_calendar('bankBookReport.startDate');"
 						style="text-decoration: none">&nbsp;<img
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
 					</td>
 					<td class="greybox" width="10%">End Date:<span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield name="endDate" id="endDate"
 							cssStyle="width:100px" value='%{getFormattedDate(endDate)}'
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -234,6 +275,7 @@ function showChequeDetails(voucherId){
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
 					</td>
 				</tr>
+				
 
 			</table>
 			<br />

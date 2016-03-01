@@ -44,6 +44,9 @@ public class Area {
 	private Float length = null;
 	private Float breadth = null;
 	private Float area = null;
+	
+	
+	public Area(){}
 
 	/**
 	 * @return Returns the length.

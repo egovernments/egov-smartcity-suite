@@ -92,19 +92,21 @@ public class CategoryMasterController {
         if (resultBinder.hasErrors())
             return "category-master";
         PropertyCategory propertycategory = new PropertyCategory();
+        ConnectionCategory categoryObj = connectionCategoryService.findByNameIgnoreCase(propertyCategory.getConnectionCategory().getName().toUpperCase()
+                .trim());
+        if (categoryObj!=null)
         propertycategory = propertyCategoryService.getByPropertyTypeAndCategory(
                 propertyCategory.getPropertyType(),
-                connectionCategoryService.findByCode(propertyCategory.getConnectionCategory().getName().toUpperCase()
-                        .trim()));
+                categoryObj);
+        else 
+            propertycategory = null;   
         if (propertycategory != null) {
             redirectAttrs.addFlashAttribute("propertyCategory", propertycategory);
             model.addAttribute("message", "Entered Category for the Chosen Property Type is already Exists");
         } else {
             ConnectionCategory category = new ConnectionCategory();
             category = propertyCategory.getConnectionCategory();
-            ConnectionCategory connectioncategory = new ConnectionCategory();
-            connectioncategory = connectionCategoryService.findByNameIgnoreCase(category.getName().trim());
-            if (connectioncategory == null) {
+            if (categoryObj == null) {
                 category.setName(category.getName().trim());
                 category.setActive(true);
                 category.setCode(category.getName().toUpperCase());
@@ -114,7 +116,7 @@ public class CategoryMasterController {
             } else {
                 final PropertyCategory propertycategoryobj = new PropertyCategory();
                 propertycategoryobj.setPropertyType(propertyCategory.getPropertyType());
-                propertycategoryobj.setConnectionCategory(connectioncategory);
+                propertycategoryobj.setConnectionCategory(categoryObj);
                 propertyCategoryService.createPropertyCategory(propertycategoryobj);
                 redirectAttrs.addFlashAttribute("propertyCategory", propertycategoryobj);
             }

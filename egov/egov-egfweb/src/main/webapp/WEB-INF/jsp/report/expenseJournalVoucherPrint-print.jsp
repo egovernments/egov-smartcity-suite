@@ -80,14 +80,24 @@
 	<s:form name="expenseJournalVoucherPrint"
 		action="expenseJournalVoucherPrint" theme="simple">
 		<input type="hidden" name="id" value='<s:property value="id"/>' />
-		<div id="buttons">
+		<div id="buttons" class="buttonbottom">
 			<input type="button" id="btnPrint"
 				onclick="javascript:parent.report.print();" value="Print"
 				class="button" />
-			<s:submit cssClass="button" value="Save as PDF" method="exportPdf"
-				id="printPDF" />
-			<s:submit cssClass="button" value="Save as Excel" method="exportXls"
-				id="printXLS" />
+			<s:submit cssClass="button" value="Save as PDF"
+				onclick="return submitPdf();"  id="printPDF" />
+			<s:submit cssClass="button" value="Save as Excel"
+				onclick="return submitXls();"  id="printXLS" />
 		</div>
 	</s:form>
+	<script type="text/javascript">
+		function submitPdf() {
+			document.expenseJournalVoucherPrint.action = '${pageContext.request.contextPath}/report/expenseJournalVoucherPrint-exportPdf.action';
+			document.expenseJournalVoucherPrint.submit();
+		}
+		function submitXls() {
+			document.expenseJournalVoucherPrint.action = '${pageContext.request.contextPath}/report/expenseJournalVoucherPrint-exportXls.action';
+			document.expenseJournalVoucherPrint.submit();
+		}
+	</script>
 </body>

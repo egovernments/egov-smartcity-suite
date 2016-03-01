@@ -814,7 +814,7 @@ public class SetUp extends AbstractTask {
             final CFinancialYear financialYearById = findao.getFinancialYearById(Long.parseLong(fyId));
             final CFinancialYear previousFinancialYearByDate = findao.getPreviousFinancialYearByDate(financialYearById
                     .getStartingDate());
-            if (previousFinancialYearByDate.getIsClosed() != 1)
+            if (previousFinancialYearByDate.getIsClosed() != true)
                 isOpen = true;
         } catch (final Exception ex) {
             isOpen = false;
@@ -1103,7 +1103,7 @@ public class SetUp extends AbstractTask {
             final String query = "SELECT id FROM financialYear " +
                     "WHERE startingDate <= ? " +
                     "AND endingDate >= ? " +
-                    "AND isActiveForPosting=1";
+                    "AND isActiveForPosting=true";
             pst = connection.prepareStatement(query);
             pst.setString(0, sDate);
             pst.setString(1, eDate);
@@ -1281,7 +1281,7 @@ public class SetUp extends AbstractTask {
                     + fundCondition
                     + ") or  f.id in(select unique fundid from transactionsummary "
                     + fundCondition1
-                    + ")) and f.isactive=1 and f.isnotleaf!=1 "
+                    + ")) and f.isactive=true and f.isnotleaf!=true "
                     + " order by f.id ";
             pst = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             int j = 1;

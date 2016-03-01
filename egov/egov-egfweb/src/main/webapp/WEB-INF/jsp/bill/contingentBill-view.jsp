@@ -59,6 +59,8 @@
 	TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
 <script type="text/javascript"
+	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"> </script>
+<script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js"></script>
 
 
@@ -494,27 +496,43 @@ function printPreview(){
 	document.forms[0].action='../bill/expenseBillPrint-print.action?id=<s:property value="billRegisterId"/>';
 	document.forms[0].submit();
 }
-
+function load(){
+	jQuery('.tabber').find('input, textarea, select').attr('readonly', 'readonly');
+	jQuery('.tabbertab').find('input, textarea, select').attr('readonly', 'readonly');
+	jQuery('.commentsTab').find('input, textarea, select').attr('readonly', 'readonly');
+	
+}
+function onSubmit()
+{
+	 var myform = jQuery('#cbill');
+		// re-disabled the set of inputs that you previously
+		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
+	document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-update.action';
+    document.cbill.submit();
+			
+		
+}
 </script>
 </head>
-<body>
-	<s:form action="contingentBill" theme="css_xhtml" name="cbill">
+<body onload="load();">
+	<s:form action="contingentBill" theme="css_xhtml" name="cbill" id = "cbill">
 		<s:token />
 		<s:push value="model">
+			<div class="formmainbox">
+			<div class="formheading" />
+				<div class="subheadnew">
+					<s:text name="contingent.bill" />
+				</div>
+			</div>
 			<div class="tabber" id="main" align="left">
 				<div class="tabbertab" id=maintab>
 					<h2>Header</h2>
 					<jsp:include page="../budget/budgetHeader.jsp">
 						<jsp:param value="Contingent Bill" name="heading" />
 					</jsp:include>
-					<div class="formmaininbox">
-						<div class="formheading" />
-						<div class="subheadnew">
-							<s:text name="contingent.bill" />
-						</div>
-					</div>
+					
 					<center>
-						<span class="mandatory">
+						<span class="mandatory1">
 							<div id="Errors">
 								<s:actionerror />
 								<s:fielderror />
@@ -548,35 +566,27 @@ function printPreview(){
 					</div>
 					<br />
 				</div>
-			</div>
-			<div class="tabbertab" id="checkList">
-				<h2>Check List</h2>
-				<div class="yui-skin-sam" align="center">
-					<div id="checkListTable"></div>
+				<div class="tabbertab" id="checkList">
+					<h2>Check List</h2>
+					<div class="yui-skin-sam" align="center">
+						<div id="checkListTable"></div>
+					</div>
+		
+					<script>
+				   	makeCheckListTable();
+				   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
+		</script>
+		
+		
 				</div>
-
-				<script>
-			   	makeCheckListTable();
-			   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
-	</script>
-
-
-			</div>
-			</div>
+			
 			<s:if test="%{mode=='approve'}">
 				<div align='center'>
 					<font style='color: red;'>
 						<p class="error-block" id="lblError" style="font: bold"></p>
 					</font>
 				</div>
-
-				<div id="apporoverSelection" style="display: none">
-					<s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
-						<%@include file="../voucher/workflowApproval-contingent.jsp"%>
-					</s:if>
-				</div>
-
-				<div align="center">
+				<div class="commentsTab" align="center">
 					<table border="0" width="100%">
 						<tr>
 							<td class="bluebox">Comments</td>
@@ -587,12 +597,19 @@ function printPreview(){
 						<br />
 					</table>
 				</div>
-				<div id="wfHistoryDiv">
+				</br>
+				<div id="apporoverSelection">
+					<%@ include file='../bill/commonWorkflowMatrix.jsp'%>
+					<%@ include file='../bill/commonWorkflowMatrix-button.jsp'%>
+				</div>
+
+
+				<%-- <div id="wfHistoryDiv">
 					<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp"
 						context="/egi">
 						<c:param name="stateId" value="${commonBean.stateId}"></c:param>
 					</c:import>
-				</div>
+				</div> --%>
 				<s:hidden name="nextLevel" id="nextLevel"></s:hidden>
 				<s:hidden name="actionName" id="actionName"></s:hidden>
 				<s:hidden name="billRegisterId" id="billRegisterId"></s:hidden>
@@ -601,16 +618,11 @@ function printPreview(){
 					<table border="0" cellspacing="0" align="center">
 						<tr></tr>
 						<tr>
-
-							<s:iterator value="%{validButtons}" var="p">
-								<td><s:submit type="submit" cssClass="buttonsubmit"
-										value="%{description}" id="%{name}" name="%{name}"
-										method="update"
-										onclick="return validate('%{name}','%{description}');  " /></td>
-							</s:iterator>
 							<td></td>
-							<td><input type="button" id="closeButton" value="Close"
-								onclick="javascript:window.close()" class="button" /></td>
+							<s:if test="%{!mode=='approve'}">
+								<td><input type="button" name="button2" id="button2"
+									value="Close" class="button" onclick="window.close();" /></td>
+							</s:if>
 						</tr>
 					</table>
 				</div>
@@ -626,11 +638,13 @@ function printPreview(){
 					<tr>
 						<td><input type="button" id="print" value="Print Preview"
 							onclick="printPreview()" class="button" /> <input type="button"
-							id="closeButton" value="Close"
-							onclick="javascript:window.close()" class="button" /></td>
+							name="button2" id="button2" value="Close" class="button"
+							onclick="window.close();" /></td>
 					</tr>
 				</table>
 			</s:else>
+			</div>
+			</div>
 		</s:push>
 	</s:form>
 
@@ -672,7 +686,7 @@ document.getElementById("billDetailTableNet").style.display="none";
 if(null != document.getElementById("topTableHeader")){
 	document.getElementById("topTableHeader").style.display="none";
 }
-disableAll();
+//disableAll();
 <s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
 	document.getElementById("departmentid").value= <s:property value="%{voucherHeader.vouchermis.departmentid.id}" /> 
 	<s:if test="%{isFieldMandatory('department')}"> 
@@ -683,26 +697,26 @@ disableAll();
 		document.getElementById("departmentid").disabled=false;
 	</s:else>
 </s:if>
-if(null != document.getElementById("approverUserId")){
+if(document.getElementById("approverUserId")){
 	document.getElementById("approverUserId").disabled=false;
 }
-if(null != document.getElementById("designationId")){
+if(document.getElementById("designationId")){
 	document.getElementById("designationId").disabled=false;
 }
-if(null != document.getElementById("comments")){
+if(document.getElementById("comments")){
 	document.getElementById("comments").disabled=false;
 }
-if(null != document.getElementById("nextLevel")){
+if(document.getElementById("nextLevel")){
 	document.getElementById("nextLevel").disabled=false;
 }
-if(null != document.getElementById("actionName")){
+if( document.getElementById("actionName")){
 	document.getElementById("actionName").disabled=false;
 }
-if(null != document.getElementById("billRegisterId")){
+if(document.getElementById("billRegisterId")){
 	document.getElementById("billRegisterId").disabled=false;
 }
 
-if(null != document.getElementById("print")){
+if(document.getElementById("print")){
 	document.getElementById("print").disabled=false;
 }
 
@@ -714,8 +728,47 @@ if(null != document.getElementById("print")){
 document.getElementById("apporoverSelection").style.display="block";
 
 //set the approver department to primary assignment department
-document.getElementById("departmentid").value=<s:property value="primaryDepartment" />;
+//document.getElementById("departmentid").value=<s:property value="primaryDepartment" />;
+var frmIndex=0;
+for(var i=0;i<document.forms[frmIndex].length;i++)
+document.forms[frmIndex].elements[i].disabled =true;
+disableYUIAddDeleteButtons(true);
 
+if(document.getElementById("approverComments"))
+	document.getElementById("approverComments").disabled=false;	
+if(null != document.getElementById("approverDepartment") ){
+	document.getElementById("approverDepartment").disabled=false;    
+	document.getElementById("approverDesignation").disabled=false;
+	document.getElementById("approverPositionId").disabled=false;
+	
+}
+if(document.getElementById("currentState"))
+	document.getElementById("currentState").disabled=false;		
+if(document.getElementById("currentDesignation"))
+	document.getElementById("currentDesignation").disabled=false;		
+if(document.getElementById("additionalRule"))
+	document.getElementById("additionalRule").disabled=false;		
+if(document.getElementById("amountRule"))
+	document.getElementById("amountRule").disabled=false;		
+if(document.getElementById("workFlowDepartment"))
+	document.getElementById("workFlowDepartment").disabled=false;		
+if(document.getElementById("pendingActions"))
+	document.getElementById("pendingActions").disabled=false;		
+if(document.getElementById("approverName"))
+	document.getElementById("approverName").disabled=false;		
+if(document.getElementById("workFlowAction"))
+	document.getElementById("workFlowAction").disabled=false;		
+if(document.getElementById("Forward"))
+	document.getElementById("Forward").disabled=false;	
+if(document.getElementById("Reject"))
+	document.getElementById("Reject").disabled=false;	
+if(document.getElementById("Cancel"))
+	document.getElementById("Cancel").disabled=false;	
+if(document.getElementById("Approve"))
+	document.getElementById("Approve").disabled=false;	
+if(document.getElementById("button2"))
+	document.getElementById("button2").disabled=false;		
+	  	
 </script>
 
 </body>
