@@ -226,9 +226,12 @@ public class PendingTDSReportAction extends BaseFormAction {
             final String formatedFromDate = Constants.DDMMYYYYFORMAT2.format(fromDate);
             paramMap.put("fromDate", formatedFromDate);
             paramMap.put("heading", "Deduction detailed report for "+ recovery.getType() +" From " + formatedFromDate + "  to " + formatedAsOndate);
+            paramMap.put("summaryheading", "Deductions remittance summary for "+ recovery.getType() +" From " + formatedFromDate + "  to " + formatedAsOndate);
             paramMap.put("fromDateText", "From Date :      " + formatedFromDate);
-        } else
+        } else{
             paramMap.put("heading", "Deduction detailed report for "+ recovery.getType() +" as on " + formatedAsOndate);
+            paramMap.put("summaryheading", "Deductions remittance summary for "+ recovery.getType() +" as on " + formatedAsOndate);
+        }
         fund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
         paramMap.put("fundName", fund.getName());
         paramMap.put("partyName", partyName);
@@ -236,6 +239,7 @@ public class PendingTDSReportAction extends BaseFormAction {
             department = (Department) persistenceService.find("from Department where id=?", department.getId());
             paramMap.put("departmentName", department.getName());
         }
+        recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
         paramMap.put("recoveryName", recovery.getRecoveryName());
         return paramMap;
     }
@@ -375,6 +379,7 @@ public class PendingTDSReportAction extends BaseFormAction {
      */
     private void populateSummaryData() {
         recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
+        type = recovery.getType();
         String deptQuery = "";
         String partyNameQuery = "";
         if (department.getId() != null && department.getId() != -1)
