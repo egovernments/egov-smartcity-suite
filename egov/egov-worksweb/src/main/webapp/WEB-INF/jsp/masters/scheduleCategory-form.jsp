@@ -91,15 +91,13 @@
 							<table >
 								<tr>
 								<td >
- 								<a href="${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>&mode=view" target="_popup" width='600' height='400' >
-											<s:text name="sor.view" />
-											<td >/</td>
-									</a></td>
+									<a class="buttonfinal" id="VIEW" name="button" onclick="window.open('${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>&mode=view','', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+ 									<s:text name="sor.view" /><td > / </td>
+								</td>	
 									<egov-authz:authorize actionName="WorksSOREditAutho">
-										<td ><a
-											href="${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>&mode=edit" target="_popup" >
-												<s:text name="schedCategory.modify" />
-										</a></td>
+								<td >
+									<a  class="buttonfinal" id="MODIFY" name="button" onclick="window.open('${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>&mode=edit','', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+									<s:text name="schedCategory.modify" /></td>
 									</egov-authz:authorize>
 								</tr>
 							</table>
@@ -115,33 +113,11 @@
 <div class="row">
 	<div class="col-sm-12 text-center buttonholdersearch">
 		<s:if test="%{mode=='edit'}">
-		<input id="modifyButton" class="btn btn-primary" type="submit" onclick="methodTest();" value="MODIFY" name="MODIFY">
+			<s:submit id="modifyButton" class="btn btn-primary" type="submit" onclick="methodTest();" value="MODIFY" name="MODIFY" />
+ 			<input  id="closeButton" class="btn btn-default" type="button" onclick="window.close();" name="button" value="Close" />
 		</s:if>
-		<input  id="closeButton" class="btn btn-default" type="button" onclick="window.close();" name="button" value="Close">
+		<s:if test="%{mode=='view'}">
+			<input  id="closeButton" class="btn btn-default" type="button" onclick="window.close();" name="button" value="Close">
+		</s:if>
 	</div>
 </div>
-<script>
-function methodTest() {
- 	if(document.getElementById("code").value=="Category Code"){
-		document.getElementById("code").value="";
-	}
-	if(document.getElementById("description").value=="Category Name") {
-		document.getElementById("description").value="";		
-	}
-}
-function disableFields() {
-	<s:if test="%{mode=='view'}">
-	document.getElementById("code").disabled = true;
-	document.getElementById("description").disabled = true;	
-	</s:if> 
-	<s:elseif test="%{mode=='edit'}">
-	document.getElementById("code").disabled = false;
-	document.getElementById("description").disabled = false;	
-	</s:elseif>
-	
-}
-function modifyData(){
-	window.location = '${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>';
-}
-</script>
- 

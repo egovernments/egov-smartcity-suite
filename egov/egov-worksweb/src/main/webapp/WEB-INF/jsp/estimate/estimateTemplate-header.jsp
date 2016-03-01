@@ -123,7 +123,7 @@ for(i=0;i<document.estimateTemplateForm.elements.length;i++){
 			    <s:text name="estimate.template.code" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" maxlength="25" />
+				<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" maxlength="25"/>
 			</div>
 			<s:if test="%{model.id!=null}" >
 				<label class="col-sm-2 control-label text-right">

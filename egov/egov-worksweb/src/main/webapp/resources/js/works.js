@@ -382,12 +382,12 @@ function validateSOR(){
 }
 
 function modifyGradeData() {
-	var id = document.getElementById('model.id').value;
-	window.location = '${pageContext.request.contextPath}/masters/contractorGrade-edit.action?mode=edit&id='+id;
+	var id = document.getElementById('id').value;
+	window.location = 'contractorGrade-edit.action?mode=edit&id='+id;
 }
 
 function viewGradeData() {
-	var id = document.getElementById('model.id').value;
-	window.location = '${pageContext.request.contextPath}/masters/contractorGrade-edit.action?mode=view&id='+id;
+	var id = document.getElementById('id').value;
+	window.location = 'contractorGrade-edit.action?mode=view&id='+id;
 }
 

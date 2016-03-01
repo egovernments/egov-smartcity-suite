@@ -38,6 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
+<script src="<egov:url path='/resources/js/works.js'/>"></script> 
 <html>
 <title><s:text name="page.title.estimate.template" /></title>
 <body>
@@ -49,26 +50,18 @@
 		<s:text name="estimate.template.success.save" /> '<s:property value="%{code}" />' <s:text name="estimate.template.success.name" />  '<s:property value="%{name}" />' <s:text name="estimate.template.success.save" />
 	</s:if>
 </div>
+<s:hidden name="id" id="id" />
 
 	<%@ include file="estimateTemplate-commonView.jsp" %>
 
 <div class="row text-center">
 	<div class="add-margin">
-	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" />
+	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyEstimate();" />
 	<s:if test="%{mode!='edit'}">
-		<input type="submit" name="create" Class="btn btn-primary" value="Create New Estimate" id="CREATE" name="button" onclick="createNew();" />
+		<input type="submit" name="create" Class="btn btn-primary" value="Create New Estimate" id="CREATE" name="button" onclick="createNewEsimate();" />
 	</s:if>
 	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
 	</div>
 </div>
-
-<script type="text/javascript">
-function createNew() {
-	window.location = '${pageContext.request.contextPath}/estimate/estimateTemplate-newform.action';
-}
-function modifyData() {
-	window.location = '${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=edit&id='+<s:property value="%{model.id}"/>;
-}
-</script>	
 </body>
 </html>

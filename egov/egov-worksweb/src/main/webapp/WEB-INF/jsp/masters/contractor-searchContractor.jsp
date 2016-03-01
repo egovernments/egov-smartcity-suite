@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-
+<script src="<egov:url path='resources/js/works.js'/>"></script> 
 <html>
 <title><s:text name="contractor.search.title" /></title>
 
@@ -109,7 +109,7 @@
 		</div>
 	</div>
 </div>
-			
+			<input type="hidden" value="<s:text name='contractor.select.error' />" id='selectMessage'>
 			<s:hidden name="id" id="id" />
 <div class="row">
 	<div class="col-xs-12 text-center buttonholdersearch">
@@ -178,40 +178,10 @@
 </s:form>
 <s:if test="%{searchResult.fullListSize != 0}">
 	<div align="center">
-		<input type="submit" name="VIEW" Class="btn btn-primary" value="View" id="VIEW" onclick="return viewData();" /> 
-		<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="return modifyData();" /> 
+		<input type="submit" name="VIEW" Class="btn btn-primary" value="View" id="VIEW" onclick="return viewContractorDataOnSearch();" /> 
+		<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="return modifyContractorDataOnSearch();" /> 
 		<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>
 </s:if>
-
-<script type="text/javascript">
-function viewData() {
-    if (document.getElementById('id').value == '' || document.getElementById('id').value == null) {
-        showMessage('contractorError', '<s:text name="contractor.select.error" />');
-        window.scrollTo(0, 0);
-        return false;
-    } else
-        window.location = '${pageContext.request.contextPath}/masters/contractor-edit.action?mode=view&id=' + dom.get('id').value;
-    return true;
-}
-
-function modifyData() {
-    if (document.getElementById('id').value == '' || document.getElementById('id').value == null) {
-        showMessage('contractorError', '<s:text name="contractor.select.error" />');
-        window.scrollTo(0, 0);
-        return false;
-    } else
-        window.location = '${pageContext.request.contextPath}/masters/contractor-edit.action?mode=edit&id=' + dom.get('id').value;
-    return true;
-}			
-function setContractorId(val) {
-	document.getElementById('id').value = val;
-}
-function validate(){
-	document.searchContractorForm.action='${pageContext.request.contextPath}/masters/contractor-viewResult.action'; 
-   	document.searchContractorForm.submit();
-	
-}
-</script>
 </body>
 </html>

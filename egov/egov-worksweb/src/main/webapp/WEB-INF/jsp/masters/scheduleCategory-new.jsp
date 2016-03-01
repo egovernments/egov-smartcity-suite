@@ -38,11 +38,13 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %>
+<script src="<egov:url path='resources/js/works.js'/>"></script> 
+
 <html>
 	<head>
 		<title><s:text name="scheduleCategory.add.title"/></title>
 	</head>
-	<body id="home" onload="disableFields()">
+	<body id="home" onload="disableFields();">
 		<div class="new-page-header">
 		<s:text name="scheduleCategory.create.title" />
 		</div>
@@ -59,7 +61,6 @@
 				<s:actionmessage theme="simple" escape="false"/>
 			</div>
 		</s:if>
-		
 		<s:form action="scheduleCategory-save" theme="simple" name="scheduleCategory" cssClass="form-horizontal form-groups-bordered">
 			<s:token />
 			<%@ include file='scheduleCategory-form.jsp'%>

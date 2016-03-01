@@ -101,14 +101,7 @@ public class ScheduleCategoryAction extends BaseFormAction {
 
     @Action(value = "/masters/scheduleCategory-edit")
     public String edit() {
-        if (mode.equals("edit")) {
-            scheduleCategory = scheduleCategoryService.findById(scheduleCategory.getId(), false);
-            return EDIT;
-        }
-        else {
-            scheduleCategory = scheduleCategoryService.findById(scheduleCategory.getId(), false);
-            return EDIT;
-        }
+     return EDIT;
     }
 
     @Override
@@ -124,7 +117,10 @@ public class ScheduleCategoryAction extends BaseFormAction {
         if (mode.equals("edit") && !scheduleCategoryService.checkForSOR(id)) {
             addActionMessage(getText("scheduleCategory.modify.validate.message"));
             return EDIT;
-        } else
+        } else if (mode.equals("edit") && scheduleCategoryService.checkForScheduleCategory(code)) {
+            addActionMessage(getText("scheduleCategory.code.isunique"));
+            return EDIT;
+        } else 
             scheduleCategoryService.persist(scheduleCategory);
         addActionMessage(getText("schedule.category.save.success"));
         return SUCCESS;
