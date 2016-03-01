@@ -124,8 +124,8 @@ public class WorksPackage extends StateAware implements Auditable {
     private Long documentNumber;
     private EgwStatus egwStatus;
     private String wpOfflineStatus;
-    private SetStatus latestOfflineStatus;
-    private Set<SetStatus> setStatuses = Collections.EMPTY_SET;
+    private OfflineStatus latestOfflineStatus;
+    private Set<OfflineStatus> offlineStatuses = Collections.EMPTY_SET;
     private List<String> worksPackageActions = new LinkedList<String>();
     private String worksPackageStatus;
     private Date approvedDate;
@@ -389,18 +389,18 @@ public class WorksPackage extends StateAware implements Auditable {
         return negotiationNumber;
     }
 
-    public Set<SetStatus> getSetStatuses() {
+    public Set<OfflineStatus> getOfflineStatuses() {
         // TODO:Fixme - Commented out for time being since it is giving issue on forward for already saved object
         /*
          * final Set<SetStatus> returnList = new HashSet<SetStatus>(); // Get only statuses which are of WorksPackage if
          * (setStatuses != null && setStatuses.size() > 0) for (final SetStatus ss : setStatuses) if (ss.getObjectType() != null
          * && ss.getObjectType().equalsIgnoreCase("WorksPackage")) returnList.add(ss);
          */
-        return setStatuses;
+        return offlineStatuses;
     }
 
-    public void setSetStatuses(final Set<SetStatus> setStatuses) {
-        this.setStatuses = setStatuses;
+    public void setOfflineStatuses(final Set<OfflineStatus> offlineStatuses) {
+        this.offlineStatuses = offlineStatuses;
     }
 
     public EgwStatus getEgwStatus() {
@@ -443,11 +443,11 @@ public class WorksPackage extends StateAware implements Auditable {
         this.retenderDetails = retenderDetails;
     }
 
-    public SetStatus getLatestOfflineStatus() {
+    public OfflineStatus getLatestOfflineStatus() {
         return latestOfflineStatus;
     }
 
-    public void setLatestOfflineStatus(final SetStatus latestOfflineStatus) {
+    public void setLatestOfflineStatus(final OfflineStatus latestOfflineStatus) {
         this.latestOfflineStatus = latestOfflineStatus;
     }
 

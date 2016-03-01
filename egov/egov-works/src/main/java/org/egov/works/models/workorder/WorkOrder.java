@@ -63,7 +63,7 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.revisionEstimate.RevisionType;
-import org.egov.works.models.tender.SetStatus;
+import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.workflow.WorkFlow;
 import org.hibernate.validator.constraints.Length;
 
@@ -118,7 +118,7 @@ public class WorkOrder extends WorkFlow {
     private String tenderType;
 
     private List<WorkOrderEstimate> workOrderEstimates = new LinkedList<WorkOrderEstimate>();
-    private Set<SetStatus> setStatuses = new HashSet<SetStatus>();
+    private Set<OfflineStatus> offlineStatuses = new HashSet<OfflineStatus>();
     private List<String> workOrderActions = new ArrayList<String>();
     private Set<WorkOrder> revisionWOs = new HashSet<WorkOrder>();
 
@@ -363,12 +363,12 @@ public class WorkOrder extends WorkFlow {
         return totalWorkOrderQuantity;
     }
 
-    public Set<SetStatus> getSetStatuses() {
-        return setStatuses;
+    public Set<OfflineStatus> getOfflineStatuses() {
+        return offlineStatuses;
     }
 
-    public void setSetStatuses(final Set<SetStatus> setStatuses) {
-        this.setStatuses = setStatuses;
+    public void setOfflineStatuses(final Set<OfflineStatus> offlineStatuses) {
+        this.offlineStatuses = offlineStatuses;
     }
 
     public EgwStatus getEgwStatus() {

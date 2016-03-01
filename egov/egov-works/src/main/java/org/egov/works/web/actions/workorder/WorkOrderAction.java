@@ -101,7 +101,7 @@ import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.estimate.AssetsForEstimate;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.tender.EstimateLineItemsForWP;
-import org.egov.works.models.tender.SetStatus;
+import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.TenderResponseActivity;
 import org.egov.works.models.tender.TenderResponseContractors;
@@ -141,7 +141,7 @@ public class WorkOrderAction extends BaseFormAction {
     private WorksService worksService;
     private TenderResponseService tenderResponseService;
     private AbstractEstimateService abstractEstimateService;
-    private PersistenceService<SetStatus, Long> worksStatusService;
+    private PersistenceService<OfflineStatus, Long> worksStatusService;
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
@@ -195,7 +195,7 @@ public class WorkOrderAction extends BaseFormAction {
 
     private WorkflowService<WorkOrder> workOrderWorkflowService;
 
-    private SetStatus setStatusObj;
+    private OfflineStatus setStatusObj;
     public static final String PRINT = "print";
     private InputStream workOrderPDF;
     private ReportService reportService;
@@ -702,10 +702,10 @@ public class WorkOrderAction extends BaseFormAction {
     private Date getWorkOrderCreationDate() {
         final String statusForCreation = getWorkOrderCreationConfValue();
         if ("0".equals(statusForCreation))
-            setStatusObj = (SetStatus) getPersistenceService().findByNamedQuery("getmaxStatusByObjectId", tenderRespId,
+            setStatusObj = (OfflineStatus) getPersistenceService().findByNamedQuery("getmaxStatusByObjectId", tenderRespId,
                     tenderRespId, OBJECT_TYPE);
         else
-            setStatusObj = (SetStatus) getPersistenceService().findByNamedQuery("getStatusDateByObjectId_Type_Desc",
+            setStatusObj = (OfflineStatus) getPersistenceService().findByNamedQuery("getStatusDateByObjectId_Type_Desc",
                     tenderRespId, OBJECT_TYPE, statusForCreation);
         if (setStatusObj != null)
             return setStatusObj.getStatusDate();
@@ -830,7 +830,7 @@ public class WorkOrderAction extends BaseFormAction {
             workOrderList.add(workOrder);
 
             if (workOrder.getEgwStatus() != null && workOrder.getEgwStatus().getCode().equals(WF_APPROVED)) {
-                final SetStatus set_status = (SetStatus) persistenceService.findByNamedQuery(
+                final OfflineStatus set_status = (OfflineStatus) persistenceService.findByNamedQuery(
                         "getmaxStatusByObjectId_Type", workOrder.getId(), workOrder.getId(),
                         WorkOrder.class.getSimpleName(), WorkOrder.class.getSimpleName());
                 if (set_status == null)
@@ -845,7 +845,7 @@ public class WorkOrderAction extends BaseFormAction {
             if (StringUtils.isNotBlank(actions)) {
                 String setStat = "";
                 String workCommencedStatus = "";
-                SetStatus lastStatus = null;
+                OfflineStatus lastStatus = null;
                 workOrder.getWorkOrderActions().addAll(Arrays.asList(actions.split(",")));
                 if (workOrder.getId() != null && getLastStatus() != null)
                     lastStatus = worksStatusService.findByNamedQuery(STATUS_OBJECTID, workOrder.getId(),
@@ -1297,13 +1297,13 @@ public class WorkOrderAction extends BaseFormAction {
         this.deptId = deptId;
     }
 
-    public void setWorksStatusService(final PersistenceService<SetStatus, Long> worksStatusService) {
+    public void setWorksStatusService(final PersistenceService<OfflineStatus, Long> worksStatusService) {
         this.worksStatusService = worksStatusService;
     }
 
     public Date getSiteHandOverDate() {
         if (id != null) {
-            final SetStatus objStatusForSite = worksStatusService.findByNamedQuery(STATUS_OBJECTID, id, WO_OBJECT_TYPE,
+            final OfflineStatus objStatusForSite = worksStatusService.findByNamedQuery(STATUS_OBJECTID, id, WO_OBJECT_TYPE,
                     SITE_HAND_OVER);
             if (objStatusForSite != null)
                 return objStatusForSite.getStatusDate();
@@ -1313,7 +1313,7 @@ public class WorkOrderAction extends BaseFormAction {
 
     public Date getWorkCommencedDate() {
         if (id != null) {
-            final SetStatus objStatusForSite = worksStatusService.findByNamedQuery(STATUS_OBJECTID, id, WO_OBJECT_TYPE,
+            final OfflineStatus objStatusForSite = worksStatusService.findByNamedQuery(STATUS_OBJECTID, id, WO_OBJECT_TYPE,
                     WORK_COMMENCED);
             if (objStatusForSite != null)
                 return objStatusForSite.getStatusDate();

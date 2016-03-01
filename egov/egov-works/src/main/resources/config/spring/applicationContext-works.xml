@@ -85,7 +85,7 @@
 		<property name="type" value="org.egov.works.models.masters.ScheduleCategory"/>
 	</bean>
 	<bean id="worksStatusService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.tender.SetStatus" />
+		<property name="type" value="org.egov.works.models.tender.OfflineStatus" />
 	</bean>
 	
 	<bean class="org.egov.works.services.AbstractEstimateService" id="abstractEstimateService"

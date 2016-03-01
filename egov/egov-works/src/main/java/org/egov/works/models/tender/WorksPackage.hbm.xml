@@ -78,7 +78,7 @@
 			<column name="STATE_ID" />
 		</many-to-one>
 		
-		<many-to-one name="latestOfflineStatus" class="org.egov.works.models.tender.SetStatus" >
+		<many-to-one name="latestOfflineStatus" class="org.egov.works.models.tender.OfflineStatus" >
 			<column name="LATEST_OFFLINE_STATUS" />
 		</many-to-one>		
 		<many-to-one name="egwStatus" column="STATUS_ID" /> 
@@ -91,9 +91,9 @@
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />	
 		<property name="lastModifiedDate" column="MODIFIED_DATE" type="timestamp" />
 		
-		<set name="setStatuses" inverse="true" >
+		<set name="offlineStatuses" inverse="true" >
 			<key column="OBJECT_ID" />
-			<one-to-many class="org.egov.works.models.tender.SetStatus"  />
+			<one-to-many class="org.egov.works.models.tender.OfflineStatus"  />
 		</set>
 		
 		<set name="tenderEstimateSet" inverse="true" >

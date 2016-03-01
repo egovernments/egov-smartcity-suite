@@ -245,7 +245,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                     paramList.add(criteriaMap.get(STATUS));
                 } else if (criteriaMap.get(STATUS).equals("APPROVED")) {
                     commonQueryFilter = commonQueryFilter.append(" and wo.egwStatus.code = ? and "
-                            + " wo.id not in (select objectId from SetStatus where objectType=?)");
+                            + " wo.id not in (select objectId from OfflineStatus where objectType=?)");
                     paramList.add(criteriaMap.get(STATUS));
                     paramList.add("WorkOrder");
                 } else if (criteriaMap.get(STATUS).equals("CANCELLED")) {
@@ -256,8 +256,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                     && Arrays.asList(setStat.split(",")).contains(criteriaMap.get(STATUS))) {
                 commonQueryFilter = commonQueryFilter
                         .append(" and wo.egwStatus.code = 'APPROVED' and wo.id in(select stat.objectId from "
-                                + "SetStatus stat where stat.egwStatus.code=? and stat.id = (select"
-                                + " max(stat1.id) from SetStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)");
+                                + "OfflineStatus stat where stat.egwStatus.code=? and stat.id = (select"
+                                + " max(stat1.id) from OfflineStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)");
                 paramList.add(criteriaMap.get(STATUS));
                 paramList.add("WorkOrder");
                 paramList.add("WorkOrder");
@@ -411,7 +411,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                     paramList.add(criteriaMap.get(STATUS));
                 } else {
                     dynQuery = dynQuery + " and wo.egwStatus.code = ? and "
-                            + " wo.id not in (select objectId from SetStatus where objectType=?)";
+                            + " wo.id not in (select objectId from OfflineStatus where objectType=?)";
                     paramList.add(criteriaMap.get(STATUS));
                     paramList.add("WorkOrder");
                 }
@@ -419,8 +419,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                     && Arrays.asList(setStat.split(",")).contains(criteriaMap.get(STATUS))) {
                 dynQuery = dynQuery
                         + " and wo.id in(select stat.objectId from "
-                        + "SetStatus stat where stat.egwStatus.code=? and stat.id = (select"
-                        + " max(stat1.id) from SetStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)";
+                        + "OfflineStatus stat where stat.egwStatus.code=? and stat.id = (select"
+                        + " max(stat1.id) from OfflineStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)";
                 paramList.add(criteriaMap.get(STATUS));
                 paramList.add("WorkOrder");
                 paramList.add("WorkOrder");
@@ -1344,7 +1344,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
     @Override
     public Date getWorkCommencedDateByWOId(final Long id) {
         final Object wOCommencedDate = persistenceService
-                .find(" select stat.statusDate from SetStatus stat where stat.objectId = ? and stat.objectType = ? and stat.egwStatus.code = ? ",
+                .find(" select stat.statusDate from OfflineStatus stat where stat.objectId = ? and stat.objectType = ? and stat.egwStatus.code = ? ",
                         id, "WorkOrder", WorksConstants.WO_STATUS_WOCOMMENCED);
         return (Date) wOCommencedDate;
     }

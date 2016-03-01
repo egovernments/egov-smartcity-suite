@@ -73,7 +73,7 @@ function gotoPage(obj)
 	}
 	if(showActions[5]!=null && obj.value==showActions[5].value)
 	{
-		window.open("${pageContext.request.contextPath}/tender/setStatus-retenderEdit.action?objectType=WorksPackage&objId="+
+		window.open("${pageContext.request.contextPath}/tender/offlineStatus-retenderEdit.action?objectType=WorksPackage&objId="+
 		packageIden.value+"&setStatus="+dom.get('setStatus').value+"&appDate="+approvedDate.value+"&objNo="+objNo.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	}
 }

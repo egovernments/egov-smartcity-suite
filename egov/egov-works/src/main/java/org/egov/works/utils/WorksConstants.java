@@ -216,7 +216,7 @@ public class WorksConstants {
     public static final String ACTION_VIEW_DOCUMENT = "View Document";
     public static final String ACTION_COPY_ESTIMATE = "Copy Estimate";
     public static final String WORKS_VIEW_OFFLINE_STATUS_VALUE = "View offline status";
-    public static final String WORKS_SETSTATUS_VALUE = "Set Status";
+    public static final String WORKS_SETSTATUS_VALUE = "Set offline status";
 
     public static final String WP_OFFLINE_STATUS = "WP_OFFLINE_STATUS";
     

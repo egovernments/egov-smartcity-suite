@@ -68,7 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ContractorBillPDFAction extends BaseFormAction {
 
     private static final long serialVersionUID = -4416572537527288800L;
-    private static final Logger logger = Logger.getLogger(ContractorBillAction.class);
+    private static final Logger logger = Logger.getLogger(ContractorBillPDFAction.class);
     private Long egbillRegisterId;
     private InputStream egBillRegisterPDF;
     @Autowired

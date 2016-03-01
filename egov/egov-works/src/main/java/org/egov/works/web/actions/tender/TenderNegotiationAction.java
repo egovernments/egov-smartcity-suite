@@ -84,7 +84,7 @@ import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.tender.NegotiationNumberGenerator;
-import org.egov.works.models.tender.SetStatus;
+import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderEstimate;
 import org.egov.works.models.tender.TenderHeader;
 import org.egov.works.models.tender.TenderResponse;
@@ -197,12 +197,12 @@ public class TenderNegotiationAction extends SearchFormAction {
     private String tenderCretedBy;
     private String tenderFileNumber;
     private Double sorPerDiff;
-    private SetStatus setStatusObj = new SetStatus();
+    private OfflineStatus setStatusObj = new OfflineStatus();
     private final static String TENDER_ACCEPTANCE_NOTE = "acceptanceNote";
     private PersistenceService<Contractor, Long> contractorService;
     private final static String CONTRACTOR_LIST = "contractorList";
     private List<String> tenderTypeList;
-    private PersistenceService<SetStatus, Long> worksStatusService;
+    private PersistenceService<OfflineStatus, Long> worksStatusService;
     private static final String STATUS_OBJECTID = "getStatusDateByObjectId_Type_Desc";
     private static final String SEARCH_NEGOTIATION_FOR_WO = "searchNegotiationForWO";
     private String cancellationReason;
@@ -355,7 +355,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                 objType = "WorksPackage";
             final Long objId = getWorksPackageId();
             if (StringUtils.isNotBlank(status)) {
-                setStatusObj = (SetStatus) getPersistenceService().findByNamedQuery(
+                setStatusObj = (OfflineStatus) getPersistenceService().findByNamedQuery(
                         "getStatusDateByObjectId_Type_Desc", objId, objType, status);
                 if (setStatusObj != null)
                     tenderHeader.setTenderDate(setStatusObj.getStatusDate());
@@ -1349,7 +1349,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                 if (tenderResponseCntractrs.getTenderResponse().getEgwStatus() != null
                         && tenderResponseCntractrs.getTenderResponse().getEgwStatus().getCode()
                                 .equals(TenderResponse.TenderResponseStatus.APPROVED.toString())) {
-                    final SetStatus setStatus = (SetStatus) persistenceService.findByNamedQuery(
+                    final OfflineStatus setStatus = (OfflineStatus) persistenceService.findByNamedQuery(
                             "getmaxStatusByObjectId_Type", tenderResponseCntractrs.getId(),
                             tenderResponseCntractrs.getId(), TenderResponseContractors.class.getSimpleName(),
                             TenderResponseContractors.class.getSimpleName());
@@ -1367,7 +1367,7 @@ public class TenderNegotiationAction extends SearchFormAction {
             }
 
             final String approved = getApprovedValue();
-            final SetStatus lastStatus = worksStatusService.findByNamedQuery(STATUS_OBJECTID, tenderResponse
+            final OfflineStatus lastStatus = worksStatusService.findByNamedQuery(STATUS_OBJECTID, tenderResponse
                     .getTenderResponseContractors().get(0).getId(), OBJECT_TYPE, getLastStatus());
             final String actions = worksService.getWorksConfigValue("TENDERNEGOTIATION_SHOW_ACTIONS");
             if (StringUtils.isNotBlank(actions)) {
@@ -1540,7 +1540,7 @@ public class TenderNegotiationAction extends SearchFormAction {
 
         if (getStatus().equals(TenderResponse.TenderResponseStatus.APPROVED.toString())) {
             negotiationStr += " and tenderResponse.egwStatus.code= ?  and "
-                    + "  tenderResponse.id  in ( select trc.tenderResponse.id from TenderResponseContractors trc where trc.id not in (select objectId from SetStatus where objectType='"
+                    + "  tenderResponse.id  in ( select trc.tenderResponse.id from TenderResponseContractors trc where trc.id not in (select objectId from OfflineStatus where objectType='"
                     + OBJECT_TYPE + "' ))";
             paramList.add(status);
         } else if (getStatus().equals(TenderResponse.TenderResponseStatus.CANCELLED.toString())) {
@@ -1550,8 +1550,8 @@ public class TenderNegotiationAction extends SearchFormAction {
             negotiationStr += "and tenderResponse.egwStatus.code != 'NEW' and ((tenderResponse.egwStatus.code = ?) or "
                     + "(tenderResponse.egwStatus.code = 'APPROVED' and tenderResponse.id in (select trc.tenderResponse.id from TenderResponseContractors trc where trc.id in ("
                     + " select stat.objectId from "
-                    + "SetStatus stat where stat.egwStatus.code= ? and stat.id = (select"
-                    + " max(stat1.id) from SetStatus stat1 where trc.id=stat1.objectId and stat1.objectType='"
+                    + "OfflineStatus stat where stat.egwStatus.code= ? and stat.id = (select"
+                    + " max(stat1.id) from OfflineStatus stat1 where trc.id=stat1.objectId and stat1.objectType='"
                     + OBJECT_TYPE + "') and stat.objectType='" + OBJECT_TYPE + "')))) ";
             paramList.add(getStatus());
             paramList.add(getStatus());
@@ -1720,11 +1720,11 @@ public class TenderNegotiationAction extends SearchFormAction {
         this.cancelRemarks = cancelRemarks;
     }
 
-    public PersistenceService<SetStatus, Long> getWorksStatusService() {
+    public PersistenceService<OfflineStatus, Long> getWorksStatusService() {
         return worksStatusService;
     }
 
-    public void setWorksStatusService(final PersistenceService<SetStatus, Long> worksStatusService) {
+    public void setWorksStatusService(final PersistenceService<OfflineStatus, Long> worksStatusService) {
         this.worksStatusService = worksStatusService;
     }
 

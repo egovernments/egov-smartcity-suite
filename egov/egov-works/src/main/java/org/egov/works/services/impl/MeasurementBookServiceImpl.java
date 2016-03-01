@@ -715,7 +715,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long>i
 
     @Override
     public Date getWorkCommencedDate(final Long woId) {
-        final Date workCommencedDate = (Date) genericService.find(" select stat.statusDate from SetStatus stat "
+        final Date workCommencedDate = (Date) genericService.find(" select stat.statusDate from OfflineStatus stat "
                 + "where stat.objectId = ? and stat.objectType = ? and stat.egwStatus.code = ? ", woId, "WorkOrder",
                 WorksConstants.WO_STATUS_WOCOMMENCED);
         return workCommencedDate;

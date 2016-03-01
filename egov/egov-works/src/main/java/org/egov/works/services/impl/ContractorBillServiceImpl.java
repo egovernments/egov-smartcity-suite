@@ -82,7 +82,7 @@ import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBDetails;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
 import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.tender.SetStatus;
+import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderActivity;
@@ -1153,7 +1153,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 && appConfigValuesList.get(0).getValue() != null)
             workCommenced = appConfigValuesList.get(0).getValue();
         Date workCommencedDate = null;
-        final SetStatus woStatus = (SetStatus) genericService.findByNamedQuery(
+        final OfflineStatus woStatus = (OfflineStatus) genericService.findByNamedQuery(
                 WorksConstants.QUERY_GETSTATUSDATEBYOBJECTID_TYPE_DESC, workOrderEstimate.getWorkOrder().getId(),
                 WorkOrder.class.getSimpleName(), workCommenced);
         if (woStatus != null)

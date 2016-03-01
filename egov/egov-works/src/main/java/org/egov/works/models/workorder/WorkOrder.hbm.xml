@@ -101,9 +101,9 @@
 			<key column="WORKORDER_ID" />
 			<one-to-many class="org.egov.works.models.measurementbook.MBHeader"  />
 		</set>		
-		<set name="setStatuses" inverse="true" >
+		<set name="offlineStatuses" inverse="true" >
 			<key column="OBJECT_ID" />
-			<one-to-many class="org.egov.works.models.tender.SetStatus"  />
+			<one-to-many class="org.egov.works.models.tender.OfflineStatus"  />
 		</set>		
 		<set name="revisionWOs" inverse="true" >
 			<key column="PARENTID" />

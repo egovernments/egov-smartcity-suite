@@ -62,7 +62,7 @@ import org.egov.infstr.models.Money;
 import org.egov.infstr.services.GeoLocationConstants;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.works.models.masters.Contractor;
-import org.egov.works.models.tender.SetStatus;
+import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderEstimate;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.TenderResponseActivity;
@@ -139,7 +139,7 @@ public class WorksGISReportAction extends BaseFormAction {
                 + "','"
                 + WorksConstants.CANCELLED_STATUS
                 + "') ), "
-                + " (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from SetStatus offLineStatus where offLineStatus.objectId = ( select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate=absEst and wpd.worksPackage.egwStatus.code not in ('"
+                + " (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from OfflineStatus offLineStatus where offLineStatus.objectId = ( select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate=absEst and wpd.worksPackage.egwStatus.code not in ('"
                 + WorksConstants.NEW
                 + "','"
                 + WorksConstants.CANCELLED_STATUS
@@ -155,7 +155,7 @@ public class WorksGISReportAction extends BaseFormAction {
                 + "','"
                 + WorksConstants.CANCELLED_STATUS
                 + "') ), "
-                + " (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from SetStatus offLineStatus where offLineStatus.objectId = ( select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate=absEst and wpd.worksPackage.egwStatus.code not in ('"
+                + " (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from OfflineStatus offLineStatus where offLineStatus.objectId = ( select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate=absEst and wpd.worksPackage.egwStatus.code not in ('"
                 + WorksConstants.NEW
                 + "','"
                 + WorksConstants.CANCELLED_STATUS
@@ -165,7 +165,7 @@ public class WorksGISReportAction extends BaseFormAction {
                 + "' and objectType='WorksPackage' ), "
                 + " absEst.parentCategory.description, workSubType.description , projcode.id,  "
                 + " to_char(wo.workOrderDate,'dd/MM/YYYY'), wo.contractPeriod, wo.contractor.name, "
-                + " (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from SetStatus offLineStatus where offLineStatus.objectId= wo.id  "
+                + " (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from OfflineStatus offLineStatus where offLineStatus.objectId= wo.id  "
                 + "    and offLineStatus.egwStatus.code='"
                 + WorksConstants.WO_STATUS_WOCOMMENCED
                 + "' and objectType='WorkOrder') ";
@@ -336,7 +336,7 @@ public class WorksGISReportAction extends BaseFormAction {
                                 workOrderContractPeriodBuf.append("NA,");
                             boolean workCommencedPresent = false;
                             boolean workExpectedCompletedPresent = false;
-                            for (final SetStatus ss : wo.getSetStatuses())
+                            for (final OfflineStatus ss : wo.getOfflineStatuses())
                                 if (ss.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.WO_STATUS_WOCOMMENCED)) {
                                     workCommencedDateBuf.append(sdf.format(ss.getStatusDate()) + ",");
                                     workCommencedPresent = true;

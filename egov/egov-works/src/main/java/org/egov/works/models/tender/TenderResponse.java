@@ -130,7 +130,7 @@ public class TenderResponse extends WorkFlow {
 
     private List<WorksPackageDetails> worksPackageDetails = new LinkedList<WorksPackageDetails>();
 
-    private Set<SetStatus> setStatuses = new HashSet<SetStatus>();
+    private Set<OfflineStatus> offlineStatuses = new HashSet<OfflineStatus>();
 
     public PersonalInformation getNegotiationPreparedBy() {
         return negotiationPreparedBy;
@@ -398,12 +398,12 @@ public class TenderResponse extends WorkFlow {
         return latestEstLineItemList;
     }
 
-    public Set<SetStatus> getSetStatuses() {
-        return setStatuses;
+    public Set<OfflineStatus> getOfflineStatuses() {
+        return offlineStatuses;
     }
 
-    public void setSetStatuses(final Set<SetStatus> setStatuses) {
-        this.setStatuses = setStatuses;
+    public void setOfflineStatuses(final Set<OfflineStatus> offlineStatuses) {
+        this.offlineStatuses = offlineStatuses;
     }
 
     public EgwStatus getEgwStatus() {
