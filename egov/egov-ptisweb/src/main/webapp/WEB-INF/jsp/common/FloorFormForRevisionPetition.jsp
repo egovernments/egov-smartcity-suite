@@ -168,8 +168,8 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 
-					<s:textfield name="propertyDetail.floorDetailsProxy[0].buildingPermissionNo" 
-						maxlength="16" size="16" id="propertyDetail.floorDetailsProxy[0].buildingPermissionNo" value="%{propertyDetail.floorDetailsProxy[0].buildingPermissionNo}"
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].buildingPermissionNo" 
+						maxlength="16" size="16" id="property.propertyDetail.floorDetailsProxy[0].buildingPermissionNo" value="%{property.propertyDetail.floorDetailsProxy[0].buildingPermissionNo}"
 						onblur="checkZero(this);" onchange="trim(this,this.value);"
 						cssStyle="width:100%" title="Building Permission Number"/>
 				</div>
@@ -178,8 +178,8 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 
-					<s:textfield name="propertyDetail.floorDetailsProxy[0].buildingPermissionDate" 
-						maxlength="16" size="16" id="propertyDetail.floorDetailsProxy[0].buildingPermissionDate" value="%{propertyDetail.floorDetailsProxy[0].buildingPermissionDate}"
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].buildingPermissionDate" 
+						maxlength="16" size="16" id="property.propertyDetail.floorDetailsProxy[0].buildingPermissionDate" value="%{property.propertyDetail.floorDetailsProxy[0].buildingPermissionDate}"
 						cssClass="datepicker" autocomplete="off"
 						cssStyle="width:100%" title="Building Permission Date"/>
 				</div>
@@ -187,8 +187,8 @@
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield name="propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area" 
-						maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area" value="%{propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area}"
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area" 
+						maxlength="10" size="10" id="property.propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area" value="%{property.propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Building paln plinth Area');checkZero(this,'Building paln plinth Area');"
 						cssStyle="width:100%" title="Plinth area in building plan"/>
 				</div>
@@ -344,8 +344,8 @@
 				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionNo" 
-						maxlength="16" size="16" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionNo" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].buildingPermissionNo}"
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionNo" 
+						maxlength="16" size="16" id="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionNo" value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].buildingPermissionNo}"
 						onblur="checkZero(this);" onchange="trim(this,this.value);"
 						cssStyle="width:100%" title="Building Permission Number"/>
 				</div>
@@ -353,9 +353,9 @@
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-				<s:date name="propertyDetail.floorDetailsProxy[#floorsstatus.index].buildingPermissionDate" var="blngPlinthArea" format="dd/MM/yyyy"/>
-					<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionDate" 
-						maxlength="16" size="16" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionDate" 
+				<s:date name="property.propertyDetail.floorDetailsProxy[#floorsstatus.index].buildingPermissionDate" var="blngPlinthArea" format="dd/MM/yyyy"/>
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionDate" 
+						maxlength="16" size="16" id="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionDate" 
 						value="%{blngPlinthArea}"
 						cssClass="datepicker" autocomplete="off"
 						cssStyle="width:100%" title="Building Permission Date"/>
@@ -364,9 +364,9 @@
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPlanPlinthArea.area" 
-						maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPlanPlinthArea.area"
-						value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].buildingPlanPlinthArea.area}"
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPlanPlinthArea.area" 
+						maxlength="10" size="10" id="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPlanPlinthArea.area"
+						value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].buildingPlanPlinthArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Building paln plinth Area');checkZero(this,'Building paln plinth Area');"
 						cssStyle="width:100%" title="Plinth area in building plan"/>
 				</div>
