@@ -89,8 +89,8 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.deduction.RemittanceBean;
@@ -109,6 +109,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.payment.BasePaymentAction;
 import org.egov.web.actions.voucher.CommonAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -173,6 +174,9 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @Autowired
     private PaymentActionHelper paymentActionHelper;
     private ChartOfAccounts chartOfAccounts;
+    @Autowired
+    @Qualifier("persistenceService")
+    PersistenceService persistenceService;
 
     public BigDecimal getBalance() {
         return balance;
@@ -578,7 +582,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         final CreateVoucher createVoucher = new CreateVoucher();
         try {
             createVoucher.deleteVoucherdetailAndGL(voucherHeader);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             HashMap<String, Object> detailMap = null;
             final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
             List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
@@ -600,8 +604,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
             final List<Transaxtion> transactions = createVoucher.createTransaction(null, accountdetails, subledgerDetails,
                     voucherHeader);
-            HibernateUtil.getCurrentSession().flush();
-
+            persistenceService.getSession().flush();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
