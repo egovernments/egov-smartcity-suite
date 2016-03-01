@@ -90,6 +90,17 @@ function validateDates(){
 		bootbox.alert("Please select the dates")
 		return false;
 	}
+	var startDate= fromDate.split('/');
+	fromDate=new Date(startDate[2],startDate[1]-1,startDate[0]);
+    var endDate = toDate.split('/');
+    toDate=new Date(endDate[2],endDate[1]-1,endDate[0]);
+	
+	
+	if(fromDate > toDate ){
+		bootbox.alert("From date should not be greater than To date  ")
+		return false;
+	}
+	
 	document.getElementById('accountNumber.id').value=bankAccount;
 	return true;	
 }
