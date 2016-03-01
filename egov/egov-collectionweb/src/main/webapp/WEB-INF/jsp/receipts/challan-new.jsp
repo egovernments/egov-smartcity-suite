@@ -745,7 +745,7 @@ function populatepositionuseronload()
 		</tr>
 		</s:if>
 		<!-- Reason For Cancellation has to be displayed for Challan CANCEL	 -->
-		<s:if test="%{(sourcePage=='inbox' && (model.challan.state.value=='REJECTED' || (model.challan.state.previous.value=='REJECTED' && model.challan.state.value=='CREATED')) || (actionName=='CHALLAN_MODIFY' && hasErrors())}">
+		<s:if test="%{(sourcePage=='inbox' && model.challan.state.value=='REJECTED') || (actionName=='CHALLAN_MODIFY' && hasErrors())}">
 			<tr>
 			   <td width="4%" class="bluebox">&nbsp;</td>
 			   <td width="21%" class="bluebox"><s:text name="challan.reason.cancellation"/></td>
@@ -794,7 +794,7 @@ onChange="onChangeDeparment(this.value)" />
 	 <div class="buttonbottom" align="center" id="printButton">
 		<!-- Action Buttons should be displayed only in case of Create New Challan or 
 		     If page is opened from inbox -->
-		<s:if test="%{model.id==null || (sourcePage!='inbox' && model.challan.state.previous.value=='REJECTED' && model.challan.state.value=='CREATED') || sourcePage=='inbox' || (actionName=='CHALLAN_MODIFY' && hasErrors()) || (actionName=='CHALLAN_VALIDATE' && hasErrors())}" >
+			<s:if test="%{model.id==null || (sourcePage=='inbox' && !hasActionMessages()) || (actionName=='CHALLAN_MODIFY' && hasErrors()) || (actionName=='CHALLAN_VALIDATE' && hasErrors())}" >
 			<s:iterator value="%{validActions}">
 				<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="actionButton" onclick="document.challan.actionName.value='%{name}';document.challan.action='challan-save.action'; return validate(this);"/>
 		    </s:iterator>	

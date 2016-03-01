@@ -242,5 +242,8 @@
         <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-success.jsp"/>
     </definition>
-    
+    <definition name="defaultersWTReport-search" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.defaultersReport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/defaultersWTReport-search.jsp"/>
+    </definition>
 </tiles-definitions>

@@ -115,4 +115,4 @@
 	</div>
 
 </s:elseif>
-<s:else>No TDS found</s:else>
+<s:else>No records found</s:else>

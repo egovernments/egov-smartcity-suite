@@ -405,6 +405,18 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 || floor.getStructureClassification().getId() == null
                                 || floor.getStructureClassification().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.constType", msgParams));
+                        
+                        if (floor.getUnstructuredLand())
+                        {
+                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getLength() == null
+                                    || floor.getBuiltUpArea().getLength().equals("")) {
+                                addActionError(getText("mandatory.assbleLength",msgParams));
+                            }
+                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getBreadth() == null
+                                    || floor.getBuiltUpArea().getBreadth().equals("")) {
+                                addActionError(getText("mandatory.assbleWidth",msgParams));
+                            }                          
+                        }
 
                        if (floor.getDrainage() && null == floor.getNoOfSeats())
                             addActionError(getText("mandatory.noofseats"));

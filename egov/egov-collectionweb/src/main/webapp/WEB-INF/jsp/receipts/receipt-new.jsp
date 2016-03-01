@@ -1312,8 +1312,6 @@ function onBodyLoad()
 	var headertable=document.getElementById('billsheaderinfotable');
 	var headertablelength=headertable.rows.length;
 	var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
-	
-	
 	if(null != document.getElementById('asteriskId')){
 		document.getElementById('asteriskId').style.display="";
 	}
@@ -2164,7 +2162,7 @@ function showHideMandataryMark(obj){
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
-		
+		<table id="manualreceipt" style="display:none">
 		<s:if test="%{!isBillSourcemisc()}">
 					<tr>
 					<td class="bluebox" width="3%" ></td>
@@ -2182,8 +2180,7 @@ function showHideMandataryMark(obj){
 					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate" cssClass="datepicker"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
 				</tr>
 		 </s:if>
-		
-		
+		</table>
 		</table>
 			
 
@@ -2223,10 +2220,8 @@ function showHideMandataryMark(obj){
          </tr>
          <tr>
            <td class="bluebox">&nbsp;</td>
-           <td class="bluebox"><s:text name="billreceipt.counter.operator"/></td>
-           <td class="bluebox"><b><s:property value="%{receiptCreatedByCounterOperator.userName}"/> </b></td>
-           <td class="bluebox"><s:text name="billreceipt.service"/></td>
-           <td class="bluebox"><b><s:property value="%{serviceName}"/></b></td>
+           <td class="bluebox"><s:text name="billreceipt.counter.operator"/>&nbsp;&nbsp;&nbsp; <b><s:property value="%{receiptCreatedByCounterOperator.name}"/> </b></td>
+           <td class="bluebox"><s:text name="billreceipt.service"/>&nbsp;&nbsp;&nbsp; <b><s:property value="%{serviceName}"/></b></td>
           </tr>
 
           <tr>

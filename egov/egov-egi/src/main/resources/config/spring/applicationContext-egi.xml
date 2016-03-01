@@ -64,8 +64,6 @@
 		<constructor-arg ref="sessionFactory"/>
 	</bean>
 
-	<bean id="beanProvider" class="org.egov.infstr.beanfactory.ApplicationContextBeanProvider" />
-
 	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>

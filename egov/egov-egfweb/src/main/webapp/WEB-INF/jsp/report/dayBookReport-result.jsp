@@ -54,8 +54,8 @@
 				style="text-align: center; width: 98%;">
 				<b><s:property value="%{heading}" /></b>
 				<div align="left" style="text-align: left; width: 98%;">
-					Total Vouchers
-					<s:property value="%{dayBookReport.totalCount}" />
+					Total Vouchers : 
+					<s:property value="%{dayBookDisplayList.size/2}" />
 					
 				</div>
 			</div>
@@ -65,16 +65,16 @@
 			property="voucherdate" />
 		<display:column media="pdf" headerClass="bluebgheadtd"
 			class="blueborderfortd" title="Voucher Number"
-			style="width:8%;text-align:center" property="voucher" />
+			style="width:8%;text-align:center" property="vouchernumber" />
 		<display:column media="excel" headerClass="bluebgheadtd"
 			class="blueborderfortd" title="Voucher Number"
-			style="width:8%;text-align:center" property="voucher" />
+			style="width:8%;text-align:center" property="vouchernumber" />
 		<display:column media="html" headerClass="bluebgheadtd"
 			class="blueborderfortd" title="Voucher Number"
 			style="width:8%;text-align:center">
 			<a href="#"
 				onclick="return viewVoucher('<s:property value="#attr.currentRowObject.vhId"/>')">
-				<s:property value="#attr.currentRowObject.voucher" />
+				<s:property value="#attr.currentRowObject.vouchernumber" />
 			</a>
 		</display:column>
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"

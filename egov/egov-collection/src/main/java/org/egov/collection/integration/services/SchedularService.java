@@ -99,12 +99,10 @@ public class SchedularService {
                     CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_AXIS);
             for (final OnlinePayment onlinePaymentObj : reconcileList) {
                 final long startTimeInMilis = System.currentTimeMillis();
-                paymentResponse = null;
-
                 LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
                 paymentResponse = axisAdaptor.createOfflinePaymentRequest(paymentService, onlinePaymentObj);
 
-                if (null != paymentResponse) {
+                if (null != paymentResponse && paymentResponse.getReceiptId()!=null && !paymentResponse.getReceiptId().equals("") ) {
                     LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
                     LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
                     LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());

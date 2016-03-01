@@ -768,9 +768,11 @@ public class CollectionsUtil {
         ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
         final ServiceDetails billingService = receiptHeader.getService();
 
+        String instrumentType="";
+        if(!receiptHeader.getReceiptInstrument().isEmpty())
+            instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
         final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(receiptHeader.getReceiptdate(),
-                receiptHeader.getReceiptnumber(), billingService.getName(), receiptHeader.getReceiptInstrument()
-                .iterator().next().getInstrumentType().getType(), receiptHeader.getTotalAmount(),
+                receiptHeader.getReceiptnumber(), billingService.getName(), instrumentType , receiptHeader.getTotalAmount(),
                 receiptHeader.getSource(),
                 receiptHeader.getStatus().getDescription()
                 );
@@ -812,12 +814,20 @@ public class CollectionsUtil {
         Boolean createVoucherForBillingService = Boolean.FALSE;
         if (receiptHeader.getService().getVoucherCutOffDate() != null
                 && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
-            if (receiptHeader.getService().getVoucherCreation())
+            if (receiptHeader.getService().getVoucherCreation()!= null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         } else if (receiptHeader.getService().getVoucherCutOffDate() == null)
-            if (receiptHeader.getService().getVoucherCreation())
+            if (receiptHeader.getService().getVoucherCreation()!= null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         return createVoucherForBillingService;
+    }
+    
+    public String getApproverName(Position position) {
+        String approver;
+        final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(position.getId());
+        approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
+                .concat("~").concat(assignment.getPosition().getName());
+        return approver;
     }
 
 }

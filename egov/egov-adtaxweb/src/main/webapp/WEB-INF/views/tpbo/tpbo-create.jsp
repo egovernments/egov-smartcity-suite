@@ -60,6 +60,7 @@
                     	<div class="col-sm-3 add-margin">
                     		<form:input type="text" cssClass="form-control patternvalidation" 
                         	      data-pattern="alphanumericwithspace" maxlength="49" path="name" id="name" required="required"/>
+                        	      <form:hidden path="id" id="id" value="${revenueInspector.id}"/>
                         	      	<form:errors path="name" cssClass="error-msg" />
                     	</div>
                     	
@@ -94,9 +95,7 @@
         	<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary" id="createrevenueinspector"><spring:message code="lbl.submit"/></button>
-					<c:if test="${empty revenueInspector.id}">
-						<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-					</c:if>
+					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>
@@ -111,7 +110,7 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/app/js/searchadvertisement.js'/>"></script>
+<script src="<c:url value='/resources/app/js/tpbo.js'/>"></script>
 
 
 

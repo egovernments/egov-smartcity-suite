@@ -169,7 +169,7 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="/tl/resources/js/app/searchTradeLicense.js"></script>
+	<script type="text/javascript" src="/tl/resources/js/app/searchTradeLicense.js?rnd=${app_release_no}"></script>
 	 <style>
 		.ui-autocomplete { 
 		    /* these sets the height and width */

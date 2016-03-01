@@ -58,30 +58,30 @@ public class UpdateTpboController {
     @Autowired
     private RevenueInspectorService revenueInspectorService;
 
-    @RequestMapping(value = "/updateTpbo/{name}", method = GET)
-    public String update(@PathVariable final String name) {
-        return "redirect:/tpbo/update/" + name;
+    @RequestMapping(value = "/updateTpbo/{id}", method = GET)
+    public String update(@PathVariable final Long id) {
+        return "redirect:/tpbo/update/" + id;
     }
 
-    @RequestMapping(value = "/update/{name}", method = GET)
-    public ModelAndView updateView(@PathVariable("name") final String name,
-            @ModelAttribute final RevenueInspector revenueInspectorRecord) {
-        return new ModelAndView("tpbo-update", "revenueInspectorRecord",
-                revenueInspectorService.findById(Long.parseLong(revenueInspectorRecord.getName())));
-
+    @RequestMapping(value = "/update/{id}", method = GET)
+    public ModelAndView updateView(@PathVariable("id") final Long id,
+            @ModelAttribute final RevenueInspector revenueInspector) {
+        return new ModelAndView("tpbo-update", "revenueInspector",
+                revenueInspectorService.findById(id));
+         
     }
 
     @RequestMapping(value = "update", method = GET)
-    public String update(@ModelAttribute final RevenueInspector revenueInspectorRecord, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, @RequestParam String id) {
+    public String update(@ModelAttribute final RevenueInspector revenueInspector, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, @RequestParam Long id) {
 
         if (errors.hasErrors()) {
             redirectAttrs.addFlashAttribute("name", "msg.tpbo.name");
             return "tpbo-update";
         }
         RevenueInspector existingTpboObject = new RevenueInspector();
-        existingTpboObject = revenueInspectorService.findById(Long.valueOf(id));
-        existingTpboObject.setActive(revenueInspectorRecord.isActive());
+        existingTpboObject = revenueInspectorService.findById(id);
+        existingTpboObject.setActive(revenueInspector.isActive());
         revenueInspectorService.update(existingTpboObject);
 
         redirectAttrs.addFlashAttribute("existingTpboObject", existingTpboObject);
@@ -90,16 +90,16 @@ public class UpdateTpboController {
         return "redirect:/tpbo/success/" + id;
     }
 
-    @RequestMapping(value = "/tpbo-update/{name}", method = GET)
-    public String Search(@PathVariable final String name, @ModelAttribute final RevenueInspector revenueInspectorRecord) {
-        return "redirect:/tpbo/success/" + name;
+    @RequestMapping(value = "/tpbo-update/{id}", method = GET)
+    public String Search(@PathVariable("id") final Long id, @ModelAttribute final RevenueInspector revenueInspector) {
+        return "redirect:/tpbo/success/" + id;
     }
 
     @RequestMapping(value = "/success/{id}", method = GET)
-    public ModelAndView successView(@PathVariable("id") final String id,
-            @ModelAttribute final RevenueInspector revenueInspectorRecord) {
-        return new ModelAndView("tpbo/tpbo-searchSuccess", "revenueInspectorRecord",
-                revenueInspectorService.findById(Long.valueOf(id)));
+    public ModelAndView successView(@PathVariable("id") final Long id,
+            @ModelAttribute final RevenueInspector revenueInspector) {
+        return new ModelAndView("tpbo/tpbo-searchSuccess", "revenueInspector",
+                revenueInspectorService.findById(id));
 
     }
 

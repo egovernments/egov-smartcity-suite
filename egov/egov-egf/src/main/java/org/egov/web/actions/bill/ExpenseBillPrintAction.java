@@ -44,7 +44,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,10 +53,10 @@ import java.util.Set;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
@@ -77,7 +77,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
 import org.egov.model.bills.EgBillPayeedetails;
@@ -90,11 +89,9 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @Results(value = {
+		
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.pdf" }),
                 @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -102,7 +99,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
                         @Result(name = "HTML", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                         "text/html" })
 })
-@Transactional(readOnly = true)
 @org.apache.struts2.convention.annotation.ParentPackage("egov")
 public class ExpenseBillPrintAction extends BaseFormAction {
     final static private Logger LOGGER = Logger.getLogger(ExpenseBillPrintAction.class);
@@ -178,6 +174,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         return print();
     }
 
+    @SkipValidation
     @Action(value = "/bill/expenseBillPrint-ajaxPrint")
     public String ajaxPrint() {
         return exportHtml();
@@ -284,6 +281,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
      */
     private Map<String, Object> getBudgetDetails(final CChartOfAccounts coa, final EgBilldetails billDetail,
             final String functionName) {
+    	final Map<String, Object> budgetApprDetailsMap = new HashMap<String, Object>();
         budgetDataMap.put(Constants.FUNCTIONID, Long.valueOf(billDetail.getFunctionid().toString()));
         if (cbill.getEgBillregistermis().getVoucherHeader() != null)
             budgetDataMap.put(Constants.ASONDATE, cbill.getEgBillregistermis().getVoucherHeader().getVoucherDate());// this date
@@ -292,11 +290,13 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         // roles
         else
             budgetDataMap.put(Constants.ASONDATE, cbill.getBilldate());
-        final CFinancialYear financialYearById = financialYearDAO.getFinancialYearById((Long) budgetDataMap
-                .get("financialyearid"));
-        final Map<String, Object> budgetApprDetailsMap = new HashMap<String, Object>();
-        budgetApprDetailsMap.put("financialYear", "BE-" + financialYearById.getFinYearRange() + " & Addl Funds(Rs)");
-        budgetDataMap.put("fromdate", financialYearById.getStartingDate());
+        
+        Date billDate=cbill.getBilldate();
+        final CFinancialYear financialYearById = financialYearDAO.getFinYearByDate(billDate);
+        
+            budgetApprDetailsMap.put("financialYear", "BE-" + financialYearById.getFinYearRange() + " & Addl Funds(Rs)");
+            budgetDataMap.put("fromdate", financialYearById.getStartingDate());
+       
         budgetDataMap.put("glcode", coa.getGlcode());
         budgetDataMap.put("glcodeid", coa.getId());
         final List<BudgetGroup> budgetHeadByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
@@ -374,10 +374,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
      */
     private void getRequiredDataForBudget(final EgBillregister cbill) {
         final String financialYearId = null;// commonsService.getFinancialYearId(cbill.getBilldate().getTime());
-        if(cbill.getEgBillregistermis().getFinancialyear()!=null)
-        {
-        	budgetDataMap.put("financialyearid", cbill.getEgBillregistermis().getFinancialyear().getId());
-        }
+        Date billDate=cbill.getBilldate();
+        final CFinancialYear financialYearById = financialYearDAO.getFinYearByDate(billDate);
+        
+        	budgetDataMap.put("financialyearid", financialYearById.getId());
+        
             budgetDataMap.put(Constants.DEPTID, cbill.getEgBillregistermis().getEgDepartment().getId());
         if (cbill.getEgBillregistermis().getFunctionaryid() != null)
             budgetDataMap.put(Constants.FUNCTIONARYID, cbill.getEgBillregistermis().getFunctionaryid().getId());
@@ -474,43 +475,32 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final Set<EgBillPayeedetails> egBillPaydetailes = detail.getEgBillPaydetailes();
                 for (final EgBillPayeedetails payeedetail : egBillPaydetailes)
                 {
+                	try{
+                	  EntityType entity = null;
                     final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
                             "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
                     vd.setDetailTypeName(detailType.getName());
-                    final String table = detailType.getFullQualifiedName();
-                    Class<?> service;
-                    try {
-                        service = Class.forName(table);
-                    } catch (final ClassNotFoundException e1) {
-                        LOGGER.error(e1.getMessage(), e1);
-                        throw new ValidationException(Arrays.asList(new ValidationError("", "")));
-                    }
-                    String simpleName = service.getSimpleName();
-                    // simpleName=simpleName.toLowerCase()+"Service";
-                    simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
-                    final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
-                            .getServletContext());
-                    // EntityTypeService entityService= (EntityTypeService)wac.getBean(simpleName);
-                    final PersistenceService entityPersistenceService = (PersistenceService) wac.getBean(simpleName);
-                    // it may give error since it is finding from session
-                    // entityPersistenceService.
+                    
+                    final Class<?> service = Class.forName(detailType.getFullQualifiedName());
+                    // getting the entity type service.
+                    final String detailTypeName = service.getSimpleName();
                     String dataType = "";
-                    try {
-                        final Class aClass = Class.forName(table);
-                        final java.lang.reflect.Method method = aClass.getMethod("getId");
-                        dataType = method.getReturnType().getSimpleName();
-                    } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
-                        throw new ApplicationRuntimeException(e.getMessage());
-                    }
-                    EntityType entity = null;
+                    final java.lang.reflect.Method method = service.getMethod("getId");
+                    dataType = method.getReturnType().getSimpleName();
                     if (dataType.equals("Long"))
-                        entity = (EntityType) entityPersistenceService.findById(Long.valueOf(
-                                payeedetail.getAccountDetailKeyId().toString()), false);
+                        entity = (EntityType) persistenceService.find(
+                                "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId().longValue());
                     else
-                        entity = (EntityType) entityPersistenceService.findById(payeedetail.getAccountDetailKeyId(), false);
+                        entity = (EntityType) persistenceService.find(
+                                "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
                     vd.setDetailKey(entity.getCode());
                     vd.setDetailName(entity.getName());
+                	} catch (final Exception e) {
+                        final List<ValidationError> errors = new ArrayList<ValidationError>();
+                        errors.add(new ValidationError("exp", e.getMessage()));
+                        throw new ValidationException(errors);
+                    }
+                   
                 }
 
                 final BillReport billReport = new BillReport(persistenceService, vd, cbill, budgetApprDetails);
@@ -546,44 +536,37 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final Set<EgBillPayeedetails> egBillPaydetailes = detail.getEgBillPaydetailes();
                 for (final EgBillPayeedetails payeedetail : egBillPaydetailes)
                 {
-                    final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                            "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
-                    vd.setDetailTypeName(detailType.getName());
-                    final String table = detailType.getFullQualifiedName();
-                    Class<?> service;
-                    try {
-                        service = Class.forName(table);
-                    } catch (final ClassNotFoundException e1) {
-                        LOGGER.error(e1.getMessage(), e1);
-                        throw new ValidationException(Arrays.asList(new ValidationError("", "")));
-                    }
-                    String simpleName = service.getSimpleName();
-                    // simpleName=simpleName.toLowerCase()+"Service";
-                    simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
-                    final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
-                            .getServletContext());
-                    // EntityTypeService entityService= (EntityTypeService)wac.getBean(simpleName);
-                    final PersistenceService entityPersistenceService = (PersistenceService) wac.getBean(simpleName);
-                    // it may give error since it is finding from session
-                    // entityPersistenceService.
-                    String dataType = "";
-                    try {
-                        final Class aClass = Class.forName(table);
-                        final java.lang.reflect.Method method = aClass.getMethod("getId");
-                        dataType = method.getReturnType().getSimpleName();
-                    } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
-                        throw new ApplicationRuntimeException(e.getMessage());
-                    }
-                    EntityType entity = null;
-                    if (dataType.equals("Long"))
-                        entity = (EntityType) entityPersistenceService.findById(Long.valueOf(
-                                payeedetail.getAccountDetailKeyId().toString()), false);
-                    else
-                        entity = (EntityType) entityPersistenceService.findById(payeedetail.getAccountDetailKeyId(), false);
-                    vd.setDetailKey(entity.getCode());
-                    vd.setDetailName(entity.getName());
+                    
+                    try{
+                    	EntityType entity = null;
+                      final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
+                              "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
+                      vd.setDetailTypeName(detailType.getName());
+                      
+                      final Class<?> service = Class.forName(detailType.getFullQualifiedName());
+                      // getting the entity type service.
+                      final String detailTypeName = service.getSimpleName();
+                      String dataType = "";
+                      final java.lang.reflect.Method method = service.getMethod("getId");
+                      dataType = method.getReturnType().getSimpleName();
+                      if (dataType.equals("Long"))
+                          entity = (EntityType) persistenceService.find(
+                                  "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId().longValue());
+                      else
+                          entity = (EntityType) persistenceService.find(
+                                  "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
+                      vd.setDetailKey(entity.getCode());
+                      vd.setDetailName(entity.getName());
+                  	} catch (final Exception e) {
+                          final List<ValidationError> errors = new ArrayList<ValidationError>();
+                          errors.add(new ValidationError("exp", e.getMessage()));
+                          throw new ValidationException(errors);
+                      }
                 }
+                
+                
+                
+                
 
                 final BillReport billReport = new BillReport(persistenceService, vd, cbill, budgetApprDetails);
                 billReportList.add(billReport);
@@ -615,6 +598,14 @@ public class ExpenseBillPrintAction extends BaseFormAction {
 
 	public void setEisCommonService(EisCommonService eisCommonService) {
 		this.eisCommonService = eisCommonService;
+	}
+
+	public FinancialYearDAO getFinancialYearDAO() {
+		return financialYearDAO;
+	}
+
+	public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+		this.financialYearDAO = financialYearDAO;
 	}
 	
 }

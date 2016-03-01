@@ -68,11 +68,6 @@ public class TpboController extends GenericController {
         return "tpbo-create";
     }
 
-    @ModelAttribute("revenueInspectorRecord")
-    public RevenueInspector RevenueInspectorRecord() {
-        return new RevenueInspector();
-    }
-
     @ModelAttribute("revenueInspector")
     public RevenueInspector RevenueInspector() {
         return new RevenueInspector();
@@ -82,8 +77,8 @@ public class TpboController extends GenericController {
     public String create(@Valid @ModelAttribute RevenueInspector revenueInspector, final BindingResult errors,
             final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            redirectAttrs.addFlashAttribute("revenueInspectorRecord", revenueInspector);
-            redirectAttrs.addFlashAttribute("code", "Unique.revenueInspectorRecord.code");
+            redirectAttrs.addFlashAttribute("revenueInspector", revenueInspector);
+            redirectAttrs.addFlashAttribute("code", "Unique.revenueInspector.code");
             return "tpbo-create";
         }
         revenueInspector = revenueInspectorService.create(revenueInspector);

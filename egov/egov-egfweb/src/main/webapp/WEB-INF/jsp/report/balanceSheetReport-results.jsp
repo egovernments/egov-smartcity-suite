@@ -38,6 +38,16 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<link href="/EGF/resources/css/budget.css" rel="stylesheet"
+	type="text/css" />
+<style type="text/css">
+@media print {
+	div#exportButton {
+		display: none;
+	}
+}
+</style>
+
 <s:if test="%{balanceSheet.size()>0}">
 	<div id="budgetSearchGrid"
 		style="width: 1250px; overflow-x: auto; overflow-y: hidden;">
@@ -175,7 +185,7 @@
 					</td>
 				</tr>
 			</table>
-			<div class="buttonbottom">
+			<div class="buttonbottom" id="exportButton">
 				<s:text name="report.export.options" />
 				: <a
 					href='/EGF/report/balanceSheetReport-generateBalanceSheetXls.action?showDropDown=false&model.period=<s:property value="model.period"/>&model.currency=<s:property value="model.currency"/>&model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.fund.id=<s:property value="model.fund.id"/>&model.asOndate=<s:property value="model.asOndate"/>&model.function.id=<s:property value="model.function.id"/>&model.functionary.id=<s:property value="model.functionary.id"/>&model.field.id=<s:property value="model.field.id"/>'>Excel</a>

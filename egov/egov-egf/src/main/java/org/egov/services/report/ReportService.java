@@ -204,6 +204,12 @@ public abstract class ReportService {
         final SimpleDateFormat formatter = Constants.DDMMYYYYFORMAT1;
         return formatter.format(date);
     }
+    
+    public String getFormattedDate2(final Date date) {
+        final SimpleDateFormat formatter = Constants.DDMMYYYYFORMAT2;
+        return formatter.format(date);
+    }
+    
 //TODO- Use the common method instead
     public String getAppConfigValueFor(final String module, final String key) {
         try {
@@ -319,7 +325,7 @@ public abstract class ReportService {
         CFinancialYear financialYear = null;
         if ("Date".equalsIgnoreCase(statement.getPeriod())
                 && statement.getAsOndate() != null) {
-            final String financialYearId = financialYearDAO.getFinancialYearId(getFormattedDate(statement.getAsOndate()));
+            final String financialYearId = financialYearDAO.getFinancialYearId(getFormattedDate2(statement.getAsOndate()));
             financialYear = financialYearDAO
                     .getFinancialYearById(Long.valueOf(financialYearId));
             statement.setFinancialYear(financialYear);

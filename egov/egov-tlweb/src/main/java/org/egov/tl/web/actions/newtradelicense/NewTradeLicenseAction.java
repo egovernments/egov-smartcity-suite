@@ -141,7 +141,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         tradeLicense.setTradeArea_weight(newTradeAreWt);
         }
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
-                && (tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING)|| tradeLicense.getState().getValue().equals(Constants.WF_STATE_RENEWAL_COMM_APPROVED))&& tradeLicense != null
+                && (tradeLicense.getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))&& tradeLicense != null
                 && !tradeLicense.isPaid() &&
                 !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
             prepareNewForm();

@@ -48,7 +48,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -62,7 +61,6 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptDetailInfo;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptMisc;
-import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.service.ChallanService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
@@ -105,6 +103,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Results({ @Result(name = ChallanAction.NEW, location = "challan-new.jsp"),
     @Result(name = CollectionConstants.CREATERECEIPT, location = "challan-createReceipt.jsp"),
+    @Result(name = CollectionConstants.CANCELRECEIPT, location = "challan-cancelReceipt.jsp"),
     @Result(name = ChallanAction.SUCCESS, location = "challan-success.jsp"),
     @Result(name = CollectionConstants.VIEW, location = "challan-view.jsp"),
     @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp") })
@@ -233,6 +232,7 @@ public class ChallanAction extends BaseFormAction {
 
     private Long serviceId;
     private ChallanService challanService;
+    private String approverName;
 
     /**
      * An array of <code>ReceiptHeader</code> instances which have to be
@@ -264,8 +264,9 @@ public class ChallanAction extends BaseFormAction {
      */
     @Action(value = "/receipts/challan-newform")
     public String newform() {
-        // addDropdownData("designationMasterList",collectionsUtil.
-        // getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(),receiptHeader));
+        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
+        setDeptId(loginUserDepartment.getId().toString());
+        setDept(loginUserDepartment);
         addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
                 collectionsUtil.getLoggedInUser(), receiptHeader));
         return NEW;
@@ -295,7 +296,9 @@ public class ChallanAction extends BaseFormAction {
             return saveChallan();
         else
             challanService.workflowtransition(receiptHeader.getChallan(), position, actionName, approvalRemarks);
-
+        
+        if(receiptHeader.getChallan().getState()!=null && receiptHeader.getChallan().getState().getOwnerPosition()!=null)
+        approverName = collectionsUtil.getApproverName(receiptHeader.getChallan().getState().getOwnerPosition());
         return SUCCESS;
     }
 
@@ -347,15 +350,12 @@ public class ChallanAction extends BaseFormAction {
                 collectionsUtil.getLoggedInUser(), receiptHeader));
 
         populateAndPersistChallanReceipt();
-
-        addActionMessage(getText("challan.savechallan.success", new String[] { receiptHeader.getChallan()
+        if(receiptHeader.getChallan().getState()!=null && receiptHeader.getChallan().getState().getOwnerPosition()!=null)
+        addActionMessage(getText("challan.savechallan.success", new String[] {collectionsUtil.getApproverName(receiptHeader.getChallan().getState().getOwnerPosition()), receiptHeader.getChallan()
                 .getChallanNumber() }));
 
         if (CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName))
             return SUCCESS;
-        if (CollectionConstants.WF_ACTION_NAME_MODIFY_CHALLAN.equals(actionName))
-            setSourcePage("");
-
         return viewChallan();
     }
 
@@ -371,8 +371,9 @@ public class ChallanAction extends BaseFormAction {
         else
             receiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
                     CollectionConstants.QUERY_RECEIPT_BY_CHALLANID, Long.valueOf(challanId));
-        // addDropdownData("designationMasterList",collectionsUtil.
-        // getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(),receiptHeader));
+        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
+        setDeptId(loginUserDepartment.getId().toString());
+        setDept(loginUserDepartment);
         addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
                 collectionsUtil.getLoggedInUser(), receiptHeader));
         loadReceiptDetails();
@@ -476,6 +477,7 @@ public class ChallanAction extends BaseFormAction {
      *
      * @return
      */
+    @Action(value = "/receipts/challan-cancelReceipt")
     public String cancelReceipt() {
         if (getSelectedReceipts() != null && getSelectedReceipts().length > 0) {
             receiptHeader = receiptHeaderService.findById(Long.valueOf(selectedReceipts[0]), false);
@@ -489,6 +491,7 @@ public class ChallanAction extends BaseFormAction {
      *
      * @return
      */
+    @Action(value = "/receipts/challan-saveOnCancel")
     public String saveOnCancel() {
         boolean isInstrumentDeposited = false;
         setSourcePage(CollectionConstants.CANCELRECEIPT);
@@ -979,13 +982,8 @@ public class ChallanAction extends BaseFormAction {
                     && receiptHeader.getChallan().getService().getId() == -1)
                 receiptHeader.getChallan().setService(null);
         }
-
-        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
-
         addDropdownData("designationMasterList", new ArrayList());
         addDropdownData("postionUserList", new ArrayList());
-        setDeptId(loginUserDepartment.getId().toString());
-        setDept(loginUserDepartment);
         setCurrentFinancialYearId(collectionCommon.getFinancialYearIdByDate(new Date()));
         /**
          * super class prepare is called at the end to ensure that the modified
@@ -1428,5 +1426,13 @@ public class ChallanAction extends BaseFormAction {
 
     public void setChallanService(final ChallanService challanService) {
         this.challanService = challanService;
+    }
+
+    public String getApproverName() {
+        return approverName;
+    }
+
+    public void setApproverName(String approverName) {
+        this.approverName = approverName;
     }
 }

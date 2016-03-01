@@ -364,7 +364,7 @@
                     </div>
                 </div>
         <script	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>        
-        <script src="../resources/js/app/newtrade.js"></script>
-        <script src="../resources/js/app/searchTrade.js"></script>
+        <script src="../resources/js/app/newtrade.js?rnd=${app_release_no}"></script>
+        <script src="../resources/js/app/searchTrade.js?rnd=${app_release_no}"></script>
     </body>
 </html>

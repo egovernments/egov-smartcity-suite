@@ -185,14 +185,14 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             if (isFieldMandatory(Constants.FUNCTION))
                 addDropdownData("functionList",
                         persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false  order by name"));
-            if (shouldShowHeaderField(Constants.FUNCTIONARY))
+            if (isFieldMandatory(Constants.FUNCTIONARY))
                 addDropdownData("functionaryList",
                         persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
-            if (shouldShowHeaderField(Constants.FUND))
+            if (isFieldMandatory(Constants.FUND))
                 addDropdownData("fundList",
                         persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
-            if (shouldShowHeaderField(Constants.FIELD))
-            addDropdownData("fieldList",
+            if (isFieldMandatory(Constants.FIELD))
+                addDropdownData("fieldList",
                         persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
             if (isFieldMandatory(Constants.SCHEME))
                 addDropdownData("schemeList", Collections.EMPTY_LIST);

@@ -111,7 +111,7 @@
 			</s:form>
 		</div>
 	</div>
-	<script src="../resources/js/app/newtrade.js"></script>
+	<script src="../resources/js/app/newtrade.js?rnd=${app_release_no}"></script>
 	<script>
 	jQuery('#subCategory').change(function(){
 		jQuery.ajax({

@@ -53,7 +53,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
@@ -130,10 +129,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Transactional
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
-
-        if(null !=license && null !=license.getState() && license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
-           updateDemandForChangeTradeArea(license);
-         }
         licensePersitenceService().persist(license);
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
         updateIndexService.updateTradeLicenseIndexes(license);
@@ -182,6 +177,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                         .find("from org.egov.tl.entity.LicenseStatus where code='CAN'");
                 license.setStatus(activeStatus);
             }
+        if(null !=license && null !=license.getState() && license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
+            updateDemandForChangeTradeArea(license);
+          }
     }
 
     public ReportRequest prepareReportInputData(final License license) {

@@ -85,13 +85,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/pdf", "contentDisposition", "no-cache;filename=PendingTDSReport.pdf" }),
+                "application/pdf", "contentDisposition", "no-cache;filename=DeductionDetailedReport.pdf" }),
         @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/xls", "contentDisposition", "no-cache;filename=PendingTDSReport.xls" }),
+                "application/xls", "contentDisposition", "no-cache;filename=DeductionDetailedReport.xls" }),
         @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=TdsSummaryReport.pdf" }),
+                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=DeductionsRemittanceSummary.pdf" }),
         @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                "contentType", "application/xls", "contentDisposition", "no-cache;filename=TdsSummaryReport.xls" }),
+                "contentType", "application/xls", "contentDisposition", "no-cache;filename=DeductionsRemittanceSummary.xls" }),
         @Result(name = "results", location = "pendingTDSReport-results.jsp"),
         @Result(name = "entities", location = "pendingTDSReport-entities.jsp"),
         @Result(name = "summaryForm", location = "pendingTDSReport-summaryForm.jsp"),
@@ -112,6 +112,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     private InputStream inputStream;
     private ReportService reportService;
     private String partyName = "";
+    private String type = "";
     private Integer detailKey;
     private boolean showRemittedEntries = false;
     private List<RemittanceBean> pendingTDS = new ArrayList<RemittanceBean>();
@@ -224,10 +225,10 @@ public class PendingTDSReportAction extends BaseFormAction {
         {
             final String formatedFromDate = Constants.DDMMYYYYFORMAT2.format(fromDate);
             paramMap.put("fromDate", formatedFromDate);
-            paramMap.put("heading", "Pending TDS report From " + formatedFromDate + "  to " + formatedAsOndate);
+            paramMap.put("heading", "Deduction detailed report for "+ recovery.getType() +" From " + formatedFromDate + "  to " + formatedAsOndate);
             paramMap.put("fromDateText", "From Date :      " + formatedFromDate);
         } else
-            paramMap.put("heading", "Pending TDS report as on " + formatedAsOndate);
+            paramMap.put("heading", "Deduction detailed report for "+ recovery.getType() +" as on " + formatedAsOndate);
         fund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
         paramMap.put("fundName", fund.getName());
         paramMap.put("partyName", partyName);
@@ -244,10 +245,16 @@ public class PendingTDSReportAction extends BaseFormAction {
         if (getFieldErrors().size() > 0)
             return;
         recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
+        type = recovery.getType();
         String deptQuery = "";
         String partyNameQuery = "";
         final RemittanceBean remittanceBean = new RemittanceBean();
         remittanceBean.setRecoveryId(recovery.getId());
+        if (department.getId() != null && department.getId() != -1)
+            deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.vouchermis.departmentid.id="
+                    + department.getId();
+        if (detailKey != null && detailKey != -1)
+            partyNameQuery = " and egRemittanceGldtl.generalledgerdetail.detailkeyid=" + detailKey;
         if (fromDate != null)
             remittanceBean.setFromDate(Constants.DDMMYYYYFORMAT1.format(fromDate));
         pendingTDS = remitRecoveryService.getRecoveryDetailsForReport(remittanceBean, getVoucherHeader(), detailKey);
@@ -653,6 +660,14 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

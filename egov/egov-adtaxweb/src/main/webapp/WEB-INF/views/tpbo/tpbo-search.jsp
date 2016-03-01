@@ -44,12 +44,11 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form id="searchrevenueinspectorform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="revenueInspectorRecord" commandName="revenueInspectorRecord">
+		<form:form id="searchrevenueinspectorform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="revenueInspector" commandName="revenueInspector">
 			<div class="panel panel-primary" data-collapsed="0">
-				
 				<div class="panel-body"> 	
 					<div class="form-group">
-					<form:hidden name="id" path="id" id="id" value="${revenueInspectorRecord.id}"/>	
+					
                     	<label class="col-sm-5 control-label text-right">
                     		<spring:message code="lbl.tpbo.name"/><span class="mandatory"></span>
                     	</label>
@@ -82,4 +81,4 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/app/js/searchadvertisement.js'/>"></script>
+<script src="<c:url value='/resources/app/js/tpbo.js'/>"></script>

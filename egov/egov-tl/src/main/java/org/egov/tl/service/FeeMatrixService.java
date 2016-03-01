@@ -48,7 +48,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.FeeMatrix;
@@ -86,7 +85,7 @@ public class FeeMatrixService<T extends License> {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    
+
     @Autowired
     public FeeMatrixService(final FeeMatrixRepository feeMatrixRepository) {
         this.feeMatrixRepository = feeMatrixRepository;
@@ -126,9 +125,6 @@ public class FeeMatrixService<T extends License> {
      */
     public List<FeeMatrixDetail> findFeeList(final T license) {
 
-        final List<FeeType> allFees = feeTypeService.findAll();
-        final Long uomId = license.getTradeName().getLicenseSubCategoryDetails().get(0).getUom().getId();
-        String uniqueNo = "";
         final List<AppConfigValues> newRenewAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License",
                 "Is Fee For New and Renew Same");
         final boolean isnew_renewfee_same = newRenewAppconfigList.get(0).getValue().equals("Y");
@@ -140,6 +136,7 @@ public class FeeMatrixService<T extends License> {
         final LicenseAppType newapp = (LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' ");
         final NatureOfBusiness permanent = (NatureOfBusiness) persistenceService
                 .find("from org.egov.tl.entity.NatureOfBusiness where   name='Permanent'");
+        String uniqueNo;
         if (isnew_renewfee_same && ispermanent_temporaryfee_same)
             uniqueNo = generateFeeMatirixUniqueNo(license, newapp, permanent);
         else if (isnew_renewfee_same)
@@ -151,21 +148,20 @@ public class FeeMatrixService<T extends License> {
 
         final Date applicationDate = license.getApplicationDate();
 
-        final CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(applicationDate);
-
         final List<FeeMatrixDetail> feeMatrixDetailList = new ArrayList<FeeMatrixDetail>();
-        FeeMatrixDetail feeMatrixDetail = null;
-        FeeMatrix feeMatrix = null;
-        for (final FeeType fee : allFees)
+        final CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(applicationDate);
+        final Long uomId = license.getTradeName().getLicenseSubCategoryDetails().get(0).getUom().getId();
+        for (final FeeType fee : feeTypeService.findAll())
             if (fee.getFeeProcessType().equals(FeeType.FeeProcessType.RANGE))
                 switchLoop: switch (fee.getCode()) {
                 // First find License Fee with UOM
                 case "LF":
-                    feeMatrix = feeMatrixRepository
+                    final FeeMatrix feeMatrix = feeMatrixRepository
                             .findByUniqueNo(uniqueNo + "-" + fee.getId() + "-" + uomId + "-" + financialYearByDate.getId());
                     if (feeMatrix == null)
                         throw new ValidationException("TL-002", "TL-002");
-                    feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix, license.getTradeArea_weight(),
+                    final FeeMatrixDetail feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,
+                            license.getTradeArea_weight(),
                             license.getApplicationDate(), financialYearByDate.getId());
                     if (feeMatrixDetail == null)
                         throw new ValidationException("TL-003", "TL-003");
@@ -180,7 +176,7 @@ public class FeeMatrixService<T extends License> {
     public List<FeeMatrix> findBySubCategory(final LicenseSubCategory subCategory) {
         return feeMatrixRepository.findBySubCategory(subCategory);
     }
-    
+
     private String generateFeeMatirixUniqueNo(final T license, final NatureOfBusiness permanent) {
         return new StringBuilder().append(permanent.getId()).append("-").append(license.getLicenseAppType().getId())
                 .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();

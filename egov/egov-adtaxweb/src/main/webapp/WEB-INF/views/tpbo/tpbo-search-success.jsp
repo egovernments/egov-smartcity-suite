@@ -44,7 +44,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form  id="revenueinspectorsearchsuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="revenueInspectorRecord" >
+		<form:form  id="revenueinspectorsearchsuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="revenueInspector" commandName="revenueInspector">
 	 		<c:if test="${not empty message}">
                 <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
             </c:if>
@@ -59,17 +59,17 @@
 					<div class="row add-border">
                     	<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.tpbo.name"/></div>
                         <div class="col-md-3 col-xs-6 add-margin view-content">
-                        	<c:out value="${revenueInspectorRecord.name}"></c:out>
+                        	<c:out value="${revenueInspector.name}"></c:out>
                         	<input id="name" type="hidden"
-								value="<c:out value="${revenueInspectorRecord.name}" />" />
+								value="<c:out value="${revenueInspector.name}" />" />
                         </div>
+                        <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.tpbo.code"/></div>
+						<div class="col-sm-3 add-margin view-content">
+                           	<c:out value="${revenueInspector.code}"></c:out>
+						</div>
                         <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.rateClass.active"/></div>
 						<div class="col-sm-3 add-margin view-content">
-                           	<c:out value="${revenueInspectorRecord.active}"></c:out>
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.tpbo.code"/></div>
-						<div class="col-sm-3 add-margin view-content">
-                           	<c:out value="${revenueInspectorRecord.code}"></c:out>
+                           	<c:out value="${revenueInspector.active}"></c:out>
 						</div>
                     </div>
            		</div>

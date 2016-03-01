@@ -138,7 +138,9 @@ public class BankAction extends BaseFormAction {
                 bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
                 bankService.persist(bank);
             } else {
-                bank.setLastmodified(new Date());
+                final Date currentDate = new Date();
+                bank.setCreated(currentDate);
+                bank.setLastmodified(currentDate);
                 bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
                 bankService.update(bank);
             }

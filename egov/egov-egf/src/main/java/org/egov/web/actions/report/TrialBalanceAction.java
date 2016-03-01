@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,6 +72,7 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -144,10 +146,10 @@ public class TrialBalanceAction extends BaseFormAction {
     private String removeEntrysWithZeroAmount = "";
     @Autowired
     private AppConfigValueService appConfigValuesService;
-
-    public void setFinancialYearDAO(final FinancialYearDAO financialYearDAO) {
-        this.financialYearDAO = financialYearDAO;
-    }
+    private Date startDate = new Date();
+    private Date endDate = new Date();
+    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    
 
     @Override
     public Object getModel() {
@@ -212,6 +214,37 @@ public class TrialBalanceAction extends BaseFormAction {
     @Action(value = "/report/trialBalance-search")
     public String search()
     {
+    	if (rb.getReportType().equalsIgnoreCase("daterange"))
+    	{
+    	String sDate=parameters.get("fromDate")[0];
+    	String eDate=parameters.get("toDate")[0];
+        Date dt=new Date();
+        Date dd=dt;
+            try {
+				dt = sdf.parse(sDate);
+			} catch (ParseException e1) {
+				
+				e1.printStackTrace();
+			}
+        
+        	CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
+        	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        	try {
+				dd = sdf.parse(eDate);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+            String endFormat = formatter.format(dd);
+            	String	endDate1 =formatter.format(finYearByDate.getEndingDate());
+            	
+            	if(endFormat.compareTo(endDate1)>0)
+            	{
+                    	addActionError(getText("End date should be within a financial year"));
+                    	return "new";
+                    
+            	}
+    	}
         try {
             final List<AppConfigValues> configValues = appConfigValuesService.
                     getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
@@ -1066,6 +1099,24 @@ public class TrialBalanceAction extends BaseFormAction {
 			AppConfigValueService appConfigValuesService) {
 		this.appConfigValuesService = appConfigValuesService;
 	}
-    
+	public void setEndDate(final Date endDate) {
+        this.endDate = endDate;
+    }
 
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setStartDate(final Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+    public void setFinancialYearDAO(final FinancialYearDAO financialYearDAO) {
+        this.financialYearDAO = financialYearDAO;
+    }
+    
+    
 }
