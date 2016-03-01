@@ -8,7 +8,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">SearchRecovery</div>
+						<div class="panel-title">Search Recovery</div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
@@ -21,8 +21,8 @@
 										<spring:message code="lbl.select" />
 									</form:option>
 									<c:forEach var="chartOfAccounts" items="${chartOfAccounts}">
-										<option value="${chartOfAccounts.id}"
-											label="${chartOfAccounts.glcode} -  ${chartOfAccounts.name}" />
+										<option value="${chartOfAccounts.id}">${chartOfAccounts.glcode}
+											- ${chartOfAccounts.name}</option>
 									</c:forEach>
 								</form:select>
 								<form:errors path="chartofaccounts" cssClass="error-msg" />
