@@ -54,7 +54,7 @@
         	
     		
         	var url2 = path+"/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService.action";
-        	makeJSONCall(["functionIdDetail","functionDetail","glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
+        	makeJSONCall(["glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
         	,url2,{serviceId:service,deptId:dept},loadFinAccSuccessHandler,loadFinAccFailureHandler);
         
         	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
@@ -177,8 +177,6 @@ loadFinAccSuccessHandler=function(req,res){
       billCreditDetailsTable.deleteRows(0,noOfRows); 
       billDetailTableIndex = 0;
 	  billCreditDetailsTable.addRow({SlNo:billCreditDetailsTable.getRecordSet().getLength()+1,
-	 		"functionid":"",
-	 		 "function":"",
              "glcodeid":"",
              "glcode":"",
              "accounthead":"",
@@ -190,8 +188,6 @@ loadFinAccSuccessHandler=function(req,res){
 	for(i=0;i<res.results.length-1;i++){
 		
 	  	 billCreditDetailsTable.addRow({SlNo:billCreditDetailsTable.getRecordSet().getLength()+1,
-	  	 			"functionid":res.results[i].functionIdDetail,
-	  	 			"function":res.results[i].functionDetail,
                     "glcodeid":res.results[i].glcodeIdDetail,
                     "glcode":res.results[i].glcodeDetail,
                     "accounthead":res.results[i].accounthead,
@@ -201,8 +197,6 @@ loadFinAccSuccessHandler=function(req,res){
        }
        
         for(i=0;i<res.results.length;i++){  
-        		updateGridMisc(VOUCHERCREDITDETAILLIST,'functionIdDetail',i,res.results[i].functionIdDetail);
-      		 	updateGridMisc(VOUCHERCREDITDETAILLIST,'functionDetail',i,res.results[i].functionDetail);
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeIdDetail',i,res.results[i].glcodeIdDetail);
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeDetail',i,res.results[i].glcodeDetail);
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'accounthead',i,res.results[i].accounthead);
