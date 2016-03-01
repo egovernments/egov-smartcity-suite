@@ -120,30 +120,34 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Override
     @Transactional
-    public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
+    public void updateDemandDetails(final BillReceiptInfo billRcptInfo) throws ApplicationRuntimeException {
         final BigDecimal totalAmount = billRcptInfo.getTotalAmount();
         final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         final String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
                 .getConsumerCode();
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("updateDemandDetails : Demand before proceeding : " + demand);
-            LOGGER.debug("updateDemandDetails : collection back update started for property : " + indexNo
-                    + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is." + totalAmount
-                    + " with receipt no." + billRcptInfo.getReceiptNum());
-        }
+        try {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("updateDemandDetails : Demand before proceeding : " + demand);
+                LOGGER.debug("updateDemandDetails : collection back update started for property : " + indexNo
+                        + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is." + totalAmount
+                        + " with receipt no." + billRcptInfo.getReceiptNum());
+            }
 
-        if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
-            updateCollForRcptCreate(demand, billRcptInfo, totalAmount);
-            updateWaterConnectionDetails(demand);
-            updateWaterTaxIndexes(demand);
-        } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
-            updateCollectionForRcptCancel(demand, billRcptInfo);
-            updateWaterConnDetailsStatus(demand, billRcptInfo);
-            updateWaterTaxIndexes(demand);
+            if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
+                updateCollForRcptCreate(demand, billRcptInfo, totalAmount);
+                updateWaterConnectionDetails(demand);
+                updateWaterTaxIndexes(demand);
+            } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
+                updateCollectionForRcptCancel(demand, billRcptInfo);
+                updateWaterConnDetailsStatus(demand, billRcptInfo);
+                updateWaterTaxIndexes(demand);
+            }
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
-
     }
 
     /**
@@ -189,8 +193,8 @@ public class WaterTaxCollection extends TaxCollection {
 
         final StringBuffer query = new StringBuffer(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-        .append("WHERE dmdet.egDemand.id = :demand");
+                .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+                .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
 
@@ -279,7 +283,7 @@ public class WaterTaxCollection extends TaxCollection {
         String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-            && !rcptAccInfo.getIsRevenueAccount()) {
+                    && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String[] installsplit = desc[1].split("#");
@@ -298,7 +302,7 @@ public class WaterTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                             demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
