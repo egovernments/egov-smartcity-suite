@@ -633,7 +633,15 @@ public class ChartOfAccounts {
         return true;
     }
 
-   
+    public void setBudgetDetailsDAO() {
+        budgetDetailsDAO = new BudgetDetailsHibernateDAO(BudgetDetail.class, HibernateUtil.getCurrentSession());
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("setting services manually .............................. ");
+        budgetDetailsDAO.setFinancialYearDAO(new FinancialYearHibernateDAO(CFinancialYear.class, HibernateUtil
+                .getCurrentSession()));
+
+    }
+
     public void setScriptService()
     {
         // This fix is for Phoenix Migration.

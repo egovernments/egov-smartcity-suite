@@ -120,8 +120,6 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     protected SequenceGenerator sequenceGenerator;
     private BudgetService budgetService;
     private FinancialYearDAO financialYearDAO;
-    @Autowired
-    private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
 
     public void setFinancialYearDAO(final FinancialYearDAO finYearDao) {
         financialYearDAO = finYearDao;
@@ -1643,8 +1641,10 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
             // check the account code needs budget checking
-           
-            final CChartOfAccounts coa = chartOfAccountsDAO.getCChartOfAccountsByGlCode(glCode);
+            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO = new ChartOfAccountsHibernateDAO(
+                    CChartOfAccounts.class,
+                    HibernateUtil.getCurrentSession());
+            final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
             if (coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq())
             {
                 // get budgethead for the glcode
