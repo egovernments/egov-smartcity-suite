@@ -215,7 +215,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("district", districtName);
         reportParams.put("subCategory", license.getTradeName() != null ? license.getTradeName().getName() : null);
         reportParams
-                .put("appType", license.getLicenseAppType() != null ? license.getLicenseAppType().getName() : "New");
+                .put("appType", license.getLicenseAppType() != null ? (license.getLicenseAppType().getName() !=null && license.getLicenseAppType().getName().equals("New")? "New Trade" :"Renewal") : "New");
         if (EgovThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
         reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());

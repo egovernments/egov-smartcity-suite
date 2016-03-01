@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-02-25T10:51:56 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -81,7 +79,7 @@
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["               Trade License is issued to "+$P{applicantName}+" to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " "+$P{subCategory}+ "at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+$P{licencenumber}+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["               Trade License is issued to "+$P{applicantName}+", to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " "+$P{subCategory}+ " at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+$P{licencenumber}+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="17" width="68" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
