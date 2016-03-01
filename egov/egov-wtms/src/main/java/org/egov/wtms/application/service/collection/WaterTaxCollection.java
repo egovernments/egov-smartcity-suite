@@ -184,17 +184,23 @@ public class WaterTaxCollection extends TaxCollection {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
                     + " with BillReceiptInfo - " + billRcptInfo);
-        updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
+        try {
+            updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw new ApplicationRuntimeException(
+                    "Error occured during back update of DCB : updateCollForRcptCreate() " + e.getMessage(), e);
+        }
     }
 
     @Transactional
     private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails,
             final EgDemand demand, final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
 
-        final StringBuffer query = new StringBuffer(
+        final StringBuilder query = new StringBuilder(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-                .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-                .append("WHERE dmdet.egDemand.id = :demand");
+        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+        .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
 
@@ -253,20 +259,18 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     // Receipt cancellation ,updating bill,demanddetails,demand
-
     @Transactional
     private void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
                 + " with BillReceiptInfo - " + billRcptInfo);
-        cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-
-        /*
-         * if (demand.getAmtCollected() != null && demand.getAmtCollected() != BigDecimal.ZERO)
-         * demand.setAmtCollected(demand.getAmtCollected().subtract (billRcptInfo.getTotalAmount()));
-         */
-
-        updateDmdDetForRcptCancel(demand, billRcptInfo);
-        LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
+        try {
+            cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+            updateDmdDetForRcptCancel(demand, billRcptInfo);
+            LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
+        }
     }
 
     @Transactional
@@ -283,7 +287,7 @@ public class WaterTaxCollection extends TaxCollection {
         String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                    && !rcptAccInfo.getIsRevenueAccount()) {
+            && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String[] installsplit = desc[1].split("#");
@@ -302,7 +306,7 @@ public class WaterTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                             demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
