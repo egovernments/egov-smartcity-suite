@@ -464,8 +464,9 @@ public class PropertyImpl extends StateAware implements Property {
                             .isCable(), getPropertyDetail().getSiteOwner(), getPropertyDetail().getApartment(),
                     getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
                     getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(), getPropertyDetail()
-                            .getOccupancyCertificationNo(), getPropertyDetail().isAppurtenantLandChecked(),
-                    getPropertyDetail().isBuildingPlanDetailsChecked(), getPropertyDetail().isCorrAddressDiff());
+
+                    .getOccupancyCertificationNo(), getPropertyDetail().isAppurtenantLandChecked(), getPropertyDetail()
+                            .isCorrAddressDiff());
 
         } else if (getPropertyDetail().getPropertyType().toString().equals(VACANT_PROPERTY)) {
             final VacantProperty vcp = (VacantProperty) getPropertyDetail();
@@ -490,8 +491,7 @@ public class PropertyImpl extends StateAware implements Property {
                             .isCable(), getPropertyDetail().getSiteOwner(), getPropertyDetail().getPattaNumber(),
                     getPropertyDetail().getCurrentCapitalValue(), getPropertyDetail().getMarketValue(),
                     getPropertyDetail().getCategoryType(), getPropertyDetail().getOccupancyCertificationNo(),
-                    getPropertyDetail().isAppurtenantLandChecked(), getPropertyDetail().isBuildingPlanDetailsChecked(),
-                    getPropertyDetail().isCorrAddressDiff());
+                    getPropertyDetail().isAppurtenantLandChecked(), getPropertyDetail().isCorrAddressDiff());
         }
         return propDetails;
     }
@@ -507,8 +507,9 @@ public class PropertyImpl extends StateAware implements Property {
                     flr.getPropertyOccupation(), flr.getFloorNo(), flr.getDepreciationMaster(), flr.getBuiltUpArea(),
                     flr.getFloorArea(), flr.getWaterMeter(), flr.getElectricMeter(), null, null, flr.getRentPerMonth(),
                     flr.getManualAlv(), flr.getUnitType(), flr.getUnitTypeCategory(), flr.getWaterRate(), flr.getAlv(),
-                    flr.getOccupancyDate(), flr.getOccupantName(), flr.getDrainage(),flr.getUnstructuredLand(), flr.getNoOfSeats(),
-                    flr.getFloorDmdCalc(), flr.getFirmName());
+                    flr.getOccupancyDate(), flr.getOccupantName(), flr.getUnstructuredLand(), flr.getFloorDmdCalc(),
+                    flr.getFirmName(), flr.getBuildingPermissionNo(), flr.getBuildingPermissionDate(),
+                    flr.getBuildingPlanPlinthArea());
             flrDtlsSet.add(floor);
         }
         return flrDtlsSet;

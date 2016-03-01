@@ -191,45 +191,15 @@
 				</s:else>
 			</div>
 		</div>
-
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<s:text name="building.permNo"></s:text>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A"
-					value="%{propertyDetail.buildingPermissionNo}" />
-			</div>
-			<div class="col-xs-3 add-margin">
-				<s:text name="buildingpermdate"></s:text>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<s:date name="%{propertyDetail.buildingPermissionDate}"
-					var="buildingPermNo" format="dd/MM/yyyy" />
-				<s:property default="N/A" value="%{#buildingPermNo}" />
-			</div>
-		</div>
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<s:text name="deviationper"></s:text>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<s:if test='%{propertyDetail.deviationPercentage == "" || propertyDetail.deviationPercentage == "-1" }'>N/A</s:if>
-				<s:else>
-					<s:property value="%{propertyDetail.deviationPercentage}"
-						default="N/A" />
-				</s:else>
-			</div>
-			<div class="col-xs-3 add-margin">
+			<div class="col-xs-3 add-margin"> 
 				<s:text name="rsnForCreatin"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<s:property
 					value="%{propertyDetail.propertyMutationMaster.mutationName}" />
 			</div>
-		</div>
-		<div class="row add-border">
-		    <div class="col-xs-3 add-margin">
+			<div class="col-xs-3 add-margin">
 				<s:text name="assessmentDate"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
@@ -237,6 +207,7 @@
 				<s:property default="N/A" value="%{#assessmentDate}" /> 
 			</div>
 		</div>
+		
 
 	</div>
 </div>

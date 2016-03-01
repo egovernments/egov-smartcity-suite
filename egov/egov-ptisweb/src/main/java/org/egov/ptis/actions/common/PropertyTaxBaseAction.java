@@ -349,22 +349,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Eneterd into validateBuiltUpProperty");
-        /*if (null != propertyDetail.isBuildingPlanDetailsChecked()) {
-            if (isBlank(propertyDetail.getBuildingPermissionNo()))
-                addActionError(getText("mandatory.buildingPlanNo"));
-            if (null == propertyDetail.getBuildingPermissionDate())
-                addActionError(getText("mandatory.buildingPlanDate"));
-            
-             * else if (null != regDocDate &&
-             * DateUtils.compareDates(propertyDetail
-             * .getBuildingPermissionDate(), regDocDate)) { if (modifyRsn ==
-             * null || (modifyRsn != null &&
-             * !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER) &&
-             * !modifyRsn .equals(PROPERTY_MODIFY_REASON_BIFURCATE)))
-             * addActionError(getText("regDate.greaterThan.buildingPermDate"));
-             * }
-             
-        }*/
+
         if (propertyDetail.isStructure())
             if (isBlank(propertyDetail.getSiteOwner()))
                 addActionError(getText("mandatory.siteowner"));
@@ -417,9 +402,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 addActionError(getText("mandatory.assbleWidth",msgParams));
                             }                          
                         }
-
-                       if (floor.getDrainage() && null == floor.getNoOfSeats())
-                            addActionError(getText("mandatory.noofseats"));
                                               
                         if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
                                 || floor.getPropertyUsage().getId().toString().equals("-1"))

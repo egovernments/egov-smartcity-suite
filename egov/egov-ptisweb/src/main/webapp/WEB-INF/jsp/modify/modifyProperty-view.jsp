@@ -118,7 +118,6 @@
 				enableFieldsForPropTypeView();
 				enableAppartnaumtLandDetailsView();
 				enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
-				enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 				toggleFloorDetailsView();
 				showHideFirmName();
 				showHideLengthBreadth();
@@ -229,8 +228,6 @@
 						jQuery('tr.extentSite').hide();
 						jQuery('tr.appurtenant').hide();
 						jQuery('tr.superStructureRow').hide();
-						jQuery('tr.bpddetailsheader').hide();
-						jQuery('tr.bpddetails').hide();
 						jQuery("#apartment").prop('selectedIndex', 0);
 						jQuery('td.apartmentRow').hide();
 					} else {
@@ -242,8 +239,6 @@
 						jQuery('tr.extentSite').show();
 						jQuery('tr.appurtenant').show();
 						jQuery('tr.superStructureRow').show();
-						jQuery('tr.bpddetailsheader').show();
-						jQuery('tr.bpddetails').show();
 						jQuery('td.apartmentRow').show();
 					}
 				}

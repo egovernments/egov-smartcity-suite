@@ -907,7 +907,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
                 propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
                 propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
-                propertyDetail.isAppurtenantLandChecked(), propertyDetail.isBuildingPlanDetailsChecked(),
+                propertyDetail.isAppurtenantLandChecked(),
                 propertyDetail.isCorrAddressDiff());
 
         vacantProperty.setManualAlv(propertyDetail.getManualAlv());

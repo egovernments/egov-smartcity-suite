@@ -106,7 +106,6 @@ public class BuiltUpProperty extends AbstractProperty {
     private String categoryType;
     private String occupancyCertificationNo;
     private Boolean appurtenantLandChecked;
-    private Boolean buildingPlanDetailsChecked;
     private Boolean corrAddressDiff;
 
     public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
@@ -120,7 +119,7 @@ public class BuiltUpProperty extends AbstractProperty {
             WoodType woodType, boolean lift, boolean toilets, boolean waterTap, boolean structure, boolean electricity,
             boolean attachedBathRoom, boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
             String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
-            String occupancyCertificationNo, Boolean appurtenantLandChecked, Boolean buildingPlanDetailsChecked,
+            String occupancyCertificationNo, Boolean appurtenantLandChecked,
             Boolean corrAddressDiff) {
         super();
         this.sitalArea = sitalArea;
@@ -172,7 +171,6 @@ public class BuiltUpProperty extends AbstractProperty {
         this.categoryType = categoryType;
         this.occupancyCertificationNo = occupancyCertificationNo;
         this.appurtenantLandChecked = appurtenantLandChecked;
-        this.buildingPlanDetailsChecked = buildingPlanDetailsChecked;
         this.corrAddressDiff = corrAddressDiff;
     }
 
@@ -926,16 +924,6 @@ public class BuiltUpProperty extends AbstractProperty {
     @Override
     public void setAppurtenantLandChecked(Boolean appurtenantLandChecked) {
         this.appurtenantLandChecked = appurtenantLandChecked;
-    }
-
-    @Override
-    public Boolean isBuildingPlanDetailsChecked() {
-        return buildingPlanDetailsChecked;
-    }
-
-    @Override
-    public void setBuildingPlanDetailsChecked(Boolean buildingPlanDetailsChecked) {
-        this.buildingPlanDetailsChecked = buildingPlanDetailsChecked;
     }
 
     @Override

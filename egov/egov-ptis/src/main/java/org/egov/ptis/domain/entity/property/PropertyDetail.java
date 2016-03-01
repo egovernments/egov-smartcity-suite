@@ -359,10 +359,6 @@ public interface PropertyDetail extends Property {
 
     public void setAppurtenantLandChecked(Boolean appurtenantLandChecked);
 
-    public Boolean isBuildingPlanDetailsChecked();
-
-    public void setBuildingPlanDetailsChecked(Boolean buildingPlanDetailsChecked);
-
     public List<Floor> getFloorDetailsProxy();
 
     public void setFloorDetailsProxy(List<Floor> floorDetailsProxy);

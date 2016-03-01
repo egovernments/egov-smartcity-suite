@@ -78,7 +78,6 @@
 		enableFieldsForPropTypeView(propType, appurtenantLandChecked);
 		enableAppartnaumtLandDetailsView();
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="property.propertyDetail.structure"]'));
-		enableOrDisableBPADetails(jQuery('input[name="property.propertyDetail.buildingPlanDetailsChecked"]'));
 		//toggleFloorDetailsView();
 		<s:if test="(objection.egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED))" >
 			showHideFirmName();
@@ -471,12 +470,7 @@
 					</td>
 				</tr>
 			</table>
-			<div id="loadingMask" style="display: none">
-				<p align="center">
-					<img src="/egi/images/bar_loader.gif"> <span id="message"><p
-							style="color: red">Please wait....</p></span>
-				</p>
-			</div>
+		
 			<div class="buttonbottom" align="center">
 
 				<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>

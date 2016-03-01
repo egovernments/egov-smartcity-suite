@@ -60,26 +60,26 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox">
+		<td class="bluebox2">
 			&nbsp;
 		</td>
-		<td class="greybox">
+		<td class="bluebox">
 			<s:text name="OwnerName" />
 			:
 		</td>
-		<td class="greybox">
+		<td class="bluebox">
 			<span class="bold"><s:property default="N/A"
 					value="%{ownerName}" /> </span>
 		</td>
- 		<td class="greybox">
+ 		<td class="bluebox">
 			<s:text name="MobileNumber" />:
 		</td>
-		<td class="greybox">
+		<td class="bluebox">
 			<span class="bold"><s:property value="%{basicProperty.mobileNumber}" default="N/A"/></span>
 		</td>
 	</tr>
 <tr>
-		<td class="bluebox2">
+		<td class="bluebox">
 			&nbsp;
 		</td>
 		<td class="bluebox" width="8%">
@@ -106,35 +106,35 @@
 	</tr>
 	
 <tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
-		<td class="greybox" width="">
+		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="25%"><s:text name="reg.docno"/> :</td>
+		<td class="bluebox" width="">
 			<span class="bold"><s:property value="%{basicProperty.regdDocNo}" default="N/A"/></span>
 		</td>
-		<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
-		<td class="greybox"><span class="bold"> <s:date
+		<td class="bluebox" width="25%"><s:text name="reg.docdate"/> :</td>
+		<td class="bluebox"><span class="bold"> <s:date
 					name="basicProperty.regdDocDate" format="dd/MM/yyyy" />
 		</span></td>
 	</tr>
 	<tr class="extentSite">
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
-		<td class="greybox" width="">
+		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="25%"><s:text name="extent.site"/> :</td>
+		<td class="bluebox" width="">
 		   <span class="bold"><s:property value="%{property.propertyDetail.sitalArea.area}" default="N/A"/></span>
 		</td>
-		<td class="greybox" width="25%"></td>
-		<td class="greybox">
+		<td class="bluebox" width="25%"></td>
+		<td class="bluebox">
 		</td>
 	</tr>
 
 		<tr class="superStructureRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
-		<td class="greybox">
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
+		<td class="bluebox">
 			<span class="bold"><s:checkbox name="property.propertyDetail.structure" disabled="true"/></span>
 		</td>
-		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox siteowner">
+		<td class="bluebox siteowner"><s:text name="siteowner"></s:text>:</td>
+		<td class="bluebox siteowner">
 			<span class="bold"><s:property value="%{property.propertyDetail.siteOwner}" default="N/A"/></span>
 		</td>
 	</tr>
@@ -151,87 +151,55 @@
 	</tr>
 	
 	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> :</td>
-		<td class="greybox" width="">
+		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="25%"><s:text name="ownership.type"></s:text> :</td>
+		<td class="bluebox" width="">
 			<span class="bold"><s:property value="%{property.propertyDetail.propertyTypeMaster.type}" default="N/A"/></span>
 		</td>
-		<td class="greybox" width="25%"><s:text name="property.type"></s:text></td>
-		<td class="greybox">
+		<td class="bluebox" width="25%"><s:text name="property.type"></s:text></td>
+		<td class="bluebox">
 			<span class="bold"><s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_TYPE_CATEGORIES.get(property.propertyDetail.categoryType)}" default="N/A"/></span>
 		</td>
 	</tr>
 	<tr id="apartmentRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox">
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="bluebox">
 			<span class="bold"><s:property value="%{property.propertyDetail.apartment.name}" default="N/A"/></span>
 		</td>
-		<td class="greybox" colspan="2">
+		<td class="bluebox" colspan="2">
 			&nbsp;			
 		</td>
 	</tr>
 	
 	<tr class="appurtenant">
-		<td class="greybox">&nbsp;</td>
+		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="isextent.appurtntland" /> : </td>
 		<td class="bluebox"><s:checkbox name="property.propertyDetail.appurtenantLandChecked" disabled="true" id="appurtenantLandChecked"/>
 		</td>
-		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
-		<td class="greybox">
+		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
+		<td class="bluebox">
 			<span class="bold"><s:property value="%{property.propertyDetail.occupancyCertificationNo}"/></span>
 		</td>
 	</tr>
 	<tr id="appurtenantRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text> :</td>
-		<td class="greybox">
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="extent.appurtntland"></s:text> :</td>
+		<td class="bluebox">
 			<span class="bold"><s:property value="%{property.propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
 		</td>
 		<td class="bluebox" colspan="2">
 			&nbsp;
 		</td>
 	</tr>
-	<tr class="bpddetailsheader">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
-		<td class="bluebox">
-		 	<span class="bold"><s:checkbox name="property.propertyDetail.buildingPlanDetailsChecked" disabled="true" id="buildingPlanDetailsChecked"/></span>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
-	</tr>
-	<tr class="bpddetails">
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{property.propertyDetail.buildingPermissionNo}" default="N/A"/></span>
-		</td>
-		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox">
-			<span class="bold">
-			<s:date name="property.propertyDetail.buildingPermissionDate" format="dd/MM/yyyy" /> 
-			</span>
-		</td>
-	</tr>
-	<tr class="bpddetails">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="deviationper"></s:text> :</td>
-		<td class="bluebox">
-			<span class="bold"><s:property value="%{property.propertyDetail.deviationPercentage}" default="N/A"/></span>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
-   </tr>	
+	
 	<!-- Amenities section -->
 	
 	<tr id="amenitiesHeaderRow" class="amenities">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"> <s:text name="amenities"></s:text>
-				</span>
+				</span> 
 			</div>
 		</td>
 	</tr>
@@ -271,7 +239,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center">
+			<div align="center" class="formmainbox" style="box-shadow:none;"> 
 				<%@ include file="../common/FloorViewForRevPetition.jsp"%>
 				<br/>
 			</div>
@@ -314,7 +282,6 @@
 </table>
 <script type="text/javascript">
 	jQuery('td.siteowner').hide();
-	jQuery('tr.bpddetails').hide();
 	jQuery('tr.vacantlanddetaills').hide();
     
 </script>

@@ -1436,21 +1436,21 @@ public class PropertyService {
         floorDmdCalc.setCategoryAmt(unitTax.getBaseRate());
         floorDmdCalc.setTotalTaxPayble(unitTax.getTotalTaxPayable());
         for (final MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes())
-            for (final MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails())
+          //  for (final MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails())
                 if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax1(floorDmdCalc.getTax1().add(taxDetail.getCalculatedTaxValue()));
+                    floorDmdCalc.setTax1(floorDmdCalc.getTax1().add(miscTax.getTotalCalculatedTax()));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(taxDetail.getCalculatedTaxValue()));
+                    floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(miscTax.getTotalCalculatedTax()));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(taxDetail.getCalculatedTaxValue()));
+                    floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(miscTax.getTotalCalculatedTax()));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(taxDetail.getCalculatedTaxValue()));
+                    floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(miscTax.getTotalCalculatedTax()));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax4(floorDmdCalc.getTax5().add(taxDetail.getCalculatedTaxValue()));
+                    floorDmdCalc.setTax5(floorDmdCalc.getTax5().add(miscTax.getTotalCalculatedTax()));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax4(floorDmdCalc.getTax6().add(taxDetail.getCalculatedTaxValue()));
+                    floorDmdCalc.setTax6(floorDmdCalc.getTax6().add(miscTax.getTotalCalculatedTax()));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax4(floorDmdCalc.getTax7().add(taxDetail.getCalculatedTaxValue()));
+                    floorDmdCalc.setTax7(floorDmdCalc.getTax7().add(miscTax.getTotalCalculatedTax()));
     }
 
     /**
