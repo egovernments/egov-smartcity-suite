@@ -87,6 +87,7 @@ public class DefaultersWTReportService {
     		queryStr.append(" where dcbinfo.arr_balance >="+ fromAmount);
     	else 
     		queryStr.append(" where dcbinfo.arr_balance >="+ fromAmount+" and dcbinfo.arr_balance <"+toAmount);
+    	queryStr.append(" and dcbinfo.connectionstatus = 'ACTIVE'");
     	if (ward != null && !ward.isEmpty())
     		queryStr.append(" and wardboundary.name = "+"'" +ward+ "'");
     	if(!topDefaulters.isEmpty())
