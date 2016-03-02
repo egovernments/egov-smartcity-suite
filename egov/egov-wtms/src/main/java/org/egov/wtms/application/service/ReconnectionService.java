@@ -61,9 +61,9 @@ public class ReconnectionService {
     @Transactional
     public WaterConnectionDetails updateReConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction,final String sourceChannel) {
+            final String workFlowAction, final String sourceChannel) {
 
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",sourceChannel);
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "", sourceChannel);
         final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
 
@@ -71,7 +71,7 @@ public class ReconnectionService {
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
-        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails,sourceChannel);
+        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
         return savedwaterConnectionDetails;
     }
 }
