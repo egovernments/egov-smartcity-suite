@@ -42,21 +42,34 @@ package org.egov.works.lineestimate.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
 
-//@Entity
+@Entity
 @Table(name = "EGW_DOCUMENTS")
+@SequenceGenerator(name = DocumentDetails.SEQ_EGW_DOCUMENTS, sequenceName = DocumentDetails.SEQ_EGW_DOCUMENTS, allocationSize = 1)
 public class DocumentDetails {
 
-    @NotNull
-    private Long objectId;
+    public static final String SEQ_EGW_DOCUMENTS = "SEQ_EGW_DOCUMENTS";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_DOCUMENTS, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "objectid")
+    private LineEstimate objectId;
 
     @NotNull
     @SafeHtml
@@ -67,13 +80,7 @@ public class DocumentDetails {
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper fileStore;
 
-    public Long getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(final Long objectId) {
-        this.objectId = objectId;
-    }
+    private transient MultipartFile file;
 
     public String getObjectType() {
         return objectType;
@@ -90,4 +97,29 @@ public class DocumentDetails {
     public void setFileStore(final FileStoreMapper fileStore) {
         this.fileStore = fileStore;
     }
+
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(final MultipartFile file) {
+        this.file = file;
+    }
+
+    public LineEstimate getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(final LineEstimate objectId) {
+        this.objectId = objectId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
 }

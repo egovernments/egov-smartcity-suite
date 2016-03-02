@@ -110,6 +110,8 @@
 				</tr>
 			</tfoot>
 		</table>
+		<div id="documentDetails">
+		</div>
 		<div class="col-sm-12 text-center">
 			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lineestimate.btn.addrow" /></button>
 		</div>

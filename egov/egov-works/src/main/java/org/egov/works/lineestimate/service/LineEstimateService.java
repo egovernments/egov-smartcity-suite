@@ -50,6 +50,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
@@ -118,25 +119,25 @@ public class LineEstimateService {
                     cFinancialYear);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
         }
+        
+        for (final DocumentDetails documentDetails : lineEstimate.getDocumentDetails())
+            documentDetails.setObjectId(lineEstimate);
+        
         final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
         return newLineEstimate;
     }
 
     @Transactional
     public LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds) {
-        final List<LineEstimateDetails> list = new ArrayList<LineEstimateDetails>(getLineEstimateDetials(lineEstimate, removedLineEstimateDetailsIds));
-        final LineEstimate lineEstimate1 = removeDeletedLineEstimateDetails(lineEstimate, removedLineEstimateDetailsIds);
-        if (null != removedLineEstimateDetailsIds) {
-            lineEstimate1.getLineEstimateDetails().addAll(list);
-        }
         final CFinancialYear cFinancialYear = financialYearDAO.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
-        for (final LineEstimateDetails lineEstimateDetails : lineEstimate1.getLineEstimateDetails()) {
+        for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails()) {
             if (lineEstimateDetails.getLineEstimate() == null) {
-                lineEstimateDetails.setLineEstimate(lineEstimate1);
-                lineEstimateDetails.setEstimateNumber(estimateNumberGenerator.generateEstimateNumber(lineEstimate1, cFinancialYear));
+                lineEstimateDetails.setLineEstimate(lineEstimate);
+                lineEstimateDetails.setEstimateNumber(estimateNumberGenerator.generateEstimateNumber(lineEstimate, cFinancialYear));
             }
         }
-        return lineEstimateRepository.saveAndFlush(lineEstimate1);
+        final LineEstimate lineEstimate1 = lineEstimateRepository.saveAndFlush(lineEstimate);
+        return removeDeletedLineEstimateDetails(lineEstimate1, removedLineEstimateDetailsIds);
     }
 
     public LineEstimate getLineEstimateByLineEstimateNumber(final String lineEstimateNumber) {

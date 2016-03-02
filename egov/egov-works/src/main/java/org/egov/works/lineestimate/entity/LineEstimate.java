@@ -57,7 +57,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CFunction;
@@ -136,12 +135,12 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "executingdepartment", nullable = false)
     private Department executingDepartment;
 
-    @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true, targetEntity=LineEstimateDetails.class)
-    private List<LineEstimateDetails> lineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
+    @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH }, orphanRemoval = true, targetEntity = LineEstimateDetails.class)
+    private final List<LineEstimateDetails> lineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
 
-    //TODO : Need to look for multiple document details support
-    @Transient
-    private List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>();
+    @OneToMany(mappedBy = "objectId", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, targetEntity = DocumentDetails.class)
+    private final List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", nullable = false)
@@ -251,7 +250,7 @@ public class LineEstimate extends StateAware {
 
     public void setLineEstimateDetails(final List<LineEstimateDetails> lineEstimateDetails) {
         this.lineEstimateDetails.clear();
-        if(lineEstimateDetails != null)
+        if (lineEstimateDetails != null)
             this.lineEstimateDetails.addAll(lineEstimateDetails);
     }
 
@@ -260,7 +259,9 @@ public class LineEstimate extends StateAware {
     }
 
     public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
-        this.documentDetails = documentDetails;
+        this.documentDetails.clear();
+        if (documentDetails != null)
+            this.documentDetails.addAll(documentDetails);
     }
 
     public EgwStatus getStatus() {

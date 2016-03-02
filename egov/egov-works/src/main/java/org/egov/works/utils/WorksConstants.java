@@ -249,4 +249,6 @@ public class WorksConstants {
     
     public static final String LINEESTIMATE_CREATE = "create";
     public static final String LINEESTIMATE_UPDATE = "update";
+    
+    public static final String FILESTORE_MODULECODE = "WMS";
 }

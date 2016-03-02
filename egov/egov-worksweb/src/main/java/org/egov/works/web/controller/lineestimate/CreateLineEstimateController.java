@@ -39,14 +39,21 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.services.masters.SchemeService;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,6 +61,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -77,6 +86,9 @@ public class CreateLineEstimateController {
     @Autowired
     private DepartmentService departmentService;
 
+    @Autowired
+    private FileStoreService fileStoreService;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
@@ -87,12 +99,15 @@ public class CreateLineEstimateController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createLineEstimate(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
-            final Model model, final BindingResult errors)
-                    throws ApplicationException {
+            final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files)
+                    throws ApplicationException, IOException {
         setDropDownValues(model);
         if (errors.hasErrors())
             return "newLineEstimate-edit";
         else {
+            final List<DocumentDetails> documentDetails = getDocumentDetails(files);
+            if (!documentDetails.isEmpty())
+                lineEstimate.setDocumentDetails(documentDetails);
             final LineEstimate newLineEstimate = lineEstimateService.create(lineEstimate);
             model.addAttribute("lineEstimate", newLineEstimate);
             return "redirect:/lineestimate/update/" + newLineEstimate.getId();
@@ -105,5 +120,19 @@ public class CreateLineEstimateController {
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("executingDepartments", departmentService.getAllDepartments());
+    }
+
+    private List<DocumentDetails> getDocumentDetails(final MultipartFile[] files) throws IOException {
+        final List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        if (files != null && files.length > 0)
+            for (int i = 0; i < files.length; i++)
+                if (!files[i].isEmpty()) {
+                    final DocumentDetails documentDetails = new DocumentDetails();
+                    documentDetails.setObjectType(WorksConstants.MODULE_NAME_LINEESTIMATE);
+                    documentDetails.setFileStore(fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
+                            files[i].getContentType(), WorksConstants.FILESTORE_MODULECODE));
+                    documentDetailsList.add(documentDetails);
+                }
+        return documentDetailsList;
     }
 }
