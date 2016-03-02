@@ -603,7 +603,7 @@ public abstract class License extends StateAware {
     }
 
     public LicenseDemand getCurrentDemand() {
-        return licenseDemand;
+        return getLicenseDemand();
     }
 
     public boolean isPaid() {
