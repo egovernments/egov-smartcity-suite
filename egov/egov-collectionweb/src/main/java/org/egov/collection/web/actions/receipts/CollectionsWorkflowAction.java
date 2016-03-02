@@ -48,6 +48,7 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -425,47 +426,6 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * Retrieves all receipt headers created by currently logged in user from
-     * current counter and in status "To be submitted"
-     *
-     * @return Next page to be displayed (index)
-     */
-    public String listSubmit() {
-        // Get all receipt headers to be submitted
-        fetchReceipts(CollectionConstants.WF_ACTION_SUBMIT);
-        return INDEX;
-    }
-
-    /**
-     * Retrieves all receipt headers created by set user from set counter and in
-     * status "submitted". Also populates the dropdown data for counter list and
-     * user list.
-     *
-     * @return Next page to be displayed (index)
-     */
-    public String listApprove() {
-        if (counterId == null)
-            // By default show receipts from all counters
-            counterId = -1l;
-        if (userName == null)
-            // By default show receipts created by all users
-            userName = CollectionConstants.ALL;
-        if (serviceCode == null)
-            // By default show receipts for all billing services
-            serviceCode = CollectionConstants.ALL;
-
-        // Get all receipt headers to be approved
-        fetchReceipts(CollectionConstants.WF_ACTION_APPROVE);
-
-        /*// Add counter list and user list to drop down data
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getCollectionServiceList());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST, collectionsUtil.getActiveCounters());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());*/
-
-        return INDEX;
-    }
-
-    /**
      * Action that will be called from the workflow inbox. The inbox also passes
      * the id of the clicked item which is of the form:
      * <next-workflow-action>-servicecode-userid-counterid
@@ -475,9 +435,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     @Action(value = "/receipts/collectionsWorkflow-listWorkflow")
     public String listWorkflow() {
         if (wfAction != null && wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
-            return listApprove();
+            fetchReceipts(CollectionConstants.WF_ACTION_APPROVE);
         else
-            return listSubmit();
+            fetchReceipts(CollectionConstants.WF_ACTION_SUBMIT);
+        return INDEX;
     }
 
     /**
@@ -505,6 +466,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      *
      * @return SUCCESS/ERROR
      */
+    @ValidationErrorPage(value = INDEX)
     @Action(value = "/receipts/collectionsWorkflow-submitCollections")
     public String submitCollections() {
         wfAction = CollectionConstants.WF_ACTION_SUBMIT;

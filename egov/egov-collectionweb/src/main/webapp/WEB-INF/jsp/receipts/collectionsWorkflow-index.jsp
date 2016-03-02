@@ -268,7 +268,17 @@ function readOnlyCheckBox() {
 		<s:text name="collectionsWorkflow.approveTitle" />
 	</s:else></div>
 	<br />
-
+	<s:if test="%{hasErrors()}">
+	    <div id="actionErrorMessages" class="errorstyle">
+	      <s:actionerror/>
+	      <s:fielderror/>
+	    </div>
+	</s:if>
+	<s:if test="%{hasActionMessages()}">
+	    <div id="actionMessages" class="messagestyle">
+	    	<s:actionmessage theme="simple"/>
+	    </div>
+	</s:if>
 	<logic:notEmpty name="receiptHeaders">
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">
