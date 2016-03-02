@@ -39,20 +39,21 @@
 #-------------------------------------------------------------------------------*/
 jQuery(document).ready(function(){
 	
-	var fileformatsinclude = ['jpeg','jpg','png'];  
+	var fileformatsincludeforimage = ['jpeg','jpg','png']; 
+	var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt','xml'];  
+	
 	
 	jQuery('.upload-file').change(function(e){		
 		/*validation for file upload*/
 		myfile= jQuery( this ).val();
+		var docname = jQuery(this).parent().parent().parent().parent().find('.docname').html();
 		var ext = myfile.split('.').pop();
-		if(jQuery.inArray(ext.toLowerCase(), fileformatsinclude) > -1){
-			//do something    
+		
+		if(docname == 'photo'){
+			validate_file(fileformatsincludeforimage, ext, jQuery( this ));	
+		}else{
+			validate_file(fileformatsinclude, ext, jQuery( this ));
 		}
-		else{
-			bootbox.alert("Please upload "+fileformatsinclude+" format documents only");
-			jQuery( this ).val('');
-			return false;
-		}	
 		
 		var fileInput = jQuery(this);
    		var maxSize = 2097152; //file size  in bytes(2MB)
@@ -72,5 +73,16 @@ jQuery(document).ready(function(){
 			}			
 		}
 	});
+	
+	function validate_file(fileformat, ext, obj){
+		if(jQuery.inArray(ext.toLowerCase(), fileformat) > -1){
+			//do something    
+		}
+		else{
+			bootbox.alert("Please upload "+fileformat+" format documents only");
+			obj.val('');
+			return false;
+		}	
+	}
 	
 });

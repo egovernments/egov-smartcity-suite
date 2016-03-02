@@ -85,7 +85,7 @@
 	<div class="form-group">
     	<div class="col-sm-1 text-center"><s:property value="#status.index + 1"/></div>
         <div class="col-sm-5 text-center">
-        	<s:property value="name" /><s:if test="mandatory"><span class="mandatory"></span></s:if>
+        	<span class="docname"><s:property value="name" /></span><s:if test="mandatory"><span class="mandatory"></span></s:if>
 			<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"/>
 		</div>
        	<div class="col-sm-3 text-center">
