@@ -31,8 +31,10 @@
 package org.egov.collection.web.actions.receipts;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
@@ -46,6 +48,7 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -535,25 +538,25 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * workflow
      */
     private void calculateAmounts() {
-        totalAmount = BigDecimal.valueOf(0);
-        for (final ReceiptHeader receiptHeader : receiptHeaders) {
-            final BigDecimal receiptAmount = receiptHeader.getAmount();
+        totalAmount = BigDecimal.ZERO;
+        for (ReceiptHeader receiptHeader : receiptHeaders) {
+                for (InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
+                        String instrumentType = instrumentHeader.getInstrumentType().getType();
+                        // Increment total amount
+                        totalAmount = totalAmount.add(instrumentHeader.getInstrumentAmount()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
-            // Increment total amount
-            totalAmount = totalAmount.add(receiptAmount).setScale(2, BigDecimal.ROUND_HALF_UP);
-
-            // Increment instrument type wise amount
-            final String instrumentType = receiptHeader.getInstrumentType();
-            BigDecimal instrumentAmount = instrumentWiseAmounts.get(instrumentType);
-            if (instrumentAmount == null)
-                instrumentAmount = receiptAmount;
-            else
-                instrumentAmount = instrumentAmount.add(receiptAmount);
-            instrumentAmount = instrumentAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
-            instrumentWiseAmounts.put(instrumentType, instrumentAmount);
-            receiptHeader.setInstrumentsAsString(receiptHeader.getInstrumentDetailAsString());
+                        BigDecimal instrumentAmount = instrumentWiseAmounts.get(instrumentType);
+                        if (instrumentAmount == null) {
+                                instrumentAmount = instrumentHeader.getInstrumentAmount();
+                        } else {
+                                instrumentAmount = instrumentAmount.add(instrumentHeader.getInstrumentAmount());
+                        }
+                        instrumentWiseAmounts.put(instrumentType, instrumentAmount.setScale(2, BigDecimal.ROUND_HALF_UP));
+                }
+                // Add to ReceiptHeader to populate in jsp
+                receiptHeader.setInstrumentsAsString(receiptHeader.getInstrumentDetailAsString());
         }
-    }
+}
 
     public String getReceiptDate() {
         return receiptDate;
