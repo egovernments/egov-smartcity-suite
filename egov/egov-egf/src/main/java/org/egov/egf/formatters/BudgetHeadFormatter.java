@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.formatters;
+package org.egov.egf.formatters;
 
 import java.text.ParseException;
 import java.util.Locale;
