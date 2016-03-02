@@ -269,47 +269,6 @@ function readOnlyCheckBox() {
 	</s:else></div>
 	<br />
 
-	<s:if test="%{isSubmitAction == false}">
-		<table width="80%" border="0" align="center" cellpadding="0"
-			cellspacing="0" class="tablebottom" style="border-width: 0px">
-			<tr>
-				<td class="blueborderfortd" width="20%" style="border-width: 0px"
-					align="right"><s:text name="collectionsWorkflow.serviceName" /></td>
-
-				<td width="15%" class="blueborderfortd" align="left"
-					style="border-width: 0px"><s:select
-					headerKey="%{getText('collectionsWorkflow.serviceNames.all')}"
-					headerValue="%{getText('collectionsWorkflow.serviceNames.all')}"
-					name="serviceCode" id="serviceCode" cssClass="selectwk"
-					list="dropdownData.serviceList" listKey="code"
-					listValue="name"
-					onchange="return changeServiceCode(this.value)" /></td>
-
-				<td class="blueborderfortd" width="15%" style="border-width: 0px"
-					align="right"><s:text name="collectionsWorkflow.counterId" /></td>
-
-				<td width="15%" class="blueborderfortd" align="left"
-					style="border-width: 0px"><s:select headerKey="-1"
-					headerValue="%{getText('collectionsWorkflow.counters.all')}"
-					name="counterId" id="counterId" cssClass="selectwk"
-					list="dropdownData.counterList" listKey="id" listValue="name"
-					onchange="return changeCounterId(this.value)" /></td>
-
-				<td class="blueborderfortd" width="20%" style="border-width: 0px"
-					align="right"><s:text name="collectionsWorkflow.user" /></td>
-
-				<td width="15%" class="blueborderfortd" align="left"
-					style="border-width: 0px"><s:select
-					headerKey="%{getText('collectionsWorkflow.users.all')}"
-					headerValue="%{getText('collectionsWorkflow.users.all')}"
-					name="userName" id="userName" cssClass="selectwk"
-					list="dropdownData.receiptCreatorList" listKey="name"
-					listValue="name" onchange="return changeUserName(this.value)" /></td>
-			</tr>
-		</table>
-		<br />
-	</s:if>
-
 	<logic:notEmpty name="receiptHeaders">
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">

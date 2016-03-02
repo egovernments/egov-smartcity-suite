@@ -454,10 +454,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         // Get all receipt headers to be approved
         fetchReceipts(CollectionConstants.WF_ACTION_APPROVE);
 
-        // Add counter list and user list to drop down data
+        /*// Add counter list and user list to drop down data
         addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getCollectionServiceList());
         addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST, collectionsUtil.getActiveCounters());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());*/
 
         return INDEX;
     }
