@@ -48,6 +48,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -61,7 +62,9 @@ public class SalaryBillRegisterViewAction extends BaseFormAction {
     private BigDecimal month;
     private Department department;
     private List<EgBillregister> billRegisterList = new ArrayList<EgBillregister>();
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public SalaryBillRegisterViewAction() {
         addRelatedEntity("departmentList", Department.class);
     }
@@ -69,8 +72,7 @@ public class SalaryBillRegisterViewAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        addDropdownData("departmentList", masterCache.get("egi-department"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
     }
 
     @Override

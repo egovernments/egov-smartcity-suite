@@ -117,7 +117,9 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     private String ulbName = "";
     private String bank;
     private static final Logger LOGGER = Logger.getLogger(ChequeIssueRegisterReportAction.class);
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public ChequeIssueRegisterReportAction() {
         addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
     }
@@ -128,10 +130,9 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
             addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
             addDropdownData("bankAccountList", Collections.EMPTY_LIST);
-            dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         }
         populateUlbName();
     }

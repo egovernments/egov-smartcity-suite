@@ -124,7 +124,7 @@ public class FunctionAction extends BaseFormAction {
 
         try {
 
-            EgovMasterDataCaching.getInstance().removeFromCache("egi-function");
+            EgovMasterDataCaching.removeFromCache("egi-function");
             function.setLevel(parentLevel);
             function.setCreated(new Date());
             function.setModifiedBy(getLoggedInUser());
@@ -164,7 +164,7 @@ public class FunctionAction extends BaseFormAction {
         CFunction parentFunc = null;
 
         try {
-            EgovMasterDataCaching.getInstance().removeFromCache("egi-function");
+            EgovMasterDataCaching.removeFromCache("egi-function");
             final CFunction funcOld = (CFunction) persistenceService.find("from CFunction where id=?", function.getId());
             if (function.getFunction() != null && function.getFunction().getId() != null) {
                 parentFunc = (CFunction) persistenceService.find("from CFunction where id=?",

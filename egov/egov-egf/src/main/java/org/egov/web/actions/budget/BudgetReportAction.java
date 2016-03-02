@@ -165,7 +165,9 @@ public class BudgetReportAction extends BaseFormAction {
     private Budget topBudget;
     private boolean departmentBudget = false;
     private String workFlowstateCondn = "";
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public boolean isDepartmentBudget() {
         return departmentBudget;
     }
@@ -221,10 +223,9 @@ public class BudgetReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         super.prepare();
-        addDropdownData("departmentList", masterCache.get("egi-department"));
-        addDropdownData("functionList", masterCache.get("egi-function"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("functionList", masterDataCache.get("egi-function"));
         addDropdownData("financialYearList", getPersistenceService().findAllBy(
                 "from CFinancialYear where isActive=true  order by finYearRange desc "));
         setRelatedEntitesOn();

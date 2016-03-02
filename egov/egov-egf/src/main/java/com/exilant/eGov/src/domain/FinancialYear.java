@@ -94,7 +94,7 @@ public class FinancialYear {
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
             created = formatter.format(sdf.parse(created));
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            EgovMasterDataCaching.removeFromCache(
                     "egi-activeFinYr");
         } catch (final Exception e) {
             LOGGER

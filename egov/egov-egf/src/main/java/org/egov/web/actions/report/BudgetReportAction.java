@@ -71,6 +71,7 @@ import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -103,7 +104,9 @@ public class BudgetReportAction extends BaseFormAction {
     private String currentYearRange = "";
     private String nextYearRange = "";
     private String lastYearRange = "";
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public void setFinancialYearDAO(final FinancialYearDAO financialYearDAO) {
         this.financialYearDAO = financialYearDAO;
     }
@@ -157,10 +160,9 @@ public class BudgetReportAction extends BaseFormAction {
     }
 
     private void setupDropdownsInHeader() {
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
-        dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
-        dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
+        dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
+        dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         addDropdownData("financialYearList", budgetService.getFYForNonApprovedBudgets());
         final List<String> isbereList = new ArrayList<String>();
         isbereList.add("BE");

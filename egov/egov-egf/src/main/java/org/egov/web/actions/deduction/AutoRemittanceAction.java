@@ -65,6 +65,7 @@ import org.egov.model.recoveries.RemittanceSchedulerLog;
 import org.egov.services.deduction.ScheduledRemittanceService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -84,12 +85,14 @@ public class AutoRemittanceAction extends BaseFormAction {
     private String drawingOfficer;
     private Date lastRunDate;
     private Map<String, String> coaMap;
-    private final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
     private List<DepartmentDOMapping> deptDOList;
     private RemittanceSchedulerLog remittanceScheduler;
     private Map<String, String> lastRunDateMap;
     private TdsHibernateDAO tdsDAO;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public Object getModel() {
         return null;
@@ -106,7 +109,7 @@ public class AutoRemittanceAction extends BaseFormAction {
                 coaMap.put(r.getChartofaccounts().getGlcode(), r.getChartofaccounts().getGlcode() + "-"
                         + r.getChartofaccounts().getName());
 
-            addDropdownData("departmentList", masterCache.get("egi-department"));
+            addDropdownData("departmentList", masterDataCache.get("egi-department"));
             deptDOList = persistenceService.findAllBy("from DepartmentDOMapping where department is not null  ");
 
             final List<Object[]> list = HibernateUtil

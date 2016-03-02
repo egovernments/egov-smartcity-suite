@@ -103,7 +103,9 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     private List<EgSalaryCodes> deductionsCodes = new ArrayList<EgSalaryCodes>();
     private @Autowired AppConfigValueService appConfigValuesService;
     private CChartOfAccounts defaultNetPayCode;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public SalaryBillRegisterAction() {
         addRelatedEntity("fieldList", Boundary.class);
         addRelatedEntity("functionaryList", Functionary.class);
@@ -119,10 +121,9 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        addDropdownData("fieldList", masterCache.get("egi-ward"));
-        addDropdownData("departmentList", masterCache.get("egi-department"));
-        addDropdownData("functionaryList", masterCache.get("egi-functionary"));
+        addDropdownData("fieldList", masterDataCache.get("egi-ward"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
         addDropdownData("financialYearList",
                 persistenceService.findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
         addDropdownData("detailTypeList", Collections.EMPTY_LIST);

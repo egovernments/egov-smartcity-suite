@@ -46,8 +46,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import net.sf.jasperreports.engine.JasperPrint;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -57,7 +55,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
-import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -69,8 +66,9 @@ import org.egov.services.report.BalanceSheetService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import net.sf.jasperreports.engine.JasperPrint;
 
 @ParentPackage("egov")
 @Results({
@@ -100,6 +98,10 @@ public class BalanceSheetReportAction extends BaseFormAction {
     private Date todayDate;
     FinancialYearDAO financialYearDAO;
     CFinancialYear financialYear=new CFinancialYear();
+    
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public FinancialYearDAO getFinancialYearDAO() {
 		return financialYearDAO;
 	}
@@ -192,10 +194,9 @@ public class BalanceSheetReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-            addDropdownData("departmentList", masterCache.get("egi-department"));
-            addDropdownData("fundList", masterCache.get("egi-fund"));
-            addDropdownData("functionList", masterCache.get("egi-function"));
+            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("fundList", masterDataCache.get("egi-fund"));
+            addDropdownData("functionList", masterDataCache.get("egi-function"));
         //    addDropdownData("functionaryList", masterCache.get("egi-functionary"));
           //  addDropdownData("fieldList", masterCache.get("egi-ward"));
             // addDropdownData("financialYearList",

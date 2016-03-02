@@ -142,7 +142,9 @@ public class BudgetSearchAction extends BaseFormAction {
     private @Autowired AppConfigValueService appConfigValuesService;
     private boolean shouldShowREAppropriations = true;
     List<AppConfigValues> excludeList = new ArrayList<AppConfigValues>();
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public String getMessage() {
         return message;
     }
@@ -251,11 +253,10 @@ public class BudgetSearchAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         if (!parameters.containsKey("skipPrepare")) {
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
             headerFields = budgetDetailConfig.getHeaderFields();
             gridFields = budgetDetailConfig.getGridFields();
             // setupDropdownDataExcluding(Constants.SUB_SCHEME);
-            dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
+            dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
             dropdownData.put("budgetList", budgetDetailService.findApprovedBudgetsForFY(getFinancialYear()));
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("done findApprovedBudgetsForFY");
@@ -264,13 +265,13 @@ public class BudgetSearchAction extends BaseFormAction {
             if (shouldShowField(Constants.SUB_SCHEME))
                 dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
             if (shouldShowField(Constants.FUNCTIONARY))
-                dropdownData.put("functionaryList", masterCache.get("egi-functionary"));
+                dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
             if (shouldShowField(Constants.FUNCTION))
-                dropdownData.put("functionList", masterCache.get("egi-function"));
+                dropdownData.put("functionList", masterDataCache.get("egi-function"));
             if (shouldShowField(Constants.SCHEME))
                 dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
             if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-                dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
+                dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
             if (shouldShowField(Constants.BOUNDARY))
                 dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
             if (shouldShowField(Constants.FUND))

@@ -104,7 +104,6 @@ import com.exilant.eGov.src.reports.TrialBalanceBean;
         "no-cache;filename=trialBalance.html" })
        })
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 public class TrialBalanceAction extends BaseFormAction {
 
     /**
@@ -140,7 +139,6 @@ public class TrialBalanceAction extends BaseFormAction {
     List<TrialBalanceBean> nonZeroItemsList = new ArrayList<TrialBalanceBean>();
     private ReportHelper reportHelper;
     private List<Fund> fundList;
-    private final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
     private Map<String, BigDecimal> fundWiseTotalMap = new LinkedHashMap<String, BigDecimal>();
     private FinancialYearDAO financialYearDAO;
     private String removeEntrysWithZeroAmount = "";
@@ -149,7 +147,8 @@ public class TrialBalanceAction extends BaseFormAction {
     private Date startDate = new Date();
     private Date endDate = new Date();
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
 
     @Override
     public Object getModel() {
@@ -163,11 +162,11 @@ public class TrialBalanceAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
 
-        addDropdownData("fundList", masterCache.get("egi-fund"));
-        addDropdownData("departmentList", masterCache.get("egi-department"));
-        addDropdownData("functionaryList", masterCache.get("egi-functionary"));
-        addDropdownData("fieldList", masterCache.get("egi-ward"));
-        addDropdownData("functionList", masterCache.get("egi-function"));
+        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
+        addDropdownData("fieldList", masterDataCache.get("egi-ward"));
+        addDropdownData("functionList", masterDataCache.get("egi-function"));
 
     }
     @Action(value = "/report/trialBalance-newForm")
@@ -264,7 +263,7 @@ public class TrialBalanceAction extends BaseFormAction {
         else
         {
             if (rb.getFundId() == null)
-                fundList = masterCache.get("egi-fund");
+                fundList = masterDataCache.get("egi-fund");
             else
             {
                 fundList = new ArrayList<Fund>();

@@ -71,6 +71,7 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -86,7 +87,9 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     private boolean showDetails = false;
     private boolean isDetailByFunction;
     private ScriptService scriptService;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public ScriptService getScriptService() {
         return scriptService;
     }
@@ -208,8 +211,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
              dropdownData.put("budgetList", budgetDetailService.findBudgetsForFY(getFinancialYear()));
          else
              dropdownData.put("budgetList", budgetDetailService.findBudgetsForFYWithNewState(getFinancialYear()));
-         final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-         addDropdownData("departmentList", masterCache.get("egi-department"));
+         addDropdownData("departmentList", masterDataCache.get("egi-department"));
          addDropdownData("designationList", Collections.EMPTY_LIST);
          addDropdownData("userList", Collections.EMPTY_LIST);
      }
@@ -687,11 +689,10 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
      @SkipValidation
      private void loadApproverUser(final List<BudgetDetail> budgetDetailList)
      {
-         final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
          final Map<String, Object> map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg", null, budgetDetailList
                 .get(0)
                  .getExecutingDepartment().getId().intValue());
-         addDropdownData("departmentList", masterCache.get("egi-department"));
+         addDropdownData("departmentList", masterDataCache.get("egi-department"));
 
          final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
          String strDesgId = "", dName = "";

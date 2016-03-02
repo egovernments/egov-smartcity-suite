@@ -60,6 +60,7 @@ import org.egov.pims.dao.GenericMasterDAO;
 import org.egov.pims.model.GenericMaster;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 // Referenced classes of package org.egov.pims.client:
 //            GenericForm
@@ -70,6 +71,9 @@ public class AfterGenericMasterAction extends DispatchAction {
 
 	private EmployeeServiceOld employeeService;
 
+	@Autowired
+	private EgovMasterDataCaching masterDataCache;
+	
 	public AfterGenericMasterAction() {
 	}
 
@@ -226,7 +230,7 @@ public class AfterGenericMasterAction extends DispatchAction {
 		try {
 			String tagName = (new StringBuilder("egEmp-")).append(className.trim())
 					.toString();
-			EgovMasterDataCaching.getInstance().removeFromCache(tagName);
+			masterDataCache.removeFromCache(tagName);
 		} catch (ApplicationRuntimeException e) {
 			// Exception Handled
 			LOGGER.error(e.getMessage());
