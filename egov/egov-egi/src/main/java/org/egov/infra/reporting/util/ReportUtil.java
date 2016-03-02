@@ -183,7 +183,7 @@ public final class ReportUtil {
 
     // Reading from session
     public static String getCityName() {
-        return ServletActionContext.getRequest().getSession().getAttribute("citymunicipalityname").toString();
+        return EgovThreadLocals.getMunicipalityName();
     }
 
     /**
