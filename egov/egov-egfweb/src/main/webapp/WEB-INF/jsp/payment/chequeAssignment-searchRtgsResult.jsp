@@ -43,7 +43,7 @@
 	rel="stylesheet" type="text/css" />
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css" />
 <title>RTGS Reference No Assignment</title>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
@@ -57,7 +57,7 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="RTGS Ref. No Assignment Search" />
 		</jsp:include>
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">RTGS Ref. No Assignment Search</div>
@@ -156,11 +156,11 @@
 					<td></td>
 					<s:if test="%{ paymentMode=='rtgs'}">
 						<!-- <td class="greybox">
-							<s:text name="chq.assignment.rtgs.refno"/><span class="mandatory">*</span>
+							<s:text name="chq.assignment.rtgs.refno"/><span class="mandatory1">*</span>
 							<s:textfield id="rtgsRefNoMap['%{#count}']" name="rtgsRefNoMap['%{#count}']" value=""/>       
 						</td>         -->
 						<td class="greybox"><s:text name="chq.assignment.rtgs.date" /><span
-							class="mandatory">*</span> <s:textfield
+							class="mandatory1">*</span> <s:textfield
 								id="rtgsdateMap[%{#count}]" name="rtgsdateMap[%{#count}]"
 								value="%{rtgsdateMap[#count]}" onchange="updateDate(this)"
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /> <!-- <a href="javascript:show_calendar('forms[0].rtgsdateMap[%{#count}]');" style="text-decoration:none">&nbsp;
@@ -224,7 +224,8 @@
 				<s:if test="%{paymentMode=='rtgs'}">
 					//result= validateForRtgsMode();  
 				</s:if>    
-				
+				document.chequeAssignment.action='/EGF/payment/chequeAssignment-update.action';
+	    		document.chequeAssignment.submit();
 								 
 				return true;                   
 			}
@@ -280,7 +281,7 @@
 				}     
 			}
 			function viewVoucher(vid){
-				var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+vid;
+				var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+vid;
 				window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 		}
 			                

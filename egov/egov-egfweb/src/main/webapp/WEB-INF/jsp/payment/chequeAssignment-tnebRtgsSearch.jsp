@@ -41,7 +41,7 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css" />
 <title>RTGS Ref. No Assignment Search</title>
 </head>
 <body>

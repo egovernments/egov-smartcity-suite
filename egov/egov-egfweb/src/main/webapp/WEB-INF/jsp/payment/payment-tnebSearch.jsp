@@ -42,7 +42,7 @@
 
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css" />
 <title>TNEB Bill Payment Search</title>
 </head>
 <body>

@@ -44,7 +44,7 @@ import java.util.Date;
 
 import org.egov.commons.Bankaccount;
 
-public class ChequeAssignment {
+public class ChequeAssignment implements java.io.Serializable{
     private Long voucherid;
     private Date voucherDate;
     private String voucherNumber;

@@ -42,6 +42,7 @@ package org.egov.web.actions.payment;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -82,6 +83,8 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -107,10 +110,10 @@ import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.egov.web.actions.voucher.CommonAction;
 import org.hibernate.Query;
+import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
@@ -119,6 +122,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Results({
         @Result(name = "search", location = "chequeAssignment-search.jsp"),
         @Result(name = "view", location = "chequeAssignment-view.jsp"),
+        @Result(name = "viewRtgs", location = "chequeAssignment-viewRtgs.jsp"),
         @Result(name = "surrenderRTGSsearch", location = "chequeAssignment-surrenderRTGSsearch.jsp"),
         @Result(name = "viewReceiptDetailsResult", location = "chequeAssignment-viewReceiptDetailsResult.jsp"),
         @Result(name = "before_pension_search", location = "chequeAssignment-before_pension_search.jsp"),
@@ -189,7 +193,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private String rtgsRefNo;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
-
+    @Autowired
+    private DBSequenceGenerator dbSequenceGenerator;
+    @Autowired
+    private SequenceNumberGenerator sequenceNumberGenerator;
     private List<InstrumentVoucher> instrumentVoucherList;
     private List<InstrumentHeader> instrumentHeaderList;
     private CommonAction common;
@@ -458,7 +465,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             if (accountNoAndRemittanceRtgsEntryMap.isEmpty()) {
                 rtgsEntry = new ArrayList<ChequeAssignment>();
                 bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
-                        Integer.parseInt(chqAssgn.getBankAccountId().toString()));
+                        Long.parseLong(chqAssgn.getBankAccountId().toString()));
                 coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id =?", new Long(chqAssgn
                         .getGlcodeId().toString()));
                 bnkAccCOA.setBankAccount(bnkAcc);
@@ -486,7 +493,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                 else {
                     rtgsEntry = new ArrayList<ChequeAssignment>();
                     bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
-                            Integer.parseInt(chqAssgn.getBankAccountId().toString()));
+                            Long.parseLong(chqAssgn.getBankAccountId().toString()));
                     coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id =?", new Long(chqAssgn
                             .getGlcodeId().toString()));
                     bnkAccCOA.setBankAccount(bnkAcc);
@@ -603,6 +610,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
     @ValidationErrorPage(value = "rtgsSearch")
     @SkipValidation
+    @Action(value = "/payment/chequeAssignment-searchRTGS")
     public String searchRTGS() throws ApplicationException, ParseException
     {
         if (LOGGER.isDebugEnabled())
@@ -614,9 +622,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         boolean addList = false;
         Bankaccount bnkAcc = new Bankaccount();
         Bankaccount selBnkAcc = new Bankaccount();
-        new HashSet<Bankaccount>();
-        new ArrayList<Bankaccount>();
-        new ChequeAssignment();
+        Set<Bankaccount> bankAccSet = new HashSet<Bankaccount>();
+        ArrayList<Bankaccount> bankAccntList = new ArrayList<Bankaccount>();
+        ChequeAssignment obj = new ChequeAssignment();
 
         rtgsChequeAssignmentList = paymentService.getPaymentVoucherForRTGSInstrument(parameters, voucherHeader);
         dbpRtgsAssignmentList = paymentService.getDirectBankPaymentVoucherForRTGSInstrument(parameters, voucherHeader);
@@ -634,7 +642,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             if (accountNoAndRtgsEntryMap.isEmpty()) {
                 rtgsEntry = new ArrayList<ChequeAssignment>();
                 bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
-                        Integer.parseInt(chqAssgn.getBankAccountId().toString()));
+                        Long.parseLong(chqAssgn.getBankAccountId().toString()));
                 selBnkAcc = bnkAcc;
                 rtgsEntry.add(chqAssgn);
                 accountNoAndRtgsEntryMap.put(bnkAcc, rtgsEntry);
@@ -645,7 +653,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                 while (ir.hasNext()) {
                     final Bankaccount bk = (Bankaccount) ir.next();
                     addList = false;
-                    if (bk.getId().equals(Integer.parseInt(chqAssgn.getBankAccountId().toString()))) {
+                    if (bk.getId().compareTo(chqAssgn.getBankAccountId().longValue()) == 0) {
                         selBnkAcc = bk;
                         addList = false;
                         break;
@@ -659,7 +667,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                 else {
                     rtgsEntry = new ArrayList<ChequeAssignment>();
                     bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
-                            Integer.parseInt(chqAssgn.getBankAccountId().toString()));
+                            Long.parseLong(chqAssgn.getBankAccountId().toString()));
                     selBnkAcc = bnkAcc;
                     rtgsEntry.add(chqAssgn);
                     accountNoAndRtgsEntryMap.put(selBnkAcc, rtgsEntry);
@@ -702,7 +710,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             if (accountNoAndRtgsEntryMap.isEmpty()) {
                 rtgsEntry = new ArrayList<ChequeAssignment>();
                 bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
-                        Integer.parseInt(chqAssgn.getBankAccountId().toString()));
+                        Long.parseLong(chqAssgn.getBankAccountId().toString()));
                 selBnkAcc = bnkAcc;
                 rtgsEntry.add(chqAssgn);
                 accountNoAndRtgsEntryMap.put(bnkAcc, rtgsEntry);
@@ -727,7 +735,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                 else {
                     rtgsEntry = new ArrayList<ChequeAssignment>();
                     bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
-                            Integer.parseInt(chqAssgn.getBankAccountId().toString()));
+                            Long.parseLong(chqAssgn.getBankAccountId().toString()));
                     selBnkAcc = bnkAcc;
                     rtgsEntry.add(chqAssgn);
                     accountNoAndRtgsEntryMap.put(selBnkAcc, rtgsEntry);
@@ -1014,7 +1022,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                     instHeaderList = chequeAssignmentHelper.reassignInstrument(chequeAssignmentList, paymentMode, bankaccount,
                             parameters, voucherHeader.getVouchermis().getDepartmentid());
                 else
-                    instHeaderList = chequeAssignmentHelper.createInstrument(chequeAssignmentList, paymentMode, bankaccount, parameters,
+                    instHeaderList = chequeAssignmentHelper.createInstrument(chequeAssignmentList, paymentMode, bankaccount,
+                            parameters,
                             voucherHeader.getVouchermis().getDepartmentid());
                 selectedRows = paymentService.selectedRows;
                 if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
@@ -1034,7 +1043,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
-        }catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
@@ -1072,7 +1081,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                         {
                             final String finYearRange = financialYearDAO.getFinancialYearByDate(rtgsdate).getFinYearRange();
                             // LOGGER.debug(finYearRange);
-                            rtgsNo = getRtgsSequenceNumber("RTGS_RefNumber/" + finYearRange);
+                            rtgsNo = getRtgsSequenceNumber("RTGS_RefNumber_" + finYearRange.replace('-', '_'));
                             rtgsNo = rtgsNo + "/" + finYearRange;
                         } else
                             rtgsNo = getRtgsSequenceNumber("RTGS_RefNumber");
@@ -1092,6 +1101,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                     paymentService.createInstrument(chequeAssignmentList, paymentMode, bankaccount, parameters, voucherHeader
                             .getVouchermis().getDepartmentid());
                     instVoucherList.addAll(paymentService.getInstVoucherList());
+                    List<InstrumentVoucher> tempInstVoucherList = new ArrayList<InstrumentVoucher>();
+                    for(InstrumentVoucher iv:instVoucherList){
+                        iv.getInstrumentHeaderId().setInstrumentAmount(iv.getInstrumentHeaderId().getInstrumentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                        tempInstVoucherList.add(iv);
+                    }
+                    instVoucherList = new ArrayList<InstrumentVoucher>();
+                    instVoucherList = tempInstVoucherList;
                     // if(LOGGER.isInfoEnabled()) LOGGER.info("addded instrunment"+instList);
                 }
     }
@@ -1227,9 +1243,21 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     }
 
     protected String getRtgsSequenceNumber(final String SEQ_RTGS_ReferenceNumber) {
-        String seqNo = sequenceGenerator.getNextNumber(SEQ_RTGS_ReferenceNumber, 1L).getFormattedNumber();
-        seqNo = ackNumberFormat.format(Integer.parseInt(seqNo));
-        return seqNo;
+        try {
+            Serializable sequenceNumber;
+            try {
+                sequenceNumber = sequenceNumberGenerator.getNextSequence(SEQ_RTGS_ReferenceNumber);
+            } catch (final SQLGrammarException e) {
+                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(SEQ_RTGS_ReferenceNumber);
+            }
+            return String.format("%06d", sequenceNumber);
+        } catch (final SQLException e) {
+            throw new ApplicationRuntimeException("Error occurred while generating Application Number", e);
+        }
+        /*
+         * String seqNo = sequenceGenerator.getNextNumber(SEQ_RTGS_ReferenceNumber, 1L).getFormattedNumber(); seqNo =
+         * ackNumberFormat.format(Integer.parseInt(seqNo)); return seqNo;
+         */
     }
 
     @ValidationErrorPage(value = "searchpensionpayment")
