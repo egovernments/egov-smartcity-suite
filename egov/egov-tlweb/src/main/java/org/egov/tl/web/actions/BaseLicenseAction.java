@@ -204,7 +204,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     @ValidationErrorPage(Constants.NEW)
-    public String enterExisting(final T license, final Map<Integer, Double> legacyInstallmentwiseFees, 
+    public String enterExisting(final T license, final Map<Integer, Integer> legacyInstallmentwiseFees, 
             final Map<Integer, Boolean> legacyFeePayStatus) {
         this.setCheckList();
         licenseService().createLegacyLicense(license, legacyInstallmentwiseFees, legacyFeePayStatus);
@@ -405,28 +405,38 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             if (!Constants.BUTTONSUBMIT.equals(workFlowAction))
                 licenseService().transitionWorkFlow(license(), workflowBean);
         User user = null;
+        Long createrPosition=null;
         for (final StateHistory state : license().getState().getHistory())
             if (state != null && state.getCreatedBy() != null)
-                if (state.getValue().equals(Constants.WORKFLOW_STATE_NEW)) {
+                if (state.getValue().contains(Constants.WORKFLOW_STATE_NEW)) {
                     user = state.getCreatedBy();
+                     createrPosition=state.getOwnerPosition().getId();
                     break;
                 }
         if (user == null)
             user = license().getCreatedBy();
+        if(createrPosition==null)
+            createrPosition=license().getState().getOwnerPosition().getId();
+        String nextDesgn="";
+       Assignment assignObj = assignmentService.getPrimaryAssignmentForPositon(workflowBean.getApproverPositionId());
+       if(assignObj!=null)
+            nextDesgn=assignObj.getDesignation().getName();
         if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
             if (license().getTradeName().isNocApplicable() != null && license().getTradeName().isNocApplicable())
-                addActionMessage(this.getText("license.approved.and.sent.to") + user.getName() + " "
+                addActionMessage(this.getText("license.approved.and.sent.to") + nextDesgn + " - " +user.getName() + " "
                         + this.getText("license.for.noc.generation"));
             else
                 addActionMessage(this.getText("license.approved.success"));
 
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONFORWARD)) {
             final String userName = assignmentService
-                    .getPrimaryAssignmentForPositon(workflowBean.getApproverPositionId()).getEmployee().getUsername();
-            addActionMessage(this.getText("license.sent") + " " + userName);
+                    .getPrimaryAssignmentForPositon(workflowBean.getApproverPositionId()).getEmployee().getName();
+            addActionMessage(this.getText("license.sent") + " " + nextDesgn + " - " + userName);
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONREJECT)) {
+           String creatorDesgn= assignmentService
+            .getPrimaryAssignmentForPositon(createrPosition).getDesignation().getName();
             if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                addActionMessage(this.getText("license.rejectedfirst") + user.getName() 
+                addActionMessage(this.getText("license.rejectedfirst") +   (creatorDesgn!=null ?creatorDesgn+ " - " :"")+ " " +user.getName() 
                         );
             else
                 addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());

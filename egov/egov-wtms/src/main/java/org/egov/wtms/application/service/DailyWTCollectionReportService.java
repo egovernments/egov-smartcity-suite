@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -201,17 +201,17 @@ public class DailyWTCollectionReportService {
                     String currentInstallment = null;
                     if (Arrays.asList(WaterTaxConstants.CREATECONNECTIONDMDDESC).contains(receiptDmdRsnDesc))
                         currentInstallment = connectionDemandService
-                        .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
-                        .getDescription();
+                                .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
+                                .getDescription();
                     else if (Arrays.asList(WaterTaxConstants.WATERCHARGESDMDDESC).contains(receiptDmdRsnDesc))
                         if (ConnectionType.METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                            .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
-                            .getDescription();
+                                    .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
+                                    .getDescription();
                         else if (ConnectionType.NON_METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                            .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
-                            .getDescription();
+                                    .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
+                                    .getDescription();
 
                     if (null != rdesc
                             && rdesc.substring(rdesc.indexOf("-") + 1, rdesc.indexOf("#")).trim().equals(currentInstallment))
@@ -235,6 +235,7 @@ public class DailyWTCollectionReportService {
         collectionModeMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
         collectionModeMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
         collectionModeMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
+        collectionModeMap.put(Source.SOFTTECH.toString(), Source.SOFTTECH.toString());
         return collectionModeMap;
     }
 }

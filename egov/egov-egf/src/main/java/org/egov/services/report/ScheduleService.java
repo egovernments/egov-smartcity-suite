@@ -205,7 +205,7 @@ public abstract class ScheduleService extends PersistenceService {
                 "SELECT coa1.glcode, s.schedule, s.schedulename, coa1.type, coa1.name" +
                         " FROM chartofaccounts coa1, chartofaccounts coa2, chartofaccounts coa3, schedulemapping s" +
                         " WHERE coa3.scheduleid  = s.id AND coa3.id = coa2.parentid AND coa2.id = coa1.parentid" +
-                        " AND coa3.classification=2 AND coa2.classification=3 AND coa1.classification=4" +
+                        " AND coa2.classification=2 AND coa1.classification=4" +
                         " AND coa3.type   IN " + reportType + " AND coa2.type IN " + reportType + " AND coa1.type IN "
                         + reportType +
                 " AND s.reporttype = 'IE' ORDER BY coa1.glcode");
@@ -241,7 +241,7 @@ public abstract class ScheduleService extends PersistenceService {
             final String filterQuery) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting ledger transactions details where >>>> EndDate=" + toDate + "from Date=" + fromDate);
-        final String voucherStatusToExclude = getAppConfigValueFor("finance", "statusexcludeReport");
+        final String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         if (!majorcode.equals("")) {
         }
 

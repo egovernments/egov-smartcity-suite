@@ -202,6 +202,9 @@ public class BudgetProposalAction extends BaseFormAction {
     private Long validId;
     private final BigDecimal bigThousand = new BigDecimal(1000);
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
     }
@@ -303,21 +306,20 @@ public class BudgetProposalAction extends BaseFormAction {
     private void loadToMasterDataMap() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting loadToMasterDataMap...... ");
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        final List<BudgetGroup> bgList = masterCache.get("egf-budgetGroup");
+        final List<BudgetGroup> bgList = masterDataCache.get("egf-budgetGroup");
         budgetGroupMap = new HashMap<Long, BudgetGroup>();
         for (final BudgetGroup bg : bgList)
             budgetGroupMap.put(bg.getId(), bg);
-        final List<CFunction> fnList = masterCache.get("egi-function");
+        final List<CFunction> fnList = masterDataCache.get("egi-function");
         functionMap = new HashMap<Long, CFunction>();
         for (final CFunction fn : fnList)
             functionMap.put(fn.getId(), fn);
 
-        final List<Fund> fundList = masterCache.get("egi-fund");
+        final List<Fund> fundList = masterDataCache.get("egi-fund");
         fundMap = new HashMap<Integer, Fund>();
         for (final Fund f : fundList)
             fundMap.put(f.getId(), f);
-        final List<Department> deptList = masterCache.get("egi-department");
+        final List<Department> deptList = masterDataCache.get("egi-department");
         deptMap = new HashMap<Integer, Department>();
         for (final Department d : deptList)
             deptMap.put(d.getId().intValue(), d);
@@ -874,10 +876,9 @@ public class BudgetProposalAction extends BaseFormAction {
     {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting loadApproverUser.....");
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         final Map<String, Object> map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg", null, budgetDetail
                 .getExecutingDepartment().getId().intValue());
-        addDropdownData("departmentList", masterCache.get("egi-department"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
 

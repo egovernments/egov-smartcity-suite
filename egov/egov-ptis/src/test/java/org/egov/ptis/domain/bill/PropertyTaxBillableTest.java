@@ -64,6 +64,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.ptis.builder.entity.property.BasicPropertyBuilder;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.service.PenaltyCalculationService;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -84,7 +85,8 @@ public class PropertyTaxBillableTest {
     private InstallmentDao installmentDao;
     @Mock
     private ModuleService moduleDao;
-   
+    @Mock
+    private PropertyTaxUtil propertyTaxUtil; 
     private PropertyTaxBillable billable= new PropertyTaxBillable(); 
     private Boundary locality;
     private Module module;
@@ -118,6 +120,7 @@ public class PropertyTaxBillableTest {
         billable.setPenaltyCalculationService(penaltyCalculationService);
         billable.setModuleDao(moduleDao);
         billable.setInstallmentDao(installmentDao);
+        billable.setPropertyTaxUtil(propertyTaxUtil);
     }
     
     private void initBasicProperty(String assessmentEffectiveDate) {

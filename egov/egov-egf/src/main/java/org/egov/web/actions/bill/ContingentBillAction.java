@@ -98,6 +98,7 @@ import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -144,7 +145,9 @@ public class ContingentBillAction extends BaseBillAction {
     private boolean showPrintPreview;
     private String sanctionedMessge;
     private Department primaryDepartment;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public StateAware getModel() {
         return super.getModel();
@@ -169,8 +172,7 @@ public class ContingentBillAction extends BaseBillAction {
         // If the department is mandatory show the logged in users assigned department only.
         if (mandatoryFields.contains("department")) {
             List<Department> deptList;
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-            deptList = masterCache.get("egi-department");
+            deptList = masterDataCache.get("egi-department");
             addDropdownData("departmentList", deptList);
             addDropdownData("billDepartmentList", persistenceService.findAllBy("from Department order by name"));
         }

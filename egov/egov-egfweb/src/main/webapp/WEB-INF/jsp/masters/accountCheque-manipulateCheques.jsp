@@ -88,7 +88,7 @@
 					align="center">
 					<tr align="center">
 						<div class="headingsmallbg">
-						<td><span class="bold">Bank Details</span></td>
+							<td><span class="bold">Bank Details</span></td>
 						</div
 					</tr>
 				</table>
@@ -119,7 +119,7 @@
 				<tr align="center">
 
 					<div class="headingsmallbg">
-					<td><span class="bold">Add New Cheque </span></td>
+						<td><span class="bold">Add New Cheque </span></td>
 					</div>
 
 				</tr>
@@ -166,9 +166,11 @@
 
 				<tr>
 
-					<td class="greybox" width="25%">Serial Number</td>
+					<td class="greybox" width="25%">Year Code<span
+						class="mandatory1">*</span></td>
 					<td class="greybox" width="25%"><s:textfield name="serialNo"
-							id="serialNo" /></td>
+							class="patternvalidation" data-pattern="number" id="serialNo"
+							required="true" /></td>
 					<td class="greybox" width="25%"></td>
 					<td class="greybox" width="25%"></td>
 
@@ -195,7 +197,7 @@
 				align="center">
 				<tr align="center">
 					<div class="headingsmallbg">
-					<td><span class="bold">Existing Cheque Details</span></td>
+						<td><span class="bold">Existing Cheque Details</span></td>
 					</div>
 				</tr>
 			</table>

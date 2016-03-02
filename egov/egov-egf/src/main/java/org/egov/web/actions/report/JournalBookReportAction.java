@@ -64,6 +64,7 @@ import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
@@ -88,6 +89,8 @@ public class JournalBookReportAction extends BaseFormAction {
     private GeneralLedgerBean journalBookReport = new GeneralLedgerBean();
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private List<GeneralLedgerBean> journalBookDisplayList = new ArrayList<GeneralLedgerBean>();
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
     String heading = "";
 
     public JournalBookReportAction() {
@@ -100,14 +103,13 @@ public class JournalBookReportAction extends BaseFormAction {
     }
 
     public void prepareNewForm() {
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         super.prepare();
         addDropdownData("fundList",
                 persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("fundsourceList",
                 persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
-        addDropdownData("functionList", masterCache.get("egi-function"));
+        addDropdownData("functionList", masterDataCache.get("egi-function"));
 
         addDropdownData("voucherNameList", VoucherHelper.VOUCHER_TYPE_NAMES.get(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL));
         if (LOGGER.isDebugEnabled())

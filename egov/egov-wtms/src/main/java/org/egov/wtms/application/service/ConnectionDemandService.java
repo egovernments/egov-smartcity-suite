@@ -66,6 +66,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -320,9 +321,8 @@ public class ConnectionDemandService {
             final List<String> consumerCodes = new ArrayList<>();
             for (final WaterConnection connection : waterConnections)
                 if (connection.getConsumerCode() != null) {
-
                     final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                            .findByConnection(connection);
+                            .findByConsumerCodeAndConnectionStatus(connection.getConsumerCode(), ConnectionStatus.ACTIVE);
 
                     waterTaxDue = getDueInfo(waterConnectionDetails);
                     waterTaxDue.setPropertyID(propertyIdentifier);
@@ -367,14 +367,14 @@ public class ConnectionDemandService {
     public Map<String, BigDecimal> getDemandCollMap(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand currDemand = waterConnectionDetails.getDemand();
         Installment installment = null;
-        List<Object> dmdCollList = new ArrayList<Object>();
+        List<Object> dmdCollList = new ArrayList<Object>(0);
         Installment currInst = null;
         Integer instId = null;
         BigDecimal currDmd = BigDecimal.ZERO;
         BigDecimal arrDmd = BigDecimal.ZERO;
         BigDecimal currCollection = BigDecimal.ZERO;
         BigDecimal arrColelection = BigDecimal.ZERO;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>(0);
 
         if (currDemand != null)
             dmdCollList = getDmdCollAmtInstallmentWise(currDemand);
@@ -386,13 +386,13 @@ public class ConnectionDemandService {
             instId = Integer.valueOf(listObj[1].toString());
             installment = (Installment) installmentDao.findById(instId, false);
             if (currInst.equals(installment)) {
-                if (listObj[3] != null && ((BigDecimal)listObj[3]).compareTo(BigDecimal.ZERO) == 1)
-                    currCollection = currCollection.add((BigDecimal) listObj[3]);
-                currDmd = currDmd.add((BigDecimal) listObj[2]);
+                if (listObj[3] != null && new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) == 1)
+                    currCollection = currCollection.add(new BigDecimal((Double) listObj[3]));
+                currDmd = currDmd.add(new BigDecimal((Double) listObj[2]));
             } else if (listObj[2] != null) {
-                arrDmd = arrDmd.add((BigDecimal) listObj[2]);
-                if (((BigDecimal) listObj[2]).compareTo(BigDecimal.ZERO) == 1)
-                    arrColelection = arrColelection.add((BigDecimal) listObj[2]);
+                arrDmd = arrDmd.add(new BigDecimal((Double) listObj[2]));
+                if (new BigDecimal((Double) listObj[2]).compareTo(BigDecimal.ZERO) == 1)
+                    arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
             }
         }
         retMap.put(WaterTaxConstants.CURR_DMD_STR, currDmd);
@@ -451,7 +451,7 @@ public class ConnectionDemandService {
         try {
             collectXML = URLEncoder.encode(billXml, "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return collectXML;
     }
@@ -656,14 +656,14 @@ public class ConnectionDemandService {
             final WaterConnectionDetails waterConnectionDetails, final String moduleName, final String installmentType) {
         final EgDemand currDemand = waterConnectionDetails.getDemand();
         Installment installment = null;
-        List<Object> dmdCollList = new ArrayList<Object>();
+        List<Object> dmdCollList = new ArrayList<Object>(0);
         Installment currInst = null;
         Integer instId = null;
         BigDecimal curDue = BigDecimal.ZERO;
         BigDecimal arrDue = BigDecimal.ZERO;
 
         BigDecimal arrearInstallmentfrom = BigDecimal.ZERO;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>(0);
         if (currDemand != null)
             dmdCollList = getDmdCollAmtInstallmentWiseWithIsDmdTrue(currDemand);
         currInst = getCurrentInstallment(moduleName, null, new Date());
@@ -712,11 +712,11 @@ public class ConnectionDemandService {
     public Map<String, BigDecimal> getDemandCollMapForBill(final WaterConnectionDetails waterConnectionDetails,
             final String moduleName, final String installmentType) {
         final EgDemand currDemand = waterConnectionDetails.getDemand();
-        List<Object> dmdCollList = new ArrayList<Object>();
+        List<Object> dmdCollList = new ArrayList<Object>(0);
         Integer instId = null;
         Double balance = null;
         Integer val = null;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>(0);
         if (currDemand != null)
             dmdCollList = getDmdCollAmtInstallmentWiseWithIsDmdTrue(currDemand);
         for (final Object object : dmdCollList) {

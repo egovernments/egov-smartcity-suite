@@ -189,4 +189,8 @@ public class ApplicationProperties {
     public List<String> portalEnabledFeatures() {
         return Arrays.asList(environment.getProperty("portal.feature.enabled").split(","));
     }
+
+    public boolean statewideMigrationRequired() {
+        return environment.getProperty("statewide.migration.required", Boolean.class, Boolean.FALSE);
+    }
 }

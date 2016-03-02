@@ -45,7 +45,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Pending TDS]]></text>
+				<text><![CDATA[Pending Deductions to be remitted]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="10" y="25" width="89" height="14" uuid="25064206-46bb-4942-a96e-6a47fc9b8454"/>
@@ -314,7 +314,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="323" y="0" width="127" height="40" uuid="1f0822ed-5b5c-4b8e-80a6-6a8803a84e91"/>

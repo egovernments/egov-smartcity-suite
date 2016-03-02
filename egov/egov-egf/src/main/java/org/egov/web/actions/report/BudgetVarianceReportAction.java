@@ -132,7 +132,9 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     private Department department = new Department();
     private CFunction function = new CFunction();
     private Fund fund = new Fund();
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @ValidationErrorPage(value = "form")
     @SkipValidation
     @Override
@@ -176,23 +178,22 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             accountTypeList.add(BudgetAccountType.REVENUE_RECEIPTS.name());
             accountTypeList.add(BudgetAccountType.CAPITAL_EXPENDITURE.name());
             accountTypeList.add(BudgetAccountType.CAPITAL_RECEIPTS.name());
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
             addDropdownData("accountTypeList", accountTypeList);
             
-            dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
+            dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
             if (isFieldMandatory(Constants.EXECUTING_DEPARTMENT))
                 addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
             if (isFieldMandatory(Constants.FUNCTION))
                 addDropdownData("functionList",
                         persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false  order by name"));
-            if (shouldShowHeaderField(Constants.FUNCTIONARY))
+            if (isFieldMandatory(Constants.FUNCTIONARY))
                 addDropdownData("functionaryList",
                         persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
-            if (shouldShowHeaderField(Constants.FUND))
+            if (isFieldMandatory(Constants.FUND))
                 addDropdownData("fundList",
                         persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
-            if (shouldShowHeaderField(Constants.FIELD))
-            addDropdownData("fieldList",
+            if (isFieldMandatory(Constants.FIELD))
+                addDropdownData("fieldList",
                         persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
             if (isFieldMandatory(Constants.SCHEME))
                 addDropdownData("schemeList", Collections.EMPTY_LIST);

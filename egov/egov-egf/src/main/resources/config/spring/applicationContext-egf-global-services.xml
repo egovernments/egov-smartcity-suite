@@ -277,5 +277,10 @@
 		<property name="type" value="org.egov.commons.Accountdetailkey" />
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-
+	<bean id="generalLedgerService" class = "org.egov.services.voucher.GeneralLedgerService" >
+               <constructor-arg index="0" value="org.egov.commons.CGeneralLedger" />
+    </bean>
+	<bean id="generalLedgerDetailService" class = "org.egov.services.voucher.GeneralLedgerDetailService" >
+               <constructor-arg index="0" value="org.egov.commons.CGeneralLedgerDetail" />
+    </bean>
 </beans>

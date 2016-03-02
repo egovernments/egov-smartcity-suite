@@ -557,7 +557,7 @@ public class CollectionCommon {
                 oldReceiptHeader.getReceiptMisc().getFund(), null, null, oldReceiptHeader.getReceiptMisc()
                 .getDepartment(), newReceiptHeader, null, null, null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
-
+        newReceiptHeader.setReceiptdate(new Date());
         final List<CChartOfAccounts> bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
 
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
@@ -596,7 +596,7 @@ public class CollectionCommon {
      * @param receiptHeader the <code>ReceiptHeader</code> instance which has to be cancelled
      * @param cancelInstrument a boolean value indicating if the instrument should be cancelled
      */
-
+    @Transactional
     public void cancelChallanReceipt(final ReceiptHeader receiptHeader, final boolean cancelInstrument) {
         String instrumentType = "";
         /**

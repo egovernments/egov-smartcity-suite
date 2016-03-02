@@ -135,13 +135,9 @@ function setAsViewPage(){
 	<s:if test="%{sourcePage=='inbox' && model.challan.state.value=='APPROVED'}">
 	if(document.getElementById('receiptMisc.fund.id')!=null)
 		document.getElementById('receiptMisc.fund.id').disabled=false;
-	if(document.getElementById('functionCode')!=null)
-		document.getElementById('functionCode').disabled=false;
 		 for(var i=0;i<billDetailTableIndex+1;i++)
 	{
 		if(null != document.getElementById('billDetailslist['+i+'].accounthead')){
-			document.getElementById('billDetailslist['+i+'].functionDetail').disabled=false;
-			document.getElementById('billDetailslist['+i+'].functionIdDetail').disabled=false;
 			document.getElementById('billDetailslist['+i+'].accounthead').disabled=false;
 			document.getElementById('billDetailslist['+i+'].glcodeIdDetail').disabled=false;
 		}
@@ -250,6 +246,12 @@ function validate(obj){
 					valid=false;
 			 }
 		</s:if>
+		 <s:if test="%{isFieldMandatory('function')}">                     
+		 if(null!= document.getElementById('functionId') && document.getElementById('functionId').value == -1){
+			 document.getElementById("challan_error_area").innerHTML+='<s:text name="miscreceipt.functioncode.errormessage" />'+ '<br>';                                
+			valid=false;
+		 }            
+		</s:if>
 		if(!validateAccountDetail()){
 			valid=false;
 		}
@@ -333,7 +335,6 @@ var fYearOptions=[{label:"--- Select ---", value:"0"}];
 	</s:iterator>
 var makeBillDetailTable = function() {
 		var billDetailColumns = [ 
-			{key:"function",label:'Function', formatter:createTextFieldFormatterForFunction(VOUCHERDETAILLIST,".functionDetail",VOUCHERDETAILTABLE)},
 			{key:"accounthead", label:'Account Head <span class="mandatory"/>',formatter:createLongTextFieldFormatter(VOUCHERDETAILLIST,".accounthead",VOUCHERDETAILTABLE)},				
 			{key:"glcode",label:'Account Code ', formatter:createTextFieldFormatter(VOUCHERDETAILLIST,".glcodeDetail","text",VOUCHERDETAILTABLE)},
 			{key:"creditamount",label:'Amount (Rs.)', formatter:createAmountFieldFormatter(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmount()",VOUCHERDETAILTABLE)},
@@ -381,8 +382,6 @@ var makeBillDetailTable = function() {
 		});
 		<s:iterator value="billDetailslist" status="stat">
 				billDetailsTable.addRow({SlNo:billDetailsTable.getRecordSet().getLength()+1,
-				    "functionid":'<s:property value="functionIdDetail"/>',
-				    "function":'<s:property value="functionDetail"/>',
 					"glcodeid":'<s:property value="glcodeIdDetail"/>',
 					"glcode":'<s:property value="glcodeDetail"/>',
 					"accounthead":'<s:property value="accounthead"/>',
@@ -390,8 +389,6 @@ var makeBillDetailTable = function() {
 					"financialYearId":'<s:property value="%{fYear}"/>'
 				});
 				var index = '<s:property value="#stat.index"/>';
-				updateGrid(VOUCHERDETAILLIST,'functionIdDetail',index,'<s:property value="functionIdDetail"/>');
-				updateGrid(VOUCHERDETAILLIST,'functionDetail',index,'<s:property value="functionDetail"/>');
 				updateGrid(VOUCHERDETAILLIST,'glcodeIdDetail',index,'<s:property value="glcodeIdDetail"/>');
 				updateGrid(VOUCHERDETAILLIST,'glcodeDetail',index,'<s:property value="glcodeDetail"/>');
 				updateGrid(VOUCHERDETAILLIST,'accounthead',index,'<s:property value="accounthead"/>');
@@ -677,7 +674,18 @@ function populatepositionuseronload()
   			</s:else>
 	     </tr>
 	     </s:if>
-	      
+	      <s:if test="%{shouldShowHeaderField('function')}">
+         <tr>
+         <s:if test="%{shouldShowHeaderField('function')}">
+         <td width="4%" class="bluebox">&nbsp;</td>
+           <td width="21%" class="bluebox"><s:text name="miscreceipt.function"/><s:if test="%{isFieldMandatory('function')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
+          <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="functionId" id="functionId" cssClass="selectwk" list="dropdownData.functionList" listKey="id" listValue="name"  /> </td>
+            </s:if>
+           <s:else>
+            <td colspan=2 class="bluebox"></td>
+            </s:else>
+         </tr>
+         </s:if>
 		  <s:if test="%{shouldShowHeaderField('field')}">
 		   <tr>
 		    <td width="4%" class="bluebox">&nbsp;</td>
@@ -745,7 +753,7 @@ function populatepositionuseronload()
 		</tr>
 		</s:if>
 		<!-- Reason For Cancellation has to be displayed for Challan CANCEL	 -->
-		<s:if test="%{(sourcePage=='inbox' && (model.challan.state.value=='REJECTED' || (model.challan.state.previous.value=='REJECTED' && model.challan.state.value=='CREATED')) || (actionName=='CHALLAN_MODIFY' && hasErrors())}">
+		<s:if test="%{(sourcePage=='inbox' && model.challan.state.value=='REJECTED') || (actionName=='CHALLAN_MODIFY' && hasErrors())}">
 			<tr>
 			   <td width="4%" class="bluebox">&nbsp;</td>
 			   <td width="21%" class="bluebox"><s:text name="challan.reason.cancellation"/></td>
@@ -794,7 +802,7 @@ onChange="onChangeDeparment(this.value)" />
 	 <div class="buttonbottom" align="center" id="printButton">
 		<!-- Action Buttons should be displayed only in case of Create New Challan or 
 		     If page is opened from inbox -->
-		<s:if test="%{model.id==null || (sourcePage!='inbox' && model.challan.state.previous.value=='REJECTED' && model.challan.state.value=='CREATED') || sourcePage=='inbox' || (actionName=='CHALLAN_MODIFY' && hasErrors()) || (actionName=='CHALLAN_VALIDATE' && hasErrors())}" >
+			<s:if test="%{model.id==null || (sourcePage=='inbox' && !hasActionMessages()) || (actionName=='CHALLAN_MODIFY' && hasErrors()) || (actionName=='CHALLAN_VALIDATE' && hasErrors())}" >
 			<s:iterator value="%{validActions}">
 				<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="actionButton" onclick="document.challan.actionName.value='%{name}';document.challan.action='challan-save.action'; return validate(this);"/>
 		    </s:iterator>	

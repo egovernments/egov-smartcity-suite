@@ -68,7 +68,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.workflow.Action;
 import org.egov.model.advance.EgAdvanceReqPayeeDetails;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
@@ -79,6 +78,7 @@ import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -101,18 +101,20 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
     private EgovCommon egovCommon;
     private Fund fund;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public void prepare() {
         super.prepare();
         modeOfCollectionMap.put("others", "Others");
         modeOfCollectionMap.put("cash", "Cash");
         modeOfCollectionMap.put("cheque", "Cheque");
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
         addDropdownData("bankList", egovCommon.getActiveBankBranchForActiveBanks());
         addDropdownData("accNumList", Collections.EMPTY_LIST);
-        addDropdownData("fundList", masterCache.get("egi-fund"));
+        addDropdownData("fundList", masterDataCache.get("egi-fund"));
         loadApproverUser();
     }
 
@@ -221,14 +223,13 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
     void loadApproverUser() {
         final String scriptName = "paymentHeader.nextDesg";
         final String type = "Payment" + "|";
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         Map<String, Object> map = new HashMap<String, Object>();
         if (paymentheader != null && paymentheader.getVoucherheader().getFiscalPeriodId() != null)
             map = voucherService.getDesgByDeptAndTypeAndVoucherDate(type, scriptName, paymentheader.getVoucherheader()
                     .getVoucherDate(), paymentheader);
         else
             map = voucherService.getDesgByDeptAndTypeAndVoucherDate(type, scriptName, new Date(), paymentheader);
-        addDropdownData("departmentList", masterCache.get("egi-department"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
         final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
         String strDesgId = "", dName = "";
         final List<Map<String, Object>> designationList = new ArrayList<Map<String, Object>>();

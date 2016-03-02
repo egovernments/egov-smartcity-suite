@@ -95,6 +95,10 @@ public class ChartOfAccts {
     private static final Logger LOGGER = Logger.getLogger(ChartOfAccts.class);
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     EGovernCommon cm = new EGovernCommon();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
             .getDefault());
@@ -236,18 +240,18 @@ public class ChartOfAccts {
         created = new SimpleDateFormat("dd/mm/yyyy").format(new Date());
         try {
             created = formatter.format(sdf.parse(created));
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-activeCoaCodes");
-            EgovMasterDataCaching.getInstance().removeFromCache("egi-coaCodes");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache("egi-coaCodes");
+            masterDataCache.removeFromCache(
                     "egi-chartOfAccounts");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-coaPurposeId10");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-accountCodes");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-liabilityCOACodes");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-coaCodesForLiability");
             setLastModified(created);
             setId(String.valueOf(PrimaryKeyGenerator

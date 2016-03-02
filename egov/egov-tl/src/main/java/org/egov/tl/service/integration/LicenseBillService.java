@@ -85,7 +85,6 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -93,7 +92,6 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
-import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.TradeLicenseUpdateIndexService;
 import org.egov.tl.utils.Constants;
@@ -129,9 +127,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     private SecurityUtils securityUtils;
-
-    @Autowired
-    private MessagingService messagingService;
 
     @Autowired
     private EgBillReceiptDao egBillReceiptDao;
@@ -410,13 +405,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                         + rcptAccInfo.getCrAmount());
                         }
 
-                // demand.setAmtCollected(amtCollected);
-                // persistenceService.update(demand);
-                // FIXME ld.getLicense(); will be sufficient to get the license back
-                // Since collection is not working, we re query to get License object
-                // replace the below with ld.getLicense(); once collection fixed
-                final TradeLicense license = (TradeLicense) persistenceService.find("from TradeLicense where id=?",
-                        ld.getLicense().getId());
+                final License license = ld.getLicense();
                 if (license.getState() != null)
                     updateWorkflowState(license);
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(license, billReceipt.getReceiptDate(),
@@ -426,8 +415,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 reconcileCollForRcptCancel(demand, billReceipt);
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
                 reconcileCollForChequeBounce(demand, billReceipt);// needs to be
-            // done for
-            // multiple
         } catch (final Exception e) {
             LOGGER.error("Error occurred while updating demand details", e);
             throw new ApplicationRuntimeException("Updating Demand Details Failed", e);
@@ -480,9 +467,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
             .withNextAction(wfmatrix.getNextAction());
         }
-        // TODO: updating License with workFlow Entry
-        // FIXME its a collection API issue to be discussed and rectified
-        persistenceService.getSession().flush();
     }
 
     /**

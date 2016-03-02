@@ -284,6 +284,7 @@ public class ReceiptAction extends BaseFormAction {
     private EgwStatusHibernateDAO statusDAO;
 
     private List<CChartOfAccounts> bankCOAList;
+    private Long functionId;
 
     @Override
     public void prepare() {
@@ -478,8 +479,8 @@ public class ReceiptAction extends BaseFormAction {
                 final CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(voucherDetails
                         .getGlcodeDetail());
                 CFunction function = null;
-                if (voucherDetails.getFunctionIdDetail() != null)
-                    function = functionDAO.getFunctionById(voucherDetails.getFunctionIdDetail());
+                if (functionId != null)
+                    function = functionDAO.getFunctionById(functionId);
                 ReceiptDetail receiptDetail = new ReceiptDetail(account, function,
                         voucherDetails.getCreditAmountDetail(), voucherDetails.getDebitAmountDetail(), BigDecimal.ZERO,
                         Long.valueOf(m), null, true, receiptHeader);
@@ -792,6 +793,8 @@ public class ReceiptAction extends BaseFormAction {
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUNCTIONARY));
         if (headerFields.contains(CollectionConstants.FUND))
             addDropdownData("fundList", collectionsUtil.getAllFunds());
+        if (headerFields.contains(CollectionConstants.FUNCTION))
+            addDropdownData("functionList", functionDAO.findAll());
         if (headerFields.contains(CollectionConstants.FIELD))
             addDropdownData("fieldList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FIELD));
         if (headerFields.contains(CollectionConstants.FUNDSOURCE))
@@ -1821,5 +1824,13 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setServiceCategoryService(final PersistenceService<ServiceCategory, Long> serviceCategoryService) {
         this.serviceCategoryService = serviceCategoryService;
+    }
+
+    public Long getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(Long functionId) {
+        this.functionId = functionId;
     }
 }

@@ -58,6 +58,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -81,7 +82,9 @@ public class SchemeAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(SchemeAction.class);
     List<Scheme> schemeList;
     private SchemeService schemeService;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public Object getModel() {
         return scheme;
@@ -96,8 +99,7 @@ public class SchemeAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        addDropdownData("fundDropDownList", masterCache.get("egi-fund"));
+        addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
 
     }
 

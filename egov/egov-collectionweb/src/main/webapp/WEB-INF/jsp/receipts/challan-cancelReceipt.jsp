@@ -54,19 +54,19 @@ function warningInfo()
 	}
 	else
 	{
-		document.cancelChallanReceiptForm.action="challan!saveOnCancel.action";
+		document.cancelChallanReceiptForm.action="challan-saveOnCancel.action";
 		document.cancelChallanReceiptForm.submit();
 	}
 }
 
 </script>
 </head>
+<body >
 <span align="center" style="display:none" id="cancellationreasonerror">
   <li>
      <font size="2" color="red"><b><s:text name="cancellationreason.error"/></b></font>
   </li>
 </span>
-<body >
 <s:form theme="simple" name="cancelChallanReceiptForm" action="challan">
 <s:push value="model">
 <div class="formmainbox">
@@ -150,7 +150,7 @@ function warningInfo()
 						
 						<tr>
 							<td width="4%" class="bluebox2">&nbsp;</td>
-							<td width="21%" class="bluebox2"><s:text name="billreceipt.reasonforcancellation"/><span class="mandatory">*</span></td>
+							<td width="21%" class="bluebox2"><s:text name="billreceipt.reasonforcancellation"/><span class="mandatory"></span></td>
 							<td width="24%" class="bluebox2" colspan="7"><s:textarea id="reasonForCancellation" label="reasonForCancellation" cols="90" rows="8" name="reasonForCancellation" value="%{reasonForCancellation}" /></td>
 						</tr>
 					</table>
@@ -162,7 +162,7 @@ function warningInfo()
 		<br/>
 		<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 		<div class="buttonbottom">
-		<input name="button32" type="button" class="buttonsubmit" id="button32"  value="Cancel Receipt" onclick="return warningInfo()"/>
+		<input name="button32" type="button" class="buttonsubmit" id="button32"  value="Cancel Receipt" onclick="return warningInfo();"/>
 		<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
 		<input name="buttonBack" type="button" class="button" id="buttonBack" value="Back" onclick="history.back()" /> 
 		</div>

@@ -31,8 +31,10 @@
 package org.egov.collection.web.actions.receipts;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
@@ -43,12 +45,10 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.admin.master.entity.Location;
+import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -139,10 +139,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     private String receiptDate;
-    protected String approverName;
-    @Autowired
-    protected AssignmentService assignmentService;
-
+    private String approverName;
     /**
      * Result for cash submission report (redirects to the cash collection
      * report)
@@ -387,16 +384,15 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             // Get the next receipt that is to be updated
             final ReceiptHeader receiptHeader = receiptHeaderService.findById(receiptId, false);
             receiptHeaderService.performWorkflow(wfAction, receiptHeader, remarks);
-            final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(receiptHeader.getState()
-                    .getOwnerPosition().getId());
-            approverName = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
-                    .concat("~").concat(assignment.getPosition().getName());
+            approverName = collectionsUtil.getApproverName(receiptHeader.getState().getOwnerPosition());
         }
         // Add the selected receipt ids to sereceiptHeader
         // Need to find a better mechanism to achieve this.
         getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS, receiptIds);
         return SUCCESS;
     }
+
+
 
     /**
      * Fetches all receipts for set user-counter combination and given status
@@ -461,10 +457,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         // Get all receipt headers to be approved
         fetchReceipts(CollectionConstants.WF_ACTION_APPROVE);
 
-        // Add counter list and user list to drop down data
+        /*// Add counter list and user list to drop down data
         addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getCollectionServiceList());
         addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST, collectionsUtil.getActiveCounters());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());*/
 
         return INDEX;
     }
@@ -542,25 +538,25 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * workflow
      */
     private void calculateAmounts() {
-        totalAmount = BigDecimal.valueOf(0);
-        for (final ReceiptHeader receiptHeader : receiptHeaders) {
-            final BigDecimal receiptAmount = receiptHeader.getAmount();
+        totalAmount = BigDecimal.ZERO;
+        for (ReceiptHeader receiptHeader : receiptHeaders) {
+                for (InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
+                        String instrumentType = instrumentHeader.getInstrumentType().getType();
+                        // Increment total amount
+                        totalAmount = totalAmount.add(instrumentHeader.getInstrumentAmount()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
-            // Increment total amount
-            totalAmount = totalAmount.add(receiptAmount).setScale(2, BigDecimal.ROUND_HALF_UP);
-
-            // Increment instrument type wise amount
-            final String instrumentType = receiptHeader.getInstrumentType();
-            BigDecimal instrumentAmount = instrumentWiseAmounts.get(instrumentType);
-            if (instrumentAmount == null)
-                instrumentAmount = receiptAmount;
-            else
-                instrumentAmount = instrumentAmount.add(receiptAmount);
-            instrumentAmount = instrumentAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
-            instrumentWiseAmounts.put(instrumentType, instrumentAmount);
-            receiptHeader.setInstrumentsAsString(receiptHeader.getInstrumentDetailAsString());
+                        BigDecimal instrumentAmount = instrumentWiseAmounts.get(instrumentType);
+                        if (instrumentAmount == null) {
+                                instrumentAmount = instrumentHeader.getInstrumentAmount();
+                        } else {
+                                instrumentAmount = instrumentAmount.add(instrumentHeader.getInstrumentAmount());
+                        }
+                        instrumentWiseAmounts.put(instrumentType, instrumentAmount.setScale(2, BigDecimal.ROUND_HALF_UP));
+                }
+                // Add to ReceiptHeader to populate in jsp
+                receiptHeader.setInstrumentsAsString(receiptHeader.getInstrumentDetailAsString());
         }
-    }
+}
 
     public String getReceiptDate() {
         return receiptDate;

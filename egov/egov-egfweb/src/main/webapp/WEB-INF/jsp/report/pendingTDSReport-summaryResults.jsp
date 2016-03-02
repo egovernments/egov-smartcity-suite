@@ -47,7 +47,8 @@
 		<tr>
 			<td colspan="7">
 				<div class="subheadsmallnew">
-					<strong>Deductions remittance summary as on <s:property
+					<strong>Deductions remittance summary for <s:property
+							value="%{type}" />  as on <s:property
 							value="%{getFormattedDate(asOnDate)}" /></strong>
 				</div>
 			</td>
@@ -115,4 +116,4 @@
 	</div>
 
 </s:elseif>
-<s:else>No TDS found</s:else>
+<s:else>No records found</s:else>

@@ -2256,7 +2256,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         "egf_budgetgroup bg1,voucherheader vh1, vouchermis vmis1 where bmis1.billid=br1.id and bdetail1.billid=br1.id and bd1.budgetgroup=bg1.id and "
                         +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and vh.id = vmis.voucherheaderid and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
+                        " (bmis1.budgetCheckReq is null or bmis1.budgetCheckReq=true) and vh1.id = vmis1.voucherheaderid and (bmis1.budgetary_appnumber != 'null' and bmis1.budgetary_appnumber is not null) "
 
                         +
                         " and (bg1.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg1.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br1.statusid not in (select id as idd from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "

@@ -70,14 +70,12 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -86,10 +84,8 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
@@ -99,7 +95,6 @@ import org.egov.services.financingsource.FinancingSourceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -134,6 +129,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
     private CreateVoucher createVoucher;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public BaseVoucherAction()
     {
         voucherHeader.setVouchermis(new Vouchermis());
@@ -163,22 +161,21 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     @Override
     public void prepare() {
         super.prepare();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside Prepare method");
         getHeaderMandateFields();
         if (headerFields.contains("department"))
-            addDropdownData("departmentList", masterCache.get("egi-department"));
+            addDropdownData("departmentList", masterDataCache.get("egi-department"));
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", masterCache.get("egi-functionary"));
+            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
         if (headerFields.contains("function"))
-            addDropdownData("functionList", masterCache.get("egi-function"));
+            addDropdownData("functionList", masterDataCache.get("egi-function"));
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", masterCache.get("egi-fund"));
+            addDropdownData("fundList", masterDataCache.get("egi-fund"));
         if (headerFields.contains("fundsource"))
-            addDropdownData("fundsourceList", masterCache.get("egi-fundSource"));
+            addDropdownData("fundsourceList", masterDataCache.get("egi-fundSource"));
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", masterCache.get("egi-ward"));
+            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.EMPTY_LIST);
         if (headerFields.contains("subscheme"))

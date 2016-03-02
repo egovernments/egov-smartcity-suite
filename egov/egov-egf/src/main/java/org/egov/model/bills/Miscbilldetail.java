@@ -107,7 +107,7 @@ public class Miscbilldetail implements java.io.Serializable
     public String getAmtInWords() {
         if (paidamount != null)
         {
-            paidamount = paidamount.setScale(2);
+            paidamount = paidamount.setScale(2, BigDecimal.ROUND_HALF_EVEN);
             amtInWords = NumberToWord.convertToWord(paidamount.toString());
 
         } else

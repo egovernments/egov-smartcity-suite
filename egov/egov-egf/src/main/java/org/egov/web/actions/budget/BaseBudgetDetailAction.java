@@ -81,6 +81,7 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -114,6 +115,9 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     BudgetDetailHelper budgetDetailHelper;
     protected boolean addNewDetails = false;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public boolean isAddNewDetails() {
         return addNewDetails;
     }
@@ -572,20 +576,19 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     }
 
     private void setupDropdownsInHeader() {
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
         setBudgetDropDown();
-        dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
+        dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
         if (shouldShowField(Constants.SUB_SCHEME))
             dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
         if (shouldShowField(Constants.FUNCTIONARY))
-            dropdownData.put("functionaryList", masterCache.get("egi-functionary"));
+            dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
         if (shouldShowField(Constants.FUNCTION))
-            dropdownData.put("functionList", masterCache.get("egi-function"));
+            dropdownData.put("functionList", masterDataCache.get("egi-function"));
         if (shouldShowField(Constants.SCHEME))
             dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
             .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
@@ -593,7 +596,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
         addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by " +
                 "finYearRange desc "));
-        dropdownData.put("departmentList", masterCache.get("egi-department"));
+        dropdownData.put("departmentList", masterDataCache.get("egi-department"));
         dropdownData.put("designationList", Collections.EMPTY_LIST);
         dropdownData.put("userList", Collections.EMPTY_LIST);
     }

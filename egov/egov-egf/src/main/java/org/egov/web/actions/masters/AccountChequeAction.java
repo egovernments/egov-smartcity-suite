@@ -86,6 +86,10 @@ public class AccountChequeAction extends BaseFormAction {
     @Autowired
     @Qualifier("accountChequesService")
     private AccountChequesService accountChequesService;
+    
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     private String deletedChqDeptId;
 
     public AccountChequeAction() {
@@ -101,17 +105,14 @@ public class AccountChequeAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        addDropdownData("departmentList", masterCache.get("egi-department"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
     }
 
     @Action(value = "/masters/accountCheque-newform")
     public String newform() {
-
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
-        addDropdownData("fundList", masterCache.get("egi-fund"));
+        addDropdownData("fundList", masterDataCache.get("egi-fund"));
         return "new";
 
     }

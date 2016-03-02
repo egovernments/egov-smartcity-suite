@@ -84,7 +84,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private TradeLicense tradeLicense = new TradeLicense();
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap = new HashMap<>();
-    private Map<Integer, Double> legacyInstallmentwiseFees = new TreeMap<>();
+    private Map<Integer, Integer> legacyInstallmentwiseFees = new TreeMap<>();
     private Map<Integer, Boolean> legacyFeePayStatus = new TreeMap<>();
     private String licenseNumber;
 
@@ -102,7 +102,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String enterExistingForm() {
         tradeLicense.setApplicationDate(new Date());
         for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense()) {
-            legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0d);
+            legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0);
             legacyFeePayStatus.put(installment.getInstallmentNumber(), false);
         }
         return super.newForm();
@@ -124,12 +124,12 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             throw new ValidationException("legacy.license.modify.excp", "You can't modify this license");
         prepareUpdate();
         for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense()) {
-            legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0d);
+            legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0);
             legacyFeePayStatus.put(installment.getInstallmentNumber(), false);
         }
         for (final EgDemandDetails demandDetail : license().getCurrentDemand().getEgDemandDetails()) {
             legacyInstallmentwiseFees.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
-                    demandDetail.getAmount().doubleValue());
+                    demandDetail.getAmount().intValue());
             legacyFeePayStatus.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
                     demandDetail.getAmtCollected().compareTo(BigDecimal.ZERO) != 0 &&
                             demandDetail.getAmtCollected().compareTo(demandDetail.getAmount()) == 0);
@@ -202,11 +202,11 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.ownerShipTypeMap = ownerShipTypeMap;
     }
 
-    public Map<Integer, Double> getLegacyInstallmentwiseFees() {
+    public Map<Integer, Integer> getLegacyInstallmentwiseFees() {
         return legacyInstallmentwiseFees;
     }
 
-    public void setLegacyInstallmentwiseFees(final Map<Integer, Double> legacyInstallmentwiseFees) {
+    public void setLegacyInstallmentwiseFees(final Map<Integer, Integer> legacyInstallmentwiseFees) {
         this.legacyInstallmentwiseFees = legacyInstallmentwiseFees;
     }
 

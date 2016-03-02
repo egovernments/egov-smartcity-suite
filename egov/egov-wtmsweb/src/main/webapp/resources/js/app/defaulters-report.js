@@ -77,7 +77,7 @@ function loadingReport()
 			$('#defaultersReport-header').show();
 			$('#reportgeneration-header').show();
 	        $("#resultDateLabel").html(fromAmount+" - "+toAmount);	
-			oTable.dataTable({
+			var oDataTable=oTable.dataTable({
 				"sPaginationType": "bootstrap",
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -88,17 +88,20 @@ function loadingReport()
 					"aButtons" : [ 
 					               {
 						             "sExtends": "pdf",
+						             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10],
 	                                 "sPdfMessage": "Defaulters Report",
 	                                 "sTitle": "Water Tax Defaulters Report",
 	                                 "sPdfOrientation": "landscape"
 					                },
 					                {
 							             "sExtends": "xls",
+							             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
 		                                 "sPdfMessage": "Defaulters Report",
 		                                 "sTitle": "Water Tax Defaulters Report"
 						             },
 						             {
 							             "sExtends": "print",
+							             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
 		                                 "sPdfMessage": "Defaulters Report",
 		                                 "sTitle": "Water Tax Defaulters Report"
 						             }],
@@ -113,7 +116,7 @@ function loadingReport()
 						'toAmount': toAmount
 					}
 				},
-				"columns" : [{"sTitle" : "S.no",},
+				"columns" : [{"sTitle" : "S.no", /*"data" : "hscNo", "mRender": function ( o,val,data, meta ) { return ''+(meta.row+1); }*/},
 							  { "data" : "hscNo" , "title": "H.S.C NO"},  
 							  { "data" : "ownerName", "title": "Owner Name"},
 							  { "data" : "wardName", "title": "Revenue Ward"},
@@ -125,7 +128,7 @@ function loadingReport()
 							  { "data" : "currentDue", "title": "Current Amount"},
 							  { "data" : "totalDue", "title": "Total"}
 							],
-							  "aaSorting": [[2, 'desc']] ,
+							 /* "aaSorting": [[3, 'asc'] , [8,'desc']] ,*/
 							  "footerCallback" : function(row, data, start, end, display) {
 									var api = this.api(), data;
 									if (data.length == 0) {
@@ -139,10 +142,20 @@ function loadingReport()
 										updateTotalFooter(10, api);
 									}
 								},
-								"fnRowCallback" : function(nRow, aData, iDisplayIndex){
-					                $("td:first", nRow).html(iDisplayIndex +1);
-					               return nRow;
+					            "fnInitComplete": function() {
+					            	if(oDataTable){ oDataTable.fnSort( [ [7,'desc'] , [3,'asc'] ] ); }
 					            },
+					            "fnDrawCallback": function ( oSettings ) {
+					                /* Need to redo the counters if filtered or sorted */
+					                if ( oSettings.bSorted || oSettings.bFiltered )
+					                {
+					                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
+					                    {
+					                        $('td:eq(0)', oSettings.aoData[ oSettings.aiDisplay[i] ].nTr ).html( i+1 );
+					                    }
+					                }
+					            },
+					            
 								"aoColumnDefs" : [ {
 									"aTargets" : [8,9,10],
 									"mRender" : function(data, type, full) {
@@ -150,7 +163,20 @@ function loadingReport()
 									}
 								} ]		
 					});
+			
+			
 			e.stopPropagation();
+		}
+		
+		function updateSerialNo()
+		{
+			$( "#defaultersReport-table tbody tr" ).each(function(index) {
+				if($(this).find('td').length>1)
+				{
+					oDataTable.fnUpdate(''+(index+1), index, 0);
+				}
+			});
+			
 		}
 		
 	

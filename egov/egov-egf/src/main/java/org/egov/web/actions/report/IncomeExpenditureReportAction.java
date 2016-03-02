@@ -59,6 +59,7 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -68,6 +69,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -111,7 +113,9 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     private StringBuffer statementheading = new StringBuffer();
     List<CChartOfAccounts> listChartOfAccounts;
     private boolean detailReport = false;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public void setIncomeExpenditureService(final IncomeExpenditureService incomeExpenditureService) {
         this.incomeExpenditureService = incomeExpenditureService;
     }
@@ -147,12 +151,11 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-            addDropdownData("departmentList", masterCache.get("egi-department"));
-            addDropdownData("functionList", masterCache.get("egi-function"));
-            addDropdownData("functionaryList", masterCache.get("egi-functionary"));
-            addDropdownData("fundDropDownList", masterCache.get("egi-fund"));
-            addDropdownData("fieldList", masterCache.get("egi-ward"));
+            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("functionList", masterDataCache.get("egi-function"));
+            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
+            addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
+            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
             addDropdownData("financialYearList",
                     getPersistenceService().findAllBy("from CFinancialYear where isActive=true  order by finYearRange desc "));
         }
@@ -318,7 +321,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     @Action(value = "/report/incomeExpenditureReport-generateIncomeExpenditurePdf")
     public String generateIncomeExpenditurePdf() throws Exception {
         populateDataSource();
-        final String heading = getUlbName() + "\\n" + statementheading.toString();
+        final String heading = ReportUtil.getCityName() + "\\n" + statementheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate());
         final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
                 getPreviousYearToDate(), getCurrentYearToDate(), subtitle, true);
@@ -329,7 +332,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     @Action(value = "/report/incomeExpenditureReport-generateDetailCodePdf")
     public String generateDetailCodePdf() throws Exception {
         populateSchedulewiseDetailCodeReport();
-        final String heading = getUlbName() + "\\n" + statementheading.toString();
+        final String heading = ReportUtil.getCityName() + "\\n" + statementheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate());
         final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
                 getPreviousYearToDate(), getCurrentYearToDate(), subtitle, true);
@@ -340,7 +343,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     @Action(value = "/report/incomeExpenditureReport-generateDetailCodeXls")
     public String generateDetailCodeXls() throws Exception {
         populateSchedulewiseDetailCodeReport();
-        final String heading = getUlbName() + "\\n" + statementheading.toString();
+        final String heading = ReportUtil.getCityName() + "\\n" + statementheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate())
                 + "                                               ";
         final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
@@ -349,19 +352,19 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return INCOME_EXPENSE_XLS;
     }
 
-    public String getUlbName() {
+   /* public String getUlbName() {
         final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);
         return "";
-    }
+    }*/
 
     @Action(value = "/report/incomeExpenditureReport-generateIncomeExpenditureXls")
     public String generateIncomeExpenditureXls() throws Exception {
         populateDataSource();
-        final String heading = getUlbName() + "\\n" + statementheading.toString();
+        final String heading = ReportUtil.getCityName() + "\\n" + statementheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate())
                 + "                                               ";
         final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
@@ -393,7 +396,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     @Action(value = "/report/incomeExpenditureReport-generateIncomeExpenditureSchedulePdf")
     public String generateIncomeExpenditureSchedulePdf() throws Exception {
         populateDataSourceForSchedule();
-        final String heading = getUlbName() + "\\n" + scheduleheading.toString();
+        final String heading = ReportUtil.getCityName() + "\\n" + scheduleheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate())
                 + "                                             ";
         final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
@@ -405,7 +408,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     @Action(value = "/report/incomeExpenditureReport-generateIncomeExpenditureScheduleXls")
     public String generateIncomeExpenditureScheduleXls() throws Exception {
         populateDataSourceForSchedule();
-        final String heading = getUlbName() + "\\n" + scheduleheading.toString();
+        final String heading = ReportUtil.getCityName() + "\\n" + scheduleheading.toString();
         // Blank space for space didvidion between left and right corner
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate()) + "					  						 ";
         final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,

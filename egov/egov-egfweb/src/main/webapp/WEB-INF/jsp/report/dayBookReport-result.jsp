@@ -54,8 +54,8 @@
 				style="text-align: center; width: 98%;">
 				<b><s:property value="%{heading}" /></b>
 				<div align="left" style="text-align: left; width: 98%;">
-					Total Vouchers
-					<s:property value="%{dayBookReport.totalCount}" />
+					Total Vouchers : 
+					<s:property value="%{dayBookDisplayList.size/2}" />
 					
 				</div>
 			</div>
@@ -97,14 +97,12 @@
 			title="Credit Amount(Rs.)" style="width:5%;text-align:right"
 			property="creditamount" />
 		<display:caption media="pdf">
-		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						                                     Day Book Report  
+		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		   <s:property value="%{heading}" />
 		</display:caption>
 		<display:caption media="excel">
 				   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						  Day Book Report  
+						  <s:property value="%{heading}" />
 				</display:caption>
 		<display:setProperty name="export.pdf" value="true" />
 		<display:setProperty name="export.pdf.filename"

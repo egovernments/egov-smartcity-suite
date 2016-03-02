@@ -42,25 +42,31 @@
 	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
 		<s:actionmessage /></font>
 </span>
+<table width="99%" border="0" cellspacing="0" cellpadding="0">
+
+	<tr>
+		<td colspan="7"><s:if test="%{fromDate!=null}">
+				<div class="subheadsmallnew">
+					<strong>Deduction detailed report for <s:property
+							value="type" /> from <s:property value="fromDate" /> to <s:property
+							value="asOnDate" /></strong>
+				</div></td>
+		</s:if>
+		<s:else>
+			<div class="subheadsmallnew">
+				<strong>Deduction detailed report for <s:property
+						value="type" /> as on <s:property value="asOnDate" /></strong>
+			</div>
+			</td>
+		</s:else>
+	</tr>
+</table>
 <s:if test="%{pendingTDS.size()>0}">
 	<br />
+	<div class="subheadsmallnew">
+		<strong>Pending Deductions to be remitted</strong>
+	</div>
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
-
-		<tr>
-			<td colspan="7"><s:if test="%{fromDate!=null}">
-					<div class="subheadsmallnew">
-						<strong>Deduction detailed report from <s:property
-								value="fromDate" /> to <s:property value="asOnDate" /></strong>
-					</div></td>
-			</s:if>
-			<s:else>
-				<div class="subheadsmallnew">
-					<strong>Deduction detailed report as on <s:property
-							value="asOnDate" /></strong>
-				</div>
-				</td>
-			</s:else>
-		</tr>
 		<tr>
 			<td
 				style="border-right-width: 1px; border-left-style: solid; padding-left: 5px; border-left-color: #E9E9E9"
@@ -327,7 +333,7 @@
 </s:if>
 <s:if
 	test="%{pendingTDS.size()<=0  && remittedTDS.size()<=0 && inWorkflowTDS.size()<=0}">
-No pending deduction found
+No Deduction details found
 </s:if>
 <s:if
 	test="%{pendingTDS.size()>0 || (showRemittedEntries==true && remittedTDS.size()>0) || inWorkflowTDS.size()>0 }">

@@ -132,7 +132,7 @@ public class ChartOfAccounts {
     EntityManager entityManager;
        
     public ChartOfAccounts() {
-    	 cache = EgovMasterDataCaching.getInstance().getCACHE_MANAGER().getCache();
+    	 cache = EgovMasterDataCaching.getCACHE_MANAGER().getCache();
     }
 
     @Deprecated
