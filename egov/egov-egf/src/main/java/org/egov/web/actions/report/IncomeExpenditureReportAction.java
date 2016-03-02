@@ -72,7 +72,6 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({
     @Result(name = "report", location = "incomeExpenditureReport-report.jsp"),

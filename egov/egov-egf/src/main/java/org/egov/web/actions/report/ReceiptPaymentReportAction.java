@@ -80,7 +80,6 @@ import org.springframework.transaction.annotation.Transactional;
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
         "no-cache;filename=receiptPaymentReport.xls" })
 })
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 public class ReceiptPaymentReportAction extends BaseFormAction {
 

@@ -72,7 +72,6 @@ import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({
         @Result(name = "result", location = "journalBookReport-result.jsp"),

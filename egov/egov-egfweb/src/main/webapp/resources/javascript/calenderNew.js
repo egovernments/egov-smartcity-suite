@@ -239,7 +239,7 @@
 	    		"'" + this.gReturnItem + "', '" + prevMM + "', '" + prevYYYY + "', '" + this.gFormat + "'" +
 	    		");" +
 	    		"\"> <img src='/egi/resources/erp2/images/nav-left.gif' border=0> <\/A></TD><TD align=center width='50%'>");
-	    	<!--this.wwrite("<a style='text-decoration:none;font-size:12px;color:#444444;font-weight:bold;font-family:tahoma,verdana,sans-serif' \href=\"javascript:window.print();\">Print</a></TD><TD ALIGN=center>");-->
+	    	//this.wwrite("<a style='text-decoration:none;font-size:12px;color:#444444;font-weight:bold;font-family:tahoma,verdana,sans-serif' \href=\"javascript:window.print();\">Print</a></TD><TD ALIGN=center>");
 this.wwriteA("<FONT FACE='" + fontface + "' style='font-size:12px;color:#444444;text-align:center;font-weight:bold;padding-bottom:0px;height:5px'>");
 	    	this.wwriteA(this.gMonthName + " " + this.gYear);
 

@@ -59,7 +59,6 @@ import java.util.Set;
 import javax.script.ScriptContext;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -75,7 +74,6 @@ import org.egov.commons.utils.EntityType;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
@@ -84,7 +82,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
@@ -99,9 +96,6 @@ import org.egov.model.voucher.WorkflowBean;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -145,6 +139,7 @@ public class ContingentBillAction extends BaseBillAction {
     private boolean showPrintPreview;
     private String sanctionedMessge;
     private Department primaryDepartment;
+  
     @Autowired
     private EgovMasterDataCaching masterDataCache;
     
@@ -246,7 +241,6 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     @ValidationErrorPage(VIEW)
-    @Transactional
     @SkipValidation
     @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-update")
     public String update() {
@@ -409,7 +403,7 @@ public class ContingentBillAction extends BaseBillAction {
         return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
-    @Transactional
+   
     @SkipValidation
     @ValidationErrorPage(value = EDIT)
     public String edit()
@@ -549,7 +543,7 @@ public class ContingentBillAction extends BaseBillAction {
         return billDetailsTableSubledger;
     }
 
-    @Transactional
+   
     @SuppressWarnings("unchecked")
     private void recreateCheckList(final EgBillregister bill) {
         final List<EgChecklists> checkLists = persistenceService.findAllBy(
@@ -560,7 +554,7 @@ public class ContingentBillAction extends BaseBillAction {
         createCheckList(bill);
     }
 
-    @Transactional
+   
     private EgBillregister updateBill(EgBillregister bill) {
         final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
         headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill!beforeView.action?billRegisterId=");

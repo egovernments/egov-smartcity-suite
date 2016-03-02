@@ -125,14 +125,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.GLEngine.TransaxtionParameter;
 import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.eGov.src.domain.VoucherHeader;
 import com.exilant.eGov.src.transactions.CommonMethodsI;
 import com.exilant.eGov.src.transactions.CommonMethodsImpl;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
@@ -637,10 +635,10 @@ public class CreateVoucher {
     public void createVoucherFromPreApprovedVoucher(final long vouhcerheaderid, final String status)
             throws ApplicationRuntimeException {
         try {
-            final VoucherHeader vh = new VoucherHeader();
-            vh.setId(String.valueOf(vouhcerheaderid));
-            vh.setStatus(status);
-            vh.update();
+            final CVoucherHeader vh =(CVoucherHeader)voucherHeaderDAO.findById(vouhcerheaderid, false);
+            vh.setStatus(Integer.valueOf(status));
+            voucherHeaderDAO.update(vh);
+           
         } catch (final Exception e)
         {
             LOGGER.error(e.getMessage());
