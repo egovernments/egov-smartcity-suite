@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------*/
 jQuery(document).ready(function(){
 	
-	var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt','xml'];  
+	var fileformatsinclude = ['jpeg','jpg','png'];  
 	
 	jQuery('.upload-file').change(function(e){		
 		/*validation for file upload*/
@@ -49,7 +49,7 @@ jQuery(document).ready(function(){
 			//do something    
 		}
 		else{
-			bootbox.alert("Please upload .doc, .docx, .xls, .xlsx, .rtf, .pdf, jpeg, .jpg, .png, .txt and .xml format documents only");
+			bootbox.alert("Please upload "+fileformatsinclude+" format documents only");
 			jQuery( this ).val('');
 			return false;
 		}	
