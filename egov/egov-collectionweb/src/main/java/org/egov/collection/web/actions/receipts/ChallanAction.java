@@ -926,8 +926,11 @@ public class ChallanAction extends BaseFormAction {
         setDeptId(receiptHeader.getReceiptMisc().getDepartment().getId().toString());
         setDept(receiptHeader.getReceiptMisc().getDepartment());
         if (!receiptHeader.getReceiptDetails().isEmpty()) {
-            setFunctionId(receiptHeader.getReceiptDetails().iterator().next().getFunction().getId());
-            setFunction(receiptHeader.getReceiptDetails().iterator().next().getFunction());
+            CFunction function = receiptHeader.getReceiptDetails().iterator().next().getFunction();
+            if(function!=null) {
+                setFunctionId(function.getId());
+                setFunction(function);
+            }
         }
         setBoundary(receiptHeader.getReceiptMisc().getBoundary());
         setServiceCategoryId(receiptHeader.getService().getServiceCategory().getId());
