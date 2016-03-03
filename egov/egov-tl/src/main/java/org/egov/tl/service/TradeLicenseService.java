@@ -161,6 +161,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
                     .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
             license.setStatus(activeStatus);
+            //setting license to non-legacy, old license number will be the only tracking
+            //to check a license created as legacy or new hereafter.
+            license.setLegacy(false);
             license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                     Constants.APPLICATION_STATUS_GENECERT_CODE);
         }
