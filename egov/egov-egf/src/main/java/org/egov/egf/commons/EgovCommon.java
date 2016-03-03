@@ -57,7 +57,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -100,9 +99,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * @author msahoo
@@ -128,6 +126,9 @@ public class EgovCommon {
     @Autowired
     private  FinancialYearHibernateDAO financialYearDAO;
 
+    @Autowired
+    private ApplicationContext context;
+    
     public FundFlowService getFundFlowService() {
         return fundFlowService;
     }
@@ -1529,11 +1530,7 @@ public class EgovCommon {
         String simpleName = service.getSimpleName();
         simpleName = simpleName.substring(0, 1).toLowerCase()
                 + simpleName.substring(1) + "Service";
-        final WebApplicationContext wac = WebApplicationContextUtils
-                .getWebApplicationContext(ServletActionContext
-                        .getServletContext());
-        final EntityTypeService entityService = (EntityTypeService) wac
-                .getBean(simpleName);
+        final EntityTypeService entityService = (EntityTypeService) context.getBean(simpleName);
         return (List<EntityType>) entityService.getAllActiveEntities(detailType
                 .getId());
     }
