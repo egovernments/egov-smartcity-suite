@@ -1773,6 +1773,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * Updates the billing system with receipt information
      * @param receiptHeader
      */
+    @Transactional
     public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader)
             throws ApplicationRuntimeException {
 
@@ -1792,7 +1793,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (updateBillingSystem(serviceCode, billReceipts)) {
             receiptHeader.setIsReconciled(true);
             // the receipts should be persisted again
-            persist(receiptHeader);
+            super.persist(receiptHeader);
         }
         LOGGER.info("$$$$$$ Billing system updated for Service Code :"
                 + receiptHeader.getService().getCode()
