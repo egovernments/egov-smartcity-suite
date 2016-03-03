@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -59,6 +56,8 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -90,7 +89,6 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.recoveries.Recovery;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.instrument.DishonorChequeService;
 import org.egov.services.instrument.FinancialIntegrationService;
@@ -129,6 +127,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     private static final String JOURNAL_VOUCHER = "Journal Voucher";
     private EisCommonService eisCommonService;
     private boolean isRestrictedtoOneFunctionCenter;
+    private @Autowired CreateVoucher createVoucher;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     private CVoucherHeader paymentVoucher;
@@ -642,10 +641,9 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                 accountdetails = populateBankChargesAccountDetails();
                 subledgerDetails = new ArrayList<HashMap<String, Object>>();
             }
-            final CreateVoucher cv = new CreateVoucher();
             // TODO from headerDetails accountdetails subledgerDetails from these 3 populate intermediate objects and create
             // voucher at final aproval.
-            voucherHeader = cv.createVoucher(headerDetails, accountdetails, subledgerDetails);
+            voucherHeader = createVoucher.createVoucher(headerDetails, accountdetails, subledgerDetails);
             voucherHeader.getVouchermis().setSourcePath("");
             voucherHeader.setOriginalvcId(null);
         } catch (final HibernateException e) {

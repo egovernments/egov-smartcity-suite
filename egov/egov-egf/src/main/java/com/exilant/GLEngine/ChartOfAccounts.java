@@ -48,9 +48,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,16 +65,13 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
-import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.model.budget.BudgetDetail;
 import org.egov.services.voucher.VoucherService;
-import org.egov.utils.Constants;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -603,13 +598,6 @@ public class ChartOfAccounts {
 
     
 
-    public void setBudgetDetailsDAO() {
-        budgetDetailsDAO = new BudgetDetailsHibernateDAO(BudgetDetail.class, HibernateUtil.getCurrentSession());
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("setting services manually .............................. ");
-        //budgetDetailsDAO.setFinancialYearDAO(financialYearDAO);
-
-    }
 
     public void setScriptService()
     {

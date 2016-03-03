@@ -66,7 +66,7 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long> {
     private @Autowired AppConfigValueService appConfigValuesService;
     private EmployeeServiceOld employeeServiceOld;
     private PersistenceService persistenceService;
-    
+    private @Autowired EgovCommon egovCommon;
     public ReceiptService(final Class<ReceiptVoucher> receiptVoucher) {
         this.type = receiptVoucher;
     }
@@ -115,12 +115,12 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long> {
 
     public Boundary getBoundaryForUser(final ReceiptVoucher rv)
     {
-        return new EgovCommon().getBoundaryForUser(rv.getCreatedBy());
+        return egovCommon.getBoundaryForUser(rv.getCreatedBy());
     }
 
     public Department getDepartmentForUser(final User user)
     {
-        return new EgovCommon().getDepartmentForUser(user, eisCommonService, employeeServiceOld, persistenceService);
+        return egovCommon.getDepartmentForUser(user, eisCommonService, employeeServiceOld, persistenceService);
     }
 
     public void setEmployeeServiceOld(final EmployeeServiceOld employeeServiceOld) {

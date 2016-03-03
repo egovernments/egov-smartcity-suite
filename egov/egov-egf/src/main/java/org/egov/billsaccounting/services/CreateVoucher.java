@@ -78,7 +78,6 @@ import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -809,8 +808,6 @@ public class CreateVoucher {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Getting next Position for WorkFlow");
         final Position nextPosition = null;
-        new EgovCommon();
-
         Department department = vs.getTempDepartmentForWfItem(voucherheader, position);
         if (department == null)
         {

@@ -41,7 +41,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CChartOfAccounts;
@@ -107,6 +106,8 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
     private AppConfigValueService appConfigValuesService;
     private EmployeeServiceOld employeeServiceOld;
     private int preapprovalStatus = 0;
+    
+    private @Autowired EgovCommon egovCommon;
 
     public ContraService() throws Exception {
     }
@@ -120,7 +121,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     public Department getDepartmentForUser(final User user)
     {
-        return new EgovCommon().getDepartmentForUser(user, eisCommonService, employeeServiceOld, persistenceService);
+        return egovCommon.getDepartmentForUser(user, eisCommonService, employeeServiceOld, persistenceService);
     }
 
     public ContraJournalVoucher updateIntoContraJournal(final CVoucherHeader voucherHeader, final ContraBean contraBean) {
@@ -439,7 +440,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     public Boundary getBoundaryForUser(final ContraJournalVoucher rv)
     {
-        return new EgovCommon().getBoundaryForUser(rv.getCreatedBy());
+        return egovCommon.getBoundaryForUser(rv.getCreatedBy());
     }
 
     public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException

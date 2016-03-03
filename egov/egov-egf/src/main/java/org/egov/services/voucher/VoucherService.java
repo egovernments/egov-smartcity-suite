@@ -170,6 +170,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     @Qualifier("financialYearDAO")
     private FinancialYearHibernateDAO financialYearDAO;
+    @Autowired
+    private EgovCommon egovCommon;
 
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
         super(voucherHeader);
@@ -193,7 +195,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
     public Boundary getBoundaryForUser(final CVoucherHeader rv)
     {
-        return new EgovCommon().getBoundaryForUser(rv.getCreatedBy());
+        return egovCommon.getBoundaryForUser(rv.getCreatedBy());
     }
 
     public String getEmployeeNameForPositionId(final Position pos) throws ApplicationRuntimeException
@@ -231,7 +233,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
     public Department getDepartmentForUser(final User user)
     {
-        return new EgovCommon().getDepartmentForUser(user, eisCommonService, employeeService, persistenceService);
+        return  egovCommon.getDepartmentForUser(user, eisCommonService, employeeService, persistenceService);
     }
 
     public PersonalInformation getEmpForCurrentUser()

@@ -72,6 +72,8 @@ public class BillsAccountingService {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
+    @Autowired
+    private CreateVoucher createVoucher;
     /**
      * API to create voucher in pre approved status
      * @param billId
@@ -92,8 +94,7 @@ public class BillsAccountingService {
                 voucherStatus = appVal.getValue();
             } else
                 throw new ApplicationRuntimeException("PREAPPROVEDVOUCHERSTATUS" + MISSINGMSG);
-            final CreateVoucher cv = new CreateVoucher();
-            vh = cv.createVoucherFromBill(billId, voucherStatus, voucherNumber, voucherDate);
+           vh = createVoucher.createVoucherFromBill(billId, voucherStatus, voucherNumber, voucherDate);
         } catch (final ValidationException e) {
             LOGGER.error(e.getErrors());
             throw new ValidationException(e.getErrors());
@@ -127,8 +128,7 @@ public class BillsAccountingService {
                 voucherStatus = appVal.getValue();
             } else
                 throw new ApplicationRuntimeException("PREAPPROVEDVOUCHERSTATUS" + MISSINGMSG);
-            final CreateVoucher cv = new CreateVoucher();
-            vh = cv.createVoucherFromBillForPJV(billId, voucherStatus, voucherdetailList, subLedgerList);
+            vh = createVoucher.createVoucherFromBillForPJV(billId, voucherStatus, voucherdetailList, subLedgerList);
         } catch (final Exception e)
         {
             LOGGER.error(e.getMessage());
@@ -158,8 +158,7 @@ public class BillsAccountingService {
             } else
                 throw new ApplicationRuntimeException("APPROVEDVOUCHERSTATUS" + MISSINGMSG);
 
-            final CreateVoucher cv = new CreateVoucher();
-            cv.createVoucherFromPreApprovedVoucher(vouhcerheaderid, voucherStatus);
+            createVoucher.createVoucherFromPreApprovedVoucher(vouhcerheaderid, voucherStatus);
 
         } catch (final ApplicationRuntimeException e) {
 
@@ -186,8 +185,7 @@ public class BillsAccountingService {
                 voucherStatus = appVal.getValue();
             } else
                 throw new ApplicationRuntimeException("DEFAULTVOUCHERCREATIONSTATUS" + MISSINGMSG);
-            final CreateVoucher cv = new CreateVoucher();
-            final long vh = cv.createVoucherFromBill(billId, voucherStatus, null, null);
+             final long vh = createVoucher.createVoucherFromBill(billId, voucherStatus, null, null);
             return vh;
         } catch (final Exception e)
         {
@@ -202,8 +200,7 @@ public class BillsAccountingService {
             final List<PreApprovedVoucher> subledgerlist)
             throws ApplicationRuntimeException
     {
-        final CreateVoucher cv = new CreateVoucher();
-        cv.updatePJV(vh, detailList, subledgerlist);
+        createVoucher.updatePJV(vh, detailList, subledgerlist);
     }
 
     /**

@@ -153,6 +153,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public boolean showApprove = false;
     private CommonBean commonBean;
     private String modeOfPayment;
+    private @Autowired CreateVoucher createVoucher;
     private Integer departmentId;
     private String wfitemstate;
     private String comments;
@@ -576,7 +577,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
      */
     private void reCreateLedger() {
 
-        final CreateVoucher createVoucher = new CreateVoucher();
         try {
             createVoucher.deleteVoucherdetailAndGL(voucherHeader);
             HibernateUtil.getCurrentSession().flush();

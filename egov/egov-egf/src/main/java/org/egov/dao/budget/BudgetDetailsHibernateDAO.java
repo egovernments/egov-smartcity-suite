@@ -68,7 +68,6 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -111,7 +110,6 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     private static final Logger LOGGER = Logger.getLogger(BudgetDetailsHibernateDAO.class);
     private static final String EMPTY_STRING = "";
     private PersistenceService persistenceService;
-    private PersistenceService service;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
@@ -124,10 +122,10 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     
     @Autowired
-    @Qualifier("financialYearDAO")
+    @Qualifier("financialYearDAO") 
     private  FinancialYearHibernateDAO financialYearHibDAO;
+    
 
-   
     /**
      * This API is to check whether the planning budget is available or not.For the amount passed if there is sufficient budget
      * available API will return TRUE. Else it will return FALSE. At any point the budgetavailable will show the right picture of
@@ -1918,12 +1916,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         return query;
     }
 
-    public PersistenceService getService() {
-        service = new PersistenceService<BudgetDetail, Long>();
-        // service.setSessionFactory(new SessionFactory());
-        //service.setType(BudgetDetail.class);
-        return service;
-    }
+   
 
     /**
      * This API is handling the budget checking
@@ -2380,7 +2373,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("finalquery  =" + finalquery);
-            final List<BudgetDetail> bdList = getService().findAllBy(finalquery);
+            final List<BudgetDetail> bdList = persistenceService.findAllBy(finalquery);
 
             if (bdList == null || bdList.size() == 0)
                 return BigDecimal.ZERO;
