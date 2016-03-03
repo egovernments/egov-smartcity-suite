@@ -64,6 +64,7 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -99,7 +100,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.masters.services.MastersService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
@@ -244,8 +244,6 @@ public class CreateVoucher {
 
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
-    @Autowired
-    private MastersService mastersService;
     CommonMethodsI cmImpl = new CommonMethodsImpl();
     PersistenceService<Bankreconciliation, Integer> bankReconSer;
     PersistenceService<EgBillregistermis, Integer> billMisSer;
@@ -260,6 +258,8 @@ public class CreateVoucher {
 
     private Fund fundByCode;
     private PersonalInformationDAO personalInformationDAO;
+    @Autowired
+	private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
 
     public CreateVoucher()
     {
@@ -1984,7 +1984,7 @@ public class CreateVoucher {
                         final String detailFunctionCode = sublegDetailMap.get(VoucherConstant.FUNCTIONCODE).toString();
                         if (glcode.equals(detailGlCode) && functioncode != null && functioncode.equals(detailFunctionCode)) {
                             final TransaxtionParameter reqData = new TransaxtionParameter();
-                            final Accountdetailtype adt = mastersService.getAccountdetailtypeById(Integer.valueOf(detailtypeid));
+                            final Accountdetailtype adt = (Accountdetailtype)accountdetailtypeHibernateDAO.findById(Integer.valueOf(detailtypeid), false);
                             reqData.setDetailName(adt.getAttributename());
                             reqData.setGlcodeId(chartOfAcc.getId().toString());
                             if (null != sublegDetailMap.get(VoucherConstant.DEBITAMOUNT)
@@ -2002,7 +2002,7 @@ public class CreateVoucher {
                         }
                     } else if (glcode.equals(detailGlCode)) {
                         final TransaxtionParameter reqData = new TransaxtionParameter();
-                        final Accountdetailtype adt = mastersService.getAccountdetailtypeById(Integer.valueOf(detailtypeid));
+                        final Accountdetailtype adt = (Accountdetailtype)accountdetailtypeHibernateDAO.findById(Integer.valueOf(detailtypeid), false);
                         reqData.setDetailName(adt.getAttributename());
                         reqData.setGlcodeId(chartOfAcc.getId().toString());
                         if (null != sublegDetailMap.get(VoucherConstant.DEBITAMOUNT)
@@ -2707,12 +2707,6 @@ public class CreateVoucher {
         this.appConfigValuesService = appConfigValuesService;
     }
 
-    public MastersService getMastersService() {
-        return mastersService;
-    }
-
-    public void setMastersService(final MastersService mastersService) {
-        this.mastersService = mastersService;
-    }
+    
 
 }

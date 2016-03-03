@@ -59,8 +59,8 @@ import org.egov.asset.service.CommonAssetsService;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
-import org.egov.dao.bills.BillsDaoFactory;
 import org.egov.dao.bills.EgBilldetailsDAO;
+import org.egov.dao.bills.EgBilldetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.exception.ApplicationException;
@@ -123,8 +123,9 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public static final String EXEC_DEPT_ID = "EXEC_DEPT_ID";
     public static final String EST_NO = "EST_NO";
     private ContractorAdvanceService contractorAdvanceService;
+   
     @Autowired
-    private BillsDaoFactory billsDaoFactory;
+    private  EgBilldetailsHibernateDAO egBilldetailsHibernateDAO; 
 
     public ContractorBillServiceImpl(final PersistenceService<ContractorBillRegister, Long> persistenceService) {
         super(persistenceService);
@@ -1067,8 +1068,8 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
             for (final CChartOfAccounts coa : coaPayableList)
                 if (coa.getId() != null)
                     glcodeIdList.add(new BigDecimal(coa.getId()));
-        final EgBilldetailsDAO ebd = billsDaoFactory.getEgBilldetailsDAO();
-        final EgBilldetails egbillDetails = ebd.getBillDetails(billId, glcodeIdList);
+       
+        final EgBilldetails egbillDetails = egBilldetailsHibernateDAO.getBillDetails(billId, glcodeIdList);
         netpaybleCode = egbillDetails.getGlcodeid();
         return netpaybleCode;
     }

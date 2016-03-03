@@ -58,6 +58,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
@@ -71,8 +72,6 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.masters.dao.AccountdetailtypeHibernateDAO;
-import org.egov.masters.dao.MastersDAOFactory;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -94,6 +93,8 @@ public class WorksService {
     private EmployeeService employeeService;
     @Autowired
     private AssignmentService assignmentService;
+    @Autowired
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO ;
 
     /**
      * This method will return the value in AppConfigValue table for the given module and key.
@@ -124,8 +125,7 @@ public class WorksService {
     }
 
     public Accountdetailtype getAccountdetailtypeByName(final String name) {
-        final AccountdetailtypeHibernateDAO accDtlTypeDao = MastersDAOFactory.getDAOFactory().getAccountdetailtypeDAO();
-        return accDtlTypeDao.getAccountdetailtypeByName(name);
+        return accountdetailtypeHibernateDAO.getAccountdetailtypeByName(name);
     }
 
     public Double getConfigval() {
