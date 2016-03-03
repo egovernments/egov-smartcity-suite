@@ -146,7 +146,7 @@ obj.value=obj.value.substring(0,mlength)
 				</label>
 				<div class="col-sm-3 add-margin">
 					<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
-                	<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate!subcategories.action' selectedValue="%{subType.id}"/>
+                	<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{subType.id}"/>
 				</div>
 				<label class="col-sm-2 control-label text-right">
 				    <s:text name="milestone.template.subtype" />

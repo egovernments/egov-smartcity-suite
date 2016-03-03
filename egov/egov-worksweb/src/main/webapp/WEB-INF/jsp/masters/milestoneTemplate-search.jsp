@@ -53,7 +53,7 @@ loadSubType= function(req, res){
 
 function submitMilestoneTemplateSearchForm() {
 	document.milestoneTemplateSearchForm.status.disabled=false;
-    document.milestoneTemplateSearchForm.action='${pageContext.request.contextPath}/masters/milestoneTemplate!searchDetails.action';
+    document.milestoneTemplateSearchForm.action='${pageContext.request.contextPath}/masters/milestoneTemplate-searchDetails.action';
     document.milestoneTemplateSearchForm.submit();
 }
 
@@ -91,7 +91,7 @@ function bodyOnLoad(){
        </div>
    </s:if>
    
-<s:form theme="simple" name="milestoneTemplateSearchForm" action="milestoneTemplate!searchDetails.action" cssClass="form-horizontal form-groups-bordered">
+<s:form theme="simple" name="milestoneTemplateSearchForm" action="milestoneTemplate-searchDetails" cssClass="form-horizontal form-groups-bordered">
   <s:hidden name="typeOfWork" id="typeOfWork" />
   <s:hidden name="subTypeOfWork" id="subTypeOfWork" />
 <div class="alert alert-danger" id="milestoneTemplate_error" style="display: none;"></div>
@@ -110,7 +110,7 @@ function bodyOnLoad(){
 						</label>
 						<div class="col-sm-3 add-margin">
 							<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
-                			<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate!subcategories.action' selectedValue="%{subType.id}" afterSuccess="loadSubType" />
+                			<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{subType.id}" afterSuccess="loadSubType" />
 						</div>
 						<label class="col-sm-2 control-label text-right">
 						    <s:text name="milestone.template.search.subtype" />

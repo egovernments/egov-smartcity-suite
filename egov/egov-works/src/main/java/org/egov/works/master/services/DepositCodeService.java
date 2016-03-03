@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service("depositCodeServices")
 @Transactional
-public class DepositCodeService {
+public class DepositCodeService extends PersistenceService<DepositCode, Integer>  {
 
     @Autowired
     private WorksService worksService;

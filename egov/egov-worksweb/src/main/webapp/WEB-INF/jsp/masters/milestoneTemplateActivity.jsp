@@ -168,7 +168,7 @@ function calculateTotalPercentage(){
 							<div class="pull-right">
 				   
 						      <a id="temptActvRow" href="#" onclick="validatePercentage();return false;" class="btn btn-primary">
-					   	       <i class="fa fa-plus"></i> Add Template Activity
+					   	       Add Template Activity
 					   	      </a>
 						   
 					   		</div>

@@ -64,19 +64,6 @@ public class MilestoneTemplate extends WorkFlow {
 
     private static final long serialVersionUID = 3503700429117169848L;
 
-    public enum MilestoneTemplateStatus {
-        CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
-    }
-
-    public enum Actions {
-        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
-
     @Required(message = "milestonetemplate.code.not.null")
     private String code;
     @Required(message = "milestonetemplate.name.not.null")
@@ -88,7 +75,7 @@ public class MilestoneTemplate extends WorkFlow {
     private EgwTypeOfWork workType;
     private EgwTypeOfWork subType;
 
-    private EgwStatus egwStatus;
+    //private EgwStatus egwStatus;
 
     @Valid
     private List<MilestoneTemplateActivity> milestoneTemplateActivities = new LinkedList<MilestoneTemplateActivity>();
@@ -156,14 +143,6 @@ public class MilestoneTemplate extends WorkFlow {
 
     public void addMilestoneTemplateActivity(final MilestoneTemplateActivity milestoneTemplateactivity) {
         milestoneTemplateActivities.add(milestoneTemplateactivity);
-    }
-
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
-    }
-
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
     }
 
     public Collection<MilestoneTemplateActivity> getStages() {

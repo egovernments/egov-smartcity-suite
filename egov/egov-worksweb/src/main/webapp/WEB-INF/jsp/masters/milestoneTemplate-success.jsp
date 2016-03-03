@@ -38,35 +38,39 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
+<%@page import="com.fasterxml.jackson.annotation.JsonInclude.Include"%>
+<script src="<egov:url path='/resources/js/works.js'/>"></script> 
 <html>
+<head>
+<title><s:text name="contractor.list" /></title>
+<style type="text/css">
+ul {
+	list-style-type: none;
+}
+</style>
+</head>
+<body>
 
-<title>Milestone Template</title>
-<body >
-<script>
-        var x=opener.top.opener;
-        if(x==null){
-            x=opener.top;
-        }
-        x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
-	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
+<s:if test="%{hasActionMessages()}">
+<div id="msgsDiv" class="new-page-header">
+	<s:actionmessage theme="simple" />
+</div>
+</s:if>
 
-</script> 
+<%@ include file='milestoneTemplate-commonView.jsp' %>
 
-		<s:if test="%{model.egwStatus.code == 'APPROVED'}">
-            <s:property value="%{model.code}"/>&nbsp; <s:text name='milestone.template.approved' />	             
-       </s:if>        
-       <s:elseif test="%{model.egwStatus.code == 'REJECTED'}">
-               <s:property value="%{model.code}"/>  <s:text name="milestone.template.rejected" />
-                <br>
-               <s:text name="common.forwardmessage" />  <s:property value="%{nextEmployeeName}" />(<s:property value="%{nextDesignation}" />)
-       </s:elseif>                                         
-       <s:else>
-               <s:property value="%{model.code}"/>  <s:text name="%{getText(messageKey)}" />
-               <br>
-               <s:if test="%{model.egwStatus.code != 'CANCELLED'}">
-               <s:text name="common.forwardmessage" />  <s:property value="%{nextEmployeeName}" />(<s:property value="%{nextDesignation}" />)
-               </s:if>
-       </s:else> 
+<s:hidden name="id" id="id"/>
 
+<div class="row text-center">
+	<div class="add-margin">
+	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyMilestoneTemplateData();" />
+	
+	<s:if test="%{mode!='edit'}">
+		<input type="submit" name="create" Class="btn btn-primary" value="Create New Milestone Template" id="CREATE" name="button" onclick="createNewMilestoneTemplate();" />
+	</s:if>
+	
+	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+	</div>
+</div>
 </body>
 </html>

@@ -49,7 +49,7 @@
 	</div>
 	<div class="errorstyle" id="subledgerCode" class="alert alert-danger"
 		style="display: none;"></div>
-	<s:form action="subledgerCode-save" theme="simple" name="subledgerCode"
+	<s:form action="depositcode-save" theme="simple" name="subledgerCode"
 		cssClass="form-horizontal form-groups-bordered">
 		<s:token />
 

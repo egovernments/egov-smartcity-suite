@@ -104,7 +104,7 @@
 			<column name="TYPEOFWORK_ID" />
 		</many-to-one>
 		
-		<property name="isActive" type="java.lang.Integer">
+		<property name="isActive" type="java.lang.Boolean">
          	<column name="ISACTIVE" precision="1" scale="0" />
 		</property>
 		

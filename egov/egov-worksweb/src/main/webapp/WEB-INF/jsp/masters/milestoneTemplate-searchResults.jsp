@@ -84,7 +84,7 @@ window.close();
 		       class="pagetabletd" title="Template Code"
 			   titleKey="milestone.template.search.code"
 			   style="width:8%;text-align:left">
-                  <a href="${pageContext.request.contextPath}/masters/milestoneTemplate!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view&sourcepage=search">
+                  <a href="${pageContext.request.contextPath}/masters/milestoneTemplate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view&sourcepage=search">
 					 <s:property  value='%{#attr.currentRow.code}' />
 				  </a>
             </display:column>
