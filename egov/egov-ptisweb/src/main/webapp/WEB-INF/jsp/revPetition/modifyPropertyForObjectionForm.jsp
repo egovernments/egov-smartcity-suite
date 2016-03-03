@@ -60,26 +60,26 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox">
+		<td class="bluebox">
 			&nbsp;
 		</td>
-		<td class="greybox">
+		<td class="bluebox">
 			<s:text name="OwnerName" />
 			:
 		</td>
-		<td class="greybox">
+		<td class="bluebox">
 			<span class="bold"><s:property default="N/A"
 					value="%{ownerName}" /> </span>
 		</td>
-		<td class="greybox">
+		<td class="bluebox">
 			<s:text name="MobileNumber" />:
 		</td>
-		<td class="greybox">
+		<td class="bluebox">
 			<span class="bold"><s:property value="%{basicProperty.mobileNumber}" default="N/A"/></span>
 		</td>
 	</tr>
 <tr>
-		<td class="greybox">
+		<td class="bluebox">
 			&nbsp;
 		</td>
 		<td class="bluebox" width="8%">
@@ -105,7 +105,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="5%">&nbsp;</td>
 		<td class="bluebox" width="25%"><s:text name="reg.docno"/> :</td>
 		<td class="bluebox" width="">
 			<span class="bold"><s:property value="%{basicProperty.regdDocNo}" default="N/A"/></span>
@@ -117,20 +117,20 @@
 		</td>
 	</tr>
 	<tr class="extentSite">
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="extent.site"/><span class="mandatory1"> *</span> :</td>
-		<td class="greybox" width=""><s:textfield name="areaOfPlot" id="areaOfPlot" size="12" maxlength="15" value="%{areaOfPlot}" 
+		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="25%"><s:text name="extent.site"/><span class="mandatory1"> *</span> :</td>
+		<td class="bluebox" width=""><s:textfield name="areaOfPlot" id="areaOfPlot" size="12" maxlength="15" value="%{areaOfPlot}" 
 		onblur="trim(this,this.value);checkForTwoDecimals(this,'extent of site');checkZero(this,'extent of site');"></s:textfield></td>
 		
-		<td class="greybox" width="25%"></td>
-		<td class="greybox">
+		<td class="bluebox" width="25%"></td>
+		<td class="bluebox">
 		</td>
 	</tr>
 	
 	<tr class="superStructureRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
-		<td class="greybox">
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
+		<td class="bluebox">
 			<s:checkbox name="property.propertyDetail.structure" id="property.propertyDetail.structure"
 				value="%{property.propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
 				
@@ -210,47 +210,8 @@
 			&nbsp;
 		</td>
 	</tr>
-	<tr class="bpddetailsheader">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
-		<td class="bluebox">
-		 <s:checkbox name="property.propertyDetail.buildingPlanDetailsChecked" id="buildingPlanDetailsChecked"
-			value="%{property.propertyDetail.buildingPlanDetailsChecked}" onclick="enableOrDisableBPADetails(this);" />
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
-	</tr>
-	<tr class="bpddetails">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="building.permNo"></s:text><span class="mandatory1"> *</span> :</td>
-		<td class="greybox"><s:textfield name="property.propertyDetail.buildingPermissionNo" id="buildingPermissionNo" size="16" maxlength="16"
-				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{property.propertyDetail.buildingPermissionNo}"></s:textfield>
-		</td>
-		<td class="greybox"><s:text name="buildingpermdate"></s:text><span class="mandatory1"> *</span> :</td>
-		<td class="greybox"><s:date name="property.propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
-		<s:textfield name="property.propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
-				id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
-		</td>
-
-	</tr>
-	
-	  <tr class="bpddetails">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="deviationper"></s:text><span class="mandatory1"> *</span> :</td>
-		<td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.deviationPercentage"
-				id="deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{property.propertyDetail.deviationPercentage}"
-				cssClass="selectnew"/>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
-   </tr>
-   
-	
 	
 	<!-- Amenities section -->
-	
 	
 	<tr id="amenitiesHeaderRow" class="amenities">
 		<td colspan="5">
@@ -296,7 +257,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center">
+			<div align="center" class="formmainbox" style="box-shadow:none;">
 				<%@ include file="../common/FloorFormForRevisionPetition.jsp"%>
 				<br/>
 			</div>

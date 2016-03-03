@@ -89,6 +89,7 @@ import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -130,6 +131,9 @@ public class AdvancePaymentAction extends BasePaymentAction {
     private BigDecimal balance;
     private ScriptService scriptService;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public void prepare() {
         super.prepare();
@@ -500,7 +504,6 @@ public class AdvancePaymentAction extends BasePaymentAction {
             atype = atype + "|" + paymentheader.getPaymentAmount();
         } else
             atype = atype + "|";
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         departmentId = voucherService.getCurrentDepartment().getId().intValue();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("departmentId :" + departmentId);
@@ -510,7 +513,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
                     .getVoucherDate(), paymentheader);
         else
             map = voucherService.getDesgByDeptAndTypeAndVoucherDate(atype, scriptName, new Date(), paymentheader);
-        addDropdownData("departmentList", masterCache.get("egi-department"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
 
         final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
         String strDesgId = "", dName = "";

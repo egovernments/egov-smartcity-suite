@@ -39,12 +39,10 @@
 -->
 
 <%@ include file="/includes/taglibs.jsp" %>
-
 <head>
 <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
-
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#bankcodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
@@ -1034,9 +1032,10 @@ function verifyChequeDetails(table,len1)
 	    }
 
 	    //validate if bank name has been entered
-	    if(getControlInBranch(table.rows[j],'bankName')!=null){
+	    if(getControlInBranch(table.rows[j],'bankName')!=null && getControlInBranch(table.rows[j],'bankID')!=null){
 	    	var bankName=getControlInBranch(table.rows[j],'bankName').value;
-	    	if(bankName==null || bankName==""){
+	    	var bankId=getControlInBranch(table.rows[j],'bankID').value;
+	    	if(bankName==null || bankName=="" || bankId==null || bankId==""){
 	    		if(bankNameErrMsg==""){
 	    		    bankNameErrMsg='<s:text name="billreceipt.missingbankid.errormessage" />' + '<br>';
 	    			document.getElementById("receipt_error_area").innerHTML+=bankNameErrMsg;
@@ -1731,7 +1730,7 @@ function autocompletecodeBank(obj,myEvent)
 	var target = document.getElementById('bankcodescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0];	
-	target.style.top=posSrc[1]+22;
+	target.style.top=posSrc[1]-40;
 	target.style.width=450;	
 		
 	var coaCodeObj=obj;
@@ -1749,6 +1748,9 @@ function autocompletecodeBank(obj,myEvent)
 				oAutoComp.useShadow = true;
 				oAutoComp.maxResultsDisplayed = 15;
 				oAutoComp.useIFrame = true;
+				bankfuncObj.applyLocalFilter = true;
+				bankfuncObj.queryMatchContains = true;
+				oAutoComp.minQueryLength = 0;
 				//if(bankfuncObj){
 				//	bankfuncObj.applyLocalFilter = true;
 				//	bankfuncObj.queryMatchContains = true;

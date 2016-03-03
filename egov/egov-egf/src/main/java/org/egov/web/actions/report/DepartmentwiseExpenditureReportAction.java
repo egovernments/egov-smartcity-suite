@@ -73,6 +73,7 @@ import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
@@ -106,14 +107,15 @@ public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
     static final String CURRENT = "current";
     static final String PREVIOUS = "previous";
     final static Logger LOGGER = Logger.getLogger(DepartmentwiseExpenditureReportAction.class);
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public void prepare() {
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         super.prepare();
-        addDropdownData("fundDropDownList", masterCache.get("egi-fund"));
+        addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
         addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true " +
                 "  and startingDate >='01-Apr-2010' order by finYearRange desc  "));
     }

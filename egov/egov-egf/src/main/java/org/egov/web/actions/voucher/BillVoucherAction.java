@@ -93,7 +93,9 @@ public class BillVoucherAction extends BaseVoucherAction {
     private EisUtilService eisUtilService;
     @Autowired
     private ScriptService scriptService;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public VoucherTypeBean getVoucherTypeBean() {
         return voucherTypeBean;
     }
@@ -107,8 +109,7 @@ public class BillVoucherAction extends BaseVoucherAction {
         super.prepare();
         // If the department is mandatory show the logged in users assigned department only.
         if (mandatoryFields.contains("department")) {
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-            addDropdownData("departmentList", masterCache.get("egi-department"));
+            addDropdownData("departmentList", masterDataCache.get("egi-department"));
         }
     }
 

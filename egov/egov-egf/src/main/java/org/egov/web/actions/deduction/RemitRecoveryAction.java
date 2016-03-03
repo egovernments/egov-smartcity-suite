@@ -173,7 +173,9 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @Autowired
     private PaymentActionHelper paymentActionHelper;
     private ChartOfAccounts chartOfAccounts;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public BigDecimal getBalance() {
         return balance;
     }
@@ -398,7 +400,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
             atype = atype + "|" + paymentheader.getPaymentAmount();
         } else
             atype = atype + "|";
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         departmentId = voucherService.getCurrentDepartment().getId().intValue();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("departmentId :" + departmentId);
@@ -408,7 +409,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
                     .getVoucherDate(), paymentheader);
         else
             map = voucherService.getDesgByDeptAndTypeAndVoucherDate(atype, scriptName, new Date(), paymentheader);
-        addDropdownData("departmentList", masterCache.get("egi-department"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
 
         final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get(DESIGNATION_LIST);
         String strDesgId = "", dName = "";

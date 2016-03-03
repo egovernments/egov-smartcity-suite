@@ -128,6 +128,10 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     private static final String ACTIONNAME = "actionName";
     @Autowired
     AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     private String message = "";
 
     public BudgetReAppropriationMisc getAppropriationMisc() {
@@ -228,7 +232,6 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     }
 
     protected void setupDropdownsInHeader() {
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
         finalStatus = getFinalStatus();
         dropdownData.put("financialYearList", getFinancialYearDropDown());
@@ -240,13 +243,13 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (shouldShowField(Constants.SUB_SCHEME))
             dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
         if (shouldShowField(Constants.FUNCTIONARY))
-            dropdownData.put("functionaryList", masterCache.get("egi-functionary"));
+            dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
         if (shouldShowField(Constants.FUNCTION))
-            dropdownData.put("functionList", masterCache.get("egi-function"));
+            dropdownData.put("functionList", masterDataCache.get("egi-function"));
         if (shouldShowField(Constants.SCHEME))
             dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
             .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
@@ -285,8 +288,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (financialYear != null && financialYear.getId() != 0L && budgetService.hasApprovedReForYear(financialYear.getId()))
             beRe = Constants.RE;
         setupDropdownsInHeader();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        dropdownData.put("departmentList", masterCache.get("egi-department"));
+        dropdownData.put("departmentList", masterDataCache.get("egi-department"));
         dropdownData.put("designationList", Collections.EMPTY_LIST);
         dropdownData.put("userList", Collections.EMPTY_LIST);
     }

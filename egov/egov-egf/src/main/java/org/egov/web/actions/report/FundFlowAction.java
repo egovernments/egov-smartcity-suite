@@ -73,6 +73,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -91,7 +92,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class FundFlowAction extends BaseFormAction {
     private static Logger LOGGER = Logger.getLogger(FundFlowAction.class);
     private static final long serialVersionUID = 1L;
-    EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
     private List<FundFlowBean> receiptList;
     private List<FundFlowBean> concurrancePaymentList;
     private List<FundFlowBean> outStandingPaymentList;
@@ -108,7 +108,9 @@ public class FundFlowAction extends BaseFormAction {
     Date openignBalanceCalculatedDate;
     private FundFlowService fundFlowService;
     private String mode;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public Object getModel() {
         return null;
@@ -116,7 +118,7 @@ public class FundFlowAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        addDropdownData("fundList", masterCache.get("egi-fund"));
+        addDropdownData("fundList", masterDataCache.get("egi-fund"));
     }
 
     @Action(value = "/report/fundFlow-beforeSearch")

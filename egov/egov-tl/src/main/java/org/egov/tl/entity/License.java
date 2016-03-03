@@ -48,7 +48,6 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
-import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
@@ -123,7 +122,7 @@ public abstract class License extends StateAware {
 
     private boolean legacy;
     private Date commencementDate;
-            
+
     private Date agreementDate;
     private String agreementDocNo;
     private FileStoreMapper fileStore;
@@ -596,6 +595,14 @@ public abstract class License extends StateAware {
         this.agreementDocNo = agreementDocNo;
     }
 
+    public FileStoreMapper getFileStore() {
+        return fileStore;
+    }
+
+    public void setFileStore(final FileStoreMapper fileStore) {
+        this.fileStore = fileStore;
+    }
+    
     public void updateStatus(final LicenseStatus currentStatus) {
         setStatus(currentStatus);
         final LicenseStatusValues statusValues = new LicenseStatusValues();
@@ -603,7 +610,13 @@ public abstract class License extends StateAware {
     }
 
     public LicenseDemand getCurrentDemand() {
-        return licenseDemand;
+        return getLicenseDemand();
+    }
+
+    public BigDecimal getCurrentLicenseFee() {
+        return getCurrentDemand().getEgDemandDetails().stream()
+                .filter(dd -> dd.getEgDemandReason().getEgInstallmentMaster().equals(getCurrentDemand().getEgInstallmentMaster()))
+                .findAny().get().getAmount();
     }
 
     public boolean isPaid() {
@@ -611,19 +624,11 @@ public abstract class License extends StateAware {
     }
 
     public BigDecimal getTotalBalance() {
-       return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
+        return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
     }
 
     public boolean isStateRejected() {
         return getState() != null && getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED);
-    }
-
-    public FileStoreMapper getFileStore() {
-        return fileStore;
-    }
-
-    public void setFileStore(final FileStoreMapper fileStore) {
-        this.fileStore = fileStore;
     }
 
 }

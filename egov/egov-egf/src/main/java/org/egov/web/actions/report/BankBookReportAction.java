@@ -52,8 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -78,7 +76,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.payment.Paymentheader;
@@ -91,6 +88,8 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
@@ -185,7 +184,6 @@ public class BankBookReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("skipPrepare")) {
-            EgovMasterDataCaching.getInstance();
             addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
             addDropdownData("accNumList", Collections.EMPTY_LIST);
 

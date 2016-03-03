@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -95,7 +95,7 @@ public class ReportGenerationService {
 
     public ReportOutput getReportOutput(final WaterConnectionDetails connectionDetails, final String workFlowAction,
             final String cityMunicipalityName, final String districtName) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<String, Object>(0);
         ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
         if (null != connectionDetails) {
@@ -114,33 +114,29 @@ public class ReportGenerationService {
                     ownerName = names.getOwnerName();
                     break;
                 }
-            if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
-                reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+            if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
                 reportParams.put("applicationtype", messageSource.getMessage("msg.new.watertap.conn", null, null));
-            } else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
-                reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+            else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
                 reportParams.put("applicationtype", messageSource.getMessage("msg.add.watertap.conn", null, null));
-            } else {
-                reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+            else
                 reportParams.put("applicationtype", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
-            }
+            reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
             reportParams.put("municipality", cityMunicipalityName);
             reportParams.put("district", districtName);
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             if (null != workFlowAction) {
-                if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
+                if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)
+                        || workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
                     reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
                     reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
+                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
+                        final User user = securityUtils.getCurrentUser();
+                        reportParams.put("userId", user.getId());
+                    }
                 }
                 if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
                     reportParams.put("workorderdate", "");
                     reportParams.put("workorderno", "");
-                }
-                if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
-                    reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
-                    reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
-                    final User user = securityUtils.getCurrentUser();
-                    reportParams.put("userId", user.getId());
                 }
             }
             reportParams.put("workFlowAction", workFlowAction);

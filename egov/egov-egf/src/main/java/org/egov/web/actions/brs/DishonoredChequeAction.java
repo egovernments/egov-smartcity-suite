@@ -24,9 +24,6 @@ import org.egov.services.receipt.ReceiptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.exilant.eGov.src.domain.BankBranch;
-import com.exilant.exility.common.TaskFailedException;
-
 @ParentPackage("egov")
 @Results({
     @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
@@ -70,12 +67,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     }
 
     public List getBankBranch() {
-        final BankBranch bb = new BankBranch();
-        try {
-            return (List) bb.getBankBranch();
-        } catch (final TaskFailedException tf) {
-            LOGGER.error(tf.getMessage());
-        }
+        
         return null;
     }
 

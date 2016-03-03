@@ -204,7 +204,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     @ValidationErrorPage(Constants.NEW)
-    public String enterExisting(final T license, final Map<Integer, Double> legacyInstallmentwiseFees, 
+    public String enterExisting(final T license, final Map<Integer, Integer> legacyInstallmentwiseFees, 
             final Map<Integer, Boolean> legacyFeePayStatus) {
         this.setCheckList();
         licenseService().createLegacyLicense(license, legacyInstallmentwiseFees, legacyFeePayStatus);

@@ -42,7 +42,6 @@ package org.egov.web.actions.report;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,8 +49,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.sf.jasperreports.engine.JRException;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -74,19 +71,19 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
-import org.egov.search.domain.resource.DateType;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Results(value = {
 		@Result(name = "result", location = "budgetAppropriationRegisterReport-result.jsp"),
@@ -135,7 +132,9 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     @Autowired
     private AppConfigValueService appConfigValuesService;
     private Boolean shouldShowREAppropriations = false;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public BudgetAppropriationRegisterReportAction() {
         addRelatedEntity(Constants.FUNCTION, CFunction.class);
         addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
@@ -146,11 +145,10 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        dropdownData.put("functionList", masterCache.get("egi-function"));
-        dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
-        dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
-        dropdownData.put("fundList", masterCache.get("egi-fund"));
+        dropdownData.put("functionList", masterDataCache.get("egi-function"));
+        dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+        dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
+        dropdownData.put("fundList", masterDataCache.get("egi-fund"));
         if (department.getId() != null && department.getId() != -1)
             department = (Department) persistenceService.find("from Department where id=?", department.getId());
         if (function.getId() != null && function.getId() != -1)

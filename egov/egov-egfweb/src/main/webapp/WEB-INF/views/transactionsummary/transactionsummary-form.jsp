@@ -91,8 +91,8 @@
 									<spring:message code="lbl.select" />
 								</form:option>
 								<c:forEach var="function" items="${cFunctions}">
-									<option value="${function.id}"
-										label="${function.code} -  ${function.name}" />
+									<option value="${function.id}">
+										${function.code} -  ${function.name}</option>
 								</c:forEach>
 							</form:select>
 							<form:errors path="functionid" cssClass="error-msg" />

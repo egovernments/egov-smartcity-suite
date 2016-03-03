@@ -132,7 +132,7 @@ public class ChartOfAccounts {
     EntityManager entityManager;
        
     public ChartOfAccounts() {
-    	 cache = EgovMasterDataCaching.getInstance().getCACHE_MANAGER().getCache();
+    	 cache = EgovMasterDataCaching.getCACHE_MANAGER().getCache();
     }
 
     @Deprecated
@@ -599,39 +599,7 @@ public class ChartOfAccounts {
         return true;
     }
 
-    public boolean postTransaxtions(final Transaxtion txnList[], final DataCollection dc) throws Exception, TaskFailedException,
-            ParseException, SQLException, ApplicationException, ValidationException
-    {
-        if (!checkBudget(txnList))
-            throw new TaskFailedException("Budgetary check is failed");
-        // if objects are lost load them
-        if (getGlAccountCodes() == null || getGlAccountIds() == null || getAccountDetailType() == null ||
-                getGlAccountCodes().size() == 0 || getGlAccountIds().size() == 0 || getAccountDetailType().size() == 0)
-            reLoadAccountData();
-        try {
-            Date dt = new Date();
-            final String vdt = dc.getValue("voucherHeader_voucherDate");
-            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
-            final SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATEFORMAT, Constants.LOCALE);
-            dt = sdf.parse(vdt);
-            final String dateformat = formatter.format(dt);
-            if (!validPeriod(dateformat)) {
-                dc.addMessage("exilPostingPeriodError");
-                return false;
-            }
-            if (!validateTxns(txnList, dc))
-                return false;
-        } catch (final Exception e) {
-            LOGGER.error("Error in post transaction", e);
-            throw new TaskFailedException();
-        }
-        if (dc.getValue("modeOfExec").toString().equalsIgnoreCase("edit")) {
-            if (!updateInGL(txnList, dc))
-                return false;
-        } else if (!postInGL(txnList, dc))
-            return false;
-        return true;
-    }
+    
 
     public void setBudgetDetailsDAO() {
         budgetDetailsDAO = new BudgetDetailsHibernateDAO(BudgetDetail.class, HibernateUtil.getCurrentSession());

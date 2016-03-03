@@ -129,6 +129,9 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
     protected EisUtilService eisService;
     private ScriptService scriptService;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public void setMiscWorkflowService(final WorkflowService<BudgetReAppropriationMisc> miscWorkflowService) {
         this.miscWorkflowService = miscWorkflowService;
     }
@@ -240,21 +243,20 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
     }
 
     protected void setupDropdownsInHeader() {
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
         dropdownData.put("finYearList",
                 getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
-        dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
+        dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
         if (shouldShowField(Constants.SUB_SCHEME))
             dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
         if (shouldShowField(Constants.FUNCTIONARY))
-            dropdownData.put("functionaryList", masterCache.get("egi-functionary"));
+            dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
         if (shouldShowField(Constants.FUNCTION))
-            dropdownData.put("functionList", masterCache.get("egi-function"));
+            dropdownData.put("functionList", masterDataCache.get("egi-function"));
         if (shouldShowField(Constants.SCHEME))
             dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
             .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
@@ -289,8 +291,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         gridFields = budgetDetailConfig.getGridFields();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
         setupDropdownsInHeader();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        addDropdownData("departmentList", masterCache.get("egi-department"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
     }

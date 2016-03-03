@@ -41,7 +41,8 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css" />
 <title>Cheque Assignment View</title>
 </head>
 <body>
@@ -49,7 +50,8 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="RTGS Ref. No Assignment View" />
 		</jsp:include>
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">RTGS Ref. No Assignment View</div>
@@ -76,7 +78,8 @@
 					<s:if test="%{#rtgsNumber!=#PreRtgsNumber}">
 						<tr>
 							<td style="text-align: center" class="blueborderfortdnew"><strong><s:property
-										value='%{instrumentHeaderId.transactionNumber}' /></strong> <a href="#"
+										value='%{instrumentHeaderId.transactionNumber}' /></strong> <a
+								href="#"
 								onclick="generateReport('pdf','<s:property value='%{instrumentHeaderId.id}'/>',
 							'<s:property value="%{instrumentHeaderId.bankAccountId.id}" />',
 							'<s:property value="%{instrumentHeaderId.bankAccountId.bankbranch.id}" />',
@@ -123,18 +126,20 @@
 			</table>
 			<br />
 			<s:hidden name="billSubType" id="billSubType" value="%{billSubType}" />
-			<input type="button" value="Close"
-				onclick="javascript:window.close()" class="buttonsubmit" />
+			<div id="buttons" class="buttonbottom">
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="buttonsubmit" />
+			</div>
 		</div>
 		</div>
 	</s:form>
 	<script>   
 function generateReport(type,instrumentnumber,bankaccount,bankbranch,bank){
 	if(type=='pdf'){
-		 var url="${pageContext.request.contextPath}/report/bankAdviceReport!exportPDF.action?bank.id="+
+		 var url="${pageContext.request.contextPath}/report/bankAdviceReport-exportPDF.action?bank.id="+
 			bank+"&bankbranch.id="+bankbranch+"&bankaccount.id="+bankaccount+"&instrumentnumber.id="+instrumentnumber;
 	}else{
-	 	 var url="${pageContext.request.contextPath}/report/bankAdviceReport!exportText.action?bank.id="+
+	 	 var url="${pageContext.request.contextPath}/report/bankAdviceReport-exportText.action?bank.id="+
 	 			bank+"&bankbranch.id="+bankbranch+"&bankaccount.id="+bankaccount+"&instrumentnumber.id="+instrumentnumber;
 	}
 	 window.open(url,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');

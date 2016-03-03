@@ -68,7 +68,9 @@ import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly=true)
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
 
     private static final Logger LOG = LoggerFactory.getLogger(LicenseBill.class);
@@ -212,7 +214,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public BigDecimal getTotalAmount() {
-        return getCurrentDemand().getBaseDemand();
+        return license.getTotalBalance();
     }
 
     @Override

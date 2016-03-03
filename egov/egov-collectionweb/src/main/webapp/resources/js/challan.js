@@ -1490,7 +1490,7 @@ function loadFinDetails(service){
 	
 	
 	var url2 = path+"/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService.action";
-	makeJSONCall(["functionIdDetail","functionDetail","glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
+	makeJSONCall(["glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
 	,url2,{serviceId:service,deptId:dept},loadFinAccSuccessHandler,loadFinAccFailureHandler);
 
 	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
@@ -1615,8 +1615,6 @@ var noOfRows =  billDetailsTable.getRecordSet().getLength();
 billDetailsTable.deleteRows(0,noOfRows); 
 billDetailTableIndex = 0;
 billDetailsTable.addRow({SlNo:billDetailsTable.getRecordSet().getLength()+1,
-		"functionid":"",
-		 "function":"",
      "glcodeid":"",
      "glcode":"",
      "accounthead":"",
@@ -1628,8 +1626,6 @@ billDetailTableIndex = 1;
 for(i=0;i<res.results.length-1;i++){
 
 	 billDetailsTable.addRow({SlNo:billDetailsTable.getRecordSet().getLength()+1,
-	 			"functionid":res.results[i].functionIdDetail,
-	 			"function":res.results[i].functionDetail,
             "glcodeid":res.results[i].glcodeIdDetail,
             "glcode":res.results[i].glcodeDetail,
             "accounthead":res.results[i].accounthead,
@@ -1639,8 +1635,6 @@ for(i=0;i<res.results.length-1;i++){
 }
 
 for(i=0;i<res.results.length;i++){  
-		updateGrid(VOUCHERDETAILLIST,'functionIdDetail',i,res.results[i].functionIdDetail);
-		 	updateGrid(VOUCHERDETAILLIST,'functionDetail',i,res.results[i].functionDetail);
         updateGrid(VOUCHERDETAILLIST,'glcodeIdDetail',i,res.results[i].glcodeIdDetail);
         updateGrid(VOUCHERDETAILLIST,'glcodeDetail',i,res.results[i].glcodeDetail);
         updateGrid(VOUCHERDETAILLIST,'accounthead',i,res.results[i].accounthead);

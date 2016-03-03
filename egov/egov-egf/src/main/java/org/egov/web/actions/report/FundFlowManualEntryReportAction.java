@@ -72,6 +72,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -108,7 +109,9 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
     private final Map<String, Object> paramMap = new HashMap<String, Object>();
     BigDecimal grandTotal = BigDecimal.ZERO;
     private static final String JASPERPATH = "/reports/templates/manualEntryReport.jasper";
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public Object getModel() {
         // TODO Auto-generated method stub
@@ -120,8 +123,7 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        addDropdownData("fundList", masterCache.get("egi-fund"));
+        addDropdownData("fundList", masterDataCache.get("egi-fund"));
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
     }
