@@ -124,7 +124,7 @@ public class CollectionCommon {
     @Autowired
     private EgwStatusHibernateDAO statusDAO;
     @Autowired
-    private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     /**
      * @param receiptHeaderService the receipt header Service to be set
@@ -312,7 +312,7 @@ public class CollectionCommon {
                 Collections.sort(billDetail.getAccounts());
 
                 for (final BillAccountDetails billAccount : billDetail.getAccounts()) {
-                    final CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(billAccount
+                    final CChartOfAccounts account = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(billAccount
                             .getGlCode());
                     final CFunction function = functionDAO.getFunctionByCode(billAccount.getFunctionCode());
                     // TODO: Need to check for getIsActualDemand()
@@ -371,18 +371,18 @@ public class CollectionCommon {
             for (final ReceiptHeader receiptHeader : receipts) {
                 final ReceiptHeader receipHeaderRefObj = (ReceiptHeader) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_CHALLANRECEIPT_BY_REFERENCEID, receiptHeader.getId());
-                receiptList.add(new BillReceiptInfoImpl(receiptHeader, egovCommon, receipHeaderRefObj));
+                receiptList.add(new BillReceiptInfoImpl(receiptHeader, egovCommon, receipHeaderRefObj, chartOfAccountsHibernateDAO));
             }
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
                 String additionalMessage = null;
                 if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL)
                     additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
-                            new BillReceiptInfoImpl(receiptHeader));
+                            new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
                 if (additionalMessage != null)
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage));
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage, chartOfAccountsHibernateDAO));
                 else
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader));
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
             }
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
@@ -403,7 +403,7 @@ public class CollectionCommon {
      */
     public Integer generateChallan(final ReceiptHeader receipt, final Map<String, Object> session, final boolean flag) {
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
-        receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader()));
+        receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader(), chartOfAccountsHibernateDAO));
 
         final String templateName = CollectionConstants.CHALLAN_TEMPLATE_NAME;
         final Map reportParams = new HashMap<String, Object>();
@@ -443,7 +443,7 @@ public class CollectionCommon {
     public List<ReceiptDetailInfo> setReceiptDetailsList(final ReceiptHeader rh, final String amountType) {
         // To Load receipt details to billDetailslist
         final List<ReceiptDetailInfo> billDetailslist = new ArrayList<ReceiptDetailInfo>(0);
-        final List<CChartOfAccounts> bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
+        final List<CChartOfAccounts> bankCOAList = chartOfAccountsHibernateDAO.getBankChartofAccountCodeList();
         for (final ReceiptDetail rDetails : rh.getReceiptDetails())
             if (!FinancialsUtil.isRevenueAccountHead(rDetails.getAccounthead(), bankCOAList)) {
                 final ReceiptDetailInfo rInfo = new ReceiptDetailInfo();
@@ -558,7 +558,7 @@ public class CollectionCommon {
                         .getDepartment(), newReceiptHeader, null, null, null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
         newReceiptHeader.setReceiptdate(new Date());
-        final List<CChartOfAccounts> bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
+        final List<CChartOfAccounts> bankCOAList = chartOfAccountsHibernateDAO.getBankChartofAccountCodeList();
 
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
             // debit account heads should not be considered

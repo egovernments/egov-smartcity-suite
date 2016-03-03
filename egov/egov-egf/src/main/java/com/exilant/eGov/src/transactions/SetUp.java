@@ -56,6 +56,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.domain.ClosedPeriods;
@@ -107,7 +108,8 @@ public class SetUp extends AbstractTask {
     private ResultSet resultsetdtl;
     private static final Logger LOGGER = Logger.getLogger(SetUp.class);
     private String effectiveDate;
-
+    @Autowired
+    private  FinancialYearHibernateDAO financialYearDAO;
     @Override
     public void execute(final String taskName,
             final String gridName,
@@ -810,9 +812,8 @@ public class SetUp extends AbstractTask {
         boolean isOpen = false;
         try {
 
-            final FinancialYearHibernateDAO findao = new FinancialYearHibernateDAO();
-            final CFinancialYear financialYearById = findao.getFinancialYearById(Long.parseLong(fyId));
-            final CFinancialYear previousFinancialYearByDate = findao.getPreviousFinancialYearByDate(financialYearById
+            final CFinancialYear financialYearById = financialYearDAO.getFinancialYearById(Long.parseLong(fyId));
+            final CFinancialYear previousFinancialYearByDate = financialYearDAO.getPreviousFinancialYearByDate(financialYearById
                     .getStartingDate());
             if (previousFinancialYearByDate.getIsClosed() != true)
                 isOpen = true;

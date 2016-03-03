@@ -68,6 +68,7 @@ import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.infra.admin.master.entity.Department;
@@ -118,6 +119,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     private CollectionCommon collectionCommon;
 
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
     }
@@ -141,7 +145,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             return null;
 
         for (final ReceiptHeader receiptHeader : receiptHeaders)
-            receipts.add(new BillReceiptInfoImpl(receiptHeader));
+            receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
         return receipts;
     }
 
@@ -174,7 +178,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             return null;
 
         for (final ReceiptHeader receiptHeader : receiptHeaders)
-            receipts.add(new BillReceiptInfoImpl(receiptHeader));
+            receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
         return receipts;
     }
 
@@ -206,7 +210,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             return null;
         else {
             // Create bill receipt info
-            final BillReceiptInfoImpl receiptInfo = new BillReceiptInfoImpl(receiptHeader);
+            final BillReceiptInfoImpl receiptInfo = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO);
 
             return receiptInfo;
         }
@@ -372,7 +376,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
          * receiptHeaderService.updateInstrument(voucherHeaderList, instrumentHeaderList); }
          */
         LOGGER.info("Logs for CreateReceipt : Receipt Creation Finished....");
-        return new BillReceiptInfoImpl(receiptHeader);
+        return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO);
     }
 
     /*
@@ -390,7 +394,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             return null;
         else {
             for (final ReceiptHeader receiptHeader : receiptHeaders)
-                receipts.add(new BillReceiptInfoImpl(receiptHeader));
+                receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
             return receipts;
         }
 
@@ -493,7 +497,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
          * receiptHeaderService.updateInstrument(voucherHeaderList, instrumentHeaderList); }
          */
         LOGGER.info("Logs For Miscellaneous Receipt : Receipt Creation Finished....");
-        return new BillReceiptInfoImpl(receiptHeader);
+        return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO);
     }
 
     /*

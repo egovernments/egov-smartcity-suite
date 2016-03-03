@@ -49,6 +49,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Relation;
 import org.egov.commons.dao.RelationHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author sapna
@@ -57,14 +58,15 @@ import org.egov.infra.exception.ApplicationRuntimeException;
  */
 public class billUtils {
     public static final Logger LOGGER = Logger.getLogger(billUtils.class);
-    private static RelationHibernateDAO relationHibernateDAO = new RelationHibernateDAO();
-
+    @Autowired
+    private  RelationHibernateDAO relationHibernateDAO ;
+//need to check
     /**
      * Get the relation Object
      * @param id
      * @return
      */
-    static public Relation findRelationById(final Integer id)
+     public Relation findRelationById(final Integer id)
     {
         try {
             if (LOGGER.isInfoEnabled())
@@ -75,12 +77,6 @@ public class billUtils {
         }
     }
 
-    public RelationHibernateDAO getRelationHibernateDAO() {
-        return relationHibernateDAO;
-    }
-
-    public void setRelationHibernateDAO(final RelationHibernateDAO relationHibernateDAO) {
-        billUtils.relationHibernateDAO = relationHibernateDAO;
-    }
+  
 
 }

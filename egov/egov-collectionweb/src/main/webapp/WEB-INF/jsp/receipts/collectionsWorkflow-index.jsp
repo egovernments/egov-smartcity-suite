@@ -294,7 +294,7 @@ function readOnlyCheckBox() {
 						style="width:5%; text-align: center">
 						<input name="receiptIds" type="checkbox" id="receiptIds"
 							value="${currentRow.id}"
-							onClick="handleReceiptSelectionEvent(${currentRow.amount}, '${currentRow.instrumentType}', this.checked)"
+							onClick="handleReceiptSelectionEvent(${currentRow.totalAmount}, '${currentRow.instrumentType}', this.checked)"
 							checked />
 					</display:column>
 				</s:if>
@@ -324,7 +324,7 @@ function readOnlyCheckBox() {
 					title="Bill Number" style="width:10% text-align: right;">&nbsp;${currentRow.referencenumber}</display:column>
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					property="amount" title="Receipt Amount"
+					property="totalAmount" title="Receipt Amount"
 					format="{0, number, #,##0.00}" style="width:10%; text-align: right" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"

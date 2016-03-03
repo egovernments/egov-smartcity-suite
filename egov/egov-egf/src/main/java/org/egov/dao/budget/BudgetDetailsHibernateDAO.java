@@ -74,7 +74,6 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
@@ -93,6 +92,7 @@ import org.egov.utils.Constants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -119,12 +119,15 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     @Autowired
     protected SequenceGenerator sequenceGenerator;
     private BudgetService budgetService;
-    private FinancialYearDAO financialYearDAO;
+    
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    
+    @Autowired
+    @Qualifier("financialYearDAO")
+    private  FinancialYearHibernateDAO financialYearHibDAO;
 
-    public void setFinancialYearDAO(final FinancialYearDAO finYearDao) {
-        financialYearDAO = finYearDao;
-    }
-
+   
     /**
      * This API is to check whether the planning budget is available or not.For the amount passed if there is sufficient budget
      * available API will return TRUE. Else it will return FALSE. At any point the budgetavailable will show the right picture of
@@ -874,9 +877,8 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
             final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
-            final FinancialYearHibernateDAO findao = new FinancialYearHibernateDAO(CFinancialYear.class,
-                    HibernateUtil.getCurrentSession());
-            final CFinancialYear finyear = findao.getFinancialYearByDate(asondate);
+           
+            final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
             if (finyear == null)
                 throw new ValidationException(EMPTY_STRING, "Financial year is not fefined for this date ["
                         + sdf.format(asondate) + "]");
@@ -1021,9 +1023,8 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
             final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
-            final FinancialYearHibernateDAO findao = new FinancialYearHibernateDAO(CFinancialYear.class,
-                    HibernateUtil.getCurrentSession());
-            final CFinancialYear finyear = findao.getFinancialYearByDate(asondate);
+           
+            final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
             if (finyear == null)
                 throw new ValidationException(EMPTY_STRING, "Financial year is not fefined for this date ["
                         + sdf.format(asondate) + "]");
@@ -1063,9 +1064,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 throw new ValidationException(EMPTY_STRING, "Glcode is null");
 
             query = query + " and gl.glcode='" + glcode + "'";
-            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO = new ChartOfAccountsHibernateDAO(
-                    CChartOfAccounts.class,
-                    HibernateUtil.getCurrentSession());
+           
             final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glcode);
             if (coa == null)
                 throw new ValidationException(EMPTY_STRING, "Chartofaccounts is null for this glcode:" + glcode);
@@ -1641,9 +1640,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
             // check the account code needs budget checking
-            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO = new ChartOfAccountsHibernateDAO(
-                    CChartOfAccounts.class,
-                    HibernateUtil.getCurrentSession());
+           
             final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
             if (coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq())
             {
@@ -1663,9 +1660,8 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 
                 paramMap.put("glcodeid", coa.getId());
                 // get the financialyear from asondate
-                final FinancialYearHibernateDAO finDAO = new FinancialYearHibernateDAO(CFinancialYear.class,
-                        HibernateUtil.getCurrentSession());
-                final CFinancialYear finyear = finDAO.getFinancialYearByDate(asondate);
+  
+                final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
                 if (finyear == null)
                     throw new ValidationException(EMPTY_STRING, "Financial Year is not defined for-" + asondate);
                 new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
@@ -2022,10 +2018,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
                 // check the account code needs budget checking
-                final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO = new ChartOfAccountsHibernateDAO(
-                        CChartOfAccounts.class,
-                        HibernateUtil.getCurrentSession());
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
+               final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
                 if (coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq())
                 {
                     // get budgethead for the glcode
@@ -2040,9 +2033,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     }
 
                     // get the financialyear from asondate
-                    final FinancialYearHibernateDAO finDAO = new FinancialYearHibernateDAO(CFinancialYear.class,
-                            HibernateUtil.getCurrentSession());
-                    final CFinancialYear finyear = finDAO.getFinancialYearByDate(asondate);
+                    final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
                     final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
                     if (finyear == null)
                         throw new ValidationException(EMPTY_STRING, "Financial year is not defined for this date ["
@@ -2171,9 +2162,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 fromdate = (java.util.Date) paramMap.get("fromdate");
 
             // get the financialyear from asondate
-            final FinancialYearHibernateDAO finDAO = new FinancialYearHibernateDAO(CFinancialYear.class,
-                    HibernateUtil.getCurrentSession());
-            final CFinancialYear finyear = finDAO.getFinancialYearByDate(asondate);
+            final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
             final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
             if (finyear == null)
                 throw new ValidationException(EMPTY_STRING, "Financial year is not defined for this date ["
@@ -2572,7 +2561,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         BigDecimal amount = BigDecimal.ZERO;
         String isbere = "";
         // 1. get the FinancialYear for the date
-        final CFinancialYear finYear = financialYearDAO.getFinYearByDate(asOnDate);
+        final CFinancialYear finYear = financialYearHibDAO.getFinYearByDate(asOnDate);
         // 2. check does approved RE Existis and set budgeting type
         final boolean hasApprovedReForYear = budgetService.hasApprovedReAsonDate(finYear.getId(), asOnDate);
         isbere = hasApprovedReForYear ? "RE" : "BE";

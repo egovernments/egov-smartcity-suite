@@ -51,7 +51,6 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
@@ -74,7 +73,9 @@ public class FinancialsUtil {
     private ContraService contraService;
     @Autowired
     private CreateVoucher createVoucher;
-    private CollectionsUtil collectionsUtil;
+    private CollectionsUtil collectionsUtil; 
+    @Autowired
+    private  ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
 
     /**
@@ -316,6 +317,8 @@ public class FinancialsUtil {
         return false;
     }
 
+
+    
     public void updateInstrumentHeader(final List<InstrumentHeader> instrumentHeaderList, final EgwStatus status,
             final Bankaccount depositedBankAccount) {
         for (final InstrumentHeader iHeader : instrumentHeaderList) {
@@ -335,10 +338,8 @@ public class FinancialsUtil {
      *
      * @return List of CChartOfAccounts
      */
-    public static List<CChartOfAccounts> getBankChartofAccountCodeList() {
-        final ChartOfAccountsDAO chartOfAccoutsDAO = new ChartOfAccountsHibernateDAO(CChartOfAccounts.class,
-                HibernateUtil.getCurrentSession());
-        return chartOfAccoutsDAO.getBankChartofAccountCodeList();
+    public  List<CChartOfAccounts> getBankChartofAccountCodeList() {
+        return chartOfAccountsHibernateDAO.getBankChartofAccountCodeList();
     }
 
     public Map<String, Object> prepareForUpdateInstrumentDepositSQL() {

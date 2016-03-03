@@ -63,7 +63,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.ChartOfAccountDetailService;
@@ -131,6 +130,9 @@ public class ChartOfAccounts {
     @Autowired
     EntityManager entityManager;
        
+    @Autowired
+    private  FinancialYearHibernateDAO financialYearDAO;
+    
     public ChartOfAccounts() {
     	 cache = EgovMasterDataCaching.getCACHE_MANAGER().getCache();
     }
@@ -605,8 +607,7 @@ public class ChartOfAccounts {
         budgetDetailsDAO = new BudgetDetailsHibernateDAO(BudgetDetail.class, HibernateUtil.getCurrentSession());
         if (LOGGER.isInfoEnabled())
             LOGGER.info("setting services manually .............................. ");
-        budgetDetailsDAO.setFinancialYearDAO(new FinancialYearHibernateDAO(CFinancialYear.class, HibernateUtil
-                .getCurrentSession()));
+        //budgetDetailsDAO.setFinancialYearDAO(financialYearDAO);
 
     }
 

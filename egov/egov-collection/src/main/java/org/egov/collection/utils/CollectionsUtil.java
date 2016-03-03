@@ -59,6 +59,7 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
@@ -99,7 +100,6 @@ import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CollectionsUtil {
     private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>(0);
@@ -134,6 +134,8 @@ public class CollectionsUtil {
     private DesignationService designationService;
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -156,6 +158,7 @@ public class CollectionsUtil {
 
         return status;
     }
+   
 
     /**
      * This method returns the <code>EgwStatus</code> for the given module type and status code
@@ -787,7 +790,7 @@ public class CollectionsUtil {
             final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService.getCode()
                     + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
-                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader));
+                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";

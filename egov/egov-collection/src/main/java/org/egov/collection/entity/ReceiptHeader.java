@@ -121,6 +121,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
     private String source;
+    
 
     public ReceiptHeader() {
     }
@@ -270,23 +271,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
         this.location = location;
     }
 
-    /**
-     * Returns total amount of the receipt
-     *
-     * @return total amount of the receipt
-     */
-    public BigDecimal getAmount() {
-        BigDecimal totalAmount = BigDecimal.valueOf(0);
-        final List<CChartOfAccounts> bankCOAList = FinancialsUtil.getBankChartofAccountCodeList();
-        for (final ReceiptDetail detail : receiptDetails)
-            if (!FinancialsUtil.isRevenueAccountHead(detail.getAccounthead(), bankCOAList)) {
-                totalAmount = totalAmount.add(detail.getCramount());
-                totalAmount = totalAmount.subtract(detail.getDramount());
-            }
-        ServiceLoader.loadInstalled(FinancialsUtil.class);
-        return totalAmount;
-    }
-
+    
     /**
      * Returns instrument type of receipts associated with the receipt. Since multiple modes of payment for a receipt are not
      * allowed (as of now), this method will return the type of the first instrument associated with this receipt.

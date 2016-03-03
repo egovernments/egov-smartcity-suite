@@ -124,8 +124,9 @@ public class EgovCommon {
 
     protected UserService userManager;
     private FundFlowService fundFlowService;
-    private FinancialYearHibernateDAO finDao = new FinancialYearHibernateDAO(
-            CFinancialYear.class, null);
+    
+    @Autowired
+    private  FinancialYearHibernateDAO financialYearDAO;
 
     public FundFlowService getFundFlowService() {
         return fundFlowService;
@@ -159,13 +160,7 @@ public class EgovCommon {
         this.fundDAO = fundDAO;
     }
 
-    public FinancialYearHibernateDAO getFinDao() {
-        return finDao;
-    }
-
-    public void setFinDao(final FinancialYearHibernateDAO finDao) {
-        this.finDao = finDao;
-    }
+   
 
     public EgovCommon() {
 
@@ -2540,7 +2535,7 @@ public class EgovCommon {
         if (adk == null || adk.equals(null))
             throw new ApplicationRuntimeException("There is no project code");
 
-        final CFinancialYear finYear = finDao.getFinancialYearByDate(asOnDate);
+        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(asOnDate);
         final Date startDate = finYear.getStartingDate();
 
         final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
