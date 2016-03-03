@@ -243,6 +243,7 @@ public class DCBReportController {
         }
         if (!connectionType.equalsIgnoreCase(""))
             whereQry.append(" and dcbinfo.connectiontype = '" + connectionType + "'");
+        whereQry.append(" and dcbinfo.connectionstatus = 'ACTIVE'");
         query = selectQry1.append(selectQry2).append(fromQry).append(whereQry).append(groupByQry);
         final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(query.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
