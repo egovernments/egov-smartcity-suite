@@ -41,17 +41,15 @@ package org.egov.bnd.model;
 
 import java.util.Date;
 
-import org.apache.struts2.ServletActionContext;
 import org.egov.bnd.services.common.BndCommonService;
 import org.egov.bnd.services.registration.BirthRegistrationService;
 import org.egov.bnd.services.registration.DeathRegistrationService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.commons.EgwStatus;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class ViewBirthDeathRegistration extends StateAware {
 
@@ -352,8 +350,9 @@ public class ViewBirthDeathRegistration extends StateAware {
                 else
                     regTypeService = "BirthRegistrationService";
 
-                final WebApplicationContext wac = WebApplicationContextUtils
-                        .getWebApplicationContext(ServletActionContext.getServletContext());
+                //FIX ME : ServletActionContext outside Action class, which does not work outside struts2 context
+                final WebApplicationContext wac = null; /*WebApplicationContextUtils
+                        .getWebApplicationContext(ServletActionContext.getServletContext());*/
                 final BndCommonService registrationPersistenceService = (BndCommonService) wac
                         .getBean(BndConstants.BNDCOMMONSERVICE);
 
@@ -373,7 +372,7 @@ public class ViewBirthDeathRegistration extends StateAware {
                 return registrationObject;
 
             } catch (final Exception e) {
-                throw new EGOVRuntimeException(
+                throw new ApplicationRuntimeException(
                         "Error in BndCommonService/ViewBirthdeathRegistration -getRegistrationObject() method");
             }
         return registrationObject;
