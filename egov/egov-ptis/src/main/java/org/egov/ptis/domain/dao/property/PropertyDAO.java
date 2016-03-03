@@ -153,7 +153,9 @@ public interface PropertyDAO {
 	public List getResultsList(DetachedCriteria detachedCriteria);
 
 	public List getDmdCollAmtInstWise(EgDemand egDemand);
-
+	
+	public List getPenaltyDmdCollAmtInstWise(EgDemand egDemand);
+	
 	/**
 	 * Called to get the EgDemandDetails Id From Installment and Egdemand.
 	 * 

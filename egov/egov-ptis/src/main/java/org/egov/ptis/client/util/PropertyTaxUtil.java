@@ -95,6 +95,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -2465,5 +2466,15 @@ public class PropertyTaxUtil {
         if(limit != null && limit != -1)
                 qry.setMaxResults(limit);
         return qry;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Installment> getInstallments(PropertyImpl property) {
+        final EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+        List<Installment> installments = (List<Installment>) persistenceService
+                .findAllBy(
+                        "select distinct(dd.egDemandReason.egInstallmentMaster) from EgDemandDetails dd where dd.egDemand = ? order by dd.egDemandReason.egInstallmentMaster.fromDate",
+                        egDemand);
+        return installments;
     }
 }
