@@ -273,12 +273,12 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
          setEnablingAmounts();
          if (consolidatedScreen)
              if (enableApprovedAmount
-                     && (detail.getApprovedAmount() == null || BigDecimal.ZERO.equals(detail.getApprovedAmount()))) {
+                     && (detail.getApprovedAmount() == null || (BigDecimal.ZERO.compareTo(detail.getApprovedAmount()))==0)) {
                  loadApproverUser(savedbudgetDetailList);
                  throw new ValidationException(Arrays.asList(new ValidationError("approved.amount.mandatory",
                          "approved.amount.mandatory")));
              }
-         if (enableOriginalAmount && (detail.getOriginalAmount() == null || BigDecimal.ZERO.equals(detail.getOriginalAmount()))) {
+         if (enableOriginalAmount && (detail.getOriginalAmount() == null || (BigDecimal.ZERO.compareTo(detail.getOriginalAmount()))==0)) {
              loadApproverUser(savedbudgetDetailList);
              throw new ValidationException(Arrays.asList(new ValidationError("original.amount.mandatory",
                      "original.amount.mandatory")));

@@ -214,13 +214,13 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     private void saveBilldetails() {
         for (final EgBilldetails row : earningsList) {
             row.setEgBillregister(getBillregister());
-            if (row.getFunctionid() != null && BigDecimal.ZERO.equals(row.getFunctionid()))
+            if (row.getFunctionid() != null && BigDecimal.ZERO.compareTo(row.getFunctionid())==0)
                 row.setFunctionid(null);
             billDetailsService.persist(row);
         }
         for (final EgBilldetails row : deductionsList) {
             row.setEgBillregister(getBillregister());
-            if (row.getFunctionid() != null && BigDecimal.ZERO.equals(row.getFunctionid()))
+            if (row.getFunctionid() != null && BigDecimal.ZERO.compareTo(row.getFunctionid())==0)
                 row.setFunctionid(null);
             billDetailsService.persist(row);
         }

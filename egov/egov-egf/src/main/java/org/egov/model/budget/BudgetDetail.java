@@ -273,7 +273,7 @@ public class BudgetDetail extends StateAware {
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (Constants.END.equalsIgnoreCase(entry.getState().getValue())
                     && !entry.getStatus().getDescription().equalsIgnoreCase("Cancelled"))
-                if (entry.getAdditionAmount() != null && !BigDecimal.ZERO.equals(entry.getAdditionAmount()))
+                if (entry.getAdditionAmount() != null && !(BigDecimal.ZERO.compareTo(entry.getAdditionAmount())==0))
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -287,7 +287,7 @@ public class BudgetDetail extends StateAware {
             if (Constants.END.equalsIgnoreCase(entry.getState().getValue())
                     && !entry.getStatus().getDescription().equalsIgnoreCase("Cancelled")
                     && entry.getState().getCreatedDate().before(asOnDate))
-                if (entry.getAdditionAmount() != null && !BigDecimal.ZERO.equals(entry.getAdditionAmount()))
+                if (entry.getAdditionAmount() != null && !(BigDecimal.ZERO.compareTo(entry.getAdditionAmount())==0))
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());

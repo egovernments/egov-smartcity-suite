@@ -94,7 +94,6 @@ import net.sf.jasperreports.engine.JRException;
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
         "no-cache;filename=BudgetAppropriationRegisterRepor.xls" })
 })
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     /**

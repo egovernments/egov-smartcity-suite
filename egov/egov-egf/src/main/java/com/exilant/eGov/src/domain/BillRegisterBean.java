@@ -57,7 +57,6 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
-@Transactional(readOnly = true)
 public class BillRegisterBean
 {
 
@@ -87,443 +86,183 @@ public class BillRegisterBean
     public BillRegisterBean() {
     }
 
-    /**
-     * This Function is for insertion
-     * @param connection
-     * @throws TaskFailedException
-     */
-    @Transactional
-    public void insert() throws TaskFailedException
-    {
-        Query psmt = null;
-        try {
-            new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-            final Date billDatee = (Date) formatter.parse(billDate);
-
-            setId(String.valueOf(PrimaryKeyGenerator.getNextKey("EG_BILLREGISTER")));
-
-            final String insertQuery = "INSERT INTO EG_BILLREGISTER (ID, BILLNUMBER, BILLDATE, BILLAMOUNT,FIELDID,WORKSDETAILID,BILLSTATUS, NARRATION,PASSEDAMOUNT,BILLTYPE,EXPENDITURETYPE,ADVANCEADJUSTED,CREATEDBY,CREATEDDATE,StatusId)"
-                    + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            psmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            psmt.setString(0, id);
-            psmt.setString(1, billNumber);
-            psmt.setDate(2, billDatee);
-            psmt.setDouble(3, billAmount);
-            psmt.setString(4, fieldId);
-            psmt.setString(5, worksDetailId);
-            psmt.setString(6, billStatus);
-            psmt.setString(7, billNarration);
-            psmt.setDouble(8, passedAmount);
-            psmt.setString(9, billType);
-            psmt.setString(10, expenditureType);
-            psmt.setDouble(11, advanceAdjusted);
-            psmt.setInteger(12, createdby);
-            psmt.setDate(13, getTodayDate());
-            psmt.setString(14, billStatusId);
-            psmt.executeUpdate();
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("INSERT QUERY IS:" + insertQuery);
-        } catch (final Exception e) {
-            LOGGER.error("Exception inserting to eg_billregister." + e);
-            throw taskExc;
-        }
-    }
-
-    /**
-     * This function is to update the status alone
-     * @param status
-     * @param connection
-     * @param id
-     * @throws TaskFailedException
-     */
-    @Transactional
-    public void updateStatus(final String status, final String id) throws TaskFailedException
-    {
-        Query psmt = null;
-        try {
-
-            final String updateQuery = "UPDATE eg_billregister SET BILLSTATUS=? where id=?";
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug(updateQuery);
-            psmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
-            psmt.setString(0, status);
-            psmt.setString(1, id);
-            psmt.executeUpdate();
-        } catch (final Exception e) {
-            LOGGER.error("Exception in updatestatus" + e);
-            throw taskExc;
-        }
-
-    }
-
-    /**
-     * This function is to update using code
-     * @param connection
-     * @param code
-     * @throws TaskFailedException
-     */
-    @Transactional
-    public void update(final String code) throws TaskFailedException
-    {
-        Query psmt = null;
-        String updateQuery = "";
-        updateQuery = "UPDATE EG_BILLREGISTER SET BILLNUMBER = ?,BILLDATE = ?,BILLAMOUNT =?" +
-                ",FIELDID = ?,WORKSDETAILID = ?,BILLSTATUS = ?,NARRATION =?,PASSEDAMOUNT = ?" +
-                ",BILLTYPE = ?,EXPENDITURETYPE =?,ADVANCEADJUSTED =?" +
-                ",LASTMODIFIEDBY =?,LASTMODIFIEDDATE =?  where id =?";
-        try {
-
-            psmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
-            psmt.setString(0, billNumber);
-            psmt.setString(1, billDate);
-            psmt.setDouble(2, billAmount);
-            psmt.setString(3, fieldId);
-            psmt.setString(4, worksDetailId);
-            psmt.setString(5, billStatus);
-            psmt.setString(6, billNarration);
-            psmt.setDouble(7, passedAmount);
-            psmt.setString(8, billType);
-            psmt.setString(9, expenditureType);
-            psmt.setDouble(10, advanceAdjusted);
-            psmt.setInteger(11, lastModifiedBy);
-            psmt.setDate(12, getTodayDate());
-            psmt.setString(13, id);
-
-            psmt.executeUpdate();
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("updateQuery:" + updateQuery);
-        } catch (final Exception ex) {
-            LOGGER.error("Exception in Updating EG_BILLREGISTER:" + ex);
-            throw taskExc;
-        }
-
-    }
-
-    /**
-     * This function is to update using id
-     * @param connection
-     * @throws TaskFailedException
-     */
-    @Transactional
-    public void update() throws TaskFailedException
-    {
-        Query psmt = null;
-        try {
-            if (isId && isField)
-            {
-                final String updateQuery1 = "UPDATE EG_BILLREGISTER SET  CREATEDBY=?,billAmount=?, billDate=?,Narration=?,billNumber=?,"
-                        + "advanceAdjusted=?, billType=?, expenditureType=?, passedAmount=?,billStatus=?, worksDetailId=?,fieldId=?,"
-                        + "lastModifiedBy=?, createdDate=?,lastModifiedDate= to_date(?,'dd-Mon-yyyy HH24:MI:SS'), StatusId=?"
-                        + "where id =?";
-                psmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery1);
-                psmt.setInteger(0, createdby);
-                psmt.setDouble(1, billAmount);
-                psmt.setString(2, billDate);
-                psmt.setString(3, billNarration);
-                psmt.setString(4, billNumber);
-                psmt.setDouble(5, advanceAdjusted);
-                psmt.setString(6, billType);
-                psmt.setString(7, expenditureType);
-                psmt.setDouble(8, passedAmount);
-                psmt.setString(9, billStatus);
-                psmt.setString(10, worksDetailId);
-                psmt.setString(11, fieldId);
-                psmt.setInteger(12, lastModifiedBy);
-                psmt.setString(13, createdDate);
-                psmt.setString(14, lastModifiedDate);
-                psmt.setString(15, billStatusId);
-                psmt.setString(16, id);
-                psmt.executeUpdate();
-
-            }
-        } catch (final Exception e) {
-            LOGGER.error("Exception in update.." + e);
-            throw taskExc;
-        }
-    }
-
-    public Date getTodayDate() {
-        String currentDate = null;
-        List<Object[]> resultset = null;
-        Date today = null;
-        try {
-            new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-            resultset = HibernateUtil.getCurrentSession()
-                    .createSQLQuery("select to_char(sysdate,'dd/MM/yyyy') as \"currentDate\" from dual").list();
-            for (final Object[] element : resultset)
-                currentDate = element[0].toString();
-            today = (Date) formatter.parse(currentDate);
-        } catch (final Exception e) {
-            LOGGER.error("Error while getting Todays Date");
-        }
-        return today;
-    }
-
-    /**
-     * @return Returns the createdby.
-     */
-    public int getCreatedby() {
-        return createdby;
-    }
-
-    /**
-     * @param createdby The createdby to set.
-     */
-    public void setCreatedby(final int createdby) {
-        this.createdby = createdby;
-
-    }
-
-    /**
-     * @return Returns the billAmount.
-     */
-
-    public double getBillAmount() {
-        return billAmount;
-    }
-
-    /**
-     * @param billAmount The billAmount to set.
-     */
-    public void setBillAmount(final double billAmount) {
-        this.billAmount = billAmount;
-
-    }
-
-    /**
-     * @return Returns the billDate.
-     */
-    public String getBillDate() {
-        return billDate;
-    }
-
-    /**
-     * @param billDate The billDate to set.
-     */
-    public void setBillDate(final String billDate) {
-        this.billDate = billDate;
-
-    }
-
-    /**
-     * @return Returns the billNarration.
-     */
-    public String getBillNarration() {
-        return billNarration;
-    }
-
-    /**
-     * @param billNarration The billNarration to set.
-     */
-    public void setBillNarration(final String billNarration) {
-        this.billNarration = billNarration;
-
-    }
-
-    /**
-     * @return Returns the billNumber.
-     */
-    public String getBillNumber() {
-        return billNumber;
-    }
-
-    /**
-     * @param billNumber The billNumber to set.
-     */
-    public void setBillNumber(final String billNumber) {
-        this.billNumber = billNumber;
-
-    }
-
-    /**
-     * @return Returns the id.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id The id to set.
-     */
-    public void setId(final String id) {
-        this.id = id;
-        isField = true;
-        isId = true;
-    }
-
-    /**
-     * @return Returns the advanceAdjusted.
-     */
-    public double getAdvanceAdjusted() {
-        return advanceAdjusted;
-    }
-
-    /**
-     * @param advanceAdjusted The advanceAdjusted to set.
-     */
-    public void setAdvanceAdjusted(final double advanceAdjusted) {
-        this.advanceAdjusted = advanceAdjusted;
-
-    }
-
-    /**
-     * @return Returns the billType.
-     */
-    public String getBillType() {
-        return billType;
-    }
-
-    /**
-     * @param billType The billType to set.
-     */
-    public void setBillType(final String billType) {
-        this.billType = billType;
-
-    }
-
-    /**
-     * @return Returns the expenditureType.
-     */
-    public String getExpenditureType() {
-        return expenditureType;
-    }
-
-    /**
-     * @param expenditureType The expenditureType to set.
-     */
-    public void setExpenditureType(final String expenditureType) {
-        this.expenditureType = expenditureType;
-
-    }
-
-    /**
-     * @return Returns the passedAmount.
-     */
-    public double getPassedAmount() {
-        return passedAmount;
-    }
-
-    /**
-     * @param passedAmount The passedAmount to set.
-     */
-    public void setPassedAmount(final double passedAmount) {
-        this.passedAmount = passedAmount;
-
-    }
-
-    /**
-     * @return Returns the billStatus.
-     */
-    public String getBillStatus() {
-        return billStatus;
-    }
-
-    /**
-     * @param billStatus The billStatus to set.
-     */
-    public void setBillStatus(final String billStatus) {
-        this.billStatus = billStatus;
-
-    }
-
-    /**
-     * @return Returns the worksDetailId.
-     */
-    public String getWorksDetailId() {
-        return worksDetailId;
-    }
-
-    /**
-     * @param worksDetailId The worksDetailId to set.
-     */
-    public void setWorksDetailId(final String worksDetailId) {
-        this.worksDetailId = worksDetailId;
-    }
-
-    /**
-     * @return Returns the fieldId.
-     */
-    public String getFieldId() {
-        return fieldId;
-    }
-
-    /**
-     * @param fieldId The fieldId to set.
-     */
-    public void setFieldId(final String fieldId) {
-        this.fieldId = fieldId;
-
-    }
-
-    public int getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
-    /**
-     * @param lastModifiedBy The lastModifiedBy to set.
-     */
-    public void setLastModifiedBy(final int lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-
-    }
-
-    public String getCreatedDate() {
-        return createdDate;
-    }
-
-    /**
-     * @param createdDate The createdDate to set.
-     */
-    public void setCreatedDate(final String createdDate) {
-        this.createdDate = createdDate;
-
-    }
-
-    /**
-     * @return Returns the lastModifiedDate.
-     */
-    public String getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    /**
-     * @param lastModifiedDate The lastModifiedDate to set.
-     */
-    public void setLastModifiedDate(final String lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-
-    }
-
-    /**
-     * @return Returns the billStatusId.
-     */
-    public String getBillStatusId() {
-        return billStatusId;
-    }
-
-    /**
-     * @param billStatusId The billStatusId to set.
-     */
-    public void setBillStatusId(final String billStatusId) {
-        this.billStatusId = billStatusId;
-
-    }
-
-    public boolean getIsSelected() {
-        return isSelected;
-    }
-
-    public void setIsSelected(final boolean isSelected) {
-        this.isSelected = isSelected;
-    }
-
-    public String getBillDeptName() {
-        return billDeptName;
-    }
-
-    public void setBillDeptName(final String billDeptName) {
-        this.billDeptName = billDeptName;
-    }
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getBillNumber() {
+		return billNumber;
+	}
+
+	public void setBillNumber(String billNumber) {
+		this.billNumber = billNumber;
+	}
+
+	public String getBillDate() {
+		return billDate;
+	}
+
+	public void setBillDate(String billDate) {
+		this.billDate = billDate;
+	}
+
+	public String getBillStatus() {
+		return billStatus;
+	}
+
+	public void setBillStatus(String billStatus) {
+		this.billStatus = billStatus;
+	}
+
+	public String getFieldId() {
+		return fieldId;
+	}
+
+	public void setFieldId(String fieldId) {
+		this.fieldId = fieldId;
+	}
+
+	public String getWorksDetailId() {
+		return worksDetailId;
+	}
+
+	public void setWorksDetailId(String worksDetailId) {
+		this.worksDetailId = worksDetailId;
+	}
+
+	public double getBillAmount() {
+		return billAmount;
+	}
+
+	public void setBillAmount(double billAmount) {
+		this.billAmount = billAmount;
+	}
+
+	public String getBillNarration() {
+		return billNarration;
+	}
+
+	public void setBillNarration(String billNarration) {
+		this.billNarration = billNarration;
+	}
+
+	public String getExpenditureType() {
+		return expenditureType;
+	}
+
+	public void setExpenditureType(String expenditureType) {
+		this.expenditureType = expenditureType;
+	}
+
+	public String getBillType() {
+		return billType;
+	}
+
+	public void setBillType(String billType) {
+		this.billType = billType;
+	}
+
+	public double getPassedAmount() {
+		return passedAmount;
+	}
+
+	public void setPassedAmount(double passedAmount) {
+		this.passedAmount = passedAmount;
+	}
+
+	public double getAdvanceAdjusted() {
+		return advanceAdjusted;
+	}
+
+	public void setAdvanceAdjusted(double advanceAdjusted) {
+		this.advanceAdjusted = advanceAdjusted;
+	}
+
+	public int getCreatedby() {
+		return createdby;
+	}
+
+	public void setCreatedby(int createdby) {
+		this.createdby = createdby;
+	}
+
+	public int getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(int lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(String lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public String getBillStatusId() {
+		return billStatusId;
+	}
+
+	public void setBillStatusId(String billStatusId) {
+		this.billStatusId = billStatusId;
+	}
+
+	public TaskFailedException getTaskExc() {
+		return taskExc;
+	}
+
+	public void setTaskExc(TaskFailedException taskExc) {
+		this.taskExc = taskExc;
+	}
+
+	public boolean isId() {
+		return isId;
+	}
+
+	public void setId(boolean isId) {
+		this.isId = isId;
+	}
+
+	public boolean isField() {
+		return isField;
+	}
+
+	public void setField(boolean isField) {
+		this.isField = isField;
+	}
+
+	public boolean getIsSelected() {
+		return isSelected;
+	}
+
+	public void setIsSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
+
+	public String getBillDeptName() {
+		return billDeptName;
+	}
+
+	public void setBillDeptName(String billDeptName) {
+		this.billDeptName = billDeptName;
+	}
+
+   
+
+   
 }
