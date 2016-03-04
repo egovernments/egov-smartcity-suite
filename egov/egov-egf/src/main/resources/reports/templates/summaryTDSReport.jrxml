@@ -11,6 +11,7 @@
 	<parameter name="fundName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="partyName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="asOnDate" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="summaryheading" class="java.lang.String" isForPrompting="false"/>
 	<field name="natureOfDeduction" class="java.lang.String"/>
 	<field name="month" class="java.lang.String"/>
 	<field name="totalRemitted" class="java.math.BigDecimal"/>
@@ -20,20 +21,6 @@
 	</background>
 	<title>
 		<band height="81" splitType="Stretch">
-			<staticText>
-				<reportElement x="37" y="4" width="315" height="21" uuid="a531dc8a-5d3a-4503-b6ec-a73c3edee1e7"/>
-				<textElement textAlignment="Right">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Deductions remittance summary as on  ]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="355" y="4" width="174" height="21" uuid="da392c61-1b9b-47f5-b672-17327fcc14bb"/>
-				<textElement>
-					<font size="13" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{asOnDate}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="10" y="25" width="89" height="14" uuid="6029ea7f-d4f6-4a1c-9e53-795ac8418f87"/>
 				<textElement>
@@ -88,6 +75,13 @@
 			<textField isBlankWhenNull="true">
 				<reportElement x="99" y="53" width="174" height="15" uuid="42f1b9ae-644e-49ea-a5cd-9014c2bb69cc"/>
 				<textFieldExpression><![CDATA[$P{partyName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="558" height="25" uuid="8fdfeaa1-9ee2-4ef0-8a28-5ae31fa7fe4d"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{summaryheading}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

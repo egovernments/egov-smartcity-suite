@@ -39,12 +39,12 @@
  */
 package org.egov.pims.model;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.Designation;
 
@@ -150,7 +150,7 @@ public class SearchEmpDTO implements java.io.Serializable
 	public String getDepartment()
 	{
 		
-		ArrayList deptMasterList=(ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-department");
+		List deptMasterList=Collections.emptyList();//EgovMasterDataCaching.getInstance().get("egEmp-department");
 		Map deptmap = getDepartmentMap(deptMasterList);
 		String dept = (String)deptmap.get(getDepID());
 		
@@ -160,7 +160,7 @@ public class SearchEmpDTO implements java.io.Serializable
 	public String getDesignation()
 	{
 		String desig = "N/A";
-		ArrayList designationMasterList=(ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-DesignationMaster");
+		List designationMasterList=Collections.emptyList();//EgovMasterDataCaching.getInstance().get("egEmp-DesignationMaster");
 		Map mapOfDesignation = getDsig(designationMasterList);
 		if(mapOfDesignation.get(getDesID())!=null)
 			desig = (String)mapOfDesignation.get(getDesID());
@@ -178,7 +178,7 @@ public class SearchEmpDTO implements java.io.Serializable
 	public void setToDate(java.sql.Date toDate) {
 		this.toDate = toDate;
 	}
-	public Map getDepartmentMap(ArrayList list)
+	public Map getDepartmentMap(List list)
 	{
 		Map depMap = new HashMap();
 		for(Iterator iter = list.iterator();iter.hasNext();)
@@ -188,7 +188,7 @@ public class SearchEmpDTO implements java.io.Serializable
 		}
 		return depMap;
 	}
-	private Map getDsig(ArrayList list)
+	private Map getDsig(List list)
 	{
 		Map desMap = new HashMap();
 		for(Iterator iter = list.iterator();iter.hasNext();)

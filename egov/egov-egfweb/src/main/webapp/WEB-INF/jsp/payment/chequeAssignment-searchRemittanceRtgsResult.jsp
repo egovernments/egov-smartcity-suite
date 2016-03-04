@@ -43,7 +43,7 @@
 	rel="stylesheet" type="text/css" />
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css" />
 <title><s:text
 		name="rtgs.assignment.remittance.pay.search.heading" /></title>
 <meta http-equiv="Content-Type"

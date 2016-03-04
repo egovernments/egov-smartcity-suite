@@ -102,11 +102,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ChallanAction.NEW, location = "challan-new.jsp"),
-    @Result(name = CollectionConstants.CREATERECEIPT, location = "challan-createReceipt.jsp"),
-    @Result(name = CollectionConstants.CANCELRECEIPT, location = "challan-cancelReceipt.jsp"),
-    @Result(name = ChallanAction.SUCCESS, location = "challan-success.jsp"),
-    @Result(name = CollectionConstants.VIEW, location = "challan-view.jsp"),
-    @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp") })
+        @Result(name = CollectionConstants.CREATERECEIPT, location = "challan-createReceipt.jsp"),
+        @Result(name = CollectionConstants.CANCELRECEIPT, location = "challan-cancelReceipt.jsp"),
+        @Result(name = ChallanAction.SUCCESS, location = "challan-success.jsp"),
+        @Result(name = CollectionConstants.VIEW, location = "challan-view.jsp"),
+        @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp") })
 public class ChallanAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(ChallanAction.class);
@@ -233,6 +233,7 @@ public class ChallanAction extends BaseFormAction {
     private Long serviceId;
     private ChallanService challanService;
     private String approverName;
+    private Long functionId;
 
     /**
      * An array of <code>ReceiptHeader</code> instances which have to be
@@ -296,9 +297,10 @@ public class ChallanAction extends BaseFormAction {
             return saveChallan();
         else
             challanService.workflowtransition(receiptHeader.getChallan(), position, actionName, approvalRemarks);
-        
-        if(receiptHeader.getChallan().getState()!=null && receiptHeader.getChallan().getState().getOwnerPosition()!=null)
-        approverName = collectionsUtil.getApproverName(receiptHeader.getChallan().getState().getOwnerPosition());
+
+        if (receiptHeader.getChallan().getState() != null
+                && receiptHeader.getChallan().getState().getOwnerPosition() != null)
+            approverName = collectionsUtil.getApproverName(receiptHeader.getChallan().getState().getOwnerPosition());
         return SUCCESS;
     }
 
@@ -319,6 +321,12 @@ public class ChallanAction extends BaseFormAction {
                 receiptHeader = new ReceiptHeader();
                 errors.add(new ValidationError(getText("challan.notfound.message"),
                         "No Valid Challan Found. Please check the challan number."));
+                throw new ValidationException(errors);
+            }
+            
+            if(CollectionConstants.CHALLAN_STATUS_CODE_CANCELLED.equals(receiptHeader.getChallan().getStatus().getCode())){
+                errors.add(new ValidationError(getText("challan.cancel.receipt.error"),
+                        "Challan is cancelled. Cannot create Receipt for Challan."));
                 throw new ValidationException(errors);
             }
 
@@ -350,9 +358,13 @@ public class ChallanAction extends BaseFormAction {
                 collectionsUtil.getLoggedInUser(), receiptHeader));
 
         populateAndPersistChallanReceipt();
-        if(receiptHeader.getChallan().getState()!=null && receiptHeader.getChallan().getState().getOwnerPosition()!=null)
-        addActionMessage(getText("challan.savechallan.success", new String[] {collectionsUtil.getApproverName(receiptHeader.getChallan().getState().getOwnerPosition()), receiptHeader.getChallan()
-                .getChallanNumber() }));
+        if (receiptHeader.getChallan().getState() != null
+                && receiptHeader.getChallan().getState().getOwnerPosition() != null)
+            addActionMessage(getText(
+                    "challan.savechallan.success",
+                    new String[] {
+                            collectionsUtil.getApproverName(receiptHeader.getChallan().getState().getOwnerPosition()),
+                            receiptHeader.getChallan().getChallanNumber() }));
 
         if (CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName))
             return SUCCESS;
@@ -431,7 +443,7 @@ public class ChallanAction extends BaseFormAction {
             if (cashOrCardInstrumenttotal != null && cashOrCardInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)
                 receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
             receiptHeaderService.setReceiptNumber(receiptHeader);
-            
+
             receiptHeaderService.populateAndPersistReceipts(receiptHeader, receiptInstrList);
             final ReceiptHeader[] receipts = new ReceiptHeader[1];
             receipts[0] = receiptHeader;
@@ -619,7 +631,7 @@ public class ChallanAction extends BaseFormAction {
             if (instrumentProxyList.get(0).getInstrumentType().getType()
                     .equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
                     || instrumentProxyList.get(0).getInstrumentType().getType()
-                    .equals(CollectionConstants.INSTRUMENTTYPE_DD))
+                            .equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeaderList = populateInstrumentHeaderForChequeDD(instrumentHeaderList, instrumentProxyList);
         instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
 
@@ -717,8 +729,8 @@ public class ChallanAction extends BaseFormAction {
         for (final ReceiptDetailInfo rDetails : billDetailslist) {
             final CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(rDetails.getGlcodeDetail());
             CFunction function = null;
-            if (rDetails.getFunctionIdDetail() != null)
-                function = functionDAO.getFunctionById(rDetails.getFunctionIdDetail());
+            if (functionId != null)
+                function = functionDAO.getFunctionById(functionId);
             ReceiptDetail receiptDetail = new ReceiptDetail(account, function, rDetails.getCreditAmountDetail(),
                     rDetails.getDebitAmountDetail(), null, Long.valueOf(m), null, null, receiptHeader);
             receiptDetail.setCramount(rDetails.getCreditAmountDetail());
@@ -772,7 +784,7 @@ public class ChallanAction extends BaseFormAction {
             final ReceiptDetail receiptDetail) {
         for (final ReceiptDetailInfo subvoucherDetails : subLedgerlist)
             if (subvoucherDetails.getGlcode() != null && subvoucherDetails.getGlcode().getId() != 0
-            && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
+                    && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
 
                 final Accountdetailtype accdetailtype = (Accountdetailtype) getPersistenceService().findByNamedQuery(
                         CollectionConstants.QUERY_ACCOUNTDETAILTYPE_BY_ID, subvoucherDetails.getDetailType().getId());
@@ -811,12 +823,12 @@ public class ChallanAction extends BaseFormAction {
                     && rDetails.getGlcodeDetail().trim().length() != 0)
                 errors.add(new ValidationError("challan.accdetail.amountZero",
                         "Enter debit/credit amount for the account code : {0}", new String[] { rDetails
-                        .getGlcodeDetail() }));
+                                .getGlcodeDetail() }));
             else if (rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0
                     && rDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) > 0)
                 errors.add(new ValidationError("challan.accdetail.amount",
                         "Please enter either debit/credit amount for the account code : {0}", new String[] { rDetails
-                        .getGlcodeDetail() }));
+                                .getGlcodeDetail() }));
             else if ((rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0 || rDetails
                     .getCreditAmountDetail().compareTo(BigDecimal.ZERO) > 0)
                     && rDetails.getGlcodeDetail().trim().length() == 0)
@@ -878,8 +890,8 @@ public class ChallanAction extends BaseFormAction {
 
                     final StringBuffer subledgerDetailRow = new StringBuffer();
                     subledgerDetailRow.append(rDetails.getGlcode().getId().toString())
-                    .append(rDetails.getDetailType().getId().toString())
-                    .append(rDetails.getDetailKeyId().toString());
+                            .append(rDetails.getDetailType().getId().toString())
+                            .append(rDetails.getDetailKeyId().toString());
                     if (null == subLedgerMap.get(subledgerDetailRow.toString()))
                         subLedgerMap.put(subledgerDetailRow.toString(), subledgerDetailRow.toString());
                     else
@@ -892,7 +904,7 @@ public class ChallanAction extends BaseFormAction {
                 if (null == subledAmtmap.get(glcodeId))
                     errors.add(new ValidationError("miscreciept.samesubledger.entrymissing",
                             "Subledger detail entry is missing for account code: {0}", new String[] { map.get("glcode")
-                            .toString() }));
+                                    .toString() }));
                 else if (!subledAmtmap.get(glcodeId).equals(new BigDecimal(map.get("amount").toString())))
                     errors.add(new ValidationError("miscreciept.samesubledger.entrymissing",
                             "Total subledger amount is not matching for account code : {0}", new String[] { map.get(
@@ -919,6 +931,13 @@ public class ChallanAction extends BaseFormAction {
     private void loadReceiptDetails() {
         setDeptId(receiptHeader.getReceiptMisc().getDepartment().getId().toString());
         setDept(receiptHeader.getReceiptMisc().getDepartment());
+        if (!receiptHeader.getReceiptDetails().isEmpty()) {
+            CFunction function = receiptHeader.getReceiptDetails().iterator().next().getFunction();
+            if(function!=null) {
+                setFunctionId(function.getId());
+                setFunction(function);
+            }
+        }
         setBoundary(receiptHeader.getReceiptMisc().getBoundary());
         setServiceCategoryId(receiptHeader.getService().getServiceCategory().getId());
         setServiceId(receiptHeader.getService().getId());
@@ -1015,6 +1034,8 @@ public class ChallanAction extends BaseFormAction {
         if (headerFields.contains(CollectionConstants.DEPARTMENT))
             addDropdownData("departmentList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
+        if (headerFields.contains(CollectionConstants.FUNCTION))
+            addDropdownData("functionList", functionDAO.findAll());
         if (headerFields.contains(CollectionConstants.FIELD))
             addDropdownData("fieldList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FIELD));
         setupDropdownDataExcluding("challan.service");
@@ -1432,7 +1453,15 @@ public class ChallanAction extends BaseFormAction {
         return approverName;
     }
 
-    public void setApproverName(String approverName) {
+    public void setApproverName(final String approverName) {
         this.approverName = approverName;
+    }
+
+    public Long getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(final Long functionId) {
+        this.functionId = functionId;
     }
 }

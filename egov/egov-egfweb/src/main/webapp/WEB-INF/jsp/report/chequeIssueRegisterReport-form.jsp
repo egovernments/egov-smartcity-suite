@@ -69,7 +69,7 @@ function generateReport(){
 	if(isValid == false)
 		return false;
 	doLoadingMask();
-	var url = '../report/chequeIssueRegisterReport!ajaxPrint.action?fromDate='+fromDate+'&toDate='+toDate+'&accountNumber.id='+bankAccount+'&department.id='+department+'&bank='+bank+'&showDropDown=false';
+	var url = '../report/chequeIssueRegisterReport-ajaxPrint.action?fromDate='+fromDate+'&toDate='+toDate+'&accountNumber.id='+bankAccount+'&department.id='+department+'&bank='+bank+'&showDropDown=false';
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 }
 
@@ -90,11 +90,22 @@ function validateDates(){
 		bootbox.alert("Please select the dates")
 		return false;
 	}
+	var startDate= fromDate.split('/');
+	fromDate=new Date(startDate[2],startDate[1]-1,startDate[0]);
+    var endDate = toDate.split('/');
+    toDate=new Date(endDate[2],endDate[1]-1,endDate[0]);
+	
+	
+	if(fromDate > toDate ){
+		bootbox.alert("From date should not be greater than To date  ")
+		return false;
+	}
+	
 	document.getElementById('accountNumber.id').value=bankAccount;
 	return true;	
 }
 function viewVoucher(vid){
-	var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+vid;
+	var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+vid;
 	window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 </script>
@@ -102,34 +113,37 @@ function viewVoucher(vid){
 	<div class="formmainbox">
 		<div class="formheading"></div>
 		<div class="subheadnew">Cheque Issue Register Report</div>
+		<br/>
+		<br/>
 
 
 		<s:form action="chequeIssueRegisterReport" theme="simple"
 			name="chequeIssueRegister">
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
 				<tr>
-					<td width="20%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
 					<td class="bluebox" width="10%">Bank Name:<span
-						class="bluebox"><span class="mandatory">*</span></span></td>
+						class="bluebox"><span class="mandatory1">*</span></span></td>
 					<td class="bluebox"><s:select name="bank" id="bank"
 							list="dropdownData.bankList" listKey="bankBranchId"
 							listValue="bankBranchName" headerKey="-1"
 							headerValue="----Choose----" onChange="populateAccNum(this);" />
 					</td>
+					<td width="10%">&nbsp;</td>
 					<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
 						dropdownId="accountNumber"
-						url="voucher/common!ajaxLoadAccNum.action" />
+						url="voucher/common-ajaxLoadAccNum.action" />
 					<td class="bluebox" width="10%">Account Number:<span
-						class="bluebox"><span class="mandatory">*</span></span></td>
+						class="bluebox"><span class="mandatory1">*</span></span></td>
 					<td class="bluebox"><s:select name="bankAccount"
 							id="accountNumber" list="dropdownData.bankAccountList"
 							listKey="id" listValue="accountnumber" headerKey="-1"
 							headerValue="----Choose----" /></td>
 				</tr>
 				<tr>
-					<td class="greybox" width="20%">&nbsp;</td>
+					<td class="greybox" width="10%">&nbsp;</td>
 					<td class="greybox" width="10%">Cheque From Date:<span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
 							cssStyle="width:100px"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -137,8 +151,9 @@ function viewVoucher(vid){
 						style="text-decoration: none">&nbsp;<img
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
 					</td>
+					<td width="10%">&nbsp;</td>
 					<td class="greybox" width="10%">Cheque To Date:<span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate"
 							cssStyle="width:100px"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -160,7 +175,7 @@ function viewVoucher(vid){
 			<br />
 			<br />
 			<div class="subheadsmallnew"></div>
-			<div align="left" class="mandatory">* Mandatory Fields</div>
+			<div align="left" class="mandatory1">* Mandatory Fields</div>
 
 			<div class="buttonbottom">
 				<input type="button" value="Submit" class="buttonsubmit"

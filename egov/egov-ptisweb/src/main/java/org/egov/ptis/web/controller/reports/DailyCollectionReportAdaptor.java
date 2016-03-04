@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
 
 import com.google.gson.JsonElement;
@@ -61,18 +62,18 @@ public class DailyCollectionReportAdaptor implements JsonSerializer<DailyCollect
         jsonObject.addProperty("receiptDate", receiptDateFormatter.format(dailyCollectionReportResult.getReceiptDate()));
         jsonObject.addProperty("assessmentNumber", dailyCollectionReportResult.getAssessmentNumber());
         jsonObject.addProperty("ownerName", dailyCollectionReportResult.getOwnerName());
-        jsonObject.addProperty("doorNumber", dailyCollectionReportResult.getDoorNumber());
+        jsonObject.addProperty("doorNumber", StringUtils.isNotBlank(dailyCollectionReportResult.getDoorNumber()) ? dailyCollectionReportResult.getDoorNumber(): "N/A");
         jsonObject.addProperty("paidAt", dailyCollectionReportResult.getPaidAt());
         jsonObject.addProperty("paymentMode", dailyCollectionReportResult.getPaymentMode());
         jsonObject.addProperty("status", dailyCollectionReportResult.getStatus());
         jsonObject.addProperty("fromDate", dailyCollectionReportResult.getFromInstallment());
         jsonObject.addProperty("toDate", dailyCollectionReportResult.getToInstallment());
-        jsonObject.addProperty("arrearAmt", dailyCollectionReportResult.getArrearAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
-        jsonObject.addProperty("currAmt", dailyCollectionReportResult.getCurrentAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
-        jsonObject.addProperty("totalPenalty", dailyCollectionReportResult.getTotalPenalty().setScale(2, BigDecimal.ROUND_HALF_UP));
-        jsonObject.addProperty("arrearLibCess", dailyCollectionReportResult.getArrearLibCess().setScale(2, BigDecimal.ROUND_HALF_UP));
-        jsonObject.addProperty("currLibCess", dailyCollectionReportResult.getCurrentLibCess().setScale(2, BigDecimal.ROUND_HALF_UP)); 
-        jsonObject.addProperty("totalLibCess", dailyCollectionReportResult.getTotalLibCess().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("arrearAmt", null != dailyCollectionReportResult.getArrearAmount() ? dailyCollectionReportResult.getArrearAmount().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
+        jsonObject.addProperty("currAmt", null != dailyCollectionReportResult.getCurrentAmount() ? dailyCollectionReportResult.getCurrentAmount().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
+        jsonObject.addProperty("totalPenalty", null != dailyCollectionReportResult.getTotalPenalty() ? dailyCollectionReportResult.getTotalPenalty().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
+        jsonObject.addProperty("arrearLibCess", null != dailyCollectionReportResult.getArrearLibCess() ? dailyCollectionReportResult.getArrearLibCess().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
+        jsonObject.addProperty("currLibCess", null != dailyCollectionReportResult.getCurrentLibCess() ? dailyCollectionReportResult.getCurrentLibCess().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO); 
+        jsonObject.addProperty("totalLibCess", null != dailyCollectionReportResult.getTotalLibCess() ? dailyCollectionReportResult.getTotalLibCess().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
         jsonObject.addProperty("totalCollection", dailyCollectionReportResult.getTotalCollection().setScale(2, BigDecimal.ROUND_HALF_UP));
         jsonObject.addProperty("ward",dailyCollectionReportResult.getWard());
         return jsonObject;

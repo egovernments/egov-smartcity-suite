@@ -41,16 +41,27 @@ package org.egov.commons.dao;
 
 import java.lang.reflect.Field;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Accountdetailtype;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
+import org.springframework.stereotype.Service;
+@Service
 public class AccountdetailtypeHibernateDAO extends GenericHibernateDAO {
 
+	@PersistenceContext
+	private EntityManager entityManager;
+	
+	
     public AccountdetailtypeHibernateDAO(final Class persistentClass, final Session session) {
         super(persistentClass, session);
+    }
+    public AccountdetailtypeHibernateDAO() {
+        super(Accountdetailtype.class, null);  
     }
 
     /**
@@ -94,4 +105,9 @@ public class AccountdetailtypeHibernateDAO extends GenericHibernateDAO {
         qry.setString("name", name);
         return (Accountdetailtype) qry.uniqueResult();
     }
+
+	@Override
+	protected Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 }

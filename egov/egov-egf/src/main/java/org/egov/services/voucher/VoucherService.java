@@ -65,6 +65,7 @@ import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgfRecordStatus;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
@@ -98,7 +99,6 @@ import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.SequenceGenerator;
-import org.egov.masters.services.MastersService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBilldetails;
@@ -159,9 +159,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     @Qualifier("voucherHelper")
     private VoucherHelper voucherHelper;
-    @Autowired
-    @Qualifier("mastersService")
-    private MastersService masters;
+  
     @Autowired
     @Qualifier("eGovernCommon")
     private EGovernCommon eGovernCommon;
@@ -172,6 +170,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     @Qualifier("financialYearDAO")
     private FinancialYearHibernateDAO financialYearDAO;
+    @Autowired
+    private EgovCommon egovCommon;
 
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
         super(voucherHeader);
@@ -190,10 +190,12 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private EgBillRegisterService egBillRegisterService;
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+	private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
 
     public Boundary getBoundaryForUser(final CVoucherHeader rv)
     {
-        return new EgovCommon().getBoundaryForUser(rv.getCreatedBy());
+        return egovCommon.getBoundaryForUser(rv.getCreatedBy());
     }
 
     public String getEmployeeNameForPositionId(final Position pos) throws ApplicationRuntimeException
@@ -231,7 +233,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
     public Department getDepartmentForUser(final User user)
     {
-        return new EgovCommon().getDepartmentForUser(user, eisCommonService, employeeService, persistenceService);
+        return  egovCommon.getDepartmentForUser(user, eisCommonService, employeeService, persistenceService);
     }
 
     public PersonalInformation getEmpForCurrentUser()
@@ -703,7 +705,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                     if (glcodeId.equals(detailGlCode)
                             && (repeatedglCodes.contains(glcodeId) ? accDetailFunc.equals(detailedFunc) : true)) {
                         final TransaxtionParameter reqData = new TransaxtionParameter();
-                        final Accountdetailtype adt = masters.getAccountdetailtypeById(Integer.valueOf(detailtypeid));
+                        final Accountdetailtype adt = (Accountdetailtype)accountdetailtypeHibernateDAO.findById(Integer.valueOf(detailtypeid), false);
                         reqData.setDetailName(adt.getAttributename());
                         reqData.setGlcodeId(detailGlCode);
                         reqData.setDetailAmt(subledgerDetails.getAmount().toString());

@@ -72,7 +72,9 @@
 					window.location = "/ptis/addarrears/form/" + assessmentNum;
 				} else if(selectedValue == 'GeneralRevisionPetition'){
 					window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=GRP&indexNumber="+assessmentNum;
-				}
+				} /* else if(selectedValue == 'WriteOff'){
+					window.location = "/ptis/writeOff/form/" + assessmentNum;
+				} */
 			}
 
 			function gotoSearchForm(){
@@ -189,6 +191,9 @@
 										        <option value="GeneralRevisionPetition">
 													<s:text name="GeneralRevisionPetition"></s:text>
 										        </option>
+										        <%-- <option value="WriteOff">
+													<s:text name="WriteOff"/>
+										        </option> --%>
 												<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.enableVacancyRemission == true}">
 													<s:if test="%{(#attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND || !#attr.currentRowObject.isTaxExempted)}">
 														<option value="VacancyRemission">

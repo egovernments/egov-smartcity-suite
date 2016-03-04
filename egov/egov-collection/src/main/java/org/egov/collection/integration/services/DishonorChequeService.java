@@ -51,11 +51,13 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.FinancialIntegrationService;
 import org.egov.utils.FinancialConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DishonorChequeService implements FinancialIntegrationService {
 
@@ -65,6 +67,9 @@ public class DishonorChequeService implements FinancialIntegrationService {
     private FinancialsUtil financialsUtil;
     private PersistenceService persistenceService;
     private ReceiptHeaderService receiptHeaderService;
+
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     @Override
     public void updateCollectionsOnInstrumentDishonor(final Long instrumentHeaderId) {
@@ -134,7 +139,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
     private Boolean updateDetailsToBillingSystem(final ReceiptHeader receiptHeader) {
 
         Boolean flag = true;
-        final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader);
+        final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO);
         final Set<BillReceiptInfo> billReceiptInfo = new HashSet<BillReceiptInfo>();
         billReceiptInfo.add(billReceipt);
         final String serviceCode = receiptHeader.getService().getCode();

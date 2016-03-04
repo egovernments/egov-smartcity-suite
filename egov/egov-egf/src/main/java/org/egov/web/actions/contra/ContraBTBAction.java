@@ -70,7 +70,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.Vouchermis;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -149,13 +148,13 @@ public class ContraBTBAction extends BaseVoucherAction {
     private @Autowired AppConfigValueService appConfigValuesService;
     private Long vhId;
     private PaymentService paymentService;
-    private EgovCommon egovCommon;
     private ChequeService chequeService;
     private String fromAccnumnar;
     private Fund toFundCode;
     private FundFlowService fundFlowService;
     CGeneralLedger generalled;
-    CommonAction commonAction;
+    @Autowired
+    private CommonAction commonAction;
     CChartOfAccounts chartofAccountsList;
     List<CGeneralLedger> generalLedgerDesList = new ArrayList<CGeneralLedger>();
     List<CGeneralLedger> generalLedgerSrcList = new ArrayList<CGeneralLedger>();
@@ -166,9 +165,14 @@ public class ContraBTBAction extends BaseVoucherAction {
     private CVoucherHeader voucherHeaderDes;
     private CVoucherHeader voucherHeader4;
     private ChartOfAccounts chartOfAccounts;
+    private @Autowired CreateVoucher createVoucher;
     @Autowired
     @Qualifier("instrumentHeaderService")
     private InstrumentHeaderService instrumentHeaderService;
+    @Autowired
+    private EgovCommon egovCommon;
+    
+    
     @Override
     public void prepare() {
         super.prepare();
@@ -439,7 +443,6 @@ public class ContraBTBAction extends BaseVoucherAction {
     private CVoucherHeader createLedgerAndPostForInterfund(
             final CVoucherHeader voucher, final ContraJournalVoucher contraVoucher2) {
 
-        final CreateVoucher createVoucher = new CreateVoucher();
         try {
             persistenceService.find(
                     "from Fund where id=?", contraBean.getToFundId());
@@ -466,8 +469,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             detailMap.put(VoucherConstant.CREDITAMOUNT, "0");
             detailMap.put(VoucherConstant.GLCODE, contraBean.getSourceGlcode());
             accountdetails.add(detailMap);
-            final CreateVoucher cv = new CreateVoucher();
-            final List<Transaxtion> transactions = cv.createTransaction(null,
+            final List<Transaxtion> transactions = createVoucher.createTransaction(null,
                     accountdetails, subledgerDetails, voucher);
             HibernateUtil.getCurrentSession().flush();
 
@@ -498,8 +500,8 @@ public class ContraBTBAction extends BaseVoucherAction {
             detailMap.put(VoucherConstant.GLCODE, contraVoucher
                     .getToBankAccountId().getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
-            final CreateVoucher cv1 = new CreateVoucher();
-            final List<Transaxtion> transactions2 = cv1.createTransaction(null,
+             
+            final List<Transaxtion> transactions2 = createVoucher.createTransaction(null,
                     accountdetails, subledgerDetails, voucherHeader2);
             HibernateUtil.getCurrentSession().flush();
             Transaxtion txnList2[] = new Transaxtion[transactions2.size()];
@@ -634,7 +636,6 @@ public class ContraBTBAction extends BaseVoucherAction {
     @ValidationErrorPage(value = "reverse")
     @Action(value = "/contra/contraBTB-reverse")
     public String reverse() {
-        final CreateVoucher cv = new CreateVoucher();
         CVoucherHeader reversalVoucher = null;
         final HashMap<String, Object> reversalVoucherMap = new HashMap<String, Object>();
         reversalVoucherMap.put("Original voucher header id", voucherHeader
@@ -655,7 +656,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         final List<HashMap<String, Object>> reversalList = new ArrayList<HashMap<String, Object>>();
         reversalList.add(reversalVoucherMap);
         try {
-            reversalVoucher = cv.reverseVoucher(reversalList);
+            reversalVoucher = createVoucher.reverseVoucher(reversalList);
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error("Error in reverse" + e.getMessage());
             throw new ValidationException(Arrays.asList(new ValidationError(
@@ -898,8 +899,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             detailMap.put(VoucherConstant.GLCODE, contraVoucher
                     .getToBankAccountId().getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
-            final CreateVoucher cv = new CreateVoucher();
-            voucherHeader = cv.createVoucher(headerDetails, accountdetails,
+            voucherHeader = createVoucher.createVoucher(headerDetails, accountdetails,
                     subledgerDetails);
 
         } catch (final HibernateException e) {
@@ -978,8 +978,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             // e
             // here
             accountdetails.add(detailMap);
-            final CreateVoucher cv = new CreateVoucher();
-            voucherHeader = cv.createVoucher(headerDetails, accountdetails,
+            voucherHeader = createVoucher.createVoucher(headerDetails, accountdetails,
                     subledgerDetails);
 
             // update ContraBTB source path
@@ -1021,7 +1020,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             detailMap.put(VoucherConstant.GLCODE, contraVoucher
                     .getToBankAccountId().getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
-            voucherHeader2 = cv.createVoucher(headerDetails, accountdetails,
+            voucherHeader2 = createVoucher.createVoucher(headerDetails, accountdetails,
                     subledgerDetails);
 
         } catch (final HibernateException e) {
@@ -1378,7 +1377,6 @@ public class ContraBTBAction extends BaseVoucherAction {
     @Transactional
     private void createLedgerAndPost(final CVoucherHeader voucher,
             final ContraJournalVoucher contraVoucher) {
-        final CreateVoucher createVoucher = new CreateVoucher();
 
         try {
             if (voucherHeader2 != null)
@@ -1406,8 +1404,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 detailMap.put(VoucherConstant.GLCODE, contraVoucher
                         .getToBankAccountId().getChartofaccounts().getGlcode());
                 accountdetails.add(detailMap);
-                final CreateVoucher cv = new CreateVoucher();
-                final List<Transaxtion> transactions = cv.createTransaction(
+                final List<Transaxtion> transactions = createVoucher.createTransaction(
                         null, accountdetails, subledgerDetails, voucher);
                 HibernateUtil.getCurrentSession().flush();
 
@@ -1558,16 +1555,15 @@ public class ContraBTBAction extends BaseVoucherAction {
      *
      */
     private void loadBankBalances() {
-        final EgovCommon common = new EgovCommon();
-        common.setPersistenceService(persistenceService);
-        common.setFundFlowService(fundFlowService);
+        egovCommon.setPersistenceService(persistenceService);
+        egovCommon.setFundFlowService(fundFlowService);
         if (contraVoucher != null
                 && contraVoucher.getFromBankAccountId() != null) {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(voucherHeader.getVoucherDate());
             BigDecimal fromBalance;
             try {
-                fromBalance = common.getAccountBalance(voucherHeader
+                fromBalance = egovCommon.getAccountBalance(voucherHeader
                         .getVoucherDate(), contraVoucher.getFromBankAccountId()
                         .getId());
             } catch (final Exception e) {
@@ -1582,7 +1578,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         if (contraVoucher != null && contraVoucher.getToBankAccountId() != null) {
             BigDecimal toBalance;
             try {
-                toBalance = common.getAccountBalance(voucherHeader
+                toBalance = egovCommon.getAccountBalance(voucherHeader
                         .getVoucherDate(), contraVoucher.getToBankAccountId()
                         .getId());
             } catch (final Exception e) {

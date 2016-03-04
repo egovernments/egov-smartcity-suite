@@ -71,6 +71,7 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author manoranjan
@@ -91,7 +92,9 @@ public class BillRegisterSearchAction extends BaseFormAction {
     private String billDateTo;
     private String expType;
     private List<Map<String, Object>> billList;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public BillRegisterSearchAction() {
         billregister = new EgBillregister();
         billregister.setEgBillregistermis(new EgBillregistermis());
@@ -125,18 +128,17 @@ public class BillRegisterSearchAction extends BaseFormAction {
         expTypeList.add(FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY);
         addDropdownData("expType", expTypeList);
         getHeaderFields();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         if (headerFields.contains("department"))
-            addDropdownData("departmentList", masterCache.get("egi-department"));
+            addDropdownData("departmentList", masterDataCache.get("egi-department"));
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", masterCache
+            addDropdownData("functionaryList", masterDataCache
                     .get("egi-functionary"));
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", masterCache.get("egi-fund"));
+            addDropdownData("fundList", masterDataCache.get("egi-fund"));
         if (headerFields.contains("fundsource"))
-            addDropdownData("fundsourceList", masterCache.get("egi-fundSource"));
+            addDropdownData("fundsourceList", masterDataCache.get("egi-fundSource"));
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", masterCache.get("egi-ward"));
+            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.EMPTY_LIST);
         if (headerFields.contains("subscheme"))

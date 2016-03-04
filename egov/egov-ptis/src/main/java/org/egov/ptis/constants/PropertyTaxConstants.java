@@ -104,6 +104,10 @@ public interface PropertyTaxConstants {
     public static final String ARR_DMD_STR = "ARR_DMD";
     public static final String CURR_COLL_STR = "CURR_COLL";
     public static final String ARR_COLL_STR = "ARR_COLL";
+    public static final String CURR_PENALTY_DMD_STR = "CURR_PEANLTY_DMD";
+    public static final String ARR_PENALTY_DMD_STR = "ARR_PENALTY_DMD";
+    public static final String CURR_PENALTY_COLL_STR = "CURR_PENALTY_COLL";
+    public static final String ARR_PENALTY_COLL_STR = "ARR_PENALTY_COLL";
     public static final String CURRENT_REBATE_STR = "CURRENT_REBATE";
     public static final String ARREAR_REBATE_STR = "ARREAR_REBATE";
 
@@ -1328,4 +1332,20 @@ public interface PropertyTaxConstants {
     public static final String GUARDIAN_RELATION_HUSBAND = "HUSBAND";
     public static final String GUARDIAN_RELATION_WIFE = "WIFE";
     public static final String GUARDIAN_RELATION_OTHERS = "OTHERS";
+    
+    public static final String WRITEOFF_REASON_DEMOLITION = "Demolition";
+    public static final String WRITEOFF_REASON_ROAD_WIDENING = "Road widening";
+    public static final String WRITEOFF_REASON_DOUBLE_ASSESSMENT = "Double Assessment";
+    public static final String WRITEOFF_REASON_NOT_TRACED = "Not traced";
+    public static final String WRITEOFF_REASON_OTHER_REASONS = "Other reasons";
+    
+    public static final List<String> WRITEOFF_REASONS = new ArrayList<String>() {
+        {
+            add(WRITEOFF_REASON_DEMOLITION);
+            add(WRITEOFF_REASON_ROAD_WIDENING);
+            add(WRITEOFF_REASON_DOUBLE_ASSESSMENT);
+            add(WRITEOFF_REASON_NOT_TRACED);
+            add(WRITEOFF_REASON_OTHER_REASONS);
+        }
+    };
 }

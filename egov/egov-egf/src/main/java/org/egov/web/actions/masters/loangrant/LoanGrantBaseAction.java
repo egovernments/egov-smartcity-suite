@@ -61,7 +61,8 @@ public class LoanGrantBaseAction extends BaseFormAction {
     protected Integer fundId;
     protected @Autowired AppConfigValueService appConfigValuesService;
     private Integer defaultFundId;
-    EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
 
     @Override
     public void prepare()
@@ -73,7 +74,7 @@ public class LoanGrantBaseAction extends BaseFormAction {
         final String fundId = appList.get(0).getValue();
         if (fundId != null && !fundId.isEmpty())
             defaultFundId = Integer.parseInt(fundId);
-        addDropdownData("fundList", masterCache.get("egi-fund"));
+        addDropdownData("fundList", masterDataCache.get("egi-fund"));
 
     }
 

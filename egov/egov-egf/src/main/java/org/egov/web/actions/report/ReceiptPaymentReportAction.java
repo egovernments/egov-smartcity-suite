@@ -69,6 +69,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
@@ -79,7 +80,6 @@ import org.springframework.transaction.annotation.Transactional;
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
         "no-cache;filename=receiptPaymentReport.xls" })
 })
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 public class ReceiptPaymentReportAction extends BaseFormAction {
 
@@ -100,6 +100,9 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
     InputStream inputStream;
     ReportHelper reportHelper;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public Object getModel() {
         return receiptPayment;
@@ -143,8 +146,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
     }
 
     private void loadDropDownData() {
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        addDropdownData("fundList", masterCache.get("egi-fund"));
+        addDropdownData("fundList", masterDataCache.get("egi-fund"));
         addDropdownData("financialYearList",
                 getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
     }

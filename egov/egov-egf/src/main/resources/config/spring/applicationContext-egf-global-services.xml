@@ -214,9 +214,7 @@
 		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-	<bean id="mastersService" class="org.egov.masters.services.MastersService"
-		scope="prototype">
-	</bean>
+	
 	<bean id="billsService" class="org.egov.services.bills.BillsService"
 		scope="prototype">
 	</bean>

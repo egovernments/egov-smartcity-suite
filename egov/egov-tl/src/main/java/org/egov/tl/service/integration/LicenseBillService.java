@@ -166,7 +166,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>();
         final LicenseBill billable = (LicenseBill) billObj;
         // final Set<LicenseDemand> demands = this.license.getDemandSet();
-        final EgDemand demand = license.getCurrentDemand();
+        final EgDemand demand = billObj.getCurrentDemand();
         final Date currentDate = new Date();
         final Map installmentWise = new HashMap<Installment, List<EgDemandDetails>>();
         final Set<Installment> sortedInstallmentSet = new TreeSet<Installment>();
@@ -182,10 +182,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
                 if ("New".equals(license.getLicenseAppType().getName()))
                     installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(),
-                            license.getCurrentDemand().getBaseDemand(), currInstallment);
+                            license.getTotalBalance(), currInstallment);
                 else if ("Renew".equals(license.getLicenseAppType().getName()))
                     installmentPenalty = billable.getCalculatedPenalty(license.getDateOfExpiry(), new Date(),
-                            license.getCurrentDemand().getBaseDemand(), currInstallment);
+                            license.getTotalBalance(), currInstallment);
                 installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license, license.getCurrentDemand());
                 penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(getCurrentInstallment(module));
                 for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet())
@@ -409,7 +409,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 if (license.getState() != null)
                     updateWorkflowState(license);
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(license, billReceipt.getReceiptDate(),
-                        demand.getAmtCollected());
+                        license.getCurrentLicenseFee());
                 updateIndexService.updateTradeLicenseIndexes(license);
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 reconcileCollForRcptCancel(demand, billReceipt);

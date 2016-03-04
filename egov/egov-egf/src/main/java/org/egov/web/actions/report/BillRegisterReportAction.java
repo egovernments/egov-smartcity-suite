@@ -92,7 +92,6 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author manoranjan
@@ -139,6 +138,9 @@ public class BillRegisterReportAction extends SearchFormAction {
     protected CommonsService commonsService;
     private static boolean errorState = false;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public BillRegisterReportAction() {
         voucherHeader.setVouchermis(new Vouchermis());
         addRelatedEntity("vouchermis.departmentid", Department.class);
@@ -769,18 +771,17 @@ public class BillRegisterReportAction extends SearchFormAction {
 
     protected void loadDropdownData() {
 
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         getHeaderFields();
         if (headerFields.contains("department"))
-            addDropdownData("departmentList", masterCache.get("egi-department"));
+            addDropdownData("departmentList", masterDataCache.get("egi-department"));
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", masterCache.get("egi-functionary"));
+            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", masterCache.get("egi-fund"));
+            addDropdownData("fundList", masterDataCache.get("egi-fund"));
         if (headerFields.contains("fundsource"))
-            addDropdownData("fundsourceList", masterCache.get("egi-fundSource"));
+            addDropdownData("fundsourceList", masterDataCache.get("egi-fundSource"));
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", masterCache.get("egi-ward"));
+            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.EMPTY_LIST);
         if (headerFields.contains("subscheme"))

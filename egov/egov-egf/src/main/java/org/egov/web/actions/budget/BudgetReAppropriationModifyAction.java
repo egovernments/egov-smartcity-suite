@@ -129,6 +129,9 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
     protected EisUtilService eisService;
     private ScriptService scriptService;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public void setMiscWorkflowService(final WorkflowService<BudgetReAppropriationMisc> miscWorkflowService) {
         this.miscWorkflowService = miscWorkflowService;
     }
@@ -240,21 +243,20 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
     }
 
     protected void setupDropdownsInHeader() {
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
         dropdownData.put("finYearList",
                 getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
-        dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
+        dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
         if (shouldShowField(Constants.SUB_SCHEME))
             dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
         if (shouldShowField(Constants.FUNCTIONARY))
-            dropdownData.put("functionaryList", masterCache.get("egi-functionary"));
+            dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
         if (shouldShowField(Constants.FUNCTION))
-            dropdownData.put("functionList", masterCache.get("egi-function"));
+            dropdownData.put("functionList", masterDataCache.get("egi-function"));
         if (shouldShowField(Constants.SCHEME))
             dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            dropdownData.put("executingDepartmentList", masterCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
             .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
@@ -289,8 +291,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         gridFields = budgetDetailConfig.getGridFields();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
         setupDropdownsInHeader();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        addDropdownData("departmentList", masterCache.get("egi-department"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
     }
@@ -343,10 +344,10 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
                     .add(budgetReAppropriationView.getAppropriatedAmount()).subtract(budgetReAppropriationView.getActuals())
                     .setScale(2));
             budgetReAppropriationView.setSequenceNumber(row.getReAppropriationMisc().getSequenceNumber());
-            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.equals(row.getOriginalAdditionAmount())) {
+            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getOriginalAdditionAmount())==0) {
                 budgetReAppropriationView.setChangeRequestType("Deduction");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalDeductionAmount());
-                if (row.getDeductionAmount() == null || BigDecimal.ZERO.equals(row.getDeductionAmount()))
+                if (row.getDeductionAmount() == null || BigDecimal.ZERO.compareTo(row.getDeductionAmount())==0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalDeductionAmount() == null ? BigDecimal.ZERO
                             : row.getOriginalDeductionAmount());
                 else
@@ -356,7 +357,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
                 budgetReAppropriationView.setChangeRequestType("Addition");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO.setScale(2)
                         : row.getOriginalAdditionAmount().setScale(2));
-                if (row.getAdditionAmount() == null || BigDecimal.ZERO.equals(row.getAdditionAmount()))
+                if (row.getAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getAdditionAmount())==0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO
                             .setScale(2) : row.getOriginalAdditionAmount().setScale(2));
                 else
@@ -420,10 +421,10 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
                     .add(budgetReAppropriationView.getAddedReleased())
                     .subtract(budgetReAppropriationView.getActuals()));
             budgetReAppropriationView.setSequenceNumber(row.getReAppropriationMisc().getSequenceNumber());
-            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.equals(row.getOriginalAdditionAmount())) {
+            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getOriginalAdditionAmount())==0) {
                 budgetReAppropriationView.setChangeRequestType("Deduction");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalDeductionAmount());
-                if (row.getDeductionAmount() == null || BigDecimal.ZERO.equals(row.getDeductionAmount()))
+                if (row.getDeductionAmount() == null || BigDecimal.ZERO.compareTo(row.getDeductionAmount())==0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalDeductionAmount() == null ? BigDecimal.ZERO
                             : row.getOriginalDeductionAmount());
                 else
@@ -433,7 +434,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
                 budgetReAppropriationView.setChangeRequestType("Addition");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO.setScale(2)
                         : row.getOriginalAdditionAmount().setScale(2));
-                if (row.getAdditionAmount() == null || BigDecimal.ZERO.equals(row.getAdditionAmount()))
+                if (row.getAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getAdditionAmount())==0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO
                             .setScale(2) : row.getOriginalAdditionAmount().setScale(2));
                 else

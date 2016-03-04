@@ -112,7 +112,8 @@ public class CommonWaterTaxSearchController {
             }
         if (applicationType != null && applicationType.equals(WaterTaxConstants.CHANGEOFUSE))
             if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION) || waterConnectionDetails
-                    .getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION))
+                    .getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION) || waterConnectionDetails
+                    .getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE) )
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
                 return "redirect:/application/changeOfUse/" + waterConnectionDetails.getConnection().getConsumerCode();
             else {

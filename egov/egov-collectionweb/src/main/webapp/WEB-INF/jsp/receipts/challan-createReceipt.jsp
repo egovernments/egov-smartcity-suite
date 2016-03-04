@@ -500,7 +500,7 @@ function checkForCurrentDate(obj)
 
 function onBodyLoad()
 {
-	<s:if test="%{model.id!=null && (model.status.code=='PENDING' || model.status.code=='CANCELLED')}">
+	<s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
 		loadDropDownCodesBank();
 	
 		// To hide delete button in cheque grid on page load
@@ -1016,8 +1016,7 @@ function validate()
 	</s:if>
 
 </s:if>
-
-<s:if test="%{model.id!=null && (model.status.code=='PENDING' || model.status.code=='CANCELLED')}">
+<s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
 	
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">   <!-- main table -->
 		<tr>

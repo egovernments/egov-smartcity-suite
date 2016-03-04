@@ -69,9 +69,9 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({
     @Result(name = "report", location = "incomeExpenditureReport-report.jsp"),
@@ -112,7 +112,9 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     private StringBuffer statementheading = new StringBuffer();
     List<CChartOfAccounts> listChartOfAccounts;
     private boolean detailReport = false;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public void setIncomeExpenditureService(final IncomeExpenditureService incomeExpenditureService) {
         this.incomeExpenditureService = incomeExpenditureService;
     }
@@ -148,12 +150,11 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-            addDropdownData("departmentList", masterCache.get("egi-department"));
-            addDropdownData("functionList", masterCache.get("egi-function"));
-            addDropdownData("functionaryList", masterCache.get("egi-functionary"));
-            addDropdownData("fundDropDownList", masterCache.get("egi-fund"));
-            addDropdownData("fieldList", masterCache.get("egi-ward"));
+            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("functionList", masterDataCache.get("egi-function"));
+            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
+            addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
+            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
             addDropdownData("financialYearList",
                     getPersistenceService().findAllBy("from CFinancialYear where isActive=true  order by finYearRange desc "));
         }

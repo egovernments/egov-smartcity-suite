@@ -517,6 +517,23 @@ public class PropertyHibernateDAO implements PropertyDAO {
         Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();
     }
+    
+    @Override
+    public List getPenaltyDmdCollAmtInstWise(EgDemand egDemand) {
+        List list = new ArrayList();
+        StringBuffer strBuf = new StringBuffer(2000);
+        strBuf.append(" select dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date "
+                + "from eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst,eg_demand_reason_master dmdresmas "
+                + "where dmdDet.id_demand_reason=dmdRes.id "
+                + "and dmdDet.id_demand =:dmdId "
+                + "and dmdRes.id_installment = inst.id "
+                + "and dmdresmas.id = dmdres.id_demand_reason_master "
+                + "and dmdresmas.code = :dmdRsnCode " 
+                + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
+        Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId())
+                .setString("dmdRsnCode", PropertyTaxConstants.LPPAY_PENALTY_DMDRSNCODE);
+        return qry.list();
+    }
 
     @Override
     public List getDmdDetIdFromInstallandEgDemand(Installment installment, EgDemand egDemand) {

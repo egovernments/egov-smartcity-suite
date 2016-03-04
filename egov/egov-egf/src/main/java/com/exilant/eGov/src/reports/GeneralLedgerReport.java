@@ -184,7 +184,6 @@ public class GeneralLedgerReport {
             LOGGER.error("Parse Exception" + e, e);
             throw taskExc;
         }
-        setDates(startDate, endDate);
         Date dd = new Date();
          
         final String endDateformat = endDate;
@@ -1160,80 +1159,7 @@ public class GeneralLedgerReport {
         return opBal;
     }
 
-    private void setDates(String startDate, String endDate) throws TaskFailedException {
-        List<Object[]> rs = null;
-        List<Object[]> rs1 = null;
-        String formstartDate = "";
-        String formendDate = "";
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
-
-        try
-        {
-            formstartDate = sdf.format(formatter1.parse(startDate));
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw taskExc;
-        }
-
-        try {
-            formendDate = sdf.format(formatter1.parse(endDate));
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw taskExc;
-        }
-        startDate = formstartDate;
-        endDate = formendDate;
-        if ((startDate == null || startDate.equalsIgnoreCase("")) && (endDate == null || endDate.equalsIgnoreCase("")))
-            try {
-                final String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" " +
-                        "FROM financialYear WHERE startingDate <= SYSDATE AND endingDate >= SYSDATE";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-                rs = pstmt.list();
-                for (final Object[] element : rs)
-                    startDate = element[0].toString();
-
-                final String query1 = "SELECT TO_CHAR(sysdate, 'dd-Mon-yyyy') AS \"endingDate\" FROM dual";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query1);
-                rs1 = pstmt.list();
-                for (final Object[] element : rs1)
-                    endDate = element[0].toString();
-            } catch (final Exception ex)
-        {
-                LOGGER.error(ex.getMessage(), ex);
-                throw taskExc;
-        }
-        if ((startDate == null || startDate.equalsIgnoreCase("")) && endDate != null && !endDate.equalsIgnoreCase(""))
-            try {
-                final String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-                pstmt.setString(1, endDate);
-                pstmt.setString(2, endDate);
-                rs = pstmt.list();
-                for (final Object[] element : rs)
-                    startDate = element[0].toString();
-
-            } catch (final Exception ex)
-        {
-                LOGGER.error(ex.getMessage(), ex);
-                throw taskExc;
-        }
-
-        if ((endDate == null || endDate.equalsIgnoreCase("")) && startDate != null && !startDate.equalsIgnoreCase(""))
-            try {
-                final String query = "SELECT TO_CHAR(endingDate, 'dd-Mon-yyyy') AS \"endingDate\" " +
-                        "FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-                pstmt.setString(1, startDate);
-                pstmt.setString(2, startDate);
-                rs = pstmt.list();
-                pstmt = null;
-            } catch (final Exception ex) {
-                LOGGER.error(ex.getMessage(), ex);
-                throw taskExc;
-            }
-
-    }
+    
 
     private String getAccountName(final String glCode) throws TaskFailedException
     {

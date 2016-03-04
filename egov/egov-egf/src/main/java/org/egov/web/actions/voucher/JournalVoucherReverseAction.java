@@ -96,6 +96,7 @@ public class JournalVoucherReverseAction extends BaseVoucherAction {
     private List<VoucherDetails> billDetailslist;
     private List<VoucherDetails> subLedgerlist;
     private VoucherService voucherService;
+    private @Autowired CreateVoucher createVoucher;
 
     public String beforeReverse() {
         if (LOGGER.isDebugEnabled())
@@ -155,7 +156,7 @@ public class JournalVoucherReverseAction extends BaseVoucherAction {
         final List<HashMap<String, Object>> reversalList = new ArrayList<HashMap<String, Object>>();
         reversalList.add(reversalVoucherMap);
         try {
-            reversalVoucher = new CreateVoucher().reverseVoucher(reversalList);
+            reversalVoucher = createVoucher.reverseVoucher(reversalList);
         } catch (final ValidationException e) {
             clearMessages();
             resetVoucherHeader();

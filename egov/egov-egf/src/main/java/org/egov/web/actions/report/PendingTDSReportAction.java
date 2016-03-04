@@ -81,6 +81,7 @@ import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
@@ -121,6 +122,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     private Recovery recovery = new Recovery();
     private Fund fund = new Fund();
     private Department department = new Department();
+    @Autowired
     private EgovCommon egovCommon;
     private final List<EntityType> entitiesList = new ArrayList<EntityType>();
     private RemitRecoveryService remitRecoveryService;
@@ -128,7 +130,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     private String message = "";
     private String mode = "";
     private static Logger LOGGER = Logger.getLogger(PendingTDSReportAction.class);
-
+    
     public void setFinancialYearDAO(final FinancialYearHibernateDAO financialYearDAO) {
         this.financialYearDAO = financialYearDAO;
     }
@@ -226,9 +228,12 @@ public class PendingTDSReportAction extends BaseFormAction {
             final String formatedFromDate = Constants.DDMMYYYYFORMAT2.format(fromDate);
             paramMap.put("fromDate", formatedFromDate);
             paramMap.put("heading", "Deduction detailed report for "+ recovery.getType() +" From " + formatedFromDate + "  to " + formatedAsOndate);
+            paramMap.put("summaryheading", "Deductions remittance summary for "+ recovery.getType() +" From " + formatedFromDate + "  to " + formatedAsOndate);
             paramMap.put("fromDateText", "From Date :      " + formatedFromDate);
-        } else
+        } else{
             paramMap.put("heading", "Deduction detailed report for "+ recovery.getType() +" as on " + formatedAsOndate);
+            paramMap.put("summaryheading", "Deductions remittance summary for "+ recovery.getType() +" as on " + formatedAsOndate);
+        }
         fund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
         paramMap.put("fundName", fund.getName());
         paramMap.put("partyName", partyName);
@@ -236,6 +241,7 @@ public class PendingTDSReportAction extends BaseFormAction {
             department = (Department) persistenceService.find("from Department where id=?", department.getId());
             paramMap.put("departmentName", department.getName());
         }
+        recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
         paramMap.put("recoveryName", recovery.getRecoveryName());
         return paramMap;
     }
@@ -375,6 +381,7 @@ public class PendingTDSReportAction extends BaseFormAction {
      */
     private void populateSummaryData() {
         recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
+        type = recovery.getType();
         String deptQuery = "";
         String partyNameQuery = "";
         if (department.getId() != null && department.getId() != -1)
@@ -491,12 +498,11 @@ public class PendingTDSReportAction extends BaseFormAction {
     }
 
     private EntityType getEntity(final EgRemittanceDetail entry) {
-        final EgovCommon common = new EgovCommon();
-        common.setPersistenceService(persistenceService);
+        egovCommon.setPersistenceService(persistenceService);
         final Integer detailKeyId = entry.getEgRemittanceGldtl().getGeneralledgerdetail().getDetailkeyid().intValue();
         EntityType entityType = null;
         try {
-            entityType = common.getEntityType(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getAccountdetailtype(),
+            entityType = egovCommon.getEntityType(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getAccountdetailtype(),
                     detailKeyId);
         } catch (final ApplicationException e) {
             e.printStackTrace();
@@ -548,10 +554,6 @@ public class PendingTDSReportAction extends BaseFormAction {
     @Override
     public Object getModel() {
         return null;
-    }
-
-    public void setEgovCommon(final EgovCommon egovCommon) {
-        this.egovCommon = egovCommon;
     }
 
     public void setReportService(final ReportService reportService) {

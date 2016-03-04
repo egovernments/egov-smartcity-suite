@@ -118,7 +118,7 @@ public class FundAction extends BaseFormAction {
         try {
             validatemandatoryFields_create();
 
-            EgovMasterDataCaching.getInstance().removeFromCache("egi-fund");
+            EgovMasterDataCaching.removeFromCache("egi-fund");
             fundNameStr.append(fund.getCode()).append("-").append(fund.getName());
             fund.setName(fundNameStr.toString());
             fund.setCode(fund.getCode());
@@ -160,7 +160,7 @@ public class FundAction extends BaseFormAction {
         validatemandatoryFields();
 
         try {
-            EgovMasterDataCaching.getInstance().removeFromCache("egi-fund");
+            EgovMasterDataCaching.removeFromCache("egi-fund");
             final Fund fundOld = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
             if (fund.getFund() != null && fund.getFund().getId() != null) {
                 parentFund = (Fund) persistenceService.find("from Fund where id=?",

@@ -42,7 +42,6 @@ package org.egov.tl.service;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 
-import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -162,6 +161,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
                     .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
             license.setStatus(activeStatus);
+            //setting license to non-legacy, old license number will be the only tracking
+            //to check a license created as legacy or new hereafter.
+            license.setLegacy(false);
             license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                     Constants.APPLICATION_STATUS_GENECERT_CODE);
         }
@@ -215,7 +217,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("district", districtName);
         reportParams.put("subCategory", license.getTradeName() != null ? license.getTradeName().getName() : null);
         reportParams
-                .put("appType", license.getLicenseAppType() != null ? license.getLicenseAppType().getName() : "New");
+                .put("appType", license.getLicenseAppType() != null ? (license.getLicenseAppType().getName() !=null && license.getLicenseAppType().getName().equals("New")? "New Trade" :"Renewal") : "New");
         if (EgovThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
         reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
@@ -226,7 +228,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("installMentYear", installMentYear);
         reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
-       reportParams.put("demandTotalamt", (license.getCurrentDemand()!=null ?license.getCurrentDemand().getAmtCollected():BigDecimal.ZERO));
+       reportParams.put("demandTotalamt", license.getCurrentLicenseFee());
         return reportParams;
     }
 

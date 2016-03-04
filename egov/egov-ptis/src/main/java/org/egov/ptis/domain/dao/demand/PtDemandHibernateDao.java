@@ -381,7 +381,49 @@ public class PtDemandHibernateDao implements PtDemandDao {
         retMap.put(PropertyTaxConstants.ARR_COLL_STR, arrColelection);
         return retMap;
     }
+    
+    @Override
+    public Map<String, BigDecimal> getPenaltyDemandCollMap(final Property property) {
+        final Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
+        Installment installment = null;
+        List penaltyDmdCollList = new ArrayList();
+        Installment currInst = null;
+        Integer instId = null;
+        BigDecimal currPenalty = BigDecimal.ZERO;
+        BigDecimal arrPenalty = BigDecimal.ZERO;
+        BigDecimal currPenaltyColl = BigDecimal.ZERO;
+        BigDecimal arrPenaltyColl = BigDecimal.ZERO;
+        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
 
+        if (currDemand != null)
+            penaltyDmdCollList = propertyDAO.getPenaltyDmdCollAmtInstWise(currDemand);
+        final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+        currInst = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+        for (final Object object : penaltyDmdCollList) {
+            final Object[] listObj = (Object[]) object;
+            instId = Integer.valueOf(listObj[0].toString());
+            installment = (Installment) installmentDao.findById(instId, false);
+            if (currInst.equals(installment)) {
+                if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
+                    currPenaltyColl = currPenaltyColl.add(new BigDecimal((Double) listObj[2]));
+                if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
+                    currPenaltyColl = currPenaltyColl.add(new BigDecimal((Double) listObj[3]));
+                currPenalty = currPenalty.add(new BigDecimal((Double) listObj[1]));
+            } else {
+                arrPenalty = arrPenalty.add(new BigDecimal((Double) listObj[1]));
+                if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
+                    arrPenaltyColl = arrPenaltyColl.add(new BigDecimal((Double) listObj[2]));
+                if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
+                    arrPenaltyColl = arrPenaltyColl.add(new BigDecimal((Double) listObj[3]));
+            }
+        }
+        retMap.put(PropertyTaxConstants.CURR_PENALTY_DMD_STR, currPenalty);
+        retMap.put(PropertyTaxConstants.ARR_PENALTY_DMD_STR, arrPenalty);
+        retMap.put(PropertyTaxConstants.CURR_PENALTY_COLL_STR, currPenaltyColl);
+        retMap.put(PropertyTaxConstants.ARR_PENALTY_COLL_STR, arrPenaltyColl);
+        return retMap;
+    }
+    
     /**
      * This method returns current installment non-history EgptPtdemand
      *

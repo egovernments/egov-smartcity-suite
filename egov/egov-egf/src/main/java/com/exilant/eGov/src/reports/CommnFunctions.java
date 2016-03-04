@@ -49,6 +49,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -520,34 +521,7 @@ public class CommnFunctions
         return strbNumber;
     }
 
-    /**
-     * function to get the financial year id
-     * @param sDate
-     * @param connection
-     * @return
-     */
-    public String getFYID(final String sDate) throws TaskFailedException {
-        String fyId = "";
-        try {
-            final String query = "SELECT id FROM financialYear " +
-                    "WHERE to_char(startingDate,'dd-MMM-yyyy')<=? AND to_char(endingDate,'dd-MMM-yyyy')>=?";
-            // for accross the financial year
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setString(0, sDate);
-            pstmt.setString(1, sDate);
-
-           List list = pstmt.list();
-           fyId=   list.toArray()[0].toString();
-
-        } catch (final Exception ex) {
-            fyId = "";
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Error GeneralLedger->getFYID(): " + ex.toString());
-            throw taskExc;
-        }
-        // if(LOGGER.isDebugEnabled()) LOGGER.debug("fyId: " + fyId);
-        return fyId;
-    }
+    
 
     // used to format the report schedule
     /*

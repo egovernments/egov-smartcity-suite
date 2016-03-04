@@ -152,7 +152,7 @@
 									<fmt:formatDate pattern="dd/MM/yyyy" value="${property.basicProperty.regdDocDate}" />
 								</div>
 							</div>
-							<div class="row add-border">
+							<%-- <div class="row add-border">
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.bpno" />
 								</div>
@@ -165,14 +165,14 @@
 								<div class="col-xs-3 add-margin view-content">
 									<fmt:formatDate pattern="dd/MM/yyyy" value="${property.propertyDetail.buildingPermissionDate}" />
 								</div>
-							</div>
+							</div> --%>
 							<div class="row add-border">
-								<div class="col-xs-3 add-margin">
+								<%-- <div class="col-xs-3 add-margin">
 									<spring:message code="lbl.percentagedeviation" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
 									<c:out value="${property.propertyDetail.deviationPercentage}" default="N/A"></c:out>
-								</div>
+								</div> --%>
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.reason.creation" />
 								</div>

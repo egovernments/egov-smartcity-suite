@@ -1159,13 +1159,6 @@ public class PropertyExternalService {
         if (isSuperStructure)
             propertyImpl.getPropertyDetail().setSiteOwner(siteOwnerName);
 
-        propertyImpl.getPropertyDetail().setBuildingPlanDetailsChecked(isBuildingPlanDetails);
-        if (isBuildingPlanDetails) {
-            propertyImpl.getPropertyDetail().setBuildingPermissionNo(buildingPermissionNo);
-            propertyImpl.getPropertyDetail().setBuildingPermissionDate(convertStringToDate(buildingPermissionDate));
-            propertyImpl.getPropertyDetail().setDeviationPercentage(percentageDeviation);
-        }
-
         propertyImpl.getPropertyDetail().setLift(lift);
         propertyImpl.getPropertyDetail().setToilets(toilet);
         propertyImpl.getPropertyDetail().setWaterTap(waterTap);
@@ -1427,8 +1420,6 @@ public class PropertyExternalService {
             builtUpArea.setLength(floorDetials.getPlinthLength());
             
             floor.setBuiltUpArea(builtUpArea);
-            floor.setDrainage(floorDetials.getDrainageCode());
-            floor.setNoOfSeats(floorDetials.getNoOfSeats());
             floor.setUnstructuredLand(floorDetials.getUnstructuredLand());
             
             floorList.add(floor);

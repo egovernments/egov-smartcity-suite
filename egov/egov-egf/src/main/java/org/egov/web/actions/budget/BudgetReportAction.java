@@ -165,7 +165,9 @@ public class BudgetReportAction extends BaseFormAction {
     private Budget topBudget;
     private boolean departmentBudget = false;
     private String workFlowstateCondn = "";
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public boolean isDepartmentBudget() {
         return departmentBudget;
     }
@@ -221,10 +223,9 @@ public class BudgetReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         super.prepare();
-        addDropdownData("departmentList", masterCache.get("egi-department"));
-        addDropdownData("functionList", masterCache.get("egi-function"));
+        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("functionList", masterDataCache.get("egi-function"));
         addDropdownData("financialYearList", getPersistenceService().findAllBy(
                 "from CFinancialYear where isActive=true  order by finYearRange desc "));
         setRelatedEntitesOn();
@@ -791,7 +792,7 @@ public class BudgetReportAction extends BaseFormAction {
         BigDecimal reAppropriationAmt = BigDecimal.ZERO;
         for (final Object[] obj : amountList)
             if (obj[0] != null && obj[1] != null && obj[2] != null && obj[3] != null && obj[4] != null
-            && !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) {
+            && !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))==0)) {
                 reAppropriationAmt = reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]);
                 reportStoreList.add(new BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long
                         .valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
@@ -815,7 +816,7 @@ public class BudgetReportAction extends BaseFormAction {
                                 + majorCodeLength + ")", finyear);
         for (final Object[] obj : amountList)
             if (obj[0] != null && obj[1] != null && obj[2] != null && obj[3] != null && obj[4] != null
-            && !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) {
+            && !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))==0)) {
                 reAppropriationAmt = reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]);
                 reportStoreList.add(new BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long
                         .valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
@@ -856,7 +857,7 @@ public class BudgetReportAction extends BaseFormAction {
         BigDecimal reAppropriationAmt = BigDecimal.ZERO;
         for (final Object[] obj : amountList)
             if (obj[0] != null && obj[1] != null && obj[2] != null && obj[3] != null && obj[4] != null
-            && !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) {
+            && !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))==0)) {
                 reAppropriationAmt = reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]);
                 reportStoreList.add(new BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long
                         .valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
@@ -873,7 +874,7 @@ public class BudgetReportAction extends BaseFormAction {
          * "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
          * + majorCodeLength + ")", finyear); for (Object[] obj : amountList) { if (obj[0] != null && obj[1] != null && obj[2] !=
          * null && obj[3] != null && obj[4] != null &&
-         * !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) { reAppropriationAmt =
+         * !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))==0)) { reAppropriationAmt =
          * reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]); reportStoreList.add(new
          * BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long.valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
          * obj[0] + EMPTYSTRING, ((BigDecimal) obj[1]), reAppropriationAmt, ((BigDecimal) obj[1]).add(reAppropriationAmt))); } }
