@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -96,9 +95,6 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
     public BasicProperty createBasicProperty(BasicProperty basicProperty,HashMap meesevaParams) {
         return   persist(basicProperty);
      }
-     
-  
-    
     
     public ReportOutput propertyAcknowledgement(PropertyImpl property,String cityLogo,String cityName) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -116,5 +112,34 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         final ReportRequest reportInput = new ReportRequest(CREATE_ACK_TEMPLATE, ackBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         return reportService.createReport(reportInput);
+    }
+    
+    public void updateOwners(Property property,BasicProperty basicProperty,String doorNumber) {
+        basicProperty.getPropertyOwnerInfo().clear();
+        int orderNo = 0;
+        boolean userExists = true;
+        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfoProxy()) {
+            orderNo++;
+            if (ownerInfo != null) {
+                User user = null;
+                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
+                    user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                if(user == null) {
+                    final Citizen newOwner = new Citizen();
+                    newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                    newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
+                    newOwner.setEmailId(ownerInfo.getOwner().getEmailId());
+                    newOwner.setGender(ownerInfo.getOwner().getGender());
+                    newOwner.setGuardian(ownerInfo.getOwner().getGuardian());
+                    newOwner.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
+                    newOwner.setName(ownerInfo.getOwner().getName());
+                    newOwner.setSalutation(ownerInfo.getOwner().getSalutation());
+                    newOwner.setPassword("NOT SET");
+                    newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
+                    userService.createUser(newOwner);
+                } 
+                
+            }
+        }
     }
 }

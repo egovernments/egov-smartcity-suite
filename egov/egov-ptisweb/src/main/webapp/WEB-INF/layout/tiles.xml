@@ -279,4 +279,10 @@
     	<put-attribute name="page-title" value="lbl.writeOff.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/transactions/writeOff/writeOff-form.jsp"/>
      </definition>
+     
+      <definition name="ownerdetails-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.ownerdetail.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/editOwner/ownerdetails-form.jsp"/>
+    </definition>
+    
 </tiles-definitions> 
