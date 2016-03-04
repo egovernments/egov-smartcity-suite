@@ -96,7 +96,11 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
                     .add(Restrictions.ge("applicationDate", DateUtils.startOfDay(hoardingSearch.getApplicationFromDate())));
         if (hoardingSearch.getApplicationToDate() != null)
             hoardingCriteria.add(Restrictions.le("applicationDate", DateUtils.endOfDay(hoardingSearch.getApplicationToDate())));
+        
         hoardingCriteria.add(Restrictions.eq("permit.isActive", Boolean.TRUE));
+        
+        hoardingCriteria.add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
+        
         return hoardingCriteria.list();
     }
 
@@ -128,8 +132,8 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
                 .createCriteria(AdvertisementPermitDetail.class, "permit")
                 .createAlias("permit.advertisement", "advertisement")
                 .createAlias("advertisement.category", "category").createAlias("advertisement.subCategory", "subCategory")
-                .createAlias("advertisement.revenueInspector", "revenueInspector")
-                .createAlias("permit.status", "permitStatus");
+                .createAlias("advertisement.revenueInspector", "revenueInspector");
+                //.createAlias("permit.status", "permitStatus");
         if (advertisementPermitDetail.getAdvertisement() != null) {
             if (advertisementPermitDetail.getAdvertisement() != null
                     && advertisementPermitDetail.getAdvertisement().getAdvertisementNumber() != null
@@ -150,12 +154,20 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
                         advertisementPermitDetail.getAdvertisement().getSubCategory().getId()));
             if (advertisementPermitDetail.getAgency() != null && advertisementPermitDetail.getAgency().getId() != null)
                 hoardingCriteria.add(Restrictions.eq("agency.id", advertisementPermitDetail.getAgency().getId()));
+          
             if (advertisementPermitDetail.getAdvertisement().getStatus() != null)
                 hoardingCriteria
                         .add(Restrictions.eq("advertisement.status", advertisementPermitDetail.getAdvertisement().getStatus()));
+            else
+                hoardingCriteria
+                .add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
+                
             if (advertisementPermitDetail.getAdvertisement().getRevenueInspector() != null)
                 hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id",
                         advertisementPermitDetail.getAdvertisement().getRevenueInspector().getId()));
+            
+            hoardingCriteria
+                .add(Restrictions.eq("isActive",true));// permit status is active.
         }
         //TODO: commented . Check any particular reason for hard coding the status ?
        // hoardingCriteria.add(Restrictions.eq("permitStatus.code", AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
@@ -163,7 +175,7 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
 
     }
 
-    @Override
+  /*  @Override
     public List<AdvertisementPermitDetail> searchAdvertisementPermitDetailBySearchParamsAndStatusApproved(
             final AdvertisementPermitDetail advertisementPermitDetail) {
 
@@ -195,9 +207,9 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
         }
         return hoardingCriteria.list();
 
-    }
+    }*/
 
-    @Override
+ /*   @Override
     public List<AdvertisementPermitDetail> renewalSearchAdvertisementPermitDetailBySearchParams(
             final AdvertisementPermitDetail advertisementPermitDetail) {
 
@@ -238,7 +250,7 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
 
         return hoardingCriteria.list();
 
-    }
+    }*/
     
     
     @Override
@@ -249,8 +261,8 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
                 .createCriteria(AdvertisementPermitDetail.class, "permit")
                 .createAlias("permit.advertisement", "advertisement")
                 .createAlias("advertisement.category", "category").createAlias("advertisement.subCategory", "subCategory")
-                .createAlias("advertisement.revenueInspector", "revenueInspector")
-                .createAlias("permit.status", "permitStatus");
+                .createAlias("advertisement.revenueInspector", "revenueInspector");
+          
         if (advertisementPermitDetail.getAdvertisement() != null) {
             if (advertisementPermitDetail.getAdvertisement() != null
                     && advertisementPermitDetail.getAdvertisement().getAdvertisementNumber() != null
@@ -274,11 +286,12 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
             if (advertisementPermitDetail.getAdvertisement().getRevenueInspector() != null)
                 hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id",
                         advertisementPermitDetail.getAdvertisement().getRevenueInspector().getId()));
-           
-            if (advertisementPermitDetail.getAdvertisement().getStatus()==null) {
-                hoardingCriteria.add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
-            }
-            
+            if (advertisementPermitDetail.getAdvertisement().getStatus() != null)
+                hoardingCriteria
+                        .add(Restrictions.eq("advertisement.status", advertisementPermitDetail.getAdvertisement().getStatus()));
+            else
+            hoardingCriteria.add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
+            hoardingCriteria.add(Restrictions.eq("isActive",true));
         }
 
         return hoardingCriteria.list();

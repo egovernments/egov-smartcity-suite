@@ -46,9 +46,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseCollection;
 import org.egov.adtax.entity.AgencyWiseCollectionDetail;
-import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.repository.AgencyWiseCollectionRepository;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
@@ -65,7 +65,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AgencyWiseCollectionService {
     private final AgencyWiseCollectionRepository agencyWiseCollectionRepository;
-    private @Autowired AdvertisementService hoardingService;
+    private @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;
     private @Autowired AppConfigValueService appConfigValuesService;
     private @Autowired AdvertisementDemandService advertisementDemandService;
 
@@ -111,13 +111,13 @@ public class AgencyWiseCollectionService {
                 AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.PENALTYCALCULATIONREQUIRED).get(0);
 
         for (final String hoardingId : hoardingList) {
-            final Advertisement hoarding = hoardingService.findBy(Long.valueOf(hoardingId.trim()));
+            final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(hoardingId.trim()));
 
-            if (hoarding != null) {
+            if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement()!=null) {
                 BigDecimal penaltyAmount = BigDecimal.ZERO;
                 BigDecimal penaltyAmt = BigDecimal.ZERO;
 
-                for (final EgDemandDetails demandDtl : hoarding.getDemandId().getEgDemandDetails())
+                for (final EgDemandDetails demandDtl : advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails())
                     // Mean if installment is different than current, then
                     // calculate
                     // penalty
@@ -128,7 +128,7 @@ public class AgencyWiseCollectionService {
                                 && "YES".equalsIgnoreCase(penaltyCalculationRequired.getValue())) {
 
                             penaltyAmt = advertisementDemandService.calculatePenalty(demandDtl, amount,
-                                    hoarding.getPenaltyCalculationDate());
+                                    advertisementPermitDetail.getAdvertisement().getPenaltyCalculationDate());
                             totalAmount = totalAmount.add(penaltyAmt);
                             penaltyAmount = penaltyAmount.add(penaltyAmt);
                         }
@@ -143,10 +143,10 @@ public class AgencyWiseCollectionService {
                     if (penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
                         // check any demand reason already present
                         final List<EgDemandDetails> penaltyDmtDtails = advertisementDemandService
-                                .getDemandDetailByPassingDemandDemandReason(hoarding.getDemandId(), pendingTaxReason);
+                                .getDemandDetailByPassingDemandDemandReason(advertisementPermitDetail.getAdvertisement().getDemandId(), pendingTaxReason);
 
                         final AgencyWiseCollectionDetail agencyWiseDt = new AgencyWiseCollectionDetail();
-                        agencyWiseDt.setDemand(hoarding.getDemandId());
+                        agencyWiseDt.setDemand(advertisementPermitDetail.getAdvertisement().getDemandId());
                         agencyWiseDt.setDemandreason(pendingTaxReason);
                         agencyWiseDt.setAmount(penaltyAmount);
                         agencyWiseDt.setAgencyWiseCollection(agencyWiseCollection);

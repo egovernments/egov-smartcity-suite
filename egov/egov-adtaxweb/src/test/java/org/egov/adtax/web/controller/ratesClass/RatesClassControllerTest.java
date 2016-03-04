@@ -100,13 +100,13 @@ public class RatesClassControllerTest extends AbstractContextControllerTest<Rate
         assertEquals(createdClass.getId(), "1");
     }*/
 
-    @Test
+   /* @Test
     public void validateRatesClass() throws Exception {
         mockMvc.perform(post("/ratesclass/create")).andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("ratesClass", "description"))
                 .andExpect(view().name("ratesClass-form"));
         verify(ratesClassService, never()).createRatesClass(any(RatesClass.class));
-    }
+    }*/
 
 
     @Override
