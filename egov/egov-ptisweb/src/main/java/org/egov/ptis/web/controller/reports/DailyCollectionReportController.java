@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -97,7 +97,7 @@ public class DailyCollectionReportController {
     }
 
     @ModelAttribute("operators")
-    public List<User> loadCollectionOperators() {
+    public Set<User> loadCollectionOperators() {
         return reportService.getCollectionOperators();
     }
 
