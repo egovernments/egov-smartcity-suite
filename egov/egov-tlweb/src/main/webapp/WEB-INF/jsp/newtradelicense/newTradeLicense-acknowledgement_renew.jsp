@@ -155,9 +155,10 @@
 				</s:form>
 			</div>
 			<div align="center" >
-				<input type="button" id="print" class="button" value="Print" class="print" onclick="javascript:window.print();"/>
+				<input type="button" id="print" class="button printbtn" value="Print" class="print" />
 				&nbsp;&nbsp;
 				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
 			</div>
+			<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
 	</body>
 </html>
