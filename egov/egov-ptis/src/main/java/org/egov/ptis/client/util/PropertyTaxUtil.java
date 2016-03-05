@@ -2444,10 +2444,9 @@ public class PropertyTaxUtil {
     public Query prepareQueryforDefaultersReport(final Long wardId, final String fromDemand,
             final String toDemand, final Integer limit) {
         final StringBuffer query = new StringBuffer(300);
-        
         query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true ");
-        String arrearBalanceCond = " (pmv.aggrArrDmd - pmv.aggrArrColl) ";
-        String arrearBalanceNotZeroCond = " and (pmv.aggrArrDmd - pmv.aggrArrColl)!=0 ";
+        String arrearBalanceCond = " ((pmv.aggrArrDmd - pmv.aggrArrColl) + (pmv.aggrCurrDmd - pmv.aggrCurrColl)) ";
+        String arrearBalanceNotZeroCond = " and ((pmv.aggrArrDmd - pmv.aggrArrColl) + (pmv.aggrCurrDmd - pmv.aggrCurrColl))!=0 ";
         String orderByClause = " order by ";
         query.append(arrearBalanceNotZeroCond);
         if(StringUtils.isNotBlank(fromDemand) && StringUtils.isBlank(toDemand)){
