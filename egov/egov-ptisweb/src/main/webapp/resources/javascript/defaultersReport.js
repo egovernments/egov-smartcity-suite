@@ -72,6 +72,12 @@ jQuery(document).ready(function() {
 	        dom.get("toDemand").focus();
 			return false;
 		}
+		if(fromDemand>toDemand){
+			dom.get("defaultersReportError").style.display='';
+	        dom.get("defaultersReportError").innerHTML='To Demand should be greather than From Demand';
+	        dom.get("fromDemand").focus();
+			return false;
+		}
 		callAjaxForDefaultersReport();
 	});
 	
