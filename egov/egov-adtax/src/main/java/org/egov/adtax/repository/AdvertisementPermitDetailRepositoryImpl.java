@@ -68,8 +68,10 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
                 "permit");
         hoardingCriteria.createAlias("permit.advertisement", "advertisement");
 
-        if (hoardingType != null && hoardingType.equalsIgnoreCase("searchLegacyRecord"))
+        if (hoardingType != null && hoardingType.equalsIgnoreCase("searchLegacyRecord")){
             hoardingCriteria.add(Restrictions.eq("advertisement.legacy", Boolean.TRUE));
+            hoardingCriteria.add(Restrictions.isNull("previousapplicationid"));
+        }
         if (hoardingSearch.getAgency() != null)
             hoardingCriteria.add(Restrictions.eq("agency.id", hoardingSearch.getAgency()));
         if (isNotBlank(hoardingSearch.getAdvertisementNumber()))
