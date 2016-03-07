@@ -49,7 +49,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
@@ -67,7 +66,7 @@ public class LicenseDemandGenerationDetail extends AbstractPersistable<Long> {
     private LicenseDemandGeneration licenseDemandGeneration;
     @OneToOne(optional = false)
     @JoinColumn(name = "tradeLicense", nullable = false)
-    private TradeLicense tradeLicense;
+    private License license;
     private String status;
     private String detail;
 
@@ -89,12 +88,12 @@ public class LicenseDemandGenerationDetail extends AbstractPersistable<Long> {
         this.licenseDemandGeneration = licenseDemandGeneration;
     }
 
-    public TradeLicense getTradeLicense() {
-        return tradeLicense;
+    public License getLicense() {
+        return license;
     }
 
-    public void setTradeLicense(final TradeLicense tradeLicense) {
-        this.tradeLicense = tradeLicense;
+    public void setLicense(final License license) {
+        this.license = license;
     }
 
     public String getStatus() {
