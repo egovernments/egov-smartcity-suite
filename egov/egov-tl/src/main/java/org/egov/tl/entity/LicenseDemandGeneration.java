@@ -39,29 +39,43 @@
  */
 package org.egov.tl.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
 @Entity
 @Table(name = "egtl_demandgeneration")
-@SequenceGenerator(name = LicenseDemandGeneration.SEQ, sequenceName = LicenseDemandGeneration.SEQ)
+@SequenceGenerator(name = LicenseDemandGeneration.SEQ, sequenceName = LicenseDemandGeneration.SEQ, allocationSize = 1)
+@Unique(fields={"installmentYear"})
 public class LicenseDemandGeneration extends AbstractAuditable {
 
     private static final long serialVersionUID = 3323170307345697375L;
     public static final String SEQ = "seq_egtl_demandgeneration";
+   
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private String installmentYear;
+    
     private String executionStatus;
+    
     private String demandGenerationStatus;
+    
+    @OneToMany(mappedBy="licenseDemandGeneration", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<LicenseDemandGenerationDetail> details = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -95,6 +109,14 @@ public class LicenseDemandGeneration extends AbstractAuditable {
 
     public void setDemandGenerationStatus(final String demandGenerationStatus) {
         this.demandGenerationStatus = demandGenerationStatus;
+    }
+
+    public List<LicenseDemandGenerationDetail> getDetails() {
+        return details;
+    }
+
+    public void setDetails(final List<LicenseDemandGenerationDetail> details) {
+        this.details = details;
     }
 
 }

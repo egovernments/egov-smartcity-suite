@@ -94,6 +94,8 @@ import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseChecklistHelper;
 import org.elasticsearch.common.joda.time.DateTime;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -610,5 +612,9 @@ public abstract class AbstractLicenseService<T extends License> {
         this.updateIndexService = updateIndexService;
     }
     
+    public List<T> getAllLicensesByNatureOfBusiness(final String natureOfBusiness) {
+        return licensePersitenceService.getSession().createCriteria(License.class).
+                createAlias("buildingType", "bt", JoinType.LEFT_OUTER_JOIN).add(Restrictions.eq("bt.name", natureOfBusiness)).list();
+    }
     
 }

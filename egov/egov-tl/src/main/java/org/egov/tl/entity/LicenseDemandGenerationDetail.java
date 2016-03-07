@@ -40,6 +40,7 @@
 package org.egov.tl.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,23 +54,28 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "egtl_demandgenerationdetail")
-@SequenceGenerator(name = LicenseDemandGenerationDetail.SEQ, sequenceName = LicenseDemandGenerationDetail.SEQ)
+@SequenceGenerator(name = LicenseDemandGenerationDetail.SEQ, sequenceName = LicenseDemandGenerationDetail.SEQ,  allocationSize = 1)
 public class LicenseDemandGenerationDetail extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 3192204759105538672L;
     public static final String SEQ = "seq_egtl_demandgenerationdetail";
+  
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "licenseDemandGeneration", nullable = false)
-    private LicenseDemandGeneration licenseDemandGeneration;
+   
     @OneToOne(optional = false)
     @JoinColumn(name = "tradeLicense", nullable = false)
     private License license;
+    
     private String status;
+    
     private String detail;
 
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "licenseDemandGeneration", nullable = false)
+    private LicenseDemandGeneration licenseDemandGeneration;
+    
     @Override
     public Long getId() {
         return id;

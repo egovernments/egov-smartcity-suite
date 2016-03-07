@@ -52,7 +52,11 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.tl.entity.FeeMatrixDetail;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseDemandGeneration;
+import org.egov.tl.entity.LicenseDemandGenerationDetail;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.repository.LicenseDemandGenerationRepository;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -83,8 +87,8 @@ public class DemandGenerationService {
     private FeeMatrixService feeMatrixService;
 
     @Autowired
-    private AbstractLicenseService<TradeLicense> abstractLicenseService;
-
+    private LicenseDemandGenerationRepository licenseDemandGenerationRepository; 
+    
     public List<CFinancialYear> financialYearList() {
         return cFinancialYearRepository.getAllFinancialYears();
     }
@@ -97,7 +101,8 @@ public class DemandGenerationService {
                 financialYear.getStartingDate());
         final List<TradeLicense> licenses = tradeLicenseService
                 .getAllLicensesByNatureOfBusiness(Constants.PERMANENT_NATUREOFBUSINESS);
-        for (final TradeLicense license : licenses)
+        //LicenseDemandGeneration licenseDemandGeneration = createLicenseDemandGeneration(String.valueOf(cFinancialYear));
+        for (final TradeLicense license : licenses) {
             if (!license.getCurrentDemand().getEgInstallmentMaster().equals(currentInstallment)) {
                 final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
                 for (final FeeMatrixDetail fm : feeList) {
@@ -111,11 +116,33 @@ public class DemandGenerationService {
                     if (reason != null) {
                         license.getLicenseDemand().getEgDemandDetails()
                                 .add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
-                        abstractLicenseService.recalculateBaseDemand(license.getLicenseDemand());
+                        tradeLicenseService.recalculateBaseDemand(license.getLicenseDemand());
                         license.getLicenseDemand().setEgInstallmentMaster(currentInstallment);
                         tradeLicenseService.licensePersitenceService().persist(license);
+                        //addLicenseDemandGenerationDetails(licenseDemandGeneration, license);
                     }
                 }
             }
+         }
+        //licenseDemandGenerationRepository.save(licenseDemandGeneration);
+    }
+
+    public LicenseDemandGeneration createLicenseDemandGeneration(final String installmentYear) {
+        final LicenseDemandGeneration licenseDemandGeneration = new LicenseDemandGeneration();
+        licenseDemandGeneration.setInstallmentYear(installmentYear);
+        licenseDemandGeneration.setExecutionStatus("IN PROGRESS");
+        licenseDemandGeneration.setDemandGenerationStatus("INCOMPLETE");
+        return licenseDemandGeneration;
+    }
+
+    public LicenseDemandGeneration addLicenseDemandGenerationDetails(final LicenseDemandGeneration licenseDemandGeneration,
+            final License license) {
+        final LicenseDemandGenerationDetail detail = new LicenseDemandGenerationDetail();
+        detail.setLicense(license);
+        detail.setLicenseDemandGeneration(licenseDemandGeneration);
+        detail.setStatus("NOT DONE");
+        detail.setDetail("Running");
+        licenseDemandGeneration.getDetails().add(detail);
+        return licenseDemandGeneration;
     }
 }

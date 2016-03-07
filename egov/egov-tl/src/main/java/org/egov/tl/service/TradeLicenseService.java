@@ -459,8 +459,4 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public void setUpdateIndexService(final TradeLicenseUpdateIndexService updateIndexService) {
         this.updateIndexService = updateIndexService;
     }
-
-    public List<TradeLicense> getAllLicensesByNatureOfBusiness(final String natureOfBusiness) {
-        return licensePersitenceService.findAllBy("from TradeLicense tl where tl.buildingType.name=?", natureOfBusiness);
-    }
 }
