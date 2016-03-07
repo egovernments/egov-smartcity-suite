@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface CFinancialYearRepository extends JpaRepository<CFinancialYear, Long> {
     @Query("from CFinancialYear where endingDate > current_date order by financialyear asc")
     List<CFinancialYear> getAllFinancialYears();
+    
+    CFinancialYear findByFinYearRange(String finYearRange);
 }

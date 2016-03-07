@@ -56,16 +56,23 @@ import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemandGeneration;
 import org.egov.tl.entity.LicenseDemandGenerationDetail;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.enums.ProcessStatus;
+import org.egov.tl.repository.LicenseDemandGenerationDetailRepository;
 import org.egov.tl.repository.LicenseDemandGenerationRepository;
 import org.egov.tl.utils.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class DemandGenerationService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemandGenerationService.class);
 
     @Autowired
     private CFinancialYearRepository cFinancialYearRepository;
@@ -87,62 +94,87 @@ public class DemandGenerationService {
     private FeeMatrixService feeMatrixService;
 
     @Autowired
-    private LicenseDemandGenerationRepository licenseDemandGenerationRepository; 
-    
+    private LicenseDemandGenerationRepository licenseDemandGenerationRepository;
+
+    @Autowired
+    private LicenseDemandGenerationDetailRepository licenseDemandGenerationDetailRepository;
+
     public List<CFinancialYear> financialYearList() {
         return cFinancialYearRepository.getAllFinancialYears();
     }
 
     @Transactional
-    public void bulkDemandGeneration(final Long cFinancialYear) {
-        final CFinancialYear financialYear = cFinancialYearRepository.findOne(cFinancialYear);
+    public void bulkDemandGeneration(LicenseDemandGeneration licenseDemandGeneration) {
+        final CFinancialYear financialYear = cFinancialYearRepository
+                .findByFinYearRange(licenseDemandGeneration.getInstallmentYear());
         final Module module = moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME);
         final Installment currentInstallment = installmentDao.getInsatllmentByModuleForGivenDate(module,
                 financialYear.getStartingDate());
         final List<TradeLicense> licenses = tradeLicenseService
                 .getAllLicensesByNatureOfBusiness(Constants.PERMANENT_NATUREOFBUSINESS);
-        //LicenseDemandGeneration licenseDemandGeneration = createLicenseDemandGeneration(String.valueOf(cFinancialYear));
+        ProcessStatus demandGenerationStatus = ProcessStatus.COMPLETED;
+        licenseDemandGeneration = createLicenseDemandGeneration(licenseDemandGeneration);
         for (final TradeLicense license : licenses) {
-            if (!license.getCurrentDemand().getEgInstallmentMaster().equals(currentInstallment)) {
-                final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
-                for (final FeeMatrixDetail fm : feeList) {
-                    if (fm.getFeeMatrix().getFeeType().getName().contains("Late"))
-                        continue;
-                    final EgDemandReasonMaster reasonMaster = demandGenericDao
-                            .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), module);
-                    final EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster,
-                            currentInstallment,
-                            module);
-                    if (reason != null) {
+            final LicenseDemandGenerationDetail licenseDemandGenerationDetail = createDemandGenerationDetails(
+                    licenseDemandGeneration, license);
+            try {
+                if (!license.getCurrentDemand().getEgInstallmentMaster().equals(currentInstallment)) {
+                    final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
+                    for (final FeeMatrixDetail fm : feeList) {
+                        if (fm.getFeeMatrix().getFeeType().getName().contains("Late"))
+                            continue;
+                        final EgDemandReasonMaster reasonMaster = demandGenericDao
+                                .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), module);
+                        final EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster,
+                                currentInstallment,
+                                module);
                         license.getLicenseDemand().getEgDemandDetails()
                                 .add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
                         tradeLicenseService.recalculateBaseDemand(license.getLicenseDemand());
                         license.getLicenseDemand().setEgInstallmentMaster(currentInstallment);
                         tradeLicenseService.licensePersitenceService().persist(license);
-                        //addLicenseDemandGenerationDetails(licenseDemandGeneration, license);
+
                     }
+                    updateLicenseDemandGenerationDetail(licenseDemandGenerationDetail, ProcessStatus.COMPLETED,
+                            "License demand generated");
+                } else {
+                    updateLicenseDemandGenerationDetail(licenseDemandGenerationDetail, ProcessStatus.COMPLETED,
+                            "License demand already exist");
                 }
+            } catch (final RuntimeException e) {
+                LOGGER.error("Error occurred while generating demand", e);
+                demandGenerationStatus = ProcessStatus.INCOMPLETE;
+                updateLicenseDemandGenerationDetail(licenseDemandGenerationDetail, ProcessStatus.INCOMPLETE, "Error : " + e);
             }
-         }
-        //licenseDemandGenerationRepository.save(licenseDemandGeneration);
+        }
+        licenseDemandGeneration.setExecutionStatus(ProcessStatus.COMPLETED);
+        licenseDemandGeneration.setDemandGenerationStatus(demandGenerationStatus);
+        licenseDemandGenerationRepository.save(licenseDemandGeneration);
     }
 
-    public LicenseDemandGeneration createLicenseDemandGeneration(final String installmentYear) {
-        final LicenseDemandGeneration licenseDemandGeneration = new LicenseDemandGeneration();
-        licenseDemandGeneration.setInstallmentYear(installmentYear);
-        licenseDemandGeneration.setExecutionStatus("IN PROGRESS");
-        licenseDemandGeneration.setDemandGenerationStatus("INCOMPLETE");
-        return licenseDemandGeneration;
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public LicenseDemandGeneration createLicenseDemandGeneration(final LicenseDemandGeneration licenseDemandGeneration) {
+        licenseDemandGeneration.setExecutionStatus(ProcessStatus.INPROGRESS);
+        licenseDemandGeneration.setDemandGenerationStatus(ProcessStatus.INCOMPLETE);
+        return licenseDemandGenerationRepository.save(licenseDemandGeneration);
     }
 
-    public LicenseDemandGeneration addLicenseDemandGenerationDetails(final LicenseDemandGeneration licenseDemandGeneration,
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public LicenseDemandGenerationDetail createDemandGenerationDetails(final LicenseDemandGeneration licenseDemandGeneration,
             final License license) {
         final LicenseDemandGenerationDetail detail = new LicenseDemandGenerationDetail();
         detail.setLicense(license);
         detail.setLicenseDemandGeneration(licenseDemandGeneration);
-        detail.setStatus("NOT DONE");
-        detail.setDetail("Running");
+        detail.setStatus(ProcessStatus.INPROGRESS);
         licenseDemandGeneration.getDetails().add(detail);
-        return licenseDemandGeneration;
+        return licenseDemandGenerationDetailRepository.save(detail);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateLicenseDemandGenerationDetail(final LicenseDemandGenerationDetail licenseDemandGenerationDetail,
+            final ProcessStatus status, final String details) {
+        licenseDemandGenerationDetail.setStatus(status);
+        licenseDemandGenerationDetail.setDetail(details);
+        licenseDemandGenerationDetailRepository.save(licenseDemandGenerationDetail);
     }
 }

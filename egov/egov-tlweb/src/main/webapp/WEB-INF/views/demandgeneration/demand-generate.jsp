@@ -52,27 +52,28 @@
         	<c:if test="${not empty message}">
                 <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
            	</c:if>
-        	<form role="form" action="generate-demand"  id="generatedemand" name="generatedemand"
-            class="form-horizontal form-groups-bordered"  method="post">
+        	<form:form role="form" action="generate-demand"  id="generatedemand" name="generatedemand" modelAttribute="licenseDemandGeneration"
+            cssClass="form-horizontal form-groups-bordered"  method="post">
 	            <div class="form-group">
 	              <label class="col-sm-4 control-label text-right"><spring:message code="lbl.financialyear" /> </label>
-		          <div class="col-sm-3 add-margin">
-		              <select id="financialYear" name="financialYear" class="form-control" required="required">
-                    		<option value=""> <spring:message code="lbl.select"/> </option>
-                 			<c:forEach items="${financialYearList}" var="financialYear">
-                 				<option value="${financialYear.id}"> ${financialYear.finYearRange}</option>
-                 			</c:forEach>
-                	  </select>
+		          <div class="col-sm-4 add-margin">
+		          	<form:select path="installmentYear" cssClass="form-control" required="required">
+		          		<form:option value="" ><spring:message code="lbl.select"/></form:option>
+		          		<form:options items="${financialYearList}" itemLabel="finYearRange" itemValue="finYearRange"/>
+		          	</form:select>
+		          	<form:errors path="installmentYear" cssClass="error-msg" />
 		          </div>
 	            </div>
-	            <div class="form-group text-center">
+	            <div class="form-group">
+					<div class="text-center">
 					<button type="submit" class='btn btn-primary' id="submit">
 	            		<spring:message code='lbl.generate.demand' />
 	         		</button>
 		            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
 		            	<spring:message code='lbl.close' /></button>
+	            	</div>
 	            </div>
-			</form>
+			</form:form>
 		</div>
 	  </div>
     </div>

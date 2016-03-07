@@ -40,6 +40,8 @@
 package org.egov.tl.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -51,31 +53,33 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.tl.entity.enums.ProcessStatus;
 
 @Entity
 @Table(name = "egtl_demandgenerationdetail")
-@SequenceGenerator(name = LicenseDemandGenerationDetail.SEQ, sequenceName = LicenseDemandGenerationDetail.SEQ,  allocationSize = 1)
+@SequenceGenerator(name = LicenseDemandGenerationDetail.SEQ, sequenceName = LicenseDemandGenerationDetail.SEQ, allocationSize = 1)
 public class LicenseDemandGenerationDetail extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 3192204759105538672L;
     public static final String SEQ = "seq_egtl_demandgenerationdetail";
-  
+
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
-   
+
     @OneToOne(optional = false)
-    @JoinColumn(name = "tradeLicense", nullable = false)
+    @JoinColumn(name = "license", nullable = false)
     private License license;
-    
-    private String status;
-    
+
+    @Enumerated(EnumType.STRING)
+    private ProcessStatus status;
+
     private String detail;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "licenseDemandGeneration", nullable = false)
     private LicenseDemandGeneration licenseDemandGeneration;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -102,11 +106,11 @@ public class LicenseDemandGenerationDetail extends AbstractPersistable<Long> {
         this.license = license;
     }
 
-    public String getStatus() {
+    public ProcessStatus getStatus() {
         return status;
     }
 
-    public void setStatus(final String status) {
+    public void setStatus(final ProcessStatus status) {
         this.status = status;
     }
 

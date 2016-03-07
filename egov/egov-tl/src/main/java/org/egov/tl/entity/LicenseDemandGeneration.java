@@ -44,6 +44,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -54,27 +56,30 @@ import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.tl.entity.enums.ProcessStatus;
 
 @Entity
 @Table(name = "egtl_demandgeneration")
 @SequenceGenerator(name = LicenseDemandGeneration.SEQ, sequenceName = LicenseDemandGeneration.SEQ, allocationSize = 1)
-@Unique(fields={"installmentYear"})
+@Unique(fields = { "installmentYear" }, enableDfltMsg = true)
 public class LicenseDemandGeneration extends AbstractAuditable {
 
     private static final long serialVersionUID = 3323170307345697375L;
     public static final String SEQ = "seq_egtl_demandgeneration";
-   
+
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private String installmentYear;
-    
-    private String executionStatus;
-    
-    private String demandGenerationStatus;
-    
-    @OneToMany(mappedBy="licenseDemandGeneration", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+
+    @Enumerated(EnumType.STRING)
+    private ProcessStatus executionStatus;
+
+    @Enumerated(EnumType.STRING)
+    private ProcessStatus demandGenerationStatus;
+
+    @OneToMany(mappedBy = "licenseDemandGeneration", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<LicenseDemandGenerationDetail> details = new ArrayList<>();
 
     @Override
@@ -95,19 +100,19 @@ public class LicenseDemandGeneration extends AbstractAuditable {
         this.installmentYear = installmentYear;
     }
 
-    public String getExecutionStatus() {
+    public ProcessStatus getExecutionStatus() {
         return executionStatus;
     }
 
-    public void setExecutionStatus(final String executionStatus) {
+    public void setExecutionStatus(final ProcessStatus executionStatus) {
         this.executionStatus = executionStatus;
     }
 
-    public String getDemandGenerationStatus() {
+    public ProcessStatus getDemandGenerationStatus() {
         return demandGenerationStatus;
     }
 
-    public void setDemandGenerationStatus(final String demandGenerationStatus) {
+    public void setDemandGenerationStatus(final ProcessStatus demandGenerationStatus) {
         this.demandGenerationStatus = demandGenerationStatus;
     }
 

@@ -40,15 +40,14 @@ package org.egov.tl.web.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.LicenseDemandGeneration;
 import org.egov.tl.service.DemandGenerationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,19 +64,19 @@ public class DemandGenerationController {
         return demandGenerationService.financialYearList();
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute final TradeLicense tradeLicense, final Model model) {
+    @RequestMapping(value = "create", method = RequestMethod.GET)
+    public String newForm(@ModelAttribute LicenseDemandGeneration licenseDemandGeneration) {
+        licenseDemandGeneration = new LicenseDemandGeneration();
         return "demand-generate";
     }
 
-    @RequestMapping(value = "/generate-demand", method = RequestMethod.POST)
-    public String demandGeneration(final Model model, final RedirectAttributes bindingErrors,
-            final HttpServletRequest request, final HttpServletResponse response) {
-        String financialYear = "";
-        if (request.getParameter("financialYear") != null && !request.getParameter("financialYear").trim().isEmpty())
-            financialYear = request.getParameter("financialYear");
-        demandGenerationService.bulkDemandGeneration(Long.valueOf(financialYear));
-        model.addAttribute("message", "msg.demand.generation.success");
-        return "demand-generate";
+    @RequestMapping(value = "generate-demand", method = RequestMethod.POST)
+    public String demandGeneration(@Valid @ModelAttribute final LicenseDemandGeneration licenseDemandGeneration,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
+        if (resultBinder.hasErrors())
+            return "demand-generate";
+        demandGenerationService.bulkDemandGeneration(licenseDemandGeneration);
+        redirectAttributes.addFlashAttribute("message", "msg.demand.generation.success");
+        return "redirect:/demand-generation/create";
     }
 }
