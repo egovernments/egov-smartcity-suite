@@ -602,5 +602,6 @@ public class Constants {
         public static final String DIGITALSIGNINCLUDEINWORKFLOW =  "DIGITALSIGNINCLUDEINWORKFLOW";
         public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
         public static final String ROLE_COMMISSIONERDEPARTEMNT ="Health";
+        public static final String PERMANENT_NATUREOFBUSINESS = "Permanent";
 }
 

@@ -393,7 +393,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     }
 
-    private void recalculateBaseDemand(final LicenseDemand licenseDemand) {
+    public void recalculateBaseDemand(final LicenseDemand licenseDemand) {
         licenseDemand.setAmtCollected(ZERO);
         licenseDemand.setBaseDemand(ZERO);
         for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
@@ -609,5 +609,6 @@ public abstract class AbstractLicenseService<T extends License> {
     public void setUpdateIndexService(final TradeLicenseUpdateIndexService updateIndexService) {
         this.updateIndexService = updateIndexService;
     }
-
+    
+    
 }
