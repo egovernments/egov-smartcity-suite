@@ -279,15 +279,36 @@ public class AdvertisementDemandService {
     }
 /**
  * 
- * @param advertisementPermitDetail
+ * @param advertisement
  * @return
  */
-    public Boolean checkAnyTaxIsPendingToCollect(final Advertisement advertisementPermitDetail) {
+    public Boolean checkAnyTaxIsPendingToCollect(final Advertisement advertisement) {
         Boolean pendingTaxCollection = false;
 
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getDemandId() != null)
-            for (final EgDemandDetails demandDtl : advertisementPermitDetail.getDemandId().getEgDemandDetails())
+        if (advertisement != null && advertisement.getDemandId() != null)
+            for (final EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails())
                 if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
+                    pendingTaxCollection = true;
+                    break;
+
+                }
+
+        return pendingTaxCollection;
+
+    }
+    /**
+     * Check any tax pay pending for selected advertisement in selected installment
+     * @param advertisement
+     * @param installment
+     * @return
+     */
+    public Boolean checkAnyTaxPendingForSelectedFinancialYear(final Advertisement advertisement, Installment installment) {
+        Boolean pendingTaxCollection = false;
+
+        if (advertisement != null && advertisement.getDemandId() != null)
+            for (final EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails())
+                if (demandDtl.getEgDemandReason().getEgInstallmentMaster().getId().equals(installment.getId()) &&
+                        demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
                     pendingTaxCollection = true;
                     break;
 
