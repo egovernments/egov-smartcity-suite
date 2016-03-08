@@ -462,23 +462,23 @@ public class AdvertisementDemandService {
     }
 
     private boolean checkAnyTaxIsPendingToCollect(AdvertisementPermitDetail advertisementPermitDetail) {
-        Boolean amountCollectedInCurrentYear = false;
+        Boolean amountCollectionPendingInCurrentYear = false;
         if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement().getDemandId() != null) {
-            final Installment currentInstallment = getCurrentInstallment();
+            final Installment currentInstallment = advertisementPermitDetail.getAdvertisement().getDemandId().getEgInstallmentMaster();
 
             if (currentInstallment != null) {
                 for (final EgDemandDetails demandDtl : advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails())
                 {
-                    if (demandDtl.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
-                            && currentInstallment.getId() == demandDtl.getEgDemandReason().getEgInstallmentMaster()
+                    if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0
+                                   && currentInstallment.getId() == demandDtl.getEgDemandReason().getEgInstallmentMaster()
                                     .getId()) {
-                        amountCollectedInCurrentYear = true;
+                        amountCollectionPendingInCurrentYear = true;
                         break;
                     }
                 }
             }
         }
-        return amountCollectedInCurrentYear;
+        return amountCollectionPendingInCurrentYear;
     }
     /*
      * Check any amount collected in the current financial year or not.
