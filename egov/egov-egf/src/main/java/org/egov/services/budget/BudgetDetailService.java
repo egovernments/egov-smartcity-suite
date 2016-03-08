@@ -2442,6 +2442,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         } catch (SQLException e) {
             e.printStackTrace();
+            //TODO- throw exception
         }
         return budgetUploadList;
     }
@@ -2452,6 +2453,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         Serializable sequenceNumber = null;
         State budgetDetailState = null;
         List<BudgetUpload> tempList = new ArrayList<BudgetUpload>();
+        //TODO- State not required
         try {
             sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
         } catch (final SQLGrammarException e) {
@@ -2469,6 +2471,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             if (getBudgetDetail(budgetUpload.getFund().getId(), budgetUpload.getFunction().getId(), budgetUpload.getDept()
                     .getId(), budgetUpload.getCoa().getId(), budgetType.equalsIgnoreCase("RE") ? budgetUpload.getReAmount()
                     : budgetUpload.getBeAmount(), fyear) == null) {
+                //TODO- Need to check for budget in Approved status. Message should be "Approved Budget Exist , hence cannot reload"
                 BudgetDetail budgetDetail = new BudgetDetail();
                 budgetDetail.setFund(budgetUpload.getFund());
                 budgetDetail.setFunction(budgetUpload.getFunction());
@@ -2477,11 +2480,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 if (budgetType.equalsIgnoreCase("RE")) {
                     budgetDetail.setOriginalAmount(budgetUpload.getReAmount());
                     budgetDetail.setApprovedAmount(budgetUpload.getReAmount());
+                    //TODO- calculate based on planning percentage
                     budgetDetail.setBudgetAvailable(budgetUpload.getReAmount());
 
                 } else {
                     budgetDetail.setOriginalAmount(budgetUpload.getBeAmount());
                     budgetDetail.setApprovedAmount(budgetUpload.getBeAmount());
+                  //TODO- calculate based on planning percentage
                     budgetDetail.setBudgetAvailable(budgetUpload.getBeAmount());
                 }
                 budgetDetail.setBudgetGroup(createBudgetGroup(budgetUpload.getCoa()));
@@ -2489,6 +2494,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         budgetType,
                         fyear.getFinYearRange()));
                 budgetDetail.setMaterializedPath(getmaterializedpathforbudget(budgetDetail.getBudget()));
+                //TODO - not needed instead add status
                 budgetDetail.setWfState(budgetDetailState);
                 budgetDetail.setPlanningPercent(BigDecimal.valueOf(budgetUpload.getPlanningPercentage()));
                 applyAuditing(budgetDetail);
@@ -2612,9 +2618,11 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 budgetFinancialYear = reFYear;
             }
 
+            //TODO- We dont need state transitions . Just the status is enough
             try {
                 sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
             } catch (final SQLGrammarException e) {
+                //TODO - throw exception
             }
 
             stateId = Long.valueOf(sequenceNumber.toString());
@@ -2629,6 +2637,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
             rootmaterial = query.uniqueResult().toString();
 
+            //TODO - not needed
             budgetState = (State) persistenceService.find("from State where id = ?", stateId);
 
             if (budgetType.equalsIgnoreCase("BE")) {
@@ -2641,6 +2650,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 budget.setMaterializedPath(rootmaterial);
                 budget.setReferenceBudget(refBudget);
                 budgetService.applyAuditing(budget);
+                //TODO set status for budget
                 budget = budgetService.persist(budget);
             } else {
                 budget.setName(budgetName);
@@ -2650,6 +2660,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 budget.setIsbere(budgetType);
                 budget.setMaterializedPath(rootmaterial);
                 budgetService.applyAuditing(budget);
+              //TODO set status for budget
                 budget = budgetService.persist(budget);
             }
 
@@ -2657,6 +2668,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
             createCapitalOrRevenueBudget(budget, "Revenue", rootmaterial + ".2",  budgetType, beFYear, reFYear);
 
+            //TODO- Can we create department budget also here?
         } catch (final ValidationException e)
         {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
@@ -2829,6 +2841,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId, final Long glCodeId,
             final BigDecimal amount, final CFinancialYear fYear) {
         return find(
+                //TODO- check based on WIP status
                 "from BudgetDetail bd where bd.state.value = 'NEW' and bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.maxCode.id = ? and bd.approvedAmount = ? and bd.budget.financialYear.id = ?",
                 fundId, functionId, deptId, glCodeId, amount, fYear.getId());
     }

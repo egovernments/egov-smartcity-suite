@@ -346,6 +346,7 @@ public class BudgetLoadAction extends BaseFormAction {
             Map<String, CFunction> functionMap = new HashMap<String, CFunction>();
             Map<String, Department> departmentMap = new HashMap<String, Department>();
             Map<String, CChartOfAccounts> coaMap = new HashMap<String, CChartOfAccounts>();
+            //TODO check for data active
             List<Fund> fundList = fundDAO.findAll();
             List<CFunction> functionList = functionDAO.findAll();
             List<Department> departmentList = departmentService.getAllDepartments();
@@ -358,6 +359,7 @@ public class BudgetLoadAction extends BaseFormAction {
                 departmentMap.put(department.getCode(), department);
             for (CChartOfAccounts coa : coaList)
                 coaMap.put(coa.getGlcode(), coa);
+            
             for (BudgetUpload budget : budgetUploadList) {
                 error = "";
                 if (budget.getFundCode() != null && !budget.getFundCode().equalsIgnoreCase("")
