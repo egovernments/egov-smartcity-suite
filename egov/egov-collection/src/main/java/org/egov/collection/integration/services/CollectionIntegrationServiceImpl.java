@@ -87,7 +87,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * systems) to interact with the collections module.
  */
 public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long> implements
-        CollectionIntegrationService {
+CollectionIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionIntegrationServiceImpl.class);
 
@@ -216,15 +216,14 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         }
     }
 
-    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest)
+    @Override
+    public RestReceiptInfo getDetailsByTransactionId(final PaymentInfoSearchRequest paymentInfoSearchRequest)
     {
         LOGGER.info(paymentInfoSearchRequest.getSource());
-        ReceiptHeader header = find("from ReceiptHeader r where r.manualreceiptnumber=? and r.source=? ",
+        final ReceiptHeader header = find("from ReceiptHeader r where r.manualreceiptnumber=? and r.source=? ",
                 paymentInfoSearchRequest.getTransactionId(), paymentInfoSearchRequest.getSource());
         if (header == null)
-        {
             throw new RuntimeException("No data found");
-        }
         return new RestReceiptInfo(header);
 
     }
@@ -279,12 +278,13 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             final User user = collectionsUtil.getUserById(EgovThreadLocals.getUserId());
             receiptHeader.setCreatedBy(user);
             receiptHeader.setLastModifiedBy(user);
+            receiptHeader.setLastModifiedDate(new Date());
             // TODO: Uncomment following lines once LocationId is added to ThreadLocals
-            /*if (EgovThreadLocals.getLocationId() != null) {
-                final Location location = collectionsUtil.getLocationById(EgovThreadLocals.getLocationId());
-                if (location != null)
-                    receiptHeader.setLocation(location);
-            }*/
+            /*
+             * if (EgovThreadLocals.getLocationId() != null) { final Location location =
+             * collectionsUtil.getLocationById(EgovThreadLocals.getLocationId()); if (location != null)
+             * receiptHeader.setLocation(location); }
+             */
         }
 
         BigDecimal chequeDDInstrumenttotal = BigDecimal.ZERO;
@@ -431,15 +431,14 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
         receiptHeader.setPaidBy(bill.getPaidBy());
 
-        if (EgovThreadLocals.getUserId() != null) {
+        if (EgovThreadLocals.getUserId() != null)
             receiptHeader.setCreatedBy(collectionsUtil.getUserById(EgovThreadLocals.getUserId()));
-            // TODO: Uncomment following lines once LocationId is added to ThreadLocals
-            /*if (EgovThreadLocals.getLocationId() != null) {
-                final Location location = collectionsUtil.getLocationById(EgovThreadLocals.getLocationId());
-                if (location != null)
-                    receiptHeader.setLocation(location);
-            }*/
-        }
+        // TODO: Uncomment following lines once LocationId is added to ThreadLocals
+        /*
+         * if (EgovThreadLocals.getLocationId() != null) { final Location location =
+         * collectionsUtil.getLocationById(EgovThreadLocals.getLocationId()); if (location != null)
+         * receiptHeader.setLocation(location); }
+         */
 
         final BigDecimal chequeDDInstrumenttotal = BigDecimal.ZERO;
         final BigDecimal otherInstrumenttotal = BigDecimal.ZERO;
@@ -505,7 +504,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
      * toDate)
      */
     @Override
-    public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(PaymentInfoSearchRequest aggrReq) {
+    public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(final PaymentInfoSearchRequest aggrReq) {
 
         final List<RestAggregatePaymentInfo> listAggregatePaymentInfo = new ArrayList<RestAggregatePaymentInfo>(0);
 
@@ -536,9 +535,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             listAggregatePaymentInfo.add(aggregatePaymentInfo);
         }
         if (listAggregatePaymentInfo.size() == 0)
-        {
             listAggregatePaymentInfo.add(new RestAggregatePaymentInfo());
-        }
         return listAggregatePaymentInfo;
     }
 
@@ -547,7 +544,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
      * fromDate, final Date toDate, final String serviceCode)
      */
     @Override
-    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(PaymentInfoSearchRequest aggrReq) {
+    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(final PaymentInfoSearchRequest aggrReq) {
         final ArrayList<RestReceiptInfo> receipts = new ArrayList<RestReceiptInfo>(0);
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, aggrReq.getFromdate(), aggrReq.getTodate(),
@@ -573,26 +570,19 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
     }
 
     @Override
-    public String cancelReceipt(PaymentInfoSearchRequest cancelReq) {
+    public String cancelReceipt(final PaymentInfoSearchRequest cancelReq) {
         String statusMessage = null;
         String instrumentType = "";
         boolean isInstrumentDeposited = false;
         final ReceiptHeader receiptHeaderToBeCancelled = (ReceiptHeader) persistenceService.findByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM, cancelReq.getReceiptNo());
         if (receiptHeaderToBeCancelled == null)
-        {
             throw new RuntimeException("Invalid receiptNumber:" + cancelReq.getReceiptNo());
-
-        }
         else if (!cancelReq.getTransactionId().equals(receiptHeaderToBeCancelled.getManualreceiptnumber()))
-        {
             throw new RuntimeException("transactionId doesnot match with receiptNo  " + cancelReq.getReceiptNo());
-        }
         else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equalsIgnoreCase(receiptHeaderToBeCancelled.getStatus()
                 .getCode()))
-        {
             throw new RuntimeException("Receipt is already Cancelled  " + cancelReq.getReceiptNo());
-        }
 
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());
 
