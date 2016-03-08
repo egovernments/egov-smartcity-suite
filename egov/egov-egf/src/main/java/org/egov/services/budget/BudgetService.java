@@ -66,6 +66,7 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Manikanta
@@ -75,7 +76,6 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     private static final Logger LOGGER = Logger.getLogger(BudgetService.class);
     protected EisCommonService eisCommonService;
     protected WorkflowService<Budget> budgetWorkflowService;
-    protected BudgetDetailService budgetDetailService;
     @Autowired
     protected SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
 
@@ -85,12 +85,10 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     public BudgetService(final Class<Budget> budget) {
         this.type = budget;
-    } 
-    @Override
-    public Budget persist(final Budget budget) {
-        super.validate(budget);
-        super.persist(budget);
-        return budget;
+    }
+
+    public Budget getByName(final String name) {
+        return find("from Budget b where b.name = ?", name);
     }
 
     public User getUser() {
@@ -170,7 +168,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
                 .createQuery(
                         "select name from  Budget where financialYear.id=:finYearId and isbere='RE' "
                                 +
-                        "and isActiveBudget=1 and parent is null and isPrimaryBudget=1 and state.value='END' and to_date(state.createdDate)<=:budgetApprovedDate");
+                                "and isActiveBudget=1 and parent is null and isPrimaryBudget=1 and state.value='END' and to_date(state.createdDate)<=:budgetApprovedDate");
         qry.setParameter("finYearId", finYearId);
         qry.setParameter("budgetApprovedDate", budgetApprovedDate);
         final String approvedBudgetName = (String) qry.uniqueResult();
@@ -207,7 +205,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Budget name " + childBudget.getName() + "moved details are ...");
             final List<BudgetDetail> unsavedbudgetDetailList = new ArrayList<BudgetDetail>();
-            unsavedbudgetDetailList.addAll(budgetDetailService.getRemainingDetailsForApproveOrReject(childBudget));
+            // unsavedbudgetDetailList.addAll(budgetDetailService.getRemainingDetailsForApproveOrReject(childBudget));
             // move rest of the details
             for (final BudgetDetail detail : unsavedbudgetDetailList) {
                 if (LOGGER.isDebugEnabled())
@@ -301,7 +299,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
             } else
                 clist = ((PersistenceService) this).findAllBy(
                         "from  CChartOfAccounts coa where coa.glcode like '" + bdgtgrp.getMajorCode().getGlcode().toString()
-                        + "%' and coa.classification = ? and coa.isActiveForPosting= ? ", Long.valueOf(4),
+                                + "%' and coa.classification = ? and coa.isActiveForPosting= ? ", Long.valueOf(4),
                         Long.valueOf(1));
             if (clist != null && clist.size() != 0)
                 coaList.addAll(clist);
@@ -312,10 +310,6 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     public void setBudgetWorkflowService(final WorkflowService<Budget> budgetWorkflowService) {
         this.budgetWorkflowService = budgetWorkflowService;
-    }
-
-    public void setBudgetDetailService(final BudgetDetailService budgetDetailService) {
-        this.budgetDetailService = budgetDetailService;
     }
 
     public void setBudgetDetailWorkflowService(final SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService) {
@@ -353,4 +347,14 @@ public class BudgetService extends PersistenceService<Budget, Long> {
         return findAllBy("select distinct b.financialYear from Budget b where b.state.value!='END' and isActiveBudget=1 and isPrimaryBudget=1 order by b.financialYear.finYearRange desc");
     }
 
+    public Budget getBudget(String budgetHead, String deptCode, String budgetType, String fyear) {
+        String budgetName;
+        if (budgetHead.substring(0, 1).equalsIgnoreCase("1")
+                || budgetHead.substring(0, 1).equalsIgnoreCase("2"))
+            budgetName = deptCode + "-" + budgetType + "-Rev-" + fyear;
+        else
+            budgetName = deptCode + "-" + budgetType + "-Cap-" + fyear;
+
+        return getByName(budgetName);
+    }
 }

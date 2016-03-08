@@ -55,6 +55,7 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.utils.Constants;
 
@@ -273,7 +274,7 @@ public class BudgetDetail extends StateAware {
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (Constants.END.equalsIgnoreCase(entry.getState().getValue())
                     && !entry.getStatus().getDescription().equalsIgnoreCase("Cancelled"))
-                if (entry.getAdditionAmount() != null && !(BigDecimal.ZERO.compareTo(entry.getAdditionAmount())==0))
+                if (entry.getAdditionAmount() != null && !(BigDecimal.ZERO.compareTo(entry.getAdditionAmount()) == 0))
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -287,7 +288,7 @@ public class BudgetDetail extends StateAware {
             if (Constants.END.equalsIgnoreCase(entry.getState().getValue())
                     && !entry.getStatus().getDescription().equalsIgnoreCase("Cancelled")
                     && entry.getState().getCreatedDate().before(asOnDate))
-                if (entry.getAdditionAmount() != null && !(BigDecimal.ZERO.compareTo(entry.getAdditionAmount())==0))
+                if (entry.getAdditionAmount() != null && !(BigDecimal.ZERO.compareTo(entry.getAdditionAmount()) == 0))
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -374,4 +375,7 @@ public class BudgetDetail extends StateAware {
         return getId().toString();
     }
 
+    public void setWfState(State state) {
+        setState(state);
+    }
 }
