@@ -230,7 +230,7 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setDisposalDate(getDisposalDate(waterConnectionDetails, appProcessTime));
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-        User meesevaUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
+        final User meesevaUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
         if (meesevaUser.getUsername().equals(WaterTaxConstants.USERNAME_MEESEVA)) {
             EgovThreadLocals.setUserId(meesevaUser.getId());
             savedWaterConnectionDetails.setCreatedBy(meesevaUser);
@@ -677,8 +677,8 @@ public class WaterConnectionDetailsService {
                                     .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED) || waterConnectionDetails
                                     .getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS)))
-                    || waterConnectionDetails.getLegacy().equals(true) && waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)) {
+                                    || waterConnectionDetails.getLegacy().equals(true) && waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)) {
                 final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
                 if (posobj != null)
                     approvalPosition = posobj.getId();
@@ -707,7 +707,7 @@ public class WaterConnectionDetailsService {
             amountTodisplayInIndex = getTotalAmount(waterConnectionDetails);
         if (waterConnectionDetails.getLegacy()
                 && (null == waterConnectionDetails.getId() || null != waterConnectionDetails.getId()
-                        && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))) {
+                && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))) {
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
             return;
         }
@@ -890,7 +890,8 @@ public class WaterConnectionDetailsService {
                         waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
                         consumerName.toString(), waterConnectionDetails.getStatus().getDescription().toString(),
                         "/wtms/application/view/" + waterConnectionDetails.getApplicationNumber(),
-                        assessmentDetails.getPropertyAddress(), user.getUsername() + "::" + user.getName());
+                        assessmentDetails.getPropertyAddress(), user.getUsername() + "::" + user.getName(),
+                        sourceChannel != null ? sourceChannel : WaterTaxConstants.SYSTEM);
 
                 if (waterConnectionDetails.getDisposalDate() != null)
                     applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
@@ -898,10 +899,6 @@ public class WaterConnectionDetailsService {
                 applicationIndexBuilder.aadharNumber(aadharNumber.toString());
                 applicationIndexBuilder.closed(ClosureStatus.NO);
                 applicationIndexBuilder.approved(ApprovalStatus.UNKNOWN);
-                if (sourceChannel == null)
-                    applicationIndexBuilder.channel(WaterTaxConstants.SYSTEM);
-                else
-                    applicationIndexBuilder.channel(sourceChannel);
                 applicationIndex = applicationIndexBuilder.build();
                 if (!waterConnectionDetails.getLegacy() && !waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))
