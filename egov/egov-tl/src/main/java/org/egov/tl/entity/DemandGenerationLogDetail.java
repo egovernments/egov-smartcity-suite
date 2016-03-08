@@ -56,12 +56,12 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.tl.entity.enums.ProcessStatus;
 
 @Entity
-@Table(name = "egtl_demandgenerationdetail")
-@SequenceGenerator(name = LicenseDemandGenerationDetail.SEQ, sequenceName = LicenseDemandGenerationDetail.SEQ, allocationSize = 1)
-public class LicenseDemandGenerationDetail extends AbstractPersistable<Long> {
+@Table(name = "egtl_demandgenerationlogdetail")
+@SequenceGenerator(name = DemandGenerationLogDetail.SEQ, sequenceName = DemandGenerationLogDetail.SEQ, allocationSize = 1)
+public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 3192204759105538672L;
-    public static final String SEQ = "seq_egtl_demandgenerationdetail";
+    public static final String SEQ = "seq_egtl_demandgenerationlogdetail";
 
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
@@ -77,8 +77,8 @@ public class LicenseDemandGenerationDetail extends AbstractPersistable<Long> {
     private String detail;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "licenseDemandGeneration", nullable = false)
-    private LicenseDemandGeneration licenseDemandGeneration;
+    @JoinColumn(name = "demandGenerationLog", nullable = false)
+    private DemandGenerationLog demandGenerationLog;
 
     @Override
     public Long getId() {
@@ -88,14 +88,6 @@ public class LicenseDemandGenerationDetail extends AbstractPersistable<Long> {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public LicenseDemandGeneration getLicenseDemandGeneration() {
-        return licenseDemandGeneration;
-    }
-
-    public void setLicenseDemandGeneration(final LicenseDemandGeneration licenseDemandGeneration) {
-        this.licenseDemandGeneration = licenseDemandGeneration;
     }
 
     public License getLicense() {
@@ -120,6 +112,14 @@ public class LicenseDemandGenerationDetail extends AbstractPersistable<Long> {
 
     public void setDetail(final String detail) {
         this.detail = detail;
+    }
+
+    public DemandGenerationLog getDemandGenerationLog() {
+        return demandGenerationLog;
+    }
+
+    public void setDemandGenerationLog(final DemandGenerationLog demandGenerationLog) {
+        this.demandGenerationLog = demandGenerationLog;
     }
 
 }

@@ -59,13 +59,13 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.tl.entity.enums.ProcessStatus;
 
 @Entity
-@Table(name = "egtl_demandgeneration")
-@SequenceGenerator(name = LicenseDemandGeneration.SEQ, sequenceName = LicenseDemandGeneration.SEQ, allocationSize = 1)
+@Table(name = "egtl_demandgenerationlog")
+@SequenceGenerator(name = DemandGenerationLog.SEQ, sequenceName = DemandGenerationLog.SEQ, allocationSize = 1)
 @Unique(fields = { "installmentYear" }, enableDfltMsg = true)
-public class LicenseDemandGeneration extends AbstractAuditable {
+public class DemandGenerationLog extends AbstractAuditable {
 
     private static final long serialVersionUID = 3323170307345697375L;
-    public static final String SEQ = "seq_egtl_demandgeneration";
+    public static final String SEQ = "seq_egtl_demandgenerationlog";
 
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
@@ -79,8 +79,8 @@ public class LicenseDemandGeneration extends AbstractAuditable {
     @Enumerated(EnumType.STRING)
     private ProcessStatus demandGenerationStatus;
 
-    @OneToMany(mappedBy = "licenseDemandGeneration", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<LicenseDemandGenerationDetail> details = new ArrayList<>();
+    @OneToMany(mappedBy = "demandGenerationLog", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<DemandGenerationLogDetail> details = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -116,11 +116,11 @@ public class LicenseDemandGeneration extends AbstractAuditable {
         this.demandGenerationStatus = demandGenerationStatus;
     }
 
-    public List<LicenseDemandGenerationDetail> getDetails() {
+    public List<DemandGenerationLogDetail> getDetails() {
         return details;
     }
 
-    public void setDetails(final List<LicenseDemandGenerationDetail> details) {
+    public void setDetails(final List<DemandGenerationLogDetail> details) {
         this.details = details;
     }
 

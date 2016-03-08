@@ -52,7 +52,7 @@
         	<c:if test="${not empty message}">
                 <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
            	</c:if>
-        	<form:form role="form" action="generate-demand"  id="generatedemand" name="generatedemand" modelAttribute="licenseDemandGeneration"
+        	<form:form role="form" action="create"  id="generatedemand" name="generatedemand" modelAttribute="demandGenerationLog"
             cssClass="form-horizontal form-groups-bordered"  method="post">
 	            <div class="form-group">
 	              <label class="col-sm-4 control-label text-right"><spring:message code="lbl.financialyear" /> </label>

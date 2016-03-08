@@ -43,7 +43,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.tl.entity.LicenseDemandGeneration;
+import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.service.DemandGenerationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -65,17 +65,17 @@ public class DemandGenerationController {
     }
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute LicenseDemandGeneration licenseDemandGeneration) {
-        licenseDemandGeneration = new LicenseDemandGeneration();
+    public String newForm(@ModelAttribute DemandGenerationLog demandGenerationLog) {
+        demandGenerationLog = new DemandGenerationLog();
         return "demand-generate";
     }
 
-    @RequestMapping(value = "generate-demand", method = RequestMethod.POST)
-    public String demandGeneration(@Valid @ModelAttribute final LicenseDemandGeneration licenseDemandGeneration,
+    @RequestMapping(value = "create", method = RequestMethod.POST)
+    public String demandGeneration(@Valid @ModelAttribute final DemandGenerationLog demandGenerationLog,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
         if (resultBinder.hasErrors())
             return "demand-generate";
-        demandGenerationService.bulkDemandGeneration(licenseDemandGeneration);
+        demandGenerationService.bulkDemandGeneration(demandGenerationLog);
         redirectAttributes.addFlashAttribute("message", "msg.demand.generation.success");
         return "redirect:/demand-generation/create";
     }

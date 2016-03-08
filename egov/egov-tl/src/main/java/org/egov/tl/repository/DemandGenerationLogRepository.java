@@ -38,9 +38,10 @@
  */
 package org.egov.tl.repository;
 
-import org.egov.tl.entity.LicenseDemandGenerationDetail;
+import org.egov.tl.entity.DemandGenerationLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LicenseDemandGenerationDetailRepository extends JpaRepository<LicenseDemandGenerationDetail, Long> {
+public interface DemandGenerationLogRepository extends JpaRepository<DemandGenerationLog, Long> {
 
+    DemandGenerationLog findByInstallmentYear(String installmentYear);
 }
