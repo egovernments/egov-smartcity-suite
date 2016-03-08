@@ -213,7 +213,7 @@ public class BudgetLoadAction extends BaseFormAction {
                             .getCell(GLCODE_CELL_INDEX)))));
                 }
                 fsIP.close();
-                FileOutputStream output_file = new FileOutputStream(new File("/home/OutPut.xls"));
+                FileOutputStream output_file = new FileOutputStream(new File("/home/" + System.getProperty("user.name") + "/OutPut.xls"));
                 wb.write(output_file);
                 output_file.close();
 
@@ -258,7 +258,7 @@ public class BudgetLoadAction extends BaseFormAction {
                         .getCell(GLCODE_CELL_INDEX)))));
             }
             fsIP.close();
-            FileOutputStream output_file = new FileOutputStream(new File("/home/OutPut.xls"));
+            FileOutputStream output_file = new FileOutputStream(new File("/home/" + System.getProperty("user.name") + "/OutPut.xls"));
             wb.write(output_file);
             output_file.close();
 

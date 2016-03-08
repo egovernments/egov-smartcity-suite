@@ -2412,7 +2412,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             deptCapList.addAll(deptCapSet);
             deptRevList.addAll(deptRevSet);
 
-            Budget budget = budgetService.getByName("-RE-" + reFYear.getFinYearRange());
+            Budget budget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
             if (budget == null) {
 
                 createRootBudget("RE", beFYear, reFYear);
@@ -2420,19 +2420,19 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 createRootBudget("BE", beFYear, reFYear);
 
             }
-            createDeptBudgetHeads(budgetService.getByName("-Capital-RE-" + reFYear.getFinYearRange()),
+            createDeptBudgetHeads(budgetService.getByName("Capital-RE-" + reFYear.getFinYearRange()),
                     "Capital",
                     "RE", beFYear, reFYear,
                     "Cap", deptCapList);
-            createDeptBudgetHeads(budgetService.getByName("-Capital-BE-" + beFYear.getFinYearRange()),
+            createDeptBudgetHeads(budgetService.getByName("Capital-BE-" + beFYear.getFinYearRange()),
                     "Capital",
                     "BE", beFYear, reFYear,
                     "Cap", deptCapList);
-            createDeptBudgetHeads(budgetService.getByName("-Revenue-RE-" + reFYear.getFinYearRange()),
+            createDeptBudgetHeads(budgetService.getByName("Revenue-RE-" + reFYear.getFinYearRange()),
                     "Revenue",
                     "RE", beFYear, reFYear,
                     "Rev", deptRevList);
-            createDeptBudgetHeads(budgetService.getByName("-Revenue-BE-" + beFYear.getFinYearRange()),
+            createDeptBudgetHeads(budgetService.getByName("Revenue-BE-" + beFYear.getFinYearRange()),
                     "Revenue",
                     "BE", beFYear, reFYear,
                     "Rev", deptRevList);
