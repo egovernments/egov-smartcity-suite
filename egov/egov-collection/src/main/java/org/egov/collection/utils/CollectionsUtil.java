@@ -308,14 +308,22 @@ public class CollectionsUtil {
         final List<String> deptCodes = new ArrayList<String>();
         for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
-        Department dept = null;
+        List<Assignment> assignList = null;
+        Boolean isDeptAllowed=false;
         final Boolean isEmp = isEmployee(loggedInUser);
-        if (isEmp)
-            dept = getDepartmentOfUser(loggedInUser);
-        if (isEmp && dept == null) {
+        if (isEmp) {
+            //dept = getDepartmentOfUser(loggedInUser);
+            assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(loggedInUser.getId());
+            for(Assignment assign: assignList) {
+                if(!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
+                isDeptAllowed = true;
+            }
+        }
+            
+        if (isEmp && !isDeptAllowed) {
             final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        } else if (!isEmp || dept != null && !deptCodes.isEmpty() && deptCodes.contains(dept.getCode())) {
+        } else if (!isEmp || isDeptAllowed) {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         } else {
