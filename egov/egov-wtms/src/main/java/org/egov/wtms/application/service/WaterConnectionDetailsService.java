@@ -230,13 +230,10 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setDisposalDate(getDisposalDate(waterConnectionDetails, appProcessTime));
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-        // TODO: as off now using anonymous created for MeeSeva after we need to
-        // craete role for this and add in appconfig for
-        // recordCreatedBYNonEmployee API
-        // so it will work as CSC Operator record
-        if (userService.getUserById(waterConnectionDetails.getCreatedBy().getId()).getUsername().equals("anonymous")) {
-            EgovThreadLocals.setUserId(Long.valueOf("40"));
-            savedWaterConnectionDetails.setCreatedBy(userService.getUserById(EgovThreadLocals.getUserId()));
+        User meesevaUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
+        if (meesevaUser.getUsername().equals(WaterTaxConstants.USERNAME_MEESEVA)) {
+            EgovThreadLocals.setUserId(meesevaUser.getId());
+            savedWaterConnectionDetails.setCreatedBy(meesevaUser);
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" persisting WaterConnectionDetail object is completed and WorkFlow API Stared ");
@@ -349,7 +346,7 @@ public class WaterConnectionDetailsService {
             for (final StateHistory stateHistory : waterConnectionDetails.getStateHistory()) {
                 final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
                 HistoryMap.put("date", stateHistory.getDateInfo());
-                HistoryMap.put("comments", stateHistory.getComments());
+                HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
                 HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
                         + stateHistory.getLastModifiedBy().getName());
                 HistoryMap.put("status", stateHistory.getValue());
