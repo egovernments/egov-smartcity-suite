@@ -69,4 +69,6 @@
 		<property name="type" value="org.egov.works.models.masters.Contractor"/>
 	</bean>
 	
+	<bean id="worksUtils" class="org.egov.works.utils.WorksUtils"/>
+	
 </beans>

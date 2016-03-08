@@ -40,6 +40,7 @@
 package org.egov.works.lineestimate.entity;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -67,9 +68,8 @@ public class DocumentDetails {
     @GeneratedValue(generator = SEQ_EGW_DOCUMENTS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "objectid")
-    private LineEstimate objectId;
+    @Column(name = "objectid")
+    private Long objectId;
 
     @NotNull
     @SafeHtml
@@ -106,11 +106,11 @@ public class DocumentDetails {
         this.file = file;
     }
 
-    public LineEstimate getObjectId() {
+    public Long getObjectId() {
         return objectId;
     }
 
-    public void setObjectId(final LineEstimate objectId) {
+    public void setObjectId(final Long objectId) {
         this.objectId = objectId;
     }
 

@@ -46,6 +46,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -74,10 +75,10 @@ public class SearchLineEstimateController {
     private DepartmentService departmentService;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
-    public String showSearchLineEstimateForm(@ModelAttribute final LineEstimate lineEstimate,
+    public String showSearchLineEstimateForm(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
-        model.addAttribute("lineEstimate", lineEstimate);
+        model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
         return "searchLineEstimate-form";
     }
 
@@ -93,7 +94,7 @@ public class SearchLineEstimateController {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
-        model.addAttribute("schemes", schemeService.findAll());
+//        model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("executingDepartments", departmentService.getAllDepartments());
     }
 }

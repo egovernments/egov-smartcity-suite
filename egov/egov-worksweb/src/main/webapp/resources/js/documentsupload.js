@@ -47,8 +47,13 @@ function addFileInputField() {
 	var trNo = (tbody.childElementCount ? tbody.childElementCount : tbody.childNodes.length) + 1;
 	var tempTrNo = trNo - 1; 
 	var curFieldValue = $("#file" + tempTrNo).val();
+	var documentsSize = parseFloat($("#documentsSize").val()) + parseFloat(trNo);
 	if(curFieldValue == "") {
 		bootbox.alert("Field is empty!");
+		return;
+	}
+	if(documentsSize > 4) {
+		bootbox.alert("Only 4 documents can be added");
 		return;
 	}
 	var tr = document.createElement("tr");

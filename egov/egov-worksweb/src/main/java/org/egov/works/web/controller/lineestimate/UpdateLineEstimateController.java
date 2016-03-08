@@ -39,7 +39,16 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -47,10 +56,13 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.services.masters.SchemeService;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,12 +72,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class UpdateLineEstimateController {
-
+    
     @Autowired
     private LineEstimateService lineEstimateService;
 
@@ -83,6 +96,9 @@ public class UpdateLineEstimateController {
 
     @Autowired
     private DepartmentService departmentService;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -103,13 +119,13 @@ public class UpdateLineEstimateController {
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.POST)
     public String updateLineEstimate(@Valid @ModelAttribute("lineEstimate") LineEstimate lineEstimate, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
-            @RequestParam final String removedLineEstimateDetailsIds)
-                    throws ApplicationException {
+            @RequestParam final String removedLineEstimateDetailsIds, @RequestParam("file") final MultipartFile[] files)
+                    throws ApplicationException, IOException {
         setDropDownValues(model);
         if (errors.hasErrors())
             return loadViewData(model, request, lineEstimate);
         else {
-            LineEstimate newLineEstimate = lineEstimateService.update(lineEstimate, removedLineEstimateDetailsIds);
+            LineEstimate newLineEstimate = lineEstimateService.update(lineEstimate, removedLineEstimateDetailsIds, files);
             setDropDownValues(model);
             redirectAttributes.addFlashAttribute("lineEstimate", newLineEstimate);
             redirectAttributes.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
@@ -127,9 +143,17 @@ public class UpdateLineEstimateController {
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final LineEstimate lineEstimate) {
-        model.addAttribute("lineEstimate", lineEstimate);
+        LineEstimate newLineEstimate = getEstimateDocuments(lineEstimate);
+        model.addAttribute("lineEstimate", newLineEstimate);
         if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
         return "newLineEstimate-edit";
+    }
+    
+    private LineEstimate getEstimateDocuments(LineEstimate lineEstimate) {
+        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(lineEstimate.getId(), WorksConstants.MODULE_NAME_LINEESTIMATE);
+        lineEstimate.setDocumentDetails(documentDetailsList);
+        return lineEstimate;
     }
 }

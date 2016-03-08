@@ -39,9 +39,16 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -54,6 +61,7 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,6 +75,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class CreateLineEstimateController {
+    
+    private static final int BUFFER_SIZE = 4096;
 
     @Autowired
     private LineEstimateService lineEstimateService;
@@ -88,6 +98,9 @@ public class CreateLineEstimateController {
 
     @Autowired
     private FileStoreService fileStoreService;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -105,10 +118,7 @@ public class CreateLineEstimateController {
         if (errors.hasErrors())
             return "newLineEstimate-edit";
         else {
-            final List<DocumentDetails> documentDetails = getDocumentDetails(files);
-            if (!documentDetails.isEmpty())
-                lineEstimate.setDocumentDetails(documentDetails);
-            final LineEstimate newLineEstimate = lineEstimateService.create(lineEstimate);
+            final LineEstimate newLineEstimate = lineEstimateService.create(lineEstimate, files);
             model.addAttribute("lineEstimate", newLineEstimate);
             return "redirect:/lineestimate/update/" + newLineEstimate.getId();
         }
@@ -122,17 +132,59 @@ public class CreateLineEstimateController {
         model.addAttribute("executingDepartments", departmentService.getAllDepartments());
     }
 
-    private List<DocumentDetails> getDocumentDetails(final MultipartFile[] files) throws IOException {
-        final List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-        if (files != null && files.length > 0)
-            for (int i = 0; i < files.length; i++)
-                if (!files[i].isEmpty()) {
-                    final DocumentDetails documentDetails = new DocumentDetails();
-                    documentDetails.setObjectType(WorksConstants.MODULE_NAME_LINEESTIMATE);
-                    documentDetails.setFileStore(fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
-                            files[i].getContentType(), WorksConstants.FILESTORE_MODULECODE));
-                    documentDetailsList.add(documentDetails);
-                }
-        return documentDetailsList;
+    @RequestMapping(value = "/downloadLineEstimateDoc", method = RequestMethod.GET)
+    public void getLineEstimateDoc(final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
+        ServletContext context = request.getServletContext();
+        String fileStoreId = request.getParameter("fileStoreId");
+        String fileName = "";
+        File downloadFile = fileStoreService.fetch(fileStoreId,
+                WorksConstants.FILESTORE_MODULECODE);
+        FileInputStream inputStream = new FileInputStream(downloadFile);
+        LineEstimate lineEstimate = lineEstimateService.getLineEstimateById(Long.parseLong(request.getParameter("lineEstimateId")));
+        lineEstimate = getEstimateDocuments(lineEstimate);
+        
+        for(DocumentDetails doc : lineEstimate.getDocumentDetails()) {
+            if(doc.getFileStore().getFileStoreId().equalsIgnoreCase(fileStoreId))
+                fileName = doc.getFileStore().getFileName();
+        }
+
+        // get MIME type of the file
+        String mimeType = context.getMimeType(downloadFile.getAbsolutePath());
+        if (mimeType == null) {
+            // set to binary type if MIME mapping not found
+            mimeType = "application/octet-stream";
+        }
+        System.out.println("MIME type: " + mimeType);
+
+        // set content attributes for the response
+        response.setContentType(mimeType);
+        response.setContentLength((int) downloadFile.length());
+
+        // set headers for the response
+        String headerKey = "Content-Disposition";
+        String headerValue = String.format("attachment; filename=\"%s\"", fileName);
+        response.setHeader(headerKey, headerValue);
+
+        // get output stream of the response
+        OutputStream outStream = response.getOutputStream();
+
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bytesRead = -1;
+
+        // write bytes read from the input stream into the output stream
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, bytesRead);
+        }
+
+        inputStream.close();
+        outStream.close();
+    }
+    
+    private LineEstimate getEstimateDocuments(LineEstimate lineEstimate) {
+        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(lineEstimate.getId(), WorksConstants.MODULE_NAME_LINEESTIMATE);
+        lineEstimate.setDocumentDetails(documentDetailsList);
+        return lineEstimate;
     }
 }

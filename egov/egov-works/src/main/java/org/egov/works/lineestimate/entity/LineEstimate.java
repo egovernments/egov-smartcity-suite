@@ -139,8 +139,7 @@ public class LineEstimate extends StateAware {
             CascadeType.REFRESH }, orphanRemoval = true, targetEntity = LineEstimateDetails.class)
     private final List<LineEstimateDetails> lineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
 
-    @OneToMany(mappedBy = "objectId", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, targetEntity = DocumentDetails.class)
-    private final List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+    private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", nullable = false)

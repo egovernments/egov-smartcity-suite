@@ -55,7 +55,7 @@
 				</c:otherwise>
 			</c:choose>
 		</div>
-		<form:form name="lineEstimateForm" action="" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST">
+		<form:form name="lineEstimateForm" action="" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST" enctype="multipart/form-data">
 			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
 			<form:hidden path="" name="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
 			<input type="hidden" value="${mode}" id="mode"/>
@@ -63,6 +63,7 @@
 				<div class="col-md-12">
 					<jsp:include page="lineEstimateHeader.jsp"/>
 					<jsp:include page="lineEstimateDetails.jsp"/>
+					<jsp:include page="uploadDocuments.jsp"/>
 				</div>
 			</div>
 			<div class="row">

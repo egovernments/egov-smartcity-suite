@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <script src="<egov:url path='resources/js/documentsupload.js?rnd=${app_release_no}'/>"></script>
 <style>
 	.file-ellipsis {
@@ -53,8 +54,15 @@
 	<div class="panel-heading">
 		<div class="panel-title"><spring:message code="lineestimate.upload.document" /></div>
 	</div>
+	<c:if test="${lineEstimate.documentDetails != null &&  !lineEstimate.documentDetails.isEmpty()}">
+		<c:forEach items="${lineEstimate.documentDetails }" var="documentDetials">
+			<a href="/egworks/lineestimate/downloadLineEstimateDoc?lineEstimateId=${lineEstimate.id }&fileStoreId=${documentDetials.fileStore.fileStoreId }">${documentDetials.fileStore.fileName }</a><br />
+		</c:forEach>
+	</c:if>
+	<input type="hidden" value="${fn:length(lineEstimate.documentDetails)}" id="documentsSize">
 	<div>
 		<table width="100%">
+			<c:if test="${lineEstimate.documentDetails != null &&  fn:length(lineEstimate.documentDetails) lt 4}">
 			<tbody>
 				<tr>
 					<td valign="top">
@@ -73,6 +81,7 @@
 					</td>
 				</tr>
 			</tbody>
+			</c:if>
 		</table>
 	</div>
 </div>

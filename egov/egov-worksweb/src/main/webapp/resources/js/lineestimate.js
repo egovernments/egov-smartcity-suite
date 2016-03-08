@@ -139,6 +139,7 @@ function addLineEstimate() {
 						}
 
 					}).end().appendTo("#tblestimate tbody");
+//			$('#tblestimate tbody tr:nth-child('+(nextIdx+1)+')').show();
 		}
 	} else {
 		  alert('limit reached!');
@@ -174,15 +175,15 @@ function deleteLineEstimate(obj) {
 		alert("This row can not be deleted");
 		return false;
 	} else {
-		//tbl.deleteRow(rIndex);
+		tbl.deleteRow(rIndex);
 		//starting index for table fields
-		var tempVal = 0;
-		$('#tblestimate tbody tr:nth-child('+rIndex+')').hide();
-		tempVal = $("#tblestimate tbody tr:nth-child("+rIndex+") input[name$='estimateAmount']").val();
-		if($deletedAmt == 0)
-			$deletedAmt = parseFloat(tempVal);
-		else
-			$deletedAmt = parseFloat(tempVal) + parseFloat($deletedAmt);
+		//var tempVal = 0;
+		//$('#tblestimate tbody tr:nth-child('+rIndex+')').hide();
+		//tempVal = $("#tblestimate tbody tr:nth-child("+rIndex+") input[name$='estimateAmount']").val();
+//		if($deletedAmt == 0)
+//			$deletedAmt = parseFloat(tempVal);
+//		else
+//			$deletedAmt = parseFloat(tempVal) + parseFloat($deletedAmt);
 		var idx=0;
 		
 		//regenerate index existing inputs in table row
@@ -220,9 +221,9 @@ function calculateEstimatedAmountTotal(){
 	$( "input[name$='estimateAmount']" ).each(function(){
 		estimateTotal = estimateTotal + parseFloat(($(this).val()?$(this).val():"0"));
 	});
-	if($deletedAmt != null || $deletedAmt != '') {
-		estimateTotal -= parseFloat($deletedAmt);
-	}
+//	if($deletedAmt != null || $deletedAmt != '') {
+//		estimateTotal -= parseFloat($deletedAmt);
+//	}
 	$('#estimateTotal').html(estimateTotal);
 }
 

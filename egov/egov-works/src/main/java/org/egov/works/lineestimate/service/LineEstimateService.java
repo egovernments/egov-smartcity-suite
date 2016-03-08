@@ -39,6 +39,7 @@
  */
 package org.egov.works.lineestimate.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,11 +58,13 @@ import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
 import org.egov.works.models.estimate.EstimateNumberGenerator;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -89,7 +92,10 @@ public class LineEstimateService {
 
     @Autowired
     private EstimateNumberGenerator estimateNumberGenerator;
-
+    
+    @Autowired
+    private WorksUtils worksUtils;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -105,7 +111,7 @@ public class LineEstimateService {
     }
 
     @Transactional
-    public LineEstimate create(final LineEstimate lineEstimate) {
+    public LineEstimate create(final LineEstimate lineEstimate, final MultipartFile[] files) throws IOException {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULE_NAME_LINEESTIMATE,
                 WorksConstants.WF_STATE_CREATED_LINEESTIMATE));
         final CFinancialYear cFinancialYear = financialYearDAO.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
@@ -120,15 +126,21 @@ public class LineEstimateService {
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
         }
         
-        for (final DocumentDetails documentDetails : lineEstimate.getDocumentDetails())
-            documentDetails.setObjectId(lineEstimate);
+//        for (final DocumentDetails documentDetails : lineEstimate.getDocumentDetails())
+//            documentDetails.setObjectId(lineEstimate.getId());
         
         final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
+        
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate, WorksConstants.MODULE_NAME_LINEESTIMATE);
+        if (!documentDetails.isEmpty()) {
+            lineEstimate.setDocumentDetails(documentDetails);
+            worksUtils.persistDocuments(documentDetails);
+        }
         return newLineEstimate;
     }
 
     @Transactional
-    public LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds) {
+    public LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds, final MultipartFile[] files) throws IOException {
         final CFinancialYear cFinancialYear = financialYearDAO.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails()) {
             if (lineEstimateDetails.getLineEstimate() == null) {
@@ -136,36 +148,57 @@ public class LineEstimateService {
                 lineEstimateDetails.setEstimateNumber(estimateNumberGenerator.generateEstimateNumber(lineEstimate, cFinancialYear));
             }
         }
-        final LineEstimate lineEstimate1 = lineEstimateRepository.saveAndFlush(lineEstimate);
-        return removeDeletedLineEstimateDetails(lineEstimate1, removedLineEstimateDetailsIds);
+        List<LineEstimateDetails> list = new ArrayList<LineEstimateDetails>(lineEstimate.getLineEstimateDetails());
+        list = removeDeletedLineEstimateDetails(list, removedLineEstimateDetailsIds);
+        for(LineEstimateDetails details : list) {
+            details.setId(null);
+        }
+        lineEstimate.getLineEstimateDetails().clear();
+        // TODO: use save instead of saveAndFlush
+        final LineEstimate persistedLineEstimate = lineEstimateRepository.saveAndFlush(lineEstimate);
+        
+        persistedLineEstimate.setLineEstimateDetails(list);
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, persistedLineEstimate, WorksConstants.MODULE_NAME_LINEESTIMATE);
+        if (!documentDetails.isEmpty()) {
+            lineEstimate.setDocumentDetails(documentDetails);
+            worksUtils.persistDocuments(documentDetails);
+        }
+        // TODO: use save instead of saveAndFlush
+        return lineEstimateRepository.saveAndFlush(persistedLineEstimate);
     }
 
     public LineEstimate getLineEstimateByLineEstimateNumber(final String lineEstimateNumber) {
         return lineEstimateRepository.findByLineEstimateNumber(lineEstimateNumber);
     }
     
-    private List<LineEstimateDetails> getLineEstimateDetials(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds) {
-        List<LineEstimateDetails> lineEstimateDetailsList = new ArrayList<LineEstimateDetails>();
-        for(LineEstimateDetails lineEstimateDetials : lineEstimate.getLineEstimateDetails()) {
-            LineEstimateDetails lineEstimateDetial = new LineEstimateDetails();
-            if(lineEstimateDetials.getId() == null) {
-                lineEstimateDetial.setId(lineEstimateDetials.getId());
-                lineEstimateDetial.setEstimateAmount(lineEstimateDetials.getEstimateAmount());
-                lineEstimateDetial.setNameOfWork(lineEstimateDetials.getNameOfWork());
-                lineEstimateDetial.setEstimateNumber(lineEstimateDetials.getEstimateNumber());
-                lineEstimateDetailsList.add(lineEstimateDetial);
+    @Transactional
+    public List<LineEstimateDetails> removeDeletedLineEstimateDetails(final List<LineEstimateDetails> list,
+            final String removedLineEstimateDetailsIds) {
+        List<LineEstimateDetails> details = new ArrayList<LineEstimateDetails>();
+        if (null != removedLineEstimateDetailsIds) {
+            String[] ids = removedLineEstimateDetailsIds.split(",");
+            List<String> strList = new ArrayList<String>();
+            for(String str : ids) {
+                strList.add(str);
+            }
+            for(LineEstimateDetails line : list) {
+                if(line.getId() != null) {
+                    if(!strList.contains(line.getId().toString()))
+                        details.add(line);
+                }
+                else
+                    details.add(line);
             }
         }
-        return lineEstimateDetailsList;
-    }
-    
-    @Transactional
-    public LineEstimate removeDeletedLineEstimateDetails(final LineEstimate lineEstimate,
-            final String removedLineEstimateDetailsIds) {
-        if (null != removedLineEstimateDetailsIds)
-            for (final String id : removedLineEstimateDetailsIds.split(","))
-                lineEstimate.getLineEstimateDetails().remove(lineEstimateDetailsRepository.findOne(Long.valueOf(id)));
-
-        return lineEstimate;
+        else {
+            return list;
+        }
+//            for (final String id : removedLineEstimateDetailsIds.split(",")){
+//                for(LineEstimateDetails line : list) {
+//                    if(!line.getId().equals(id))
+//                        details.add(line);
+//                }
+//            }
+        return details;
     }
 }
