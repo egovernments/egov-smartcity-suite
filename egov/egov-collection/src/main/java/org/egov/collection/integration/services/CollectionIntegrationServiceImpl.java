@@ -627,10 +627,6 @@ CollectionIntegrationService {
                     && !receiptHeaderToBeCancelled.getState().getValue().equals(CollectionConstants.WF_STATE_END))
                 receiptHeaderService.endReceiptWorkFlowOnCancellation(receiptHeaderToBeCancelled);
 
-            // Update Billing System regarding cancellation of the existing
-            // receipt(when the instrument is not deposited)
-            receiptHeaderService.updateBillingSystemWithReceiptInfo(receiptHeaderToBeCancelled);
-
             LOGGER.info("Receipt Cancelled with Receipt Number(saveOnCancel): "
                     + receiptHeaderToBeCancelled.getReceiptnumber() + "; Consumer Code: "
                     + receiptHeaderToBeCancelled.getConsumerCode());
