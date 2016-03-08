@@ -92,13 +92,14 @@
 						<thead>
                             <tr>
                              <th rowspan="2">Name</th>
-                             <th colspan="8">Demand</th>
-                             <th colspan="8">Collection</th>
+                             <th rowspan="2">Door No</th>
+							 <th rowspan="2">Owner Name</th>
+                             <th colspan="7">Demand</th>
+                             <th colspan="7">Collection</th>
                              <th colspan="5">Balance</th>
                             </tr>
 
 							<tr>
-							    <th>Door No</th>
 								<th>Arrear
 									Property Tax</th>
 								<th>Penalty
@@ -147,6 +148,7 @@
 						 <tfoot id="report-footer">
 							<tr>
 								<td>Total</td>
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>
