@@ -49,6 +49,7 @@ public class CurrentInstDCBReportResult {
     private BigDecimal currCollection;
     private BigDecimal arrearDemand;
     private BigDecimal arrearCollection;
+    private BigDecimal totalCollection;
 
     public String getWardName() {
         return wardName;
@@ -96,6 +97,10 @@ public class CurrentInstDCBReportResult {
 
     public void setArrearCollection(BigDecimal arrearCollection) {
         this.arrearCollection = arrearCollection;
+    }
+
+    public BigDecimal getTotalCollection() {
+        return getArrearCollection().add(getCurrCollection());
     }
 
 

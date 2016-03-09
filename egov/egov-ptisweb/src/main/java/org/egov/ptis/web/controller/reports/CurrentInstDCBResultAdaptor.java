@@ -60,6 +60,7 @@ public class CurrentInstDCBResultAdaptor implements JsonSerializer<CurrentInstDC
         jsonObject.addProperty("currCollection",currentInstDCBReportResult.getCurrCollection().setScale(2, BigDecimal.ROUND_HALF_UP));
         jsonObject.addProperty("arrearDemand",currentInstDCBReportResult.getArrearDemand().setScale(2, BigDecimal.ROUND_HALF_UP));
         jsonObject.addProperty("arrearCollection",currentInstDCBReportResult.getArrearCollection().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("totalCollection",currentInstDCBReportResult.getTotalCollection().setScale(2, BigDecimal.ROUND_HALF_UP));
         return jsonObject;
         
     }
