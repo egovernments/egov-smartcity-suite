@@ -71,7 +71,6 @@ $(document).ready(function(){
 	});
 	typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
 	
-	
 	$("#deactivation").click(function(e){
 		var pendingTax= $('#ptax').html();
 		if($('#statusdeactivateform').valid()){
@@ -147,7 +146,58 @@ $('#searchrecord').click(function(e){
 		var url = '/adtax/deactivate/result/'+ applicationNumber;
 	});
 	
+	$('#zoneList').change(function(){
+		$.ajax({
+			type: "GET",
+			url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+			cache: true,
+			dataType: "json",
+			data:{
+				locality : $('#zoneList').val()
+		  	   },
+			success: function (response) {
+				console.log("success"+response);
+				$('#wardlist').empty();
+				$('#wardlist').append($('<option>').text('Select from below').attr('value', ""));
+				$.each(response.results.boundaries, function (j, boundary) {
+					if (boundary.wardId) {
+							$('#wardlist').append($('<option>').text(boundary.wardName).attr('value', boundary.wardId))
+					}
+				});
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	});
 	
+	$('#wardlist').change(function(){
+		$("#wardId").val($('#wardlist').val());    
+	});
+	
+	$('#categories').change(function(){
+		$.ajax({
+			url: "/adtax/hoarding/subcategories-by-category",    
+			type: "GET",
+			data: {
+				categoryId : $('#categories').val()   
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				//$("#category").val($('#categories').val());    
+				$('#subcategories').empty();
+				$('#subcategories').append($("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+					$('#subcategories').append($('<option>').text(value.description).attr('value', value.id));
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	});
 	
 	
 	
