@@ -41,14 +41,12 @@ package org.egov.works.web.actions.tender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -61,18 +59,18 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
+import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.Retender;
 import org.egov.works.models.tender.RetenderHistory;
-import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.WorksService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Results({  @Result(name = OfflineStatusAction.EDIT, location = "offlineStatus-edit.jsp"),
-            @Result(name = OfflineStatusAction.RETENDER, location = "offlineStatus-retender.jsp"),
-            @Result(name = OfflineStatusAction.SUCCESS, location = "offlineStatus-success.jsp")})
+@Results({ @Result(name = OfflineStatusAction.EDIT, location = "offlineStatus-edit.jsp"),
+        @Result(name = OfflineStatusAction.RETENDER, location = "offlineStatus-retender.jsp"),
+        @Result(name = OfflineStatusAction.SUCCESS, location = "offlineStatus-success.jsp") })
 public class OfflineStatusAction extends BaseFormAction {
 
     private static final long serialVersionUID = -6533573442117204510L;
@@ -185,9 +183,9 @@ public class OfflineStatusAction extends BaseFormAction {
             populateStatusNameAndDateDetails(setStatusList);
         return EDIT;
     }
-    
-    //@SkipValidation
-    @Action(value = "/tender/offlineStatus-retenderEdit")   
+
+    // @SkipValidation
+    @Action(value = "/tender/offlineStatus-retenderEdit")
     public String retenderEdit() {
         worksPackage = (WorksPackage) persistenceService.find(" from WorksPackage where id =? ", objId);
         if (worksPackage.getRetenderDetails() == null || worksPackage.getRetenderDetails().size() == 0)
@@ -445,7 +443,7 @@ public class OfflineStatusAction extends BaseFormAction {
 
     public String save() {
         int i = 0;
-        for (final String statName : getStatusNameDetails()) {
+        for (final String statName : worksService.getStatusNameDetails(statusName)) {
             if (i > getSetStatusList().size() - 1) {
                 final OfflineStatus stat = new OfflineStatus();
                 stat.setObjectId(objId);
@@ -486,16 +484,6 @@ public class OfflineStatusAction extends BaseFormAction {
             return commonsService.getStatusListByModuleAndCodeList(objectType, statList);
     }
 
-    @SuppressWarnings("unchecked")
-    public Collection<String> getStatusNameDetails() {
-        return CollectionUtils.select(Arrays.asList(statusName), statusName -> (String) statusName != null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public Collection<Date> getStatusDateDetails() {
-        return CollectionUtils.select(Arrays.asList(statusDate), statusDate -> (Date) statusDate != null);
-    }
-
     private EgwStatus getDescriptionByCode(final String statName) {
 
         if (objectType != null && objectType.equals(TENDERRESPONSE_CONTRACTORS))
@@ -518,7 +506,7 @@ public class OfflineStatusAction extends BaseFormAction {
     private void validateStatusName() {
         int i = 0;
         final List<EgwStatus> statList = getAllStatus();
-        for (final String statName : getStatusNameDetails()) {
+        for (final String statName : worksService.getStatusNameDetails(statusName)) {
             if (!statList.isEmpty() && !statName.equals(statList.get(i).getCode())) {
                 addFieldError(
                         "status.order.incorrect",
@@ -557,11 +545,11 @@ public class OfflineStatusAction extends BaseFormAction {
     }
 
     private List<Date> getDateList() {
-        return (List<Date>) getStatusDateDetails();
+        return (List<Date>) worksService.getStatusDateDetails(statusDate);
     }
 
     private List<String> getStatusCodeList() {
-        return (List<String>) getStatusNameDetails();
+        return (List<String>) worksService.getStatusNameDetails(statusName);
     }
 
     public void setWorksStatusService(final PersistenceService<OfflineStatus, Long> worksStatusService) {

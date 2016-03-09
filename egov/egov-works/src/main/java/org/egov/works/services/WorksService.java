@@ -44,6 +44,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
@@ -97,7 +99,6 @@ public class WorksService {
     private AssignmentService assignmentService;
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
-
 
     /**
      * This method will return the value in AppConfigValue table for the given module and key.
@@ -218,7 +219,7 @@ public class WorksService {
         adk.setDetailname(accountdetailtype.getAttributename());
         adk.setAccountdetailtype(accountdetailtype);
         accountdetailkeyHibernateDAO.create(adk);
-        //commonsService.createAccountdetailkey(adk);
+        // commonsService.createAccountdetailkey(adk);
     }
 
     public void setCommonsService(final CommonsService commonsService) {
@@ -1237,6 +1238,16 @@ public class WorksService {
         final DecimalFormat formatter = new DecimalFormat("0.00");
         formatter.setDecimalSeparatorAlwaysShown(true);
         return formatter.format(rounded);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<String> getStatusNameDetails(final String[] statusNames) {
+        return CollectionUtils.select(Arrays.asList(statusNames), statusName -> (String) statusName != null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<Date> getStatusDateDetails(final Date[] statusDates) {
+        return CollectionUtils.select(Arrays.asList(statusDates), statusDate -> (Date) statusDate != null);
     }
 
 }

@@ -52,7 +52,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -412,7 +411,8 @@ public class TenderNegotiationAction extends SearchFormAction {
 
         setTenderCretedBy(worksService.getWorksConfigValue("ESTIMATE_OR_WP_SEARCH_REQ"));
         final List<Contractor> contractorList = new ArrayList<Contractor>();
-        for (final TenderResponseContractors tenderResponseContractors : getActionTenderResponseContractorsList())
+        for (final TenderResponseContractors tenderResponseContractors : tenderResponseService
+                .getActionTenderResponseContractorsList(actionTenderResponseContractors))
             contractorList.add(tenderResponseContractors.getContractor());
         addDropdownData(CONTRACTOR_LIST, contractorList);
     }
@@ -491,7 +491,8 @@ public class TenderNegotiationAction extends SearchFormAction {
                         || NEW.equalsIgnoreCase(tenderResponse.getEgwStatus().getCode()) || REJECTED
                                 .equalsIgnoreCase(tenderResponse.getEgwStatus().getCode())))
             tenderResponse.getTenderResponseContractors().clear();
-        actionTenderResponseContractors = (List) getActionTenderResponseContractorsList();
+        actionTenderResponseContractors = (List) tenderResponseService
+                .getActionTenderResponseContractorsList(actionTenderResponseContractors);
 
         if (tenderResponse != null
                 && !actionTenderResponseContractors.isEmpty()
@@ -573,7 +574,8 @@ public class TenderNegotiationAction extends SearchFormAction {
                     prepare();
                     if (tenderResponse != null)
                         tenderResponse.getTenderResponseContractors().clear();
-                    actionTenderResponseContractors = (List) getActionTenderResponseContractorsList();
+                    actionTenderResponseContractors = (List) tenderResponseService
+                            .getActionTenderResponseContractorsList(actionTenderResponseContractors);
                     if (tenderResponse != null) {
                         tenderResponse.getTenderResponseActivities().clear();
                         financialYear = abstractEstimateService.getCurrentFinancialYear(tenderResponse
@@ -608,7 +610,8 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     public String cancel() {
-        actionTenderResponseContractors = (List) getActionTenderResponseContractorsList();
+        actionTenderResponseContractors = (List) tenderResponseService
+                .getActionTenderResponseContractorsList(actionTenderResponseContractors);
         if (tenderResponse != null
                 && !actionTenderResponseContractors.isEmpty()
                 && actionTenderResponseContractors.get(0) != null
@@ -1020,27 +1023,12 @@ public class TenderNegotiationAction extends SearchFormAction {
         this.status = status;
     }
 
-    public Collection<TenderResponseActivity> getTenderResponseActivityList() {
-        return CollectionUtils.select(
-                actionTenderResponseActivities,
-                tenderReponseAct -> {
-                    final TenderResponseActivity tra = (TenderResponseActivity) tenderReponseAct;
-                    if (tra == null)
-                        return false;
-                    else {
-                        tra.setActivity((Activity) getPersistenceService().find("from Activity where id=?",
-                                tra.getActivity().getId()));
-                        return true;
-                    }
-
-                });
-    }
-
     @Override
     public void validate() {
         if (actionTenderResponseContractors != null) {
             final List<Contractor> contractorList = new ArrayList<Contractor>();
-            for (final TenderResponseContractors tenderResponseContractors : getActionTenderResponseContractorsList())
+            for (final TenderResponseContractors tenderResponseContractors : tenderResponseService
+                    .getActionTenderResponseContractorsList(actionTenderResponseContractors))
                 contractorList.add(tenderResponseContractors.getContractor());
             addDropdownData(CONTRACTOR_LIST, contractorList);
         }
@@ -1063,9 +1051,11 @@ public class TenderNegotiationAction extends SearchFormAction {
             if (tenderResponse.getPercNegotiatedAmountRate() <= -100D)
                 addActionError(getText("tenderResponse.percNegotiatedRate.valid"));
         }
+        final Collection<TenderResponseActivity> tenderResponseActivityList = tenderResponseService
+                .getTenderResponseActivityList(actionTenderResponseActivities);
         if (tenderResponse != null && tenderType != null && !tenderTypeList.isEmpty()
-                && tenderType.equals(tenderTypeList.get(1)) && !getTenderResponseActivityList().isEmpty())
-            for (final TenderResponseActivity tenderResponseActivity : getTenderResponseActivityList()) {
+                && tenderType.equals(tenderTypeList.get(1)) && !tenderResponseActivityList.isEmpty())
+            for (final TenderResponseActivity tenderResponseActivity : tenderResponseActivityList) {
                 for (final TenderResponseQuotes tenderResponseQuotes : tenderResponseActivity
                         .getTenderResponseQuotesList())
                     if (tenderResponseQuotes.getQuotedRate() == 0.0)
@@ -1673,11 +1663,6 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     public void setActionTenderResponseContractors(final List<TenderResponseContractors> actionTenderResponseContractors) {
         this.actionTenderResponseContractors = actionTenderResponseContractors;
-    }
-
-    public Collection<TenderResponseContractors> getActionTenderResponseContractorsList() {
-        return CollectionUtils.select(actionTenderResponseContractors,
-                tenderResponseContractors -> (TenderResponseContractors) tenderResponseContractors != null);
     }
 
     public void setContractorService(final PersistenceService<Contractor, Long> service) {

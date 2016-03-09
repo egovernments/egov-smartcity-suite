@@ -58,7 +58,6 @@ import java.util.Set;
 
 import javax.script.ScriptContext;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -885,28 +884,6 @@ public class ContractorBillAction extends BaseFormAction {
         return SUCCESS;
     }
 
-    public Collection<StatutoryDeductionsForBill> getStatutoryDeductions() {
-        return CollectionUtils.select(actionStatutorydetails,
-                statutoryDeductionsForBill -> (StatutoryDeductionsForBill) statutoryDeductionsForBill != null);
-    }
-
-    public Collection<EgBilldetails> getCustomDeductionTypes() {
-        return CollectionUtils.select(customDeductions, egBilldetails -> (EgBilldetails) egBilldetails != null);
-    }
-
-    public Collection<EgBilldetails> getRetentionMoneyTypes() {
-        return CollectionUtils.select(retentionMoneyDeductions, egBilldetails -> (EgBilldetails) egBilldetails != null);
-    }
-
-    public Collection<AssetForBill> getAssestAndAccountDetails() {
-        return CollectionUtils.select(accountDetailsForBill, assetForBill -> (AssetForBill) assetForBill != null);
-    }
-
-    public Collection<DeductionTypeForBill> getStandardDeductionTypes() {
-        return CollectionUtils.select(standardDeductions,
-                deductionTypeForBill -> (DeductionTypeForBill) deductionTypeForBill != null);
-    }
-
     @Override
     public void validate() {
         String actionName = "";
@@ -1151,9 +1128,11 @@ public class ContractorBillAction extends BaseFormAction {
     }
 
     public boolean checkForCOADuplicatesInAccDet() {
-        if (!getAssestAndAccountDetails().isEmpty() && workOrderEstimate.getAssetValues().isEmpty()) {
+        final Collection<AssetForBill> assetAndAccountDetails = contractorBillService
+                .getAssetAndAccountDetails(accountDetailsForBill);
+        if (!assetAndAccountDetails.isEmpty() && workOrderEstimate.getAssetValues().isEmpty()) {
             final Set<Long> coaSet = new HashSet<Long>();
-            for (final AssetForBill assetForBill : getAssestAndAccountDetails())
+            for (final AssetForBill assetForBill : assetAndAccountDetails)
                 if (assetForBill.getCoa() != null && assetForBill.getCoa().getId() > 0L) {
                     if (coaSet.contains(assetForBill.getCoa().getId()))
                         return false;
@@ -1164,9 +1143,10 @@ public class ContractorBillAction extends BaseFormAction {
     }
 
     public boolean checkForCOADuplicatesInCustomDed() {
-        if (!getCustomDeductionTypes().isEmpty()) {
+        final Collection<EgBilldetails> customDeductionTypes = contractorBillService.getCustomDeductionTypes(customDeductions);
+        if (!customDeductionTypes.isEmpty()) {
             final Set<BigDecimal> coaSet = new HashSet<BigDecimal>();
-            for (final EgBilldetails egBilldetails : getCustomDeductionTypes())
+            for (final EgBilldetails egBilldetails : customDeductionTypes)
                 if (egBilldetails.getGlcodeid() != null
                         && worksService.checkBigDecimalValue(egBilldetails.getGlcodeid(), BigDecimal.valueOf(0))) {
                     if (coaSet.contains(egBilldetails.getGlcodeid()))
@@ -1219,7 +1199,7 @@ public class ContractorBillAction extends BaseFormAction {
             contractorBillRegister.getEgBilldetailes().add(
                     getBillDetailsRegister(contractorBillRegister, fdList, entry.getKey(), entry.getValue(), false,
                             false));
-        for (final EgBilldetails rbillDetails : getRetentionMoneyTypes())
+        for (final EgBilldetails rbillDetails : contractorBillService.getRetentionMoneyTypes(retentionMoneyDeductions))
             if (rbillDetails != null
                     && worksService.checkBigDecimalValue(rbillDetails.getGlcodeid(), BigDecimal.valueOf(0))) {
                 final EgBilldetails egbillDetails = getBillDetailsRegister(contractorBillRegister, fdList, rbillDetails
@@ -1496,7 +1476,7 @@ public class ContractorBillAction extends BaseFormAction {
     public Map<String, BigDecimal> getGlcodesForStatDed() {
         final Map<String, BigDecimal> debitGlcodeAndAmountMap = new HashMap<String, BigDecimal>();
         final Set<Long> coaSet = new HashSet<Long>();
-        for (final StatutoryDeductionsForBill bpd : getStatutoryDeductions())
+        for (final StatutoryDeductionsForBill bpd : contractorBillService.getStatutoryDeductions(actionStatutorydetails))
             if (bpd != null && bpd.getEgBillPayeeDtls().getRecovery() != null
                     && bpd.getEgBillPayeeDtls().getRecovery().getId() != null
                     && bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts() != null

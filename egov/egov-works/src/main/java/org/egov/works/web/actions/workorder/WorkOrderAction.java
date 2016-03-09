@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -1383,7 +1382,8 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     public Collection<WorkOrderActivity> getActionWorkOrderActivityList() {
-        final Collection<WorkOrderActivity> woActivityList = getActionWorkOrderActivitiesList();
+        final Collection<WorkOrderActivity> woActivityList = workOrderService
+                .getActionWorkOrderActivitiesList(actionWorkOrderActivities);
         for (final WorkOrderActivity workOrderActivity : woActivityList) {
             workOrderActivity.setActivity(activityService.findById(workOrderActivity.getActivity().getId(), false));
             workOrderActivity.setUnAssignedQuantity(workOrderActivity.getActivity().getQuantity()
@@ -1412,14 +1412,10 @@ public class WorkOrderAction extends BaseFormAction {
                 }
     }
 
-    public Collection<WorkOrderActivity> getActionWorkOrderActivitiesList() {
-        return CollectionUtils.select(actionWorkOrderActivities,
-                workOrderActivity -> (WorkOrderActivity) workOrderActivity != null);
-    }
-
     @Override
     public void validate() {
-        final Collection<WorkOrderActivity> woActivityList = getActionWorkOrderActivitiesList();
+        final Collection<WorkOrderActivity> woActivityList = workOrderService
+                .getActionWorkOrderActivitiesList(actionWorkOrderActivities);
 
         final String contractPrd = workOrder.getContractPeriod();
 

@@ -286,4 +286,13 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
      * @return List<Object> containing workOder Id and WorkOrder number.
      */
     public List<Object> getWorkOrderDetails(Long estimateId);
+
+    /**
+     * This function returns collection of WorkOrderActivity Objects. By taking actionWorkOrderActivities as parameter by
+     * eliminating empty objects.
+     *
+     * @param actionWorkOrderActivities
+     * @return Collection<WorkOrderActivity>.
+     */
+    public Collection<WorkOrderActivity> getActionWorkOrderActivitiesList(List<WorkOrderActivity> actionWorkOrderActivities);
 }

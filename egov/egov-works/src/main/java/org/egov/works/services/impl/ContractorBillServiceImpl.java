@@ -43,6 +43,7 @@ package org.egov.works.services.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.asset.service.AssetService;
@@ -96,7 +98,7 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long>implements
+public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long> implements
         ContractorBillService {
     private static final Logger logger = Logger.getLogger(ContractorBillServiceImpl.class);
 
@@ -1727,5 +1729,33 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 .setParameter(0, WorksConstants.APPROVED).setParameter(1, woId).setParameter(2, estId)
                 .setParameter(3, WorksConstants.ADMIN_SANCTIONED_STATUS).uniqueResult();
         return mbDateRefNo;
+    }
+
+    @Override
+    public Collection<StatutoryDeductionsForBill> getStatutoryDeductions(
+            final List<StatutoryDeductionsForBill> actionStatutorydetails) {
+        return CollectionUtils.select(actionStatutorydetails,
+                statutoryDeductionsForBill -> (StatutoryDeductionsForBill) statutoryDeductionsForBill != null);
+    }
+
+    @Override
+    public Collection<EgBilldetails> getCustomDeductionTypes(final List<EgBilldetails> customDeductions) {
+        return CollectionUtils.select(customDeductions, egBilldetails -> (EgBilldetails) egBilldetails != null);
+    }
+
+    @Override
+    public Collection<EgBilldetails> getRetentionMoneyTypes(final List<EgBilldetails> retentionMoneyDeductions) {
+        return CollectionUtils.select(retentionMoneyDeductions, egBilldetails -> (EgBilldetails) egBilldetails != null);
+    }
+
+    @Override
+    public Collection<AssetForBill> getAssetAndAccountDetails(final List<AssetForBill> accountDetailsForBill) {
+        return CollectionUtils.select(accountDetailsForBill, assetForBill -> (AssetForBill) assetForBill != null);
+    }
+
+    @Override
+    public Collection<DeductionTypeForBill> getStandardDeductionTypes(final List<DeductionTypeForBill> standardDeductions) {
+        return CollectionUtils.select(standardDeductions,
+                deductionTypeForBill -> (DeductionTypeForBill) deductionTypeForBill != null);
     }
 }

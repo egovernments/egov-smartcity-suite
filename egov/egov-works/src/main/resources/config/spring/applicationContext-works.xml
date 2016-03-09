@@ -195,6 +195,7 @@
 	<bean class="org.egov.works.services.TenderResponseService" id="tenderResponseService"
 		parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.tender.TenderResponse" />
+		<property name="persistenceService" ref="persistenceService" />
 		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
 	</bean>
 

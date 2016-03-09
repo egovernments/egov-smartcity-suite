@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
@@ -72,7 +73,7 @@ import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 
-public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implements WorkOrderService {
+public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> implements WorkOrderService {
     private static final Logger logger = Logger.getLogger(WorkOrderServiceImpl.class);
 
     private PersistenceService<Contractor, Long> contractorService;
@@ -1384,5 +1385,12 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                 estimateId,
                 WorksConstants.NEW, WorksConstants.CANCELLED_STATUS);
         return woDetails;
+    }
+
+    @Override
+    public Collection<WorkOrderActivity> getActionWorkOrderActivitiesList(
+            final List<WorkOrderActivity> actionWorkOrderActivities) {
+        return CollectionUtils.select(actionWorkOrderActivities,
+                workOrderActivity -> (WorkOrderActivity) workOrderActivity != null);
     }
 }

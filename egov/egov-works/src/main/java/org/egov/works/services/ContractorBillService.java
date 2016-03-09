@@ -40,6 +40,7 @@
 package org.egov.works.services;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -476,4 +477,14 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
      * @return
      */
     public Object[] getLatestMBCreatedDateAndRefNo(Long woId, Long estId);
+
+    public Collection<StatutoryDeductionsForBill> getStatutoryDeductions(List<StatutoryDeductionsForBill> actionStatutorydetails);
+
+    public Collection<EgBilldetails> getCustomDeductionTypes(List<EgBilldetails> customDeductions);
+
+    public Collection<EgBilldetails> getRetentionMoneyTypes(List<EgBilldetails> retentionMoneyDeductions);
+
+    public Collection<AssetForBill> getAssetAndAccountDetails(List<AssetForBill> accountDetailsForBill);
+
+    public Collection<DeductionTypeForBill> getStandardDeductionTypes(List<DeductionTypeForBill> standardDeductions);
 }
