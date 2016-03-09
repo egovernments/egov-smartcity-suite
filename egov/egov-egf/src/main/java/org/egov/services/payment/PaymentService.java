@@ -2327,7 +2327,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "','"
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "') " +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2362,7 +2362,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "','"
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "') " +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2392,7 +2392,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "'"
                                         +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate").addScalar("paidTo")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2425,7 +2425,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "'"
                                         +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate").addScalar("paidTo")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
