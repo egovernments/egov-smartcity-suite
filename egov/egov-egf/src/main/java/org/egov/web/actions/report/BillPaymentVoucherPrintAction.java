@@ -364,14 +364,14 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
             for (final CGeneralLedger vd : voucher.getGeneralledger())
                 if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount().doubleValue()))==0) {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
-                            .toString()), vd);
+                            .toString()), vd, egovCommon);
                     voucherReport.setDepartment(voucher.getVouchermis().getDepartmentid());
                     voucherReportList.add(voucherReport);
                 }
             for (final CGeneralLedger vd : voucher.getGeneralledger())
             	  if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount().doubleValue()))==0){
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
-                            .toString()), vd);
+                            .toString()), vd, egovCommon);
                     voucherReport.setDepartment(voucher.getVouchermis().getDepartmentid());
                     voucherReportList.add(voucherReport);
                 }
