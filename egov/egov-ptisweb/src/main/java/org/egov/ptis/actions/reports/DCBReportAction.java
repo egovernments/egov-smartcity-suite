@@ -55,6 +55,8 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.actions.common.CommonServices;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -79,6 +81,8 @@ public class DCBReportAction extends BaseFormAction {
     private String selectedModeBndry; // Used to traverse back. Block -> Ward -> Zone
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private PropertyTypeMasterDAO propertyTypeMasterDAO;
 
     @Override
     public Object getModel() {
@@ -89,6 +93,8 @@ public class DCBReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
+        final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAllExcludeEWSHS();
+        addDropdownData("PropTypeMaster", propTypeList);
         setWardBndryMap(CommonServices.getFormattedBndryMap(wardList));
         wardBndryMap.put(0l, "All");
     }

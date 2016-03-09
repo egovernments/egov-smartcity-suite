@@ -117,11 +117,27 @@ function setHiddenValueByLink(obj, param) {
 	}
 }
 
+function setDefaultCourtCaseValue(){
+	checkCourtCase(document.getElementById("courtCase")); 
+}
+
+function checkCourtCase(obj){
+	if(obj.checked == true)
+		document.getElementById("courtCase").value = 'true';
+	else
+		document.getElementById("courtCase").value = 'false';
+}
+
 function callAjaxByBoundary() {
 	var modeVal = "";
 	var boundary_Id = "";
 	var temp="";
+	var propTypes = "";
+	var courtCase = false;
+	propTypes = jQuery('#propTypes').val();
+	courtCase = jQuery('#courtCase').val(); 
 	modeVal = jQuery('#mode').val(); 
+	
 	if(modeVal=='ward'){
 		boundary_Id = jQuery('#wardId').val();
 		temp=modeVal+"~"+boundary_Id;
@@ -144,7 +160,9 @@ function callAjaxByBoundary() {
 					url : "/ptis/reports/ajaxDCBReport-getBoundaryWiseDCBList.action",      
 					data : {
 						mode : modeVal,
-						boundaryId : boundary_Id
+						boundaryId : boundary_Id, 
+						propTypes : JSON.stringify(propTypes!='-1'?propTypes:null),
+						courtCase : courtCase
 					}
 				},
 				"sPaginationType" : "bootstrap",

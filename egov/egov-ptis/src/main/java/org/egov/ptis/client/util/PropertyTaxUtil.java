@@ -2048,11 +2048,11 @@ public class PropertyTaxUtil {
      * @param boundaryId
      * @return
      */
-    public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode) {
-
-        final String WARDWISE = "ward";
-        final String BLOCKWISE = "block";
-        final String PROPERTY = "property";
+    public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase, final List<String> propertyTypes) { 
+ 
+        final String WARDWISE = "ward"; 
+        final String BLOCKWISE = "block";  
+        final String PROPERTY = "property"; 
 
         final StringBuffer queryStr = new StringBuffer("");
         final StringBuffer unionQueryStr = new StringBuffer("");
@@ -2060,12 +2060,28 @@ public class PropertyTaxUtil {
         String finalCommonQry = "", finalSelectQry = "", finalGrpQry = "", finalWhereQry = "", finalFrmQry = "";
         String innerSelectQry0 = "", innerSelectQry1 = "", arrearGroupBy = "", whereQry = "", collGroupBy = "";
         Long param = null;
-
+        String propertyTypeIds= "";
+        String courtCaseTable = "";
+        String courtCaseQry = "";
+        
+        if(propertyTypes!=null && !propertyTypes.isEmpty()){
+            propertyTypeIds=propertyTypes.get(0);
+            for(int i=1;i<propertyTypes.size();i++){
+                propertyTypeIds+=","+propertyTypes.get(i);
+            }
+        }
+        
+        if(courtCase){
+            courtCaseTable =",pt_court_cases_tbl pcc ";
+            courtCaseQry = " and pcc.i_asmtno = cast(pi.upicno AS numeric)";
+        }
+        
         if (boundaryId != -1 && boundaryId != null)
             param = boundaryId;
         // To retreive Arrear Demand and Collection Details
-        arrear_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
+        arrear_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "+courtCaseTable
                 + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true and pi.isexempted = false "
+                + courtCaseQry
                 + "and im.start_date not between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
                 + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 
@@ -2080,8 +2096,9 @@ public class PropertyTaxUtil {
                 + "0 as curPFTColl,0 as curSTColl, 0 as curVLTColl,0 as curPSCTColl from (";
 
         // To retreive Current Demand and Collection Details
-        current_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
+        current_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "+courtCaseTable
                 + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true and pi.isexempted = false "
+                + courtCaseQry
                 + "and im.start_date between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
                 + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 
@@ -2123,6 +2140,8 @@ public class PropertyTaxUtil {
             collGroupBy = ") as collection  group by ward ";
             if (param != 0)
               whereQry = " and pi.WARDID = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+              whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
             finalWhereQry = " where dcbinfo.ward=boundary.id ";
         } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
             innerSelectQry0 = "select distinct pi.blockid as block,";
@@ -2130,6 +2149,8 @@ public class PropertyTaxUtil {
             arrearGroupBy = ") as arrear group by block ";
             collGroupBy = ") as collection  group by block ";
             whereQry = " and pi.wardid = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
             finalWhereQry = " where dcbinfo.block=boundary.id ";
         } else if (mode.equalsIgnoreCase(PROPERTY)) {
             innerSelectQry0 = "select distinct pi.upicno as upicno, pi.houseno as doorno, pi.ownersname as ownername, ";
@@ -2137,6 +2158,8 @@ public class PropertyTaxUtil {
             arrearGroupBy = ") as arrear group by upicno,doorno,ownername ";
             collGroupBy = ") as collection  group by upicno,doorno,ownername ";
             whereQry = " and pi.blockid = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
             finalSelectQry = "select COALESCE(upicno,null,'',upicno) as \"assessmentNo\", doorno as \"houseNo\", ownername as \"ownerName\", ";
             finalFrmQry = " )as dcbinfo ";
             finalWhereQry = "";
@@ -2150,8 +2173,9 @@ public class PropertyTaxUtil {
         // Final Query : Retrieves arrear and current for the selected boundary.
         queryStr.append(finalSelectQry).append(finalCommonQry).append(unionQueryStr).append(finalFrmQry)
                 .append(finalWhereQry).append(finalGrpQry);
-
-        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
+        
+       
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString()); 
         return query;
     }
 
