@@ -45,7 +45,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><s:text name="budgetload" /></title>
 <script type="text/javascript">
-	function urlLoad(fileStoreId, type) {
+	function urlLoad(fileStoreId) {
 		var sUrl = "/egi/downloadfile?fileStoreId=" + fileStoreId
 				+ "&moduleName=EGF";
 		window.open(sUrl, "window",
@@ -82,7 +82,7 @@
 					<tr align="center">
 						<th style="width: 2%; text-align: center" align="center"><a
 							href="#"
-							onclick="urlLoad('<s:property value="%{originalFileStoreId}" />','original');"
+							onclick="urlLoad('<s:property value="%{originalFileStoreId}" />');"
 							id="sourceLink" /> Download Original File </a></th>
 
 					</tr>
@@ -90,7 +90,7 @@
 
 						<th style="width: 2%; text-align: center" align="center"><a
 							href="#"
-							onclick="urlLoad('<s:property value="%{outPutFileStoreId}" />','output');"
+							onclick="urlLoad('<s:property value="%{outPutFileStoreId}" />');"
 							id="sourceLink" /> Download OutPut File </a></th>
 					</tr>
 				</table>

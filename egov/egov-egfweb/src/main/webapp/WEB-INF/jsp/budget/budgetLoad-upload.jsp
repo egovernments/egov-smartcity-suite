@@ -57,9 +57,11 @@
 		document.budgetLoad.submit();
 		return true;
 	}
-	function urlLoad(fileStoreId, type) {
-			var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=EGF";
-			window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
+	function urlLoad(fileStoreId) {
+		var sUrl = "/egi/downloadfile?fileStoreId=" + fileStoreId
+				+ "&moduleName=EGF";
+		window.open(sUrl, "window",
+				'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
 
 	}
 </script>
@@ -89,18 +91,55 @@
 			</span>
 			<center>
 				<table border="0" width="100%" cellspacing="0" cellpadding="0">
-					<tr>
-						<td class="greybox" width="20%"></td>
-						<td class="greybox"></td>
-						<td class="greybox"><s:text name="budgetupload" /> <span
-							class="greybox"><span class="mandatory1">*</span></span></td>
-						<td class="greybox"><s:file name="budgetInXls"
-								id="budgetInXls" /></td>
-						<span class="greybox" colspan="2">
-							</td>
-							<td class="greybox"></td>
+					<tr width="50%">
+						<th width="50%"></th>
+						<th width="25%" class="bluebgheadtd" style="width: 4%; text-align: center"
+							align="center">Original Files</th>
+						<th width="25%" class="bluebgheadtd" style="width: 4%; text-align: center"
+							align="center">Output Files</th>
 					</tr>
+					<tr >
+						<td width="50%">
+							<table border="0" width="100%" cellspacing="0" cellpadding="0">
+								<tr>
+									<td class="greybox" width="20%"></td>
+									<td class="greybox"></td>
+									<td class="greybox"><s:text name="budgetupload" /> <span
+										class="greybox"><span class="mandatory1">*</span></span></td>
+									<td class="greybox"><s:file name="budgetInXls"
+											id="budgetInXls" /></td>
+									<span class="greybox" colspan="2">
+										</td>
+										<td class="greybox"></td>
+								</tr>
 
+							</table>
+						</td>
+						<td width="25%">
+							<table border="1" width="100%" cellspacing="0" cellpadding="0">
+								<s:iterator var="scheme" value="originalFiles" status="f">
+									<tr>
+
+										<td style="text-align: center" align="center"><a href="#"
+											onclick="urlLoad('<s:property value="%{fileStoreId}" />');"
+											id="originalFileId" /> <s:label value="%{fileName}" /> </a></td>
+									</tr>
+								</s:iterator>
+							</table>
+						</td>
+						<td width="25%">
+							<table border="1" width="100%" cellspacing="0" cellpadding="0">
+								<s:iterator var="scheme" value="outPutFiles" status="f">
+									<tr>
+
+										<td style="text-align: center" align="center"><a href="#"
+											onclick="urlLoad('<s:property value="%{fileStoreId}" />');"
+											id="outputFileId" /> <s:label value="%{fileName}" /> </a></td>
+									</tr>
+								</s:iterator>
+							</table>
+						</td>
+					</tr>
 				</table>
 
 				<div class="buttonbottom" id="buttondiv">

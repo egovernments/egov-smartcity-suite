@@ -44,11 +44,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -114,7 +114,11 @@ public class BudgetLoadAction extends BaseFormAction {
     private MultipartFile[] originalFile = new MultipartFile[1];
     private MultipartFile[] outPutFile = new MultipartFile[1];
     private String originalFileStoreId, outPutFileStoreId;
-
+    private List<FileStoreMapper> originalFiles = new ArrayList<FileStoreMapper>();
+    private List<FileStoreMapper> outPutFiles = new ArrayList<FileStoreMapper>();
+    private String budgetOriginalFileName;
+    private String budgetOutPutFileName;
+    private String timeStamp;
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
@@ -156,6 +160,10 @@ public class BudgetLoadAction extends BaseFormAction {
     @Action(value = "/budget/budgetLoad-beforeUpload")
     public String beforeUpload()
     {
+        originalFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
+                "from FileStoreMapper where fileName like '%budget_original%' order by id desc ").setMaxResults(5).list();
+        outPutFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
+                "from FileStoreMapper where fileName like '%budget_output%' order by id desc ").setMaxResults(5).list();
         return "upload";
     }
 
@@ -165,13 +173,6 @@ public class BudgetLoadAction extends BaseFormAction {
     {
         try {
             FileInputStream fsIP = new FileInputStream(budgetInXls);
-
-            final FileStoreMapper originalFileStore = fileStoreService.store(budgetInXls,
-                    budgetInXlsFileName,
-                    budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
-
-            persistenceService.persist(originalFileStore);
-            originalFileStoreId = originalFileStore.getFileStoreId();
 
             final POIFSFileSystem fs = new POIFSFileSystem(fsIP);
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -188,6 +189,16 @@ public class BudgetLoadAction extends BaseFormAction {
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         getText("be.year.is.not.immediate.next.fy.year.of.re.year"),
                         getText("be.year.is.not.immediate.next.fy.year.of.re.year"))));
+            timeStamp = new Timestamp((new Date()).getTime()).toString().replace(".", "_");
+            budgetOriginalFileName = budgetInXlsFileName.split("\\.")[0] + "_budget_original_"
+                    + timeStamp + "."
+                    + budgetInXlsFileName.split("\\.")[1];
+            final FileStoreMapper originalFileStore = fileStoreService.store(budgetInXls,
+                    budgetOriginalFileName,
+                    budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
+
+            persistenceService.persist(originalFileStore);
+            originalFileStoreId = originalFileStore.getFileStoreId();
 
             List<BudgetUpload> budgetUploadList = loadToBudgetUpload(sheet);
             budgetUploadList = validateMasterData(budgetUploadList);
@@ -254,8 +265,11 @@ public class BudgetLoadAction extends BaseFormAction {
             FileOutputStream output_file = new FileOutputStream(budgetInXls);
             wb.write(output_file);
             output_file.close();
+            budgetOutPutFileName = budgetInXlsFileName.split("\\.")[0] + "_budget_output_"
+                    + timeStamp + "."
+                    + budgetInXlsFileName.split("\\.")[1];
             final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
-                    budgetInXlsFileName,
+                    budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
 
             persistenceService.persist(outPutFileStore);
@@ -303,9 +317,11 @@ public class BudgetLoadAction extends BaseFormAction {
             FileOutputStream output_file = new FileOutputStream(budgetInXls);
             wb.write(output_file);
             output_file.close();
-
+            budgetOutPutFileName = budgetInXlsFileName.split("\\.")[0] + "_budget_output_"
+                    + timeStamp + "."
+                    + budgetInXlsFileName.split("\\.")[1];
             final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
-                    budgetInXlsFileName,
+                    budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
             persistenceService.persist(outPutFileStore);
 
@@ -607,6 +623,46 @@ public class BudgetLoadAction extends BaseFormAction {
 
     public void setOutPutFileStoreId(String outPutFileStoreId) {
         this.outPutFileStoreId = outPutFileStoreId;
+    }
+
+    public List<FileStoreMapper> getOriginalFiles() {
+        return originalFiles;
+    }
+
+    public void setOriginalFiles(List<FileStoreMapper> originalFiles) {
+        this.originalFiles = originalFiles;
+    }
+
+    public List<FileStoreMapper> getOutPutFiles() {
+        return outPutFiles;
+    }
+
+    public void setOutPutFiles(List<FileStoreMapper> outPutFiles) {
+        this.outPutFiles = outPutFiles;
+    }
+
+    public String getBudgetOriginalFileName() {
+        return budgetOriginalFileName;
+    }
+
+    public void setBudgetOriginalFileName(String budgetOriginalFileName) {
+        this.budgetOriginalFileName = budgetOriginalFileName;
+    }
+
+    public String getBudgetOutPutFileName() {
+        return budgetOutPutFileName;
+    }
+
+    public void setBudgetOutPutFileName(String budgetOutPutFileName) {
+        this.budgetOutPutFileName = budgetOutPutFileName;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
 }
