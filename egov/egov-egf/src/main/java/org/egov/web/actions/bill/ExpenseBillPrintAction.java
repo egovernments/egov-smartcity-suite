@@ -111,7 +111,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     @Autowired
     private EisCommonService eisCommonService; 
 
-    
+   
 
 	private BudgetDetailsHibernateDAO budgetDetailsDAO;
     @Autowired
@@ -119,6 +119,8 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     Map<String, Object> budgetDataMap = new HashMap<String, Object>();
     Map<String, Object> paramMap = new HashMap<String, Object>();
+    @Autowired
+    private EgovCommon egovCommon;
 
     public BudgetDetailsHibernateDAO getBudgetDetailsDAO() {
         return budgetDetailsDAO;
@@ -397,10 +399,8 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         tempMap.put("detailtype", detailtype.getName());
         tempMap.put("detailtypeid", detailtype.getId());
         tempMap.put("detailkeyid", detailkeyid);
-
-        final EgovCommon common = new EgovCommon();
-        common.setPersistenceService(persistenceService);
-        final EntityType entityType = common.getEntityType(detailtype, detailkeyid);
+        egovCommon.setPersistenceService(persistenceService);
+        final EntityType entityType = egovCommon.getEntityType(detailtype, detailkeyid);
         tempMap.put(Constants.DETAILKEY, entityType.getName());
         tempMap.put(Constants.DETAILCODE, entityType.getCode());
         return tempMap;

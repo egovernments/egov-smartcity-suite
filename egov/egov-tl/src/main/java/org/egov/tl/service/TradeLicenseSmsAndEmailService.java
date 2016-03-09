@@ -48,7 +48,6 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
@@ -85,7 +84,7 @@ public class TradeLicenseSmsAndEmailService {
         String smsMsg = null;
         String emailBody = "";
         String emailSubject = "";
-        final Locale locale = LocaleContextHolder.getLocale();
+        final Locale locale = Locale.getDefault();
         final String[] strarr = getMunicipalityName().split(" ");
         final String cityname = strarr[0];
         String smsCode = "";
@@ -155,20 +154,16 @@ public class TradeLicenseSmsAndEmailService {
     }
 
     public void sendSMsAndEmailOnCollection(final License license, final Date receiptDate, final BigDecimal demandAmount) {
-        final StringBuilder smsMsgColl = new StringBuilder();
+        final String smsMsgColl = String.format(
+                "Dear %s,\nTrade License with TIN No.%s, fee collected is at the rate of Rs.%s/- per year w.e.f %s.\nThanks,\n%s",
+                license.getLicensee().getApplicantName(), license.getLicenseNumber(),
+                demandAmount.toString(),
+                new SimpleDateFormat("dd/MM/yyyy").format(receiptDate), EgovThreadLocals.getMunicipalityName());
         final StringBuilder emailSubjectColl = new StringBuilder();
-        smsMsgColl.append(Constants.STR_WITH_APPLICANT_NAME).append(license.getLicensee().getApplicantName())
-                .append(",").append("\n").append(Constants.STR_WITH_LICENCE_NUMBER)
-                .append(license.getLicenseNumber()).append(Constants.STR_FOR_SUBMISSION)
-                .append(demandAmount).append(Constants.STR_FOR_SUBMISSION_DATE)
-                .append(new SimpleDateFormat("dd/MM/yyyy").format(receiptDate))
-                .append(Constants.STR_FOR_CITYMSG).append(EgovThreadLocals.getMunicipalityName());
         emailSubjectColl.append(Constants.STR_FOR_EMAILSUBJECT).append(license.getLicenseNumber());
-        if (license.getLicensee().getMobilePhoneNumber() != null && smsMsgColl != null)
-            messagingService.sendSMS(license.getLicensee().getMobilePhoneNumber(), smsMsgColl.toString());
-        if (license.getLicensee().getEmailId() != null && smsMsgColl != null)
-            messagingService.sendEmail(license.getLicensee().getEmailId(), emailSubjectColl.toString(),
-                    smsMsgColl.toString());
+        messagingService.sendSMS(license.getLicensee().getMobilePhoneNumber(), smsMsgColl);
+        messagingService.sendEmail(license.getLicensee().getEmailId(), emailSubjectColl.toString(),
+                smsMsgColl.toString());
 
     }
 

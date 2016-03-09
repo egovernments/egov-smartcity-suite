@@ -126,9 +126,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     public static final String ZERO = "0";
     private FinancingSourceService financingSourceService;
     List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
+    private @Autowired CreateVoucher createVoucher;
     Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
-    private CreateVoucher createVoucher;
-
+    
     @Autowired
     private EgovMasterDataCaching masterDataCache;
     
@@ -407,13 +407,6 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 
     }
 
-    public CreateVoucher getCreateVoucher() {
-        return createVoucher;
-    }
-
-    public void setCreateVoucher(final CreateVoucher createVoucher) {
-        this.createVoucher = createVoucher;
-    }
 
     protected boolean validateData(final List<VoucherDetails> billDetailslist, final List<VoucherDetails> subLedgerList) {
         BigDecimal totalDrAmt = BigDecimal.ZERO;
@@ -787,7 +780,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         final List<HashMap<String, Object>> reversalList = new ArrayList<HashMap<String, Object>>();
         reversalList.add(reversalVoucherMap);
         try {
-            reversalVoucher = new CreateVoucher().reverseVoucher(reversalList);
+            reversalVoucher = createVoucher.reverseVoucher(reversalList);
         } catch (final ValidationException e) {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("ERROR in Reversing voucher" + e.getMessage());

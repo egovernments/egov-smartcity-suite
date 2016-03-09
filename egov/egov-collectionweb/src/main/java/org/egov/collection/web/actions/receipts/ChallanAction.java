@@ -323,6 +323,12 @@ public class ChallanAction extends BaseFormAction {
                         "No Valid Challan Found. Please check the challan number."));
                 throw new ValidationException(errors);
             }
+            
+            if(CollectionConstants.CHALLAN_STATUS_CODE_CANCELLED.equals(receiptHeader.getChallan().getStatus().getCode())){
+                errors.add(new ValidationError(getText("challan.cancel.receipt.error"),
+                        "Challan is cancelled. Cannot create Receipt for Challan."));
+                throw new ValidationException(errors);
+            }
 
             if (CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())) {
                 loadReceiptDetails();

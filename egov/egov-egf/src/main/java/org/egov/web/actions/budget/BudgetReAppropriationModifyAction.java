@@ -344,10 +344,10 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
                     .add(budgetReAppropriationView.getAppropriatedAmount()).subtract(budgetReAppropriationView.getActuals())
                     .setScale(2));
             budgetReAppropriationView.setSequenceNumber(row.getReAppropriationMisc().getSequenceNumber());
-            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.equals(row.getOriginalAdditionAmount())) {
+            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getOriginalAdditionAmount())==0) {
                 budgetReAppropriationView.setChangeRequestType("Deduction");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalDeductionAmount());
-                if (row.getDeductionAmount() == null || BigDecimal.ZERO.equals(row.getDeductionAmount()))
+                if (row.getDeductionAmount() == null || BigDecimal.ZERO.compareTo(row.getDeductionAmount())==0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalDeductionAmount() == null ? BigDecimal.ZERO
                             : row.getOriginalDeductionAmount());
                 else
@@ -357,7 +357,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
                 budgetReAppropriationView.setChangeRequestType("Addition");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO.setScale(2)
                         : row.getOriginalAdditionAmount().setScale(2));
-                if (row.getAdditionAmount() == null || BigDecimal.ZERO.equals(row.getAdditionAmount()))
+                if (row.getAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getAdditionAmount())==0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO
                             .setScale(2) : row.getOriginalAdditionAmount().setScale(2));
                 else
@@ -421,10 +421,10 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
                     .add(budgetReAppropriationView.getAddedReleased())
                     .subtract(budgetReAppropriationView.getActuals()));
             budgetReAppropriationView.setSequenceNumber(row.getReAppropriationMisc().getSequenceNumber());
-            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.equals(row.getOriginalAdditionAmount())) {
+            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getOriginalAdditionAmount())==0) {
                 budgetReAppropriationView.setChangeRequestType("Deduction");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalDeductionAmount());
-                if (row.getDeductionAmount() == null || BigDecimal.ZERO.equals(row.getDeductionAmount()))
+                if (row.getDeductionAmount() == null || BigDecimal.ZERO.compareTo(row.getDeductionAmount())==0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalDeductionAmount() == null ? BigDecimal.ZERO
                             : row.getOriginalDeductionAmount());
                 else
@@ -434,7 +434,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
                 budgetReAppropriationView.setChangeRequestType("Addition");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO.setScale(2)
                         : row.getOriginalAdditionAmount().setScale(2));
-                if (row.getAdditionAmount() == null || BigDecimal.ZERO.equals(row.getAdditionAmount()))
+                if (row.getAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getAdditionAmount())==0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO
                             .setScale(2) : row.getOriginalAdditionAmount().setScale(2));
                 else

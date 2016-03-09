@@ -46,14 +46,15 @@ package com.exilant.eGov.src.reports;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 
-import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 
 public class OpeningBalance
@@ -67,7 +68,6 @@ public class OpeningBalance
     private String glcode = "", name = "", narration = "" , deptcode= "",functioncode = "";
     private Double debit, credit, balance;
     ArrayList al = new ArrayList();
-    EGovernCommon egc = new EGovernCommon();
 
     private static final Logger LOGGER = Logger.getLogger(OpeningBalance.class);
 
@@ -302,9 +302,8 @@ public class OpeningBalance
 
     public void isCurDate(final Connection conn, final String VDate) throws TaskFailedException {
 
-        final EGovernCommon egc = new EGovernCommon();
         try {
-            final String today = egc.getCurrentDate();
+            final String today = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
             final String[] dt2 = today.split("/");
             final String[] dt1 = VDate.split("/");
 

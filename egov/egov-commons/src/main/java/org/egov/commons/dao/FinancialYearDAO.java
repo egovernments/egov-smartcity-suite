@@ -45,19 +45,33 @@ import java.util.List;
 import org.egov.commons.CFinancialYear;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface FinancialYearDAO extends GenericDAO{
-	public String getCurrYearFiscalId();
-	public String getCurrYearStartDate();
-	public String getPrevYearFiscalId();
+public interface FinancialYearDAO extends GenericDAO {
+    public String getCurrYearFiscalId();
+
+    public String getCurrYearStartDate();
+
+    public String getPrevYearFiscalId();
+
     public String getFinancialYearId(String estDate);
+
     public CFinancialYear getFinancialYearByFinYearRange(String finYearRange);
+
     public List<CFinancialYear> getAllActiveFinancialYearList();
+
     public List<CFinancialYear> getAllActivePostingFinancialYear();
+
     public CFinancialYear getFinancialYearById(Long id);
-    //public CFinancialYear getFinancialYear(String estDate);
+
+    // public CFinancialYear getFinancialYear(String estDate);
     public CFinancialYear getFinancialYearByDate(Date date);
+
     public CFinancialYear getFinYearByDate(Date date);
-	public boolean isSameFinancialYear(Date fromDate,Date toDate);
-	public CFinancialYear getPreviousFinancialYearByDate( Date date);   
-	public boolean isFinancialYearActiveForPosting(Date fromDate,Date toDate);
+
+    public boolean isSameFinancialYear(Date fromDate, Date toDate);
+
+    public CFinancialYear getPreviousFinancialYearByDate(Date date);
+
+    public boolean isFinancialYearActiveForPosting(Date fromDate, Date toDate);
+
+    public CFinancialYear getNextFinancialYearByDate(Date date);
 }

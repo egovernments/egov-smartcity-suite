@@ -267,6 +267,7 @@ public class WaterTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
     public static final String USERNAME_ANONYMOUS = "anonymous";
+    public static final String USERNAME_MEESEVA = "meeseva";
     
     public static final String PREVIEWWORKFLOWACTION = "Preview";
     public static final String SIGNWORKFLOWACTION = "Sign";

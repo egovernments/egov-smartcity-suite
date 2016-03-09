@@ -52,6 +52,7 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class VoucherReport {
     private CGeneralLedger generalLedger = new CGeneralLedger();
@@ -60,7 +61,7 @@ public class VoucherReport {
     private Department department;
     private static final String MULTIPLE = "MULTIPLE";
     private static final Logger LOGGER = Logger.getLogger(VoucherReport.class);
-
+    private @Autowired EgovCommon egovCommon;
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
@@ -91,12 +92,11 @@ public class VoucherReport {
                 final Integer detailTypeId = generalLedgerDetail.get(0).getDetailTypeId();
                 //persistenceService.setType(Accountdetailtype.class);
                 final List detailType = persistenceService.findAllBy("from Accountdetailtype where id=?", detailTypeId);
-                final EgovCommon common = new EgovCommon();
-                common.setPersistenceService(persistenceService);
+                egovCommon.setPersistenceService(persistenceService);
                 final Integer detailKeyId = generalLedgerDetail.get(0).getDetailKeyId();
                 EntityType entityType = null;
                 try {
-                    entityType = common.getEntityType((Accountdetailtype) detailType.get(0), detailKeyId);
+                    entityType = egovCommon.getEntityType((Accountdetailtype) detailType.get(0), detailKeyId);
                 } catch (final ApplicationException e) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Error" + e.getMessage(), e);

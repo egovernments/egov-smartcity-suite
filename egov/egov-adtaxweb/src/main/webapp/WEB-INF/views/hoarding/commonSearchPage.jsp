@@ -116,18 +116,9 @@
 							</form:select>
 							
 						</div>
-					</div>
+					</div> 
                     <div class="form-group">
-                    	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.hoarding.status"/></label>
-                        <div class="col-sm-3 add-margin">
-                   			<form:select path="status" id="hoardingstatus" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${status}" />
-							</form:select>
-							<form:errors path="status" cssClass="error-msg"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.ri.no"/></label>
+                       <label class="col-sm-3 control-label text-right"><spring:message code="lbl.ri.no"/></label>
                         <div class="col-sm-3 add-margin">
                         	<form:select path="revenueInspector" id="revenueinspector" cssClass="form-control" 
 							cssErrorClass="form-control error" >

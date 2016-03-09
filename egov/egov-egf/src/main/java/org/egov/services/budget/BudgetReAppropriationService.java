@@ -285,7 +285,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     // checks if the deduction amount is greater than the available amount(i.e, approved-actuals)
     private boolean canDeduct(final BudgetReAppropriation appropriation) {
         if (appropriation == null || appropriation.getOriginalDeductionAmount() == null
-                || BigDecimal.ZERO.equals(appropriation.getOriginalDeductionAmount()))
+                || BigDecimal.ZERO.compareTo(appropriation.getOriginalDeductionAmount())==0)
             return true;
         final Map<String, Object> paramMap = new HashMap<String, Object>();
         final BudgetDetail budgetDetail = appropriation.getBudgetDetail();

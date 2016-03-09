@@ -567,7 +567,6 @@ public class BndCommonService {
      */
     @Transactional
     public String getCityLogoName(final HttpServletRequest request) {
-        // HttpServletRequest request=ServletActionContext.getRequest();
         final HttpSession session = request.getSession();
         final ServletContext servletContext = session.getServletContext();
 

@@ -64,7 +64,7 @@ var entities;
 function loadEntities(){
 	var element = document.getElementById("recovery").value;
 	if(element != -1){
-		var	url = "/EGF/report/pendingTDSReport!ajaxLoadEntites.action?recoveryId="+element;
+		var	url = "/EGF/report/pendingTDSReport-ajaxLoadEntites.action?recoveryId="+element;
 		var req2 = initiateRequest();
 		req2.onreadystatechange = function(){
 		  if (req2.readyState == 4){

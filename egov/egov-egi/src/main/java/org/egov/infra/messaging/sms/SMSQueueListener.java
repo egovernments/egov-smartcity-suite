@@ -44,14 +44,12 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.support.JmsUtils;
 import org.springframework.stereotype.Component;
 
 @Component("smsQueueListener")
 public class SMSQueueListener implements MessageListener {
-    private static final Logger LOG = LoggerFactory.getLogger(SMSQueueListener.class);
     private final SMSService smsService;
 
     @Autowired
@@ -65,7 +63,7 @@ public class SMSQueueListener implements MessageListener {
             final MapMessage emailMessage = (MapMessage) message;
             smsService.sendSMS(emailMessage.getString("mobile"), emailMessage.getString("message"));
         } catch (final JMSException e) {
-            LOG.error("SMS sending failed for reason {}", e);
+            throw JmsUtils.convertJmsAccessException(e);
         }
     }
 

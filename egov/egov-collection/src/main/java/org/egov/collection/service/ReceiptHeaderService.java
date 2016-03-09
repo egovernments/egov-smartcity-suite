@@ -75,6 +75,7 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.DesignationService;
@@ -123,6 +124,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Autowired
     private CollectionIndexService collectionIndexService;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     /**
      * @param statusCode Status code of receipts to be fetched. If null or ALL, then receipts with all statuses are fetched
@@ -1770,6 +1773,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * Updates the billing system with receipt information
      * @param receiptHeader
      */
+    @Transactional
     public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader)
             throws ApplicationRuntimeException {
 
@@ -1782,14 +1786,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
                         : ""));
         final Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
-        billReceipts.add(new BillReceiptInfoImpl(receiptHeader));
+        billReceipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
         if (serviceCode == null)
             serviceCode = receiptHeader.getService().getCode();
 
         if (updateBillingSystem(serviceCode, billReceipts)) {
             receiptHeader.setIsReconciled(true);
             // the receipts should be persisted again
-            persist(receiptHeader);
+            super.persist(receiptHeader);
         }
         LOGGER.info("$$$$$$ Billing system updated for Service Code :"
                 + receiptHeader.getService().getCode()

@@ -38,9 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.tl.entity;
-/**
- * 
- */
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -51,32 +49,49 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+
 @Entity
-@SequenceGenerator(name=FeeType.SEQ,sequenceName=FeeType.SEQ,allocationSize=1)
-@Table(name="egtl_mstr_fee_type")
-public class FeeType extends AbstractAuditable {  
-	public static final String SEQ="seq_egtl_mstr_fee_type";
-	/**
-	 * 
-	 * Will be RANGE, FLAT, PERCENTAGE actually but as of now 
-	 * code is not written and no usecases fixing to RANGE only
-	 */
-	public static enum FeeProcessType {
-		RANGE
+@SequenceGenerator(name = FeeType.SEQ, sequenceName = FeeType.SEQ, allocationSize = 1)
+@Table(name = "egtl_mstr_fee_type")
+public class FeeType extends AbstractAuditable {
+    
+    private static final long serialVersionUID = -766315755023031686L;
+
+    public static final String SEQ = "seq_egtl_mstr_fee_type";
+
+    /**
+     * 
+     * Will be RANGE, FLAT, PERCENTAGE actually but as of now code is not written and no usecases fixing to RANGE only
+     */
+    public static enum FeeProcessType {
+        RANGE
     }
-    private static final long serialVersionUID = 1L;	
+
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
     @NotNull
-    @Length(max=32)
+    @Length(max = 32)
     private String name;
-    @Length(max=12)
+    
+    @Length(max = 12)
     private String code;
-    
-    private FeeProcessType feeProcessType; 
 
-    
+    private FeeProcessType feeProcessType;
+
+    @Override
+    public void setId(final Long id) {
+
+        this.id = id;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+
+    }
+
     public String getName() {
         return name;
     }
@@ -84,7 +99,23 @@ public class FeeType extends AbstractAuditable {
     public void setName(final String name) {
         this.name = name;
     }
+    
+    public String getCode() {
+        return code;
+    }
 
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    public FeeProcessType getFeeProcessType() {
+        return feeProcessType;
+    }
+
+    public void setFeeProcessType(final FeeProcessType feeProcessType) {
+        this.feeProcessType = feeProcessType;
+    }
+    
     @Override
     public String toString() {
         final StringBuilder str = new StringBuilder();
@@ -94,31 +125,4 @@ public class FeeType extends AbstractAuditable {
         return str.toString();
     }
 
-	@Override
-	public void setId(Long id) {
-		
-		this.id=id;
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-		
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public FeeProcessType getFeeProcessType() {
-		return feeProcessType;
-	}
-
-	public void setFeeProcessType(FeeProcessType feeProcessType) {
-		this.feeProcessType = feeProcessType;
-	}
 }

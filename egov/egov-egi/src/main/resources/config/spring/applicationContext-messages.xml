@@ -54,15 +54,21 @@
 	
 	<jee:jndi-lookup id="emailQueue" jndi-name="java:/jms/queue/email" expected-type="javax.jms.Destination" resource-ref="true"/>
 	
-    <jms:listener-container connection-factory="cacheConnectionFactory" destination-resolver="jmsDestinationResolver" transaction-manager="transactionManager">
-        <jms:listener id="smsQueueListenerBean" destination="java:/jms/queue/sms"
-                      ref="smsQueueListener" method="onMessage"/>
+    <jms:listener-container  connection-factory="cacheConnectionFactory" 
+     						 destination-resolver="jmsDestinationResolver" 
+    						 transaction-manager="transactionManager"
+    						 error-handler="messagingErrorHandler">
+        <jms:listener id="smsQueueListenerBean" destination="java:/jms/queue/sms" ref="smsQueueListener" method="onMessage"/>
     </jms:listener-container>
     
-    <jms:listener-container connection-factory="cacheConnectionFactory" destination-resolver="jmsDestinationResolver" transaction-manager="transactionManager">
-        <jms:listener id="emailQueueListenerBean" destination="java:/jms/queue/email"
-                      ref="emailQueueListener" method="onMessage"/>
+    <jms:listener-container connection-factory="cacheConnectionFactory" 
+    						destination-resolver="jmsDestinationResolver" 
+    						transaction-manager="transactionManager"
+    						error-handler="messagingErrorHandler">
+        <jms:listener id="emailQueueListenerBean" destination="java:/jms/queue/email" ref="emailQueueListener" method="onMessage"/>
     </jms:listener-container>
 
+	<bean id="messagingErrorHandler" class="org.egov.infra.messaging.MessagingErrorHandler"/>
+	
 </beans>
 

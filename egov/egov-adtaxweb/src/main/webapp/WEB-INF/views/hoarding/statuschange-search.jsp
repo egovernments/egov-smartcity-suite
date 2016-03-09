@@ -79,6 +79,7 @@
 		                  	<form:select path="advertisement.subCategory" id="subcategories" cssClass="form-control" 
 							cssErrorClass="form-control error">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<form:options items="${subCategoryList}" />
 							</form:select>
 							<form:errors path="advertisement.subCategory" cssClass="error-msg"/>
                         </div>

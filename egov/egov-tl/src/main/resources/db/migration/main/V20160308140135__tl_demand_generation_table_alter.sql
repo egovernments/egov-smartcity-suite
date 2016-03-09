@@ -1,0 +1,6 @@
+alter sequence seq_egtl_demandgeneration rename to seq_egtl_demandgenerationlog;
+alter table egtl_demandgeneration rename to egtl_demandgenerationlog;
+
+alter table egtl_demandgenerationdetail rename licensedemandgeneration  to demandGenerationLog;
+alter sequence seq_egtl_demandgenerationdetail rename to seq_egtl_demandgenerationlogdetail;
+alter table egtl_demandgenerationdetail rename to egtl_demandgenerationlogdetail;

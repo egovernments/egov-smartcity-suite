@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -59,6 +56,8 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -90,7 +89,6 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.recoveries.Recovery;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.instrument.DishonorChequeService;
 import org.egov.services.instrument.FinancialIntegrationService;
@@ -129,6 +127,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     private static final String JOURNAL_VOUCHER = "Journal Voucher";
     private EisCommonService eisCommonService;
     private boolean isRestrictedtoOneFunctionCenter;
+    private @Autowired CreateVoucher createVoucher;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     private CVoucherHeader paymentVoucher;
@@ -149,6 +148,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     private String approverDesignation;
     private String mode = null;
     private List desgnationList;
+    
+    private @Autowired BankEntries bankEntries;
 
     public DishonorChequeWorkflowAction() {
         this.addRelatedEntity("instrumentHeader", InstrumentHeader.class);
@@ -243,15 +244,14 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     }
 
     BankEntries createBankEntry() {
-        final BankEntries be = new BankEntries();
-        be.setBankAccountId(dishonorChequeView.getInstrumentHeader().getBankAccountId().getId().intValue());
-        be.setRefNo(dishonorChequeView.getBankReferenceNumber());
-        be.setTxnAmount(dishonorChequeView.getBankChargesAmt().toString());
-        be.setType("P");
-        be.setRemarks(dishonorChequeView.getBankreason());
-        be.setTxnDate(sdf.format(dishonorChequeView.getTransactionDate()));
-        be.setGlcodeId(dishonorChequeView.getBankchargeGlCodeId().getId().toString());
-        return be;
+        bankEntries.setBankAccountId(dishonorChequeView.getInstrumentHeader().getBankAccountId().getId().intValue());
+        bankEntries.setRefNo(dishonorChequeView.getBankReferenceNumber());
+        bankEntries.setTxnAmount(dishonorChequeView.getBankChargesAmt().toString());
+        bankEntries.setType("P");
+        bankEntries.setRemarks(dishonorChequeView.getBankreason());
+        bankEntries.setTxnDate(sdf.format(dishonorChequeView.getTransactionDate()));
+        bankEntries.setGlcodeId(dishonorChequeView.getBankchargeGlCodeId().getId().toString());
+        return bankEntries;
     }
 
     private CVoucherHeader createVoucherHeader(final String type, final String reason) throws ParseException {
@@ -264,9 +264,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
 
     public CVoucherHeader createBankReversalVoucher() throws ParseException, HibernateException, TaskFailedException,
             SQLException {
-        BankEntries be = new BankEntries();
         CVoucherHeader BankVoucher = null;
-        be = createBankEntry();
+        bankEntries = createBankEntry();
         final String narration = "Reversal Bank Charges Entry for receipt number "
                 + dishonorChequeView.getOriginalVoucherHeader().getVoucherNumber() +
                 ", Cheque Number " + dishonorChequeView.getInstrumentHeader().getInstrumentNumber() + " Cheque Dated :"
@@ -290,9 +289,9 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         BankVoucher = createVoucher(BankVoucher, headerDetails, "Bank Entry");
 
         updateInstrumentVoucherReference(Arrays.asList(instrument), BankVoucher);
-        be.setVoucherheaderId(BankVoucher.getId().toString());
-        be.setInstrumentHeaderId(instrument.getId());
-        be.insert();
+        bankEntries.setVoucherheaderId(BankVoucher.getId().toString());
+        bankEntries.setInstrumentHeaderId(instrument.getId());
+        bankEntries.insert();
 
         return BankVoucher;
 
@@ -642,10 +641,9 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                 accountdetails = populateBankChargesAccountDetails();
                 subledgerDetails = new ArrayList<HashMap<String, Object>>();
             }
-            final CreateVoucher cv = new CreateVoucher();
             // TODO from headerDetails accountdetails subledgerDetails from these 3 populate intermediate objects and create
             // voucher at final aproval.
-            voucherHeader = cv.createVoucher(headerDetails, accountdetails, subledgerDetails);
+            voucherHeader = createVoucher.createVoucher(headerDetails, accountdetails, subledgerDetails);
             voucherHeader.getVouchermis().setSourcePath("");
             voucherHeader.setOriginalvcId(null);
         } catch (final HibernateException e) {

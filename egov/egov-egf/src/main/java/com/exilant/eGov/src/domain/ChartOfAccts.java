@@ -99,7 +99,8 @@ public class ChartOfAccts {
     @Autowired
     private EgovMasterDataCaching masterDataCache;
     
-    EGovernCommon cm = new EGovernCommon();
+    private @Autowired EGovernCommon eGovernCommon;
+    
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
             .getDefault());
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
@@ -236,7 +237,6 @@ public class ChartOfAccts {
     @Transactional
     public void insert(final Connection connection) throws SQLException,
     TaskFailedException {
-        new EGovernCommon();
         created = new SimpleDateFormat("dd/mm/yyyy").format(new Date());
         try {
             created = formatter.format(sdf.parse(created));
@@ -324,8 +324,7 @@ public class ChartOfAccts {
 
     public void newUpdate() throws TaskFailedException,
     SQLException {
-        final EGovernCommon commommethods = new EGovernCommon();
-        created = commommethods.getCurrentDate();
+        created = eGovernCommon.getCurrentDate();
         Query pstmt = null;
         try {
             created = formatter.format(sdf.parse(created));

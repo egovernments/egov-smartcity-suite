@@ -47,8 +47,8 @@
 package com.exilant.eGov.src.domain;
 
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
@@ -57,7 +57,6 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
@@ -88,14 +87,10 @@ public class FinancialYear {
     @Transactional
     public void insert() throws SQLException,
     TaskFailedException {
-        final EGovernCommon commommethods = new EGovernCommon();
-        created = commommethods.getCurrentDate();
         try {
-            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-            created = formatter.format(sdf.parse(created));
-            EgovMasterDataCaching.removeFromCache(
-                    "egi-activeFinYr");
+            created = formatter.format(new Date());
+            EgovMasterDataCaching.removeFromCache("egi-activeFinYr");
         } catch (final Exception e) {
             LOGGER
             .error("Exp in insert to financialyear: " + e.getMessage(),
@@ -220,12 +215,10 @@ public class FinancialYear {
 
     public void newUpdate() throws TaskFailedException,
     SQLException {
-        final EGovernCommon commommethods = new EGovernCommon();
-        created = commommethods.getCurrentDate();
         Query pstmt = null;
         try {
-            created = formatter.format(sdf.parse(created));
-        } catch (final ParseException parseExp) {
+            created = formatter.format(new Date());
+        } catch (final Exception parseExp) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(parseExp.getMessage(), parseExp);
         }

@@ -146,6 +146,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public List<CChartOfAccounts> contingentBillGlcodeList = new ArrayList<CChartOfAccounts>();
     public List<BigDecimal> cBillGlcodeIdList = null;
     protected List<Miscbilldetail> miscBillList = null;
+    private @Autowired  EGovernCommon eGovernCommon ;
     private static final String EMPTY_STRING = "";
     private static final String DELIMETER = "~";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving Data";
@@ -168,6 +169,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     List<InstrumentVoucher> instVoucherList;
     private @Autowired EisCommonService eisCommonService;
     private BillsAccountingService billsAccountingService;
+    private @Autowired EgovCommon egovCommon;
     private FundFlowService fundFlowService;
     private ChequeAssignmentService chequeAssignmentService;
     private VoucherService voucherService;
@@ -200,13 +202,12 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getAccountBalance...");
-        final EgovCommon common = new EgovCommon();
-        common.setPersistenceService(persistenceService);
-        common.setFundFlowService(fundFlowService);
-        common.setAppConfigValuesService(appConfigValuesService);
+        egovCommon.setPersistenceService(persistenceService);
+        egovCommon.setFundFlowService(fundFlowService);
+        egovCommon.setAppConfigValuesService(appConfigValuesService);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed getAccountBalance.");
-        return common.getAccountBalance(formatter.parse(voucherDate), Long.valueOf(accountId), amount, paymentId, accGlcodeID);
+        return egovCommon.getAccountBalance(formatter.parse(voucherDate), Long.valueOf(accountId), amount, paymentId, accGlcodeID);
     }
 
     public boolean isChequeNoGenerationAuto()
@@ -244,7 +245,6 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             final Bankaccount bankaccount) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting createPayment...");
-        final CreateVoucher createVoucher = new CreateVoucher();
         final CVoucherHeader voucherHeader = createVoucher
                 .createPreApprovedVoucher(headerdetails, accountcodedetails, subledgerdetails);
         final Paymentheader paymentheader = createPaymentHeader(voucherHeader, bankaccount, parameters);
@@ -729,8 +729,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting updateVoucher...");
-        final CreateVoucher createVoucher = new CreateVoucher();
-        final CVoucherHeader existingVH = (CVoucherHeader) persistenceService.find(" from CVoucherHeader where id=?",
+       final CVoucherHeader existingVH = (CVoucherHeader) persistenceService.find(" from CVoucherHeader where id=?",
                 paymentheader.getVoucherheader().getId());
         createVoucher.deleteVoucherdetailAndGL(existingVH);
         updateVoucherHeader(parameters, existingVH, paymentheader.getVoucherheader());
@@ -754,7 +753,6 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting updateVoucherHeader...");
-        final EGovernCommon eGovernCommon = new EGovernCommon();
         String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         String autoVoucherType = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
         String manualVoucherNumber = "";

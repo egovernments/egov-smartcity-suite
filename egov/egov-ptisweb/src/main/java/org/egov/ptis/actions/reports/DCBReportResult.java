@@ -41,6 +41,7 @@ public class DCBReportResult {
     private BigDecimal clctn_currentVLT = BigDecimal.ZERO;
     private BigDecimal clctn_currentPSCT = BigDecimal.ZERO;
     private String houseNo;
+    private String ownerName;
 
     public String getBoundaryName() {
         return boundaryName;
@@ -388,5 +389,13 @@ public class DCBReportResult {
 
         public void setHouseNo(String houseNo) {
                 this.houseNo = houseNo;
+        }
+
+        public String getOwnerName() {
+            return ownerName;
+        }
+
+        public void setOwnerName(String ownerName) {
+            this.ownerName = ownerName;
         }
 }

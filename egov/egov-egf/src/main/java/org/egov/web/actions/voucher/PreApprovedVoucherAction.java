@@ -129,6 +129,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     protected WorkflowBean workflowBean = new WorkflowBean();
     protected EisCommonService eisCommonService;
+    private @Autowired EgovCommon egovCommon;
     @Autowired
     @Qualifier("preApprovedActionHelper")
     private PreApprovedActionHelper preApprovedActionHelper;
@@ -1022,9 +1023,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         tempMap.put("detailtypeid", detailtype.getId());
         tempMap.put("detailkeyid", detailkeyid);
 
-        final EgovCommon common = new EgovCommon();
-        common.setPersistenceService(persistenceService);
-        final EntityType entityType = common.getEntityType(detailtype, detailkeyid);
+        egovCommon.setPersistenceService(persistenceService);
+        final EntityType entityType = egovCommon.getEntityType(detailtype, detailkeyid);
         if (entityType == null)
         {
             tempMap.put(Constants.DETAILKEY, detailkeyid + " " + Constants.MASTER_DATA_DELETED);

@@ -401,6 +401,12 @@
 			$('.pass-cancel').attr('disabled','disabled');
 			</script>
 		</c:if>
+		<c:if test="${warn_pwd_expire}">
+			<script>
+				var pwdExpireInDays = ${pwd_expire_in_days};
+				bootbox.alert("Your password will expire in "+pwdExpireInDays+" day(s), please update your password.");
+			</script>
+		</c:if>
 		<div class="modal fade favourites" data-backdrop="static">
 			<div class="modal-dialog">
 				<div class="modal-content">

@@ -111,6 +111,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
     private PersistenceService<Miscbilldetail, Long> miscbilldetailService;
     private Map<String, String> modeOfPaymentMap = new LinkedHashMap<String, String>();
     private EgovCommon egovCommon;
+    private @Autowired CreateVoucher createVoucher;
     private Fund fund;
     private Long advanceRequisitionId;
     private String wfitemstate;
@@ -393,8 +394,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
                     subledgerDetails.add(subledgertDetailMap);
                 }
 
-            final CreateVoucher cv = new CreateVoucher();
-            voucherHeader = cv.createPreApprovedVoucher(headerDetails, accountdetails, subledgerDetails);
+            voucherHeader = createVoucher.createPreApprovedVoucher(headerDetails, accountdetails, subledgerDetails);
 
         } catch (final HibernateException e) {
             LOGGER.error(e.getMessage(), e);

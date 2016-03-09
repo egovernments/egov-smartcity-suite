@@ -93,7 +93,8 @@ public class EGovernCommon extends AbstractTask {
 	@Autowired
 	@Qualifier("persistenceService")
 	private PersistenceService persistenceService;
-
+	
+	private @Autowired EGovernCommon eGovernCommon;
 	@Autowired
 	private DBSequenceGenerator dbSequenceGenerator;
 	@Autowired
@@ -107,11 +108,10 @@ public class EGovernCommon extends AbstractTask {
 			final boolean errorData,
 			final boolean gridHasCol, final String prefix) throws TaskFailedException
 	{
-		final EGovernCommon egobj = new EGovernCommon();
-		datacol.addValue("voucherHeader_cgn", egobj.getCGNumber());
+		datacol.addValue("voucherHeader_cgn", eGovernCommon.getCGNumber());
 		if (datacol.getValue("hasSecondCGN").equalsIgnoreCase("true"))
-			datacol.addValue("jv_cgn", egobj.getCGNumber());
-		datacol.addValue("databaseDate", egobj.getCurrentDate());
+			datacol.addValue("jv_cgn", eGovernCommon.getCGNumber());
+		datacol.addValue("databaseDate", eGovernCommon.getCurrentDate());
 	}
 
 	public long getCGNumber()
@@ -175,7 +175,7 @@ public class EGovernCommon extends AbstractTask {
 	 
 
 	 
-
+	@Deprecated
 	public String getCurrentDateTime() throws TaskFailedException
 	{
 		return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());

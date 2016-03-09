@@ -176,7 +176,6 @@
 	<bean id="budgetService" class="org.egov.services.budget.BudgetService"
 		scope="prototype">
 		<property name="eisCommonService" ref="eisCommonService" />
-		<property name="budgetDetailService" ref="budgetDetailService" />
 		<constructor-arg index="0" value="org.egov.model.budget.Budget" />
 	</bean>
 	<bean id="budgetGroupService" class="org.egov.services.budget.BudgetGroupService">
@@ -214,9 +213,7 @@
 		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-	<bean id="mastersService" class="org.egov.masters.services.MastersService"
-		scope="prototype">
-	</bean>
+	
 	<bean id="billsService" class="org.egov.services.bills.BillsService"
 		scope="prototype">
 	</bean>

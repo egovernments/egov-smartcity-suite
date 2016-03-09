@@ -1236,7 +1236,7 @@ public class ContingentBillAction extends BaseBillAction {
     // setters
 
     public String getComments() {
-        if (!BigDecimal.ZERO.equals(billAmount))
+        if (!(BigDecimal.ZERO.compareTo(billAmount)==0))
             return getText("bill.comments", new String[] { billAmount.toPlainString() });
         else
             return "";

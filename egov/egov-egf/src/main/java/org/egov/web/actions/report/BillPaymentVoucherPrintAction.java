@@ -80,6 +80,7 @@ import org.egov.utils.ReportHelper;
 import org.egov.web.actions.voucher.VoucherReport;
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
@@ -120,6 +121,8 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     String bankAccountNumber = "";
     ArrayList<Long> chequeNoList = new ArrayList<Long>();
     ArrayList<String> chequeNosList = new ArrayList<String>();
+    @Autowired
+    private EgovCommon egovCommon;
 
     public Map<String, Object> getParamMap() {
         final Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -413,10 +416,8 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         tempMap.put("detailtype", detailtype.getName());
         tempMap.put("detailtypeid", detailtype.getId());
         tempMap.put("detailkeyid", detailkeyid);
-
-        final EgovCommon common = new EgovCommon();
-        common.setPersistenceService(persistenceService);
-        final EntityType entityType = common.getEntityType(detailtype, detailkeyid);
+        egovCommon.setPersistenceService(persistenceService);
+        final EntityType entityType = egovCommon.getEntityType(detailtype, detailkeyid);
         tempMap.put(Constants.DETAILKEY, entityType.getName());
         tempMap.put(Constants.DETAILCODE, entityType.getCode());
         return tempMap;

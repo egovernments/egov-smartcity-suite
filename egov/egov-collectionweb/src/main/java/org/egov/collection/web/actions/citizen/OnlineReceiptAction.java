@@ -81,6 +81,7 @@ import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.entity.Source;
@@ -315,6 +316,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private Long testReceiptId;
     // TO BE REMOVED ONCE THE TEST URL IS UP
     private String testAuthStatusCode;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     // TO BE REMOVED ONCE THE TEST URL IS UP
     public Long getTestReceiptId() {
@@ -402,7 +405,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             try {
                 final HashSet<BillReceiptInfo> billReceipt = new HashSet<BillReceiptInfo>();
-                billReceipt.add(new BillReceiptInfoImpl(onlinePaymentReceiptHeader));
+                billReceipt.add(new BillReceiptInfoImpl(onlinePaymentReceiptHeader, chartOfAccountsHibernateDAO));
 
                 if (!receiptHeaderService.updateBillingSystem(
                         onlinePaymentReceiptHeader.getService().getCode(),
@@ -517,7 +520,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     throw new ValidationException(errors);
                 }
 
-                billReceipts.add(new BillReceiptInfoImpl(receipts[i]));
+                billReceipts.add(new BillReceiptInfoImpl(receipts[i], chartOfAccountsHibernateDAO));
             }
 
             if (CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED.equals(getStatusCode()[i])

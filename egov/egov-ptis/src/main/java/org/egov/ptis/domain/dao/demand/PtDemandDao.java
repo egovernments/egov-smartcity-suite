@@ -170,7 +170,9 @@ public interface PtDemandDao {
 	 * @return Map.
 	 **/
 	public Map<String, BigDecimal> getDemandCollMap(Property property);
-
+	
+	public Map<String, BigDecimal> getPenaltyDemandCollMap(Property property);
+	
 	public Ptdemand getNonHistoryCurrDmdForProperty(Property property);
 
 	public Ptdemand findById(Integer id, boolean lock);

@@ -116,6 +116,7 @@ public class ContraBTCAction extends BaseVoucherAction {
     private ChequeService chequeService;
     private String showMode;
     private String saveType;
+    private @Autowired CreateVoucher createVoucher;
     @Autowired
 	private ChartOfAccounts chartOfAccounts;
 
@@ -478,9 +479,8 @@ public class ContraBTCAction extends BaseVoucherAction {
     CVoucherHeader createVoucher(final HashMap<String, Object> headerDetails,
             final List<HashMap<String, Object>> subledgerDetails,
             final List<HashMap<String, Object>> accountdetails) {
-        final CreateVoucher cv = new CreateVoucher();
-        return cv
-                .createVoucher(headerDetails, accountdetails, subledgerDetails);
+         
+        return createVoucher.createVoucher(headerDetails, accountdetails, subledgerDetails);
     }
 
     private List<HashMap<String, Object>> populateAccountDetails() {
@@ -557,7 +557,7 @@ public class ContraBTCAction extends BaseVoucherAction {
         final List<HashMap<String, Object>> reversalList = new ArrayList<HashMap<String, Object>>();
         reversalList.add(reversalVoucherMap);
         try {
-            reversalVoucher = new CreateVoucher().reverseVoucher(reversalList);
+            reversalVoucher =  createVoucher.reverseVoucher(reversalList);
         } catch (final ValidationException e) {
             LOGGER.error(e.getMessage(), e);
             addActionError(getText(e.getErrors().get(0).getMessage()));
@@ -653,7 +653,6 @@ public class ContraBTCAction extends BaseVoucherAction {
     }
 
     void createLedgerAndPost(final CVoucherHeader voucher) {
-        final CreateVoucher createVoucher = new CreateVoucher();
         try {
             createVoucher.deleteVoucherdetailAndGL(voucher);
             HibernateUtil.getCurrentSession().flush();
@@ -666,8 +665,8 @@ public class ContraBTCAction extends BaseVoucherAction {
             accountdetails.add(populateDetailMap(bankAccount
                     .getChartofaccounts().getGlcode(), BigDecimal.ZERO,
                     contraBean.getAmount()));
-            final CreateVoucher cv = new CreateVoucher();
-            final List<Transaxtion> transactions = cv.createTransaction(null,
+             
+            final List<Transaxtion> transactions = createVoucher.createTransaction(null,
                     accountdetails, subledgerDetails, voucher);
             HibernateUtil.getCurrentSession().flush();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];

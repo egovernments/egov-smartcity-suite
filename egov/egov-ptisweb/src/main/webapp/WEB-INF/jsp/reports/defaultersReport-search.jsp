@@ -82,7 +82,7 @@
 								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 										name="fromamt" /> :</label>
 								<div class="col-sm-3 add-margin">
-									<s:textfield name="fromDemand" id="fromDemand" class="form-control" maxlength="10" onblur="validNumber(this);checkZero(this,'From Demand');" />
+									<s:textfield name="fromDemand" id="fromDemand" class="form-control" maxlength="10" onblur="validNumber(this);" />
 								</div>
 								
 								<label for="field-1" class="col-sm-2 control-label text-right"><s:text

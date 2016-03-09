@@ -1,0 +1,4 @@
+Insert into eg_roleaction values((select id from eg_role where name='Financial Administrator'),(select id from eg_action where name='Ajax-load Banks'));
+Insert into eg_roleaction values((select id from eg_role where name='Financial Administrator'),(select id from eg_action where name='ajax-common-loadbaccount'));
+Insert into eg_roleaction values((select id from eg_role where name='Financial Administrator'),(select id from eg_action where name='accountCheque-manipulateCheques'));
+Insert into eg_roleaction values((select id from eg_role where name='Financial Administrator'),(select id from eg_action where name='AccountChequeSave'));

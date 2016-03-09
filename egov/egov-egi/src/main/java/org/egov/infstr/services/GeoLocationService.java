@@ -50,7 +50,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts2.ServletActionContext;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -160,7 +159,7 @@ public class GeoLocationService {
 	 *		      (5, "008B00");
 	 */
 	
-	public static void setKmlDataToCacheAndRequest(Map<String, BigDecimal>  wardWiseData,Map<Integer, String> colorCodes ,String kmlPath)
+	public static void setKmlDataToCacheAndRequest(Map<String, BigDecimal>  wardWiseData,Map<Integer, String> colorCodes ,String kmlPath, HttpServletRequest request)
 	{
 		
 		LOGGER.debug("GeoLocationService | setKmlDataToCacheAndRequest | Start");
@@ -185,8 +184,6 @@ public class GeoLocationService {
 
 		geoKmlInfo.setWardWiseColor(wardWiseKmlColorStyle);
 		geoKmlInfo.setColorCodes(convertToKmlColor(colorCodes));
-		
-		HttpServletRequest request = ServletActionContext.getRequest();
 		
 		request.setAttribute(GeoLocationConstants.KML_DATA_MODEL_JBOSS_CACHE_KEY_NAME , putKmlDataToCache(geoKmlInfo));
 		request.setAttribute(GeoLocationConstants.COLOR_CODE_AND_RANGE_MAP_NAME , getColorRange(wardDataMinAmount,wardDataMaxAmount,

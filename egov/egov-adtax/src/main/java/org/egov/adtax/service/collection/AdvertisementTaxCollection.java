@@ -403,7 +403,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
                     .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
 
                 advertisementPermitDetailService.updateStateTransition(advertisementPermitDetail, Long.valueOf(0),
-                        AdvertisementTaxConstants.COLLECTION_REMARKS, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE,
+                        AdvertisementTaxConstants.COLLECTION_REMARKS, advertisementPermitDetail.getPreviousapplicationid()!=null?AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE:  AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE,
                         AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON);
                 advertisementPermitDetailRepository.saveAndFlush(advertisementPermitDetail);
             }

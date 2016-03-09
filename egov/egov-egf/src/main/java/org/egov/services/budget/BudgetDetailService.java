@@ -39,6 +39,10 @@
  ******************************************************************************/
 package org.egov.services.budget;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,17 +53,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
@@ -68,42 +77,83 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.budget.BudgetUpload;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
+import org.egov.utils.BudgetAccountType;
+import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> {
     protected EisCommonService eisCommonService;
     protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
     private ScriptService scriptExecutionService;
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    PersistenceService persistenceService;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+
+    @Autowired
+    @Qualifier("budgetService")
+    private BudgetService budgetService;
+
+    @Autowired
+    @Qualifier("budgetGroupService")
+    private BudgetGroupService budgetGroupService;
+
+    @Autowired
+    private SequenceNumberGenerator sequenceNumberGenerator;
+
+    @Autowired
+    @Qualifier("chartOfAccountsService")
+    private ChartOfAccountsService chartOfAccountsService;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
+
+    @Autowired
+    private DepartmentService departmentService;
+
     private static final Logger LOGGER = Logger.getLogger(BudgetDetailService.class);
-    
+    private static final String BUDGET_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'Budget','NEW',1,current_date,current_date,1,current_date,1,1,0)";
+    private static final String BUDGETDETAIL_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'BudgetDetail','NEW',1,current_date,current_date,1,current_date,1,1,0)";
+    private static final String BUDGETGROUP_INSERT = "insert into egf_budgetgroup (ID,NAME,MINCODE,MAXCODE,DESCRIPTION,UPDATEDTIMESTAMP,ACCOUNTTYPE,BUDGETINGTYPE,ISACTIVE) values (:id,:name,:mincode,:maxcode,:description,:updatedtimestamp,:accounttype,:budgetingtype,:isactive)";
+
     public BudgetDetailService(final Class<BudgetDetail> budgetDetail) {
         this.type = budgetDetail;
     }
+
+    public Long getCountByBudget(Long budgetId) {
+        return ((BigInteger) persistenceService.getSession()
+                .createSQLQuery("select count(*) from egf_budgetdetail where budget = " + budgetId).uniqueResult()).longValue();
+    }
+
     public boolean canViewApprovedAmount(final PersistenceService persistenceService, final Budget budget) {
         final Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "budget.report.view.access").get(0);
         final ScriptContext context = ScriptService.createContext("wfItem", budget, "eisCommonServiceBean", eisCommonService,
@@ -492,13 +542,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final StringBuffer miscQuery = getMiscQuery(mandatoryFields, "vmis", "gl", "vh");
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-        .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'9999999999') end "
-                +
-                "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end   as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
-                +
-                "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-                +
-                "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
+                .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'9999999999') end "
+                        +
+                        "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end   as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
+                        +
+                        "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
+                        +
+                        "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
         final String voucherstatusExclude = list.get(0).getValue();
         StringBuffer query = new StringBuffer();
         query = query
@@ -584,13 +634,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-        .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end "
-                +
-                "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
-                +
-                "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-                +
-                "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
+                .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end "
+                        +
+                        "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
+                        +
+                        "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
+                        +
+                        "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
         final String voucherstatusExclude = list.get(0).getValue();
         StringBuffer query = new StringBuffer();
         /*
@@ -681,13 +731,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-        .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end "
-                +
-                "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
-                +
-                "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-                +
-                "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
+                .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end "
+                        +
+                        "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
+                        +
+                        "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
+                        +
+                        "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
         final String voucherstatusExclude = list.get(0).getValue();
         StringBuffer query = new StringBuffer();
         /*
@@ -2084,13 +2134,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             throw new ValidationException("", "exclude_status_forbudget_actual is not defined in AppConfig");
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-        .append(" (select bg1.id as id,bg1.accounttype as accounttype ,case when c1.glcode is  NULL then -1 else to_number(c1.glcode,'999999999') end "
-                +
-                "as mincode,case when c2.glcode is null then  '999999999' else c2.glcode end as maxcode,case when c3.glcode is null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
-                +
-                "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-                +
-                "c2.id=bg1.maxcode left outer join chartofaccounts  c3 on c3.id=bg1.majorcode )  bg ");
+                .append(" (select bg1.id as id,bg1.accounttype as accounttype ,case when c1.glcode is  NULL then -1 else to_number(c1.glcode,'999999999') end "
+                        +
+                        "as mincode,case when c2.glcode is null then  '999999999' else c2.glcode end as maxcode,case when c3.glcode is null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
+                        +
+                        "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
+                        +
+                        "c2.id=bg1.maxcode left outer join chartofaccounts  c3 on c3.id=bg1.majorcode )  bg ");
         final String voucherstatusExclude = list.get(0).getValue();
         StringBuffer query = new StringBuffer();
         query = query
@@ -2231,7 +2281,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         StringBuffer query = new StringBuffer();
         query = query
                 .append(
-                        "select bd.id as bud,SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)   as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                "select bd.id as bud,SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)   as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         +
                         "egf_budgetgroup bg,voucherheader vh, vouchermis vmis where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
@@ -2268,8 +2318,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + ",'dd/MM/yyyy') "
                         + miscQuery
                         + " and ((bdetail1.glcodeid between bg1.mincode  " +
-                        "and bg1.maxcode ) or bdetail1.glcodeid=bg1.majorcode  ) group by bd1.id" );
-                       
+                        "and bg1.maxcode ) or bdetail1.glcodeid=bg1.majorcode  ) group by bd1.id");
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Main Query :" + query);
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
@@ -2346,6 +2396,467 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 consolidateBudget = Boolean.FALSE;
 
         return consolidateBudget;
+    }
+
+    @Transactional
+    public List<BudgetUpload> loadBudget(List<BudgetUpload> budgetUploadList, CFinancialYear reFYear,
+            CFinancialYear beFYear) {
+
+        try {
+
+            Budget budget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
+            if (budget == null) {
+                Set<String> deptSet = new TreeSet<String>();
+                List<String> deptList = new ArrayList<String>();
+                List<Department> departments = departmentService.getAllDepartments();
+
+                for (Department dept : departments)
+                    deptSet.add(dept.getCode());
+
+                deptList.addAll(deptSet);
+                EgwStatus budgetStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Created");
+                createRootBudget("RE", beFYear, reFYear, deptList, budgetStatus);
+
+                createRootBudget("BE", beFYear, reFYear, deptList, budgetStatus);
+
+            }
+            EgwStatus budgetDetailStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
+
+            budgetUploadList = createBudgetDetails("RE", budgetUploadList, reFYear, budgetDetailStatus);
+
+            budgetUploadList = createBudgetDetails("BE", budgetUploadList, beFYear, budgetDetailStatus);
+
+        } catch (SQLException e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+        return budgetUploadList;
+    }
+
+    @Transactional
+    public List<BudgetUpload> createBudgetDetails(String budgetType, List<BudgetUpload> budgetUploadList, CFinancialYear fyear,
+            EgwStatus status) {
+        List<BudgetUpload> tempList = new ArrayList<BudgetUpload>();
+        try {
+
+            for (BudgetUpload budgetUpload : budgetUploadList) {
+                BudgetDetail budgetDetail = new BudgetDetail();
+                BudgetDetail temp = getBudgetDetail(budgetUpload.getFund().getId(), budgetUpload.getFunction().getId(),
+                        budgetUpload
+                                .getDept()
+                                .getId(), budgetUpload.getCoa().getId(), fyear);
+                if (temp != null) {
+                    if (temp.getStatus().getCode().equalsIgnoreCase("Created")) {
+                        BigDecimal amount;
+                        if (budgetType.equalsIgnoreCase("RE"))
+                            amount = budgetUpload.getReAmount();
+                        else
+                            amount = budgetUpload.getBeAmount();
+
+                        if (amount.compareTo(temp.getApprovedAmount()) != 0) {
+                            temp.setApprovedAmount(amount);
+                            temp.setOriginalAmount(amount);
+                            temp.setBudgetAvailable(temp.getApprovedAmount().multiply(temp.getPlanningPercent())
+                                    .divide(new BigDecimal(String
+                                            .valueOf(100))));
+
+                            applyAuditing(temp);
+                            budgetDetail = update(temp);
+                            budgetUpload.setFinalStatus("Success");
+                            tempList.add(budgetUpload);
+                        } else {
+                            budgetUpload.setFinalStatus("Already budget is defined for this combination");
+                            tempList.add(budgetUpload);
+                        }
+                    } else {
+                        budgetUpload.setFinalStatus("Already budget is defined for this combination and Approved");
+                        tempList.add(budgetUpload);
+                    }
+
+                } else if (temp == null) {
+
+                    budgetDetail.setFund(budgetUpload.getFund());
+                    budgetDetail.setFunction(budgetUpload.getFunction());
+                    budgetDetail.setExecutingDepartment(budgetUpload.getDept());
+                    budgetDetail.setAnticipatoryAmount(BigDecimal.ZERO);
+                    budgetDetail.setPlanningPercent(BigDecimal.valueOf(budgetUpload.getPlanningPercentage()));
+                    if (budgetType.equalsIgnoreCase("RE")) {
+                        budgetDetail.setOriginalAmount(budgetUpload.getReAmount());
+                        budgetDetail.setApprovedAmount(budgetUpload.getReAmount());
+                        budgetDetail.setBudgetAvailable(budgetUpload.getReAmount().multiply(budgetDetail.getPlanningPercent())
+                                .divide(new BigDecimal(String
+                                        .valueOf(100))));
+
+                    } else {
+                        budgetDetail.setOriginalAmount(budgetUpload.getBeAmount());
+                        budgetDetail.setApprovedAmount(budgetUpload.getBeAmount());
+                        budgetDetail.setBudgetAvailable(budgetUpload.getBeAmount().multiply(budgetDetail.getPlanningPercent())
+                                .divide(new BigDecimal(String
+                                        .valueOf(100))));
+                    }
+                    budgetDetail.setBudgetGroup(createBudgetGroup(budgetUpload.getCoa()));
+                    budgetDetail.setBudget(budgetService.getBudget(budgetUpload.getBudgetHead(), budgetUpload.getDeptCode(),
+                            budgetType,
+                            fyear.getFinYearRange()));
+                    budgetDetail.setMaterializedPath(getmaterializedpathforbudget(budgetDetail.getBudget()));
+                    budgetDetail.setStatus(status);
+                    // budgetDetail = setBudgetDetailStatus(budgetDetail);
+                    applyAuditing(budgetDetail);
+                    persist(budgetDetail);
+                    budgetUpload.setFinalStatus("Success");
+                    tempList.add(budgetUpload);
+                }
+            }
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+        return tempList;
+    }
+
+    @Transactional
+    public BudgetDetail setBudgetDetailStatus(BudgetDetail budgetDetail) {
+        Long stateId;
+        Serializable sequenceNumber = null;
+        State budgetDetailState = null;
+        try {
+            sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
+        } catch (final SQLGrammarException e) {
+        }
+        stateId = Long.valueOf(sequenceNumber.toString());
+
+        persistenceService
+                .getSession()
+                .createSQLQuery(BUDGETDETAIL_STATES_INSERT).setLong("stateId", stateId)
+                .executeUpdate();
+
+        budgetDetailState = (State) persistenceService.find("from State where id = ?", stateId);
+        budgetDetail.setWfState(budgetDetailState);
+        return budgetDetail;
+    }
+
+    private String getmaterializedpathforbudget(Budget budget) {
+
+        return budget.getMaterializedPath() + "." + (getCountByBudget(budget.getId()) + 1);
+    }
+
+    @Transactional
+    public BudgetGroup createBudgetGroup(CChartOfAccounts coa) {
+        BudgetGroup budgetGroup = budgetGroupService.getBudgetGroup(coa.getId());
+        try {
+            Long bgroupId = null;
+            Serializable sequenceNumber = null;
+            try {
+                sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_egf_budgetgroup");
+            } catch (final SQLGrammarException e) {
+            }
+
+            bgroupId = Long.valueOf(sequenceNumber.toString());
+            /*
+             * if (budgetGroup == null) { budgetGroup = new BudgetGroup(); budgetGroup.setName(coa.getGlcode() + "-" +
+             * coa.getName()); budgetGroup.setDescription(coa.getName()); budgetGroup.setIsActive(true); if
+             * (coa.getType().compareTo('E') == 0) { budgetGroup.setAccountType(BudgetAccountType.REVENUE_EXPENDITURE);
+             * budgetGroup.setBudgetingType(BudgetingType.DEBIT); } else if (coa.getType().compareTo('A') == 0) {
+             * budgetGroup.setAccountType(BudgetAccountType.CAPITAL_EXPENDITURE);
+             * budgetGroup.setBudgetingType(BudgetingType.DEBIT); } else if (coa.getType().compareTo('L') == 0) {
+             * budgetGroup.setAccountType(BudgetAccountType.CAPITAL_RECEIPTS); budgetGroup.setBudgetingType(BudgetingType.CREDIT);
+             * } else if (coa.getType().compareTo('I') == 0) { budgetGroup.setAccountType(BudgetAccountType.REVENUE_RECEIPTS);
+             * budgetGroup.setBudgetingType(BudgetingType.CREDIT); } if (coa.getClassification().compareTo(1l) == 0 ||
+             * coa.getClassification().compareTo(2l) == 0 || coa.getClassification().compareTo(4l) == 0) {
+             * budgetGroup.setMinCode(coa); budgetGroup.setMaxCode(coa); } budgetGroup.setMajorCode(null);
+             * budgetGroupService.applyAuditing(budgetGroup); budgetGroup = budgetGroupService.persist(budgetGroup); if
+             * (coa.getType().compareTo('E') == 0 || coa.getType().compareTo('A') == 0) { coa.setBudgetCheckReq(true); coa =
+             * chartOfAccountsService.update(coa); } }
+             */
+            if (budgetGroup == null) {
+                Query query = persistenceService
+                        .getSession()
+                        .createSQLQuery(BUDGETGROUP_INSERT);
+                query.setLong("id", bgroupId);
+                query.setString("name", coa.getGlcode() + "-" + coa.getName());
+                query.setString("description", coa.getName());
+                query.setBoolean("isactive", true);
+
+                if (coa.getType().compareTo('E') == 0) {
+                    query.setString("accounttype", BudgetAccountType.REVENUE_EXPENDITURE.toString());
+                    query.setString("budgetingtype", BudgetingType.DEBIT.toString());
+                }
+                else if (coa.getType().compareTo('A') == 0) {
+                    query.setString("accounttype", BudgetAccountType.CAPITAL_EXPENDITURE.toString());
+                    query.setString("budgetingtype", BudgetingType.DEBIT.toString());
+                } else if (coa.getType().compareTo('L') == 0) {
+                    query.setString("accounttype", BudgetAccountType.CAPITAL_RECEIPTS.toString());
+                    query.setString("budgetingtype", BudgetingType.CREDIT.toString());
+                } else if (coa.getType().compareTo('I') == 0) {
+                    query.setString("accounttype", BudgetAccountType.REVENUE_RECEIPTS.toString());
+                    query.setString("budgetingtype", BudgetingType.CREDIT.toString());
+                }
+
+                if (coa.getClassification().compareTo(1l) == 0 || coa.getClassification().compareTo(2l) == 0
+                        || coa.getClassification().compareTo(4l) == 0) {
+                    query.setLong("mincode", coa.getId());
+                    query.setLong("maxcode", coa.getId());
+                } else
+                {
+                    query.setLong("mincode", (Long) null);
+                    query.setLong("maxcode", (Long) null);
+                }
+                query.setDate("updatedtimestamp", new Date());
+                query.executeUpdate();
+                budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id = ?", bgroupId);
+                if (coa.getType().compareTo('E') == 0 || coa.getType().compareTo('A') == 0) {
+                    coa.setBudgetCheckReq(true);
+                    coa = chartOfAccountsService.update(coa);
+                }
+            }
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+        return budgetGroup;
+    }
+
+    @Transactional
+    public void createRootBudget(String budgetType, CFinancialYear beFYear, CFinancialYear reFYear,
+            List<String> deptList, EgwStatus status)
+            throws SQLException {
+        String budgetName, budgetDes;
+        CFinancialYear budgetFinancialYear;
+        String rootmaterial;
+        Budget budget = new Budget();
+
+        try {
+            if (budgetType.equalsIgnoreCase("BE")) {
+                budgetName = budgetType + "-" + beFYear.getFinYearRange();
+                budgetDes = "Budget - " + budgetType + " for the year " + beFYear.getFinYearRange();
+                budgetFinancialYear = beFYear;
+            } else {
+                budgetName = budgetType + "-" + reFYear.getFinYearRange();
+                budgetDes = "Budget - " + budgetType + " for the year " + reFYear.getFinYearRange();
+                budgetFinancialYear = reFYear;
+            }
+            Query query = persistenceService.getSession().createSQLQuery(
+                    "select count(*)+1 from egf_budget where parent is null");
+
+            rootmaterial = query.uniqueResult().toString();
+
+            if (budgetType.equalsIgnoreCase("BE")) {
+                Budget refBudget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
+                budget.setName(budgetName);
+                budget.setDescription(budgetDes);
+                budget.setFinancialYear(budgetFinancialYear);
+                budget.setIsbere(budgetType);
+                budget.setMaterializedPath(rootmaterial);
+                budget.setReferenceBudget(refBudget);
+                budgetService.applyAuditing(budget);
+                // budget = setBudgetState(budget);
+                budget.setStatus(status);
+                budget = budgetService.persist(budget);
+            } else {
+                budget.setName(budgetName);
+                budget.setDescription(budgetDes);
+                budget.setFinancialYear(budgetFinancialYear);
+                budget.setIsbere(budgetType);
+                budget.setMaterializedPath(rootmaterial);
+                budgetService.applyAuditing(budget);
+                // budget = setBudgetState(budget);
+                budget.setStatus(status);
+                budget = budgetService.persist(budget);
+            }
+
+            createCapitalOrRevenueBudget(budget, "Capital", rootmaterial + ".1", budgetType, beFYear, reFYear, deptList,
+                    status);
+
+            createCapitalOrRevenueBudget(budget, "Revenue", rootmaterial + ".2", budgetType, beFYear, reFYear, deptList,
+                    status);
+
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+    }
+
+    @Transactional
+    public Budget setBudgetState(Budget budget) {
+        State budgetState;
+        Serializable sequenceNumber = null;
+        Long stateId;
+        try {
+            sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
+            stateId = Long.valueOf(sequenceNumber.toString());
+        } catch (final SQLGrammarException e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+        persistenceService
+                .getSession()
+                .createSQLQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
+                .executeUpdate();
+        budgetState = (State) persistenceService.find("from State where id = ?", stateId);
+        budget.setWfState(budgetState);
+        return budget;
+    }
+
+    @Transactional
+    public void createCapitalOrRevenueBudget(Budget parent, String capitalOrRevenue, String rootmaterial,
+            String budgetType, CFinancialYear beFYear, CFinancialYear reFYear, List<String> deptList, EgwStatus status)
+            throws SQLException {
+        String budgetName, budgetDes;
+        CFinancialYear budgetFinancialYear;
+        Budget budget = new Budget();
+        try {
+            if (budgetType.equalsIgnoreCase("BE")) {
+                budgetName = capitalOrRevenue + "-" + budgetType + "-" + beFYear.getFinYearRange();
+                budgetDes = capitalOrRevenue + " Budget - " + budgetType + " for the year "
+                        + beFYear.getFinYearRange();
+                budgetFinancialYear = beFYear;
+            } else {
+                budgetName = capitalOrRevenue + "-" + budgetType + "-" + reFYear.getFinYearRange();
+                budgetDes = capitalOrRevenue + " Budget - " + budgetType + " for the year "
+                        + reFYear.getFinYearRange();
+                budgetFinancialYear = reFYear;
+            }
+
+            if (budgetType.equalsIgnoreCase("BE")) {
+                Budget refBudget = budgetService.getByName(capitalOrRevenue + "-RE-"
+                        + reFYear.getFinYearRange());
+                budget.setName(budgetName);
+                budget.setDescription(budgetDes);
+                budget.setFinancialYear(budgetFinancialYear);
+                // budget = setBudgetState(refBudget);
+                budget.setStatus(status);
+                budget.setIsbere(budgetType);
+                budget.setMaterializedPath(rootmaterial);
+                budget.setReferenceBudget(refBudget);
+                budget.setParent(parent);
+                budgetService.applyAuditing(budget);
+                budget = budgetService.persist(budget);
+            } else {
+                budget.setName(budgetName);
+                budget.setDescription(budgetDes);
+                budget.setFinancialYear(budgetFinancialYear);
+                // budget = setBudgetState(refBudget);
+                budget.setStatus(status);
+                budget.setIsbere(budgetType);
+                budget.setMaterializedPath(rootmaterial);
+                budget.setParent(parent);
+                budgetService.applyAuditing(budget);
+                budget = budgetService.persist(budget);
+            }
+
+            createDeptBudgetHeads(budget, capitalOrRevenue, budgetType, beFYear, reFYear, capitalOrRevenue.substring(0, 3),
+                    deptList, status);
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+    }
+
+    @Transactional
+    public void createDeptBudgetHeads(Budget parent, String capitalOrRevenue, String budgetType,
+            CFinancialYear beFYear, CFinancialYear reFYear, String revOrCap, List<String> deptList, EgwStatus status)
+            throws SQLException {
+        String budgetName, budgetDes, rootmaterial;
+        CFinancialYear budgetFinancialYear;
+        rootmaterial = parent.getMaterializedPath() + ".";
+        String materialPath = rootmaterial;
+        Serializable sequenceNumber = null;
+        try {
+            Query query = persistenceService.getSession().createSQLQuery(
+                    "select count(*)+1 from egf_budget c,egf_budget p where c.parent = p.id and p.name = :parentName")
+                    .setString("parentName", parent.getName());
+
+            String count = query.uniqueResult().toString();
+            Integer capOrRevCount = Integer.valueOf(count);
+            for (String deptCode : deptList) {
+                Budget budget = new Budget();
+
+                if (budgetType.equalsIgnoreCase("BE")) {
+                    budgetName = deptCode + "-" + budgetType + "-" + revOrCap + "-" + beFYear.getFinYearRange();
+                    budgetDes = departmentService.getDepartmentByCode(deptCode).getName() + " " + budgetType + " "
+                            + capitalOrRevenue + "Budget for the year " + beFYear.getFinYearRange();
+                    budgetFinancialYear = beFYear;
+                } else {
+                    budgetName = deptCode + "-" + budgetType + "-" + revOrCap + "-" + reFYear.getFinYearRange();
+                    budgetDes = departmentService.getDepartmentByCode(deptCode).getName() + " " + budgetType + " "
+                            + capitalOrRevenue + "Budget for the year " + reFYear.getFinYearRange();
+                    budgetFinancialYear = reFYear;
+                }
+                if (budgetService.getByName(budgetName) == null) {
+                    materialPath = rootmaterial + capOrRevCount++;
+
+                    if (budgetType.equalsIgnoreCase("BE")) {
+                        Budget refBudget = budgetService
+                                .getByName(deptCode + "-RE-" + revOrCap + "-" + reFYear.getFinYearRange());
+                        budget.setName(budgetName);
+                        budget.setDescription(budgetDes);
+                        budget.setFinancialYear(budgetFinancialYear);
+                        // budget = setBudgetState(budget);
+                        budget.setStatus(status);
+                        budget.setIsbere(budgetType);
+                        budget.setMaterializedPath(materialPath);
+                        budget.setReferenceBudget(refBudget);
+                        budget.setParent(parent);
+                        budgetService.applyAuditing(budget);
+                        budget = budgetService.persist(budget);
+                    } else {
+                        budget.setName(budgetName);
+                        budget.setDescription(budgetDes);
+                        budget.setFinancialYear(budgetFinancialYear);
+                        // budget = setBudgetState(budget);
+                        budget.setStatus(status);
+                        budget.setIsbere(budgetType);
+                        budget.setMaterializedPath(materialPath);
+                        budget.setParent(parent);
+                        budgetService.applyAuditing(budget);
+                        budget = budgetService.persist(budget);
+                    }
+                }
+            }
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+    }
+
+    public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId, final Long glCodeId,
+            final CFinancialYear fYear) {
+        return find(
+                "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.maxCode.id = ? and bd.budget.financialYear.id = ?",
+                fundId, functionId, deptId, glCodeId, fYear.getId());
     }
 
 }

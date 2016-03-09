@@ -122,7 +122,12 @@ function loadingReport()
 							  { "data" : "wardName", "title": "Revenue Ward"},
 							  { "data" : "houseNo", "title": "Door No"},
 							  { "data" : "locality", "title": "Locality"},
-							  { "data" : "mobileNumber", "title": "Mobile Number"},
+							  { 
+								  "data" : "mobileNumber", "title": "Mobile Number",
+								  "render" : function(data, type, row) {
+									  return (!data || parseInt(data)==0? "NA" : data);
+								  }
+							  },
 							  { "data" : "duePeriodFrom", "title": "Due Period From"},
 							  { "data" : "arrearsDue", "title": "Arears Amount"},
 							  { "data" : "currentDue", "title": "Current Amount"},

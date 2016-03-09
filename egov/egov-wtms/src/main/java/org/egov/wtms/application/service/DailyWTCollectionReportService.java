@@ -132,7 +132,7 @@ public class DailyWTCollectionReportService {
         query.setDate("fromDate", new DateTime(fromDate).withTimeAtStartOfDay().toDate());
         query.setDate("toDate", new DateTime(toDate).plusDays(1).toDate());
         if (StringUtils.isNotBlank(collectionMode))
-            query.setLong("mode", Long.valueOf(collectionMode));
+            query.setString("mode", collectionMode);
         if (StringUtils.isNotBlank(collectionOperator))
             query.setLong("operator", Long.valueOf(collectionOperator));
         if (StringUtils.isNotBlank(status))
@@ -236,6 +236,7 @@ public class DailyWTCollectionReportService {
         collectionModeMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
         collectionModeMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
         collectionModeMap.put(Source.SOFTTECH.toString(), Source.SOFTTECH.toString());
+        collectionModeMap.put(Source.SYSTEM.toString(), Source.SYSTEM.toString());
         return collectionModeMap;
     }
 }

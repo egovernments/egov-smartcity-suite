@@ -47,7 +47,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpUtils;
 
-import org.apache.struts2.ServletActionContext;
 import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.model.DeathRegistration;
 import org.egov.bnd.model.NonAvailability;
@@ -193,7 +192,7 @@ public class GenerateCertificateService {
             final String roleName) {
         final HashMap<String, Object> registrationMapObject = new HashMap<String, Object>();
 
-        final HttpServletRequest request = ServletActionContext.getRequest();
+        final HttpServletRequest request = null; //FIX ME : ServletActionContext outside Action class, which does not work outside struts2 context //ServletActionContext.getRequest();
 
         if (nonAvailability != null && nonAvailability.getCitizenName() != null
                 && !"".equals(nonAvailability.getCitizenName()))
@@ -286,7 +285,7 @@ public class GenerateCertificateService {
             final String roleName) {
         final HashMap<String, Object> registrationMapObject = new HashMap<String, Object>();
 
-        final HttpServletRequest request = ServletActionContext.getRequest();
+        final HttpServletRequest request = null;//ServletActionContext.getRequest();//FIX ME : ServletActionContext outside Action class, which does not work outside struts2 context
 
         // TODO: view birth record should be given
         final StringBuffer urlPatter = buildUrlPatterForBirthCertificate(birthRegistration, request);
@@ -433,7 +432,7 @@ public class GenerateCertificateService {
             final String roleName) {
         final HashMap<String, Object> registrationMapObject = new HashMap<String, Object>();
 
-        final HttpServletRequest request = ServletActionContext.getRequest();
+        final HttpServletRequest request = null /*ServletActionContext.getRequest()*/;//FIX ME : ServletActionContext outside Action class, which does not work outside struts2 context
 
         final StringBuffer urlPatter = buildUrlPatterForDeathCertificate(deathRegistration, request);
         registrationMapObject.put("URL", urlPatter.toString());

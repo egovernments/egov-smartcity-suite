@@ -40,12 +40,22 @@
 package org.egov.dao.budget;
 
 import org.egov.infstr.dao.GenericHibernateDAO;
+import org.egov.model.budget.BudgetUsage;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+
+@Transactional(readOnly = true)
+@Repository
 public class BudgetUsageHibernateDAO extends GenericHibernateDAO implements BudgetUsageDAO {
 
-    public BudgetUsageHibernateDAO(final Class persistentClass, final Session session) {
-        super(persistentClass, session);
+    public BudgetUsageHibernateDAO(final Session session) {
+        super(BudgetUsage.class, session);
+    }
+    public BudgetUsageHibernateDAO()
+    {
+        super(BudgetUsage.class,null);
     }
 
 }

@@ -46,7 +46,7 @@
 <head>
 	<title><s:text name='dcbreport.search' /></title>
 </head>
-<body>
+<body onload="setDefaultCourtCaseValue();">
 	<div id="dcbError" class="errorstyle" style="display:none;"></div>
 	<div class="row">
 		<div class="col-md-12">
@@ -62,15 +62,32 @@
 						<s:hidden id="boundaryId" name="boundaryId" value="%{boundaryId}"/> 
 						<s:hidden id="selectedModeBndry" name="selectedModeBndry" value="%{selectedModeBndry}"/> 
 							<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label text-right"><s:text
+								<label class="col-sm-3 control-label text-right"><s:text
 										name="Ward" /> :</label>
-								<div class="col-sm-6 add-margin">
+								<div class="col-sm-3 add-margin" style="margin-bottom:15px;">
 									<s:select headerKey="-1"
 										headerValue="%{getText('default.select')}" name="wardId"
 										id="wardId" listKey="key" listValue="value"
 										list="wardBndryMap" cssClass="form-control" value="%{wardId}" />
 								</div>
+								
+								<label class="col-sm-2 control-label text-right"><s:text
+										name="ownership.type" /> :</label>
+								<div class="col-sm-3 add-margin" style="margin-bottom:15px;">
+									<s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypes" multiple="true"
+										id="propTypes" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{propTypes}"
+										cssClass="form-control"/> 
+								</div>
 							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"><s:text
+										name="dcbReport.courtCase.lbl" /> :</label>
+								<div class="col-sm-3 add-margin" style="margin-bottom:15px;">
+									<s:checkbox name="courtCase" id="courtCase" value="%{courtCase}" onclick="checkCourtCase(this);"/>
+								</div>
+							</div>
+							
 						</div>
 					</div>
 				</s:form>
@@ -92,13 +109,14 @@
 						<thead>
                             <tr>
                              <th rowspan="2">Name</th>
-                             <th colspan="8">Demand</th>
-                             <th colspan="8">Collection</th>
+                             <th rowspan="2">Door No</th>
+							 <th rowspan="2">Owner Name</th>
+                             <th colspan="7">Demand</th>
+                             <th colspan="7">Collection</th>
                              <th colspan="5">Balance</th>
                             </tr>
 
 							<tr>
-							    <th>Door No</th>
 								<th>Arrear
 									Property Tax</th>
 								<th>Penalty
@@ -147,6 +165,7 @@
 						 <tfoot id="report-footer">
 							<tr>
 								<td>Total</td>
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>

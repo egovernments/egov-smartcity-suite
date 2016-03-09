@@ -7,14 +7,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author manoranjan
@@ -33,6 +32,9 @@ public class ServiceSubledgerInfo {
 	private ServiceAccountDetails serviceAccountDetail;
 	
 	private EntityType entity;
+	
+	@Autowired
+	private ApplicationContext context;
 
 	/**
 	 * @return the detailType
@@ -128,8 +130,7 @@ public class ServiceSubledgerInfo {
 				// getting the entity type service.
 				String detailTypeName = service.getSimpleName();
 				String detailTypeService =  detailTypeName.substring(0,1).toLowerCase()+detailTypeName.substring(1)+"Service";
-				WebApplicationContext wac= WebApplicationContextUtils.getWebApplicationContext(ServletActionContext.getServletContext());
-				PersistenceService entityPersistenceService=(PersistenceService)wac.getBean(detailTypeService);
+				PersistenceService entityPersistenceService=(PersistenceService)context.getBean(detailTypeService);
 				String dataType = "";
 				// required to know data type of the id of the detail  type object.
 				java.lang.reflect.Method method = service.getMethod("getId");

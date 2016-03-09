@@ -193,4 +193,8 @@ public class ApplicationProperties {
     public boolean statewideMigrationRequired() {
         return environment.getProperty("statewide.migration.required", Boolean.class, Boolean.FALSE);
     }
+
+    public Integer getBatchUpdateSize() {
+        return environment.getProperty("hibernate.jdbc.batch_size", Integer.class);
+    }
 }

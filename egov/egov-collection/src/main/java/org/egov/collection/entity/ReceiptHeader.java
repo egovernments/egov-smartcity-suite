@@ -48,20 +48,17 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.ServiceLoader;
 import java.util.Set;
 
 import javax.validation.constraints.Size;
 
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.utils.FinancialsUtil;
-import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.ServiceDetails;
-import org.egov.infra.admin.master.entity.Location;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -121,6 +118,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
     private String source;
+    
 
     public ReceiptHeader() {
     }
@@ -270,23 +268,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
         this.location = location;
     }
 
-    /**
-     * Returns total amount of the receipt
-     *
-     * @return total amount of the receipt
-     */
-    public BigDecimal getAmount() {
-        BigDecimal totalAmount = BigDecimal.valueOf(0);
-        final List<CChartOfAccounts> bankCOAList = FinancialsUtil.getBankChartofAccountCodeList();
-        for (final ReceiptDetail detail : receiptDetails)
-            if (!FinancialsUtil.isRevenueAccountHead(detail.getAccounthead(), bankCOAList)) {
-                totalAmount = totalAmount.add(detail.getCramount());
-                totalAmount = totalAmount.subtract(detail.getDramount());
-            }
-        ServiceLoader.loadInstalled(FinancialsUtil.class);
-        return totalAmount;
-    }
-
+    
     /**
      * Returns instrument type of receipts associated with the receipt. Since multiple modes of payment for a receipt are not
      * allowed (as of now), this method will return the type of the first instrument associated with this receipt.

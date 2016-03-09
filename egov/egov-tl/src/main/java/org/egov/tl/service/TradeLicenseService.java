@@ -161,6 +161,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
                     .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
             license.setStatus(activeStatus);
+            // setting license to non-legacy, old license number will be the only tracking
+            // to check a license created as legacy or new hereafter.
+            license.setLegacy(false);
             license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                     Constants.APPLICATION_STATUS_GENECERT_CODE);
         }
@@ -169,16 +172,16 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             if (license.getLicenseAppType() != null
                     && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
                 final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-            .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-            license.setStatus(activeStatus);
+                        .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
+                license.setStatus(activeStatus);
             } else {
                 final LicenseStatus activeStatus = (LicenseStatus) persistenceService
                         .find("from org.egov.tl.entity.LicenseStatus where code='CAN'");
                 license.setStatus(activeStatus);
             }
-        if(null !=license && null !=license.getState() && license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
+        if (null != license && null != license.getState()
+                && license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING))
             updateDemandForChangeTradeArea(license);
-          }
     }
 
     public ReportRequest prepareReportInputData(final License license) {
@@ -208,13 +211,16 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("licencenumber", license.getLicenseNumber());
         reportParams.put("wardName", license.getBoundary().getName());
         reportParams.put("cscNumber", "");
-        reportParams.put("nameOfEstablishment", (license.getNameOfEstablishment() !=null ? license.getNameOfEstablishment() :""));
+        reportParams.put("nameOfEstablishment", license.getNameOfEstablishment() != null ? license.getNameOfEstablishment() : "");
         reportParams.put("licenceAddress", license.getAddress());
         reportParams.put("municipality", cityMunicipalityName);
         reportParams.put("district", districtName);
         reportParams.put("subCategory", license.getTradeName() != null ? license.getTradeName().getName() : null);
         reportParams
-                .put("appType", license.getLicenseAppType() != null ? (license.getLicenseAppType().getName() !=null && license.getLicenseAppType().getName().equals("New")? "New Trade" :"Renewal") : "New");
+                .put("appType", license.getLicenseAppType() != null
+                        ? license.getLicenseAppType().getName() != null && license.getLicenseAppType().getName().equals("New")
+                                ? "New Trade" : "Renewal"
+                        : "New");
         if (EgovThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
         reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
@@ -225,7 +231,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("installMentYear", installMentYear);
         reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
-       reportParams.put("demandTotalamt", license.getCurrentLicenseFee());
+        reportParams.put("demandTotalamt", license.getCurrentLicenseFee());
         return reportParams;
     }
 
@@ -244,21 +250,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Transactional
     public void initiateWorkFlowForTransfer(final TradeLicense license, final WorkflowBean workflowBean) {
         /*
-         * final Position position =
-         * eisCommonsManager.getPositionByUserId(Integer
-         * .valueOf(EGOVThreadLocals.getUserId())); try {
-         * tradeLicenseWorkflowService.start(license, position,
-         * workflowBean.getComments()); } catch (final
-         * ApplicationRuntimeException e) { if
-         * (license.getState().getValue().equalsIgnoreCase("END")) {
-         * license.setState(null); persistenceService.persist(license);
-         * tradeLicenseWorkflowService.start(license, position,
-         * workflowBean.getComments()); } else throw e; }
-         * license.getState().setText2
-         * (license.getWorkflowIdentityForTransfer()); final LicenseStatus
-         * underWorkflowStatus = (LicenseStatus) persistenceService
-         * .find("from org.egov.tl.entity.LicenseStatus where code='UWF'" );
-         * license.setStatus(underWorkflowStatus);
+         * final Position position = eisCommonsManager.getPositionByUserId(Integer .valueOf(EGOVThreadLocals.getUserId())); try {
+         * tradeLicenseWorkflowService.start(license, position, workflowBean.getComments()); } catch (final
+         * ApplicationRuntimeException e) { if (license.getState().getValue().equalsIgnoreCase("END")) { license.setState(null);
+         * persistenceService.persist(license); tradeLicenseWorkflowService.start(license, position, workflowBean.getComments());
+         * } else throw e; } license.getState().setText2 (license.getWorkflowIdentityForTransfer()); final LicenseStatus
+         * underWorkflowStatus = (LicenseStatus) persistenceService .find("from org.egov.tl.entity.LicenseStatus where code='UWF'"
+         * ); license.setStatus(underWorkflowStatus);
          */
         processWorkFlowForTransfer(license, workflowBean);
         return;
@@ -267,67 +265,34 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Transactional
     public void processWorkFlowForTransfer(final TradeLicense license, final WorkflowBean workflowBean) {
         /*
-         * if
-         * (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONSAVE))
-         * { final Position position =
-         * eisCommonsManager.getPositionByUserId(Integer
-         * .valueOf(EGOVThreadLocals.getUserId()));
-         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE +
-         * "NEW", position, workflowBean.getComments());
-         * license.getState().setText2
-         * (license.getWorkflowIdentityForTransfer()); } else if
-         * (workflowBean.getActionName
-         * ().equalsIgnoreCase(Constants.BUTTONAPPROVE)) { Position position =
-         * eisCommonsManager
+         * if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONSAVE)) { final Position position =
+         * eisCommonsManager.getPositionByUserId(Integer .valueOf(EGOVThreadLocals.getUserId()));
+         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE + "NEW", position, workflowBean.getComments());
+         * license.getState().setText2 (license.getWorkflowIdentityForTransfer()); } else if (workflowBean.getActionName
+         * ().equalsIgnoreCase(Constants.BUTTONAPPROVE)) { Position position = eisCommonsManager
          * .getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE +
-         * Constants.WORKFLOW_STATE_APPROVED, position,
-         * workflowBean.getComments());
-         * license.getState().setText2(license.getWorkflowIdentityForTransfer
-         * ()); license.acceptTransfer(); position =
-         * eisCommonsManager.getPositionByUserId
-         * (license.getCreatedBy().getId());
-         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE +
-         * Constants.WORKFLOW_STATE_GENERATECERTIFICATE, position,
-         * workflowBean.getComments());
-         * license.getState().setText2(license.getWorkflowIdentityForTransfer
-         * ()); license.getLicenseTransfer().setApproved(true); } else if
-         * (workflowBean
-         * .getActionName().equalsIgnoreCase(Constants.BUTTONFORWARD)) { final
-         * Position nextPosition =
-         * eisCommonsManager.getPositionByUserId(workflowBean
-         * .getApproverUserId());
-         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE +
-         * Constants.WORKFLOW_STATE_FORWARDED, nextPosition,
-         * workflowBean.getComments());
-         * license.getState().setText2(license.getWorkflowIdentityForTransfer
-         * ()); } else if
-         * (workflowBean.getActionName().equalsIgnoreCase(Constants
-         * .BUTTONREJECT)) { if
-         * (license.getState().getValue().contains(Constants
-         * .WORKFLOW_STATE_REJECTED)) { final Position position =
-         * eisCommonsManager
-         * .getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-         * workflowService().end(license, position);
-         * license.getLicenseTransfer().setApproved(false);
-         * license.getState().setText2
-         * (license.getWorkflowIdentityForTransfer()); } else { final Position
-         * position =
-         * eisCommonsManager.getPositionByUserId(license.getCreatedBy(
-         * ).getId());
-         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE +
-         * Constants.WORKFLOW_STATE_REJECTED, position,
-         * workflowBean.getComments());
-         * license.getState().setText2(license.getWorkflowIdentityForTransfer
-         * ()); } } else if
-         * (workflowBean.getActionName().equalsIgnoreCase(Constants
-         * .BUTTONGENERATEDCERTIFICATE)) { final Position position =
-         * eisCommonsManager
-         * .getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-         * workflowService().end(license, position); final LicenseStatus
-         * activeStatus = (LicenseStatus) persistenceService .find(
-         * "from org.egov.tl.entity.LicenseStatus where code='ACT'");
-         * license.setStatus(activeStatus); }
+         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE + Constants.WORKFLOW_STATE_APPROVED, position,
+         * workflowBean.getComments()); license.getState().setText2(license.getWorkflowIdentityForTransfer ());
+         * license.acceptTransfer(); position = eisCommonsManager.getPositionByUserId (license.getCreatedBy().getId());
+         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE + Constants.WORKFLOW_STATE_GENERATECERTIFICATE,
+         * position, workflowBean.getComments()); license.getState().setText2(license.getWorkflowIdentityForTransfer ());
+         * license.getLicenseTransfer().setApproved(true); } else if (workflowBean
+         * .getActionName().equalsIgnoreCase(Constants.BUTTONFORWARD)) { final Position nextPosition =
+         * eisCommonsManager.getPositionByUserId(workflowBean .getApproverUserId());
+         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE + Constants.WORKFLOW_STATE_FORWARDED, nextPosition,
+         * workflowBean.getComments()); license.getState().setText2(license.getWorkflowIdentityForTransfer ()); } else if
+         * (workflowBean.getActionName().equalsIgnoreCase(Constants .BUTTONREJECT)) { if
+         * (license.getState().getValue().contains(Constants .WORKFLOW_STATE_REJECTED)) { final Position position =
+         * eisCommonsManager .getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId())); workflowService().end(license,
+         * position); license.getLicenseTransfer().setApproved(false); license.getState().setText2
+         * (license.getWorkflowIdentityForTransfer()); } else { final Position position =
+         * eisCommonsManager.getPositionByUserId(license.getCreatedBy( ).getId());
+         * license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE + Constants.WORKFLOW_STATE_REJECTED, position,
+         * workflowBean.getComments()); license.getState().setText2(license.getWorkflowIdentityForTransfer ()); } } else if
+         * (workflowBean.getActionName().equalsIgnoreCase(Constants .BUTTONGENERATEDCERTIFICATE)) { final Position position =
+         * eisCommonsManager .getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId())); workflowService().end(license,
+         * position); final LicenseStatus activeStatus = (LicenseStatus) persistenceService .find(
+         * "from org.egov.tl.entity.LicenseStatus where code='ACT'"); license.setStatus(activeStatus); }
          */
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
@@ -411,7 +376,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     public List getHotelCategoriesForTrade() {
         final List subCategory = persistenceService
-                .findAllBy("select id from org.egov.tl.entity.LicenseSubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tl.entity.LicenseType where name='TradeLicense')");
+                .findAllBy(
+                        "select id from org.egov.tl.entity.LicenseSubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tl.entity.LicenseType where name='TradeLicense')");
         return subCategory;
     }
 
@@ -484,14 +450,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
     }
 
-    
+    @Override
     public TradeLicenseUpdateIndexService getUpdateIndexService() {
         return updateIndexService;
     }
 
-    
+    @Override
     public void setUpdateIndexService(final TradeLicenseUpdateIndexService updateIndexService) {
         this.updateIndexService = updateIndexService;
     }
-
 }

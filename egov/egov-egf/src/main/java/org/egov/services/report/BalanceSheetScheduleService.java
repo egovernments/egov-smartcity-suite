@@ -60,6 +60,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.report.Statement;
 import org.egov.web.actions.report.StatementEntry;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BalanceSheetScheduleService extends ScheduleService {
     private static final String BS = "BS";
@@ -68,7 +69,8 @@ public class BalanceSheetScheduleService extends ScheduleService {
     private String removeEntrysWithZeroAmount = "";
     private static final Logger LOGGER = Logger.getLogger(BalanceSheetScheduleService.class);
 
-    
+    @Autowired
+    private  FinancialYearHibernateDAO financialYearDAO;
     
    
     public void setBalanceSheetService(final BalanceSheetService balanceSheetService) {
@@ -149,9 +151,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("addOpeningBalanceForPreviousYear");
         final BigDecimal divisor = balanceSheet.getDivisor();
-        final FinancialYearHibernateDAO finYrHibernate = new FinancialYearHibernateDAO(CFinancialYear.class,
-                HibernateUtil.getCurrentSession());
-        final CFinancialYear prevFinanciaYr = finYrHibernate.getPreviousFinancialYearByDate(fromDate);
+        final CFinancialYear prevFinanciaYr = financialYearDAO.getPreviousFinancialYearByDate(fromDate);
         final String prevFinancialYrId = prevFinanciaYr.getId().toString();
         final Query query = HibernateUtil
                 .getCurrentSession()

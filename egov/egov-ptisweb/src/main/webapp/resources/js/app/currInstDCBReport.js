@@ -86,6 +86,7 @@ jQuery(document).ready(function() {
 						  { "data" : "currCollection", "title": "Current collection"},
 						  { "data" : "arrearDemand", "title": "Arrear Demand"},
 						  { "data" : "arrearCollection", "title": "Arrear collection"},
+						  { "data" : "totalCollection", "title": "Total collection"},
 						  
 						  ],
 						  "footerCallback" : function(row, data, start, end, display) {
@@ -96,14 +97,14 @@ jQuery(document).ready(function() {
 									jQuery('#report-footer').show();
 								}
 								if (data.length > 0) {
-									for(var i=1;i<=5;i++)
+									for(var i=1;i<=6;i++)
 									{
 									  updateTotalFooter(i, api);	
 									}
 								}
 							},
 							"aoColumnDefs" : [ {
-								"aTargets" : [2,3,4,5],
+								"aTargets" : [2,3,4,5,6],
 								"mRender" : function(data, type, full) {
 									return formatNumberInr(data);    
 								}

@@ -262,7 +262,7 @@ public class SearchReceiptAction extends SearchFormAction {
         }
         if (getCounterId() != -1) {
             criteriaString.append(" and receipt.location.id = ? ");
-            params.add(getCounterId());
+            params.add(Long.valueOf(getCounterId()));
         }
 
         if (getUserId() != -1) {

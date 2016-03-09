@@ -73,7 +73,12 @@ public class UpdateHoardingController extends HoardingControllerSupport {
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
         model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
-        model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+      //  model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+        if(advertisementPermitDetail!=null && advertisementPermitDetail.getPreviousapplicationid()!=null)
+            model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            else
+                model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+        
         model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
         model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
         prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
@@ -92,7 +97,12 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
         if (resultBinder.hasErrors()) {
             prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
-            model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            
+            if(advertisementPermitDetail!=null && advertisementPermitDetail.getPreviousapplicationid()!=null)
+            model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            else
+                model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+                
             model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
             model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
             return "hoarding-update";
@@ -116,12 +126,14 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                 return "redirect:/advertisement/demandNotice?pathVar=" + advertisementPermitDetail.getId();
             else {
                 updateHoardingDocuments(advertisementPermitDetail);
-                advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
-                        approvalComment, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, workFlowAction);
+                
+            advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
+                        approvalComment, (advertisementPermitDetail!=null && advertisementPermitDetail.getPreviousapplicationid()!=null)?AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE: AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, workFlowAction);
                 if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction))
                     redirAttrib.addFlashAttribute("message", "msg.success.approved");
                 else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-                    final Assignment wfInitiator = advertisementPermitDetailService.getWfInitiator(advertisementPermitDetail);
+                    final Assignment wfInitiator = advertisementPermitDetailService
+                            .getWfInitiator(advertisementPermitDetail);
                     if (EgovThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId()))
                         redirAttrib.addFlashAttribute("message", "msg.success.cancelled");
                     else {

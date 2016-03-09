@@ -44,7 +44,7 @@
 		<sx:head />
 	</head>
 	<body>
-		<div id="content">
+		<div id="content" class="printable">
 			<div class="formmainbox panel-primary">
 										<div class="subheadnew text-center" id="headingdiv">
 											<s:text name="page.title.viewtrade" />
@@ -69,11 +69,14 @@
 											</s:push>
 										</s:form>
 		
+		
+		</div>
+		</div>
 		<div align="center" class="buttonbottom" id="buttondiv">
 			<table>
 				<tr>
 					<td>
-						<input name="button1" type="button" class="buttonsubmit" id="button" onclick="window.print();" value="Print" />
+						<input name="button1" type="button" class="buttonsubmit printbtn" id="button" value="Print" />
 					</td>
 					<td>
 						<input name="button2" type="button" class="button" id="button" onclick="window.close();" value="Close" />
@@ -81,7 +84,6 @@
 				</tr>
 			</table>
 		</div>
-		</div>
-		</div>
+		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
 	</body>
 </html>

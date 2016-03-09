@@ -97,6 +97,9 @@ public class FinancialUtil {
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
+	
+	@Autowired
+	private CreateVoucher createVoucher;
 
 	/**
 	 * This method creates a Voucher
@@ -195,8 +198,7 @@ public class FinancialUtil {
 
 			}
 
-			CreateVoucher cv = new CreateVoucher();
-			CVoucherHeader cvh = cv.createVoucher(headerdetails,
+			CVoucherHeader cvh = createVoucher.createVoucher(headerdetails,
 					accountDetList, new ArrayList<HashMap<String, Object>>());
 			if (cvh == null) {
 				LOGGER.error("Voucher Creation failed. CVoucherHeader is null.");

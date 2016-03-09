@@ -173,9 +173,10 @@ public class AdvertisementPermitDetailService {
         // If demand pending for collection, then only update demand details.
         // If demand fully paid and user changed tax details, then no need to
         // update demand details.
-        if (anyDemandPendingForCollection)
-            advertisementDemandService.updateDemand(advertisementPermitDetail,
+        if (anyDemandPendingForCollection && advertisementPermitDetail.getPreviousapplicationid()==null)
+           advertisementDemandService.updateDemand(advertisementPermitDetail,
                     advertisementPermitDetail.getAdvertisement().getDemandId());
+        
         roundOfAllTaxAmount(advertisementPermitDetail);
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
 
@@ -287,22 +288,6 @@ public class AdvertisementPermitDetailService {
 
     }
 
-    public List<HoardingSearch> getAdvertisementSearchResult(final HoardingSearch hoardingSearch) {
-        final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
-                .searchAdvertisementPermitDetailLike(hoardingSearch, null);
-        final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
-        advPermitDtl.forEach(result -> {
-            final HoardingSearch hoardingSearchResult = new HoardingSearch();
-            hoardingSearchResult.setAdvertisementNumber(result.getAdvertisement().getAdvertisementNumber());
-            hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
-            hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
-            hoardingSearchResult.setAgencyName(result.getAgency() != null ? result.getAgency().getName() : "");
-            hoardingSearchResult.setStatus(result.getAdvertisement().getStatus());
-            hoardingSearchResults.add(hoardingSearchResult);
-        });
-        return hoardingSearchResults;
-    }
-
     public List<HoardingSearch> getAdvertisementSearchResult(final HoardingSearch hoardingSearch, final String hoardingType) {
         final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
                 .searchAdvertisementPermitDetailLike(hoardingSearch, hoardingType);
@@ -340,12 +325,21 @@ public class AdvertisementPermitDetailService {
     public AdvertisementPermitDetail renewal(final AdvertisementPermitDetail advertisementPermitDetail,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getId() == null)
+   
+        //TODO: UPDATE DEMAND ON APPROVAL FROM COMMISSIONER. tILL THAT POINT NO NEED TO UPDATE.
+        //TODO:DEMAND WE NEED TO UPDATE TO EXISTING DEMAND DETAIL.
+      
+        /*    if (advertisementPermitDetail != null && advertisementPermitDetail.getId() == null)
             advertisementPermitDetail.getAdvertisement()
                     .setDemandId(advertisementDemandService.updateDemand(advertisementPermitDetail,
-                            advertisementPermitDetail.getAdvertisement().getDemandId()));
+                            advertisementPermitDetail.getAdvertisement().getDemandId()));*/
+        
+          //TODO: REJECTION OF RENEWAL WORKFLOW NOT HANDLED. We need to change advertisement status as active and old permit as active. 
         roundOfAllTaxAmount(advertisementPermitDetail);
-        advertisementPermitDetail.getPreviousapplicationid().setIsActive(false);
+     
+        //DONTO CHANGE STATUS TO INACTIVE UNTILL NEW RECORD APPROVED.
+        // advertisementPermitDetail.getPreviousapplicationid().setIsActive(false);
+        
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
 
         if (approvalPosition != null && approvalPosition > 0 && additionalRule != null
@@ -354,14 +348,13 @@ public class AdvertisementPermitDetailService {
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         return advertisementPermitDetail;
     }
-    
+    //TODO : CODE REVIEW PENDING
     public List<HoardingSearch> getRenewalAdvertisementSearchResult(final AdvertisementPermitDetail advPermitDetail,
             final String searchType) {
 
         final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
-                .renewalSearchAdvertisementPermitDetailBySearchParams(advPermitDetail);
-        final HashMap<String, HoardingSearch> agencyWiseHoardingList = new HashMap<String, HoardingSearch>();
-        final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
+                .searchActiveAdvertisementPermitDetailBySearchParams(advPermitDetail);
+       final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
 
         advPermitDtl.forEach(result -> {
             final HoardingSearch hoardingSearchResult = new HoardingSearch();
@@ -379,55 +372,10 @@ public class AdvertisementPermitDetailService {
             if (result.getAdvertisement().getDemandId() != null) {
                 hoardingSearchResult
                         .setFinancialYear(result.getAdvertisement().getDemandId().getEgInstallmentMaster().getDescription());
-                if (searchType != null && searchType.equalsIgnoreCase("agency") && result.getAgency() != null) {
-                    // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
-                    final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
-                    // TODO: DO CODE CHANGE
-                    final HoardingSearch hoardingSearchObj = agencyWiseHoardingList.get(result.getAgency().getName());
-                    if (hoardingSearchObj == null) {
-                        hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail
-                                .get(AdvertisementTaxConstants.PENALTYAMOUNT));
-                        hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
-                                .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
-                        hoardingSearchResult.setTotalHoardingInAgency(1);
-                        hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
-                        agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
-                    } else {
-                        final StringBuffer hoardingIds = new StringBuffer();
-                        hoardingSearchObj.setPenaltyAmount(hoardingSearchObj.getPenaltyAmount().add(
-                                demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT)));
-                        hoardingSearchObj.setPendingDemandAmount(hoardingSearchObj.getPendingDemandAmount().add(
-                                demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT)));
-                        hoardingSearchObj.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
-
-                        hoardingIds.append(hoardingSearchObj.getHordingIdsSearchedByAgency()).append("~")
-                                .append(result.getId());
-                        hoardingSearchObj.setHordingIdsSearchedByAgency(hoardingIds.toString());
-                        agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchObj);
-                    }
-                } else {
-
-                    final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
-                    hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
-                    hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
-                            .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
-                    hoardingSearchResults.add(hoardingSearchResult);
-                }
             }
+            hoardingSearchResults.add(hoardingSearchResult);
         });
-        if (agencyWiseHoardingList.size() > 0) {
-            final List<HoardingSearch> agencyWiseFinalHoardingList = new ArrayList<HoardingSearch>();
-            agencyWiseHoardingList.forEach((key, value) -> {
-                agencyWiseFinalHoardingList.add(value);
-            });
-            return agencyWiseFinalHoardingList;
-        }
         return hoardingSearchResults;
-
     }
     
     

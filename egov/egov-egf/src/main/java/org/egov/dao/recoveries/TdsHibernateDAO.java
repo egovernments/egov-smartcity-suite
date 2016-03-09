@@ -63,6 +63,9 @@ import org.egov.model.recoveries.Recovery;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -70,13 +73,18 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author Sathish
  * @version 1.00
+ * 
  */
+@Repository
 @Transactional(readOnly = true)
 public class TdsHibernateDAO extends GenericHibernateDAO
 {
     private final Logger LOGGER = Logger.getLogger(TdsHibernateDAO.class);
     public static final SimpleDateFormat DDMMYYYYFORMAT1 = new SimpleDateFormat("dd-MMM-yyyy", new Locale("en", "IN"));
     private Session session;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService<Recovery, Integer> persistenceService;
 
     public TdsHibernateDAO(final Class persistentClass, final Session session)
     {
@@ -212,9 +220,6 @@ public class TdsHibernateDAO extends GenericHibernateDAO
             LOGGER.debug("EgovCommon | recoveryForPartyContractor | Start ");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("asONDate value received : " + asOndate);
-        final PersistenceService<Recovery, Integer> persistenceService = new PersistenceService<Recovery, Integer>();
-        // persistenceService.setSessionFactory(new SessionFactory());
-        //persistenceService.setType(Recovery.class);
         final StringBuffer recoveryQuery = new StringBuffer(400);
         List<Recovery> listTds;
         recoveryQuery

@@ -91,6 +91,7 @@ import org.hibernate.type.DoubleType;
 import org.hibernate.type.IntegerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author mani
@@ -114,6 +115,8 @@ public class ScheduledRemittanceService {
     private Map<Integer, Integer> deptDOMap;
     // fundcode-bankaccountid
     private Map<String, Integer> receiptBankAccountMap;
+    
+    private @Autowired CreateVoucher createVoucher;
 
     private FinancialYearDAO financialYearDAO;
     private RecoveryService recoveryService;
@@ -893,8 +896,7 @@ public class ScheduledRemittanceService {
         detailMap.put(VoucherConstant.GLCODE, ba.getChartofaccounts().getGlcode());
         accountdetails.add(detailMap);
 
-        final CreateVoucher cv = new CreateVoucher();
-        final CVoucherHeader voucherHeader = cv.createPreApprovedVoucher(headerdetails, accountdetails, subledgerDetails);
+        final CVoucherHeader voucherHeader = createVoucher.createPreApprovedVoucher(headerdetails, accountdetails, subledgerDetails);
 
         final Paymentheader ph = new Paymentheader();
         ph.setVoucherheader(voucherHeader);

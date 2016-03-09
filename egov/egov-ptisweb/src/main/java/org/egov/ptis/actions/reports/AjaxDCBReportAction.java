@@ -17,6 +17,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -37,6 +38,8 @@ public class AjaxDCBReportAction extends BaseFormAction {
     public static final String PROPERTY = "property";
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    private String propTypes;
+    private Boolean courtCase;
 
     @Override
     public Object getModel() {
@@ -84,9 +87,12 @@ public class AjaxDCBReportAction extends BaseFormAction {
      * @return
      */
     public SQLQuery prepareQuery() {
-        final SQLQuery query = propertyTaxUtil.prepareQueryForDCBReport(boundaryId, mode);
+        //To conver multi selected propertyTypes values(json stringify) into list
+        List<String> propertyType=new Gson().fromJson(propTypes, new TypeToken<ArrayList<String>>() { 
+        }.getType());
+        final SQLQuery query = propertyTaxUtil.prepareQueryForDCBReport(boundaryId, mode,courtCase,propertyType);
         query.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
-        return query;
+        return query; 
     }
 
     public String getMode() {
@@ -103,5 +109,17 @@ public class AjaxDCBReportAction extends BaseFormAction {
 
     public void setBoundaryId(final Long boundaryId) {
         this.boundaryId = boundaryId;
+    }
+
+    public Boolean getCourtCase() {
+        return courtCase;
+    }
+
+    public void setCourtCase(Boolean courtCase) { 
+        this.courtCase = courtCase;
+    }
+
+    public void setPropTypes(String propTypes) {
+        this.propTypes = propTypes;
     }
 }
