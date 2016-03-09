@@ -857,7 +857,7 @@ var onDropdownChange = function(index,obj) {
 		}
 		selecteddetailtype=document.getElementById('subLedgerlist['+obj.value+'].detailType.id').value;
 		//document.getElementById('subLedgerlist['+obj.value+'].subledgerCode').value= subledgerid.options[subledgerid.selectedIndex].text;
-		var url = path+'/receipts/ajaxReceiptCreate!getDetailType.action?accountCode='+accountCode+'&index='+obj.value+'&selectedDetailType='+selecteddetailtype+'&onload=false';
+		var url = path+'/receipts/ajaxReceiptCreate-getDetailType.action?accountCode='+accountCode+'&index='+obj.value+'&selectedDetailType='+selecteddetailtype+'&onload=false';
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 };
 var postType = {
