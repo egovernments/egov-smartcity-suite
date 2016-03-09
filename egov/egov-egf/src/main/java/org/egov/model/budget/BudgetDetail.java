@@ -49,6 +49,7 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CFunction;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
@@ -86,7 +87,8 @@ public class BudgetDetail extends StateAware {
     private Long documentNumber;
     private String uniqueNo;
     private BigDecimal planningPercent;
-
+    private EgwStatus status;
+    
     public Set<BudgetReAppropriation> getBudgetReAppropriations() {
         return budgetReAppropriations;
     }
@@ -378,4 +380,14 @@ public class BudgetDetail extends StateAware {
     public void setWfState(State state) {
         setState(state);
     }
+
+    public EgwStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EgwStatus status) {
+        this.status = status;
+    }
+    
+    
 }

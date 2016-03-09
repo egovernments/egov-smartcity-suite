@@ -45,21 +45,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><s:text name="budgetload" /></title>
 <script type="text/javascript">
-	function validate() {
-		document.getElementById("msg").innerHTML = "";
-		document.getElementById("Errors").innerHTML = "";
-
-		if (document.getElementById("budgetInXls").value == "") {
-			bootbox.alert("Select File to upload");
-			return false;
-		}
-		document.budgetLoad.action = '/EGF/budget/budgetLoad-upload.action';
-		document.budgetLoad.submit();
-		return true;
-	}
 	function urlLoad(fileStoreId, type) {
-			var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=EGF";
-			window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
+		var sUrl = "/egi/downloadfile?fileStoreId=" + fileStoreId
+				+ "&moduleName=EGF";
+		window.open(sUrl, "window",
+				'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
 
 	}
 </script>
@@ -88,27 +78,26 @@
 				</div> <s:actionmessage />
 			</span>
 			<center>
-				<table border="0" width="100%" cellspacing="0" cellpadding="0">
-					<tr>
-						<td class="greybox" width="20%"></td>
-						<td class="greybox"></td>
-						<td class="greybox"><s:text name="budgetupload" /> <span
-							class="greybox"><span class="mandatory1">*</span></span></td>
-						<td class="greybox"><s:file name="budgetInXls"
-								id="budgetInXls" /></td>
-						<span class="greybox" colspan="2">
-							</td>
-							<td class="greybox"></td>
-					</tr>
+				<table align="center" width="100%">
+					<tr align="center">
+						<th style="width: 2%; text-align: center" align="center"><a
+							href="#"
+							onclick="urlLoad('<s:property value="%{originalFileStoreId}" />','original');"
+							id="sourceLink" /> Download Original File </a></th>
 
+					</tr>
+					<tr align="center">
+
+						<th style="width: 2%; text-align: center" align="center"><a
+							href="#"
+							onclick="urlLoad('<s:property value="%{outPutFileStoreId}" />','output');"
+							id="sourceLink" /> Download OutPut File </a></th>
+					</tr>
 				</table>
 
 				<div class="buttonbottom" id="buttondiv">
 					<table>
 						<tr>
-							<td><s:submit type="submit" cssClass="buttonsubmit"
-									value="Upload Budget" name="upload" method="upload"
-									onclick="return validate();" /></td>
 							<td><input type="button" value="Close"
 								onclick="javascript:window.close()" class="buttonsubmit" /></td>
 						</tr>

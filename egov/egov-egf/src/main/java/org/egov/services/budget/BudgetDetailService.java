@@ -62,10 +62,12 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
@@ -131,6 +133,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     @Autowired
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
 
     @Autowired
     private DepartmentService departmentService;
@@ -2398,62 +2403,135 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             CFinancialYear beFYear) {
 
         try {
-            Set<String> deptCapSet = new TreeSet<String>();
-            Set<String> deptRevSet = new TreeSet<String>();
-            List<String> deptCapList = new ArrayList<String>();
-            List<String> deptRevList = new ArrayList<String>();
-
-            for (BudgetUpload budgetUpload : budgetUploadList)
-                if (budgetUpload.getBudgetHead().substring(0, 1).equalsIgnoreCase("1")
-                        || budgetUpload.getBudgetHead().substring(0, 1).equalsIgnoreCase("2"))
-                    deptRevSet.add(budgetUpload.getDeptCode());
-                else
-                    deptCapSet.add(budgetUpload.getDeptCode());
-            deptCapList.addAll(deptCapSet);
-            deptRevList.addAll(deptRevSet);
 
             Budget budget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
             if (budget == null) {
+                Set<String> deptSet = new TreeSet<String>();
+                List<String> deptList = new ArrayList<String>();
+                List<Department> departments = departmentService.getAllDepartments();
 
-                createRootBudget("RE", beFYear, reFYear);
+                for (Department dept : departments)
+                    deptSet.add(dept.getCode());
 
-                createRootBudget("BE", beFYear, reFYear);
+                deptList.addAll(deptSet);
+                EgwStatus budgetStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Created");
+                createRootBudget("RE", beFYear, reFYear, deptList, budgetStatus);
+
+                createRootBudget("BE", beFYear, reFYear, deptList, budgetStatus);
 
             }
-            createDeptBudgetHeads(budgetService.getByName("Capital-RE-" + reFYear.getFinYearRange()),
-                    "Capital",
-                    "RE", beFYear, reFYear,
-                    "Cap", deptCapList);
-            createDeptBudgetHeads(budgetService.getByName("Capital-BE-" + beFYear.getFinYearRange()),
-                    "Capital",
-                    "BE", beFYear, reFYear,
-                    "Cap", deptCapList);
-            createDeptBudgetHeads(budgetService.getByName("Revenue-RE-" + reFYear.getFinYearRange()),
-                    "Revenue",
-                    "RE", beFYear, reFYear,
-                    "Rev", deptRevList);
-            createDeptBudgetHeads(budgetService.getByName("Revenue-BE-" + beFYear.getFinYearRange()),
-                    "Revenue",
-                    "BE", beFYear, reFYear,
-                    "Rev", deptRevList);
-            budgetUploadList = createBudgetDetails("RE", budgetUploadList, reFYear);
+            EgwStatus budgetDetailStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
 
-            budgetUploadList = createBudgetDetails("BE", budgetUploadList, beFYear);
+            budgetUploadList = createBudgetDetails("RE", budgetUploadList, reFYear, budgetDetailStatus);
+
+            budgetUploadList = createBudgetDetails("BE", budgetUploadList, beFYear, budgetDetailStatus);
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            //TODO- throw exception
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
         }
         return budgetUploadList;
     }
 
     @Transactional
-    public List<BudgetUpload> createBudgetDetails(String budgetType, List<BudgetUpload> budgetUploadList, CFinancialYear fyear) {
+    public List<BudgetUpload> createBudgetDetails(String budgetType, List<BudgetUpload> budgetUploadList, CFinancialYear fyear,
+            EgwStatus status) {
+        List<BudgetUpload> tempList = new ArrayList<BudgetUpload>();
+        try {
+
+            for (BudgetUpload budgetUpload : budgetUploadList) {
+                BudgetDetail budgetDetail = new BudgetDetail();
+                BudgetDetail temp = getBudgetDetail(budgetUpload.getFund().getId(), budgetUpload.getFunction().getId(),
+                        budgetUpload
+                                .getDept()
+                                .getId(), budgetUpload.getCoa().getId(), fyear);
+                if (temp != null) {
+                    if (temp.getStatus().getCode().equalsIgnoreCase("Created")) {
+                        BigDecimal amount;
+                        if (budgetType.equalsIgnoreCase("RE"))
+                            amount = budgetUpload.getReAmount();
+                        else
+                            amount = budgetUpload.getBeAmount();
+
+                        if (amount.compareTo(temp.getApprovedAmount()) != 0) {
+                            temp.setApprovedAmount(amount);
+                            temp.setOriginalAmount(amount);
+                            temp.setBudgetAvailable(temp.getApprovedAmount().multiply(temp.getPlanningPercent())
+                                    .divide(new BigDecimal(String
+                                            .valueOf(100))));
+
+                            applyAuditing(temp);
+                            budgetDetail = update(temp);
+                            budgetUpload.setFinalStatus("Success");
+                            tempList.add(budgetUpload);
+                        } else {
+                            budgetUpload.setFinalStatus("Already budget is defined for this combination");
+                            tempList.add(budgetUpload);
+                        }
+                    } else {
+                        budgetUpload.setFinalStatus("Already budget is defined for this combination and Approved");
+                        tempList.add(budgetUpload);
+                    }
+
+                } else if (temp == null) {
+
+                    budgetDetail.setFund(budgetUpload.getFund());
+                    budgetDetail.setFunction(budgetUpload.getFunction());
+                    budgetDetail.setExecutingDepartment(budgetUpload.getDept());
+                    budgetDetail.setAnticipatoryAmount(BigDecimal.ZERO);
+                    budgetDetail.setPlanningPercent(BigDecimal.valueOf(budgetUpload.getPlanningPercentage()));
+                    if (budgetType.equalsIgnoreCase("RE")) {
+                        budgetDetail.setOriginalAmount(budgetUpload.getReAmount());
+                        budgetDetail.setApprovedAmount(budgetUpload.getReAmount());
+                        budgetDetail.setBudgetAvailable(budgetUpload.getReAmount().multiply(budgetDetail.getPlanningPercent())
+                                .divide(new BigDecimal(String
+                                        .valueOf(100))));
+
+                    } else {
+                        budgetDetail.setOriginalAmount(budgetUpload.getBeAmount());
+                        budgetDetail.setApprovedAmount(budgetUpload.getBeAmount());
+                        budgetDetail.setBudgetAvailable(budgetUpload.getBeAmount().multiply(budgetDetail.getPlanningPercent())
+                                .divide(new BigDecimal(String
+                                        .valueOf(100))));
+                    }
+                    budgetDetail.setBudgetGroup(createBudgetGroup(budgetUpload.getCoa()));
+                    budgetDetail.setBudget(budgetService.getBudget(budgetUpload.getBudgetHead(), budgetUpload.getDeptCode(),
+                            budgetType,
+                            fyear.getFinYearRange()));
+                    budgetDetail.setMaterializedPath(getmaterializedpathforbudget(budgetDetail.getBudget()));
+                    budgetDetail.setStatus(status);
+                    // budgetDetail = setBudgetDetailStatus(budgetDetail);
+                    applyAuditing(budgetDetail);
+                    persist(budgetDetail);
+                    budgetUpload.setFinalStatus("Success");
+                    tempList.add(budgetUpload);
+                }
+            }
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+        return tempList;
+    }
+
+    @Transactional
+    public BudgetDetail setBudgetDetailStatus(BudgetDetail budgetDetail) {
         Long stateId;
         Serializable sequenceNumber = null;
         State budgetDetailState = null;
-        List<BudgetUpload> tempList = new ArrayList<BudgetUpload>();
-        //TODO- State not required
         try {
             sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
         } catch (final SQLGrammarException e) {
@@ -2466,48 +2544,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .executeUpdate();
 
         budgetDetailState = (State) persistenceService.find("from State where id = ?", stateId);
-
-        for (BudgetUpload budgetUpload : budgetUploadList) {
-            if (getBudgetDetail(budgetUpload.getFund().getId(), budgetUpload.getFunction().getId(), budgetUpload.getDept()
-                    .getId(), budgetUpload.getCoa().getId(), budgetType.equalsIgnoreCase("RE") ? budgetUpload.getReAmount()
-                    : budgetUpload.getBeAmount(), fyear) == null) {
-                //TODO- Need to check for budget in Approved status. Message should be "Approved Budget Exist , hence cannot reload"
-                BudgetDetail budgetDetail = new BudgetDetail();
-                budgetDetail.setFund(budgetUpload.getFund());
-                budgetDetail.setFunction(budgetUpload.getFunction());
-                budgetDetail.setExecutingDepartment(budgetUpload.getDept());
-                budgetDetail.setAnticipatoryAmount(BigDecimal.ZERO);
-                if (budgetType.equalsIgnoreCase("RE")) {
-                    budgetDetail.setOriginalAmount(budgetUpload.getReAmount());
-                    budgetDetail.setApprovedAmount(budgetUpload.getReAmount());
-                    //TODO- calculate based on planning percentage
-                    budgetDetail.setBudgetAvailable(budgetUpload.getReAmount());
-
-                } else {
-                    budgetDetail.setOriginalAmount(budgetUpload.getBeAmount());
-                    budgetDetail.setApprovedAmount(budgetUpload.getBeAmount());
-                  //TODO- calculate based on planning percentage
-                    budgetDetail.setBudgetAvailable(budgetUpload.getBeAmount());
-                }
-                budgetDetail.setBudgetGroup(createBudgetGroup(budgetUpload.getCoa()));
-                budgetDetail.setBudget(budgetService.getBudget(budgetUpload.getBudgetHead(), budgetUpload.getDeptCode(),
-                        budgetType,
-                        fyear.getFinYearRange()));
-                budgetDetail.setMaterializedPath(getmaterializedpathforbudget(budgetDetail.getBudget()));
-                //TODO - not needed instead add status
-                budgetDetail.setWfState(budgetDetailState);
-                budgetDetail.setPlanningPercent(BigDecimal.valueOf(budgetUpload.getPlanningPercentage()));
-                applyAuditing(budgetDetail);
-                persist(budgetDetail);
-                budgetUpload.setFinalStatus("Success");
-                tempList.add(budgetUpload);
-            } else {
-                budgetUpload.setFinalStatus("Already budget is defined for this combination");
-                tempList.add(budgetUpload);
-            }
-        }
-
-        return tempList;
+        budgetDetail.setWfState(budgetDetailState);
+        return budgetDetail;
     }
 
     private String getmaterializedpathforbudget(Budget budget) {
@@ -2597,78 +2635,59 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     @Transactional
-    public void createRootBudget(String budgetType, CFinancialYear beFYear, CFinancialYear reFYear)
+    public void createRootBudget(String budgetType, CFinancialYear beFYear, CFinancialYear reFYear,
+            List<String> deptList, EgwStatus status)
             throws SQLException {
         String budgetName, budgetDes;
         CFinancialYear budgetFinancialYear;
-        Long stateId;
         String rootmaterial;
         Budget budget = new Budget();
-        State budgetState;
-        Serializable sequenceNumber = null;
 
         try {
             if (budgetType.equalsIgnoreCase("BE")) {
                 budgetName = budgetType + "-" + beFYear.getFinYearRange();
-                budgetDes = " Budget - " + budgetType + " for the year " + beFYear.getFinYearRange();
+                budgetDes = "Budget - " + budgetType + " for the year " + beFYear.getFinYearRange();
                 budgetFinancialYear = beFYear;
             } else {
-                budgetName =  budgetType + "-" + reFYear.getFinYearRange();
-                budgetDes = " Budget - " + budgetType + " for the year " + reFYear.getFinYearRange();
+                budgetName = budgetType + "-" + reFYear.getFinYearRange();
+                budgetDes = "Budget - " + budgetType + " for the year " + reFYear.getFinYearRange();
                 budgetFinancialYear = reFYear;
             }
-
-            //TODO- We dont need state transitions . Just the status is enough
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
-            } catch (final SQLGrammarException e) {
-                //TODO - throw exception
-            }
-
-            stateId = Long.valueOf(sequenceNumber.toString());
-
-            persistenceService
-                    .getSession()
-                    .createSQLQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
-                    .executeUpdate();
-
             Query query = persistenceService.getSession().createSQLQuery(
                     "select count(*)+1 from egf_budget where parent is null");
 
             rootmaterial = query.uniqueResult().toString();
 
-            //TODO - not needed
-            budgetState = (State) persistenceService.find("from State where id = ?", stateId);
-
             if (budgetType.equalsIgnoreCase("BE")) {
-                Budget refBudget = budgetService.getByName("-RE-" + reFYear.getFinYearRange());
+                Budget refBudget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
                 budget.setName(budgetName);
                 budget.setDescription(budgetDes);
                 budget.setFinancialYear(budgetFinancialYear);
-                budget.setWfState(budgetState);
                 budget.setIsbere(budgetType);
                 budget.setMaterializedPath(rootmaterial);
                 budget.setReferenceBudget(refBudget);
                 budgetService.applyAuditing(budget);
-                //TODO set status for budget
+                // budget = setBudgetState(budget);
+                budget.setStatus(status);
                 budget = budgetService.persist(budget);
             } else {
                 budget.setName(budgetName);
                 budget.setDescription(budgetDes);
                 budget.setFinancialYear(budgetFinancialYear);
-                budget.setWfState(budgetState);
                 budget.setIsbere(budgetType);
                 budget.setMaterializedPath(rootmaterial);
                 budgetService.applyAuditing(budget);
-              //TODO set status for budget
+                // budget = setBudgetState(budget);
+                budget.setStatus(status);
                 budget = budgetService.persist(budget);
             }
 
-            createCapitalOrRevenueBudget(budget, "Capital", rootmaterial + ".1",  budgetType, beFYear, reFYear);
+            createCapitalOrRevenueBudget(budget, "Capital", rootmaterial + ".1", budgetType, beFYear, reFYear, deptList,
+                    status);
 
-            createCapitalOrRevenueBudget(budget, "Revenue", rootmaterial + ".2",  budgetType, beFYear, reFYear);
+            createCapitalOrRevenueBudget(budget, "Revenue", rootmaterial + ".2", budgetType, beFYear, reFYear, deptList,
+                    status);
 
-            //TODO- Can we create department budget also here?
         } catch (final ValidationException e)
         {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
@@ -2681,15 +2700,33 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     @Transactional
-    public void createCapitalOrRevenueBudget(Budget parent, String capitalOrRevenue, String rootmaterial,
-            String budgetType,
-            CFinancialYear beFYear, CFinancialYear reFYear) throws SQLException {
-        String budgetName, budgetDes;
-        CFinancialYear budgetFinancialYear;
-        Long stateId;
-        Budget budget = new Budget();
+    public Budget setBudgetState(Budget budget) {
         State budgetState;
         Serializable sequenceNumber = null;
+        Long stateId;
+        try {
+            sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
+            stateId = Long.valueOf(sequenceNumber.toString());
+        } catch (final SQLGrammarException e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+        persistenceService
+                .getSession()
+                .createSQLQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
+                .executeUpdate();
+        budgetState = (State) persistenceService.find("from State where id = ?", stateId);
+        budget.setWfState(budgetState);
+        return budget;
+    }
+
+    @Transactional
+    public void createCapitalOrRevenueBudget(Budget parent, String capitalOrRevenue, String rootmaterial,
+            String budgetType, CFinancialYear beFYear, CFinancialYear reFYear, List<String> deptList, EgwStatus status)
+            throws SQLException {
+        String budgetName, budgetDes;
+        CFinancialYear budgetFinancialYear;
+        Budget budget = new Budget();
         try {
             if (budgetType.equalsIgnoreCase("BE")) {
                 budgetName = capitalOrRevenue + "-" + budgetType + "-" + beFYear.getFinYearRange();
@@ -2703,27 +2740,14 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 budgetFinancialYear = reFYear;
             }
 
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
-            } catch (final SQLGrammarException e) {
-            }
-
-            stateId = Long.valueOf(sequenceNumber.toString());
-
-            persistenceService
-                    .getSession()
-                    .createSQLQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
-                    .executeUpdate();
-
-            budgetState = (State) persistenceService.find("from State where id = ?", stateId);
-
             if (budgetType.equalsIgnoreCase("BE")) {
                 Budget refBudget = budgetService.getByName(capitalOrRevenue + "-RE-"
                         + reFYear.getFinYearRange());
                 budget.setName(budgetName);
                 budget.setDescription(budgetDes);
                 budget.setFinancialYear(budgetFinancialYear);
-                budget.setWfState(budgetState);
+                // budget = setBudgetState(refBudget);
+                budget.setStatus(status);
                 budget.setIsbere(budgetType);
                 budget.setMaterializedPath(rootmaterial);
                 budget.setReferenceBudget(refBudget);
@@ -2734,7 +2758,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 budget.setName(budgetName);
                 budget.setDescription(budgetDes);
                 budget.setFinancialYear(budgetFinancialYear);
-                budget.setWfState(budgetState);
+                // budget = setBudgetState(refBudget);
+                budget.setStatus(status);
                 budget.setIsbere(budgetType);
                 budget.setMaterializedPath(rootmaterial);
                 budget.setParent(parent);
@@ -2742,6 +2767,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 budget = budgetService.persist(budget);
             }
 
+            createDeptBudgetHeads(budget, capitalOrRevenue, budgetType, beFYear, reFYear, capitalOrRevenue.substring(0, 3),
+                    deptList, status);
         } catch (final ValidationException e)
         {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
@@ -2755,11 +2782,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @Transactional
     public void createDeptBudgetHeads(Budget parent, String capitalOrRevenue, String budgetType,
-            CFinancialYear beFYear, CFinancialYear reFYear, String revOrCap, List<String> deptList) throws SQLException {
+            CFinancialYear beFYear, CFinancialYear reFYear, String revOrCap, List<String> deptList, EgwStatus status)
+            throws SQLException {
         String budgetName, budgetDes, rootmaterial;
         CFinancialYear budgetFinancialYear;
-        Long stateId;
-        State budgetState;
         rootmaterial = parent.getMaterializedPath() + ".";
         String materialPath = rootmaterial;
         Serializable sequenceNumber = null;
@@ -2776,30 +2802,16 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 if (budgetType.equalsIgnoreCase("BE")) {
                     budgetName = deptCode + "-" + budgetType + "-" + revOrCap + "-" + beFYear.getFinYearRange();
                     budgetDes = departmentService.getDepartmentByCode(deptCode).getName() + " " + budgetType + " "
-                            + capitalOrRevenue + " Budget for the year " + beFYear.getFinYearRange();
+                            + capitalOrRevenue + "Budget for the year " + beFYear.getFinYearRange();
                     budgetFinancialYear = beFYear;
                 } else {
                     budgetName = deptCode + "-" + budgetType + "-" + revOrCap + "-" + reFYear.getFinYearRange();
                     budgetDes = departmentService.getDepartmentByCode(deptCode).getName() + " " + budgetType + " "
-                            + capitalOrRevenue + " Budget for the year " + reFYear.getFinYearRange();
+                            + capitalOrRevenue + "Budget for the year " + reFYear.getFinYearRange();
                     budgetFinancialYear = reFYear;
                 }
                 if (budgetService.getByName(budgetName) == null) {
                     materialPath = rootmaterial + capOrRevCount++;
-
-                    try {
-                        sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
-                    } catch (final SQLGrammarException e) {
-                    }
-
-                    stateId = Long.valueOf(sequenceNumber.toString());
-
-                    persistenceService
-                            .getSession()
-                            .createSQLQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
-                            .executeUpdate();
-
-                    budgetState = (State) persistenceService.find("from State where id = ?", stateId);
 
                     if (budgetType.equalsIgnoreCase("BE")) {
                         Budget refBudget = budgetService
@@ -2807,9 +2819,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         budget.setName(budgetName);
                         budget.setDescription(budgetDes);
                         budget.setFinancialYear(budgetFinancialYear);
-                        budget.setWfState(budgetState);
+                        // budget = setBudgetState(budget);
+                        budget.setStatus(status);
                         budget.setIsbere(budgetType);
-                        budget.setMaterializedPath(rootmaterial);
+                        budget.setMaterializedPath(materialPath);
                         budget.setReferenceBudget(refBudget);
                         budget.setParent(parent);
                         budgetService.applyAuditing(budget);
@@ -2818,9 +2831,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         budget.setName(budgetName);
                         budget.setDescription(budgetDes);
                         budget.setFinancialYear(budgetFinancialYear);
-                        budget.setWfState(budgetState);
+                        // budget = setBudgetState(budget);
+                        budget.setStatus(status);
                         budget.setIsbere(budgetType);
-                        budget.setMaterializedPath(rootmaterial);
+                        budget.setMaterializedPath(materialPath);
                         budget.setParent(parent);
                         budgetService.applyAuditing(budget);
                         budget = budgetService.persist(budget);
@@ -2839,11 +2853,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId, final Long glCodeId,
-            final BigDecimal amount, final CFinancialYear fYear) {
+            final CFinancialYear fYear) {
         return find(
-                //TODO- check based on WIP status
-                "from BudgetDetail bd where bd.state.value = 'NEW' and bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.maxCode.id = ? and bd.approvedAmount = ? and bd.budget.financialYear.id = ?",
-                fundId, functionId, deptId, glCodeId, amount, fYear.getId());
+                "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.maxCode.id = ? and bd.budget.financialYear.id = ?",
+                fundId, functionId, deptId, glCodeId, fYear.getId());
     }
 
 }

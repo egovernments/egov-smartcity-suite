@@ -41,7 +41,10 @@ package org.egov.web.actions.budget;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -49,8 +52,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -71,6 +72,8 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -87,15 +90,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = "upload", location = "budgetLoad-upload.jsp")
+        @Result(name = "upload", location = "budgetLoad-upload.jsp"),
+        @Result(name = "result", location = "budgetLoad-result.jsp")
 })
 public class BudgetLoadAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BudgetLoadAction.class);
     private File budgetInXls;
-    private static final int MUNCIPALLITY_NAME_ROW_INDEX = 0;
-    private static final int MUNCIPALLITY_NAME_CELL_INDEX = 1;
+    private String budgetInXlsFileName;
+    private String budgetInXlsContentType;
     private static final int RE_YEAR_ROW_INDEX = 1;
     private static final int BE_YEAR_ROW_INDEX = 2;
     private static final int DATA_STARTING_ROW_INDEX = 4;
@@ -109,8 +113,8 @@ public class BudgetLoadAction extends BaseFormAction {
     private boolean errorInMasterData = false;
     private MultipartFile[] originalFile = new MultipartFile[1];
     private MultipartFile[] outPutFile = new MultipartFile[1];
-    private Long originalFileStoreId, outPutFileStoreId;
-    private String mode;
+    private String originalFileStoreId, outPutFileStoreId;
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
@@ -135,8 +139,7 @@ public class BudgetLoadAction extends BaseFormAction {
     private BudgetDetailService budgetDetailService;
 
     @Autowired
-    @Qualifier("fileStoreUtils")
-    private FileStoreUtils fileStoreUtils;
+    protected FileStoreService fileStoreService;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -163,14 +166,12 @@ public class BudgetLoadAction extends BaseFormAction {
         try {
             FileInputStream fsIP = new FileInputStream(budgetInXls);
 
-            /*
-             * DiskFileItem originalFileItem = new DiskFileItem("file", "text/plain", false, budgetInXls.getName(), (int)
-             * budgetInXls.length(), budgetInXls.getParentFile()); originalFileItem.getOutputStream(); originalFile[0] = new
-             * CommonsMultipartFile(originalFileItem); Set<FileStoreMapper> originalFileStore =
-             * fileStoreUtils.addToFileStore(originalFile, FinancialConstants.MODULE_NAME_APPCONFIG); List<FileStoreMapper>
-             * originalFileStoreList = new ArrayList<FileStoreMapper>(); originalFileStoreList.addAll(originalFileStore);
-             * originalFileStoreId = originalFileStoreList.get(0).getId();
-             */
+            final FileStoreMapper originalFileStore = fileStoreService.store(budgetInXls,
+                    budgetInXlsFileName,
+                    budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
+
+            persistenceService.persist(originalFileStore);
+            originalFileStoreId = originalFileStore.getFileStoreId();
 
             final POIFSFileSystem fs = new POIFSFileSystem(fsIP);
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -178,12 +179,12 @@ public class BudgetLoadAction extends BaseFormAction {
             final HSSFSheet sheet = wb.getSheetAt(0);
             final HSSFRow reRow = sheet.getRow(RE_YEAR_ROW_INDEX);
             final HSSFRow beRow = sheet.getRow(BE_YEAR_ROW_INDEX);
-            String reYear = getStrValue(reRow.getCell(1));
-            String beYear = getStrValue(beRow.getCell(1));
-            CFinancialYear reFYear = financialYearDAO.getFinancialYearByFinYearRange(reYear);
+            String reFinYearRange = getStrValue(reRow.getCell(1));
+            String beFinYearRange = getStrValue(beRow.getCell(1));
+            CFinancialYear reFYear = financialYearDAO.getFinancialYearByFinYearRange(reFinYearRange);
             CFinancialYear beFYear = financialYearDAO.getNextFinancialYearByDate(reFYear.getStartingDate());
 
-            if (!validateFinancialYears(reFYear, beFYear, beYear))
+            if (!validateFinancialYears(reFYear, beFYear, beFinYearRange))
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         getText("be.year.is.not.immediate.next.fy.year.of.re.year"),
                         getText("be.year.is.not.immediate.next.fy.year.of.re.year"))));
@@ -193,51 +194,92 @@ public class BudgetLoadAction extends BaseFormAction {
             budgetUploadList = validateDuplicateData(budgetUploadList);
 
             if (errorInMasterData) {
-                Map<String, String> errorsMap = new HashMap<String, String>();
-
-                HSSFRow row = sheet.getRow(3);
-                HSSFCell cell = row.createCell(7);
-                cell.setCellValue("Error Reason");
-
-                for (BudgetUpload budget : budgetUploadList)
-                    errorsMap.put(budget.getFundCode() + "-" + budget.getFunctionCode() + "-" + budget.getDeptCode()
-                            + "-"
-                            + budget.getBudgetHead(), budget.getErrorReason());
-
-                for (int i = DATA_STARTING_ROW_INDEX; i <= sheet.getLastRowNum(); i++) {
-                    HSSFRow errorRow = sheet.getRow(i);
-                    HSSFCell errorCell = errorRow.createCell(7);
-                    errorCell.setCellValue(errorsMap.get((getStrValue(sheet.getRow(i).getCell(FUNDCODE_CELL_INDEX)) + "-"
-                            + getStrValue(sheet.getRow(i).getCell(FUNCTIONCODE_CELL_INDEX)) + "-"
-                            + getStrValue(sheet.getRow(i).getCell(DEPARTMENTCODE_CELL_INDEX)) + "-" + getStrValue(sheet.getRow(i)
-                            .getCell(GLCODE_CELL_INDEX)))));
-                }
                 fsIP.close();
-                FileOutputStream output_file = new FileOutputStream(new File("/home/" + System.getProperty("user.name") + "/OutPut.xls"));
-                wb.write(output_file);
-                output_file.close();
+                prepareOutPutFileWithErrors(budgetUploadList);
 
-                /*
-                 * DiskFileItem outPutFileItem = new DiskFileItem("file", "text/plain", false, budgetInXls.getName(), (int)
-                 * budgetInXls.length(), budgetInXls.getParentFile()); outPutFileItem.getOutputStream(); outPutFile[0] = new
-                 * CommonsMultipartFile(outPutFileItem); Set<FileStoreMapper> outPutFileStore =
-                 * fileStoreUtils.addToFileStore(originalFile, FinancialConstants.MODULE_NAME_APPCONFIG); List<FileStoreMapper>
-                 * outPutFileStoreList = new ArrayList<FileStoreMapper>(); outPutFileStoreList.addAll(outPutFileStore);
-                 * outPutFileStoreId = originalFileStoreList.get(0).getId(); mode = "result";
-                 */
                 throw new ValidationException(Arrays.asList(new ValidationError(getText("error.while.validating.masterdata"),
                         getText("error.while.validating.masterdata"))));
             }
 
-            final HSSFRow muncipallityNameRow = sheet.getRow(MUNCIPALLITY_NAME_ROW_INDEX);
             budgetUploadList = removeEmptyRows(budgetUploadList);
-            /*
-             * budgetUploadList = budgetDetailService.loadBudget(budgetUploadList,
-             * getStrValue(muncipallityNameRow.getCell(MUNCIPALLITY_NAME_CELL_INDEX)), reFYear, beFYear);
-             */
 
             budgetUploadList = budgetDetailService.loadBudget(budgetUploadList, reFYear, beFYear);
 
+            fsIP.close();
+            prepareOutPutFileWithFinalStatus(budgetUploadList);
+
+            addActionMessage(getText("budget.load.sucessful"));
+
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+
+        return "result";
+    }
+
+    private void prepareOutPutFileWithErrors(List<BudgetUpload> budgetUploadList) {
+        FileInputStream fsIP;
+        try {
+            fsIP = new FileInputStream(budgetInXls);
+
+            Map<String, String> errorsMap = new HashMap<String, String>();
+            final POIFSFileSystem fs = new POIFSFileSystem(fsIP);
+            final HSSFWorkbook wb = new HSSFWorkbook(fs);
+            wb.getNumberOfSheets();
+            final HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFRow row = sheet.getRow(3);
+            HSSFCell cell = row.createCell(7);
+            cell.setCellValue("Error Reason");
+
+            for (BudgetUpload budget : budgetUploadList)
+                errorsMap.put(budget.getFundCode() + "-" + budget.getFunctionCode() + "-" + budget.getDeptCode()
+                        + "-"
+                        + budget.getBudgetHead(), budget.getErrorReason());
+
+            for (int i = DATA_STARTING_ROW_INDEX; i <= sheet.getLastRowNum(); i++) {
+                HSSFRow errorRow = sheet.getRow(i);
+                HSSFCell errorCell = errorRow.createCell(7);
+                errorCell.setCellValue(errorsMap.get((getStrValue(sheet.getRow(i).getCell(FUNDCODE_CELL_INDEX)) + "-"
+                        + getStrValue(sheet.getRow(i).getCell(FUNCTIONCODE_CELL_INDEX)) + "-"
+                        + getStrValue(sheet.getRow(i).getCell(DEPARTMENTCODE_CELL_INDEX)) + "-" + getStrValue(sheet.getRow(i)
+                        .getCell(GLCODE_CELL_INDEX)))));
+            }
+
+            FileOutputStream output_file = new FileOutputStream(budgetInXls);
+            wb.write(output_file);
+            output_file.close();
+            final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
+                    budgetInXlsFileName,
+                    budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
+
+            persistenceService.persist(outPutFileStore);
+
+            outPutFileStoreId = outPutFileStore.getFileStoreId();
+        } catch (FileNotFoundException e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        } catch (IOException e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
+    }
+
+    private void prepareOutPutFileWithFinalStatus(List<BudgetUpload> budgetUploadList) {
+        FileInputStream fsIP;
+        try {
+            fsIP = new FileInputStream(budgetInXls);
+
+            Map<String, String> errorsMap = new HashMap<String, String>();
+            final POIFSFileSystem fs = new POIFSFileSystem(fsIP);
+            final HSSFWorkbook wb = new HSSFWorkbook(fs);
+            wb.getNumberOfSheets();
+            final HSSFSheet sheet = wb.getSheetAt(0);
             Map<String, String> finalStatusMap = new HashMap<String, String>();
 
             HSSFRow row = sheet.getRow(3);
@@ -257,75 +299,24 @@ public class BudgetLoadAction extends BaseFormAction {
                         + getStrValue(sheet.getRow(i).getCell(DEPARTMENTCODE_CELL_INDEX)) + "-" + getStrValue(sheet.getRow(i)
                         .getCell(GLCODE_CELL_INDEX)))));
             }
-            fsIP.close();
-            FileOutputStream output_file = new FileOutputStream(new File("/home/" + System.getProperty("user.name") + "/OutPut.xls"));
+
+            FileOutputStream output_file = new FileOutputStream(budgetInXls);
             wb.write(output_file);
             output_file.close();
 
-            /*
-             * DiskFileItem outPutFileItem = new DiskFileItem("file", "text/plain", false, budgetInXls.getName(), (int)
-             * budgetInXls.length(), budgetInXls.getParentFile()); outPutFileItem.getOutputStream(); outPutFile[0] = new
-             * CommonsMultipartFile(outPutFileItem); Set<FileStoreMapper> outPutFileStore =
-             * fileStoreUtils.addToFileStore(outPutFile, FinancialConstants.MODULE_NAME_APPCONFIG); List<FileStoreMapper>
-             * outPutFileStoreList = new ArrayList<FileStoreMapper>(); outPutFileStoreList.addAll(outPutFileStore);
-             * outPutFileStoreId = outPutFileStoreList.get(0).getId(); mode = "result";
-             */
-            addActionMessage(getText("budget.load.sucessful"));
+            final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
+                    budgetInXlsFileName,
+                    budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
+            persistenceService.persist(outPutFileStore);
 
-        } catch (final ValidationException e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
-                    e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
+            outPutFileStoreId = outPutFileStore.getFileStoreId();
+        } catch (FileNotFoundException e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        } catch (IOException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
-
-        return "upload";
-    }
-
-    @ValidationErrorPage("upload")
-    @Action(value = "/budget/budgetLoad-export")
-    public String export(HttpServletResponse response)
-    {
-
-        try {
-            if (originalFileStoreId != null)
-                fileStoreUtils.fetchFileAndWriteToStream(originalFileStoreId.toString(),
-                        FinancialConstants.MODULE_NAME_APPCONFIG, true, response);
-            else
-                fileStoreUtils.fetchFileAndWriteToStream(outPutFileStoreId.toString(),
-                        FinancialConstants.MODULE_NAME_APPCONFIG, true, response);
-        } catch (final ValidationException e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
-                    e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
-        }
-        return null;
-    }
-
-    private List<BudgetUpload> prepareOutPutFile(HSSFWorkbook wb) {
-        List<BudgetUpload> tempList = new ArrayList<>();
-        try {
-            if (errorInMasterData) {
-
-            }
-
-        } catch (final ValidationException e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
-                    e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
-        }
-        return tempList;
     }
 
     private List<BudgetUpload> removeEmptyRows(List<BudgetUpload> budgetUploadList) {
@@ -346,11 +337,10 @@ public class BudgetLoadAction extends BaseFormAction {
             Map<String, CFunction> functionMap = new HashMap<String, CFunction>();
             Map<String, Department> departmentMap = new HashMap<String, Department>();
             Map<String, CChartOfAccounts> coaMap = new HashMap<String, CChartOfAccounts>();
-            //TODO check for data active
-            List<Fund> fundList = fundDAO.findAll();
-            List<CFunction> functionList = functionDAO.findAll();
+            List<Fund> fundList = fundDAO.findAllActiveIsLeafFunds();
+            List<CFunction> functionList = functionDAO.getAllActiveFunctions();
             List<Department> departmentList = departmentService.getAllDepartments();
-            List<CChartOfAccounts> coaList = chartOfAccountsService.findAll();
+            List<CChartOfAccounts> coaList = chartOfAccountsService.getActiveCodeList();
             for (Fund fund : fundList)
                 fundMap.put(fund.getCode(), fund);
             for (CFunction function : functionList)
@@ -359,7 +349,7 @@ public class BudgetLoadAction extends BaseFormAction {
                 departmentMap.put(department.getCode(), department);
             for (CChartOfAccounts coa : coaList)
                 coaMap.put(coa.getGlcode(), coa);
-            
+
             for (BudgetUpload budget : budgetUploadList) {
                 error = "";
                 if (budget.getFundCode() != null && !budget.getFundCode().equalsIgnoreCase("")
@@ -595,28 +585,28 @@ public class BudgetLoadAction extends BaseFormAction {
         this.budgetInXls = budgetInXls;
     }
 
-    public Long getOriginalFileStoreId() {
+    public String getOriginalFileStoreId() {
         return originalFileStoreId;
     }
 
-    public void setOriginalFileStoreId(Long originalFileStoreId) {
+    public void setOriginalFileStoreId(String originalFileStoreId) {
         this.originalFileStoreId = originalFileStoreId;
     }
 
-    public Long getOutPutFileStoreId() {
+    public void setBudgetInXlsFileName(String budgetInXlsFileName) {
+        this.budgetInXlsFileName = budgetInXlsFileName;
+    }
+
+    public void setBudgetInXlsContentType(String budgetInXlsContentType) {
+        this.budgetInXlsContentType = budgetInXlsContentType;
+    }
+
+    public String getOutPutFileStoreId() {
         return outPutFileStoreId;
     }
 
-    public void setOutPutFileStoreId(Long outPutFileStoreId) {
+    public void setOutPutFileStoreId(String outPutFileStoreId) {
         this.outPutFileStoreId = outPutFileStoreId;
-    }
-
-    public String getMode() {
-        return mode;
-    }
-
-    public void setMode(String mode) {
-        this.mode = mode;
     }
 
 }
