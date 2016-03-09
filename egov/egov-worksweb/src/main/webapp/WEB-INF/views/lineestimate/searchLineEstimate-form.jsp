@@ -47,7 +47,7 @@
 <script src="<egov:url path='resources/js/works.js'/>"></script>
 <div class="page-container" id="page-container">
 	<div class="main-content">
-		<form:form name="lineEstimateSearchForm" role="form" action="/egworks/lineestimate/search" modelAttribute="lineEstimateSearchRequest" id="lineEstimateSearchRequest" class="form-horizontal form-groups-bordered">
+		<form:form name="lineEstimateSearchForm" role="form" action="/egworks/lineestimate/search" modelAttribute="lineEstimateSearchRequest" id="lineEstimatesearchform" class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0">
@@ -56,14 +56,14 @@
 						</div>
 						<div class="panel-body">
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.administartive.sanctionno" /><span class="mandatory"></span></label>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.administartive.sanctionno" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control"/>
 									<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.executingdepartment" /><span class="mandatory"></span></label>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.executingdepartment" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required">
+									<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
 										<form:options items="${executingDepartments}" itemValue="id" itemLabel="name" />
 									</form:select>
@@ -71,29 +71,29 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.fromdate" /><span class="mandatory"></span></label>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.fromdate" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="adminSanctionFromDate" class="form-control datepicker"	id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" />
 									<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.todate" /><span class="mandatory"></span></label>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.todate" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="adminSanctionToDate" class="form-control datepicker"	id="v" data-inputmask="'mask': 'd/m/y'" />
 									<form:errors path="adminSanctionToDate" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.fund" /><span class="mandatory"></span></label>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.fund" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:select path="fund" data-first-option="false" class="form-control" id="fund" required="required">
+									<form:select path="fund" data-first-option="false" class="form-control" id="fund">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
 										<form:options items="${funds}" itemValue="id" itemLabel="name"/>
 									</form:select>
 									<form:errors path="fund" cssClass="add-margin error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.function" /><span class="mandatory"></span></label>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.function" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:select path="function" data-first-option="false" name="function" class="form-control" id="function" required="required">
+									<form:select path="function" data-first-option="false" name="function" class="form-control" id="function">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
 										<form:options items="${functions}" itemValue="id" itemLabel="name"/>
 									</form:select>
@@ -101,15 +101,15 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.budgethead" /><span class="mandatory"></span></label>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.budgethead" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:select path="budgetHead" data-first-option="false" id="budgetHead" class="form-control" required="required">
+									<form:select path="budgetHead" data-first-option="false" id="budgetHead" class="form-control">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
 										<form:options items="${budgetHeads}" itemValue="id" itemLabel="name"/>
 									</form:select>
 									<form:errors path="budgetHead" cssClass="add-margin error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.estimateno" /><span class="mandatory"></span></label>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.estimateno" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="estimateNumber" id="estimateNumber" class="form-control"/>
 									<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
@@ -122,11 +122,66 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" class="btn btn-primary" value="Search"><spring:message code="lineestimate.btn.submit"/></form:button>
-					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lineestimate.btn.close"/></form:button>
+					<button type='button' class='btn btn-primary' id="btnsearch">
+						<spring:message code='lineestimate.btn.search' />
+					</button>
+					<a href='javascript:void(0)' class='btn btn-default'
+						onclick='self.close()'><spring:message code='lineestimate.btn.close' /></a>
 				</div>
 			</div>
 		</form:form>  
 	</div>
 </div>
-<script src="<c:url value='/resources/js/searchlineestimate.js'/>"></script>
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">LineEstimate Search
+		Result</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lineestimate.administartive.sanctionno" /></th>
+					<th><spring:message code="lbl.executingdepartment" /></th>
+					<th><spring:message code="lbl.fund" /></th>
+					<th><spring:message code="lbl.function" /></th>
+					<th><spring:message code="lbl.budgethead" /></th>
+					<th><spring:message code="lineestimate.createdby" /></th>
+					<th><spring:message code="lineestimate.totalamount" /></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+<script>
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/lineestimate/searchlineestimatehelper.js'/>"></script>

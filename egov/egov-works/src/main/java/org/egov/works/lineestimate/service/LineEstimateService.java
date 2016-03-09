@@ -54,6 +54,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
 import org.egov.works.models.estimate.EstimateNumberGenerator;
@@ -200,5 +201,9 @@ public class LineEstimateService {
 //                }
 //            }
         return details;
+    }
+    
+    public List<LineEstimate> search(LineEstimateSearchRequest lineEstimateSearchRequest){
+        return lineEstimateRepository.findAll();
     }
 }
