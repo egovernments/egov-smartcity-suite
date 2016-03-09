@@ -85,6 +85,8 @@ public class CashBook {
     private FinancialYearHibernateDAO financialYearDAO;
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     final SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
+    private @Autowired EGovernCommon eGovernCommon; 
+    private @Autowired  ReportEngine engine;
 
     public CashBook() {
     }
@@ -103,7 +105,6 @@ public class CashBook {
             String glCode1 = "";
             String glCode2 = "";
             taskExc = new TaskFailedException();
-            final EGovernCommon egc = new EGovernCommon();
             final String cashPId = EGovConfig.getProperty("egf_config.xml",
                     "PURPOSEID", "", "CashInHand");
 
@@ -129,7 +130,7 @@ public class CashBook {
                 if (snapShotDateTime.equalsIgnoreCase(""))
                     effTime = "";
                 else
-                    effTime = egc.getEffectiveDateFilter(snapShotDateTime);
+                    effTime = eGovernCommon.getEffectiveDateFilter(snapShotDateTime);
             } catch (final Exception ex) {
                 LOGGER.error("exception in getGeneralLedgerList", ex);
                 throw taskExc;
@@ -216,7 +217,6 @@ public class CashBook {
             BigDecimal cashOpeningBalance = new BigDecimal("0.00");
             BigDecimal chequeOpeningBalance = new BigDecimal("0.00");
 
-            final ReportEngine engine = new ReportEngine();
             final ReportEngineBean reBean = engine
                     .populateReportEngineBean(reportBean);
             final String engineQry = engine.getVouchersListQuery(reBean);
@@ -877,10 +877,9 @@ public class CashBook {
 
     public void isCurDate(final String VDate) throws TaskFailedException {
 
-        final EGovernCommon egc = new EGovernCommon();
         try {
 
-            final String today = egc.getCurrentDate();
+            final String today = eGovernCommon.getCurrentDate();
             final String[] dt2 = today.split("/");
             final String[] dt1 = VDate.split("/");
 

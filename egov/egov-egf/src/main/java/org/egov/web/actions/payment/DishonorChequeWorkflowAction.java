@@ -148,6 +148,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     private String approverDesignation;
     private String mode = null;
     private List desgnationList;
+    
+    private @Autowired BankEntries bankEntries;
 
     public DishonorChequeWorkflowAction() {
         this.addRelatedEntity("instrumentHeader", InstrumentHeader.class);
@@ -242,15 +244,14 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     }
 
     BankEntries createBankEntry() {
-        final BankEntries be = new BankEntries();
-        be.setBankAccountId(dishonorChequeView.getInstrumentHeader().getBankAccountId().getId().intValue());
-        be.setRefNo(dishonorChequeView.getBankReferenceNumber());
-        be.setTxnAmount(dishonorChequeView.getBankChargesAmt().toString());
-        be.setType("P");
-        be.setRemarks(dishonorChequeView.getBankreason());
-        be.setTxnDate(sdf.format(dishonorChequeView.getTransactionDate()));
-        be.setGlcodeId(dishonorChequeView.getBankchargeGlCodeId().getId().toString());
-        return be;
+        bankEntries.setBankAccountId(dishonorChequeView.getInstrumentHeader().getBankAccountId().getId().intValue());
+        bankEntries.setRefNo(dishonorChequeView.getBankReferenceNumber());
+        bankEntries.setTxnAmount(dishonorChequeView.getBankChargesAmt().toString());
+        bankEntries.setType("P");
+        bankEntries.setRemarks(dishonorChequeView.getBankreason());
+        bankEntries.setTxnDate(sdf.format(dishonorChequeView.getTransactionDate()));
+        bankEntries.setGlcodeId(dishonorChequeView.getBankchargeGlCodeId().getId().toString());
+        return bankEntries;
     }
 
     private CVoucherHeader createVoucherHeader(final String type, final String reason) throws ParseException {
@@ -263,9 +264,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
 
     public CVoucherHeader createBankReversalVoucher() throws ParseException, HibernateException, TaskFailedException,
             SQLException {
-        BankEntries be = new BankEntries();
         CVoucherHeader BankVoucher = null;
-        be = createBankEntry();
+        bankEntries = createBankEntry();
         final String narration = "Reversal Bank Charges Entry for receipt number "
                 + dishonorChequeView.getOriginalVoucherHeader().getVoucherNumber() +
                 ", Cheque Number " + dishonorChequeView.getInstrumentHeader().getInstrumentNumber() + " Cheque Dated :"
@@ -289,9 +289,9 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         BankVoucher = createVoucher(BankVoucher, headerDetails, "Bank Entry");
 
         updateInstrumentVoucherReference(Arrays.asList(instrument), BankVoucher);
-        be.setVoucherheaderId(BankVoucher.getId().toString());
-        be.setInstrumentHeaderId(instrument.getId());
-        be.insert();
+        bankEntries.setVoucherheaderId(BankVoucher.getId().toString());
+        bankEntries.setInstrumentHeaderId(instrument.getId());
+        bankEntries.insert();
 
         return BankVoucher;
 

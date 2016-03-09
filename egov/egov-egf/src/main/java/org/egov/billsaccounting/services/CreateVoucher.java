@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
@@ -70,6 +72,7 @@ import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -78,6 +81,8 @@ import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
+import org.egov.dao.budget.BudgetDetailsHibernateDAO;
+import org.egov.dao.budget.BudgetUsageHibernateDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -130,7 +135,6 @@ import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.GLEngine.TransaxtionParameter;
 import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.eGov.src.transactions.CommonMethodsI;
 import com.exilant.eGov.src.transactions.CommonMethodsImpl;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
@@ -170,6 +174,8 @@ public class CreateVoucher {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+    @Autowired
+    private EGovernCommon eGovernCommon;
     // add here for other bills
 
     // bill related common variables for back end updation
@@ -177,14 +183,16 @@ public class CreateVoucher {
     SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY);
     SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
     NumberFormat nf = new DecimalFormat("##############.00");
-    EGovernCommon cm = new EGovernCommon();
-
+   
     // transaction related common variables
     private int usrId;
     @Autowired
     private BillsService billsService;
     @Autowired
     private FundHibernateDAO fundDAO;
+    
+    @Autowired
+    private BudgetUsageHibernateDAO budgetUsageHibernateDAO;
 
     @Autowired
     private ChartOfAccounts chartOfAccounts;
@@ -193,7 +201,7 @@ public class CreateVoucher {
     private FunctionaryHibernateDAO functionaryDAO;
     @Autowired
     private FinancialYearDAO financialYearDAO;
-
+    @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
     @Autowired
     private SchemeHibernateDAO schemeDAO;
@@ -207,12 +215,15 @@ public class CreateVoucher {
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
     @Autowired
     private VoucherHeaderDAO voucherHeaderDAO;
-
+    @Autowired
     private BankaccountHibernateDAO bankAccountDAO;
-
+    @Autowired
     private BankHibernateDAO bankDAO;
     @Autowired
     private VoucherHelper voucherHelper;
+    
+    @Autowired
+    private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO  ;
 
     @Autowired
     @Qualifier("voucherService")
@@ -243,7 +254,10 @@ public class CreateVoucher {
 
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
-    CommonMethodsI cmImpl = new CommonMethodsImpl();
+    @Autowired
+    private BudgetDetailsHibernateDAO budgetDetailsDAO;
+    @Autowired
+    private CommonMethodsImpl cmImpl ;
     PersistenceService<Bankreconciliation, Integer> bankReconSer;
     PersistenceService<EgBillregistermis, Integer> billMisSer;
     PersistenceService<EgBilldetails, Integer> billDetailSer;
@@ -256,9 +270,12 @@ public class CreateVoucher {
     private GeneralLedgerDetailService generalLedgerDetailService;
 
     private Fund fundByCode;
+    @Autowired
     private PersonalInformationDAO personalInformationDAO;
     @Autowired
-	private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+    @Autowired
+    private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
 
     public CreateVoucher()
     {
@@ -266,7 +283,7 @@ public class CreateVoucher {
             LOGGER.debug("Initializing CreateVoucher Service");
         try
         {
-
+          
             // generalLedgerService = new PersistenceService<CGeneralLedger, Long>();
             // generalLedgerService.setType(CGeneralLedger.class);
             // generalLedgerService.setSessionFactory(new SessionFactory());
@@ -763,8 +780,7 @@ public class CreateVoucher {
             {
                 LOGGER.error("Calling StartWorkflow...in create voucher.....for ......ContraJournalVoucher......"
                         + voucherheader.getType() + " ----" + voucherheader.getName());
-                final EgBillRegisterHibernateDAO egBillRegDao = new EgBillRegisterHibernateDAO();
-                final String billtype = egBillRegDao.getBillTypeforVoucher(voucherheader);
+                final String billtype = egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherheader);
                 if (billtype == null)
                 {
                     applicationContext
@@ -1044,7 +1060,8 @@ public class CreateVoucher {
             final List<HashMap<String, Object>> accountcodedetails,
             final List<HashMap<String, Object>> subledgerdetails) throws ApplicationRuntimeException {
         CVoucherHeader vh;
-        Vouchermis mis;
+        Vouchermis mis; 
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("start | createVoucher API");
         try {
@@ -1064,7 +1081,7 @@ public class CreateVoucher {
             final String vdt = formatter.format(vh.getVoucherDate());
             String fiscalPeriod = null;
             try {
-                fiscalPeriod = cm.getFiscalPeriod(vdt);
+                fiscalPeriod = eGovernCommon.getFiscalPeriod(vdt);
             } catch (final TaskFailedException e) {
                 throw new ApplicationRuntimeException("error while getting fiscal period");
             }
@@ -1098,7 +1115,7 @@ public class CreateVoucher {
             vh.setCgvn(cgNum);
 
             try {
-                if (!cm.isUniqueVN(vh.getVoucherNumber(), vdt))
+                if (!eGovernCommon.isUniqueVN(vh.getVoucherNumber(), vdt))
                     throw new ValidationException(Arrays.asList(new ValidationError("Duplicate Voucher Number",
                             "Duplicate Voucher Number")));
             } catch (final Exception e) {
@@ -1288,8 +1305,11 @@ public class CreateVoucher {
         final String vdt = formatter.format(vh.getVoucherDate());
         String fiscalPeriod = null;
         try {
-            fiscalPeriod = cm.getFiscalPeriod(vdt);
-        } catch (final TaskFailedException e) {
+            CFiscalPeriod fis= fiscalPeriodHibernateDAO.getFiscalPeriodByDate(vh.getVoucherDate());
+            if(fis!=null)
+                fiscalPeriod=fis.getId().toString();
+           
+        } catch (final Exception e) {
             throw new ApplicationRuntimeException("error while getting fiscal period");
         }
         if (null == fiscalPeriod)
@@ -1322,7 +1342,7 @@ public class CreateVoucher {
         vh.setCgvn(cgNum);
 
         try {
-            if (!cm.isUniqueVN(vh.getVoucherNumber(), vdt))
+            if (!eGovernCommon.isUniqueVN(vh.getVoucherNumber(), vdt))
                 throw new ValidationException(Arrays.asList(new ValidationError("Duplicate Voucher Number",
                         "Duplicate Voucher Number")));
         } catch (final Exception e) {
@@ -1722,7 +1742,6 @@ public class CreateVoucher {
             final String schemecode = headerdetails.get(VoucherConstant.SCHEMECODE).toString();
             vouchermis.setSchemeid(schemeDAO.getSchemeByCode(schemecode));
         }
-
         if (headerdetails.containsKey(VoucherConstant.SUBSCHEMECODE) && null != headerdetails.get(VoucherConstant.SUBSCHEMECODE)) {
             final String subschemecode = headerdetails.get(VoucherConstant.SUBSCHEMECODE).toString();
             vouchermis.setSubschemeid(subSchemeDAO.getSubSchemeByCode(subschemecode));
@@ -2032,11 +2051,9 @@ public class CreateVoucher {
     }
 
     public Functionary getFunctionaryByCode(final BigDecimal code) {
-        PersistenceService<Functionary, Integer> functionarySer;
-        functionarySer = new PersistenceService<Functionary, Integer>();
         // functionarySer.setSessionFactory(new SessionFactory());
         // functionarySer.setType(Functionary.class);
-        final Functionary functionary = functionarySer.find("from Functionary where code=?", code);
+        final Functionary functionary = (Functionary) persistenceService.find("from Functionary where code=?", code);
         return functionary;
 
     }
@@ -2197,7 +2214,8 @@ public class CreateVoucher {
         if (null != supplierBillDetails.get("narration").toString())
             billregister.setNarration(supplierBillDetails.get("narration").toString());
         EgwStatus status = null;
-        status = (EgwStatus) egwStatusDAO.findById(Integer.valueOf(cm.getEGWStatusId("PURCHBILL", "Pending")), false);
+       // status = (EgwStatus) egwStatusDAO.findById(Integer.valueOf(eGovernCommon.getEGWStatusId("PURCHBILL", "Pending")), false);
+        status = (EgwStatus) egwStatusDAO.getStatusByModuleAndCode("PURCHBILL", "Pending");
         billregister.setStatus(status);
         if (null != EgovThreadLocals.getUserId())
             billregister.setCreatedBy(userMngr.getUserById(Long.valueOf(EgovThreadLocals.getUserId())));
@@ -2704,6 +2722,7 @@ public class CreateVoucher {
         this.appConfigValuesService = appConfigValuesService;
     }
 
+    
     
 
 }

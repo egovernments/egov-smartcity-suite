@@ -88,6 +88,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -168,6 +169,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     private BigDecimal notInBooktotalDebit;
     private BigDecimal notInBooktotalCredit;
     private BigDecimal notprocessedCredit;
+    private @Autowired EGovernCommon eGovernCommon;
     private BigDecimal notprocessedDebit;
     private BigDecimal notprocessedNet;
     private BigDecimal notInBookNet;
@@ -823,10 +825,9 @@ public class AutoReconciliationAction extends BaseFormAction {
     @SuppressWarnings({ "unchecked", "deprecation" })
     public String generateReport() {
         // bankStatments not in BankBook
-        final EGovernCommon cm = new EGovernCommon();
 
         try {
-            bankBookBalance = cm.getAccountBalance(dateFormatter.format(toDate), accountId.toString()).setScale(2,
+            bankBookBalance = eGovernCommon.getAccountBalance(dateFormatter.format(toDate), accountId.toString()).setScale(2,
                     BigDecimal.ROUND_HALF_UP);
         } catch (final HibernateException e) {
             throw new ApplicationRuntimeException(e.getMessage());

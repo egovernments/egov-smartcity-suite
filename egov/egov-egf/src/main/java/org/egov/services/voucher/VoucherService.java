@@ -80,6 +80,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -109,7 +110,6 @@ import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.bills.EgBillRegisterService;
@@ -172,6 +172,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private FinancialYearHibernateDAO financialYearDAO;
     @Autowired
     private EgovCommon egovCommon;
+    @Autowired
+    private DesignationService designationService;
 
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
         super(voucherHeader);
@@ -185,6 +187,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private EmployeeServiceOld employeeService;
     @Autowired
     private ScriptService scriptService;
+    
 
     @Autowired
     private EgBillRegisterService egBillRegisterService;
@@ -284,7 +287,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
     @SuppressWarnings({ "unchecked", "deprecation" })
     public Map<String, Object> getDesgByDeptAndTypeAndVoucherDate(final String type, final String scriptName, final Date vouDate,
-            final Paymentheader paymentheader) {
+            final Paymentheader paymentheader)  {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
         final Map<String, Object> map = new HashMap<String, Object>();
@@ -302,17 +305,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 desgFuncryMap = new HashMap<String, Object>();
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Designation and Functionary  Name  = " + desgFuncryName);
-                try {
-                    designation = new DesignationMasterDAO().getDesignationByDesignationName(desgFuncryName
-                            .substring(desgFuncryName.indexOf('-') + 1));
-                    desgFuncryMap.put("designationName", desgFuncryName.substring(0, desgFuncryName.indexOf('-')).split("~")[0]
-                            + "-" + designation.getName());
-                    desgFuncryMap.put("designationId",
-                            designation.getId() + "-" + desgFuncryName.substring(0, desgFuncryName.indexOf('-')));
-                    designationList.add(desgFuncryMap);
-                } catch (final NoSuchObjectException e) {
-                    LOGGER.error(e);
-                }
+                designation = designationService.getDesignationByName(desgFuncryName
+                        .substring(desgFuncryName.indexOf('-') + 1));
+                desgFuncryMap.put("designationName", desgFuncryName.substring(0, desgFuncryName.indexOf('-')).split("~")[0]
+                        + "-" + designation.getName());
+                desgFuncryMap.put("designationId",
+                        designation.getId() + "-" + desgFuncryName.substring(0, desgFuncryName.indexOf('-')));
+                designationList.add(desgFuncryMap);
             } else if (desgFuncryName.equalsIgnoreCase("END"))
                 map.put("wfitemstate", "END");
         map.put("designationList", designationList);
@@ -731,7 +730,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
     public void setVoucherHeaderDetails(final CVoucherHeader voucherHeader, final VoucherTypeBean voucherTypeBean)
             throws Exception {
-        new EGovernCommon();
         voucherHeader.setName(voucherTypeBean.getVoucherName());
         voucherHeader.setType(voucherTypeBean.getVoucherType());
         String vNumGenMode = null;
@@ -753,7 +751,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             throws Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("start | insertIntoVoucherHeader");
-        final EGovernCommon cm = new EGovernCommon();
         voucherHeader.setName(voucherTypeBean.getVoucherName());
         voucherHeader.setType(voucherTypeBean.getVoucherType());
         String vNumGenMode = null;
@@ -783,7 +780,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         try {
             final String vdt = Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate());
             String fiscalPeriod = null;
-            fiscalPeriod = cm.getFiscalPeriod(vdt);
+            fiscalPeriod = eGovernCommon.getFiscalPeriod(vdt);
             if (null == fiscalPeriod)
                 throw new ApplicationRuntimeException(
                         "Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
@@ -793,14 +790,14 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             // String
             // vType=voucherHeader.getVoucherNumber().substring(0,Integer.parseInt(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
             final String vType = voucherHeader.getFundId().getIdentifier() + "/" + getCgnType(voucherHeader.getType()) + "/CGVN";
-            String eg_voucher = cm.getEg_Voucher(vType, fiscalPeriod);
+            String eg_voucher = eGovernCommon.getEg_Voucher(vType, fiscalPeriod);
 
             for (int i = eg_voucher.length(); i < 10; i++)
                 eg_voucher = "0" + eg_voucher;
             final String cgNum = vType + eg_voucher;
             voucherHeader.setCgvn(cgNum);
             voucherHeader.setEffectiveDate(new Date());
-            if (!cm.isUniqueVN(voucherHeader.getVoucherNumber(), vdt))
+            if (!eGovernCommon.isUniqueVN(voucherHeader.getVoucherNumber(), vdt))
                 throw new ApplicationRuntimeException("Duplicate Voucher Number");
             // vh.setCreatedBy(userMngr.getUserById(Integer.valueOf(EgovThreadLocals.getUserId())));
             voucherHeader.getVouchermis().setVoucherheaderid(voucherHeader);
@@ -927,16 +924,12 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 desgFuncryMap = new HashMap<String, Object>();
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Designation and Functionary  Name  = " + desgFuncryName);
-                try {
-                    designation = new DesignationMasterDAO().getDesignationByDesignationName(desgFuncryName
-                            .substring(desgFuncryName.indexOf('-') + 1));
-                    desgFuncryMap.put("designationName", designation.getName());
-                    desgFuncryMap.put("designationId",
-                            designation.getId() + "-" + desgFuncryName.substring(0, desgFuncryName.indexOf('-')));
-                    designationList.add(desgFuncryMap);
-                } catch (final NoSuchObjectException e) {
-                    LOGGER.error(e);
-                }
+                designation = designationService.getDesignationByName(desgFuncryName
+                        .substring(desgFuncryName.indexOf('-') + 1));
+                desgFuncryMap.put("designationName", designation.getName());
+                desgFuncryMap.put("designationId",
+                        designation.getId() + "-" + desgFuncryName.substring(0, desgFuncryName.indexOf('-')));
+                designationList.add(desgFuncryMap);
             } else if (desgFuncryName.equalsIgnoreCase("END"))
                 map.put("wfitemstate", "END");
         map.put("designationList", designationList);
@@ -963,16 +956,12 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 desgFuncryMap = new HashMap<String, Object>();
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Designation and Functionary  Name  = " + desgFuncryName);
-                try {
-                    designation = new DesignationMasterDAO().getDesignationByDesignationName(desgFuncryName
-                            .substring(desgFuncryName.indexOf('-') + 1));
-                    desgFuncryMap.put("designationName", designation.getName());
-                    desgFuncryMap.put("designationId",
-                            designation.getId() + "-" + desgFuncryName.substring(0, desgFuncryName.indexOf('-')));
-                    designationList.add(desgFuncryMap);
-                } catch (final NoSuchObjectException e) {
-                    LOGGER.error(e);
-                }
+                designation = designationService.getDesignationByName(desgFuncryName
+                        .substring(desgFuncryName.indexOf('-') + 1));
+                desgFuncryMap.put("designationName", designation.getName());
+                desgFuncryMap.put("designationId",
+                        designation.getId() + "-" + desgFuncryName.substring(0, desgFuncryName.indexOf('-')));
+                designationList.add(desgFuncryMap);
             } else if (desgFuncryName.equalsIgnoreCase("END"))
                 map.put("wfitemstate", "END");
         map.put("designationList", designationList);
@@ -998,17 +987,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 desgFuncryMap = new HashMap<String, Object>();
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Designation and Functionary  Name  = " + desgFuncryName);
-                try {
-                    designation = new DesignationMasterDAO().getDesignationByDesignationName(desgFuncryName
-                            .substring(desgFuncryName.indexOf('-') + 1));
-                    desgFuncryMap.put("designationName", designation.getName());
-                    desgFuncryMap.put("designationId",
-                            designation.getId() + "-" + desgFuncryName.substring(0, desgFuncryName.indexOf('-')));
-                    designationList.add(desgFuncryMap);
-                    map.put("wfitemstate", desgFuncryName);
-                } catch (final NoSuchObjectException e) {
-                    LOGGER.error(e);
-                }
+                designation = designationService.getDesignationByName(desgFuncryName
+                        .substring(desgFuncryName.indexOf('-') + 1));
+                desgFuncryMap.put("designationName", designation.getName());
+                desgFuncryMap.put("designationId",
+                        designation.getId() + "-" + desgFuncryName.substring(0, desgFuncryName.indexOf('-')));
+                designationList.add(desgFuncryMap);
+                map.put("wfitemstate", desgFuncryName);
             } else if (desgFuncryName.equalsIgnoreCase("ANYFUNCTIONARY-ANYDESG")) {
                 designationList = getAllDesgByAndDept(deptId, desgFuncryName);
                 map.put("wfitemstate", desgFuncryName);

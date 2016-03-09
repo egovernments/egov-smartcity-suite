@@ -146,6 +146,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public List<CChartOfAccounts> contingentBillGlcodeList = new ArrayList<CChartOfAccounts>();
     public List<BigDecimal> cBillGlcodeIdList = null;
     protected List<Miscbilldetail> miscBillList = null;
+    private @Autowired  EGovernCommon eGovernCommon ;
     private static final String EMPTY_STRING = "";
     private static final String DELIMETER = "~";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving Data";
@@ -752,7 +753,6 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting updateVoucherHeader...");
-        final EGovernCommon eGovernCommon = new EGovernCommon();
         String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         String autoVoucherType = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
         String manualVoucherNumber = "";

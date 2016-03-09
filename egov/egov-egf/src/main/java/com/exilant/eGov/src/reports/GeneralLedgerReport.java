@@ -55,7 +55,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -86,14 +85,14 @@ public class GeneralLedgerReport {
     private static final Logger LOGGER = Logger.getLogger(GeneralLedgerReport.class);
     com.exilant.eGov.src.transactions.OpBal OpBal = new com.exilant.eGov.src.transactions.OpBal();
     DecimalFormat dft = new DecimalFormat("##############0.00");
-    EGovernCommon egc = new EGovernCommon();
-    CommnFunctions cmnFun = new CommnFunctions();
+    private @Autowired EGovernCommon eGovernCommon;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private ReportEngine engine;
     @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
+    private @Autowired CommnFunctions commnFunctions;
 
     public GeneralLedgerReport() {
     }
@@ -120,7 +119,7 @@ public class GeneralLedgerReport {
             if (snapShotDateTime.equalsIgnoreCase(""))
                 effTime = "";
             else
-                effTime = egc.getEffectiveDateFilter(snapShotDateTime);
+                effTime = eGovernCommon.getEffectiveDateFilter(snapShotDateTime);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw taskExc;
@@ -216,7 +215,6 @@ public class GeneralLedgerReport {
 
         // String query = getQuery(glCode1,fundId, fundSourceId, startDate, endDate);
 
-       // engine = new ReportEngine();
        // engine.setAppConfigValuesService(appConfigValuesService); 
         final ReportEngineBean reBean = engine.populateReportEngineBean(reportBean);
         engineQry = engine.getVouchersListQuery(reBean);
@@ -1021,7 +1019,7 @@ public class GeneralLedgerReport {
         }
 
         /** opening balance till the date from the start of the Year **/
-        final String startDate = cmnFun.getStartDate(Integer.parseInt(fyId));
+        final String startDate = commnFunctions.getStartDate(Integer.parseInt(fyId));
         if (!fundId.equalsIgnoreCase(""))
             fundCondition = "AND vh.fundId = ? ";
         if (!fundSourceId.equalsIgnoreCase(""))
@@ -1247,9 +1245,8 @@ public class GeneralLedgerReport {
     public void isCurDate(final String VDate) throws TaskFailedException
     {
 
-        final EGovernCommon egc = new EGovernCommon();
         try {
-            final String today = egc.getCurrentDate();
+            final String today = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
             final String[] dt2 = today.split("/");
             final String[] dt1 = VDate.split("/");
 

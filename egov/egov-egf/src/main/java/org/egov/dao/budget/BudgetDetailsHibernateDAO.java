@@ -125,6 +125,9 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     @Qualifier("financialYearDAO") 
     private  FinancialYearHibernateDAO financialYearHibDAO;
     
+    @Autowired
+    private BudgetUsageHibernateDAO budgetUsageHibernateDAO;
+    
 
     /**
      * This API is to check whether the planning budget is available or not.For the amount passed if there is sufficient budget
@@ -364,9 +367,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 }
                 final BudgetDetail bd = bdList.get(0);
                 bd.setBudgetAvailable(amtavailable);
-                final BudgetDetailsDAO bdDAO = new BudgetDetailsHibernateDAO(BudgetDetail.class,
-                        HibernateUtil.getCurrentSession());
-                bdDAO.update(bd);
+                update(bd);
 
                 final BudgetUsage budgetUsage = new BudgetUsage();
                 budgetUsage.setFinancialYearId(financialyearid.intValue());
@@ -385,8 +386,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     budgetUsage.setReleasedAmount(amount);
                 }
                 budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
-                final BudgetUsageDAO bu = new BudgetUsageHibernateDAO(BudgetUsage.class, HibernateUtil.getCurrentSession());
-                bu.create(budgetUsage);
+                budgetUsageHibernateDAO.create(budgetUsage);
                 return BigDecimal.ONE;
             }
             else
@@ -462,9 +462,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 }
                 final BudgetDetail bd = bdList.get(0);
                 bd.setBudgetAvailable(amtavailable);
-                final BudgetDetailsDAO bdDAO = new BudgetDetailsHibernateDAO(BudgetDetail.class,
-                        HibernateUtil.getCurrentSession());
-                bdDAO.update(bd);
+                update(bd);
 
                 final BudgetUsage budgetUsage = new BudgetUsage();
                 budgetUsage.setFinancialYearId(financialyearid.intValue());
@@ -483,8 +481,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     budgetUsage.setReleasedAmount(amount);
                 }
                 budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
-                final BudgetUsageDAO bu = new BudgetUsageHibernateDAO(BudgetUsage.class, HibernateUtil.getCurrentSession());
-                bu.create(budgetUsage);
+                budgetUsageHibernateDAO.create(budgetUsage);
                 return BigDecimal.ONE;
             }
             else
@@ -559,9 +556,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 }
                 final BudgetDetail bd = bdList.get(0);
                 bd.setBudgetAvailable(amtavailable);
-                final BudgetDetailsDAO bdDAO = new BudgetDetailsHibernateDAO(BudgetDetail.class,
-                        HibernateUtil.getCurrentSession());
-                bdDAO.update(bd);
+                update(bd);
 
                 final BudgetUsage budgetUsage = new BudgetUsage();
                 budgetUsage.setFinancialYearId(financialyearid.intValue());
@@ -580,8 +575,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     budgetUsage.setReleasedAmount(amount);
                 }
                 budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
-                final BudgetUsageDAO bu = new BudgetUsageHibernateDAO(BudgetUsage.class, HibernateUtil.getCurrentSession());
-                bu.create(budgetUsage);
+                budgetUsageHibernateDAO.create(budgetUsage);
                 return budgetUsage;
             }
             else
