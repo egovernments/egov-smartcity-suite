@@ -41,6 +41,7 @@ package org.egov.works.web.actions.tender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -54,7 +55,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
@@ -82,7 +83,7 @@ public class OfflineStatusAction extends BaseFormAction {
     private Long objId;
     private String objectType;
     @Autowired
-    private CommonsService commonsService;
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private List<OfflineStatus> setStatusList;
     private static final String STATUS_OBJECTID = "getStatusByObjectId";
     private static final String STATUS_VALUES = ".setstatus";
@@ -184,7 +185,7 @@ public class OfflineStatusAction extends BaseFormAction {
         return EDIT;
     }
 
-    // @SkipValidation
+    @SkipValidation
     @Action(value = "/tender/offlineStatus-retenderEdit")
     public String retenderEdit() {
         worksPackage = (WorksPackage) persistenceService.find(" from WorksPackage where id =? ", objId);
@@ -478,18 +479,21 @@ public class OfflineStatusAction extends BaseFormAction {
                 } else
                     statList.add(stat);
         }
-        if (objectType != null && objectType.equals(TENDERRESPONSE_CONTRACTORS))
-            return commonsService.getStatusListByModuleAndCodeList(TENDERRESPONSE, statList);
-        else
-            return commonsService.getStatusListByModuleAndCodeList(objectType, statList);
+        if (!statList.isEmpty()) {
+            if (objectType != null && objectType.equals(TENDERRESPONSE_CONTRACTORS))
+                return egwStatusHibernateDAO.getStatusListByModuleAndCodeList(TENDERRESPONSE, statList);
+            else
+                return egwStatusHibernateDAO.getStatusListByModuleAndCodeList(objectType, statList);
+        } else
+            return Collections.EMPTY_LIST;
     }
 
     private EgwStatus getDescriptionByCode(final String statName) {
 
         if (objectType != null && objectType.equals(TENDERRESPONSE_CONTRACTORS))
-            return commonsService.getStatusByModuleAndCode(TENDERRESPONSE, statName);
+            return egwStatusHibernateDAO.getStatusByModuleAndCode(TENDERRESPONSE, statName);
         else
-            return commonsService.getStatusByModuleAndCode(objectType, statName);
+            return egwStatusHibernateDAO.getStatusByModuleAndCode(objectType, statName);
     }
 
     private void populateStatusNameAndDateDetails(final List<OfflineStatus> setStatusList) {
@@ -602,10 +606,6 @@ public class OfflineStatusAction extends BaseFormAction {
 
     public void setObjectType(final String objectType) {
         this.objectType = objectType;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public Date getAppDate() {
