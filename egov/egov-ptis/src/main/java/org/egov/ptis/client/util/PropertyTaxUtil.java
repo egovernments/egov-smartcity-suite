@@ -95,7 +95,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -558,21 +557,8 @@ public class PropertyTaxUtil {
                 installmentAndReason.get(split[0]).put(split[1], entry.getValue());
         }
 
-        for (final String installmentYear : installmentAndReason.keySet()) {
-            if (installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY) != null)
-                orderMap.put(installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY), order++);
-
-            if (installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_PENALTY_FINES) != null)
-                orderMap.put(installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_PENALTY_FINES), order++);
-        }
-
         for (final String installmentYear : installmentAndReason.keySet())
             for (final String reasonCode : PropertyTaxConstants.ORDERED_DEMAND_RSNS_LIST) {
-
-                if (reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
-                        || reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY))
-                    continue;
-
                 if (installmentAndReason.get(installmentYear).get(reasonCode) != null)
                     orderMap.put(installmentAndReason.get(installmentYear).get(reasonCode), order++);
             }
