@@ -105,7 +105,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.category.active" /><span class="mandatory"></span></label>
+								code="lbl.category.active" /></label>
 						<div class="col-sm-1 add-margin">
 							<form:checkbox path="active" id="classactive"
 								cssClass="form-control" />
