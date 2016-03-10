@@ -53,6 +53,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.EgwStatus;
@@ -104,12 +105,13 @@ public class DailyWTCollectionReportService {
 
     public Set<User> getUsers() {
         final String operatorDesignation = appConfigValueService
-                .getAppConfigValueByDate("Collection", "COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK", new Date()).getValue();
+                .getAppConfigValueByDate(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR, new Date()).getValue();
         return assignmentService.getUsersByDesignations(operatorDesignation.split(","));
     }
 
     public List<EgwStatus> getStatusByModule() {
-        return egwStatusHibernateDAO.getStatusByModule("ReceiptHeader");
+        return egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
     }
 
     public List<DailyWTCollectionReport> getCollectionDetails(final Date fromDate, final Date toDate,
@@ -139,14 +141,12 @@ public class DailyWTCollectionReportService {
             query.setLong("status", Long.valueOf(status));
         final List<ReceiptHeader> receiptHeaderList = query.list();
         final List<DailyWTCollectionReport> dailyWTCollectionReportList = new ArrayList<DailyWTCollectionReport>(0);
-        DailyWTCollectionReport result = null;
-        BigDecimal currCollection = null;
-        BigDecimal arrCollection = null;
 
         for (final ReceiptHeader receiptHeader : receiptHeaderList) {
-            currCollection = BigDecimal.ZERO;
-            arrCollection = BigDecimal.ZERO;
-            result = new DailyWTCollectionReport();
+            BigDecimal currCollection = BigDecimal.ZERO;
+            BigDecimal arrCollection = BigDecimal.ZERO;
+            DailyWTCollectionReport result = new DailyWTCollectionReport();
+            
             result.setReceiptNumber(receiptHeader.getReceiptnumber());
             result.setReceiptDate(receiptHeader.getReceiptdate());
             result.setConsumerCode(receiptHeader.getConsumerCode());
