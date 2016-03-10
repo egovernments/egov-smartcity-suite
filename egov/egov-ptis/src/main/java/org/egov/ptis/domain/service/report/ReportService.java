@@ -39,13 +39,6 @@
  */
 package org.egov.ptis.domain.service.report;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
@@ -61,8 +54,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.collection.entity.ReceiptDetail;
-import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.RegionalHeirarchy;
 import org.egov.commons.RegionalHeirarchyType;
@@ -73,7 +64,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.model.instrument.InstrumentHeader;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
@@ -585,6 +575,170 @@ public class ReportService {
         result = BigDecimal.valueOf(amt / 100000).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         return result;
+    }
+
+    public List<BillCollectorDailyCollectionReportResult> getUlbWiseDcbCollection(Date date,
+            BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) {
+
+        boolean whereConditionAdded = false;
+        List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(
+                0);
+        int noofDays = 0;
+        final StringBuilder queryBuilder = new StringBuilder(
+                " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\",collectorname,mobilenumber ,sum(totalaccessments) \"totalaccessments\" , sum(current_demand) \"current_demand\", sum(arrears_demand) \"arrears_demand\", sum(current_demand_collection) \"current_demand_collection\" ,sum(arrears_demand_collection) \"arrears_demand_collection\" , sum(current_penalty) \"current_penalty\", sum(arrears_penalty) \"arrears_penalty\"  , sum(current_penalty_collection) \"current_penalty_collection\"  , sum(arrears_penalty_collection) \"arrears_penalty_collection\"  "
+                        + " from public.ulbWise_DCBCollection_view  ");
+
+        String value_ALL = "ALL";
+
+        if (bcDailyCollectionReportResult != null) {
+            if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
+                    && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(value_ALL)) {
+                whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
+                queryBuilder.append("  lower(ulbname)=:cityName  ");
+            } else if (bcDailyCollectionReportResult.getDistrict() != null
+                    && !bcDailyCollectionReportResult.getDistrict().equals("")
+                    && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(value_ALL)) {
+                if (whereConditionAdded)
+                    queryBuilder.append(" and  lower(district)=:districtName ");
+                else {
+                    whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
+                    queryBuilder.append("  lower(district)=:districtName  ");
+                }
+            } else if (bcDailyCollectionReportResult.getRegion() != null
+                    && !bcDailyCollectionReportResult.getRegion().equals("")
+                    && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(value_ALL)) {
+                if (whereConditionAdded)
+                    queryBuilder.append(" and  lower(district) in (:districtNames) ");
+                else {
+                    whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
+                    queryBuilder.append("   lower(district) in (:districtNames) ");
+                }
+            }
+
+            if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
+                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
+
+                if (whereConditionAdded)
+                    queryBuilder.append(" and category =:typeOfSearch ");
+                else {
+                    whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
+                    queryBuilder.append(" category =:typeOfSearch ");
+                }
+            }
+
+        }
+        queryBuilder
+                .append(" group by district,ulbname ,ulbcode  ,collectorname,mobilenumber  order by district,ulbname,collectorname ");
+        final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
+        // query.setDate("collDate", date);
+
+        if (bcDailyCollectionReportResult != null) {
+            if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
+                    && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(value_ALL)) {
+                query.setString("cityName", bcDailyCollectionReportResult.getCity().toLowerCase());
+
+            } else if (bcDailyCollectionReportResult.getDistrict() != null
+                    && !bcDailyCollectionReportResult.getDistrict().equals("")
+                    && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(value_ALL)) {
+                query.setString("districtName", bcDailyCollectionReportResult.getDistrict().toLowerCase());
+
+            } else if (bcDailyCollectionReportResult.getRegion() != null
+                    && !bcDailyCollectionReportResult.getRegion().equals("")
+                    && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(value_ALL)) {
+                LinkedList<String> districtlist = new LinkedList<String>();
+                if (regionalHeirarchyService != null) {
+                    List<RegionalHeirarchy> regions = regionalHeirarchyService
+                            .getActiveChildRegionHeirarchyByPassingParentNameAndType(RegionalHeirarchyType.DISTRICT,
+                                    bcDailyCollectionReportResult.getRegion());
+                    if (regions != null && regions.size() > 0) {
+                        for (RegionalHeirarchy regiion : regions) {
+                            districtlist.add(regiion.getName().toLowerCase());
+                        }
+                        query.setParameterList("districtNames", districtlist);
+                    }
+
+                }
+
+            }
+
+            if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
+                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
+                query.setString("typeOfSearch", bcDailyCollectionReportResult.getType());
+            }
+        }
+
+        query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
+
+        listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
+
+        buildCollectionReportForUlbWiseDCb(listBcPayment);
+        return listBcPayment;
+
+    }
+
+    private void buildCollectionReportForUlbWiseDCb(List<BillCollectorDailyCollectionReportResult> listBcPayment) {
+
+        for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
+
+            if (bcResult.getArrears_demand() == null)
+                bcResult.setArrears_demand(0.0);
+            if (bcResult.getCurrent_demand() == null)
+                bcResult.setCurrent_demand(0.0);
+            if (bcResult.getArrears_penalty() == null)
+                bcResult.setArrears_penalty(0.0);
+            if (bcResult.getCurrent_penalty() == null)
+                bcResult.setCurrent_penalty(0.0);
+            if (bcResult.getTotalaccessments() == null)
+                bcResult.setTotalaccessments(BigDecimal.valueOf(0));
+
+            bcResult.setTarget_total_demand(bcResult.getArrears_demand() + bcResult.getCurrent_demand()
+                    + bcResult.getArrears_penalty() + bcResult.getCurrent_penalty());
+
+            if (bcResult.getCurrent_demand_collection() == null)
+                bcResult.setCurrent_demand_collection(0.0);
+            if (bcResult.getArrears_demand_collection() == null)
+                bcResult.setArrears_demand_collection(0.0);
+            if (bcResult.getCurrent_penalty_collection() == null)
+                bcResult.setCurrent_penalty_collection(0.0);
+            if (bcResult.getArrears_penalty_collection() == null)
+                bcResult.setArrears_penalty_collection(0.0);
+
+            bcResult.setCummulative_total_Collection(bcResult.getCurrent_demand_collection()
+                    + bcResult.getArrears_demand_collection() + bcResult.getCurrent_penalty_collection()
+                    + bcResult.getArrears_penalty_collection());
+
+            bcResult.setBalance_arrearTax(bcResult.getArrears_demand() - bcResult.getArrears_demand_collection());
+            bcResult.setBalance_arrearInterest(bcResult.getArrears_penalty() - bcResult.getArrears_penalty_collection());
+            bcResult.setBalance_currentTax(bcResult.getCurrent_demand() - bcResult.getCurrent_demand_collection());
+            bcResult.setBalance_currentInterest(bcResult.getCurrent_penalty()
+                    - bcResult.getCurrent_penalty_collection());
+            bcResult.setBalance_total(bcResult.getTarget_total_demand() - bcResult.getCummulative_total_Collection());
+
+        }
+
+        for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
+
+            bcResult.setBalance_arrearTax(formatAmt(bcResult.getBalance_arrearTax()).doubleValue());
+            bcResult.setBalance_arrearInterest(formatAmt(bcResult.getBalance_arrearInterest()).doubleValue());
+            bcResult.setBalance_currentTax(formatAmt(bcResult.getBalance_currentTax()).doubleValue());
+            bcResult.setBalance_currentInterest(formatAmt(bcResult.getBalance_currentInterest()).doubleValue());
+            bcResult.setBalance_total(formatAmt(bcResult.getBalance_total()).doubleValue());
+
+            bcResult.setArrears_demand(formatAmt(bcResult.getArrears_demand()).doubleValue());
+            bcResult.setArrears_demand_collection(formatAmt(bcResult.getArrears_demand_collection()).doubleValue());
+            bcResult.setArrears_penalty(formatAmt(bcResult.getArrears_penalty()).doubleValue());
+            bcResult.setArrears_penalty_collection(formatAmt(bcResult.getArrears_penalty_collection()).doubleValue());
+
+            bcResult.setCurrent_demand(formatAmt(bcResult.getCurrent_demand()).doubleValue());
+            bcResult.setCurrent_demand_collection(formatAmt(bcResult.getCurrent_demand_collection()).doubleValue());
+            bcResult.setCurrent_penalty(formatAmt(bcResult.getCurrent_penalty()).doubleValue());
+            bcResult.setCurrent_penalty_collection(formatAmt(bcResult.getCurrent_penalty_collection()).doubleValue());
+            bcResult.setTarget_total_demand(formatAmt(bcResult.getTarget_total_demand()).doubleValue());
+            bcResult.setCummulative_total_Collection(formatAmt(bcResult.getCummulative_total_Collection())
+                    .doubleValue());
+
+        }
+
     }
 
 }

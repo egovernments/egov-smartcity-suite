@@ -76,6 +76,23 @@ public class BillCollectorDailyCollectionReportResult {
     private Double lastyear_cummulative_collection = 0.0;
     private String generatedDate;
     
+    private BigDecimal totalaccessments;
+    private Double current_demand;
+    private Double arrears_demand;
+    private Double current_demand_collection;
+    private Double arrears_demand_collection;
+    private Double  current_penalty;
+    private Double arrears_penalty;
+    private Double current_penalty_collection;
+    private Double arrears_penalty_collection;
+    private String  category;
+    
+    private Double balance_arrearTax;
+    private Double balance_arrearInterest;
+    private Double balance_currentTax;
+    private Double balance_currentInterest;
+    private Double balance_total;
+    
     
     public String getGeneratedDate() {
         return generatedDate;
@@ -276,6 +293,126 @@ public class BillCollectorDailyCollectionReportResult {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public BigDecimal getTotalaccessments() {
+        return totalaccessments;
+    }
+
+    public void setTotalaccessments(BigDecimal totalaccessments) {
+        this.totalaccessments = totalaccessments;
+    }
+
+    public Double getCurrent_demand() {
+        return current_demand;
+    }
+
+    public void setCurrent_demand(Double current_demand) {
+        this.current_demand = current_demand;
+    }
+
+    public Double getArrears_demand() {
+        return arrears_demand;
+    }
+
+    public void setArrears_demand(Double arrears_demand) {
+        this.arrears_demand = arrears_demand;
+    }
+
+    public Double getCurrent_demand_collection() {
+        return current_demand_collection;
+    }
+
+    public void setCurrent_demand_collection(Double current_demand_collection) {
+        this.current_demand_collection = current_demand_collection;
+    }
+
+    public Double getArrears_demand_collection() {
+        return arrears_demand_collection;
+    }
+
+    public void setArrears_demand_collection(Double arrears_demand_collection) {
+        this.arrears_demand_collection = arrears_demand_collection;
+    }
+
+    public Double getCurrent_penalty() {
+        return current_penalty;
+    }
+
+    public void setCurrent_penalty(Double current_penalty) {
+        this.current_penalty = current_penalty;
+    }
+
+    public Double getArrears_penalty() {
+        return arrears_penalty;
+    }
+
+    public void setArrears_penalty(Double arrears_penalty) {
+        this.arrears_penalty = arrears_penalty;
+    }
+
+    public Double getCurrent_penalty_collection() {
+        return current_penalty_collection;
+    }
+
+    public void setCurrent_penalty_collection(Double current_penalty_collection) {
+        this.current_penalty_collection = current_penalty_collection;
+    }
+
+    public Double getArrears_penalty_collection() {
+        return arrears_penalty_collection;
+    }
+
+    public void setArrears_penalty_collection(Double arrears_penalty_collection) {
+        this.arrears_penalty_collection = arrears_penalty_collection;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Double getBalance_arrearTax() {
+        return balance_arrearTax;
+    }
+
+    public void setBalance_arrearTax(Double balance_arrearTax) {
+        this.balance_arrearTax = balance_arrearTax;
+    }
+
+    public Double getBalance_arrearInterest() {
+        return balance_arrearInterest;
+    }
+
+    public void setBalance_arrearInterest(Double balance_arrearInterest) {
+        this.balance_arrearInterest = balance_arrearInterest;
+    }
+
+    public Double getBalance_currentTax() {
+        return balance_currentTax;
+    }
+
+    public void setBalance_currentTax(Double balance_currentTax) {
+        this.balance_currentTax = balance_currentTax;
+    }
+
+    public Double getBalance_currentInterest() {
+        return balance_currentInterest;
+    }
+
+    public void setBalance_currentInterest(Double balance_currentInterest) {
+        this.balance_currentInterest = balance_currentInterest;
+    }
+
+    public Double getBalance_total() {
+        return balance_total;
+    }
+
+    public void setBalance_total(Double balance_total) {
+        this.balance_total = balance_total;
     }
 
 }
