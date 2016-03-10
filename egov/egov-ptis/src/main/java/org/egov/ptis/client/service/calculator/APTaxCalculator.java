@@ -303,7 +303,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         }
         // calculating Un Authorized Penalty
         if (!propTypeCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-            if (!(unAuthDeviationPerc == null || "0".equals(unAuthDeviationPerc) || "-1".equals(unAuthDeviationPerc))) {
+            if (!(unAuthDeviationPerc == null || "0".equals(unAuthDeviationPerc) || "-1".equals(unAuthDeviationPerc) || (unAuthDeviationPerc != null && unAuthDeviationPerc.intValue() == 0))) {
                 halfYearHeadTax = BigDecimal.ZERO;
                 halfYearHeadTax = roundOffToNearestEven(calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable));
                 totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
@@ -489,13 +489,13 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return tax;
     }
 
-
     private BigDecimal getUnAuthDeviationPerc(Floor floor) {
         BigDecimal deviationPerc = null;
         BigDecimal diffArea = null;
-        BigDecimal plinthArea = new BigDecimal(floor.getBuiltUpArea().getArea());
-        BigDecimal buildingPlanPlinthArea = (floor.getBuildingPlanPlinthArea() != null && floor.getBuildingPlanPlinthArea().getArea() != null) ? new BigDecimal(floor
-                .getBuildingPlanPlinthArea().getArea()) : BigDecimal.ZERO;
+        BigDecimal plinthArea = new BigDecimal(floor.getBuiltUpArea().getArea()).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal buildingPlanPlinthArea = (floor.getBuildingPlanPlinthArea() != null && floor
+                .getBuildingPlanPlinthArea().getArea() != null) ? new BigDecimal(floor.getBuildingPlanPlinthArea()
+                .getArea()).setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
         if (buildingPlanPlinthArea.compareTo(BigDecimal.ZERO) == 0) {
             deviationPerc = new BigDecimal(100);
         } else if (plinthArea.compareTo(buildingPlanPlinthArea) == 1) {
