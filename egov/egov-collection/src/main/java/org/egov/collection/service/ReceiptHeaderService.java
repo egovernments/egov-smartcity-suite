@@ -1324,6 +1324,11 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
                 updateBillingSystemWithReceiptInfo(receiptHeader);
         }
+        if(!CollectionConstants.RECEIPT_STATUS_CODE_FAILED.equals(receiptHeader.getStatus().getCode())
+                && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())) {
+            final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
+            collectionIndexService.createCollectionIndex(collectionIndex);
+        }
         return super.persist(receiptHeader);
     }
 
@@ -1393,8 +1398,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     public void setReceiptNumber(final ReceiptHeader entity) {
         entity.setReceiptnumber(collectionsNumberGenerator.generateReceiptNumber(entity));
-        final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(entity);
-        collectionIndexService.createCollectionIndex(collectionIndex);
     }
 
     private void setChallanNumber(final Challan challan) {
