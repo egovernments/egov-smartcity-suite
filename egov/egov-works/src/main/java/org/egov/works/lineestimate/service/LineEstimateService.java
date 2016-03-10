@@ -60,7 +60,10 @@ import org.egov.works.lineestimate.repository.LineEstimateRepository;
 import org.egov.works.models.estimate.EstimateNumberGenerator;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -203,7 +206,45 @@ public class LineEstimateService {
         return details;
     }
     
-    public List<LineEstimate> search(LineEstimateSearchRequest lineEstimateSearchRequest){
-        return lineEstimateRepository.findAll();
+    public List<LineEstimate> searchLineEstimates(LineEstimateSearchRequest lineEstimateSearchRequest){
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
+                .createAlias("lineEstimateDetails", "lineEstimateDetail");
+        if(lineEstimateSearchRequest != null) {
+            if(lineEstimateSearchRequest.getAdminSanctionNumber() != null) {
+                criteria.add(Restrictions.eq("lineEstimateNumber", lineEstimateSearchRequest.getAdminSanctionNumber()));
+            }
+            if(lineEstimateSearchRequest.getBudgetHead() != null) {
+                criteria.add(Restrictions.eq("budgetHead.id", lineEstimateSearchRequest.getBudgetHead()));
+            }
+            if(lineEstimateSearchRequest.getExecutingDepartment() != null) {
+                criteria.add(Restrictions.eq("executingDepartment.id", lineEstimateSearchRequest.getExecutingDepartment()));
+            }
+            if(lineEstimateSearchRequest.getFunction() != null) {
+                criteria.add(Restrictions.eq("function.id", lineEstimateSearchRequest.getFunction()));
+            }
+            if(lineEstimateSearchRequest.getFund() != null) {
+                criteria.add(Restrictions.eq("fund.id", lineEstimateSearchRequest.getFund().intValue()));
+            }
+            if(lineEstimateSearchRequest.getEstimateNumber() != null) {
+                criteria.add(Restrictions.eq("lineEstimateDetail.estimateNumber", lineEstimateSearchRequest.getEstimateNumber()));
+            }
+            if(lineEstimateSearchRequest.getAdminSanctionFromDate() != null) {
+                criteria.add(Restrictions.ge("lineEstimateDate", lineEstimateSearchRequest.getAdminSanctionFromDate()));
+            }
+            if(lineEstimateSearchRequest.getAdminSanctionToDate() != null) {
+                criteria.add(Restrictions.le("lineEstimateDate", lineEstimateSearchRequest.getAdminSanctionToDate()));
+            }
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+
+    public List<String> findLineEstimateNumbers(String name) {
+        List<LineEstimateDetails> lineEstimateDetails = lineEstimateDetailsRepository.findByEstimateNumberContainingIgnoreCase(name);
+        List<String> results = new ArrayList<String>();
+        for(LineEstimateDetails details : lineEstimateDetails) {
+            results.add(details.getEstimateNumber());
+        }
+        return results;
     }
 }

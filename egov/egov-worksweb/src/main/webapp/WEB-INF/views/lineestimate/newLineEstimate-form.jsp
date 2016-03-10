@@ -37,14 +37,11 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<script src="<egov:url path='resources/js/helper.js'/>"></script>
-<script src="<egov:url path='resources/js/works.js'/>"></script>
 <div class="page-container" id="page-container">
 	<div class="main-content">
 		<div style="font-weight:bold; color:green; text-align:center;">
@@ -52,7 +49,7 @@
 				<spring:message code="lineestimate.create.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
 			</c:if>
 		</div>
-		<form:form name="lineEstimateForm" role="form" action="/egworks/lineestimate/create" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+		<form:form name="lineEstimateForm" role="form" action="create" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="lineEstimateHeader.jsp"/>

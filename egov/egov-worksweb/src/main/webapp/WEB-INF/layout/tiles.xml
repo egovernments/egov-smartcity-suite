@@ -71,13 +71,8 @@
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/newLineEstimate-edit.jsp"/>
     </definition>
     
-    <definition name="searchLineEstimate-form" extends="base_layout">
-        <put-attribute name="page-title" value="title.new.lineestimate" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimate-form.jsp"/>
-    </definition>
-    
 	<definition name="lineestimate-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.lineestimate.search" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimate-form.jsp"/>
+		<put-attribute name="page-title" value="title.search.lineestimate" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimate-header.jsp"/>
 	</definition>
 </tiles-definitions>

@@ -58,6 +58,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -106,13 +107,13 @@ public class SearchLineEstimateController {
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
 //        model.addAttribute("schemes", schemeService.findAll());
-        model.addAttribute("executingDepartments", departmentService.getAllDepartments());
+        model.addAttribute("departments", departmentService.getAllDepartments());
     }
     
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxsearch(Model model, @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest)
     {
-        List<LineEstimate> searchResultList = lineEstimateService.search(lineEstimateSearchRequest);
+        List<LineEstimate> searchResultList = lineEstimateService.searchLineEstimates(lineEstimateSearchRequest);
         String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
         return result;
     }
@@ -123,5 +124,10 @@ public class SearchLineEstimateController {
         final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateJsonAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
+    }
+    
+    @RequestMapping(value = "/lineEstimateNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findLineEstimateNumbers(@RequestParam final String name) {
+        return lineEstimateService.findLineEstimateNumbers(name);
     }
 }

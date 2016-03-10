@@ -37,41 +37,26 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="page-container" id="page-container">
-	<div class="main-content">
-		<div style="font-weight:bold; color:green; text-align:center;">
-			<c:choose>
-				<c:when test="${message.equals('create')}">
-					<spring:message code="lineestimate.create.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
-				</c:when>
-				<c:otherwise>
-					<spring:message code="lineestimate.update.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
-				</c:otherwise>
-			</c:choose>
-		</div>
-		<form:form name="lineEstimateForm" action="" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST" enctype="multipart/form-data">
-			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
-			<form:hidden path="" name="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
-			<input type="hidden" value="${mode}" id="mode"/>
-			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="lineEstimateHeader.jsp"/>
-					<jsp:include page="lineEstimateDetails.jsp"/>
-					<jsp:include page="uploadDocuments.jsp"/>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" class="btn btn-primary" value="Submit"><spring:message code="lineestimate.btn.submit"/></form:button>
-					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lineestimate.btn.close"/></form:button>
-				</div>
-			</div>
-		</form:form>  
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.lineestimate.search" /></div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lineestimate.administartive.sanctionno" /></th>
+					<th><spring:message code="lbl.department" /></th>
+					<th><spring:message code="lbl.fund" /></th>
+					<th><spring:message code="lbl.function" /></th>
+					<th><spring:message code="lbl.budgethead" /></th>
+					<th><spring:message code="lineestimate.createdby" /></th>
+					<th><spring:message code="lineestimate.totalamount" /></th>
+					<th><spring:message code="lbl.Action" /></th>
+				</tr>
+			</thead>
+		</table>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/lineestimate.js'/>"></script>

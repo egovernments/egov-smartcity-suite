@@ -44,34 +44,55 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="page-container" id="page-container">
 	<div class="main-content">
-		<div style="font-weight:bold; color:green; text-align:center;">
-			<c:choose>
-				<c:when test="${message.equals('create')}">
-					<spring:message code="lineestimate.create.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
-				</c:when>
-				<c:otherwise>
-					<spring:message code="lineestimate.update.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
-				</c:otherwise>
-			</c:choose>
-		</div>
-		<form:form name="lineEstimateForm" action="" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST" enctype="multipart/form-data">
-			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
-			<form:hidden path="" name="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
-			<input type="hidden" value="${mode}" id="mode"/>
+		<form:form name="lineEstimateSearchForm" role="form" action="" modelAttribute="lineEstimateSearchRequest" id="lineEstimatesearchform" class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="col-md-12">
-					<jsp:include page="lineEstimateHeader.jsp"/>
-					<jsp:include page="lineEstimateDetails.jsp"/>
-					<jsp:include page="uploadDocuments.jsp"/>
+					<jsp:include page="searchLineEstimate-form.jsp"/>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" class="btn btn-primary" value="Submit"><spring:message code="lineestimate.btn.submit"/></form:button>
-					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lineestimate.btn.close"/></form:button>
+					<button type='button' class='btn btn-primary' id="btnsearch">
+						<spring:message code='lineestimate.btn.search' />
+					</button>
+					<a href='javascript:void(0)' class='btn btn-default'
+						onclick='self.close()'><spring:message code='lineestimate.btn.close' /></a>
 				</div>
 			</div>
 		</form:form>  
 	</div>
 </div>
-<script src="<c:url value='/resources/js/lineestimate.js'/>"></script>
+<jsp:include page="lineEstimate-searchresults.jsp"/>
+<script>
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/lineestimate/searchlineestimatehelper.js'/>"></script>
