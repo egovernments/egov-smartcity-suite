@@ -187,4 +187,9 @@
 	<put-attribute name="body" value="/WEB-INF/views/budgetuploadreport/budgetuploadreport-search.jsp"/>
 </definition>
 
+<definition name="approvebudget-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.approvebudget.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/approvebudget/approvebudget-search.jsp"/>
+</definition>
+
 </tiles-definitions>
