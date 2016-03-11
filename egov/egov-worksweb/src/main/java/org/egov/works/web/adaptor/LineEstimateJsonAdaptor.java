@@ -1,8 +1,6 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
-
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 
@@ -19,6 +17,10 @@ public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate>
         final JsonObject jsonObject = new JsonObject();
         if (lineEstimate != null)
         {
+            if (lineEstimate.getLineEstimateNumber() != null)
+                jsonObject.addProperty("adminSanctionNumber", lineEstimate.getAdminSanctionNumber());
+            else
+                jsonObject.addProperty("adminSanctionNumber", "");
             if (lineEstimate.getLineEstimateNumber() != null)
                 jsonObject.addProperty("lineEstimateNumber", lineEstimate.getLineEstimateNumber());
             else
@@ -39,12 +41,20 @@ public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate>
                 jsonObject.addProperty("executingDepartment", lineEstimate.getExecutingDepartment().getName());
             else
                 jsonObject.addProperty("executingDepartment", "");
-            if(lineEstimate.getCreatedBy() != null)
+            if (lineEstimate.getCreatedBy() != null)
                 jsonObject.addProperty("createdBy", lineEstimate.getCreatedBy().getName());
             else
                 jsonObject.addProperty("createdBy", "");
+            if (lineEstimate.getAdminSanctionBy() != null)
+                jsonObject.addProperty("approvedBy", lineEstimate.getAdminSanctionBy().getName());
+            else
+                jsonObject.addProperty("approvedBy", "");
+            if (lineEstimate.getStatus() != null)
+                jsonObject.addProperty("status", lineEstimate.getStatus().getDescription());
+            else
+                jsonObject.addProperty("status", "");
             Long totalAmount = 0L;
-            for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
                 totalAmount += led.getEstimateAmount().longValue();
             }
             jsonObject.addProperty("totalAmount", totalAmount);

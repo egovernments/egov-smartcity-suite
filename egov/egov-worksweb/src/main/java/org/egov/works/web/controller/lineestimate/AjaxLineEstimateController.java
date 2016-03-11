@@ -48,7 +48,7 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
-import org.egov.works.web.adapter.SubSchemeAdaptor;
+import org.egov.works.web.adaptor.SubSchemeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

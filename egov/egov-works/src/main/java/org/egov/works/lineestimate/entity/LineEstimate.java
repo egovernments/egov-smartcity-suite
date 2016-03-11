@@ -65,6 +65,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.budget.BudgetGroup;
@@ -134,6 +135,18 @@ public class LineEstimate extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "executingdepartment", nullable = false)
     private Department executingDepartment;
+    
+    @SafeHtml
+    @Length(max = 50)
+    @Column(unique = true)
+    private String adminSanctionNumber;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date adminSanctionDate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adminSanctionBy")
+    private User adminSanctionBy;
 
     @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH }, orphanRemoval = true, targetEntity = LineEstimateDetails.class)
@@ -274,5 +287,29 @@ public class LineEstimate extends StateAware {
     @Override
     public String getStateDetails() {
         return null;
+    }
+
+    public String getAdminSanctionNumber() {
+        return adminSanctionNumber;
+    }
+
+    public void setAdminSanctionNumber(String adminSanctionNumber) {
+        this.adminSanctionNumber = adminSanctionNumber;
+    }
+
+    public Date getAdminSanctionDate() {
+        return adminSanctionDate;
+    }
+
+    public void setAdminSanctionDate(Date adminSanctionDate) {
+        this.adminSanctionDate = adminSanctionDate;
+    }
+
+    public User getAdminSanctionBy() {
+        return adminSanctionBy;
+    }
+
+    public void setAdminSanctionBy(User adminSanctionBy) {
+        this.adminSanctionBy = adminSanctionBy;
     }
 }

@@ -49,7 +49,9 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
+import org.egov.works.lineestimate.entity.LineEstimateSearchResult;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -93,35 +95,47 @@ public class SearchLineEstimateController {
         model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
         return "lineestimate-search";
     }
-
-    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String searchLineEstimate(@ModelAttribute final LineEstimate lineEstimate,
-            final Model model) throws ApplicationException {
+    
+    @RequestMapping(value = "/searchlineestimateforloa-form", method = RequestMethod.GET)
+    public String create(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
+            final Model model) {
         setDropDownValues(model);
-        model.addAttribute("lineEstimate", lineEstimate);
-        return "Json String";
+        model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
+        return "searchLineEstimateForLoa-form";
     }
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
-//        model.addAttribute("schemes", schemeService.findAll());
+        model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", departmentService.getAllDepartments());
     }
     
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(Model model, @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest)
-    {
+    public @ResponseBody String ajaxsearch(Model model, @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
         List<LineEstimate> searchResultList = lineEstimateService.searchLineEstimates(lineEstimateSearchRequest);
-        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
+        String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateResultJson(searchResultList)).append("}").toString();
+        return result;
+    }
+    
+    @RequestMapping(value = "/ajaxsearchlineestimatesforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchLineEstimatesForLOA(Model model, @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
+        List<LineEstimateSearchResult> searchResultList = lineEstimateService.searchLineEstimatesForLOA(lineEstimateSearchRequest);
+        String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateForLOAResultJson(searchResultList)).append("}").toString();
         return result;
     }
 
-    public Object toSearchResultJson(final Object object)
-    {
+    public Object toSearchLineEstimateResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateJsonAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    public Object toSearchLineEstimateForLOAResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateForLOAJsonAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -129,5 +143,10 @@ public class SearchLineEstimateController {
     @RequestMapping(value = "/lineEstimateNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLineEstimateNumbers(@RequestParam final String name) {
         return lineEstimateService.findLineEstimateNumbers(name);
+    }
+    
+    @RequestMapping(value = "/adminSanctionNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findAdminSanctionNumbers(@RequestParam final String name) {
+        return lineEstimateService.findAdminSanctionNumbers(name);
     }
 }

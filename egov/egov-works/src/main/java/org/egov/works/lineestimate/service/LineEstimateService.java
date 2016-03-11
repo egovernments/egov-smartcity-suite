@@ -55,6 +55,7 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
+import org.egov.works.lineestimate.entity.LineEstimateSearchResult;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
 import org.egov.works.models.estimate.EstimateNumberGenerator;
@@ -78,7 +79,7 @@ public class LineEstimateService {
     private EntityManager entityManager;
 
     private final LineEstimateRepository lineEstimateRepository;
-    
+
     private final LineEstimateDetailsRepository lineEstimateDetailsRepository;
 
     @Autowired
@@ -96,16 +97,17 @@ public class LineEstimateService {
 
     @Autowired
     private EstimateNumberGenerator estimateNumberGenerator;
-    
+
     @Autowired
     private WorksUtils worksUtils;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Autowired
-    public LineEstimateService(final LineEstimateRepository lineEstimateRepository, final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
+    public LineEstimateService(final LineEstimateRepository lineEstimateRepository,
+            final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
         this.lineEstimateRepository = lineEstimateRepository;
         this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
     }
@@ -129,13 +131,11 @@ public class LineEstimateService {
                     cFinancialYear);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
         }
-        
-//        for (final DocumentDetails documentDetails : lineEstimate.getDocumentDetails())
-//            documentDetails.setObjectId(lineEstimate.getId());
-        
+
         final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
-        
-        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate, WorksConstants.MODULE_NAME_LINEESTIMATE);
+
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate,
+                WorksConstants.MODULE_NAME_LINEESTIMATE);
         if (!documentDetails.isEmpty()) {
             lineEstimate.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
@@ -144,25 +144,28 @@ public class LineEstimateService {
     }
 
     @Transactional
-    public LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds, final MultipartFile[] files) throws IOException {
+    public LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds,
+            final MultipartFile[] files) throws IOException {
         final CFinancialYear cFinancialYear = financialYearDAO.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails()) {
             if (lineEstimateDetails.getLineEstimate() == null) {
                 lineEstimateDetails.setLineEstimate(lineEstimate);
-                lineEstimateDetails.setEstimateNumber(estimateNumberGenerator.generateEstimateNumber(lineEstimate, cFinancialYear));
+                lineEstimateDetails.setEstimateNumber(estimateNumberGenerator
+                        .generateEstimateNumber(lineEstimate, cFinancialYear));
             }
         }
         List<LineEstimateDetails> list = new ArrayList<LineEstimateDetails>(lineEstimate.getLineEstimateDetails());
         list = removeDeletedLineEstimateDetails(list, removedLineEstimateDetailsIds);
-        for(LineEstimateDetails details : list) {
+        for (LineEstimateDetails details : list) {
             details.setId(null);
         }
         lineEstimate.getLineEstimateDetails().clear();
         // TODO: use save instead of saveAndFlush
         final LineEstimate persistedLineEstimate = lineEstimateRepository.saveAndFlush(lineEstimate);
-        
+
         persistedLineEstimate.setLineEstimateDetails(list);
-        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, persistedLineEstimate, WorksConstants.MODULE_NAME_LINEESTIMATE);
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, persistedLineEstimate,
+                WorksConstants.MODULE_NAME_LINEESTIMATE);
         if (!documentDetails.isEmpty()) {
             lineEstimate.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
@@ -174,7 +177,7 @@ public class LineEstimateService {
     public LineEstimate getLineEstimateByLineEstimateNumber(final String lineEstimateNumber) {
         return lineEstimateRepository.findByLineEstimateNumber(lineEstimateNumber);
     }
-    
+
     @Transactional
     public List<LineEstimateDetails> removeDeletedLineEstimateDetails(final List<LineEstimateDetails> list,
             final String removedLineEstimateDetailsIds) {
@@ -182,12 +185,12 @@ public class LineEstimateService {
         if (null != removedLineEstimateDetailsIds) {
             String[] ids = removedLineEstimateDetailsIds.split(",");
             List<String> strList = new ArrayList<String>();
-            for(String str : ids) {
+            for (String str : ids) {
                 strList.add(str);
             }
-            for(LineEstimateDetails line : list) {
-                if(line.getId() != null) {
-                    if(!strList.contains(line.getId().toString()))
+            for (LineEstimateDetails line : list) {
+                if (line.getId() != null) {
+                    if (!strList.contains(line.getId().toString()))
                         details.add(line);
                 }
                 else
@@ -197,42 +200,36 @@ public class LineEstimateService {
         else {
             return list;
         }
-//            for (final String id : removedLineEstimateDetailsIds.split(",")){
-//                for(LineEstimateDetails line : list) {
-//                    if(!line.getId().equals(id))
-//                        details.add(line);
-//                }
-//            }
         return details;
     }
-    
-    public List<LineEstimate> searchLineEstimates(LineEstimateSearchRequest lineEstimateSearchRequest){
+
+    public List<LineEstimate> searchLineEstimates(LineEstimateSearchRequest lineEstimateSearchRequest) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
                 .createAlias("lineEstimateDetails", "lineEstimateDetail");
-        if(lineEstimateSearchRequest != null) {
-            if(lineEstimateSearchRequest.getAdminSanctionNumber() != null) {
-                criteria.add(Restrictions.eq("lineEstimateNumber", lineEstimateSearchRequest.getAdminSanctionNumber()));
+        if (lineEstimateSearchRequest != null) {
+            if (lineEstimateSearchRequest.getAdminSanctionNumber() != null) {
+                criteria.add(Restrictions.eq("adminSanctionNumber", lineEstimateSearchRequest.getAdminSanctionNumber()));
             }
-            if(lineEstimateSearchRequest.getBudgetHead() != null) {
+            if (lineEstimateSearchRequest.getBudgetHead() != null) {
                 criteria.add(Restrictions.eq("budgetHead.id", lineEstimateSearchRequest.getBudgetHead()));
             }
-            if(lineEstimateSearchRequest.getExecutingDepartment() != null) {
+            if (lineEstimateSearchRequest.getExecutingDepartment() != null) {
                 criteria.add(Restrictions.eq("executingDepartment.id", lineEstimateSearchRequest.getExecutingDepartment()));
             }
-            if(lineEstimateSearchRequest.getFunction() != null) {
+            if (lineEstimateSearchRequest.getFunction() != null) {
                 criteria.add(Restrictions.eq("function.id", lineEstimateSearchRequest.getFunction()));
             }
-            if(lineEstimateSearchRequest.getFund() != null) {
+            if (lineEstimateSearchRequest.getFund() != null) {
                 criteria.add(Restrictions.eq("fund.id", lineEstimateSearchRequest.getFund().intValue()));
             }
-            if(lineEstimateSearchRequest.getEstimateNumber() != null) {
+            if (lineEstimateSearchRequest.getEstimateNumber() != null) {
                 criteria.add(Restrictions.eq("lineEstimateDetail.estimateNumber", lineEstimateSearchRequest.getEstimateNumber()));
             }
-            if(lineEstimateSearchRequest.getAdminSanctionFromDate() != null) {
-                criteria.add(Restrictions.ge("lineEstimateDate", lineEstimateSearchRequest.getAdminSanctionFromDate()));
+            if (lineEstimateSearchRequest.getAdminSanctionFromDate() != null) {
+                criteria.add(Restrictions.ge("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionFromDate()));
             }
-            if(lineEstimateSearchRequest.getAdminSanctionToDate() != null) {
-                criteria.add(Restrictions.le("lineEstimateDate", lineEstimateSearchRequest.getAdminSanctionToDate()));
+            if (lineEstimateSearchRequest.getAdminSanctionToDate() != null) {
+                criteria.add(Restrictions.le("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionToDate()));
             }
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -240,11 +237,57 @@ public class LineEstimateService {
     }
 
     public List<String> findLineEstimateNumbers(String name) {
-        List<LineEstimateDetails> lineEstimateDetails = lineEstimateDetailsRepository.findByEstimateNumberContainingIgnoreCase(name);
+        List<LineEstimateDetails> lineEstimateDetails = lineEstimateDetailsRepository
+                .findByEstimateNumberContainingIgnoreCase(name);
         List<String> results = new ArrayList<String>();
-        for(LineEstimateDetails details : lineEstimateDetails) {
+        for (LineEstimateDetails details : lineEstimateDetails) {
             results.add(details.getEstimateNumber());
         }
         return results;
+    }
+
+    public List<String> findAdminSanctionNumbers(String name) {
+        List<LineEstimate> lineEstimates = lineEstimateRepository.findByAdminSanctionNumberContainingIgnoreCase(name);
+        List<String> results = new ArrayList<String>();
+        for (LineEstimate estimate : lineEstimates) {
+            results.add(estimate.getAdminSanctionNumber());
+        }
+        return results;
+    }
+
+    public List<LineEstimateSearchResult> searchLineEstimatesForLOA(LineEstimateSearchRequest lineEstimateSearchRequest) {
+        List<LineEstimate> lineEstimates = searchLineEstimates(lineEstimateSearchRequest);
+        List<LineEstimateSearchResult> lineEstimateSearchResults = new ArrayList<LineEstimateSearchResult>();
+        for (LineEstimate le : lineEstimates) {
+            for (LineEstimateDetails led : le.getLineEstimateDetails()) {
+                if (lineEstimateSearchRequest.getEstimateNumber() != null) {
+                    if (led.getEstimateNumber().equalsIgnoreCase(lineEstimateSearchRequest.getEstimateNumber())) {
+                        LineEstimateSearchResult result = new LineEstimateSearchResult();
+                        result.setId(le.getId());
+                        result.setAdminSanctionNumber(le.getAdminSanctionNumber());
+                        result.setCreatedBy(le.getCreatedBy().getName());
+                        result.setEstimateAmount(led.getEstimateAmount());
+                        result.setEstimateNumber(led.getEstimateNumber());
+                        result.setNameOfWork(led.getNameOfWork());
+                        if(le.getAdminSanctionBy() != null)
+                            result.setApprovedBy(le.getAdminSanctionBy().getName());
+                        lineEstimateSearchResults.add(result);
+                    }
+                }
+                else {
+                    LineEstimateSearchResult result = new LineEstimateSearchResult();
+                    result.setId(le.getId());
+                    result.setAdminSanctionNumber(le.getAdminSanctionNumber());
+                    result.setCreatedBy(le.getCreatedBy().getName());
+                    result.setEstimateAmount(led.getEstimateAmount());
+                    result.setEstimateNumber(led.getEstimateNumber());
+                    result.setNameOfWork(led.getNameOfWork());
+                    if(le.getAdminSanctionBy() != null)
+                        result.setApprovedBy(le.getAdminSanctionBy().getName());
+                    lineEstimateSearchResults.add(result);
+                }
+            }
+        }
+        return lineEstimateSearchResults;
     }
 }

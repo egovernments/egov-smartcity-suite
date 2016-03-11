@@ -37,19 +37,75 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.lineestimate.repository;
+package org.egov.works.lineestimate.entity;
 
-import java.util.List;
+import java.math.BigDecimal;
 
-import org.egov.works.lineestimate.entity.LineEstimate;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public class LineEstimateSearchResult {
+    private Long id;
+    private String adminSanctionNumber;
+    private String estimateNumber;
+    private String nameOfWork;
+    private String createdBy;
+    private String approvedBy;
+    private BigDecimal estimateAmount;
 
-@Repository
-public interface LineEstimateRepository extends JpaRepository<LineEstimate, Long> {
-    LineEstimate findById(final Long id);
+    public LineEstimateSearchResult() {
+    }
 
-    LineEstimate findByLineEstimateNumber(final String lineEstimateNumber);
+    public Long getId() {
+        return id;
+    }
 
-    List<LineEstimate> findByAdminSanctionNumberContainingIgnoreCase(String name);
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAdminSanctionNumber() {
+        return adminSanctionNumber;
+    }
+
+    public void setAdminSanctionNumber(String adminSanctionNumber) {
+        this.adminSanctionNumber = adminSanctionNumber;
+    }
+
+    public String getEstimateNumber() {
+        return estimateNumber;
+    }
+
+    public void setEstimateNumber(String estimateNumber) {
+        this.estimateNumber = estimateNumber;
+    }
+
+    public String getNameOfWork() {
+        return nameOfWork;
+    }
+
+    public void setNameOfWork(String nameOfWork) {
+        this.nameOfWork = nameOfWork;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public BigDecimal getEstimateAmount() {
+        return estimateAmount;
+    }
+
+    public void setEstimateAmount(BigDecimal estimateAmount) {
+        this.estimateAmount = estimateAmount;
+    }
 }

@@ -85,4 +85,9 @@
         <put-attribute name="page-title" value="title.new.create.milestone" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptance-search.jsp"/>
     </definition>
+    
+    <definition name="searchLineEstimateForLoa-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForLOA-header.jsp"/>
+    </definition>
 </tiles-definitions>

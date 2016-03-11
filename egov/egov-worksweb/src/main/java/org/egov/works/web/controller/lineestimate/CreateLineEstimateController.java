@@ -111,7 +111,7 @@ public class CreateLineEstimateController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String createLineEstimate(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
+    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files)
                     throws ApplicationException, IOException {
         setDropDownValues(model);

@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.adapter;
+package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 

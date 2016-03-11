@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,21 +36,37 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-error.subject.required=Subject is required
-error.subject.maxlength=Subject should not be more than 256 characters
-error.fund.required=Fund is required
-error.reference.required=Reference is required
-error.reference.maxlength=Reference should not be more than 1024 characters
-error.function.required=Function is required
-error.description.required=Description is required
-error.description.maxlength=Description should not be more than 1024 characters
-error.budgethead.required=Budget Head is required
-error.lineestimatedate.required=Date is required
-error.executingdepartment.required=Executing Department is required
-error.nameofwork.required=Name of Work is required
-error.nameofwork.maxlength=Name of Work should not be more than 1024 characters
-error.estimateamount.required=Estimate Amount is required
-err.input.stream=Error occurred while getting InputStream
-lineestimate.document.error=Unable to fetch documents
-error.lineestimate.loa.search=Please select a Line Estimate to create Letter of Acceptance
+#------------------------------------------------------------------------------- -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.lineestimate.search" /></div>
+	<div id="errorMessage" style="display: none;"><spring:message code="error.lineestimate.loa.search" /></div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="hdr.select" /></th>
+					<th><spring:message code="lbl.sino" /></th>
+					<th><spring:message code="lineestimate.administartive.sanctionno" /></th>
+					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lineestimate.nameofwork" /></th>
+					<th><spring:message code="lineestimate.createdby" /></th>
+					<th><spring:message code="lineestimate.approvedby" /></th>
+					<th><spring:message code="lbl.estimateamount" /></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type='button' class='btn btn-primary' id="btncreateloa">
+				<spring:message code='btn.createloa' />
+			</button>
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lineestimate.btn.close' /></a>
+		</div>
+	</div>
+</div>

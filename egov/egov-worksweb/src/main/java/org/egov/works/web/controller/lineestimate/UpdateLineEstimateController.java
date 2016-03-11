@@ -39,16 +39,11 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -56,7 +51,6 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -117,7 +111,7 @@ public class UpdateLineEstimateController {
     }
 
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.POST)
-    public String updateLineEstimate(@Valid @ModelAttribute("lineEstimate") LineEstimate lineEstimate, final BindingResult errors,
+    public String update(@Valid @ModelAttribute("lineEstimate") LineEstimate lineEstimate, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam final String removedLineEstimateDetailsIds, @RequestParam("file") final MultipartFile[] files)
                     throws ApplicationException, IOException {

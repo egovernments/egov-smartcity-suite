@@ -47,12 +47,16 @@
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lineestimate.administartive.sanctionno" /></th>
+					<th><spring:message code="lbl.sino" /></th>
 					<th><spring:message code="lbl.department" /></th>
+					<th><spring:message code="lbl.lineestimatenumber" /></th>
+					<th><spring:message code="lineestimate.administartive.sanctionno" /></th>
 					<th><spring:message code="lbl.fund" /></th>
 					<th><spring:message code="lbl.function" /></th>
 					<th><spring:message code="lbl.budgethead" /></th>
 					<th><spring:message code="lineestimate.createdby" /></th>
+					<th><spring:message code="lineestimate.approvedby" /></th>
+					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lineestimate.totalamount" /></th>
 					<th><spring:message code="lbl.Action" /></th>
 				</tr>

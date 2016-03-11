@@ -40,6 +40,17 @@
 jQuery('#btnsearch').click(function(e) {
 	callAjaxSearch();
 });
+
+jQuery('#btncreateloa').click(function(e) {
+	var lineEstimateNumber = $('input[name=selectCheckbox]:checked').val();
+	if(lineEstimateNumber == null) {
+		var message = $('#errorMessage').html();
+		bootbox.alert(message);
+	}
+	else {
+		window.location = "/egworks/letterofacceptance/newform?estimateNumber=" + lineEstimateNumber;
+	}
+});
 	
 function getFormData($form){
     var unindexed_array = $form.serializeArray();
@@ -58,7 +69,7 @@ function callAjaxSearch() {
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/egworks/lineestimate/ajaxsearch",      
+					url : "/egworks/lineestimate/ajaxsearchlineestimatesforloa",      
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
@@ -71,30 +82,26 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)',row).html(index+1);
-					$('td:eq(10)',row).html(parseFloat(Math.round(data.totalAmount * 100) / 100).toFixed(2));
+					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.estimateNumber +'"/>');
+					$('td:eq(1)',row).html(index+1);
+					$('td:eq(7)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
 					return row;
 				},
 				aaSorting: [],				
 				columns : [ { 
 					"data" : "", "sClass" : "text-center"} ,{ 
-					"data" : "executingDepartment", "sClass" : "text-left"} ,{
-					"data" : "lineEstimateNumber", "sClass" : "text-left"} ,{
+					"data" : "", "sClass" : "text-right"} ,{ 
 					"data" : "adminSanctionNumber", "sClass" : "text-left"} ,{ 
-					"data" : "fund", "sClass" : "text-left"} ,{ 
-					"data" : "function", "sClass" : "text-left"} ,{ 
-					"data" : "budgetHead", "sClass" : "text-left"} ,{
+					"data" : "estimateNumber", "sClass" : "text-left"} ,{ 
+					"data" : "nameOfWork", "sClass" : "text-left"} ,{
 					"data" : "createdBy", "sClass" : "text-left"} ,{
-					"data" : "approvedBy", "sClass" : "text-left"} ,{
-					"data" : "status", "sClass" : "text-left"} ,{
-					"data" : "totalAmount", "sClass" : "text-right"}, {
-					"data" : "", "target":-1, "sClass" : "text-left","defaultContent": '<select id="actionDropdown" class="form-control"><option value="">Select from below</option><option value="1">View Lineestimate</option><option value="2">View PDF</option><option value="3">View Workflow history</option><option value="4">View Documents</option></select>'
+					"data" : "approvedBy", "sClass" : "text-left"}, {
+					"data" : "", "sClass" : "text-right", "sType" : "decimal"
 					}]				
 				});
 			}
-
 $(document).ready(function(){
-    var estimateNumber = new Bloodhound({
+	var estimateNumber = new Bloodhound({
         datumTokenizer: function (datum) {
             return Bloodhound.tokenizers.whitespace(datum.value);
         },
@@ -147,4 +154,4 @@ $(document).ready(function(){
 			displayKey : 'name',
 			source : adminSanctionNumber.ttAdapter()
 		});
-	});
+});
