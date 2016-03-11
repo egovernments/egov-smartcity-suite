@@ -89,6 +89,7 @@ public class Floor extends BaseModel implements Auditable {
     private String buildingPermissionNo;
     private Date buildingPermissionDate;
     private Area buildingPlanPlinthArea;
+    private Integer floorUid;
 
     public Floor(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
             PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
@@ -97,7 +98,7 @@ public class Floor extends BaseModel implements Auditable {
             BigDecimal manualAlv, PropertyTypeMaster unitType, String unitTypeCategory, String waterRate,
             BigDecimal alv, Date occupancyDate, String occupierName, Boolean unstructuredLand,
              FloorwiseDemandCalculations floorDmdCalc, String firmName,String buildingPermissionNo,Date buildingPermissionDate,
-            Area buildingPlanPlinthArea) {
+            Area buildingPlanPlinthArea, Integer floorUid) {
         super();
         this.constructionTypeSet = constructionTypeSet;
         this.structureClassification = structureClassification;
@@ -123,6 +124,7 @@ public class Floor extends BaseModel implements Auditable {
         this.buildingPermissionNo = buildingPermissionNo;
         this.buildingPermissionDate = buildingPermissionDate;
         this.buildingPlanPlinthArea = buildingPlanPlinthArea;
+        this.floorUid = floorUid;
     }
 
     public Floor() {
@@ -481,6 +483,14 @@ public class Floor extends BaseModel implements Auditable {
 
     public void setBuildingPlanPlinthArea(Area buildingPlanPlinthArea) {
         this.buildingPlanPlinthArea = buildingPlanPlinthArea;
+    }
+
+    public Integer getFloorUid() {
+        return floorUid;
+    }
+
+    public void setFloorUid(Integer floorUid) {
+        this.floorUid = floorUid;
     }
 
 }
