@@ -182,5 +182,9 @@
 	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-search.jsp"/>
 </definition>
 
+<definition name="budgetuploadreport-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.budgetuploadreport.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/budgetuploadreport/budgetuploadreport-search.jsp"/>
+</definition>
 
 </tiles-definitions>

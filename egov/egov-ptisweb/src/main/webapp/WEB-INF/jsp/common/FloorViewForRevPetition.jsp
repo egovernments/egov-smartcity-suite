@@ -122,8 +122,8 @@
 	    </td>
 	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-			<s:date name="buildingPermissionDate" var="cdFormat" format="dd/MM/yyyy"/>
-	    <span class="bold"><s:property default="N/A" value="%{cdFormat}"/></span>
+			<s:date name="buildingPermissionDate" var="bpdate" format="dd/MM/yyyy"/>
+	    <span class="bold"><s:property default="N/A" value="%{bpdate}"/></span>
 	    </td>
 	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">

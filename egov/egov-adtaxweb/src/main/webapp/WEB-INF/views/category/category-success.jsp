@@ -69,6 +69,10 @@
 						<div class="col-sm-3 add-margin view-content">
                            	<c:out value="${hoardingCategory.active}"></c:out>
 						</div>
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.property.id"/></div>
+						<div class="col-sm-3 add-margin view-content">
+                           	<c:out value="${hoardingCategory.propertyMandatory}"></c:out>
+						</div>
                 
                     </div>
            		</div>

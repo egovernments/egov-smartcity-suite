@@ -51,8 +51,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALT
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -70,6 +70,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
+import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 
 public class PropertyImpl extends StateAware implements Property {
@@ -403,7 +404,7 @@ public class PropertyImpl extends StateAware implements Property {
         newProp.setPropertyDetail(clonePropertyDetail(newProp));
         newProp.setPropertyModifyReason(getPropertyModifyReason());
         newProp.setPropertySource(getPropertySource());
-        newProp.setPtDemandSet(cloneDemand());
+        newProp.setPtDemandSet(cloneDemand(newProp.getPropertyDetail().getFloorDetails()));
         newProp.setRemarks(getRemarks());
         newProp.setVacant(getVacant());
         newProp.setIsExemptedFromTax(getIsExemptedFromTax());
@@ -430,10 +431,21 @@ public class PropertyImpl extends StateAware implements Property {
     /*
      * This method returns Demand details as a Set
      */
-    private Set<Ptdemand> cloneDemand() {
+    private Set<Ptdemand> cloneDemand(List<Floor> floors) {
         final Set<Ptdemand> newdemandSet = new HashSet<Ptdemand>();
         for (final Ptdemand demand : getPtDemandSet())
             newdemandSet.add((Ptdemand) demand.clone());
+        for (Ptdemand clonedDemand : newdemandSet) {
+            for (FloorwiseDemandCalculations floorDmdCalc : clonedDemand.getDmdCalculations().getFlrwiseDmdCalculations()) {
+                Floor oldFloor = floorDmdCalc.getFloor();
+                for (Floor newFloor : floors) {
+                    if (newFloor.getFloorUid().equals(oldFloor.getFloorUid())) {
+                        floorDmdCalc.setFloor(newFloor);
+                        break;
+                    }
+                }
+            }
+        }
         return newdemandSet;
     }
 
@@ -509,7 +521,7 @@ public class PropertyImpl extends StateAware implements Property {
                     flr.getManualAlv(), flr.getUnitType(), flr.getUnitTypeCategory(), flr.getWaterRate(), flr.getAlv(),
                     flr.getOccupancyDate(), flr.getOccupantName(), flr.getUnstructuredLand(), flr.getFloorDmdCalc(),
                     flr.getFirmName(), flr.getBuildingPermissionNo(), flr.getBuildingPermissionDate(),
-                    flr.getBuildingPlanPlinthArea());
+                    flr.getBuildingPlanPlinthArea(), flr.getFloorUid());
             flrDtlsSet.add(floor);
         }
         return flrDtlsSet;

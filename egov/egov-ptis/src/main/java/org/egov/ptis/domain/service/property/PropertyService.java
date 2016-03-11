@@ -400,6 +400,7 @@ public class PropertyService {
         Float totBltUpAreaVal = new Float(0);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             property.getPropertyDetail().getFloorDetails().clear();
+            int floorUid = 1;
             for (final Floor floor : property.getPropertyDetail().getFloorDetailsProxy())
                 if (floor != null) {
                     totBltUpAreaVal = totBltUpAreaVal + floor.getBuiltUpArea().getArea();
@@ -440,6 +441,7 @@ public class PropertyService {
                     floor.setPropertyDetail(property.getPropertyDetail());
                     floor.setCreatedDate(new Date());
                     floor.setModifiedDate(new Date());
+                    floor.setFloorUid(floorUid++);
                     final User user = userService.getUserById(EgovThreadLocals.getUserId());
                     floor.setCreatedBy(user);
                     floor.setModifiedBy(user);

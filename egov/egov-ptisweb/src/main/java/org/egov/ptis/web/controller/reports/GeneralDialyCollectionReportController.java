@@ -80,10 +80,11 @@ import com.google.gson.GsonBuilder;
  */
 @Controller
 @RequestMapping(value = "/reports")
-public class BillCollectorWiseDialyCollectionReportController {
+public class GeneralDialyCollectionReportController {
 
     private static final String BILL_COLLECTOR_COLL_REPORT_FORM = "bcDailyCollectionReport-form";
     private static final String ULBWISE_COLL_REPORT_FORM = "ulbWiseCollectionReport-form";
+    private static final String ULBWISE_DCB_REPORT_FORM = "ulbWiseDcbReport-form";
     private String DISTRICT = "DISTRICT";
     private String CITY = "CITY";
    private  BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult = new BillCollectorDailyCollectionReportResult();
@@ -146,11 +147,35 @@ public class BillCollectorWiseDialyCollectionReportController {
 
         return BILL_COLLECTOR_COLL_REPORT_FORM;
     }
+    @RequestMapping(value = "/ulbWiseDcbReport-form", method = RequestMethod.GET)
+    public String searchUlbWiseDcbForm(final Model model) {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        if (bcDailyCollectionReportResult != null)
+            bcDailyCollectionReportResult.setGeneratedDate(dateFormat.format(calendar.getTime()));
 
+        return ULBWISE_DCB_REPORT_FORM;
+    }
+
+    
     @RequestMapping(value = "/ulbWiseCollectionReport-form", method = RequestMethod.GET)
     public String searchUlbWiseForm(final Model model) {
         return ULBWISE_COLL_REPORT_FORM;
     }
+    
+   
+    @RequestMapping(value = "/ulbWiseDCBList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody void searchUlbWiseDcb(final HttpServletRequest request, final HttpServletResponse response,BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult,
+            final Model model) throws IOException {
+        IOUtils.write(
+                "{ \"data\":"
+                        + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+                                .toJson(reportService.getUlbWiseDcbCollection(new Date(),bcDailyCollectionReportResult)) + "}",
+                response.getWriter()); 
+    }
+  
+    
     @RequestMapping(value = "/ulbWiseCollectionList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void searchUlbWise(final HttpServletRequest request, final HttpServletResponse response,
             final Model model) throws IOException {

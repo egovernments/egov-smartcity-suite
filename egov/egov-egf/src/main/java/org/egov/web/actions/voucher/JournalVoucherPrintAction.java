@@ -179,14 +179,14 @@ public class JournalVoucherPrintAction extends BaseFormAction {
             for (final CGeneralLedger vd : voucher.getGeneralledger())
                 if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount().doubleValue())) == 0) {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher
-                            .getId().toString()), vd);
+                            .getId().toString()), vd, egovCommon);
                     voucherReportList.add(voucherReport);
                 }
 
             for (final CGeneralLedger vd : voucher.getGeneralledger())
                 if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount().doubleValue())) == 0) {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher
-                            .getId().toString()), vd);
+                            .getId().toString()), vd, egovCommon);
                     voucherReportList.add(voucherReport);
                 }
         }

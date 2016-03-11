@@ -357,4 +357,8 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
         return getByName(budgetName);
     }
+
+    public List<Budget> getBudgetsForUploadReport() {
+        return findAllBy("select distinct b from Budget b where b.name like '%RE%' and b.materializedPath  in (select distinct substring(bd.materializedPath,  1 , 1) from BudgetDetail bd where bd.status.code = 'Created')");
+    }
 }

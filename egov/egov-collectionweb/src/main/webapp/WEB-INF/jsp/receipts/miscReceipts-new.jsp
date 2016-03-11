@@ -714,7 +714,9 @@ var totaldbamt=0,totalcramt=0;
                 <s:textfield id="voucherDate" name="voucherDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="validateVoucherDate(this)" data-inputmask="'mask': 'd/m/y'"/>
                 <div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
           </td>
-               
+          <td width="21%" class="bluebox"><s:text name="challan.narration"/></td>
+		    <td width="24%" class="bluebox"><s:textarea name="referenceDesc" id="referenceDesc" value="%{referenceDesc}" cols="18" rows="1" maxlength="250" onkeyup="return ismaxlength(this)"/></td>
+	    
            <s:if test="%{shouldShowHeaderField('field')}">
            <td width="21%" class="bluebox"><s:text name="miscreceipt.field"/><s:if test="%{isFieldMandatory('field')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
           <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="boundaryId" id="boundaryId" cssClass="selectwk" list="dropdownData.fieldList" listKey="id" listValue="name"  /> </td>

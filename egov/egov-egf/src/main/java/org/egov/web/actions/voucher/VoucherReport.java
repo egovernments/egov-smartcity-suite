@@ -61,14 +61,15 @@ public class VoucherReport {
     private Department department;
     private static final String MULTIPLE = "MULTIPLE";
     private static final Logger LOGGER = Logger.getLogger(VoucherReport.class);
-    private @Autowired EgovCommon egovCommon;
+    private  EgovCommon egovCommon;
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
-    public VoucherReport(final PersistenceService persistenceService, final Integer voucherId, final CGeneralLedger voucherDetail) {
+    public VoucherReport(final PersistenceService persistenceService, final Integer voucherId, final CGeneralLedger voucherDetail, EgovCommon egovCommon) {
         super();
         this.persistenceService = persistenceService;
+        this.egovCommon=egovCommon;
         generalLedger = getGeneralLedger(voucherId, voucherDetail);
         this.voucherDetail = voucherDetail;
     }
@@ -149,6 +150,14 @@ public class VoucherReport {
 
     public Department getDepartment() {
         return department;
+    }
+
+    public EgovCommon getEgovCommon() {
+        return egovCommon;
+    }
+
+    public void setEgovCommon(EgovCommon egovCommon) {
+        this.egovCommon = egovCommon;
     }
 
 }

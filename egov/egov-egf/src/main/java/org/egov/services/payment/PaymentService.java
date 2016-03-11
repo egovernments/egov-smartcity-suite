@@ -2327,7 +2327,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "','"
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "') " +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2362,7 +2362,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "','"
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "') " +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2392,7 +2392,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "'"
                                         +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate").addScalar("paidTo")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2425,7 +2425,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "'"
                                         +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate").addScalar("paidTo")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2576,17 +2576,21 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         // if it's cash or RTGS
         else
         {
+            final String chequeNo;
             if (paymentMode.equals(FinancialConstants.MODEOFPAYMENT_RTGS))
                 instrumentHeaderList.add(prepareInstrumentHeaderForRtgs(account, parameters.get("rtgsRefNo")[0], totalPaidAmt,
                         formatter.parse(parameters.get("rtgsDate")[0]), ""));
             else if (isChequeNoGenerationAuto())  // if cheque number generation is auto
             {
-                final String chequeNo = chequeService.nextChequeNumber(account.getId().toString(), 1, dept.getId().intValue());
-                StringUtils.split(chequeNo, ",");
+                chequeNo = chequeService.nextChequeNumber(account.getId().toString(), 1, dept.getId().intValue());
+                instrumentHeaderList.add(prepareInstrumentHeader(account, chequeNo,
+                        FinancialConstants.MODEOFPAYMENT_CHEQUE.toLowerCase(), parameters.get("inFavourOf")[0], totalPaidAmt,
+                        currentDate, "", null));
             } else
                 instrumentHeaderList.add(prepareInstrumentHeader(account, parameters.get("chequeNo")[0],
                         FinancialConstants.MODEOFPAYMENT_CHEQUE.toLowerCase(), parameters.get("inFavourOf")[0], totalPaidAmt,
                         formatter.parse(parameters.get("chequeDt")[0]), "", parameters.get("serialNo")[0]));
+            
             instHeaderList = instrumentService.addToInstrument(instrumentHeaderList);
 
             final List<Paymentheader> paymentList = persistenceService.findAllByNamedQuery("getPaymentList",
