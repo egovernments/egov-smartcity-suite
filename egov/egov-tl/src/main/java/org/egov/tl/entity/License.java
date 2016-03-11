@@ -69,7 +69,7 @@ public abstract class License extends StateAware {
     protected Boundary boundary;
     protected Boundary parentBoundary;
     // this should be NatureOfBusiness only which means it is Permanent or temporary.
-    protected NatureOfBusiness buildingType;
+    protected NatureOfBusiness natureOfBusiness;
     protected Date dateOfExpiry;
     protected String feeTypeStr;
     protected String inspectionDetails;
@@ -528,12 +528,14 @@ public abstract class License extends StateAware {
         this.tradeArea_weight = tradeArea_weight;
     }
 
-    public NatureOfBusiness getBuildingType() {
-        return buildingType;
+    
+
+    public NatureOfBusiness getNatureOfBusiness() {
+        return natureOfBusiness;
     }
 
-    public void setBuildingType(final NatureOfBusiness buildingType) {
-        this.buildingType = buildingType;
+    public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
+        this.natureOfBusiness = natureOfBusiness;
     }
 
     public LicenseAppType getLicenseAppType() {

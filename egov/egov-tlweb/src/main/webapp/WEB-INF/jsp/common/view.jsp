@@ -113,7 +113,7 @@
 		<div class="col-xs-3 add-margin"><s:text name='license.establishmentname' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{nameOfEstablishment}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.tradeType.lbl' /></div>
-		<div class="col-xs-3 add-margin view-content"><s:property value="%{buildingType.name}" /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{natureOfBusiness.name}" /></div>
 	</div>
 	
 	<div class="row add-border">
