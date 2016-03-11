@@ -176,11 +176,12 @@ $(document).ready(function(){
 			console.log(propertyNo); 
 			jQuery.ajax({
 			//	url: "/ptis/rest/property/" + propertyNo,
-				url:"/restapi/property/assessmentDetails",
-				type:"post",
+				url:"/adtax/ajax-assessmentDetails",
+				type:"GET",
 				contentType:"application/json", 
 				dataType :"json",
-			    data: JSON.stringify({"assessmentNo":propertyNo}),
+			   // data: JSON.stringify({"assessmentNoRequest":propertyNo}),
+			    data:{'assessmentNoRequest' : propertyNo},
 				success:function(data){
 					if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
 						alert(data.errorDetails.errorMessage);
