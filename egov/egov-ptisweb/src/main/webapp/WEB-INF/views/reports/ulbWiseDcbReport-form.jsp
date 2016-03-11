@@ -117,6 +117,9 @@
 									<form:option value="EWSHS">  
 									EWSHS
 								</form:option>
+								<form:option value="COURTCASE">  
+									Court Cases
+								</form:option>
 							</form:select>
 						</div>
 					</div>
