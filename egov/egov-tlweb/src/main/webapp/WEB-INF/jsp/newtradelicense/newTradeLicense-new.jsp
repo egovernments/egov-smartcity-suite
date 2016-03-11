@@ -171,8 +171,7 @@
 					  jQuery('.add-padding').attr('onclick','').unbind('click');
 					  // renaming approver remarks label for second level of workflow
 					  <s:if test="%{getNextAction()!='END'}">
-					  vv
-					 	 jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+					  	jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
 					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
 					</s:if>
 				} 
