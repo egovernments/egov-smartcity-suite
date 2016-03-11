@@ -37,26 +37,27 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">File No</label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.file.no" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control">
 		
 	</div>
-	<label class="col-sm-2 control-label text-right">File Date</label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.file.date" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control"> 
 	</div>
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Estimate Amount</label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimateamount" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="estimateAmount" disabled>
 	</div>
 	
-	<label class="col-sm-2 control-label text-right">Tender Finalized Percentage</label><div class="col-sm-3">
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.tender.finalized.percentage" /></label><div class="col-sm-3">
 		<div class="input-group" style="margin-bottom: 0;">
             <div class="input-group-btn">
                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">+ &nbsp;<span class="caret"></span></button>
@@ -72,64 +73,64 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Agreement Amount</label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.agreement.amount" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control">
 	</div>
-	<label class="col-sm-2 control-label text-right">Date of Agreement</label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.dateofagreement" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="workOrderDate" name="workOrderDate" type="text" class="form-control" value="${workOrderDate}" maxlength="12" readonly="true" disabled/>
+		<input id="workOrderDate" name="workOrderDate" type="text" class="form-control" maxlength="12" disabled/>
 	</div>
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Name of the Agency</label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofagency" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 0;">
 		<div class="input-group">
 			<input id="contractor" name="workOrder.contractor" data-pattern="number" min="3" class="form-control patternvalidation" required="required" type="text" maxlength="15"> 
 			<span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
 		</div>
 	</div>
-	<label class="col-sm-2 control-label text-right">Contractor Code</label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor.code" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="contractorCode" disabled>
 	</div>
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Prepared By</label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.preparedby" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="preparedBy" disabled>
 	</div>
 </div>
 
 <div class="form-group" style="display: block;">
-	<label class="col-sm-3 control-label text-right">Additional Security Deposit</label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.additional.security.deposit" /></label>
 	<div class="col-sm-3 add-margin">
 <input type="text" class="form-control">		
 	</div>	
-    <label class="col-sm-2 control-label text-right">Bank Guarantee</label>
+    <label class="col-sm-2 control-label text-right"><spring:message code="lbl.bank.guarantee" /></label>
     <div class="col-sm-3 add-margin">
 		<textarea class="form-control"></textarea>
 	</div>
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">EMD Amount<span class="mandatory"></span></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.emd.amount" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin"><input type="text" class="form-control"></div>
-	<label class="col-sm-2 control-label text-right">Contract Period (in days)<span class="mandatory"></span></label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contract.period" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control"> 
 	</div>
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Defect Liability Period (in Years)<span class="mandatory"></span></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.dlp" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin"><input type="text" class="form-control"></div>
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Work allocated to<span class="mandatory"></span></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.work.allocated.to" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<select id="" name="waterSource" class="form-control" data-first-option="false" required="required">
 			<option value="">
@@ -138,7 +139,7 @@
   		<!-- 	<option selected="">Assistant Engineer</option> -->
 		</select>		
 	</div>
-	<label class="col-sm-2 control-label text-right">Engineer in charge<span class="mandatory"></span></label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.engineer.incharge" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<select id="" name="waterSource" class="form-control" data-first-option="false" required="required">
 			<option value="">

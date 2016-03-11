@@ -37,8 +37,9 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Estimate Number</label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="estimateNumber" disabled>
 	</div>
@@ -49,11 +50,11 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Name of the work</label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofwork" /></label>
 	<div class="col-sm-3 add-margin">
 		<textarea class="form-control" id="nameOfWork" disabled></textarea>
 	</div>
-	<label class="col-sm-2 control-label text-right">Department</label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
 	<div class="col-sm-3 add-margin">	
 		<input type="text" class="form-control" id="department" disabled>
 	</div>
