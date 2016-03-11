@@ -79,5 +79,10 @@
 	<definition name="createLetterOfAcceptance-form" extends="base_layout">
         <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/createLetterOfAcceptance-form.jsp"/>
-    </definition>	
+    </definition>
+    	
+    <definition name="search-searchloa" extends="base_layout">
+        <put-attribute name="page-title" value="title.new.create.milestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptance-search.jsp"/>
+    </definition>
 </tiles-definitions>
