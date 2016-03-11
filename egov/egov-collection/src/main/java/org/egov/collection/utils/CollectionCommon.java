@@ -192,7 +192,7 @@ public class CollectionCommon {
         case CollectionConstants.RECEIPT_TYPE_CHALLAN:
             templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
             break;
-        case CollectionConstants.RECEIPT_TYPE_ADHOC:
+        /*case CollectionConstants.RECEIPT_TYPE_ADHOC:
             templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
                     + CollectionConstants.RECEIPT_TEMPLATE_NAME;
             if (!reportService.isValidTemplate(templateName)) {
@@ -210,10 +210,11 @@ public class CollectionCommon {
                     LOGGER.error(errMsg);
                     throw new ApplicationRuntimeException(errMsg);
                 }
-            }
+            }*/
+        case CollectionConstants.RECEIPT_TYPE_ADHOC:
+                templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
             break;
         }
-
         return templateName;
     }
 
