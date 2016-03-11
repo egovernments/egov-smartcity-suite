@@ -506,6 +506,7 @@ public class CollectionCommon {
 
         } catch (final Exception e) {
             LOGGER.error("Exception while setting subledger details", e);
+            throw new ApplicationRuntimeException("Exception while setting subledger details" , e);
         }
         if (subLedgerlist.isEmpty())
             subLedgerlist.add(new ReceiptDetailInfo());
@@ -791,10 +792,16 @@ public class CollectionCommon {
 
     public ArrayList<ReceiptDetail> apportionBillAmount(final BigDecimal actualAmountPaid,
             final ArrayList<ReceiptDetail> receiptDetails) {
+        BigDecimal totalCreditAmount = BigDecimal.ZERO;
         final ReceiptHeader receiptHeader = receiptDetails.get(0).getReceiptHeader();
         final BillingIntegrationService billingService = (BillingIntegrationService) collectionsUtil
                 .getBean(receiptHeader.getService().getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         billingService.apportionPaidAmount(receiptHeader.getReferencenumber(), actualAmountPaid, receiptDetails);
+        for (final ReceiptDetail receiptDetail : receiptDetails)
+            totalCreditAmount = totalCreditAmount.add(receiptDetail.getCramount());
+        if (totalCreditAmount.intValue() == 0)
+            throw new ApplicationRuntimeException("Apportioning Failed at the Billing System: " + receiptHeader.getService().getCode()
+                    + ", for bill number: " + receiptHeader.getReferencenumber());
         return receiptDetails;
     }
 
