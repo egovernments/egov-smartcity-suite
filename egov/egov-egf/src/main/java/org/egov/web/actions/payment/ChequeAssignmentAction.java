@@ -134,6 +134,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
         @Result(name = "searchRtgsResult", location = "chequeAssignment-searchRtgsResult.jsp"),
         @Result(name = "surrendersearch", location = "chequeAssignment-surrendersearch.jsp"),
         @Result(name = "searchpayment", location = "chequeAssignment-searchpayment.jsp"),
+        @Result(name = "surrendercheques", location = "chequeAssignment-surrendercheques.jsp"),
         @Result(name = "rtgsSearch", location = "chequeAssignment-rtgsSearch.jsp"),
         @Result(name = "tnebRtgsSearch", location = "chequeAssignment-tnebRtgsSearch.jsp"),
         @Result(name = "bankAdvice-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -1436,17 +1437,17 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             if (!"".equals(toDate))
                 sql.append(" and iv.voucherHeaderId.voucherDate<='" + sdf.format(formatter.parse(toDate)) + "'");
             if (bankaccount != null && bankaccount != -1)
-                sql.append(" and  iv.instrumentHeaderId.bankAccountId.id=" + bankaccount);
+                sql.append(" and  ih.bankAccountId.id=" + bankaccount);
             if (instrumentNumber != null && !instrumentNumber.isEmpty())
-                sql.append(" and  iv.instrumentHeaderId.instrumentNumber='" + instrumentNumber + "'");
+                sql.append(" and  ih.instrumentNumber='" + instrumentNumber + "'");
             if (department != null && department != -1)
                 sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=" + department);
             if (voucherHeader.getVoucherNumber() != null && !voucherHeader.getVoucherNumber().isEmpty())
                 sql.append(" and  iv.voucherHeaderId.voucherNumber='" + voucherHeader.getVoucherNumber() + "'");
-            final String mainquery = "select iv.instrumentHeaderId from  InstrumentVoucher iv  where   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
+            final String mainquery = "select ih from  InstrumentVoucher iv  where   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "'  " + sql + " "
 
-                    + " and iv.instrumentHeaderId.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
+                    + " and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
             instrumentHeaderList = persistenceService.findAllBy(mainquery, created.getId());
             final LinkedHashSet lhs = new LinkedHashSet();
@@ -1502,17 +1503,17 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             if (!"".equals(toDate))
                 sql.append(" and iv.voucherHeaderId.voucherDate<='" + sdf.format(formatter.parse(toDate)) + "'");
             if (bankaccount != null && bankaccount != -1)
-                sql.append(" and  iv.instrumentHeaderId.bankAccountId.id=" + bankaccount);
+                sql.append(" and  ih.bankAccountId.id=" + bankaccount);
             if (instrumentNumber != null && !instrumentNumber.isEmpty())
-                sql.append(" and  iv.instrumentHeaderId.transactionNumber='" + instrumentNumber + "'");
+                sql.append(" and  ih.transactionNumber='" + instrumentNumber + "'");
             if (department != null && department != -1)
                 sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=" + department);
             if (voucherHeader.getVoucherNumber() != null && !voucherHeader.getVoucherNumber().isEmpty())
                 sql.append(" and  iv.voucherHeaderId.voucherNumber='" + voucherHeader.getVoucherNumber() + "'");
-            final String mainquery = "select iv.instrumentHeaderId from  InstrumentVoucher iv,InstrumentHeader ih where iv.instrumentHeaderId =ih.id and ih.transactionNumber is not null and ih.instrumentType=6 and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
+            final String mainquery = "select ih from  InstrumentVoucher iv,InstrumentHeader ih ,InstrumentType it where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "'  " + sql + " "
 
-                    + " and iv.instrumentHeaderId.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
+                    + " and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
             instrumentHeaderList = persistenceService.findAllBy(mainquery, created.getId());
             final LinkedHashSet lhs = new LinkedHashSet();
@@ -1527,7 +1528,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
             if (instrumentVoucherList.size() > 0)
                 loadReasonsForSurrendaring();
-            // loadChequeSerialNo(bankaccount);
+             loadChequeSerialNo(bankaccount);
 
         } catch (final ParseException e) {
             LOGGER.error(e.getMessage());
@@ -1611,12 +1612,12 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private void getheader() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getheader...");
-        final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount);
+        final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.longValue());
         bank_account_dept = account.getBankbranch().getBank().getName() + "-" + account.getBankbranch().getBranchname()
                 + "-" + account.getAccountnumber();
         if (department != null && department != -1)
         {
-            final Department dept = (Department) persistenceService.find("from Department where id=?", department);
+            final Department dept = (Department) persistenceService.find("from Department where id=?", department.longValue());
             bank_account_dept = bank_account_dept + "-" + dept.getName();
         }
         if (LOGGER.isDebugEnabled())
@@ -1639,7 +1640,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             LOGGER.debug("Completed validateForSuurenderSearch.");
     }
 
-    @ValidationErrorPage(value = "surrendercheques")
+    @ValidationErrorPage(value = "surrenderRTGS")
     @SkipValidation
     @Action(value = "/payment/chequeAssignment-save")
     public String save()
