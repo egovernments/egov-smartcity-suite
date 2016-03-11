@@ -1658,14 +1658,14 @@ public class CommonAction extends BaseFormAction {
             accNumList = new ArrayList<Bankaccount>();
             StringBuffer queryString = new StringBuffer();
             queryString = queryString
-                    .append("select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
+                    .append("select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode ,bank.name as bankName"
                             +
                             " from  voucherheader vh,chartofaccounts coa,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,paymentheader ph,  "
                             +
                             "egf_instrumentvoucher eiv,egf_instrumentheader ih,egw_status egws ")
                     .append("where ph.voucherheaderid=vh.id and coa.id=bankaccount.glcodeid and vh.id=eiv.VOUCHERHEADERID and ")
                     .append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' ")
-                    .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque=1 ")
+                    .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque='1' ")
                     .append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ")
                     .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
                             + branchId + "  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
@@ -1700,7 +1700,7 @@ public class CommonAction extends BaseFormAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBanksAccountsWithAssignedCheques.");
-        return "bankAccNum";
+        return "bankAccNum-bankName";
     }
 
     public Integer getBranchId() {

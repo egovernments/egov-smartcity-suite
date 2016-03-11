@@ -190,9 +190,25 @@ public class BudgetLoadAction extends BaseFormAction {
                         getText("be.year.is.not.immediate.next.fy.year.of.re.year"),
                         getText("be.year.is.not.immediate.next.fy.year.of.re.year"))));
             timeStamp = new Timestamp((new Date()).getTime()).toString().replace(".", "_");
-            budgetOriginalFileName = budgetInXlsFileName.split("\\.")[0] + "_budget_original_"
-                    + timeStamp + "."
-                    + budgetInXlsFileName.split("\\.")[1];
+            if (budgetInXlsFileName.contains("_budget_original_")) {
+                budgetOriginalFileName = budgetInXlsFileName.split("_budget_original_")[0] + "_budget_original_"
+                        + timeStamp + "."
+                        + budgetInXlsFileName.split("\\.")[1];
+            } else if (budgetInXlsFileName.contains("_budget_output_")) {
+                budgetOriginalFileName = budgetInXlsFileName.split("_budget_output_")[0] + "_budget_original_"
+                        + timeStamp + "."
+                        + budgetInXlsFileName.split("\\.")[1];
+            } else {
+                if (budgetInXlsFileName.length() > 60) {
+                    throw new ValidationException(Arrays.asList(new ValidationError(
+                            getText("file.name.should.be.less.then.60.characters"),
+                            getText("file.name.should.be.less.then.60.characters"))));
+                } else
+                    budgetOriginalFileName = budgetInXlsFileName.split("\\.")[0] + "_budget_original_"
+                            + timeStamp + "."
+                            + budgetInXlsFileName.split("\\.")[1];
+            }
+
             final FileStoreMapper originalFileStore = fileStoreService.store(budgetInXls,
                     budgetOriginalFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
@@ -207,9 +223,8 @@ public class BudgetLoadAction extends BaseFormAction {
             if (errorInMasterData) {
                 fsIP.close();
                 prepareOutPutFileWithErrors(budgetUploadList);
-
-                throw new ValidationException(Arrays.asList(new ValidationError(getText("error.while.validating.masterdata"),
-                        getText("error.while.validating.masterdata"))));
+                addActionMessage(getText("error.while.validating.masterdata"));
+                return "result";
             }
 
             budgetUploadList = removeEmptyRows(budgetUploadList);
@@ -223,10 +238,18 @@ public class BudgetLoadAction extends BaseFormAction {
 
         } catch (final ValidationException e)
         {
+            originalFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
+                    "from FileStoreMapper where fileName like '%budget_original%' order by id desc ").setMaxResults(5).list();
+            outPutFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
+                    "from FileStoreMapper where fileName like '%budget_output%' order by id desc ").setMaxResults(5).list();
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
                     e.getErrors().get(0).getMessage())));
         } catch (final Exception e)
         {
+            originalFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
+                    "from FileStoreMapper where fileName like '%budget_original%' order by id desc ").setMaxResults(5).list();
+            outPutFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
+                    "from FileStoreMapper where fileName like '%budget_output%' order by id desc ").setMaxResults(5).list();
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
@@ -265,9 +288,24 @@ public class BudgetLoadAction extends BaseFormAction {
             FileOutputStream output_file = new FileOutputStream(budgetInXls);
             wb.write(output_file);
             output_file.close();
-            budgetOutPutFileName = budgetInXlsFileName.split("\\.")[0] + "_budget_output_"
-                    + timeStamp + "."
-                    + budgetInXlsFileName.split("\\.")[1];
+            if (budgetInXlsFileName.contains("_budget_original_")) {
+                budgetOutPutFileName = budgetInXlsFileName.split("_budget_original_")[0] + "_budget_output_"
+                        + timeStamp + "."
+                        + budgetInXlsFileName.split("\\.")[1];
+            } else if (budgetInXlsFileName.contains("_budget_output_")) {
+                budgetOutPutFileName = budgetInXlsFileName.split("_budget_output_")[0] + "_budget_output_"
+                        + timeStamp + "."
+                        + budgetInXlsFileName.split("\\.")[1];
+            } else {
+                if (budgetInXlsFileName.length() > 60) {
+                    throw new ValidationException(Arrays.asList(new ValidationError(
+                            getText("file.name.should.be.less.then.60.characters"),
+                            getText("file.name.should.be.less.then.60.characters"))));
+                } else
+                    budgetOutPutFileName = budgetInXlsFileName.split("\\.")[0] + "_budget_output_"
+                            + timeStamp + "."
+                            + budgetInXlsFileName.split("\\.")[1];
+            }
             final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
                     budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
@@ -317,9 +355,24 @@ public class BudgetLoadAction extends BaseFormAction {
             FileOutputStream output_file = new FileOutputStream(budgetInXls);
             wb.write(output_file);
             output_file.close();
-            budgetOutPutFileName = budgetInXlsFileName.split("\\.")[0] + "_budget_output_"
-                    + timeStamp + "."
-                    + budgetInXlsFileName.split("\\.")[1];
+            if (budgetInXlsFileName.contains("_budget_original_")) {
+                budgetOutPutFileName = budgetInXlsFileName.split("_budget_original_")[0] + "_budget_output_"
+                        + timeStamp + "."
+                        + budgetInXlsFileName.split("\\.")[1];
+            } else if (budgetInXlsFileName.contains("_budget_output_")) {
+                budgetOutPutFileName = budgetInXlsFileName.split("_budget_output_")[0] + "_budget_output_"
+                        + timeStamp + "."
+                        + budgetInXlsFileName.split("\\.")[1];
+            } else {
+                if (budgetInXlsFileName.length() > 60) {
+                    throw new ValidationException(Arrays.asList(new ValidationError(
+                            getText("file.name.should.be.less.then.60.characters"),
+                            getText("file.name.should.be.less.then.60.characters"))));
+                } else
+                    budgetOutPutFileName = budgetInXlsFileName.split("\\.")[0] + "_budget_output_"
+                            + timeStamp + "."
+                            + budgetInXlsFileName.split("\\.")[1];
+            }
             final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
                     budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);

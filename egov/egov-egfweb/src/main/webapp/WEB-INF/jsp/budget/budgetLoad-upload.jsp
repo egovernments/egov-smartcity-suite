@@ -64,6 +64,22 @@
 				'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
 
 	}
+	jQuery(document).ready(function() {
+		var fileformats = [ 'xls', 'xlsx' ];
+
+		jQuery('#budgetInXls').on('change.bs.fileinput', function(e) {
+			/*validation for file upload*/
+			myfile = jQuery(this).val();
+			var ext = myfile.split('.').pop();
+			if (jQuery.inArray(ext, fileformats) > -1) {
+				//do something    
+			} else {
+				bootbox.alert(ext + " file format is not allowed");
+				jQuery(this).val("");
+				return;
+			}
+		});
+	});
 </script>
 </head>
 <body>
@@ -93,12 +109,14 @@
 				<table border="0" width="100%" cellspacing="0" cellpadding="0">
 					<tr width="50%">
 						<th width="50%"></th>
-						<th width="25%" class="bluebgheadtd" style="width: 4%; text-align: center"
-							align="center">Original Files</th>
-						<th width="25%" class="bluebgheadtd" style="width: 4%; text-align: center"
-							align="center">Output Files</th>
+						<th width="25%" class="bluebgheadtd"
+							style="width: 4%; text-align: center" align="center">Original
+							Files</th>
+						<th width="25%" class="bluebgheadtd"
+							style="width: 4%; text-align: center" align="center">Output
+							Files</th>
 					</tr>
-					<tr >
+					<tr>
 						<td width="50%">
 							<table border="0" width="100%" cellspacing="0" cellpadding="0">
 								<tr>

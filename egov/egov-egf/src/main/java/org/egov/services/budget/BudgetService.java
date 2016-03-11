@@ -46,6 +46,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
@@ -66,6 +68,7 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -78,6 +81,13 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     protected WorkflowService<Budget> budgetWorkflowService;
     @Autowired
     protected SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
+    
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
 
     public void setEisCommonService(final EisCommonService eisCommonService) {
         this.eisCommonService = eisCommonService;
@@ -356,5 +366,21 @@ public class BudgetService extends PersistenceService<Budget, Long> {
             budgetName = deptCode + "-" + budgetType + "-Cap-" + fyear;
 
         return getByName(budgetName);
+    }
+
+    public List<Budget> getBudgetsForUploadReport() {
+        return findAllBy("select distinct b from Budget b where b.name like '%RE%' and b.materializedPath  in (select distinct substring(bd.materializedPath,  1 , 1) from BudgetDetail bd where bd.status.code = 'Created')");
+    }
+
+    @Transactional
+    public void updateByMaterializedPath(final String materializedPath) {
+        EgwStatus approvedStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Approved");
+        EgwStatus createdStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Created");
+        persistenceService
+                .getSession()
+                .createSQLQuery(
+                        "update egf_budget set status = :approvedStatus where status =:createdStatus and  materializedPath like'"
+                                + materializedPath + "%'").setLong("approvedStatus", approvedStatus.getId())
+                .setLong("createdStatus", createdStatus.getId()).executeUpdate();
     }
 }

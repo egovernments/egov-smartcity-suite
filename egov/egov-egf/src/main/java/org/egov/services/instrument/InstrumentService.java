@@ -969,6 +969,7 @@ public class InstrumentService {
     /**
      * @param suurenderChequelist
      */
+    @Transactional
     public void surrenderCheques(
             final List<InstrumentHeader> suurenderChequelist) {
 

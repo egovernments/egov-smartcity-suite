@@ -50,9 +50,8 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Surrender RTGS" />
 		</jsp:include>
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
 		</span>
-		<div class="formmainbox">
 			<div class="subheadnew"></div>
 			<div class="formmainbox">
 				<div class="subheadnew">
@@ -120,7 +119,7 @@
 						</s:iterator>
 						<tr>
 							<td class="greybox"><s:text name="chq.issued.department" /><span
-								class="mandatory">*</span> <s:select name="department"
+								class="mandatory1">*</span> <s:select name="department"
 									id="department" list="dropdownData.departmentList" listKey="id"
 									listValue="name" headerKey="-1"
 									headerValue="----Choose----" value="%{department}" /></td>
@@ -173,7 +172,7 @@
 			   var slObj=	document.getElementById(name);
 				var dept = document.getElementById('department').options[dom.get('department').selectedIndex].value;
 				var slNo = slObj.options[slObj.selectedIndex].value;
-				var url = '${pageContext.request.contextPath}/voucher/common!ajaxValidateChequeNumber.action?bankaccountId='+document.getElementById('bankaccount').value+'&chequeNumber='+obj.value+'&index='+index+'&departmentId='+dept+"&serialNo="+slNo;
+				var url = '${pageContext.request.contextPath}/voucher/common-ajaxValidateChequeNumber.action?bankaccountId='+document.getElementById('bankaccount').value+'&chequeNumber='+obj.value+'&index='+index+'&departmentId='+dept+"&serialNo="+slNo;
 				var transaction = YAHOO.util.Connect.asyncRequest('POST', url,callback , null);
 			}
 			
@@ -197,12 +196,13 @@
 	function openDetails(val)
 	{
 	var mode="view";
- 	window.open("/EGF/voucher/preApprovedVoucher!loadvoucherview.action?vhid="+val+"&showMode="+mode,"","height=650,width=900,scrollbars=yes,left=30,top=30,status=yes");
+ 	window.open("/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+val+"&showMode="+mode,"","height=650,width=900,scrollbars=yes,left=30,top=30,status=yes");
  	}
  	function surrenderChq(){
 		
  		document.getElementById('button').value='surrender';
- 		document.getElementById('department').disabled=false;
+ 		document.chequeAssignment.action = '/EGF/payment/chequeAssignment-save.action';
+		document.chequeAssignment.submit();
 		return true;
  	}
   	function Reassign()
@@ -247,14 +247,10 @@
 	 		}
 	 	
  		}
-		document.getElementById('department').disabled=false;
 		
  	}
  	
  		
-		<s:if test="%{isFieldMandatory('department')}">
-				document.getElementById('department').disabled=true;
-		</s:if>	
 	</script>
 </body>
 

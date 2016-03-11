@@ -92,6 +92,7 @@ import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyMutationTransferee;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
@@ -451,7 +452,7 @@ public class PropertyTransferRestService {
         propertyMutation.setDeedNo(deedNo);
         propertyMutation.setSaleDetail(saleDetail);
         propertyMutation.setMutationReason(propertyTransferService.getPropertyTransferReasonsByCode(mutationReason));
-        propertyMutation.setTransfereeInfos(getPropertyOwnerInfoList(ownerDetailsList));
+        propertyMutation.setTransfereeInfos(getPropertyOwnerInfoList(ownerDetailsList,propertyMutation));
         return propertyMutation;
     }
 /**
@@ -485,9 +486,10 @@ public class PropertyTransferRestService {
  * @param ownerDetailsList
  * @return
  */
-    private List<User> getPropertyOwnerInfoList(List<OwnerDetails> ownerDetailsList) {
-        List<User> proeprtyOwnerInfoList = new ArrayList<User>();
+    private List<PropertyMutationTransferee> getPropertyOwnerInfoList(List<OwnerDetails> ownerDetailsList,PropertyMutation propertyMutation) {
+        List<PropertyMutationTransferee> proeprtyOwnerInfoList = new ArrayList<PropertyMutationTransferee>();
         for (OwnerDetails ownerDetais : ownerDetailsList) {
+            PropertyMutationTransferee pmt = new PropertyMutationTransferee();
             User owner = new User();
             owner.setAadhaarNumber(ownerDetais.getAadhaarNo());
             owner.setSalutation(ownerDetais.getSalutationCode());
@@ -498,7 +500,9 @@ public class PropertyTransferRestService {
             owner.setEmailId(ownerDetais.getEmailId());
             owner.setGuardianRelation(ownerDetais.getGuardianRelation());
             owner.setGuardian(ownerDetais.getGuardian());
-            proeprtyOwnerInfoList.add(owner);
+            pmt.setTransferee(owner);
+            pmt.setPropertyMutation(propertyMutation);
+            proeprtyOwnerInfoList.add(pmt);
         }
         return proeprtyOwnerInfoList;
     }

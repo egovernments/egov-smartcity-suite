@@ -84,8 +84,8 @@ function getUom(){
   
     <label class="col-sm-2 control-label text-right"><s:text name='license.tradeType.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:select name="buildingType" id="buildingType" list="dropdownData.tradeTypeList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{buildingType.id}" class="form-control"   />
+        <s:select name="natureOfBusiness" id="buildingType" list="dropdownData.tradeTypeList"
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{natureOfBusiness.id}" class="form-control"   />
     </div>
 </div>
 <div class="form-group">

@@ -1324,11 +1324,17 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
                 updateBillingSystemWithReceiptInfo(receiptHeader);
         }
-        if(!CollectionConstants.RECEIPT_STATUS_CODE_FAILED.equals(receiptHeader.getStatus().getCode())
-                && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())) {
-            final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
-            collectionIndexService.createCollectionIndex(collectionIndex);
-        }
+        if (!CollectionConstants.RECEIPT_STATUS_CODE_FAILED.equals(receiptHeader.getStatus().getCode())
+                && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode()))
+            if (CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED.equals(receiptHeader.getStatus().getCode())) {
+                final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
+                collectionIndexService.createCollectionIndex(collectionIndex);
+            } else {
+                final CollectionIndex collectionIndex = collectionIndexService.findByReceiptNumber(receiptHeader
+                        .getReceiptnumber());
+                collectionIndex.setStatus(receiptHeader.getStatus().getDescription());
+                collectionIndexService.updateCollectionIndex(collectionIndex);
+            }
         return super.persist(receiptHeader);
     }
 
@@ -1640,6 +1646,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .withNextAction(nextAction);
         getSession().flush();
         super.persist(receiptHeader);
+        final CollectionIndex collectionIndex = collectionIndexService.findByReceiptNumber(receiptHeader
+                .getReceiptnumber());
+        collectionIndex.setStatus(receiptHeader.getStatus().getDescription());
+        collectionIndexService.updateCollectionIndex(collectionIndex);
     }
 
     public Set<InstrumentHeader> createOnlineInstrument(final Date transactionDate, final String transactionId,

@@ -61,36 +61,36 @@
 										<th class="bluebgheadtd"><s:text name="Guardian"/><span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Add/Delete</th>
 									</tr>
-									<s:if test="%{transfereeInfos.size == 0}">
+									<s:if test="%{transfereeInfosProxy.size == 0}">
 								      <tr id="nameRow" >
 								        <td class="blueborderfortd" align="center">
-										   <s:textfield name="transfereeInfos[0].aadhaarNumber" size="12" maxlength="12" value=""  data-idx="0" onblur="getAadharDetailsForTransferee(this);" cssClass="txtaadhar"></s:textfield>
+										   <s:textfield name="transfereeInfosProxy[0].transferee.aadhaarNumber" size="12" maxlength="12" value=""  data-idx="0" onblur="getAadharDetailsForTransferee(this);" cssClass="txtaadhar"></s:textfield>
 										</td>
 										 <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].mobileNumber" maxlength="10" size="20" id="mobileNumber"  value=""  data-idx="0" data-optional="0" data-errormsg="Mobile no is mandatory!"
+								        	<s:textfield name="transfereeInfosProxy[0].transferee.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value=""  data-idx="0" data-optional="0" data-errormsg="Mobile no is mandatory!"
 								        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');"/>
 								        	<s:checkbox name="editMobileno[0]" id="editMobileno[0]" onclick="enableMobileNumber(this);" data-idx="0" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].name" maxlength="100" size="20" id="ownerName"  value=""  data-optional="0" data-errormsg="Owner name is mandatory!"
+								        	<s:textfield name="transfereeInfosProxy[0].transferee.name" maxlength="100" size="20" id="ownerName"  value=""  data-optional="0" data-errormsg="Owner name is mandatory!"
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select id="transfereeInfos[0].gender" name="transfereeInfos[0].gender" value="%{transfereeInfos[0].gender}"
+								        	<s:select id="transfereeInfosProxy[0].gender" name="transfereeInfosProxy[0].transferee.gender" value="%{transfereeInfosProxy[0].transferee.gender}"
 								        	  headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].emailId" maxlength="64" size="20" id="emailId"  value="" 
+								        	<s:textfield name="transfereeInfosProxy[0].transferee.emailId" maxlength="64" size="20" id="emailId"  value="" 
 								        		onblur="trim(this,this.value);validateEmail(this);"/>
 								        	<!-- This hidden field can become dropdown later when transferee become non citizen -->
-								        	<s:hidden name="transfereeInfos[0].type" value="CITIZEN" data-static="true"/>
+								        	<s:hidden name="transfereeInfosProxy[0].transferee.type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        		 <s:select id="transfereeInfos[0].guardianRelation" name="transfereeInfos[0].guardianRelation" value="%{transfereeInfos[0].guardianRelation}"
+								        		 <s:select id="transfereeInfosProxy[0].transferee.guardianRelation" name="transfereeInfosProxy[0].transferee.guardianRelation" value="%{transfereeInfosProxy[0].transferee.guardianRelation}"
 				                                     headerValue="Choose" headerKey="" list="guardianRelationMap" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
 								        </td>
 								         <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].guardian" maxlength="100" size="20" 
+								        	<s:textfield name="transfereeInfosProxy[0].transferee.guardian" maxlength="100" size="20" 
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Guardian name is mandatory!"/>
 								        </td>
 								        <td class="blueborderfortd">
@@ -107,39 +107,40 @@
 								     </tr>
 								     </s:if>
 								     <s:else>
-								     <s:iterator value="transfereeInfos" status="status" >
+								     <s:iterator value="(transfereeInfosProxy.size).{#this}" status="status" >
 								      <tr id="nameRow" >
 								        <td class="blueborderfortd" align="center">
-										   <s:textfield name="transfereeInfos[%{#status.index}].aadhaarNumber" data-idx="%{#status.index}" onblur="getAadharDetailsForTransferee(this);" cssClass="txtaadhar" size="12" maxlength="12"></s:textfield>
+										   <s:textfield name="transfereeInfosProxy[%{#status.index}].transferee.aadhaarNumber" data-idx="%{#status.index}"  value="%{transfereeInfosProxy[#status.index].transferee.aadhaarNumber}"
+										   onblur="getAadharDetailsForTransferee(this);" cssClass="txtaadhar" size="12" maxlength="12"></s:textfield>
 										</td>
 										<td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20" data-optional="0" data-errormsg="Mobile no is mandatory!" data-idx="%{#status.index}"
-								        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');"/>
-								        <s:checkbox name="editMobileno[%{#ownerStatus.index}]" id="editMobileno[%{#ownerStatus.index}]" onclick="enableMobileNumber(this);" data-idx="%{#status.index}" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
+								        	<s:textfield name="transfereeInfosProxy[%{#status.index}].transferee.mobileNumber" maxlength="10" size="20" data-optional="0" data-errormsg="Mobile no is mandatory!" data-idx="%{#status.index}"
+								        		 value="%{transfereeInfosProxy[#status.index].transferee.mobileNumber}" onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');"/>
+								        <s:checkbox name="editMobileno[%{#status.index}]" id="editMobileno[%{#status.index}]" onclick="enableMobileNumber(this);" data-idx="%{#status.index}" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="100" size="20" data-optional="0" data-errormsg="Owner name is mandatory!"
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        	<s:textfield name="transfereeInfosProxy[%{#status.index}].transferee.name" maxlength="100" size="20" data-optional="0" data-errormsg="Owner name is mandatory!"
+								        		value="%{transfereeInfosProxy[#status.index].transferee.name}" onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select id="transfereeInfos[%{#status.index}].gender" name="transfereeInfos[%{#status.index}].gender" value="%{transfereeInfos[#status.index].gender}"
+								        	<s:select id="transfereeInfosProxy[%{#status.index}].transferee.gender" name="transfereeInfosProxy[%{#status.index}].transferee.gender" value="%{transfereeInfosProxy[#status.index].transferee.gender}"
 								        	 headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
-								        </td>
+								        </td>  
 								      
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].emailId" maxlength="64" size="20" 
-								        		onblur="trim(this,this.value);validateEmail(this);"/>
+								        	<s:textfield name="transfereeInfosProxy[%{#status.index}].transferee.emailId" maxlength="64" size="20" 
+								        		value="%{transfereeInfosProxy[#status.index].transferee.emailId}" onblur="trim(this,this.value);validateEmail(this);"/>
 								        		<!-- This hidden field can become dropdown later when transferee become non citizen -->
-								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN" data-static="true"/>
+								        	<s:hidden name="transfereeInfosProxy[%{#status.index}].transferee.type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								         <s:select id="transfereeInfos[%{#status.index}].guardianRelation" name="transfereeInfos[%{#status.index}].guardianRelation" value="%{transfereeInfos[#status.index].guardianRelation}"
-				                                     headerValue="Choose" headerKey="" list="guardianRelationMap" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
+								         <s:select id="transfereeInfosProxy[%{#status.index}].transferee.guardianRelation" name="transfereeInfosProxy[%{#status.index}].transferee.guardianRelation" value="%{transfereeInfosProxy[#status.index].transferee.guardianRelation}"
+				                              headerValue="Choose" headerKey="" list="guardianRelationMap" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
 								
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="100" size="20"
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Guardian name is mandatory!"/>
+								        	<s:textfield name="transfereeInfosProxy[%{#status.index}].transferee.guardian" maxlength="100" size="20"
+								        		  value="%{transfereeInfosProxy[#status.index].transferee.guardian}"  onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Guardian name is mandatory!"/>
 								        </td>
 								        
 								        <td class="blueborderfortd">
@@ -152,7 +153,7 @@
 											        onclick="javascript:deleteOwner(this); return false;">
 											           <i class="fa fa-minus-circle"></i>
 											  </span>
-								        </td>
+								        </td> 
 								     </tr>
 								     </s:iterator>
 								     </s:else>
@@ -174,33 +175,33 @@
 					console.log('response received!')
 					var userInfoObj = jQuery.parseJSON(value);
 					if(userInfoObj.valid == true) {
-						jQuery("input[name='transfereeInfos["+ rowidx +"].name']").val(userInfoObj.name);
-						jQuery("input[name='transfereeInfos["+ rowidx +"].name']").attr('readonly', true);
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").val(userInfoObj.name);
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").attr('readonly', true);
 						if(userInfoObj.gender == 'M' || userInfoObj.gender == 'Male') {
-							jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").val("MALE");
+							jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("MALE");
 						} else if (userInfoObj.gender == 'F' || userInfoObj.gender == 'Female') {
-							jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").val("FEMALE");
+							jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("FEMALE");
 						} else {
-							jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").val("OTHERS");
+							jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("OTHERS");
 						} 
-						jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").attr('disabled','disabled');
-						jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").val(userInfoObj.phone);
-						jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").attr('readonly', true);
-						jQuery("input[name='transfereeInfos["+ rowidx +"].emailId").attr('readonly', true);
-						jQuery("select[name='transfereeInfos["+ rowidx +"].guardianRelation']").attr('disabled', 'disabled');
-						jQuery("input[name='transfereeInfos["+ rowidx +"].guardian']").val(userInfoObj.careof);
-						jQuery("input[name='transfereeInfos["+ rowidx +"].guardian']").attr('readonly', true);
+						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").attr('disabled','disabled');
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val(userInfoObj.phone);
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").attr('readonly', true);
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").attr('readonly', true);
+						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").attr('disabled', 'disabled');
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").val(userInfoObj.careof);
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").attr('readonly', true);
 					} else if(userInfoObj.valid == false) {
-						jQuery("input[name='transfereeInfos["+ rowidx +"].aadhaarNumber']").val("");
-						jQuery("input[name='transfereeInfos["+ rowidx +"].name']").val("");
-						jQuery("input[name='transfereeInfos["+ rowidx +"].name']").attr('readonly', false);
-						jQuery("select[name='transfereeInfos["+ rowidx +"].gender").removeAttr('disabled');
-						jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").val("");
-						jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").val("").attr('readonly', false);
-						//jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").attr('readonly', true);
-						jQuery("input[name='transfereeInfos["+ rowidx +"].emailId").attr('readonly', false);
-						jQuery("select[name='transfereeInfos["+ rowidx +"].guardianRelation']").removeAttr('disabled');
-						jQuery("input[name='transfereeInfos["+ rowidx +"].guardian']").attr('readonly', false);
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.aadhaarNumber']").val("");
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").val("");
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").attr('readonly', false);
+						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").removeAttr('disabled');
+						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("");
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val("").attr('readonly', false);
+						//jQuery("input[name='transfereeInfosProxy["+ rowidx +"].mobileNumber']").attr('readonly', true);
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").attr('readonly', false);
+						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").removeAttr('disabled');
+						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").attr('readonly', false);
 						if(aadharNo != "NaN") {
 						bootbox.alert("Aadhar number is not valid");
 						}
@@ -223,12 +224,12 @@
    				data:{"mobileNumber" : mobileNo},
    			}).done(function(response) {
    				if(response.exists) {
-   					jQuery("input[name='transfereeInfos["+ rowidx +"].name']").val(response.name);
-   					jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").val(response.gender);
-   					jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").val(response.mobileNumber);
-   					jQuery("input[name='transfereeInfos["+ rowidx +"].emailId").val(response.email);
-   					jQuery("select[name='transfereeInfos["+ rowidx +"].guardianRelation']").val(response.guardianRelarion);
-   					jQuery("input[name='transfereeInfos["+ rowidx +"].guardian']").val(response.guardian);
+   					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").val(response.name);
+   					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val(response.gender);
+   					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val(response.mobileNumber);
+   					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").val(response.email);
+   					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").val(response.guardianRelarion);
+   					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").val(response.guardian);
    			    }
               });
           }
@@ -237,9 +238,9 @@
           function enableMobileNumber(obj) { 
        	   var rowidx= jQuery(obj).data('idx');
        	   if(obj.checked == true) {
-       		   jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").attr('readonly', false);
+       		   jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").attr('readonly', false);
            	   } else {
-           		jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").attr('readonly', true);
+           		jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").attr('readonly', true); 
                }
-            }
+            }   
 	</script>

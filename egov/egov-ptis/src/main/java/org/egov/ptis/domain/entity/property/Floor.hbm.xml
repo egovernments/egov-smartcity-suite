@@ -130,5 +130,6 @@
 		<one-to-one name="floorDmdCalc" lazy="proxy" outer-join="true"
 			class="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" property-ref="floor"
 			cascade="none" />
+		<property name="floorUid" column="FLOOR_UID" type="java.lang.Integer"/>
 	</class>
 </hibernate-mapping>

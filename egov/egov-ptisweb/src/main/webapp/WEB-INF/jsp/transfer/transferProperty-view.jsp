@@ -220,41 +220,41 @@
 											<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
 											<th class="bluebgheadtd"><s:text name="Guardian" /></th>
 										</tr>
-										<s:iterator value="transfereeInfos" status="ownerStatus">
+										<s:iterator value="transfereeInfosProxy" status="ownerStatus">
 											<tr>
 												<td class="blueborderfortd" align="center"><span
 													class="bold"> <s:if
-															test='%{transfereeInfos[#ownerStatus.index].aadhaarNumber == ""}'>N/A</s:if>
+															test='%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber == ""}'>N/A</s:if>
 														<s:else>
 															<s:property
-																value="%{transfereeInfos[#ownerStatus.index].aadhaarNumber}" />
+																value="%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber}" />
 														</s:else>
 												</span></td>
 												<td class="blueborderfortd" align="center"><span
 													class="bold"><s:property
-															value="%{transfereeInfos[#ownerStatus.index].mobileNumber}" /></span>
+															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.mobileNumber}" /></span>
 												</td>
 												<td class="blueborderfortd" align="center"><span
 													class="bold"><s:property
-															value="%{transfereeInfos[#ownerStatus.index].name}" /></span></td>
+															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.name}" /></span></td>
 												<td class="blueborderfortd" align="center"><span
 													class="bold"><s:property
-															value="%{transfereeInfos[#ownerStatus.index].gender}" /></span></td>
+															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.gender}" /></span></td>
 												<td class="blueborderfortd" align="center"><span
 													class="bold"> <s:if
-															test='%{transfereeInfos[#ownerStatus.index].emailId == ""}'>N/A</s:if>
+															test='%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId == ""}'>N/A</s:if>
 														<s:else>
 															<s:property
-																value="%{transfereeInfos[#ownerStatus.index].emailId}" />
+																value="%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId}" />
 														</s:else>
 												</span></td>
 												<td class="blueborderfortd" align="center"><span
 													class="bold"><s:property
-															value="%{transfereeInfos[#ownerStatus.index].guardianRelation}" /></span>
+															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardianRelation}" /></span>
 												</td>
 												<td class="blueborderfortd" align="center"><span
 													class="bold"><s:property
-															value="%{transfereeInfos[#ownerStatus.index].guardian}" /></span></td>
+															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardian}" /></span></td>
 											</tr>
 										</s:iterator>
 									</table>
