@@ -75,4 +75,9 @@
 		<put-attribute name="page-title" value="title.search.lineestimate" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimate-header.jsp"/>
 	</definition>
+	
+	<definition name="createLetterOfAcceptance-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/createLetterOfAcceptance-form.jsp"/>
+    </definition>	
 </tiles-definitions>
