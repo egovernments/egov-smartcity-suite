@@ -68,7 +68,9 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -146,7 +148,6 @@ public class DailyWTCollectionReportService {
             BigDecimal currCollection = BigDecimal.ZERO;
             BigDecimal arrCollection = BigDecimal.ZERO;
             DailyWTCollectionReport result = new DailyWTCollectionReport();
-            
             result.setReceiptNumber(receiptHeader.getReceiptnumber());
             result.setReceiptDate(receiptHeader.getReceiptdate());
             result.setConsumerCode(receiptHeader.getConsumerCode());
@@ -156,14 +157,21 @@ public class DailyWTCollectionReportService {
                     .findByApplicationNumberOrConsumerCode(receiptHeader.getConsumerCode());
             if (null != waterConnection)
                 result.setConnectionType(waterConnection.getConnectionType().toString());
-            final String[] address = receiptHeader.getPayeeAddress().split(",");
+            final StringBuilder queryString = new StringBuilder();
+            queryString.append(
+                    "select wardboundary.name as \"wardName\",dcbinfo.houseno as \"houseNo\" from egwtr_mv_dcb_view dcbinfo"
+                            + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = '"+receiptHeader.getConsumerCode()+"'");
+            final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryString.toString());
+            finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
+            List<DefaultersReport> listforWardAndHsc = new ArrayList<DefaultersReport>();
+            listforWardAndHsc =finalQuery.list();
+            if (!listforWardAndHsc.isEmpty())
+            {
+            result.setDoorNumber(listforWardAndHsc.get(0).getHouseNo());
+            result.setWardName(listforWardAndHsc.get(0).getWardName());
+            }
             result.setTotal(receiptHeader.getTotalAmount());
-            if (address.length >= 4)
-                result.setDoorNumber(address[0]);
-            else
-                result.setDoorNumber("N/A");
             result.setStatus(receiptHeader.getStatus().getDescription());
-
             if ("CANCELLED".equalsIgnoreCase(receiptHeader.getStatus().getCode()))
                 result.setCancellationDetails(receiptHeader.getReasonForCancellation());
             else

@@ -138,7 +138,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[WATER CHARGE RECEIPT]]></text>
+				<text><![CDATA[Estimation Charges Receipt]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="178" y="53" width="181" height="20" uuid="489089ae-12ea-4549-b3a9-1eef3959e124">
