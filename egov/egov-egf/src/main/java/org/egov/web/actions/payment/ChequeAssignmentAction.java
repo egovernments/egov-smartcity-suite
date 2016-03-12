@@ -148,9 +148,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 })
 public class ChequeAssignmentAction extends BaseVoucherAction
 {
-    /**
-     *
-     */
     private static final long serialVersionUID = -3721873563220007939L;
     private static final String SURRENDERSEARCH = "surrendersearch";
     private static final String SURRENDERRTGSSEARCH = "surrenderRTGSsearch";
@@ -246,7 +243,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private BigDecimal totalDeductedAmount;
     private Boolean nonSubledger = false;
     private FinancialYearDAO financialYearDAO;
-
+    private boolean containsRTGS = false;
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
     }
@@ -1103,8 +1100,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                             .getVouchermis().getDepartmentid());
                     instVoucherList.addAll(paymentService.getInstVoucherList());
                     List<InstrumentVoucher> tempInstVoucherList = new ArrayList<InstrumentVoucher>();
-                    for(InstrumentVoucher iv:instVoucherList){
-                        iv.getInstrumentHeaderId().setInstrumentAmount(iv.getInstrumentHeaderId().getInstrumentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                    for (InstrumentVoucher iv : instVoucherList) {
+                        iv.getInstrumentHeaderId().setInstrumentAmount(
+                                iv.getInstrumentHeaderId().getInstrumentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                         tempInstVoucherList.add(iv);
                     }
                     instVoucherList = new ArrayList<InstrumentVoucher>();
@@ -1413,6 +1411,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
     @SkipValidation
     @ValidationErrorPage(value = SURRENDERSEARCH)
+    @Action(value = "/payment/chequeAssignment-searchChequesForSurrender")
     public String searchChequesForSurrender()
     {
         if (LOGGER.isDebugEnabled())
@@ -1444,7 +1443,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                 sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=" + department);
             if (voucherHeader.getVoucherNumber() != null && !voucherHeader.getVoucherNumber().isEmpty())
                 sql.append(" and  iv.voucherHeaderId.voucherNumber='" + voucherHeader.getVoucherNumber() + "'");
-            final String mainquery = "select ih from  InstrumentVoucher iv  where   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
+            final String mainquery = "select ih from  InstrumentVoucher iv ,InstrumentHeader ih ,InstrumentType it where iv.instrumentHeaderId.id =ih.id and ih.instrumentNumber is not null and ih.instrumentType=it.id and ( it.type = 'cheque' or it.type = 'cash' ) and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "'  " + sql + " "
 
                     + " and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
@@ -1473,6 +1472,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         getheader();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed searchChequesForSurrender.");
+        containsRTGS = false;
         return "surrendercheques";
     }
 
@@ -1528,7 +1528,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
             if (instrumentVoucherList.size() > 0)
                 loadReasonsForSurrendaring();
-             loadChequeSerialNo(bankaccount);
+            loadChequeSerialNo(bankaccount);
 
         } catch (final ParseException e) {
             LOGGER.error(e.getMessage());
@@ -1640,7 +1640,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             LOGGER.debug("Completed validateForSuurenderSearch.");
     }
 
-    @ValidationErrorPage(value = "surrenderRTGS")
+    @ValidationErrorPage(value = "surrendercheques")
     @SkipValidation
     @Action(value = "/payment/chequeAssignment-save")
     public String save()
@@ -1653,7 +1653,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         loadChequeSerialNo(bankaccount);
 
         try {
-            boolean containsRTGS = false;
+            
             if (surrender == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception while surrender Cheque ",
                         "Please select the atleast one Cheque for Surrendering ")));
@@ -2535,5 +2535,14 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     public void setFinancialYearDAO(final FinancialYearDAO financialYearDAO) {
         this.financialYearDAO = financialYearDAO;
     }
+
+    public boolean isContainsRTGS() {
+        return containsRTGS;
+    }
+
+    public void setContainsRTGS(boolean containsRTGS) {
+        this.containsRTGS = containsRTGS;
+    }
+
 
 }

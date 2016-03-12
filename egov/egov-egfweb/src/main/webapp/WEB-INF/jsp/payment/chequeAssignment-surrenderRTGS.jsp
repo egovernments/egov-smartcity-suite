@@ -201,7 +201,7 @@
  	function surrenderChq(){
 		
  		document.getElementById('button').value='surrender';
- 		document.chequeAssignment.action = '/EGF/payment/chequeAssignment-save.action';
+ 		document.chequeAssignment.action = '/EGF/payment/chequeAssignment-save.action?containsRTGS=true';
 		document.chequeAssignment.submit();
 		return true;
  	}
