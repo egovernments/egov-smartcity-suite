@@ -145,7 +145,6 @@ public class JpaConfiguration {
         properties.put(USE_QUERY_CACHE, applicationProperties.getProperty(USE_QUERY_CACHE));
         properties.put(USE_MINIMAL_PUTS, env.getProperty(USE_MINIMAL_PUTS));
         properties.put("hibernate.cache.infinispan.cachemanager", env.getProperty("hibernate.cache.infinispan.cachemanager"));
-        properties.put("hibernate.search.lucene_version", env.getProperty("hibernate.search.lucene_version"));
         properties.put(JTA_PLATFORM, env.getProperty(JTA_PLATFORM));
         properties.put(AUTO_CLOSE_SESSION, env.getProperty(AUTO_CLOSE_SESSION));
         properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));

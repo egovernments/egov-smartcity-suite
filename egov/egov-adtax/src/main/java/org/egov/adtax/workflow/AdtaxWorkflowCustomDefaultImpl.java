@@ -39,9 +39,8 @@
  ******************************************************************************/
 package org.egov.adtax.workflow;
 
-import javax.transaction.Transactional;
-
-import org.egov.adtax.entity.AdvertisementPermitDetail;;
+import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.springframework.transaction.annotation.Transactional;;
 
 /**
  * The Class ApplicationCommonWorkflow.

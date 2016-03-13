@@ -115,20 +115,6 @@ public class CFunction implements java.io.Serializable {
     }
 
     /**
-     * @return Returns the isActive.
-     */
-    public boolean isIsActive() {
-        return this.isActive;
-    }
-
-    /**
-     * @param isActive The isActive to set.
-     */
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    /**
      * @return Returns the lastModified.
      */
     public Date getLastModified() {

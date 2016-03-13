@@ -334,7 +334,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         {
             vd.setFunctionIdDetail(Long.valueOf(netPay.getFunctionId()));
             final String function = (String) HibernateUtil.getCurrentSession().load(CFunction.class,
-                    Long.valueOf(netPay.getFunctionId()));
+                    Long.valueOf(netPay.getFunctionId())).getName();
             vd.setFunctionDetail(function);
         }
         commonBean.setAmount(BigDecimal.valueOf(netPay.getCreditAmount()));

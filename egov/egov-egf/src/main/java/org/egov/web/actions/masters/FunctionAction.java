@@ -189,7 +189,7 @@ public class FunctionAction extends BaseFormAction {
             funcNameStr.append(function.getCode()).append("-").append(function.getFuncNameActual());
             funcOld.setName(funcNameStr.toString());
             funcOld.setCode(function.getCode());
-            funcOld.setIsActive(function.isIsActive());
+            funcOld.setIsActive(function.getIsActive());
             funcOld.setModifiedBy(getLoggedInUser());
             funcOld.setFuncNameActual(function.getFuncNameActual());
 
