@@ -48,8 +48,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
-
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
@@ -60,16 +61,20 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.hibernate.SQLQuery;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.CurrentDcbService;
+import org.egov.wtms.application.service.WaterChargesReceiptInfo;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -91,6 +96,13 @@ public class CurrentViewDcbController {
 
     @Autowired
     private UserService userService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     @Autowired(required = true)
     protected WaterConnectionDetailsService waterConnectionDetailsService;
@@ -124,6 +136,23 @@ public class CurrentViewDcbController {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
+    @RequestMapping(value = "/showMigData/{consumerNumber}/{applicationCode}", method = RequestMethod.GET)
+    public String showMigData(final Model model, @PathVariable final String consumerNumber, @PathVariable final String applicationCode,final HttpServletRequest request) {
+        List<WaterChargesReceiptInfo> waterChargesReceiptInfo = new ArrayList<WaterChargesReceiptInfo>();
+    	final StringBuilder queryStr = new StringBuilder();
+        queryStr.append(
+                "select i_bookno as \"bookNumber\", i_ctrrcptno as \"receiptNumber\",dt_ctrrcptdt as \"receiptDate\",dt_paidfrmprddt as \"fromDate\",dt_paidtoprddt as \"toDate\","
+                + "d_crr+d_arr as \"receiptAmount\" from wt_wtchrgrcpt_tbl where i_csmrno ="+consumerNumber);
+        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class));
+        waterChargesReceiptInfo = finalQuery.list();
+        model.addAttribute("waterChargesReceiptInfo", waterChargesReceiptInfo);
+        model.addAttribute("consumerCode", consumerNumber);
+       return "dcbview-migdata";
+    }
+    
+  
+    
     @RequestMapping(value = "/consumerCodeWis/{applicationCode}", method = RequestMethod.GET)
     public String search(final Model model, @PathVariable final String applicationCode, final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationCode);

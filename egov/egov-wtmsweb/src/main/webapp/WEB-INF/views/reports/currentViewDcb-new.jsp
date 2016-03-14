@@ -92,7 +92,7 @@
 										Balance</th>
 								</tr>
 								<tr>
-									<th>Installments</th>
+									<th>Installments <br/><a href="javascript:void(0);" onclick="openNewWindow();">Show Receipts</a></th>
 									<th>Water charges</th>
 
 									<th>Water charges</th>
@@ -366,5 +366,21 @@ function onsubmitpay()
 											$('#editmeterWate11rConnectionform').attr('action', url);
 											window.location = url;
 }
+
+
+function openNewWindow() {
+	var consumerNumber=$('#consumerCode').val();
+	var applicationTypeCode=$('#applicationTypeCode').val();
+	window.open("/wtms/viewDcb/showMigData/"+consumerNumber+"/"+applicationTypeCode, '',
+			'scrollbars=yes,width=1000,height=700,status=yes');
+	/* window.open('../showMigData/' +consumerNumber
+				, 
+				'_blank', 'width=650, height=500, scrollbars=yes', false); */
+	/* var url = '/wtms/viewDcb/showMigData/'+ consumerNumber;
+	$('#editmeterWate11rConnectionform').attr('method', 'get');
+	$('#editmeterWate11rConnectionform').attr('action', url);
+	window.location = url; */
+}
+
 </script>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>

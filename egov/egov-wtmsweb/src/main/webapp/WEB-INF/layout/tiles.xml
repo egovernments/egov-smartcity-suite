@@ -246,4 +246,8 @@
         <put-attribute name="page-title" value="title.defaultersReport" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/defaultersWTReport-search.jsp"/>
     </definition>
+    <definition name="dcbview-migdata" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.migrateddata" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dcbViewMigratedData.jsp"/>
+    </definition>
 </tiles-definitions>
