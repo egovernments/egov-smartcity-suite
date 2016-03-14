@@ -373,13 +373,6 @@ function openNewWindow() {
 	var applicationTypeCode=$('#applicationTypeCode').val();
 	window.open("/wtms/viewDcb/showMigData/"+consumerNumber+"/"+applicationTypeCode, '',
 			'scrollbars=yes,width=1000,height=700,status=yes');
-	/* window.open('../showMigData/' +consumerNumber
-				, 
-				'_blank', 'width=650, height=500, scrollbars=yes', false); */
-	/* var url = '/wtms/viewDcb/showMigData/'+ consumerNumber;
-	$('#editmeterWate11rConnectionform').attr('method', 'get');
-	$('#editmeterWate11rConnectionform').attr('action', url);
-	window.location = url; */
 }
 
 </script>
