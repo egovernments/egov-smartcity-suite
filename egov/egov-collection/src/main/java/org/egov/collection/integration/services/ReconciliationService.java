@@ -56,6 +56,7 @@ import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -77,17 +78,12 @@ public class ReconciliationService {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     /**
-     * This method processes the success message arriving from the payment
-     * gateway. The receipt status is changed from PENDING to APPROVED and the
-     * online transaction status is changed from PENDING to SUCCCESS. The
-     * authorization status for success(0300) for the online transaction is also
-     * persisted. An instrument of type 'ONLINE' is created with the transaction
-     * details and are persisted along with the receipt details. Voucher for the
-     * receipt is created and the Financial System is updated. The billing
-     * system is updated about the receipt creation. In case update to financial
-     * systems/billing system fails, the receipt creation is rolled back and the
-     * receipt/payment status continues to be in PENDING state ( and will be
-     * reconciled manually).
+     * This method processes the success message arriving from the payment gateway. The receipt status is changed from PENDING to
+     * APPROVED and the online transaction status is changed from PENDING to SUCCCESS. The authorization status for success(0300)
+     * for the online transaction is also persisted. An instrument of type 'ONLINE' is created with the transaction details and
+     * are persisted along with the receipt details. Voucher for the receipt is created and the Financial System is updated. The
+     * billing system is updated about the receipt creation. In case update to financial systems/billing system fails, the receipt
+     * creation is rolled back and the receipt/payment status continues to be in PENDING state ( and will be reconciled manually).
      *
      * @param onlinePaymentReceiptHeader
      * @param paymentResponse
@@ -99,22 +95,45 @@ public class ReconciliationService {
                 .getBean(onlinePaymentReceiptHeader.getService().getCode()
                         + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
 
-        onlinePaymentReceiptHeader.getReceiptDetails().clear();
-        receiptHeaderService.persist(onlinePaymentReceiptHeader);
+        final List<ReceiptDetail> existingReceiptDetails = new ArrayList<ReceiptDetail>(0);
+
+        for (final ReceiptDetail receiptDetail : onlinePaymentReceiptHeader.getReceiptDetails())
+            if (!FinancialsUtil.isRevenueAccountHead(receiptDetail.getAccounthead(),
+                    chartOfAccountsHibernateDAO.getBankChartofAccountCodeList())) {
+                final ReceiptDetail newReceiptDetail = new ReceiptDetail();
+                if (receiptDetail.getOrdernumber() != null)
+                    newReceiptDetail.setOrdernumber(receiptDetail.getOrdernumber());
+                if (receiptDetail.getDescription() != null)
+                    newReceiptDetail.setDescription(receiptDetail.getDescription());
+                if (receiptDetail.getIsActualDemand() != null)
+                    newReceiptDetail.setIsActualDemand(receiptDetail.getIsActualDemand());
+                if (receiptDetail.getFunction() != null)
+                    newReceiptDetail.setFunction(receiptDetail.getFunction());
+                if (receiptDetail.getCramountToBePaid() != null)
+                    newReceiptDetail.setCramountToBePaid(receiptDetail.getCramountToBePaid());
+                newReceiptDetail.setCramount(receiptDetail.getCramount());
+                newReceiptDetail.setAccounthead(receiptDetail.getAccounthead());
+                newReceiptDetail.setDramount(receiptDetail.getDramount());
+                existingReceiptDetails.add(newReceiptDetail);
+            }
+
         final List<ReceiptDetail> receiptDetailList = billingService.reconstructReceiptDetail(
                 onlinePaymentReceiptHeader.getReferencenumber(), onlinePaymentReceiptHeader.getTotalAmount(),
-                new ArrayList(onlinePaymentReceiptHeader.getReceiptDetails()));
+                existingReceiptDetails);
+        
         if (receiptDetailList != null) {
+            onlinePaymentReceiptHeader.getReceiptDetails().clear();
+            receiptHeaderService.persist(onlinePaymentReceiptHeader);
             LOGGER.debug("Reconstructed receiptDetailList : " + receiptDetailList.toString());
             for (final ReceiptDetail receiptDetail : receiptDetailList) {
                 receiptDetail.setReceiptHeader(onlinePaymentReceiptHeader);
                 onlinePaymentReceiptHeader.addReceiptDetail(receiptDetail);
             }
+            // Add debit account head
+            onlinePaymentReceiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(
+                    onlinePaymentReceiptHeader.getTotalAmount(), onlinePaymentReceiptHeader, BigDecimal.ZERO,
+                    onlinePaymentReceiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE));
         }
-        // Add debit account head
-        onlinePaymentReceiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(
-                onlinePaymentReceiptHeader.getTotalAmount(), onlinePaymentReceiptHeader, BigDecimal.ZERO,
-                onlinePaymentReceiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE));
 
         createSuccessPayment(onlinePaymentReceiptHeader, paymentResponse.getTxnDate(),
                 paymentResponse.getTxnReferenceNo(), paymentResponse.getAuthStatus(), null);
@@ -124,9 +143,9 @@ public class ReconciliationService {
         boolean updateToSystems = true;
 
         try {
-            Boolean createVoucherForBillingService = collectionsUtil.checkVoucherCreation(onlinePaymentReceiptHeader);
-            if(createVoucherForBillingService)
-            receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader);
+            final Boolean createVoucherForBillingService = collectionsUtil.checkVoucherCreation(onlinePaymentReceiptHeader);
+            if (createVoucherForBillingService)
+                receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader);
             LOGGER.debug("Updated financial systems and created voucher.");
         } catch (final ApplicationRuntimeException ex) {
             updateToSystems = false;
@@ -150,10 +169,8 @@ public class ReconciliationService {
     }
 
     /**
-     * @param receipts
-     *            - list of receipts which have to be processed as successful
-     *            payments. For payments created as a response from TECHPRO,
-     *            size of the array will be 1.
+     * @param receipts - list of receipts which have to be processed as successful payments. For payments created as a response
+     * from TECHPRO, size of the array will be 1.
      */
     @Transactional
     private void createSuccessPayment(final ReceiptHeader receipt, final Date transactionDate,
@@ -181,10 +198,9 @@ public class ReconciliationService {
     }
 
     /**
-     * This method processes the failure message arriving from the payment
-     * gateway. The receipt and the online transaction are both cancelled. The
-     * authorization status for reason of failure is also persisted. The reason
-     * for payment failure is displayed back to the user
+     * This method processes the failure message arriving from the payment gateway. The receipt and the online transaction are
+     * both cancelled. The authorization status for reason of failure is also persisted. The reason for payment failure is
+     * displayed back to the user
      *
      * @param onlinePaymentReceiptHeader
      * @param paymentResponse
@@ -211,8 +227,7 @@ public class ReconciliationService {
     }
 
     /**
-     * This method looks up the bean to communicate with the billing system and
-     * updates the billing system.
+     * This method looks up the bean to communicate with the billing system and updates the billing system.
      */
     public Boolean updateBillingSystem(final String serviceCode, final BillReceiptInfo billReceipt,
             final BillingIntegrationService billingService) {
