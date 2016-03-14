@@ -489,6 +489,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public void setRelatedEntitesOn(final BudgetDetail detail, final PersistenceService service) {
+        
+        detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved"));
         if (detail.getBudget() != null) {
             detail.setBudget((Budget) service.find("from Budget where id=?", detail.getBudget().getId()));
             addMaterializedPath(detail);
@@ -498,7 +500,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         if (detail.getFunctionary() != null)
             detail.setFunctionary((Functionary) service.find("from Functionary where id=?", detail.getFunctionary().getId()));
         if (detail.getExecutingDepartment() != null)
-            detail.setExecutingDepartment((Department) service.find("from Department where ID_DEPT=?", detail
+            detail.setExecutingDepartment((Department) service.find("from Department where id=?", detail
                     .getExecutingDepartment().getId()));
         if (detail.getScheme() != null)
             detail.setScheme((Scheme) service.find("from Scheme where id=?", detail.getScheme().getId()));
@@ -2857,6 +2859,12 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return find(
                 "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.maxCode.id = ? and bd.budget.financialYear.id = ?",
                 fundId, functionId, deptId, glCodeId, fYear.getId());
+    }
+    public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId, final Long budgetGroupId,
+            final Long budgetId) {
+        return find(
+                "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.id= ? and bd.budget.id = ?",
+                fundId, functionId, deptId, budgetGroupId, budgetId);
     }
     @Transactional
     public void updateByMaterializedPath(final String materializedPath) {

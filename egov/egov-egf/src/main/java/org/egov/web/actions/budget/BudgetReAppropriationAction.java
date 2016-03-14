@@ -60,6 +60,7 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -69,9 +70,9 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
@@ -86,52 +87,62 @@ import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({
-    @Result(name = BudgetReAppropriationAction.NEW, location = "budgetReAppropriation-" + BudgetReAppropriationAction.NEW
-            + ".jsp"),
-            @Result(name = "search", location = "budgetReAppropriation-search.jsp"),
-            @Result(name = "beRe", location = "budgetReAppropriation-beRe.jsp")
+        @Result(name = "new", location = "budgetReAppropriation-new.jsp"),
+        @Result(name = "search", location = "budgetReAppropriation-search.jsp"),
+        @Result(name = "beRe", location = "budgetReAppropriation-beRe.jsp")
 })
 public class BudgetReAppropriationAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final String BERE = "beRe";
     private static final Logger LOGGER = Logger.getLogger(BudgetReAppropriationAction.class);
-    List<BudgetReAppropriationView> budgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
-    List<BudgetReAppropriationView> newBudgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
+    private List<BudgetReAppropriationView> budgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
+    private List<BudgetReAppropriationView> newBudgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
     protected BudgetDetailConfig budgetDetailConfig;
-    BudgetDetail budgetDetail;
+    private BudgetDetail budgetDetail;
     protected Budget budget;
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> gridFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
-    BudgetDetailHelper budgetDetailHelper;
+    @Autowired
+    private BudgetDetailHelper budgetDetailHelper;
+    @Autowired
     private EisCommonService eisCommonService;
-    BudgetDetailService budgetDetailService;
-    BudgetReAppropriationService budgetReAppropriationService;
-    WorkflowService<BudgetReAppropriation> budgetReAppropriationWorkflowService;
-    BudgetDetailsDAO budgetDetailsDAO;
-    CFinancialYear financialYear;
-    BudgetService budgetService;
-    String beRe = Constants.BE;
-    String sequenceNumber;
-    BudgetReAppropriationMisc appropriationMisc = new BudgetReAppropriationMisc();
+    @Autowired
+    @Qualifier("budgetService")
+    private BudgetService budgetService;
+    @Autowired
+    @Qualifier("budgetDetailService")
+    private BudgetDetailService budgetDetailService;
+    @Autowired
+    @Qualifier("budgetReAppropriationService")
+    private BudgetReAppropriationService budgetReAppropriationService;
+    @Autowired
+    private WorkflowService<BudgetReAppropriation> budgetReAppropriationWorkflowService;
+    @Autowired
+    private BudgetDetailsDAO budgetDetailsDAO;
+    private CFinancialYear financialYear;
+    private String beRe = Constants.BE;
+    private String sequenceNumber;
+    private BudgetReAppropriationMisc appropriationMisc = new BudgetReAppropriationMisc();
     private List<BudgetReAppropriation> reAppropriationList = null;
     private String type = "";
-    String finalStatus = "";
+    private String finalStatus = "";
     private static final String ACTIONNAME = "actionName";
     @Autowired
-    AppConfigValueService appConfigValuesService;
-    
+    private AppConfigValueService appConfigValuesService;
+
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
     private String message = "";
 
     public BudgetReAppropriationMisc getAppropriationMisc() {
@@ -252,7 +263,8 @@ public class BudgetReAppropriationAction extends BaseFormAction {
             dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
-            .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
+                    .put("fundList",
+                            persistenceService.findAllBy("from Fund where isNotLeaf=false and isActive=true order by name"));
         if (shouldShowField(Constants.BOUNDARY))
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
         dropdownData.put("finYearList",
@@ -298,21 +310,22 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return budgetDetail;
     }
 
-    @Transactional
     @Action(value = "/budget/budgetReAppropriation-create")
     public String create() {
         save(EgovThreadLocals.getUserId().intValue());
         return NEW;
     }
 
-    @Transactional
+    @Action(value = "/budget/budgetReAppropriation-createAndForward")
     public String createAndForward() {
         final BudgetReAppropriationMisc misc = save(getUserId());
-        final Position owner = misc.getState().getOwnerPosition();
-        if ("END".equalsIgnoreCase(misc.getCurrentState().getValue()))
-            addActionMessage(getText("budget.reapp.approved.end"));
-        else
-            addActionMessage(getText("budget.reapp.approved") + budgetService.getEmployeeNameAndDesignationForPosition(owner));
+        addActionMessage(getText("budget.reapp.approved.end"));
+        /*
+         * final Position owner = misc.getState().getOwnerPosition(); if
+         * ("END".equalsIgnoreCase(misc.getCurrentState().getValue())) addActionMessage(getText("budget.reapp.approved.end"));
+         * else addActionMessage(getText("budget.reapp.approved") +
+         * budgetService.getEmployeeNameAndDesignationForPosition(owner));
+         */
         clearFields();
         return NEW;
     }
@@ -330,28 +343,27 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (financialYear != null && financialYear.getId() != 0)
             financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?", financialYear.getId());
         try {
-            misc = createBudgetReAppropriationMisc(parameters.get(ACTIONNAME)[0] + "|" + userId);
+            misc = budgetReAppropriationService.createBudgetReAppropriationMisc(parameters.get(ACTIONNAME)[0] + "|" + userId,beRe,financialYear,appropriationMisc,getPosition());
             removeEmptyReAppropriation(budgetReAppropriationList);
-            reAppropriationCreated = createReAppropriation(parameters.get(ACTIONNAME)[0] + "|" + userId,
+            reAppropriationCreated = budgetReAppropriationService.createReAppropriation(parameters.get(ACTIONNAME)[0] + "|" + userId,
                     budgetReAppropriationList, getPosition(), financialYear, beRe, misc,
                     parameters.get("appropriationMisc.reAppropriationDate")[0]);
             removeEmptyReAppropriation(newBudgetReAppropriationList);
-            reAppForNewBudgetCreated = createReAppropriationForNewBudgetDetail(parameters.get(ACTIONNAME)[0] + "|" + userId,
+            reAppForNewBudgetCreated =budgetReAppropriationService.createReAppropriationForNewBudgetDetail(parameters.get(ACTIONNAME)[0] + "|" + userId,
                     newBudgetReAppropriationList, getPosition(), misc);
             if (!reAppropriationCreated && !reAppForNewBudgetCreated)
                 throw new ValidationException(Arrays.asList(new ValidationError("budgetDetail.budgetGroup.mandatory",
                         "budgetDetail.budgetGroup.mandatory")));
             newBudgetReAppropriationList.clear();
             budgetReAppropriationList.clear();
-        } catch (final ValidationException e) {
-            if (misc != null)
-                persistenceService.delete(misc);
-            discardSequenceNumber();
-            throw e;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-
-            throw new ValidationException(Arrays.asList(new ValidationError("budgetDetail.duplicate", "budgetdetail.exists")));
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
         }
         if (reAppropriationCreated)
             addActionMessage(getText("budget.reappropriation.existing.saved") + misc.getSequenceNumber());
@@ -405,6 +417,8 @@ public class BudgetReAppropriationAction extends BaseFormAction {
                 .getValue();
     }
 
+    @ValidationErrorPage(value = NEW)
+    @Action(value = "/budget/budgetReAppropriation-loadActuals")
     public String loadActuals() {
         removeEmptyReAppropriation(budgetReAppropriationList);
         removeEmptyReAppropriation(newBudgetReAppropriationList);
@@ -468,14 +482,12 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     }
 
     List getFinancialYearDropDown() {
-        final List<Budget> budgets = budgetService
-                .findAllBy("from Budget where isActiveBudget=1 and isPrimaryBudget=1 and state.value='END'");
-        final List<Long> ids = new ArrayList<Long>();
-        for (final Budget budget : budgets)
-            ids.add(budget.getFinancialYear().getId());
+        List<Long> ids = new ArrayList<Long>();
+        ids = (List<Long>) persistenceService
+                .findAllBy("select distinct financialYear.id from Budget where isActiveBudget=true and isPrimaryBudget=true and state.value='END'");
         Query query;
         if (!ids.isEmpty()) {
-            query = HibernateUtil.getCurrentSession()
+            query = persistenceService.getSession()
                     .createQuery("from CFinancialYear where id in (:ids) order by finYearRange desc")
                     .setParameterList("ids", ids);
             return query.list();
@@ -487,7 +499,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (id != null && id != 0L)
             return budgetService
                     .findAllBy(
-                            "from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = 1 and state.type='Budget' and state.value='"
+                            "from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = true and status.moduletype='BUDGET' and status.code='"
                                     + finalStatus + "' and financialYear.id=? and isbere=? order by name", id, beRe);
         return new ArrayList();
     }
@@ -539,91 +551,6 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return "search";
     }
 
-    @Transactional
-    private void saveAndStartWorkFlowForNewDetail(final String actionName, final BudgetDetail detail,
-            final BudgetReAppropriationView appropriation, final Position position, final BudgetReAppropriationMisc misc) {
-        final BudgetReAppropriation reAppropriation = new BudgetReAppropriation();
-        detail.setPlanningPercent(appropriation.getPlanningPercent());
-        detail.setBudgetAvailable(appropriation.getPlanningBudgetApproved());
-        reAppropriation.setBudgetDetail(detail);
-        reAppropriation.setReAppropriationMisc(misc);
-        reAppropriation.setAnticipatoryAmount(appropriation.getAnticipatoryAmount());
-        // Since it is a new budget detail, the amount will always be addition amount
-        reAppropriation.setOriginalAdditionAmount(appropriation.getDeltaAmount());
-        reAppropriation.start().withOwner(position);
-        budgetReAppropriationWorkflowService.transition(actionName, reAppropriation, "");
-    }
-
-    @Transactional
-    public boolean createReAppropriation(final String actionName,
-            final List<BudgetReAppropriationView> budgetReAppropriationList,
-            final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
-            final String asOnDate) {
-        if (budgetReAppropriationList.isEmpty()
-                || !budgetReAppropriationService.rowsToAddForExistingDetails(budgetReAppropriationList))
-            return false;
-        budgetReAppropriationService.validateMandatoryFields(budgetReAppropriationList);
-        final List<BudgetReAppropriationView> addedList = new ArrayList<BudgetReAppropriationView>();
-        for (final BudgetReAppropriationView appropriation : budgetReAppropriationList) {
-            budgetReAppropriationService.validateDuplicates(addedList, appropriation);
-            saveAndStartWorkFlowForExistingdetails(actionName, appropriation, position, financialYear, beRe, misc, asOnDate);
-            addedList.add(appropriation);
-        }
-        return true;
-    }
-
-    @Transactional
-    public boolean createReAppropriationForNewBudgetDetail(final String actionName,
-            final List<BudgetReAppropriationView> newBudgetReAppropriationList, final Position position,
-            final BudgetReAppropriationMisc misc) {
-        BudgetDetail detail = null;
-        if (newBudgetReAppropriationList.isEmpty()
-                || !newBudgetReAppropriationList.isEmpty() && !budgetReAppropriationService
-                .rowsToAddExists(newBudgetReAppropriationList))
-            return false;
-        try {
-            final List<BudgetReAppropriationView> addedList = new ArrayList<BudgetReAppropriationView>();
-            for (final BudgetReAppropriationView appropriation : newBudgetReAppropriationList) {
-                detail = budgetReAppropriationService.createApprovedBudgetDetail(appropriation, position);
-                if (!budgetReAppropriationService.checkRowEmpty(appropriation)) {
-                    budgetReAppropriationService.validateMandatoryFields(newBudgetReAppropriationList);
-                    budgetReAppropriationService.validateDuplicates(addedList, appropriation);
-                    saveAndStartWorkFlowForNewDetail(actionName, detail, appropriation, position, misc);
-                    addedList.add(appropriation);
-                }
-            }
-        } catch (final Exception e) {
-            throw new ValidationException(Arrays.asList(new ValidationError("budgetDetail.duplicate", "budgetdetail.exists")));
-        }
-        return true;
-    }
-
-    @Transactional
-    protected void saveAndStartWorkFlowForExistingdetails(final String actionName, final BudgetReAppropriationView reAppView,
-            final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
-            final String asOnDate) {
-        final BudgetReAppropriation appropriation = new BudgetReAppropriation();
-        final List<BudgetDetail> searchBy = budgetDetailService.searchByCriteriaWithTypeAndFY(financialYear.getId(), beRe,
-                reAppView.getBudgetDetail());
-        if (searchBy.size() != 1)
-            throw new ValidationException(Arrays.asList(new ValidationError("budget.reappropriation.invalid.combination",
-                    "budget.reappropriation.invalid.combination")));
-        appropriation.setBudgetDetail(searchBy.get(0));
-        appropriation.setReAppropriationMisc(misc);
-        appropriation.setAnticipatoryAmount(reAppView.getAnticipatoryAmount());
-        try {
-            appropriation.setAsOnDate(Constants.DDMMYYYYFORMAT2.parse(asOnDate));
-        } catch (final Exception e) {
-            LOGGER.error("Error while parsing date");
-        }
-        if ("Addition".equalsIgnoreCase(reAppView.getChangeRequestType()))
-            appropriation.setOriginalAdditionAmount(reAppView.getDeltaAmount());
-        else
-            appropriation.setOriginalDeductionAmount(reAppView.getDeltaAmount());
-        budgetReAppropriationService.validateDeductionAmount(appropriation);
-        appropriation.start().withOwner(position);
-        budgetReAppropriationWorkflowService.transition(actionName, appropriation, "");
-    }
 
     public void transition(final String actionName, final BudgetReAppropriation detail, final String comment) {
         budgetReAppropriationWorkflowService.transition(actionName, detail, comment);

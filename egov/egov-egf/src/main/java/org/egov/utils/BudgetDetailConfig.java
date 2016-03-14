@@ -50,9 +50,13 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class BudgetDetailConfig {
     private static final String DELIMITER = ",";
+    @Autowired
+    @Qualifier("persistenceService")
     private final PersistenceService persistenceService;
     List<String> headerFields = new ArrayList<String>();
     List<String> gridFields = new ArrayList<String>();
