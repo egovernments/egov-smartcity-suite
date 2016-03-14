@@ -127,7 +127,7 @@ body
 								<form:option value="">
 									<spring:message code="lbl.option.select" />
 								</form:option>
-								<form:options items="${status}"  itemValue="id" itemLabel="description" />
+								<form:options items="${status}"  itemValue="description" itemLabel="description" />
 							</form:select>
 						</div>
 						
@@ -208,4 +208,4 @@ body
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/js/app/dailyCollectionReport.js'/>"></script>
+	src="<c:url value='/resources/js/app/dailyCollectionReport.js?rnd=${app_release_no}'/>"></script>

@@ -48,9 +48,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -63,21 +61,17 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
-import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.model.budget.BudgetDetail;
 import org.egov.services.voucher.VoucherService;
-import org.egov.utils.Constants;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -131,8 +125,11 @@ public class ChartOfAccounts {
     @Autowired
     EntityManager entityManager;
        
+    @Autowired
+    private  FinancialYearHibernateDAO financialYearDAO;
+    
     public ChartOfAccounts() {
-    	 cache = EgovMasterDataCaching.getInstance().getCACHE_MANAGER().getCache();
+    	 cache = EgovMasterDataCaching.getCACHE_MANAGER().getCache();
     }
 
     @Deprecated
@@ -599,53 +596,13 @@ public class ChartOfAccounts {
         return true;
     }
 
-    public boolean postTransaxtions(final Transaxtion txnList[], final DataCollection dc) throws Exception, TaskFailedException,
-            ParseException, SQLException, ApplicationException, ValidationException
-    {
-        if (!checkBudget(txnList))
-            throw new TaskFailedException("Budgetary check is failed");
-        // if objects are lost load them
-        if (getGlAccountCodes() == null || getGlAccountIds() == null || getAccountDetailType() == null ||
-                getGlAccountCodes().size() == 0 || getGlAccountIds().size() == 0 || getAccountDetailType().size() == 0)
-            reLoadAccountData();
-        try {
-            Date dt = new Date();
-            final String vdt = dc.getValue("voucherHeader_voucherDate");
-            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
-            final SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATEFORMAT, Constants.LOCALE);
-            dt = sdf.parse(vdt);
-            final String dateformat = formatter.format(dt);
-            if (!validPeriod(dateformat)) {
-                dc.addMessage("exilPostingPeriodError");
-                return false;
-            }
-            if (!validateTxns(txnList, dc))
-                return false;
-        } catch (final Exception e) {
-            LOGGER.error("Error in post transaction", e);
-            throw new TaskFailedException();
-        }
-        if (dc.getValue("modeOfExec").toString().equalsIgnoreCase("edit")) {
-            if (!updateInGL(txnList, dc))
-                return false;
-        } else if (!postInGL(txnList, dc))
-            return false;
-        return true;
-    }
+    
 
-    public void setBudgetDetailsDAO() {
-        budgetDetailsDAO = new BudgetDetailsHibernateDAO(BudgetDetail.class, HibernateUtil.getCurrentSession());
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("setting services manually .............................. ");
-        budgetDetailsDAO.setFinancialYearDAO(new FinancialYearHibernateDAO(CFinancialYear.class, HibernateUtil
-                .getCurrentSession()));
-
-    }
 
     public void setScriptService()
     {
         // This fix is for Phoenix Migration.
-        /*
+        /*while fixing Chnage new  ScriptService to autowired
          * ScriptService scriptService = new ScriptService(100,100,100,100); scriptService.setSessionFactory(new
          * SessionFactory()); budgetDetailsDAO.setScriptExecutionService(scriptService); SequenceGenerator sequenceGenerator = new
          * SequenceGenerator(new SessionFactory()); budgetDetailsDAO.setSequenceGenerator(sequenceGenerator);

@@ -46,6 +46,8 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -54,15 +56,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ParentPackage("egov")
 @Results({
-    @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
-    @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
-    @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
-    @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
-            "namespace", "/reports", "receiptDate", "${receiptDate}" }),
-            @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, type = "redirectAction", location = "chequeCollectionReport-submissionReport.action", params = {
-                    "namespace", "/reports", "receiptDate", "${receiptDate}" }),
-                    @Result(name = "cancel", type = "redirectAction", location = "receipt", params = { "namespace", "/receipts",
-                            "method", "cancel" }) })
+        @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
+        @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
+        @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
+        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
+                "namespace", "/reports", "receiptDate", "${receiptDate}" }),
+        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, type = "redirectAction", location = "chequeCollectionReport-submissionReport.action", params = {
+                "namespace", "/reports", "receiptDate", "${receiptDate}" }),
+        @Result(name = "cancel", type = "redirectAction", location = "receipt", params = { "namespace", "/receipts",
+                "method", "cancel" }) })
 public class CollectionsWorkflowAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -78,8 +80,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private Long[] receiptIds;
 
     /**
-     * Map of instrument type wise amounts for all receipts that are eligible
-     * for the workflow
+     * Map of instrument type wise amounts for all receipts that are eligible for the workflow
      */
     private final Map<String, BigDecimal> instrumentWiseAmounts = new HashMap<String, BigDecimal>(4);
 
@@ -126,8 +127,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private String remarks;
 
     /**
-     * Workflow action (SUBMIT/APPROVE). Based on this, the JSP can decide to
-     * display/hide various buttons
+     * Workflow action (SUBMIT/APPROVE). Based on this, the JSP can decide to display/hide various buttons
      */
     private String wfAction;
 
@@ -138,14 +138,12 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private String receiptDate;
     private String approverName;
     /**
-     * Result for cash submission report (redirects to the cash collection
-     * report)
+     * Result for cash submission report (redirects to the cash collection report)
      */
     protected static final String SUBMISSION_REPORT_CASH = "submissionReportCash";
 
     /**
-     * Result for cheque submission report (redirects to the cheque collection
-     * report)
+     * Result for cheque submission report (redirects to the cheque collection report)
      */
     protected static final String SUBMISSION_REPORT_CHEQUE = "submissionReportCheque";
 
@@ -158,13 +156,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * This method is called when user clicks on a collections work flow item in
-     * the inbox. The inbox item details contains the next work flow action to
-     * be performed, service code, user id and counter id in the following form:
+     * This method is called when user clicks on a collections work flow item in the inbox. The inbox item details contains the
+     * next work flow action to be performed, service code, user id and counter id in the following form:
      * <next-workflow-action>-servicecode-username-counterid
      *
-     * @param inboxItemDetails
-     *            the id to set
+     * @param inboxItemDetails the id to set
      */
     public void setInboxItemDetails(final String inboxItemDetails) {
         final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
@@ -179,16 +175,14 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param collectionsUtil
-     *            the collectionsUtil to set
+     * @param collectionsUtil the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
     }
 
     /**
-     * @param workflow
-     *            the receipt workflow service
+     * @param workflow the receipt workflow service
      */
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
@@ -202,8 +196,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @return true if partial selection is to be allowed for
-     *         submission/approval, else false
+     * @return true if partial selection is to be allowed for submission/approval, else false
      */
     public Boolean getAllowPartialSelection() {
         // return wfAction.equals(CollectionConstants.WF_ACTION_SUBMIT);
@@ -247,8 +240,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param counterId
-     *            the counter id to be set
+     * @param counterId the counter id to be set
      */
     public void setCounterId(final Long counterId) {
         this.counterId = counterId;
@@ -262,8 +254,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param userName
-     *            the user name to set
+     * @param userName the user name to set
      */
     public void setUserName(final String userName) {
         this.userName = userName;
@@ -277,8 +268,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param serviceCode
-     *            the Service Code to set
+     * @param serviceCode the Service Code to set
      */
     public void setServiceCode(final String serviceCode) {
         this.serviceCode = serviceCode;
@@ -301,8 +291,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     /**
      * Returns amount for given instrument type
      *
-     * @param instrumentType
-     *            The instrument type
+     * @param instrumentType The instrument type
      * @return amount for given instrument type
      */
     private BigDecimal getInstrumentTypeAmount(final String instrumentType) {
@@ -312,56 +301,49 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @return Total amount collected as cash amongst all receipts eligible for
-     *         the workflow action
+     * @return Total amount collected as cash amongst all receipts eligible for the workflow action
      */
     public BigDecimal getCashAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_CASH);
     }
 
     /**
-     * @return Total amount collected as cheque amongst all receipts eligible
-     *         for the workflow action
+     * @return Total amount collected as cheque amongst all receipts eligible for the workflow action
      */
     public BigDecimal getChequeAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_CHEQUE);
     }
 
     /**
-     * @return Total amount collected as dd amongst all receipts eligible for
-     *         the workflow action
+     * @return Total amount collected as dd amongst all receipts eligible for the workflow action
      */
     public BigDecimal getDdAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_DD);
     }
 
     /**
-     * @return Total amount collected using card amongst all receipts eligible
-     *         for the workflow action
+     * @return Total amount collected using card amongst all receipts eligible for the workflow action
      */
     public BigDecimal getCardAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_CARD);
     }
 
     /**
-     * @return Total amount collected using bank amongst all receipts eligible
-     *         for the workflow action
+     * @return Total amount collected using bank amongst all receipts eligible for the workflow action
      */
     public BigDecimal getBankAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_BANK);
     }
 
     /**
-     * @param Array
-     *            of receipt Ids
+     * @param Array of receipt Ids
      */
     public void setReceiptIds(final Long[] receiptIds) {
         this.receiptIds = receiptIds;
     }
 
     /**
-     * @param Submission
-     *            /Approval/Rejection remarks
+     * @param Submission /Approval/Rejection remarks
      */
     public void setRemarks(final String remarks) {
         this.remarks = remarks;
@@ -370,10 +352,8 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     /**
      * Updates the receipt's status by invoking the workflow action
      *
-     * @param wfAction
-     *            Workflow action e.g. submit_for_approval/approve/reject
-     * @param remarks
-     *            Approval/rejection remarks
+     * @param wfAction Workflow action e.g. submit_for_approval/approve/reject
+     * @param remarks Approval/rejection remarks
      * @return SUCCESS/ERROR
      */
     private String updateReceiptWorkflowStatus(final String wfAction, final String remarks) {
@@ -389,17 +369,12 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         return SUCCESS;
     }
 
-
-
     /**
-     * Fetches all receipts for set user-counter combination and given status
-     * code. Also sets the work flow action code to given value, and calculates
-     * the various amounts using the fetched receipts.
+     * Fetches all receipts for set user-counter combination and given status code. Also sets the work flow action code to given
+     * value, and calculates the various amounts using the fetched receipts.
      *
-     * @param statusCode
-     *            Status code for which receipts are to be fetched
-     * @param workflowAction
-     *            Work flow action code
+     * @param statusCode Status code for which receipts are to be fetched
+     * @param workflowAction Work flow action code
      */
     private void fetchReceipts(final String workflowAction) {// Get
         // all
@@ -422,49 +397,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * Retrieves all receipt headers created by currently logged in user from
-     * current counter and in status "To be submitted"
-     *
-     * @return Next page to be displayed (index)
-     */
-    public String listSubmit() {
-        // Get all receipt headers to be submitted
-        fetchReceipts(CollectionConstants.WF_ACTION_SUBMIT);
-        return INDEX;
-    }
-
-    /**
-     * Retrieves all receipt headers created by set user from set counter and in
-     * status "submitted". Also populates the dropdown data for counter list and
-     * user list.
-     *
-     * @return Next page to be displayed (index)
-     */
-    public String listApprove() {
-        if (counterId == null)
-            // By default show receipts from all counters
-            counterId = -1l;
-        if (userName == null)
-            // By default show receipts created by all users
-            userName = CollectionConstants.ALL;
-        if (serviceCode == null)
-            // By default show receipts for all billing services
-            serviceCode = CollectionConstants.ALL;
-
-        // Get all receipt headers to be approved
-        fetchReceipts(CollectionConstants.WF_ACTION_APPROVE);
-
-        // Add counter list and user list to drop down data
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getCollectionServiceList());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST, collectionsUtil.getActiveCounters());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());
-
-        return INDEX;
-    }
-
-    /**
-     * Action that will be called from the workflow inbox. The inbox also passes
-     * the id of the clicked item which is of the form:
+     * Action that will be called from the workflow inbox. The inbox also passes the id of the clicked item which is of the form:
      * <next-workflow-action>-servicecode-userid-counterid
      *
      * @return Next page to be displayed (index)
@@ -472,9 +405,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     @Action(value = "/receipts/collectionsWorkflow-listWorkflow")
     public String listWorkflow() {
         if (wfAction != null && wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
-            return listApprove();
+            fetchReceipts(CollectionConstants.WF_ACTION_APPROVE);
         else
-            return listSubmit();
+            fetchReceipts(CollectionConstants.WF_ACTION_SUBMIT);
+        return INDEX;
     }
 
     /**
@@ -502,6 +436,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      *
      * @return SUCCESS/ERROR
      */
+    @ValidationErrorPage(value = INDEX)
     @Action(value = "/receipts/collectionsWorkflow-submitCollections")
     public String submitCollections() {
         wfAction = CollectionConstants.WF_ACTION_SUBMIT;
@@ -531,26 +466,24 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * Calculates instrument type wise amounts of all receipts eligible for the
-     * workflow
+     * Calculates instrument type wise amounts of all receipts eligible for the workflow
      */
     private void calculateAmounts() {
-        totalAmount = BigDecimal.valueOf(0);
+        totalAmount = BigDecimal.ZERO;
         for (final ReceiptHeader receiptHeader : receiptHeaders) {
-            final BigDecimal receiptAmount = receiptHeader.getAmount();
+            for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
+                final String instrumentType = instrumentHeader.getInstrumentType().getType();
+                // Increment total amount
+                totalAmount = totalAmount.add(instrumentHeader.getInstrumentAmount()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
-            // Increment total amount
-            totalAmount = totalAmount.add(receiptAmount).setScale(2, BigDecimal.ROUND_HALF_UP);
-
-            // Increment instrument type wise amount
-            final String instrumentType = receiptHeader.getInstrumentType();
-            BigDecimal instrumentAmount = instrumentWiseAmounts.get(instrumentType);
-            if (instrumentAmount == null)
-                instrumentAmount = receiptAmount;
-            else
-                instrumentAmount = instrumentAmount.add(receiptAmount);
-            instrumentAmount = instrumentAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
-            instrumentWiseAmounts.put(instrumentType, instrumentAmount);
+                BigDecimal instrumentAmount = instrumentWiseAmounts.get(instrumentType);
+                if (instrumentAmount == null)
+                    instrumentAmount = instrumentHeader.getInstrumentAmount();
+                else
+                    instrumentAmount = instrumentAmount.add(instrumentHeader.getInstrumentAmount());
+                instrumentWiseAmounts.put(instrumentType, instrumentAmount.setScale(2, BigDecimal.ROUND_HALF_UP));
+            }
+            // Add to ReceiptHeader to populate in jsp
             receiptHeader.setInstrumentsAsString(receiptHeader.getInstrumentDetailAsString());
         }
     }

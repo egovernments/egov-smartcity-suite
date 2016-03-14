@@ -70,6 +70,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.exception.TooManyValuesException;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.AssignmentDAO;
@@ -89,6 +90,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -116,6 +118,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }

@@ -42,12 +42,15 @@ package org.egov.infra.config.persistence;
 import static org.hibernate.cfg.AvailableSettings.AUTOCOMMIT;
 import static org.hibernate.cfg.AvailableSettings.AUTO_CLOSE_SESSION;
 import static org.hibernate.cfg.AvailableSettings.CACHE_REGION_FACTORY;
+import static org.hibernate.cfg.AvailableSettings.DEFAULT_BATCH_FETCH_SIZE;
 import static org.hibernate.cfg.AvailableSettings.DIALECT;
 import static org.hibernate.cfg.AvailableSettings.GENERATE_STATISTICS;
 import static org.hibernate.cfg.AvailableSettings.JTA_PLATFORM;
 import static org.hibernate.cfg.AvailableSettings.MULTI_TENANT;
 import static org.hibernate.cfg.AvailableSettings.MULTI_TENANT_CONNECTION_PROVIDER;
 import static org.hibernate.cfg.AvailableSettings.MULTI_TENANT_IDENTIFIER_RESOLVER;
+import static org.hibernate.cfg.AvailableSettings.ORDER_INSERTS;
+import static org.hibernate.cfg.AvailableSettings.ORDER_UPDATES;
 import static org.hibernate.cfg.AvailableSettings.USE_MINIMAL_PUTS;
 import static org.hibernate.cfg.AvailableSettings.USE_QUERY_CACHE;
 import static org.hibernate.cfg.AvailableSettings.USE_SECOND_LEVEL_CACHE;
@@ -108,9 +111,9 @@ public class JpaConfiguration {
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
         entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
-        final ClasspathScanningPersistenceUnitPostProcessor classpathScanningPPU = new ClasspathScanningPersistenceUnitPostProcessor("org.egov");
-        classpathScanningPPU.setMappingFileNamePattern("**/*hbm.xml");
-        entityManagerFactory.setPersistenceUnitPostProcessors(classpathScanningPPU);
+        ClasspathScanningPersistenceUnitPostProcessor hbmScanner = new ClasspathScanningPersistenceUnitPostProcessor("org.egov");
+        hbmScanner.setMappingFileNamePattern("**/*hbm.xml");
+        entityManagerFactory.setPersistenceUnitPostProcessors(hbmScanner);
         entityManagerFactory.afterPropertiesSet();
         return entityManagerFactory.getObject();
     }
@@ -146,6 +149,9 @@ public class JpaConfiguration {
         properties.put(JTA_PLATFORM, env.getProperty(JTA_PLATFORM));
         properties.put(AUTO_CLOSE_SESSION, env.getProperty(AUTO_CLOSE_SESSION));
         properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));
+        properties.put(DEFAULT_BATCH_FETCH_SIZE, applicationProperties.getBatchUpdateSize());
+        properties.put(ORDER_INSERTS, true);
+        properties.put(ORDER_UPDATES, true);
         properties.put(AUTOCOMMIT, false);
         /*
          * since jadira doesn't support multitenant settings properties.put("jadira.usertype.autoRegisterUserTypes", true);

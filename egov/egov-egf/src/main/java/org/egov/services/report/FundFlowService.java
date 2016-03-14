@@ -464,7 +464,7 @@ public class FundFlowService extends PersistenceService {
                     + FinancialConstants.CONTRAVOUCHER_NAME_INTERFUND
                     + "') "
                     +
-                    "  and vh.fiscalperiodid in (select id from fiscalperiod where financialyearid=(select f.id from financialyear f where sysdate between f.startingdate and f.endingdate))"
+                    "  and vh.fiscalperiodid in (select id from fiscalperiod where financialyearid=(select f.id from financialyear f where CURRENT_DATE between f.startingdate and f.endingdate))"
                     +
                     " and vh.voucherdate='" + sqlformat.format(asPerDate) + "'   and vh.status =0");
         else
@@ -511,7 +511,7 @@ public class FundFlowService extends PersistenceService {
                     + FinancialConstants.CONTRAVOUCHER_NAME_INTERFUND
                     + "') "
                     +
-                    "  and vh.fiscalperiodid in (select id from fiscalperiod where financialyearid=(select f.id from financialyear f where sysdate between f.startingdate and f.endingdate))"
+                    "  and vh.fiscalperiodid in (select id from fiscalperiod where financialyearid=(select f.id from financialyear f where CURRENT_DATE between f.startingdate and f.endingdate))"
                     +
                     " and vh.voucherdate='" + sqlformat.format(asPerDate) + "'  and vh.status =0");
         else
@@ -572,7 +572,7 @@ public class FundFlowService extends PersistenceService {
                         "	and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid and ba.id="
                         + bankaccountId
                         + "")
-                        .append(" and vh.fiscalperiodid in (select id from fiscalperiod where financialyearid=(select f.id from financialyear f where sysdate between f.startingdate and f.endingdate))")
+                        .append(" and vh.fiscalperiodid in (select id from fiscalperiod where financialyearid=(select f.id from financialyear f where CURRENT_DATE between f.startingdate and f.endingdate))")
                         .append(" and vh.voucherdate >= '")
                         .append(START_FINANCIALYEAR_DATE + "' ")
                         .append(" and to_char(created_date,'dd-Mon-yyyy') ='")

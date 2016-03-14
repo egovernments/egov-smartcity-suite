@@ -88,6 +88,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -155,7 +156,7 @@ public class AutoReconciliationAction extends BaseFormAction {
             ",NARRATION,CSLNO,CREATEDDATE) values (seq_egf_brs_bankstatements.nextval,:accNo,:accountId,to_date(:txDate,"
             + "'"
             + dateInDotFormat + "'),:type,:instrumentNo,:debit" +
-            ",:credit,:balance,:narration,:cslNo,sysdate)";
+            ",:credit,:balance,:narration,:cslNo,CURRENT_DATE)";
     private int count;
     private int rowIndex;
     private int rowCount;
@@ -168,6 +169,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     private BigDecimal notInBooktotalDebit;
     private BigDecimal notInBooktotalCredit;
     private BigDecimal notprocessedCredit;
+    private @Autowired EGovernCommon eGovernCommon;
     private BigDecimal notprocessedDebit;
     private BigDecimal notprocessedNet;
     private BigDecimal notInBookNet;
@@ -519,7 +521,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         // entries
         // let the user decide
 
-        final String recociliationQuery = "update EGF_InstrumentHeader set id_status=:statusId,  lastmodifiedby=:userId,lastmodifieddate=sysdate"
+        final String recociliationQuery = "update EGF_InstrumentHeader set id_status=:statusId,  lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE"
                 +
                 " where id= (select id from egf_instrumentheader where instrumentNumber=:instrumentNo and "
                 +
@@ -533,7 +535,7 @@ public class AutoReconciliationAction extends BaseFormAction {
 
         final String recociliationAmountQuery = "update egf_instrumentOtherdetails set reconciledamount=:amount,instrumentstatusdate=:txDate "
                 +
-                " ,lastmodifiedby=:userId,lastmodifieddate=sysdate,reconciledOn=:reconciliationDate "
+                " ,lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE,reconciledOn=:reconciliationDate "
                 +
                 " where instrumentheaderid= (select id from egf_instrumentheader where instrumentNumber=:instrumentNo and "
                 +
@@ -671,7 +673,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         markForProcessing(BRS_TRANSACTION_TYPE_BANK);
         final List<AutoReconcileBean> CSLList = getStatmentsForProcessing(BRS_TRANSACTION_TYPE_BANK);
         final Long instrumentTypeId = getInstrumentType(FinancialConstants.INSTRUMENT_TYPE_BANK_TO_BANK);
-        final String recociliationQuery = "update EGF_InstrumentHeader set id_status=:statusId,  lastmodifiedby=:userId,lastmodifieddate=sysdate"
+        final String recociliationQuery = "update EGF_InstrumentHeader set id_status=:statusId,  lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE"
                 +
                 " where id = (select ih.id from egf_instrumentheader ih,egf_instrumentvoucher iv,voucherheader vh where  "
                 +
@@ -685,7 +687,7 @@ public class AutoReconciliationAction extends BaseFormAction {
 
         final String recociliationAmountQuery = "update egf_instrumentOtherdetails set reconciledamount=:amount,instrumentstatusdate=:txDate "
                 +
-                " ,lastmodifiedby=:userId,lastmodifieddate=sysdate,reconciledOn=:reconciliationDate "
+                " ,lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE,reconciledOn=:reconciliationDate "
                 +
                 " where instrumentheaderid =  (select ih.id from egf_instrumentheader ih,egf_instrumentvoucher iv,voucherheader vh where  "
                 +
@@ -823,10 +825,9 @@ public class AutoReconciliationAction extends BaseFormAction {
     @SuppressWarnings({ "unchecked", "deprecation" })
     public String generateReport() {
         // bankStatments not in BankBook
-        final EGovernCommon cm = new EGovernCommon();
 
         try {
-            bankBookBalance = cm.getAccountBalance(dateFormatter.format(toDate), accountId.toString()).setScale(2,
+            bankBookBalance = eGovernCommon.getAccountBalance(dateFormatter.format(toDate), accountId.toString()).setScale(2,
                     BigDecimal.ROUND_HALF_UP);
         } catch (final HibernateException e) {
             throw new ApplicationRuntimeException(e.getMessage());

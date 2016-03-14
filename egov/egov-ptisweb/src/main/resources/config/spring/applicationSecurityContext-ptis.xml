@@ -72,6 +72,8 @@
 				<security:filter-chain pattern="/reports/billcollectorDailyCollectionReportList" filters="none" />  
 				<security:filter-chain pattern="/reports/getRegionHeirarchyByType" filters="none" />
 				<security:filter-chain pattern="/reports/ulbWiseCollectionReport-form" filters="none" />  
+				<security:filter-chain pattern="/reports/ulbWiseDcbReport-form" filters="none" />  
+					<security:filter-chain pattern="/reports/ulbWiseDCBList" filters="none" />  
 				<security:filter-chain pattern="/reports/ulbWiseCollectionList" filters="none" />  
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>

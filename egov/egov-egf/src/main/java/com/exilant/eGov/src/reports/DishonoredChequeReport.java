@@ -53,8 +53,8 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 
 public class DishonoredChequeReport
@@ -73,8 +73,7 @@ public class DishonoredChequeReport
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS", Locale.getDefault());
-    EGovernCommon egc = new EGovernCommon();
-    CommnFunctions cf = new CommnFunctions();
+   private @Autowired CommnFunctions commnFunctions;
     private static final Logger LOGGER = Logger.getLogger(DishonoredChequeReport.class);
 
     public DishonoredChequeReport() {
@@ -340,7 +339,7 @@ public class DishonoredChequeReport
             for (final Object[] element : rs) {
                 originalVcId[i] = element[5].toString();
                 bankRefNo[i] = element[6].toString();
-                bankCharge[i] = cf.numberToString(element[8].toString()).toString();
+                bankCharge[i] = commnFunctions.numberToString(element[8].toString()).toString();
                 i += 1;
             }
         } catch (final Exception sqlE) {

@@ -38,7 +38,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-/ Author: RG Bhandi, Exilant Consulting
+/* Author: RG Bhandi, Exilant Consulting
 /  Ver 1.0 Oct - 2004
 /
 ******************************************/

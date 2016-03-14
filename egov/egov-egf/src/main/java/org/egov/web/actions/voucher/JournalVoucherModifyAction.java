@@ -124,6 +124,9 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     @Qualifier("journalVoucherActionHelper")
     private JournalVoucherActionHelper journalVoucherActionHelper;
 
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @SuppressWarnings("unchecked")
     @Override
     public void prepare() {
@@ -399,14 +402,13 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private void loadApproverUser(final String type) {
         final String scriptName = "billvoucher.nextDesg";
         departmentId = voucherService.getCurrentDepartment().getId().intValue();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         final Map<String, Object> map = voucherService.getDesgByDeptAndType(type, scriptName);
         if (null == map.get("wfitemstate")) {
             // If the department is mandatory show the logged in users assigned department only.
             if (mandatoryFields.contains("department"))
                 addDropdownData("approvaldepartmentList", voucherHelper.getAllAssgnDeptforUser());
             else
-                addDropdownData("approvaldepartmentList", masterCache.get("egi-department"));
+                addDropdownData("approvaldepartmentList", masterDataCache.get("egi-department"));
             addDropdownData("designationList", (List<Designation>) map.get("designationList"));
             wfitemstate = "";
         } else

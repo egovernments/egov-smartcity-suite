@@ -44,8 +44,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.sf.jasperreports.engine.JasperPrint;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -61,7 +59,10 @@ import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.jasperreports.engine.JasperPrint;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -96,17 +97,18 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
     private String isFundSelected = "false";
     private String isFunctionSelected = "false";
     private String isDepartmentSelected = "false";
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public void prepare() {
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-            addDropdownData("departmentList", masterCache.get("egi-department"));
-            addDropdownData("functionList", masterCache.get("egi-function"));
-            addDropdownData("fundDropDownList", masterCache.get("egi-fund"));
+            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("functionList", masterDataCache.get("egi-function"));
+            addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
             budgetList = persistenceService
                     .findAllBy("from Budget bud where bud.isActiveBudget=1  and bud.parent is null  order by bud.financialYear.id  desc");
             addDropdownData("budList", budgetList);

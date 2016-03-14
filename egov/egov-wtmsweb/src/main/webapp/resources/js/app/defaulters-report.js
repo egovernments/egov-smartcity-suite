@@ -71,7 +71,7 @@ function loadingReport()
 			var toAmount = $("#toAmount").val(); 
 			var ward = $("#ward").val();
 			var topDefaulters = $("#topDefaulters").val();
-			
+			var today = getdate();
 
 			oTable= $('#defaultersReport-table');
 			$('#defaultersReport-header').show();
@@ -89,7 +89,7 @@ function loadingReport()
 					               {
 						             "sExtends": "pdf",
 						             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10],
-	                                 "sPdfMessage": "Defaulters Report",
+	                                 "sPdfMessage": "Defaulters Report as on "+today+"",
 	                                 "sTitle": "Water Tax Defaulters Report",
 	                                 "sPdfOrientation": "landscape"
 					                },
@@ -122,7 +122,12 @@ function loadingReport()
 							  { "data" : "wardName", "title": "Revenue Ward"},
 							  { "data" : "houseNo", "title": "Door No"},
 							  { "data" : "locality", "title": "Locality"},
-							  { "data" : "mobileNumber", "title": "Mobile Number"},
+							  { 
+								  "data" : "mobileNumber", "title": "Mobile Number",
+								  "render" : function(data, type, row) {
+									  return (!data || parseInt(data)==0? "NA" : data);
+								  }
+							  },
 							  { "data" : "duePeriodFrom", "title": "Due Period From"},
 							  { "data" : "arrearsDue", "title": "Arears Amount"},
 							  { "data" : "currentDue", "title": "Current Amount"},
@@ -200,7 +205,22 @@ function formatNumberInr(x) {
 	}
 	return x;
 }
+function getdate()
+{
+	var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
 
+    var yyyy = today.getFullYear();
+    if(dd<10){
+        dd='0'+dd
+    } 
+    if(mm<10){
+        mm='0'+mm
+    } 
+    var today = dd+'/'+mm+'/'+yyyy;
+    return today;
+}
 function updateTotalFooter(colidx, api) {
 	// Remove the formatting to get integer data for summation
 	var intVal = function(i) {

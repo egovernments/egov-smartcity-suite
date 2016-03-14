@@ -61,417 +61,436 @@ import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
  * might have one or more floors. The data for property tax might be given for
  * individual floors or at aggregate level.
  * </p>
- *
  */
 
 public class Floor extends BaseModel implements Auditable {
-        private ConstructionTypeSet constructionTypeSet = null;
-        private StructureClassification structureClassification = null;
-        private PropertyUsage propertyUsage = null;
-        private PropertyOccupation propertyOccupation = null;
-        private DepreciationMaster depreciationMaster = null;
-        private Integer floorNo = null;
-        private Area builtUpArea = null;
-        private Area floorArea = null;
-        private String waterMeter = null;
-        private String electricMeter = null;
-        private PropertyTypeMaster unitType;
-        private String unitTypeCategory;
-        private BigDecimal rentPerMonth;
-        private BigDecimal manualAlv;
-        private BigDecimal alv;
-        private String waterRate;
-        private PropertyDetail propertyDetail;
-        private Date occupancyDate;
-        private String occupantName;
-        private String firmName;
-        private Boolean drainage;
-        private Integer noOfSeats;
-        private FloorwiseDemandCalculations floorDmdCalc;
-        private Boolean unstructuredLand=false;
-        
+    private ConstructionTypeSet constructionTypeSet = null;
+    private StructureClassification structureClassification = null;
+    private PropertyUsage propertyUsage = null;
+    private PropertyOccupation propertyOccupation = null;
+    private DepreciationMaster depreciationMaster = null;
+    private Integer floorNo = null;
+    private Area builtUpArea = null;
+    private Area floorArea = null;
+    private String waterMeter = null;
+    private String electricMeter = null;
+    private PropertyTypeMaster unitType;
+    private String unitTypeCategory;
+    private BigDecimal rentPerMonth;
+    private BigDecimal manualAlv;
+    private BigDecimal alv;
+    private String waterRate;
+    private PropertyDetail propertyDetail;
+    private Date occupancyDate;
+    private String occupantName;
+    private String firmName;
+    private FloorwiseDemandCalculations floorDmdCalc;
+    private Boolean unstructuredLand = false;
+    private String buildingPermissionNo;
+    private Date buildingPermissionDate;
+    private Area buildingPlanPlinthArea;
+    private Integer floorUid;
 
-        public Floor(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
-                        PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
-                        DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea, String waterMeter,
-                        String electricMeter, Date lastUpdatedTimeStamp, Date createdTimeStamp, BigDecimal rentPerMonth,
-                        BigDecimal manualAlv, PropertyTypeMaster unitType, String unitTypeCategory, String waterRate,
-                        BigDecimal alv, Date occupancyDate, String occupierName, Boolean drainage,Boolean unstructuredLand, Integer noOfSeats,
-                        FloorwiseDemandCalculations floorDmdCalc,String firmName) {
-                super();
-                this.constructionTypeSet = constructionTypeSet;
-                this.structureClassification = structureClassification;
-                this.propertyUsage = propertyUsage;
-                this.propertyOccupation = propertyOccupation;
-                this.floorNo = floorNo;
-                this.depreciationMaster = depreciationMaster;
-                this.builtUpArea = builtUpArea;
-                this.floorArea = floorArea;
-                this.waterMeter = waterMeter;
-                this.electricMeter = electricMeter;
-                this.rentPerMonth = rentPerMonth;
-                this.manualAlv = manualAlv;
-                this.unitType = unitType;
-                this.unitTypeCategory = unitTypeCategory;
-                this.waterRate = waterRate;
-                this.alv = alv;
-                this.occupancyDate = occupancyDate;
-                this.occupantName = occupierName;
-                this.drainage = drainage;
-                this.unstructuredLand=unstructuredLand;
-                this.noOfSeats = noOfSeats;
-                this.floorDmdCalc = floorDmdCalc;
-                this.firmName=firmName;
-        }
+    public Floor(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
+            PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
+            DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea, String waterMeter,
+            String electricMeter, Date lastUpdatedTimeStamp, Date createdTimeStamp, BigDecimal rentPerMonth,
+            BigDecimal manualAlv, PropertyTypeMaster unitType, String unitTypeCategory, String waterRate,
+            BigDecimal alv, Date occupancyDate, String occupierName, Boolean unstructuredLand,
+             FloorwiseDemandCalculations floorDmdCalc, String firmName,String buildingPermissionNo,Date buildingPermissionDate,
+            Area buildingPlanPlinthArea, Integer floorUid) {
+        super();
+        this.constructionTypeSet = constructionTypeSet;
+        this.structureClassification = structureClassification;
+        this.propertyUsage = propertyUsage;
+        this.propertyOccupation = propertyOccupation;
+        this.floorNo = floorNo;
+        this.depreciationMaster = depreciationMaster;
+        this.builtUpArea = builtUpArea;
+        this.floorArea = floorArea;
+        this.waterMeter = waterMeter;
+        this.electricMeter = electricMeter;
+        this.rentPerMonth = rentPerMonth;
+        this.manualAlv = manualAlv;
+        this.unitType = unitType;
+        this.unitTypeCategory = unitTypeCategory;
+        this.waterRate = waterRate;
+        this.alv = alv;
+        this.occupancyDate = occupancyDate;
+        this.occupantName = occupierName;
+        this.unstructuredLand = unstructuredLand;
+        this.floorDmdCalc = floorDmdCalc;
+        this.firmName = firmName;
+        this.buildingPermissionNo = buildingPermissionNo;
+        this.buildingPermissionDate = buildingPermissionDate;
+        this.buildingPlanPlinthArea = buildingPlanPlinthArea;
+        this.floorUid = floorUid;
+    }
 
-        public Floor() {
+    public Floor() {
 
-        }
+    }
 
-        public Floor(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
-                        PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
-                        DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea, String waterMeter,
-                        String electricMeter) {
-                this.constructionTypeSet = constructionTypeSet;
-                this.structureClassification = structureClassification;
-                this.propertyUsage = propertyUsage;
-                this.propertyOccupation = propertyOccupation;
-                this.floorNo = floorNo;
-                this.depreciationMaster = depreciationMaster;
-                this.builtUpArea = builtUpArea;
-                this.floorArea = floorArea;
-                this.waterMeter = waterMeter;
-                this.electricMeter = electricMeter;
-        }
+    public Floor(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
+            PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
+            DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea, String waterMeter,
+            String electricMeter) {
+        this.constructionTypeSet = constructionTypeSet;
+        this.structureClassification = structureClassification;
+        this.propertyUsage = propertyUsage;
+        this.propertyOccupation = propertyOccupation;
+        this.floorNo = floorNo;
+        this.depreciationMaster = depreciationMaster;
+        this.builtUpArea = builtUpArea;
+        this.floorArea = floorArea;
+        this.waterMeter = waterMeter;
+        this.electricMeter = electricMeter;
+    }
 
-        /**
-         * @return Returns the builtUpArea.
-         */
+    /**
+     * @return Returns the builtUpArea.
+     */
 
-        public Area getBuiltUpArea() {
-                return builtUpArea;
-        }
+    public Area getBuiltUpArea() {
+        return builtUpArea;
+    }
 
-        /**
-         * @param builtUpArea
-         *            The builtUpArea to set.
-         */
+    /**
+     * @param builtUpArea
+     *            The builtUpArea to set.
+     */
 
-        public void setBuiltUpArea(Area builtUpArea) {
-                this.builtUpArea = builtUpArea;
-        }
+    public void setBuiltUpArea(Area builtUpArea) {
+        this.builtUpArea = builtUpArea;
+    }
 
-        /**
-         * @return Returns the constructionTypeSet.
-         */
+    /**
+     * @return Returns the constructionTypeSet.
+     */
 
-        public ConstructionTypeSet getConstructionTypeSet() {
-                return constructionTypeSet;
-        }
+    public ConstructionTypeSet getConstructionTypeSet() {
+        return constructionTypeSet;
+    }
 
-        /**
-         * @param constructionTypeSet
-         *            The constructionTypeSet to set.
-         */
+    /**
+     * @param constructionTypeSet
+     *            The constructionTypeSet to set.
+     */
 
-        public void setConstructionTypeSet(ConstructionTypeSet constructionTypeSet) {
-                this.constructionTypeSet = constructionTypeSet;
-        }
+    public void setConstructionTypeSet(ConstructionTypeSet constructionTypeSet) {
+        this.constructionTypeSet = constructionTypeSet;
+    }
 
-        /**
-         * @return Returns the electricMeter.
-         */
+    /**
+     * @return Returns the electricMeter.
+     */
 
-        public String getElectricMeter() {
-                return electricMeter;
-        }
+    public String getElectricMeter() {
+        return electricMeter;
+    }
 
-        /**
-         * @param electricMeter
-         *            The electricMeter to set.
-         */
+    /**
+     * @param electricMeter
+     *            The electricMeter to set.
+     */
 
-        public void setElectricMeter(String electricMeter) {
-                this.electricMeter = electricMeter;
-        }
+    public void setElectricMeter(String electricMeter) {
+        this.electricMeter = electricMeter;
+    }
 
-        public PropertyTypeMaster getUnitType() {
-                return unitType;
-        }
+    public PropertyTypeMaster getUnitType() {
+        return unitType;
+    }
 
-        public void setUnitType(PropertyTypeMaster unitType) {
-                this.unitType = unitType;
-        }
+    public void setUnitType(PropertyTypeMaster unitType) {
+        this.unitType = unitType;
+    }
 
-        public String getUnitTypeCategory() {
-                return this.unitTypeCategory;
-        }
+    public String getUnitTypeCategory() {
+        return this.unitTypeCategory;
+    }
 
-        public void setUnitTypeCategory(String unitTypeCategory) {
-                this.unitTypeCategory = unitTypeCategory;
-        }
+    public void setUnitTypeCategory(String unitTypeCategory) {
+        this.unitTypeCategory = unitTypeCategory;
+    }
 
-        /**
-         * @return Returns the floorArea.
-         */
+    /**
+     * @return Returns the floorArea.
+     */
 
-        public Area getFloorArea() {
-                return floorArea;
-        }
+    public Area getFloorArea() {
+        return floorArea;
+    }
 
-        /**
-         * @param floorArea
-         *            The floorArea to set.
-         */
+    /**
+     * @param floorArea
+     *            The floorArea to set.
+     */
 
-        public void setFloorArea(Area floorArea) {
-                this.floorArea = floorArea;
-        }
+    public void setFloorArea(Area floorArea) {
+        this.floorArea = floorArea;
+    }
 
-        /**
-         * @return Returns the floorNo.
-         */
+    /**
+     * @return Returns the floorNo.
+     */
 
-        public Integer getFloorNo() {
-                return floorNo;
-        }
+    public Integer getFloorNo() {
+        return floorNo;
+    }
 
-        /**
-         * @param floorNo
-         *            The floorNo to set.
-         */
+    /**
+     * @param floorNo
+     *            The floorNo to set.
+     */
 
-        public void setFloorNo(Integer floorNo) {
-                this.floorNo = floorNo;
-        }
+    public void setFloorNo(Integer floorNo) {
+        this.floorNo = floorNo;
+    }
 
-        /**
-         * @return Returns the propertyOccupation.
-         */
+    /**
+     * @return Returns the propertyOccupation.
+     */
 
-        public PropertyOccupation getPropertyOccupation() {
-                return propertyOccupation;
-        }
+    public PropertyOccupation getPropertyOccupation() {
+        return propertyOccupation;
+    }
 
-        /**
-         * @param propertyOccupation
-         *            The propertyOccupation to set.
-         */
+    /**
+     * @param propertyOccupation
+     *            The propertyOccupation to set.
+     */
 
-        public void setPropertyOccupation(PropertyOccupation propertyOccupation) {
-                this.propertyOccupation = propertyOccupation;
-        }
+    public void setPropertyOccupation(PropertyOccupation propertyOccupation) {
+        this.propertyOccupation = propertyOccupation;
+    }
 
-        /**
-         * @return Returns the propertyUsage.
-         */
+    /**
+     * @return Returns the propertyUsage.
+     */
 
-        public PropertyUsage getPropertyUsage() {
-                return propertyUsage;
-        }
+    public PropertyUsage getPropertyUsage() {
+        return propertyUsage;
+    }
 
-        /**
-         * @param propertyUsage
-         *            The propertyUsage to set.
-         */
+    /**
+     * @param propertyUsage
+     *            The propertyUsage to set.
+     */
 
-        public void setPropertyUsage(PropertyUsage propertyUsage) {
-                this.propertyUsage = propertyUsage;
-        }
+    public void setPropertyUsage(PropertyUsage propertyUsage) {
+        this.propertyUsage = propertyUsage;
+    }
 
-        /**
-         * @return Returns the structureClassification.
-         */
+    /**
+     * @return Returns the structureClassification.
+     */
 
-        public StructureClassification getStructureClassification() {
-                return structureClassification;
-        }
+    public StructureClassification getStructureClassification() {
+        return structureClassification;
+    }
 
-        /**
-         * @param structureClassification
-         *            The structureClassification to set.
-         */
+    /**
+     * @param structureClassification
+     *            The structureClassification to set.
+     */
 
-        public void setStructureClassification(StructureClassification structureClassification) {
-                this.structureClassification = structureClassification;
-        }
+    public void setStructureClassification(StructureClassification structureClassification) {
+        this.structureClassification = structureClassification;
+    }
 
-        /**
-         * @return Returns the waterMeter.
-         */
+    /**
+     * @return Returns the waterMeter.
+     */
 
-        public String getWaterMeter() {
-                return waterMeter;
-        }
+    public String getWaterMeter() {
+        return waterMeter;
+    }
 
-        /**
-         * @param waterMeter
-         *            The waterMeter to set.
-         */
+    /**
+     * @param waterMeter
+     *            The waterMeter to set.
+     */
 
-        public void setWaterMeter(String waterMeter) {
-                this.waterMeter = waterMeter;
-        }
+    public void setWaterMeter(String waterMeter) {
+        this.waterMeter = waterMeter;
+    }
 
-        /**
-         * @return true if the given Object is equal to Floor this will get invoke
-         *         when more than one object is adding to collection(ex:Set,Map.)
-         */
+    /**
+     * @return true if the given Object is equal to Floor this will get invoke
+     *         when more than one object is adding to collection(ex:Set,Map.)
+     */
 
-        public boolean equals(Object that) {
-                if (that == null)
-                        return false;
+    public boolean equals(Object that) {
+        if (that == null)
+            return false;
 
-                if (this == that)
-                        return true;
-                if (that.getClass() != this.getClass())
-                        return false;
+        if (this == that)
+            return true;
+        if (that.getClass() != this.getClass())
+            return false;
 
-                final Floor thatFlrImpl = (Floor) that;
+        final Floor thatFlrImpl = (Floor) that;
 
-                if (this.getId() != null && thatFlrImpl.getId() != null) {
-                        if (getId().equals(thatFlrImpl.getId())) {
-                                return true;
-                        } else
-                                return false;
-                } else
-                        return false;
-        }
-
-        /**
-         * @return Returns the hashCode
-         */
-
-        public int hashCode() {
-                int hashCode = 0;
-                if (getId() != null) {
-                        hashCode += this.getId().hashCode();
-                }
-                return hashCode;
-        }
-
-        /**
-         * @return Returns the boolean after validating the current object
-         */
-
-        public boolean validateFloor() {
-                if (getFloorNo() == null)
-                        throw new ApplicationRuntimeException("In Floor Validate : FloorNumber is Not Set, Please Check !!");
-
+        if (this.getId() != null && thatFlrImpl.getId() != null) {
+            if (getId().equals(thatFlrImpl.getId())) {
                 return true;
-        }
+            } else
+                return false;
+        } else
+            return false;
+    }
 
-        public BigDecimal getRentPerMonth() {
-                return rentPerMonth;
-        }
+    /**
+     * @return Returns the hashCode
+     */
 
-        public void setRentPerMonth(BigDecimal rentPerMonth) {
-                this.rentPerMonth = rentPerMonth;
+    public int hashCode() {
+        int hashCode = 0;
+        if (getId() != null) {
+            hashCode += this.getId().hashCode();
         }
+        return hashCode;
+    }
 
-        public DepreciationMaster getDepreciationMaster() {
-                return depreciationMaster;
-        }
+    /**
+     * @return Returns the boolean after validating the current object
+     */
 
-        public void setDepreciationMaster(DepreciationMaster depreciationMaster) {
-                this.depreciationMaster = depreciationMaster;
-        }
+    public boolean validateFloor() {
+        if (getFloorNo() == null)
+            throw new ApplicationRuntimeException("In Floor Validate : FloorNumber is Not Set, Please Check !!");
 
-        public BigDecimal getManualAlv() {
-                return manualAlv;
-        }
+        return true;
+    }
 
-        public void setManualAlv(BigDecimal manualAlv) {
-                this.manualAlv = manualAlv;
-        }
+    public BigDecimal getRentPerMonth() {
+        return rentPerMonth;
+    }
 
-        public String getWaterRate() {
-                return waterRate;
-        }
+    public void setRentPerMonth(BigDecimal rentPerMonth) {
+        this.rentPerMonth = rentPerMonth;
+    }
 
-        public void setWaterRate(String waterRate) {
-                this.waterRate = waterRate;
-        }
+    public DepreciationMaster getDepreciationMaster() {
+        return depreciationMaster;
+    }
 
-        public BigDecimal getAlv() {
-                return alv;
-        }
+    public void setDepreciationMaster(DepreciationMaster depreciationMaster) {
+        this.depreciationMaster = depreciationMaster;
+    }
 
-        public void setAlv(BigDecimal alv) {
-                this.alv = alv;
-        }
+    public BigDecimal getManualAlv() {
+        return manualAlv;
+    }
 
-        public Date getOccupancyDate() {
-                return occupancyDate;
-        }
+    public void setManualAlv(BigDecimal manualAlv) {
+        this.manualAlv = manualAlv;
+    }
 
-        public void setOccupancyDate(Date occupancyDate) {
-                this.occupancyDate = occupancyDate;
-        }
+    public String getWaterRate() {
+        return waterRate;
+    }
 
-        public String getOccupantName() {
-                return occupantName;
-        }
+    public void setWaterRate(String waterRate) {
+        this.waterRate = waterRate;
+    }
 
-        public void setOccupantName(String occupantName) {
-                this.occupantName = occupantName;
-        }
+    public BigDecimal getAlv() {
+        return alv;
+    }
 
-        public String toString() {
-                return new StringBuilder(256).append("Floor [Id: ").append(getId()).append(", FloorNo=").append(getFloorNo())
-                                .append(", FloorArea=").append(getFloorArea() != null ? getFloorArea().getArea() : "null")
-                                .append(", PropertyUsage=").append(getPropertyUsage()).append(", StructCl=")
-                                .append(getStructureClassification()).append(", Occupancy=").append(getPropertyOccupation())
-                                .append(", Depreciation=").append(getDepreciationMaster()).append(", WaterRate=")
-                                .append(getWaterRate()).append(", alv=").append(getAlv()).append("]").toString();
-        }
+    public void setAlv(BigDecimal alv) {
+        this.alv = alv;
+    }
 
-        public PropertyDetail getPropertyDetail() {
-                return propertyDetail;
-        }
+    public Date getOccupancyDate() {
+        return occupancyDate;
+    }
 
-        public void setPropertyDetail(PropertyDetail propertyDetail) {
-                this.propertyDetail = propertyDetail;
-        }
+    public void setOccupancyDate(Date occupancyDate) {
+        this.occupancyDate = occupancyDate;
+    }
 
-        public Boolean getDrainage() {
-                return drainage;
-        }
+    public String getOccupantName() {
+        return occupantName;
+    }
 
-        public void setDrainage(Boolean drainage) {
-                this.drainage = drainage;
-        }
+    public void setOccupantName(String occupantName) {
+        this.occupantName = occupantName;
+    }
 
-        public Integer getNoOfSeats() {
-                return noOfSeats;
-        }
+    public String toString() {
+        return new StringBuilder(256).append("Floor [Id: ").append(getId()).append(", FloorNo=").append(getFloorNo())
+                .append(", FloorArea=").append(getFloorArea() != null ? getFloorArea().getArea() : "null")
+                .append(", PropertyUsage=").append(getPropertyUsage()).append(", StructCl=")
+                .append(getStructureClassification()).append(", Occupancy=").append(getPropertyOccupation())
+                .append(", Depreciation=").append(getDepreciationMaster()).append(", WaterRate=")
+                .append(getWaterRate()).append(", alv=").append(getAlv()).append("]").toString();
+    }
 
-        public void setNoOfSeats(Integer noOfSeats) {
-                this.noOfSeats = noOfSeats;
-        }
+    public PropertyDetail getPropertyDetail() {
+        return propertyDetail;
+    }
 
-        public FloorwiseDemandCalculations getFloorDmdCalc() {
-                return floorDmdCalc;
-        }
+    public void setPropertyDetail(PropertyDetail propertyDetail) {
+        this.propertyDetail = propertyDetail;
+    }
 
-        public void setFloorDmdCalc(FloorwiseDemandCalculations floorDmdCalc) {
-                this.floorDmdCalc = floorDmdCalc;
-        }
+    public FloorwiseDemandCalculations getFloorDmdCalc() {
+        return floorDmdCalc;
+    }
 
-        public String getFirmName() {
-            return firmName;
-        }
-    
-        public void setFirmName(String firmName) {
-            this.firmName = firmName;
-        }
+    public void setFloorDmdCalc(FloorwiseDemandCalculations floorDmdCalc) {
+        this.floorDmdCalc = floorDmdCalc;
+    }
 
-        public Boolean getUnstructuredLand() {
-            return unstructuredLand;
-        }
+    public String getFirmName() {
+        return firmName;
+    }
 
-        public void setUnstructuredLand(Boolean unstructuredLand) {
-            this.unstructuredLand = unstructuredLand;
-        }
+    public void setFirmName(String firmName) {
+        this.firmName = firmName;
+    }
+
+    public Boolean getUnstructuredLand() {
+        return unstructuredLand;
+    }
+
+    public void setUnstructuredLand(Boolean unstructuredLand) {
+        this.unstructuredLand = unstructuredLand;
+    }
+
+    public String getBuildingPermissionNo() {
+        return buildingPermissionNo;
+    }
+
+    public void setBuildingPermissionNo(String buildingPermissionNo) {
+        this.buildingPermissionNo = buildingPermissionNo;
+    }
+
+    public Date getBuildingPermissionDate() {
+        return buildingPermissionDate;
+    }
+
+    public void setBuildingPermissionDate(Date buildingPermissionDate) {
+        this.buildingPermissionDate = buildingPermissionDate;
+    }
+
+    public Area getBuildingPlanPlinthArea() {
+        return buildingPlanPlinthArea;
+    }
+
+    public void setBuildingPlanPlinthArea(Area buildingPlanPlinthArea) {
+        this.buildingPlanPlinthArea = buildingPlanPlinthArea;
+    }
+
+    public Integer getFloorUid() {
+        return floorUid;
+    }
+
+    public void setFloorUid(Integer floorUid) {
+        this.floorUid = floorUid;
+    }
 
 }

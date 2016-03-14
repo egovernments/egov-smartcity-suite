@@ -57,6 +57,7 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,8 @@ public class ReconciliationService {
     private CollectionCommon collectionCommon;
     @Autowired
     private ApplicationContext beanProvider;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     /**
      * This method processes the success message arriving from the payment
@@ -133,7 +136,7 @@ public class ReconciliationService {
 
         try {
             if (!updateBillingSystem(onlinePaymentReceiptHeader.getService().getCode(), new BillReceiptInfoImpl(
-                    onlinePaymentReceiptHeader), billingService))
+                    onlinePaymentReceiptHeader, chartOfAccountsHibernateDAO), billingService))
                 updateToSystems = false;
         } catch (final ApplicationRuntimeException ex) {
             onlinePaymentReceiptHeader.getOnlinePayment().setRemarks("update to billing system failed.");

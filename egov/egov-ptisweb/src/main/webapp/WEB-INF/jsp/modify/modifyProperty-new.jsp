@@ -93,7 +93,6 @@
 		enableFieldsForPropType();
 		enableAppartnaumtLandDetails();
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
-		enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 		toggleFloorDetails();
 		showHideFirmName();
 		showHideLengthBreadth();
@@ -145,8 +144,12 @@
 				var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
 				var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
 				  
-				if(buildLength.value!=null && buildLength.value!="" && buildbreadth.value!=null && buildbreadth.value!="")
-					builtUpArea.value=buildLength.value * buildbreadth.value;
+				if(buildLength.value!=null && buildLength.value!="" && buildbreadth.value!=null && buildbreadth.value!=""){
+					builtUpArea.value= roundoff(eval(buildLength.value * buildbreadth.value));
+					trim(builtUpArea,builtUpArea.value);
+					checkForTwoDecimals(builtUpArea,'Assessable Area');
+					checkZero(builtUpArea,'Assessable Area');
+				}
 				else
 					builtUpArea.value="";
 			}else

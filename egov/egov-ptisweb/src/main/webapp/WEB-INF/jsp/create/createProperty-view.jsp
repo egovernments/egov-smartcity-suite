@@ -67,10 +67,10 @@
 		if(appurtenantLandChecked == null) {
 			jQuery('#appurtenantRow').hide();
 		}
-		var buildingPlanDetailsChecked = '<s:property value="%{propertyDetail.buildingPlanDetailsChecked}"/>';
-		if(buildingPlanDetailsChecked != 'true') {
-			jQuery('tr.bpddetails').hide();
-		}
+		//var buildingPlanDetailsChecked = '<s:property value="%{propertyDetail.buildingPlanDetailsChecked}"/>';
+		//if(buildingPlanDetailsChecked != 'true') {
+		//	jQuery('tr.bpddetails').hide();
+		//}
 		var structure = '<s:property value="%{propertyDetail.structure}"/>';
 		if(structure == 'false') {
 			jQuery('td.siteowner').hide();

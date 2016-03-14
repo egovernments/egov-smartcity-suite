@@ -76,22 +76,20 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.services.bills.BillsService;
 import org.egov.services.budget.BudgetAppropriationService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Results(value = {
-        @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/pdf", "contentDisposition", "no-cache;filename=JournalVoucherReport.pdf" }),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=JournalVoucherReport.xls" }),
-                        @Result(name = "HTML", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "text/html" })
-})
+        @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=JournalVoucherReport.pdf" }),
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/xls", "contentDisposition", "no-cache;filename=JournalVoucherReport.xls" }),
+        @Result(name = "HTML", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "text/html" }) })
 @ParentPackage("egov")
 public class JournalVoucherPrintAction extends BaseFormAction {
     String jasperpath = "/reports/templates/journalVoucherReport.jasper";
@@ -108,6 +106,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     private BillsService billsManager;
     private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
     private BudgetAppropriationService budgetAppropriationService;
+    private @Autowired EgovCommon egovCommon;
 
     public void setBillsService(final BillsService billsManager) {
         this.billsManager = billsManager;
@@ -164,9 +163,10 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     private void populateVoucher() {
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
-        	
+
             final Long id = Long.valueOf(parameters.get("id")[0]);
-            final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id =?",id);
+            final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService.find(
+                    "from CVoucherHeader where id =?", id);
             if (voucherHeader != null) {
                 voucher = voucherHeader;
                 generateVoucherReportList();
@@ -177,17 +177,16 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     private void generateVoucherReportList() {
         if (voucher != null) {
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount().doubleValue()))==0) {
-                    final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
-                            .toString()), vd);
+                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount().doubleValue())) == 0) {
+                    final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher
+                            .getId().toString()), vd, egovCommon);
                     voucherReportList.add(voucherReport);
                 }
-            
+
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-                	 if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount().doubleValue()))==0)
-                {
-                    final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
-                            .toString()), vd);
+                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount().doubleValue())) == 0) {
+                    final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher
+                            .getId().toString()), vd, egovCommon);
                     voucherReportList.add(voucherReport);
                 }
         }
@@ -195,8 +194,8 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     public String getFundName() {
         if (voucher != null && voucher.getFundId() != null) {
-            //persistenceService.setType(Fund.class);
-            final Fund fund = (Fund) persistenceService.find("from Fund where id=? ",voucher.getFundId().getId());
+            // persistenceService.setType(Fund.class);
+            final Fund fund = (Fund) persistenceService.find("from Fund where id=? ", voucher.getFundId().getId());
             return fund == null ? "" : fund.getName();
         }
         return "";
@@ -204,9 +203,9 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     public String getDepartmentName() {
         if (voucher != null && voucher.getVouchermis() != null && voucher.getVouchermis().getDepartmentid() != null) {
-            //persistenceService.setType(Department.class);
-            final Department dept = (Department) persistenceService.find("from Department where id=? ",voucher.getVouchermis().getDepartmentid().getId()
-                    );
+            // persistenceService.setType(Department.class);
+            final Department dept = (Department) persistenceService.find("from Department where id=? ", voucher
+                    .getVouchermis().getDepartmentid().getId());
             return dept == null ? "" : dept.getName();
         }
         return "";
@@ -263,7 +262,8 @@ public class JournalVoucherPrintAction extends BaseFormAction {
                 reportHelper.getClass().getResourceAsStream("/reports/templates/budgetAppropriationDetail.jasper"));
         if (billRegistermis != null && billRegistermis.getBudgetaryAppnumber() != null
                 && !"".equalsIgnoreCase(billRegistermis.getBudgetaryAppnumber()))
-            paramMap.put("budgetDetail", budgetAppropriationService.getBudgetDetailsForBill(billRegistermis.getEgBillregister()));
+            paramMap.put("budgetDetail",
+                    budgetAppropriationService.getBudgetDetailsForBill(billRegistermis.getEgBillregister()));
         else if (voucher != null && voucher.getVouchermis().getBudgetaryAppnumber() != null
                 && !"".equalsIgnoreCase(voucher.getVouchermis().getBudgetaryAppnumber()))
             paramMap.put("budgetDetail", budgetAppropriationService.getBudgetDetailsForVoucher(voucher));
@@ -274,14 +274,14 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     public Map<String, Object> getAccountDetails(final Integer detailtypeid, final Integer detailkeyid,
             final Map<String, Object> tempMap) throws ApplicationException {
-        final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY, detailtypeid);
+        final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY,
+                detailtypeid);
         tempMap.put("detailtype", detailtype.getName());
         tempMap.put("detailtypeid", detailtype.getId());
         tempMap.put("detailkeyid", detailkeyid);
 
-        final EgovCommon common = new EgovCommon();
-        common.setPersistenceService(persistenceService);
-        final EntityType entityType = common.getEntityType(detailtype, detailkeyid);
+        egovCommon.setPersistenceService(persistenceService);
+        final EntityType entityType = egovCommon.getEntityType(detailtype, detailkeyid);
         tempMap.put(Constants.DETAILKEY, entityType.getName());
         tempMap.put(Constants.DETAILCODE, entityType.getCode());
         return tempMap;
@@ -305,8 +305,10 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     }
 
     /*
-     * private Position getStateUser(State state) { if (state.getPrevious() != null) return state.getPrevious().getOwner(); else
-     * return null;// inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate()); }
+     * private Position getStateUser(State state) { if (state.getPrevious() !=
+     * null) return state.getPrevious().getOwner(); else return null;//
+     * inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(),
+     * state.getCreatedDate()); }
      */
 
     private void loadInboxHistoryData(final State states) throws ApplicationRuntimeException {
@@ -315,13 +317,13 @@ public class JournalVoucherPrintAction extends BaseFormAction {
             Collections.reverse(stateHistory);
             for (final StateHistory state : stateHistory) {
 
-                // WorkflowTypes workflowTypes = inboxService.getWorkflowType(state.getType());
+                // WorkflowTypes workflowTypes =
+                // inboxService.getWorkflowType(state.getType());
                 final String pos = state.getSenderName().concat(" / ").concat(state.getSenderName());
                 final String nextAction = state.getNextAction();
                 if (!"NEW".equalsIgnoreCase(state.getValue())) {
-                    final WorkFlowHistoryItem inboxHistoryItem = new WorkFlowHistoryItem(getFormattedDate(state.getCreatedDate(),
-                            "dd/MM/yyyy hh:mm a"), pos,
-                            nextAction, state.getValue(),
+                    final WorkFlowHistoryItem inboxHistoryItem = new WorkFlowHistoryItem(getFormattedDate(
+                            state.getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction, state.getValue(),
                             state.getComments() != null ? removeSpecialCharacters(state.getComments()) : "");
                     inboxHistory.add(inboxHistoryItem);
                 }
@@ -337,9 +339,8 @@ public class JournalVoucherPrintAction extends BaseFormAction {
         if (state.getNextAction() == null)
             return "";
         else {
-            final org.egov.infstr.workflow.Action action = (org.egov.infstr.workflow.Action)
-                    persistenceService.findByNamedQuery(org.egov.infstr.workflow.Action.BY_NAME_AND_TYPE, state.getNextAction(),
-                            null);
+            final org.egov.infstr.workflow.Action action = (org.egov.infstr.workflow.Action) persistenceService
+                    .findByNamedQuery(org.egov.infstr.workflow.Action.BY_NAME_AND_TYPE, state.getNextAction(), null);
             if (action != null)
                 return " - " + (action.getDescription() != null ? action.getDescription() : state.getNextAction());
             else

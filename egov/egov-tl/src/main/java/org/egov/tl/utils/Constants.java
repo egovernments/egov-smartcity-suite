@@ -42,7 +42,6 @@ package org.egov.tl.utils;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class Constants {
         public static final String FILESTORE_MODULECODE = "TL";
@@ -474,157 +473,6 @@ public class Constants {
 
         public static final String[] LICENSE_CATEGORY = { "Hospital", "Clinic" };
 
-        public static final TreeMap<String, String> HOSPITAL_TYPES = new TreeMap<String, String>() {
-                /**
-         *
-         */
-                private static final long serialVersionUID = 3913747971019907907L;
-
-                {
-                        put("Allopathic", "Allopathic");
-                        put("Ayush", "Ayush");
-                }
-        };
-
-        // TreeMap for hospital sub type allopathic
-        public static final TreeMap<String, String> HOSPITAL_SUBTYPE_ALLOPATHIC_HOSP = new TreeMap<String, String>() {
-                /**
-         *
-         */
-                private static final long serialVersionUID = -1696336859471578718L;
-
-                {
-                        put("General Hospital", "General Hospital");
-                        put("Maternity  Home (Gynecology)", "Maternity  Home (Gynecology)");
-                        put("Surgical Hospital", "Surgical Hospital");
-                        put("Pediatric Hospital", "Pediatric Hospital");
-                        put("Ophthalmic Hospital", "Ophthalmic Hospital");
-                        put("Ortho", "Ortho");
-                        put("Multispeciality", "Multispeciality");
-                        put("Speciality", "Speciality");
-                        put("Research Center", "Research Center");
-                        put("Nursing home", "Nursing home");
-                        put("Community Health Centre", "Community Health Centre");
-                        put("Sanatorium", "Sanatorium");
-                        put("Pathology Laboratory", "Pathology Laboratory");
-                        put("Hematology Laboratory", "Hematology Laboratory");
-                        put("Biochemistry  Laboratory", "Biochemistry  Laboratory");
-                        put("Microbiology Laboratory", "Microbiology Laboratory");
-                        put("Genetics Laboratory", "Genetics Laboratory");
-                        put("Collection Centre", "Collection Centre");
-                        put("Super Speciality Hospital", "Super Speciality Hospital");
-                        put("Cancer Hospital", "Cancer Hospital");
-                        put("Physical and Metaly Challenged Hospital",
-                                        "Physical and Metaly Challenged Hospital");
-                        put("Others", "Others");
-                }
-        };
-
-        public static final TreeMap<String, String> HOSPITAL_SUBTYPE_ALLOPATHIC_CLINIC = new TreeMap<String, String>() {
-                /**
-         *
-         */
-                private static final long serialVersionUID = 3947415644930340600L;
-
-                {
-                        put("ENT (Ear, Nose And Throat)", "ENT (Ear, Nose And Throat)");
-                        put("Ophthalmic", "Ophthalmic");
-                        put("Dermatology", "Dermatology");
-                        put("Dentist", "Dentist");
-                        put("Physician", "Physician");
-                        put("Pediatric", "Pediatric");
-                        put("Ortho", "Ortho");
-                        put("Radiologist", "Radiologist");
-                        put("Pathology", "Pathology");
-                        put("Medicine", "Medicine");
-                        put("Gynecology And Obstetrics", "Gynecology And Obstetrics");
-                        put("Single Practitioner", "Single Practitioner");
-                        put("Polyclinic", "Polyclinic");
-                        put("Sub-centre", "Sub-centre");
-                        put("Physiotherapy Clinic", "Physiotherapy Clinic");
-                        put("Occupational Therapy", "Occupational Therapy");
-                        put("Infertility", "Infertility");
-                        put("Day Care Centre", "Day Care Centre");
-                        put("Dialysis Centre", "Dialysis Centre");
-                        put("Integrated Counseling and Testing Centre( ICTC)",
-                                        "Integrated Counseling and Testing Centre( ICTC)");
-                        put("Wellness/Fitness Centre", "Wellness/Fitness Centre");
-                        put("X Ray Centre", "X Ray Centre");
-                        put("Mammography Centre", "Mammography Centre");
-                        put("Bone Densitometry Centre", "Bone Densitometry Centre");
-                        put("Sonography Centre", "Sonography Centre");
-                        put("Color Doppler Centre", "Color Doppler Centre");
-                        put("CT Scan Centre", "CT Scan Centre");
-                        put("Magnetic Resonance Imaging (MRI) Centre",
-                                        "Magnetic Resonance Imaging (MRI) Centre");
-                        put("Positron Emission Tomography (PET) Scan Centre",
-                                        "Positron Emission Tomography (PET) Scan Centre");
-                        put("Electro Myo Graphy (EMG) Centre",
-                                        "Electro Myo Graphy (EMG) Centre");
-                        put("Others", "Others");
-                }
-        };
-
-        // TreeMap for hospital sub type ayush
-        public static final TreeMap<String, String> HOSPITAL_SUBTYPE_AYUSH_HOSP = new TreeMap<String, String>() {
-                /**
-         *
-         */
-                private static final long serialVersionUID = 1923352736848787384L;
-
-                {
-                        put("Ayurvedic Hospital", "Ayurvedic Hospital");
-                        put("Unani Hospital", "Unani Hospital");
-                        put("Homeopathic Hospital", "Homeopathic Hospital");
-                        put("Yoga/Naturopathic Hospital", "Yoga/Naturopathic Hospital");
-                        put("Sidha", "Sidha");
-                        put("Others", "Others");
-                }
-        };
-
-        // TreeMap for hospital sub type ayush Clinic
-        public static final TreeMap<String, String> HOSPITAL_SUBTYPE_AYUSH_CLINIC = new TreeMap<String, String>() {
-                /**
-         *
-         */
-                private static final long serialVersionUID = 7689151937226854434L;
-
-                {
-                        put("Ayurvedic Clinic", "Ayurvedic Cinic");
-                        put("Unani Clinic", "Unani Clinic");
-                        put("Homeopathic Clinic", "Homeopathic Clinic");
-                        put("Naturopathic Clinic", "Naturopathic Clinic");
-                        put("Others", "Others");
-                }
-        };
-
-        public static final String HOSPITAL_TYPE_ALLOPATHIC = "Allopathic";
-        public static final String HOSPITAL_TYPE_AYUSH = "Ayush";
-
-        public static final String HOSPITAL_CATEGORY_HOSP = "Hospital";
-        public static final String HOSPITAL_CATEGORY_CLINIC = "Clinic";
-
-        public static final String DROPDOWN_LIST_HOSPITAL_SUBTYPE = "hospitalSubTypeList";
-
-        // For PwdContractorLicense Check list
-        public static final String PWDCONTRACTOR_CHECKLIST1 = "Sales Tax/Tin No";
-        public static final String PWDCONTRACTOR_CHECKLIST2 = "Financial Statement / IT Certificate";
-        public static final String PWDCONTRACTOR_CHECKLIST3 = "solvency certificate";
-        public static final String PWDCONTRACTOR_CHECKLIST4 = "professional tax certificate";
-        public static final String PWDCONTRACTOR_CHECKLIST5 = "provident fund certificate";
-        public static final String PWDCONTRACTOR_CHECKLIST6 = "undertaking certificate";
-        public static final String PWDCONTRACTOR_CHECKLIST7 = "Application copies / in 2,3";
-        public static final String PWDCONTRACTOR_CHECKLIST8 = "partnership deed/ownership deed(if Applicable)";
-        public static final String PWDCONTRACTOR_CHECKLIST9 = "Ownership Certificate";
-        public static final String PWDCONTRACTOR_CHECKLIST10 = "List Of Works Which Are Done and Progress";
-        public static final String PWDCONTRACTOR_CHECKLIST11 = "List Of Machine Required For Work";
-        public static final String PWDCONTRACTOR_CHECKLIST12 = "List of technical staff with proper doc’s";
-        public static final String PWDCONTRACTOR_CHECKLIST13 = "Attested copy of PTR/PTE";
-        public static final String PWDCONTRACTOR_CHECKLIST14 = "electric license(if applicable)";
-        public static final String PWDCONTRACTOR_CHECKLIST15 = "Oath for not coming In Black List";
-        public static final String PWDCONTRACTOR_CHECKLIST16 = "2 passport size photos";
-        public static final String PWDCONTRACTOR_CHECKLIST17 = "Other";
-        public static final String PWDCONTRACTOR_CHECKLIST18 = "Old Certificate";
 
         public static final String DEMAND_REASON_REGN_FEE = "Registration Fee";
         public static final String WORKFLOW_REG_FEE_STATE_COLLECTED = "Registration Fee Collected";
@@ -643,12 +491,6 @@ public class Constants {
         public static final String MAINTENANCE_CONTRACTORS = "MTN";
         public static final String BOT_CONTRACTORS = "BOT";
         public static final String FIRE_CONTRACTORS = "FRC";
-
-        // PWD Contractor License
-        public static final String[] TYPEOFFIRMPWD = {
-                        "Individual/Sole Proprietor", "Joint Stock Company",
-                        "Hindu Undivided Family", "Registered Partnership Firm",
-                        "Limited Company", "UnEmployeed Engineer", "Partnership" };
         public static final String CLASS8 = "8";
         public static final String CLASS9 = "9";
         public static final String MAX_AMOUNT_WORKS_ESTIMATE = "10000";
@@ -690,18 +532,6 @@ public class Constants {
         public static final String DOCUMENTSIZE = "0";
         public static final String TL_PROVISIONAL_NOC_NUMBER = "TL_PRO_NOC_NUMBER";
         public static final String ENTER_LICENSE = "Enter License";
-        // Hawker License
-        public static final TreeMap<String, String> HAWKER_TYPE = new TreeMap<String, String>() {
-                /**
-         *
-         */
-                private static final long serialVersionUID = 6964943974528285503L;
-
-                {
-                        put("Moving", "Moving");
-                        put("Stationary", "Stationary");
-                }
-        };
         public static final String CITIZENUSER = "citizenUser";
 
         public static final String VIOLATION_FEE_DEMAND_REASON = "Violation Fee";
@@ -742,13 +572,8 @@ public class Constants {
         public static final String APPLICATION_STATUS_COLLECTION_CODE = "COLLECTIONPENDING";
         public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNPENDING";
         public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
-        public static final String STR_WITH_APPLICANT_NAME = " Dear ";
         public static final String RENEWAL_LIC_APPTYPE ="Renew";
         
-        public static final String STR_WITH_LICENCE_NUMBER=" Trade License with TIN No.";
-        public static final String STR_FOR_SUBMISSION = "/- and the Amount is Collected  @ Rs. ";
-        public static final String STR_FOR_SUBMISSION_DATE="/- per year w.e.f ";
-        public static final String STR_FOR_CITYMSG=". \nThanks,\n";
         public static final String REVENUE_HIERARCHYTYPE = "REVENUE";
         public static final String STR_FOR_EMAILSUBJECT="Trade License application Amount Collected for TIN No.";
         
@@ -777,5 +602,6 @@ public class Constants {
         public static final String DIGITALSIGNINCLUDEINWORKFLOW =  "DIGITALSIGNINCLUDEINWORKFLOW";
         public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
         public static final String ROLE_COMMISSIONERDEPARTEMNT ="Health";
+        public static final String PERMANENT_NATUREOFBUSINESS = "Permanent";
 }
 

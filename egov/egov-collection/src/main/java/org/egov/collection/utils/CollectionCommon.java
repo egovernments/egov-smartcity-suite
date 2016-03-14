@@ -124,7 +124,7 @@ public class CollectionCommon {
     @Autowired
     private EgwStatusHibernateDAO statusDAO;
     @Autowired
-    private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     /**
      * @param receiptHeaderService the receipt header Service to be set
@@ -171,7 +171,7 @@ public class CollectionCommon {
         switch (receiptType) {
         case CollectionConstants.RECEIPT_TYPE_BILL:
             templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-            + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
+                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
             if (!reportService.isValidTemplate(templateName)) {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
@@ -192,9 +192,9 @@ public class CollectionCommon {
         case CollectionConstants.RECEIPT_TYPE_CHALLAN:
             templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
             break;
-        case CollectionConstants.RECEIPT_TYPE_ADHOC:
+        /*case CollectionConstants.RECEIPT_TYPE_ADHOC:
             templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-            + CollectionConstants.RECEIPT_TEMPLATE_NAME;
+                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;
             if (!reportService.isValidTemplate(templateName)) {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
@@ -210,10 +210,11 @@ public class CollectionCommon {
                     LOGGER.error(errMsg);
                     throw new ApplicationRuntimeException(errMsg);
                 }
-            }
+            }*/
+        case CollectionConstants.RECEIPT_TYPE_ADHOC:
+                templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
             break;
         }
-
         return templateName;
     }
 
@@ -238,14 +239,14 @@ public class CollectionCommon {
                 && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
             if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
                 newReceiptDetail
-                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                        CollectionConstants.INSTRUMENTTYPE_CASH));
+                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                                CollectionConstants.INSTRUMENTTYPE_CASH));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD))
                 newReceiptDetail
-                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                        CollectionConstants.INSTRUMENTTYPE_CARD));
+                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                                CollectionConstants.INSTRUMENTTYPE_CARD));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK))
                 newReceiptDetail.setAccounthead(receiptHeader.getReceiptInstrument().iterator().next()
                         .getBankAccountId().getChartofaccounts());
@@ -312,7 +313,7 @@ public class CollectionCommon {
                 Collections.sort(billDetail.getAccounts());
 
                 for (final BillAccountDetails billAccount : billDetail.getAccounts()) {
-                    final CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(billAccount
+                    final CChartOfAccounts account = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(billAccount
                             .getGlCode());
                     final CFunction function = functionDAO.getFunctionByCode(billAccount.getFunctionCode());
                     // TODO: Need to check for getIsActualDemand()
@@ -371,18 +372,18 @@ public class CollectionCommon {
             for (final ReceiptHeader receiptHeader : receipts) {
                 final ReceiptHeader receipHeaderRefObj = (ReceiptHeader) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_CHALLANRECEIPT_BY_REFERENCEID, receiptHeader.getId());
-                receiptList.add(new BillReceiptInfoImpl(receiptHeader, egovCommon, receipHeaderRefObj));
+                receiptList.add(new BillReceiptInfoImpl(receiptHeader, egovCommon, receipHeaderRefObj, chartOfAccountsHibernateDAO));
             }
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
                 String additionalMessage = null;
                 if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL)
                     additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
-                            new BillReceiptInfoImpl(receiptHeader));
+                            new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
                 if (additionalMessage != null)
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage));
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage, chartOfAccountsHibernateDAO));
                 else
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader));
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
             }
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
@@ -403,7 +404,7 @@ public class CollectionCommon {
      */
     public Integer generateChallan(final ReceiptHeader receipt, final Map<String, Object> session, final boolean flag) {
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
-        receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader()));
+        receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader(), chartOfAccountsHibernateDAO));
 
         final String templateName = CollectionConstants.CHALLAN_TEMPLATE_NAME;
         final Map reportParams = new HashMap<String, Object>();
@@ -443,7 +444,7 @@ public class CollectionCommon {
     public List<ReceiptDetailInfo> setReceiptDetailsList(final ReceiptHeader rh, final String amountType) {
         // To Load receipt details to billDetailslist
         final List<ReceiptDetailInfo> billDetailslist = new ArrayList<ReceiptDetailInfo>(0);
-        final List<CChartOfAccounts> bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
+        final List<CChartOfAccounts> bankCOAList = chartOfAccountsHibernateDAO.getBankChartofAccountCodeList();
         for (final ReceiptDetail rDetails : rh.getReceiptDetails())
             if (!FinancialsUtil.isRevenueAccountHead(rDetails.getAccounthead(), bankCOAList)) {
                 final ReceiptDetailInfo rInfo = new ReceiptDetailInfo();
@@ -506,6 +507,7 @@ public class CollectionCommon {
 
         } catch (final Exception e) {
             LOGGER.error("Exception while setting subledger details", e);
+            throw new ApplicationRuntimeException("Exception while setting subledger details" , e);
         }
         if (subLedgerlist.isEmpty())
             subLedgerlist.add(new ReceiptDetailInfo());
@@ -555,10 +557,10 @@ public class CollectionCommon {
 
         final ReceiptMisc receiptMisc = new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(),
                 oldReceiptHeader.getReceiptMisc().getFund(), null, null, oldReceiptHeader.getReceiptMisc()
-                .getDepartment(), newReceiptHeader, null, null, null);
+                        .getDepartment(), newReceiptHeader, null, null, null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
         newReceiptHeader.setReceiptdate(new Date());
-        final List<CChartOfAccounts> bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
+        final List<CChartOfAccounts> bankCOAList = chartOfAccountsHibernateDAO.getBankChartofAccountCodeList();
 
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
             // debit account heads should not be considered
@@ -708,7 +710,7 @@ public class CollectionCommon {
             invalidBankPaytMsg += "Missing Bank Transaction Date \n";
         if (new Date().compareTo(paytInfoBank.getTransactionDate()) == -1)
             invalidBankPaytMsg += "Bank Transaction Date[" + paytInfoBank.getTransactionDate()
-            + "] cannot be a future date \n";
+                    + "] cannot be a future date \n";
         Bankaccount account = null;
         if (paytInfoBank.getBankAccountId() == null)
             invalidBankPaytMsg += "Missing Bank Account Id \n";
@@ -717,7 +719,7 @@ public class CollectionCommon {
 
             if (account == null)
                 invalidBankPaytMsg += "No account found for bank account id[" + paytInfoBank.getBankAccountId()
-                + "] \n";
+                        + "] \n";
         }
 
         if (!CollectionConstants.BLANK.equals(invalidBankPaytMsg))
@@ -751,18 +753,18 @@ public class CollectionCommon {
         if (paytInfoChequeDD.getInstrumentAmount() == null
                 || paytInfoChequeDD.getInstrumentAmount().compareTo(BigDecimal.ZERO) <= 0)
             invalidChequeDDPaytMsg += "Invalid cheque/DD Instrument Amount[" + paytInfoChequeDD.getInstrumentAmount()
-            + "] \n";
+                    + "] \n";
         if (paytInfoChequeDD.getInstrumentNumber() == null
                 || CollectionConstants.BLANK.equals(paytInfoChequeDD.getInstrumentNumber())
                 || !MoneyUtils.isInteger(paytInfoChequeDD.getInstrumentNumber())
                 || paytInfoChequeDD.getInstrumentNumber().length() != 6)
             invalidChequeDDPaytMsg += "Invalid Cheque/DD Instrument Number[" + paytInfoChequeDD.getInstrumentNumber()
-            + "]. \n";
+                    + "]. \n";
         if (paytInfoChequeDD.getInstrumentDate() == null)
             invalidChequeDDPaytMsg += "Missing Cheque/DD Transaction Date \n";
         if (new Date().compareTo(paytInfoChequeDD.getInstrumentDate()) == -1)
             invalidChequeDDPaytMsg += "Cheque/DD Transaction Date[" + paytInfoChequeDD.getInstrumentDate()
-            + "] cannot be a future date \n";
+                    + "] cannot be a future date \n";
         Bank bank = null;
         if (paytInfoChequeDD.getBankId() != null) {
             bank = (Bank) bankDAO.findById(paytInfoChequeDD.getBankId().intValue(), false);
@@ -799,7 +801,7 @@ public class CollectionCommon {
         for (final ReceiptDetail receiptDetail : receiptDetails)
             totalCreditAmount = totalCreditAmount.add(receiptDetail.getCramount());
         if (totalCreditAmount.intValue() == 0)
-            new ApplicationRuntimeException("Apportioning Failed at the Billing System: " + receiptHeader.getService().getCode()
+            throw new ApplicationRuntimeException("Apportioning Failed at the Billing System: " + receiptHeader.getService().getCode()
                     + ", for bill number: " + receiptHeader.getReferencenumber());
         return receiptDetails;
     }

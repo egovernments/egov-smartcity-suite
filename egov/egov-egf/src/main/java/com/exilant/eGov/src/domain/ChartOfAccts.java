@@ -95,7 +95,12 @@ public class ChartOfAccts {
     private static final Logger LOGGER = Logger.getLogger(ChartOfAccts.class);
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    EGovernCommon cm = new EGovernCommon();
+    
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
+    private @Autowired EGovernCommon eGovernCommon;
+    
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
             .getDefault());
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
@@ -232,22 +237,21 @@ public class ChartOfAccts {
     @Transactional
     public void insert(final Connection connection) throws SQLException,
     TaskFailedException {
-        new EGovernCommon();
         created = new SimpleDateFormat("dd/mm/yyyy").format(new Date());
         try {
             created = formatter.format(sdf.parse(created));
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-activeCoaCodes");
-            EgovMasterDataCaching.getInstance().removeFromCache("egi-coaCodes");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache("egi-coaCodes");
+            masterDataCache.removeFromCache(
                     "egi-chartOfAccounts");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-coaPurposeId10");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-accountCodes");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-liabilityCOACodes");
-            EgovMasterDataCaching.getInstance().removeFromCache(
+            masterDataCache.removeFromCache(
                     "egi-coaCodesForLiability");
             setLastModified(created);
             setId(String.valueOf(PrimaryKeyGenerator
@@ -320,8 +324,7 @@ public class ChartOfAccts {
 
     public void newUpdate() throws TaskFailedException,
     SQLException {
-        final EGovernCommon commommethods = new EGovernCommon();
-        created = commommethods.getCurrentDate();
+        created = eGovernCommon.getCurrentDate();
         Query pstmt = null;
         try {
             created = formatter.format(sdf.parse(created));

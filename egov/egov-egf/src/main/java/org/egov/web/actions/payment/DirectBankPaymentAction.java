@@ -136,6 +136,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private static final String FAILED = "Transaction failed";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     private static final long serialVersionUID = 1L;
+    @Autowired
     private CreateVoucher createVoucher;
     private PaymentService paymentService;
     @Autowired
@@ -609,7 +610,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @ValidationErrorPage("reverse")
     public String reverse() {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final CreateVoucher cv = new CreateVoucher();
         CVoucherHeader reversalVoucher = null;
         final HashMap<String, Object> reversalVoucherMap = new HashMap<String, Object>();
         reversalVoucherMap.put("Original voucher header id", voucherHeader.getId());
@@ -626,7 +626,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         final List<HashMap<String, Object>> reversalList = new ArrayList<HashMap<String, Object>>();
         reversalList.add(reversalVoucherMap);
         try {
-            reversalVoucher = cv.reverseVoucher(reversalList);
+            reversalVoucher = createVoucher.reverseVoucher(reversalList);
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ValidationException(Arrays.asList(new ValidationError(FAILED_WHILE_REVERSING, FAILED_WHILE_REVERSING)));
@@ -644,7 +644,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
   
 
     private void reCreateLedger() {
-        final CreateVoucher createVoucher = new CreateVoucher();
         try {
             createVoucher.deleteVoucherdetailAndGL(voucherHeader);
             HibernateUtil.getCurrentSession().flush();
@@ -1048,15 +1047,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         this.scriptService = scriptService;
     }
 
-    @Override
-    public CreateVoucher getCreateVoucher() {
-        return createVoucher;
-    }
-
-    @Override
-    public void setCreateVoucher(final CreateVoucher createVoucher) {
-        this.createVoucher = createVoucher;
-    }
+ 
 
     public ChartOfAccounts getChartOfAccounts() {
         return chartOfAccounts;

@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.utils.FinancialsUtil;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 
 /**
  * Provides account information for receipts
@@ -52,12 +53,12 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
     /**
      * This is used to check if an account is a revenue account.
      */
-    private final boolean isRevenueAccount;
+    private  boolean isRevenueAccount;
     /**
      * The private instance of receipt detail. This is used by all public
      * getters.
      */
-    private final ReceiptDetail receiptDetail;
+    private  ReceiptDetail receiptDetail;
 
     /**
      * Creates the receipt account info for given receipt detail.
@@ -65,12 +66,13 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
      * @param receiptDetail
      *            The receipt detail object
      */
-    public ReceiptAccountInfoImpl(final ReceiptDetail receiptDetail) {
+    public ReceiptAccountInfoImpl(final ReceiptDetail receiptDetail,ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
         this.receiptDetail = receiptDetail;
-        isRevenueAccount = FinancialsUtil.isRevenueAccountHead(this.receiptDetail.getAccounthead(),
-                FinancialsUtil.getBankChartofAccountCodeList());
+        this.isRevenueAccount = FinancialsUtil.isRevenueAccountHead(this.receiptDetail.getAccounthead(),
+                chartOfAccountsHibernateDAO.getBankChartofAccountCodeList());
+       
     }
-
+   
     @Override
     public String toString() {
         return receiptDetail.toString();

@@ -56,12 +56,17 @@ import org.apache.struts.actions.DispatchAction;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.service.EmployeeServiceOld;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BeforeGenericMasterAction extends DispatchAction
 {
 
 	public final static Logger LOGGER = Logger.getLogger(BeforeGenericMasterAction.class.getClass());
 	private EmployeeServiceOld employeeService;
+	
+	@Autowired
+	private EgovMasterDataCaching masterDataCache;
+	
     public BeforeGenericMasterAction()
     {
     }
@@ -186,25 +191,25 @@ public class BeforeGenericMasterAction extends DispatchAction
     {
         try {
 			HashMap genericMap = new HashMap();
-			ArrayList statusMasterList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-EmployeeStatusMaster");
+			ArrayList statusMasterList = (ArrayList)masterDataCache.get("egEmp-EmployeeStatusMaster");
 			genericMap.put("EmployeeStatusMaster", employeeService.getMapForList(statusMasterList));
-			ArrayList gradeMasterList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-GradeMaster");
+			ArrayList gradeMasterList = (ArrayList)masterDataCache.get("egEmp-GradeMaster");
 			genericMap.put("GradeMaster", employeeService.getMapForList(gradeMasterList));
-			ArrayList bloodGroupList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-BloodGroupMaster");
+			ArrayList bloodGroupList = (ArrayList)masterDataCache.get("egEmp-BloodGroupMaster");
 			genericMap.put("BloodGroupMaster", employeeService.getMapForList(bloodGroupList));
-			ArrayList catMasterList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-CategoryMaster");
+			ArrayList catMasterList = (ArrayList)masterDataCache.get("egEmp-CategoryMaster");
 			genericMap.put("CategoryMaster", employeeService.getMapForList(catMasterList));
-			ArrayList commMasterList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-CommunityMaster");
+			ArrayList commMasterList = (ArrayList)masterDataCache.get("egEmp-CommunityMaster");
 			genericMap.put("CommunityMaster", employeeService.getMapForList(commMasterList));
-			ArrayList langKnownMasterList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-LanguagesKnownMaster");
+			ArrayList langKnownMasterList = (ArrayList)masterDataCache.get("egEmp-LanguagesKnownMaster");
 			genericMap.put("LanguagesKnownMaster", employeeService.getMapForList(langKnownMasterList));
-			ArrayList langQualiMasterList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-LanguagesQulifiedMaster");
+			ArrayList langQualiMasterList = (ArrayList)masterDataCache.get("egEmp-LanguagesQulifiedMaster");
 			genericMap.put("LanguagesQulifiedMaster", employeeService.getMapForList(langQualiMasterList));
-			ArrayList recruimentMasterMasterList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-RecruimentMaster");
+			ArrayList recruimentMasterMasterList = (ArrayList)masterDataCache.get("egEmp-RecruimentMaster");
 			genericMap.put("RecruimentMaster", employeeService.getMapForList(recruimentMasterMasterList));
-			ArrayList religionMasterList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-ReligionMaster");
+			ArrayList religionMasterList = (ArrayList)masterDataCache.get("egEmp-ReligionMaster");
 			genericMap.put("ReligionMaster", employeeService.getMapForList(religionMasterList));
-			ArrayList typeOfRecMasterList = (ArrayList)EgovMasterDataCaching.getInstance().get("egEmp-TypeOfRecruimentMaster");
+			ArrayList typeOfRecMasterList = (ArrayList)masterDataCache.get("egEmp-TypeOfRecruimentMaster");
 			genericMap.put("TypeOfRecruimentMaster", employeeService.getMapForList(typeOfRecMasterList));
 			genericMap.put("genericTable", getMap());
 			genericMap.put("genericName", getNameMap());

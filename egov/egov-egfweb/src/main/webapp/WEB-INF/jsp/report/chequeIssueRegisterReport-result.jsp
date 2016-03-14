@@ -130,10 +130,10 @@
 						<td>
 							<div class="excelpdf">
 								<a
-									href='${pageContext.request.contextPath}/report/chequeIssueRegisterReport!generateXls.action?fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&accountNumber.id=<s:property value="accountNumber.id"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&functionary.id=<s:property value="functionary.id"/>&fund.id=<s:property value="fund.id"/>&field.id=<s:property value="field.id"/>&bank=<s:property value="bank"/>'>Excel</a>
+									href='/EGF/report/chequeIssueRegisterReport-generateXls.action?fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&accountNumber.id=<s:property value="accountNumber.id"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&functionary.id=<s:property value="functionary.id"/>&fund.id=<s:property value="fund.id"/>&field.id=<s:property value="field.id"/>&bank=<s:property value="bank"/>'>Excel</a>
 								<img align="absmiddle"
 									src="/egi/resources/erp2/images/excel.png"> | <a
-									href='${pageContext.request.contextPath}/report/chequeIssueRegisterReport!generatePdf.action?fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&accountNumber.id=<s:property value="accountNumber.id"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&functionary.id=<s:property value="functionary.id"/>&fund.id=<s:property value="fund.id"/>&field.id=<s:property value="field.id"/>&bank=<s:property value="bank"/>'>PDF</a>
+									href='/EGF/report/chequeIssueRegisterReport-generatePdf.action?fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&accountNumber.id=<s:property value="accountNumber.id"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&functionary.id=<s:property value="functionary.id"/>&fund.id=<s:property value="fund.id"/>&field.id=<s:property value="field.id"/>&bank=<s:property value="bank"/>'>PDF</a>
 								<img align="absmiddle" src="/egi/resources/erp2/images/pdf.png">
 							</div>
 						</td>
@@ -144,4 +144,4 @@
 		</tr>
 	</table>
 </s:if>
-<s:else>No data found</s:else>
+<s:else><h5 style="color: red">No data found</h5></s:else>

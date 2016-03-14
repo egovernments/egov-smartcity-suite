@@ -41,7 +41,8 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css" />
 <title><s:text name="surrender.cheque.search" /></title>
 </head>
 <body>
@@ -93,7 +94,7 @@
 							headerValue="----Choose----" onchange="loadBankAccount(this)" /></td>
 					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
 						dropdownId="bankaccount"
-						url="voucher/common!ajaxLoadBanksAccountsWithAssignedCheques.action" />
+						url="voucher/common-ajaxLoadBanksAccountsWithAssignedCheques.action" />
 					<td class="greybox"><s:text name="bankaccount" /><span
 						class="mandatory"></span></td>
 					<td class="greybox" colspan="2"><s:select name="bankaccount"
@@ -120,7 +121,7 @@
 
 			</table>
 			<div class="buttonbottom">
-				<s:submit method="searchChequesForSurrender" value="Search"
+				<s:submit onclick = "onSubmit();" value="Search"
 					id="searchBtn" cssClass="buttonsubmit" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
@@ -130,22 +131,28 @@
 	</s:form>
 	<s:if test="%{!validateUser('chequeassignment')}">
 		<script>
-					document.getElementById('searchBtn').disabled=true;
-					document.getElementById('errorSpan').innerHTML='<s:text name="chq.assignment.invalid.user"/>'
-				</script>
+			document.getElementById('searchBtn').disabled = true;
+			document.getElementById('errorSpan').innerHTML = '<s:text name="chq.assignment.invalid.user"/>'
+		</script>
 	</s:if>
 	<script>
-				var date='<s:date name="currentDate" format="dd/MM/yyyy"/>';			
-				function loadBankAccount(obj)
-				{
-						var bankbranchId = obj.options[obj.selectedIndex].value;
-						var index=bankbranchId.indexOf("-");
-						var bankId = bankbranchId.substring(0,index);
-						var brId=bankbranchId.substring(index+1,bankbranchId.length);
-						document.getElementById("bankbranch").value=brId;
-						populatebankaccount({bankId:bankId,branchId:brId+'&asOnDate='+date});
-				}
-			</script>
+		function onSubmit() {
+			document.chequeAssignment.action = '/EGF/payment/chequeAssignment-searchChequesForSurrender.action';
+			document.chequeAssignment.submit();
+		}
+		var date = '<s:date name="currentDate" format="dd/MM/yyyy"/>';
+		function loadBankAccount(obj) {
+			var bankbranchId = obj.options[obj.selectedIndex].value;
+			var index = bankbranchId.indexOf("-");
+			var bankId = bankbranchId.substring(0, index);
+			var brId = bankbranchId.substring(index + 1, bankbranchId.length);
+			document.getElementById("bankbranch").value = brId;
+			populatebankaccount({
+				bankId : bankId,
+				branchId : brId + '&asOnDate=' + date
+			});
+		}
+	</script>
 
 </body>
 </html>

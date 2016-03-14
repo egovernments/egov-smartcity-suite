@@ -557,21 +557,8 @@ public class PropertyTaxUtil {
                 installmentAndReason.get(split[0]).put(split[1], entry.getValue());
         }
 
-        for (final String installmentYear : installmentAndReason.keySet()) {
-            if (installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY) != null)
-                orderMap.put(installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY), order++);
-
-            if (installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_PENALTY_FINES) != null)
-                orderMap.put(installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_PENALTY_FINES), order++);
-        }
-
         for (final String installmentYear : installmentAndReason.keySet())
             for (final String reasonCode : PropertyTaxConstants.ORDERED_DEMAND_RSNS_LIST) {
-
-                if (reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
-                        || reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY))
-                    continue;
-
                 if (installmentAndReason.get(installmentYear).get(reasonCode) != null)
                     orderMap.put(installmentAndReason.get(installmentYear).get(reasonCode), order++);
             }
@@ -2061,11 +2048,11 @@ public class PropertyTaxUtil {
      * @param boundaryId
      * @return
      */
-    public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode) {
-
-        final String WARDWISE = "ward";
-        final String BLOCKWISE = "block";
-        final String PROPERTY = "property";
+    public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase, final List<String> propertyTypes) { 
+ 
+        final String WARDWISE = "ward"; 
+        final String BLOCKWISE = "block";  
+        final String PROPERTY = "property"; 
 
         final StringBuffer queryStr = new StringBuffer("");
         final StringBuffer unionQueryStr = new StringBuffer("");
@@ -2073,12 +2060,28 @@ public class PropertyTaxUtil {
         String finalCommonQry = "", finalSelectQry = "", finalGrpQry = "", finalWhereQry = "", finalFrmQry = "";
         String innerSelectQry0 = "", innerSelectQry1 = "", arrearGroupBy = "", whereQry = "", collGroupBy = "";
         Long param = null;
-
+        String propertyTypeIds= "";
+        String courtCaseTable = "";
+        String courtCaseQry = "";
+        
+        if(propertyTypes!=null && !propertyTypes.isEmpty()){
+            propertyTypeIds=propertyTypes.get(0);
+            for(int i=1;i<propertyTypes.size();i++){
+                propertyTypeIds+=","+propertyTypes.get(i);
+            }
+        }
+        
+        if(courtCase){
+            courtCaseTable =",pt_court_cases_tbl pcc ";
+            courtCaseQry = " and pcc.i_asmtno = cast(pi.upicno AS numeric)";
+        }
+        
         if (boundaryId != -1 && boundaryId != null)
             param = boundaryId;
         // To retreive Arrear Demand and Collection Details
-        arrear_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
-                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true "
+        arrear_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "+courtCaseTable
+                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true and pi.isexempted = false "
+                + courtCaseQry
                 + "and im.start_date not between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
                 + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 
@@ -2093,8 +2096,9 @@ public class PropertyTaxUtil {
                 + "0 as curPFTColl,0 as curSTColl, 0 as curVLTColl,0 as curPSCTColl from (";
 
         // To retreive Current Demand and Collection Details
-        current_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
-                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true "
+        current_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "+courtCaseTable
+                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true and pi.isexempted = false "
+                + courtCaseQry
                 + "and im.start_date between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
                 + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
 
@@ -2136,6 +2140,8 @@ public class PropertyTaxUtil {
             collGroupBy = ") as collection  group by ward ";
             if (param != 0)
               whereQry = " and pi.WARDID = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+              whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
             finalWhereQry = " where dcbinfo.ward=boundary.id ";
         } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
             innerSelectQry0 = "select distinct pi.blockid as block,";
@@ -2143,17 +2149,21 @@ public class PropertyTaxUtil {
             arrearGroupBy = ") as arrear group by block ";
             collGroupBy = ") as collection  group by block ";
             whereQry = " and pi.wardid = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
             finalWhereQry = " where dcbinfo.block=boundary.id ";
         } else if (mode.equalsIgnoreCase(PROPERTY)) {
-            innerSelectQry0 = "select distinct pi.upicno as upicno, pi.houseno as doorno,";
-            innerSelectQry1 = "select upicno as upicno,doorno as doorno,";
-            arrearGroupBy = ") as arrear group by upicno,doorno ";
-            collGroupBy = ") as collection  group by upicno,doorno ";
+            innerSelectQry0 = "select distinct pi.upicno as upicno, pi.houseno as doorno, pi.ownersname as ownername, ";
+            innerSelectQry1 = "select upicno as upicno,doorno as doorno,ownername as ownername, ";
+            arrearGroupBy = ") as arrear group by upicno,doorno,ownername ";
+            collGroupBy = ") as collection  group by upicno,doorno,ownername ";
             whereQry = " and pi.blockid = " + param;
-            finalSelectQry = "select COALESCE(upicno,null,'',upicno) as \"assessmentNo\", doorno as \"houseNo\", ";
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            finalSelectQry = "select COALESCE(upicno,null,'',upicno) as \"assessmentNo\", doorno as \"houseNo\", ownername as \"ownerName\", ";
             finalFrmQry = " )as dcbinfo ";
             finalWhereQry = "";
-            finalGrpQry = " group by dcbinfo.upicno,dcbinfo.doorno order by dcbinfo.upicno ";
+            finalGrpQry = " group by dcbinfo.upicno,dcbinfo.doorno,dcbinfo.ownername order by dcbinfo.upicno ";
         }
         // Arrear Demand query union Current Demand query
         unionQueryStr.append(innerSelectQry1).append(arrear_innerCommonQry1).append(innerSelectQry0)
@@ -2163,8 +2173,9 @@ public class PropertyTaxUtil {
         // Final Query : Retrieves arrear and current for the selected boundary.
         queryStr.append(finalSelectQry).append(finalCommonQry).append(unionQueryStr).append(finalFrmQry)
                 .append(finalWhereQry).append(finalGrpQry);
-
-        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
+        
+       
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString()); 
         return query;
     }
 
@@ -2427,10 +2438,8 @@ public class PropertyTaxUtil {
      * Method to check for Nagar Panchayats as Grade
      * @return boolean
      */
-    public static boolean checkIsNagarPanchayat() {
-        HttpServletRequest request = ServletActionContext.getRequest();
-        String grade=(request.getSession().getAttribute("cityGrade")!=null?
-                request.getSession().getAttribute("cityGrade").toString():null);
+    public boolean checkIsNagarPanchayat() {
+        String grade = (String) persistenceService.findAllBy("select grade from City").get(0);
         return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
     }
     
@@ -2445,10 +2454,9 @@ public class PropertyTaxUtil {
     public Query prepareQueryforDefaultersReport(final Long wardId, final String fromDemand,
             final String toDemand, final Integer limit) {
         final StringBuffer query = new StringBuffer(300);
-        
-        query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true ");
-        String arrearBalanceCond = " (pmv.aggrArrDmd - pmv.aggrArrColl) ";
-        String arrearBalanceNotZeroCond = " and (pmv.aggrArrDmd - pmv.aggrArrColl)!=0 ";
+        query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true and pmv.isExempted=false ");
+        String arrearBalanceCond = " ((pmv.aggrArrDmd - pmv.aggrArrColl) + (pmv.aggrCurrDmd - pmv.aggrCurrColl)) ";
+        String arrearBalanceNotZeroCond = " and ((pmv.aggrArrDmd - pmv.aggrArrColl) + (pmv.aggrCurrDmd - pmv.aggrCurrColl))!=0 ";
         String orderByClause = " order by ";
         query.append(arrearBalanceNotZeroCond);
         if(StringUtils.isNotBlank(fromDemand) && StringUtils.isBlank(toDemand)){
@@ -2467,5 +2475,15 @@ public class PropertyTaxUtil {
         if(limit != null && limit != -1)
                 qry.setMaxResults(limit);
         return qry;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Installment> getInstallments(PropertyImpl property) {
+        final EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+        List<Installment> installments = (List<Installment>) persistenceService
+                .findAllBy(
+                        "select distinct(dd.egDemandReason.egInstallmentMaster) from EgDemandDetails dd where dd.egDemand = ? order by dd.egDemandReason.egInstallmentMaster.fromDate",
+                        egDemand);
+        return installments;
     }
 }

@@ -111,9 +111,7 @@
 									status="stat">
 									<td class="blueborderfortd">
 										<div align="right">
-											<a href="javascript:void(0);"
-												onclick='return showDetail(<s:property value="glCode"/>, <s:property value="id"/>)'><s:property
-													value="fundWiseAmount[name]" /></a>&nbsp;
+											<s:property	value="fundWiseAmount[name]" />&nbsp;
 										</div>
 									</td>
 								</s:iterator>

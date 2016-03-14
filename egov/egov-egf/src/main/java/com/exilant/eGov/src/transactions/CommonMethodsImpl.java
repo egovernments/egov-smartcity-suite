@@ -65,6 +65,8 @@ import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.infstr.utils.seqgen.DatabaseSequenceFirstTimeException;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -73,7 +75,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
     Connection connection;
     List<Object[]> rset;
     private static final Logger LOGGER = Logger.getLogger(CommonMethodsImpl.class);
-
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService ;
     /**
      * Get the cash in hand code account for the boundary
      */
@@ -631,7 +635,6 @@ public class CommonMethodsImpl implements CommonMethodsI {
             // ---
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" In CommonMethodsImpl :getTxnNumber method ");
-            final PersistenceService persistenceService = new PersistenceService();
             // persistenceService.setSessionFactory(new SessionFactory());
             //persistenceService.setType(CFiscalPeriod.class);
             final CFiscalPeriod fiscalPeriodObj = (CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",
@@ -721,7 +724,6 @@ public class CommonMethodsImpl implements CommonMethodsI {
             // ---
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" In CommonMethodsImpl :getTxnNumber method ");
-            final PersistenceService persistenceService = new PersistenceService();
             // persistenceService.setSessionFactory(new SessionFactory());
             //persistenceService.setType(CFiscalPeriod.class);
             final CFiscalPeriod fiscalPeriodObj = (CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",
@@ -803,7 +805,6 @@ public class CommonMethodsImpl implements CommonMethodsI {
             // ---
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" In CommonMethodsImpl :getTxnNumber method ");
-            final PersistenceService persistenceService = new PersistenceService();
             // persistenceService.setSessionFactory(new SessionFactory());
             //persistenceService.setType(CFiscalPeriod.class);
             final CFiscalPeriod fiscalPeriodObj = (CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",

@@ -48,4 +48,9 @@ public class BudgetGroupService extends PersistenceService<BudgetGroup, Long>
         this.type = budgetGroup;
     }
 
+    public BudgetGroup getBudgetGroup(final Long coaId) {
+        BudgetGroup budgetGroup = null;
+        budgetGroup = find("from BudgetGroup where majorCode.id=? or maxCode.id =? or minCode.id = ?", coaId, coaId, coaId);
+        return budgetGroup;
+    }
 }

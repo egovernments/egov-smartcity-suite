@@ -714,12 +714,12 @@ function checkNumberMandatory(obj)
 function validateEmail( obj)
 {
        var objRegExp  = /^[a-z0-9]([a-z0-9_\-\.]*)@([a-z0-9_\-\.]*)(\.[a-z]{2,3}(\.[a-z]{2}){0,2})$/i;
-        if(obj.value!="")
+        if(obj.value)
           {
           if(!objRegExp.test(obj.value))
           {
           bootbox.alert('Pleasr Enter Valid Email Address');
-          obj.value="";
+          obj.value=""; 
           obj.focus();
           return false;
           }
@@ -945,8 +945,10 @@ function addOwner() {
 										{
 											return nextIdx;
 										}
-									});
+									});  
 
+							
+												
 							// if element is static attribute hold values for
 							// next row, otherwise it will be reset
 							if (!jQuery(this).data('static')) {
@@ -955,6 +957,9 @@ function addOwner() {
 								// set default selection for dropdown
 								if (jQuery(this).is("select")) {
 									jQuery(this).prop('selectedIndex', 0);
+								}
+								else if (jQuery(this).is("input:text")) {
+									jQuery(this).attr('value', '');
 								}
 							}
 							

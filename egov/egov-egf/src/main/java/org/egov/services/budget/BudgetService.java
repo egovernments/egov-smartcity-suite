@@ -46,6 +46,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
@@ -66,6 +68,8 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Manikanta
@@ -75,9 +79,15 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     private static final Logger LOGGER = Logger.getLogger(BudgetService.class);
     protected EisCommonService eisCommonService;
     protected WorkflowService<Budget> budgetWorkflowService;
-    protected BudgetDetailService budgetDetailService;
     @Autowired
     protected SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
+    
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
 
     public void setEisCommonService(final EisCommonService eisCommonService) {
         this.eisCommonService = eisCommonService;
@@ -85,12 +95,10 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     public BudgetService(final Class<Budget> budget) {
         this.type = budget;
-    } 
-    @Override
-    public Budget persist(final Budget budget) {
-        super.validate(budget);
-        super.persist(budget);
-        return budget;
+    }
+
+    public Budget getByName(final String name) {
+        return find("from Budget b where b.name = ?", name);
     }
 
     public User getUser() {
@@ -145,18 +153,18 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     }
 
     public boolean hasReForYear(final Long financialYear) {
-        return checkForRe("from  Budget where financialYear.id=? and isbere='RE' and isActiveBudget=1", financialYear);
+        return checkForRe("from  Budget where financialYear.id=? and isbere='RE' and isActiveBudget=true", financialYear);
     }
 
     public boolean hasApprovedBeForYear(final Long financialYear) {
         return checkForRe(
-                "from  Budget where financialYear.id=? and isbere='BE' and isActiveBudget=1 and parent is null and isPrimaryBudget=1 and state.value='END'",
+                "from  Budget where financialYear.id=? and isbere='BE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and state.value='END'",
                 financialYear);
     }
 
     public boolean hasApprovedReForYear(final Long financialYear) {
         return checkForRe(
-                "from  Budget where financialYear.id=? and isbere='RE' and isActiveBudget=1 and parent is null and isPrimaryBudget=1 and state.value='END'",
+                "from  Budget where financialYear.id=? and isbere='RE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and state.value='END'",
                 financialYear);
     }
 
@@ -170,7 +178,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
                 .createQuery(
                         "select name from  Budget where financialYear.id=:finYearId and isbere='RE' "
                                 +
-                        "and isActiveBudget=1 and parent is null and isPrimaryBudget=1 and state.value='END' and to_date(state.createdDate)<=:budgetApprovedDate");
+                                "and isActiveBudget=true and parent is null and isPrimaryBudget=true and state.value='END' and to_date(state.createdDate)<=:budgetApprovedDate");
         qry.setParameter("finYearId", finYearId);
         qry.setParameter("budgetApprovedDate", budgetApprovedDate);
         final String approvedBudgetName = (String) qry.uniqueResult();
@@ -207,7 +215,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Budget name " + childBudget.getName() + "moved details are ...");
             final List<BudgetDetail> unsavedbudgetDetailList = new ArrayList<BudgetDetail>();
-            unsavedbudgetDetailList.addAll(budgetDetailService.getRemainingDetailsForApproveOrReject(childBudget));
+            // unsavedbudgetDetailList.addAll(budgetDetailService.getRemainingDetailsForApproveOrReject(childBudget));
             // move rest of the details
             for (final BudgetDetail detail : unsavedbudgetDetailList) {
                 if (LOGGER.isDebugEnabled())
@@ -301,7 +309,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
             } else
                 clist = ((PersistenceService) this).findAllBy(
                         "from  CChartOfAccounts coa where coa.glcode like '" + bdgtgrp.getMajorCode().getGlcode().toString()
-                        + "%' and coa.classification = ? and coa.isActiveForPosting= ? ", Long.valueOf(4),
+                                + "%' and coa.classification = ? and coa.isActiveForPosting= ? ", Long.valueOf(4),
                         Long.valueOf(1));
             if (clist != null && clist.size() != 0)
                 coaList.addAll(clist);
@@ -312,10 +320,6 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     public void setBudgetWorkflowService(final WorkflowService<Budget> budgetWorkflowService) {
         this.budgetWorkflowService = budgetWorkflowService;
-    }
-
-    public void setBudgetDetailService(final BudgetDetailService budgetDetailService) {
-        this.budgetDetailService = budgetDetailService;
     }
 
     public void setBudgetDetailWorkflowService(final SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService) {
@@ -350,7 +354,33 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     }
 
     public List getFYForNonApprovedBudgets() {
-        return findAllBy("select distinct b.financialYear from Budget b where b.state.value!='END' and isActiveBudget=1 and isPrimaryBudget=1 order by b.financialYear.finYearRange desc");
+        return findAllBy("select distinct b.financialYear from Budget b where b.state.value!='END' and isActiveBudget=true and isPrimaryBudget=true order by b.financialYear.finYearRange desc");
     }
 
+    public Budget getBudget(String budgetHead, String deptCode, String budgetType, String fyear) {
+        String budgetName;
+        if (budgetHead.substring(0, 1).equalsIgnoreCase("1")
+                || budgetHead.substring(0, 1).equalsIgnoreCase("2"))
+            budgetName = deptCode + "-" + budgetType + "-Rev-" + fyear;
+        else
+            budgetName = deptCode + "-" + budgetType + "-Cap-" + fyear;
+
+        return getByName(budgetName);
+    }
+
+    public List<Budget> getBudgetsForUploadReport() {
+        return findAllBy("select distinct b from Budget b where b.name like '%RE%' and b.materializedPath  in (select distinct substring(bd.materializedPath,  1 , 1) from BudgetDetail bd where bd.status.code = 'Created')");
+    }
+
+    @Transactional
+    public void updateByMaterializedPath(final String materializedPath) {
+        EgwStatus approvedStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Approved");
+        EgwStatus createdStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Created");
+        persistenceService
+                .getSession()
+                .createSQLQuery(
+                        "update egf_budget set status = :approvedStatus where status =:createdStatus and  materializedPath like'"
+                                + materializedPath + "%'").setLong("approvedStatus", approvedStatus.getId())
+                .setLong("createdStatus", createdStatus.getId()).executeUpdate();
+    }
 }

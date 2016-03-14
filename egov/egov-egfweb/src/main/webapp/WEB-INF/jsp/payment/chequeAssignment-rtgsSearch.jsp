@@ -41,11 +41,11 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css" />
 <title>RTGS Ref. No Assignment Search</title>
 </head>
 <body onload="onload()">
-	<s:form action="chequeAssignment" theme="simple">
+	<s:form action="chequeAssignment" theme="simple" id = "chequeAssignment" name = "chequeAssignment">
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="RTGS Ref. No. Assignment Search" />
 		</jsp:include>
@@ -110,7 +110,7 @@
 				<tr>
 					<egov:ajaxdropdown id="bank_branch" fields="['Text','Value']"
 						dropdownId="bank_branch"
-						url="voucher/common!ajaxLoadAllBanks.action" />
+						url="voucher/common-ajaxLoadAllBanks.action" />
 					<td class="greybox"><s:text name="chq.assignment.bank" /></td>
 					<td class="greybox"><s:select name="bank_branch"
 							id="bank_branch" list="bankBranchMap" headerKey="-1"
@@ -118,7 +118,7 @@
 							value="%{bank_branch}" /></td>
 					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
 						dropdownId="bankaccount"
-						url="voucher/common!ajaxLoadBankAccountsWithApprovedPayments.action" />
+						url="voucher/common-ajaxLoadBankAccountsWithApprovedPayments.action" />
 					<td class="greybox"><s:text name="chq.assignment.bankaccount" /></td>
 					<td class="greybox" colspan="2"><s:select name="bankaccount"
 							id="bankaccount" list="dropdownData.bankaccountList" listKey="id"
@@ -138,7 +138,7 @@
 			</table>
 			<div class="buttonbottom">
 				<s:submit method="searchRTGS" value="Search" id="searchBtn"
-					cssClass="buttonsubmit" />
+					cssClass="buttonsubmit" onclick="submitForm();" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
@@ -179,6 +179,10 @@
 					}
 					
 				}
+				function submitForm(){
+					document.chequeAssignment.action='/EGF/payment/chequeAssignment-searchRTGS.action';
+		    		document.chequeAssignment.submit();
+					}
 			</script>
 	<s:if test="%{!validateUser('chequeassignment')}">
 		<script>

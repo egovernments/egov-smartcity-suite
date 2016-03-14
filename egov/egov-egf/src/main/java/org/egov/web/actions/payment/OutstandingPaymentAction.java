@@ -103,7 +103,9 @@ public class OutstandingPaymentAction extends BaseFormAction {
     private String selectedVhs;
     private Long[] selectdVhs;
     private BigDecimal rBalance = BigDecimal.ZERO;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public String execute() throws Exception {
         return "form";
@@ -121,10 +123,9 @@ public class OutstandingPaymentAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         if (!parameters.containsKey("skipPrepare")) {
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
             addDropdownData("bankList", Collections.EMPTY_LIST);
             addDropdownData("accNumList", Collections.EMPTY_LIST);
-            addDropdownData("fundList", masterCache.get("egi-fund"));
+            addDropdownData("fundList", masterDataCache.get("egi-fund"));
         }
     }
 

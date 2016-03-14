@@ -62,6 +62,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.BillRegisterBean;
@@ -83,7 +84,9 @@ public class CancelBillAction extends BaseFormAction {
     private boolean afterSearch = false;
     Integer loggedInUser = EgovThreadLocals.getUserId().intValue();
     public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public Object getModel() {
 
@@ -134,10 +137,9 @@ public class CancelBillAction extends BaseFormAction {
     public void prepare()
     {
         super.prepare();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside Prepare method");
-        dropdownData.put("DepartmentList", masterCache.get("egi-department"));
+        dropdownData.put("DepartmentList", masterDataCache.get("egi-department"));
         // get this from master data cache
         addDropdownData("fundList", persistenceService.findAllBy("from Fund where isactive=true and isnotleaf=false order by name"));
         // Important - Remove the like part of the query below to generalize the bill cancellation screen

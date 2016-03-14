@@ -55,7 +55,9 @@
 	<!-- <alias name="${filestore.servicebean.name}" alias="fileStoreService" /> -->
 	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
-
+	
+	<bean id="masterDataCache" class="org.egov.infstr.utils.EgovMasterDataCaching" lazy-init="false"/>
+	
 	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory">
 	</bean>
 

@@ -270,8 +270,23 @@
     	<put-attribute name="body" value="/WEB-INF/views/reports/bcDailyCollectionReport-form.jsp"/>
     </definition>
 
-<definition name="ulbWiseCollectionReport-form" extends="base_layout">
+	<definition name="ulbWiseCollectionReport-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.ulbWiseDailyColl.report.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/ulbWiseCollectionReport-form.jsp"/>
     </definition>
+    
+    <definition name="writeOff-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.writeOff.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/writeOff/writeOff-form.jsp"/>
+     </definition>
+     
+      <definition name="ownerdetails-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.ownerdetail.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/editOwner/ownerdetails-form.jsp"/>
+    </definition>
+       <definition name="ulbWiseDcbReport-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.uldDCbDaily.report.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/ulbWiseDcbReport-form.jsp"/>
+    </definition>
+    
 </tiles-definitions> 

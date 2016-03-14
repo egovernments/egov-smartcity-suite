@@ -72,7 +72,7 @@ public class TableDefinition {
     private final String QUOTE = "'";
     private final char CONNECTOR = '_';
     private final char EQUAL = '=';
-    private final String now = "sysdate";
+    private final String now = "CURRENT_DATE";
 
     public TableDefinition()
     {

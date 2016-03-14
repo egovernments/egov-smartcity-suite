@@ -132,7 +132,9 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     private Department department = new Department();
     private CFunction function = new CFunction();
     private Fund fund = new Fund();
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @ValidationErrorPage(value = "form")
     @SkipValidation
     @Override
@@ -176,10 +178,9 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             accountTypeList.add(BudgetAccountType.REVENUE_RECEIPTS.name());
             accountTypeList.add(BudgetAccountType.CAPITAL_EXPENDITURE.name());
             accountTypeList.add(BudgetAccountType.CAPITAL_RECEIPTS.name());
-            final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
             addDropdownData("accountTypeList", accountTypeList);
             
-            dropdownData.put("budgetGroupList", masterCache.get("egf-budgetGroup"));
+            dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
             if (isFieldMandatory(Constants.EXECUTING_DEPARTMENT))
                 addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
             if (isFieldMandatory(Constants.FUNCTION))
@@ -305,7 +306,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         }
         final List<BudgetDetail> result = persistenceService.findAllBy("from BudgetDetail where budget.isbere='" + budgetType
                 + "' and " +
-                "budget.isActiveBudget=1 and budget.state.value='END' and budget.financialYear.id=" + financialYear.getId()
+                "budget.isActiveBudget=true and budget.state.value='END' and budget.financialYear.id=" + financialYear.getId()
                 + getMiscQuery() + " order by budget.name,budgetGroup.name");
         if (budgetVarianceEntries == null)
             budgetVarianceEntries = new ArrayList<BudgetVarianceEntry>();

@@ -129,6 +129,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     protected WorkflowBean workflowBean = new WorkflowBean();
     protected EisCommonService eisCommonService;
+    private @Autowired EgovCommon egovCommon;
     @Autowired
     @Qualifier("preApprovedActionHelper")
     private PreApprovedActionHelper preApprovedActionHelper;
@@ -178,6 +179,10 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private ScriptService scriptService;
     private String mode = "";
     protected Long voucherId ;
+    
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public StateAware getModel() {
         return voucherHeader;
@@ -404,14 +409,13 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private void loadApproverUser(final String type) {
         final String scriptName = "billvoucher.nextDesg";
         departmentId = voucherService.getCurrentDepartment().getId().intValue();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         final Map<String, Object> map = voucherService.getDesgByDeptAndType(type, scriptName);
         if (null == map.get("wfitemstate")) {
             // If the department is mandatory show the logged in users assigned department only.
             if (mandatoryFields.contains("department"))
                 addDropdownData("departmentList", voucherHelper.getAllAssgnDeptforUser());
             else
-                addDropdownData("departmentList", masterCache.get("egi-department"));
+                addDropdownData("departmentList", masterDataCache.get("egi-department"));
             addDropdownData("designationList", (List<Designation>) map.get("designationList"));
             wfitemstate = "";
         } else
@@ -1019,9 +1023,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         tempMap.put("detailtypeid", detailtype.getId());
         tempMap.put("detailkeyid", detailkeyid);
 
-        final EgovCommon common = new EgovCommon();
-        common.setPersistenceService(persistenceService);
-        final EntityType entityType = common.getEntityType(detailtype, detailkeyid);
+        egovCommon.setPersistenceService(persistenceService);
+        final EntityType entityType = egovCommon.getEntityType(detailtype, detailkeyid);
         if (entityType == null)
         {
             tempMap.put(Constants.DETAILKEY, detailkeyid + " " + Constants.MASTER_DATA_DELETED);

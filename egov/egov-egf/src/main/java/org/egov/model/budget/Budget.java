@@ -45,6 +45,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
 
@@ -68,6 +69,7 @@ public class Budget extends StateAware {
     private Budget referenceBudget;
     private Long documentNumber;
     private EgwStatus status;
+
     @Override
     public Long getId() {
         return id;
@@ -213,4 +215,7 @@ public class Budget extends StateAware {
         this.status = status;
     }
 
+    public void setWfState(State state) {
+        setState(state);
+    }
 }

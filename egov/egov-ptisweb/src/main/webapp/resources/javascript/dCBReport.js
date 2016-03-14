@@ -117,11 +117,27 @@ function setHiddenValueByLink(obj, param) {
 	}
 }
 
+function setDefaultCourtCaseValue(){
+	checkCourtCase(document.getElementById("courtCase")); 
+}
+
+function checkCourtCase(obj){
+	if(obj.checked == true)
+		document.getElementById("courtCase").value = 'true';
+	else
+		document.getElementById("courtCase").value = 'false';
+}
+
 function callAjaxByBoundary() {
 	var modeVal = "";
 	var boundary_Id = "";
 	var temp="";
+	var propTypes = "";
+	var courtCase = false;
+	propTypes = jQuery('#propTypes').val();
+	courtCase = jQuery('#courtCase').val(); 
 	modeVal = jQuery('#mode').val(); 
+	
 	if(modeVal=='ward'){
 		boundary_Id = jQuery('#wardId').val();
 		temp=modeVal+"~"+boundary_Id;
@@ -144,7 +160,9 @@ function callAjaxByBoundary() {
 					url : "/ptis/reports/ajaxDCBReport-getBoundaryWiseDCBList.action",      
 					data : {
 						mode : modeVal,
-						boundaryId : boundary_Id
+						boundaryId : boundary_Id, 
+						propTypes : JSON.stringify(propTypes!='-1'?propTypes:null),
+						courtCase : courtCase
 					}
 				},
 				"sPaginationType" : "bootstrap",
@@ -184,12 +202,13 @@ function callAjaxByBoundary() {
 										+ data.id + '">' + data.name + '</a>';
 							},
 							"sTitle" : "Name"
-						},
-						{
+						}, {
 							"data" : "houseNo",
 							"sTitle" : "Door No"
-						},
-						{
+						}, {
+							"data" : "ownerName",
+							"sTitle" : "Owner Name"
+						}, {
 							"data" : "dmnd_arrearPT",
 							"sTitle" : "Arrear Property Tax"
 						}, {
@@ -267,14 +286,14 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						for(var i=2;i<=20;i++)
+						for(var i=3;i<=21;i++)
 						{
 						  updateTotalFooter(i, api);	
 						}
 					}
 				}, 
 				"aoColumnDefs" : [ {
-					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], 
+					"aTargets" : [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21], 
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}
@@ -284,10 +303,12 @@ function callAjaxByBoundary() {
 			if(jQuery("#mode").val() === "property")
 			{
 				reportdatatable.fnSetColumnVis( 1, true );
+				reportdatatable.fnSetColumnVis( 2, true );
 			}
 			else
 			{
 				reportdatatable.fnSetColumnVis( 1, false );
+				reportdatatable.fnSetColumnVis( 2, false );
 			}
 	
 }
@@ -301,7 +322,7 @@ function updateTotalFooter(colidx, api) {
 	};
 
 	// Total over all pages
-	total = api.column(colidx).data().reduce(function(a, b) {
+	total = api.column(colidx).data().reduce(function(a, b) { 
 		return intVal(a) + intVal(b);
 	});
 

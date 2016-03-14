@@ -104,6 +104,10 @@ public interface PropertyTaxConstants {
     public static final String ARR_DMD_STR = "ARR_DMD";
     public static final String CURR_COLL_STR = "CURR_COLL";
     public static final String ARR_COLL_STR = "ARR_COLL";
+    public static final String CURR_PENALTY_DMD_STR = "CURR_PEANLTY_DMD";
+    public static final String ARR_PENALTY_DMD_STR = "ARR_PENALTY_DMD";
+    public static final String CURR_PENALTY_COLL_STR = "CURR_PENALTY_COLL";
+    public static final String ARR_PENALTY_COLL_STR = "ARR_PENALTY_COLL";
     public static final String CURRENT_REBATE_STR = "CURRENT_REBATE";
     public static final String ARREAR_REBATE_STR = "ARREAR_REBATE";
 
@@ -464,10 +468,10 @@ public interface PropertyTaxConstants {
             put(DEMANDRSN_CODE_PENALTY_FINES, 1);
             put(DEMANDRSN_CODE_GENERAL_TAX, 2);
             put(DEMANDRSN_CODE_VACANT_TAX, 2);
-            put(DEMANDRSN_CODE_LIBRARY_CESS, 3);
-            put(DEMANDRSN_CODE_EDUCATIONAL_CESS, 4);
-            put(DEMANDRSN_CODE_SEWERAGE_TAX, 5);
-            put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, 6);
+            put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, 3);
+            put(DEMANDRSN_CODE_LIBRARY_CESS, 4);
+            put(DEMANDRSN_CODE_EDUCATIONAL_CESS, 5);
+            put(DEMANDRSN_CODE_SEWERAGE_TAX, 6);
             put(DEMANDRSN_CODE_REBATE, 7);
         }
     };
@@ -973,10 +977,10 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_KEY_BULKBILL_WARD = "WardNum";
     public static final Integer QUARTZ_BULKBILL_JOBS = 5;
 
-    public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
-            DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS,
-            DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_SEWERAGE_TAX, DEMANDRSN_CODE_REBATE,
-            DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
+    public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+            DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
+            DEMANDRSN_CODE_LIBRARY_CESS,
+            DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_SEWERAGE_TAX, DEMANDRSN_CODE_REBATE, DEMANDRSN_CODE_ADVANCE);
 
     public static final String APPCONFIG_KEY_WARDSFOR_BULKBILL = "WardNum";
     public static final String APPCONFIG_KEY_WARDSFOR_TAXXMLMIGRTN = "WardNo";
@@ -1328,4 +1332,20 @@ public interface PropertyTaxConstants {
     public static final String GUARDIAN_RELATION_HUSBAND = "HUSBAND";
     public static final String GUARDIAN_RELATION_WIFE = "WIFE";
     public static final String GUARDIAN_RELATION_OTHERS = "OTHERS";
+    
+    public static final String WRITEOFF_REASON_DEMOLITION = "Demolition";
+    public static final String WRITEOFF_REASON_ROAD_WIDENING = "Road widening";
+    public static final String WRITEOFF_REASON_DOUBLE_ASSESSMENT = "Double Assessment";
+    public static final String WRITEOFF_REASON_NOT_TRACED = "Not traced";
+    public static final String WRITEOFF_REASON_OTHER_REASONS = "Other reasons";
+    
+    public static final List<String> WRITEOFF_REASONS = new ArrayList<String>() {
+        {
+            add(WRITEOFF_REASON_DEMOLITION);
+            add(WRITEOFF_REASON_ROAD_WIDENING);
+            add(WRITEOFF_REASON_DOUBLE_ASSESSMENT);
+            add(WRITEOFF_REASON_NOT_TRACED);
+            add(WRITEOFF_REASON_OTHER_REASONS);
+        }
+    };
 }

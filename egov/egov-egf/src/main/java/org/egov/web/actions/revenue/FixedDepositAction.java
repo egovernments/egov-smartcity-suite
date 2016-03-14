@@ -150,7 +150,7 @@ public class FixedDepositAction extends BaseFormAction {
         if (fromDate != null && toDate != null)
             query.append("where date >='" + sdf.format(fromDate) + "' and date <='" + sdf.format(toDate) + "'");
         else if (fromDate == null && toDate == null)
-            query.append("where date<= sysdate");
+            query.append("where date<= CURRENT_DATE");
         else if (fromDate != null)
             query.append("where date>='" + sdf.format(fromDate) + "'");
         else

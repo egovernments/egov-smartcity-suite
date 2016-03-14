@@ -29,6 +29,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyMutationTransferee;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -232,8 +233,8 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         ttrObj.setAssessmentNo(propertyMutation.getBasicProperty().getUpicNo());
         if (propertyMutation.getTransfereeInfos() != null && propertyMutation.getTransfereeInfos().size() > 0) {
             String newOwnerName = "";
-            for (final User usr : propertyMutation.getTransfereeInfos())
-                newOwnerName = newOwnerName + usr.getName() + ",";
+            for (final PropertyMutationTransferee usr : propertyMutation.getTransfereeInfos())
+                newOwnerName = newOwnerName + usr.getTransferee().getName() + ",";
             ttrObj.setOwnerName(newOwnerName.substring(0, newOwnerName.length() - 1));
         }
         ttrObj.setDoorNo(propertyMutation.getBasicProperty().getAddress().getHouseNoBldgApt());
@@ -250,8 +251,8 @@ public class TitleTransferRegisterAction extends BaseFormAction {
 
         if (propertyMutation.getTransfereeInfos() != null && propertyMutation.getTransfereeInfos().size() > 0) {
             ownerName = "";
-            for (final User usr : propertyMutation.getTransfereeInfos())
-                ownerName = ownerName + usr.getName() + ",";
+            for (final PropertyMutationTransferee usr : propertyMutation.getTransfereeInfos())
+                ownerName = ownerName + usr.getTransferee().getName() + ",";
             ttrObj.setChangedTitle(ownerName.substring(0, ownerName.length() - 1));
         }
         ttrObj.setDateOfTransfer(sdf.format(propertyMutation.getLastModifiedDate()));
@@ -283,8 +284,8 @@ public class TitleTransferRegisterAction extends BaseFormAction {
 
         if (propertyMutation.getTransfereeInfos() != null && propertyMutation.getTransfereeInfos().size() > 0) {
             ownerName = "";
-            for (final User usr : propertyMutation.getTransfereeInfos())
-                ownerName = ownerName + usr.getName() + ",";
+            for (final PropertyMutationTransferee usr : propertyMutation.getTransfereeInfos())
+                ownerName = ownerName + usr.getTransferee().getName() + ",";
             ttrObj.setChangedTitle(ownerName.substring(0, ownerName.length() - 1));
         }
 

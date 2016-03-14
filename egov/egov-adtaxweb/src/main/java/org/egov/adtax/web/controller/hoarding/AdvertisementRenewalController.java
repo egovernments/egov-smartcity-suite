@@ -66,6 +66,15 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
     public String renewForm(@PathVariable final String id, final Model model,
             @ModelAttribute final AdvertisementPermitDetail renewalPermitDetail) {
         final AdvertisementPermitDetail parentPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
+        
+        if (parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getDemandId() != null) {
+            // CHECK ANY DEMAND PENDING for selected year.
+            if (!advertisementDemandService.checkAnyTaxPendingForSelectedFinancialYear(parentPermitDetail.getAdvertisement(),parentPermitDetail.getAdvertisement().getDemandId().getEgInstallmentMaster())) {
+                model.addAttribute("message", "msg.renewal.taxNotPending");
+                return "renewal-error";
+            }
+        }
+            
         loadBasicData(model, parentPermitDetail, renewalPermitDetail);
         model.addAttribute("renewalPermitDetail", renewalPermitDetail);
         model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);

@@ -98,7 +98,7 @@ public class CancelLicenseAction extends BaseFormAction {
         addRelatedEntity("licensee", Licensee.class);
         addRelatedEntity("tradeName", LicenseSubCategory.class);
         addRelatedEntity("licensee.boundary", Boundary.class);
-        addRelatedEntity("buildingType", NatureOfBusiness.class);
+        addRelatedEntity("natureOfBusiness", NatureOfBusiness.class);
         addRelatedEntity("category", LicenseCategory.class);
         addRelatedEntity("uom", UnitOfMeasurement.class);
 

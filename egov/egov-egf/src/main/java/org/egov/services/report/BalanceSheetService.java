@@ -63,12 +63,16 @@ import org.egov.web.actions.report.Statement;
 import org.egov.web.actions.report.StatementEntry;
 import org.egov.web.actions.report.StatementResultObject;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class BalanceSheetService extends ReportService {
     private static final String BS = "BS";
     private static final String L = "L";
     private static final BigDecimal NEGATIVE = new BigDecimal(-1);
     private String removeEntrysWithZeroAmount = "";
+    @Autowired
+    private  FinancialYearHibernateDAO financialYearDAO;
 
     @Override
     protected void addRowsToStatement(final Statement balanceSheet, final Statement assets, final Statement liabilities) {
@@ -124,8 +128,7 @@ public class BalanceSheetService extends ReportService {
     public void addOpeningBalancePrevYear(final Statement balanceSheet, final String transactionQuery, final Date fromDate) {
         try {
             final BigDecimal divisor = balanceSheet.getDivisor();
-            final FinancialYearHibernateDAO finYrHibernate = new FinancialYearHibernateDAO(CFinancialYear.class, null);
-            final CFinancialYear prevFinancialYr = finYrHibernate.getPreviousFinancialYearByDate(fromDate);
+           final CFinancialYear prevFinancialYr = financialYearDAO.getPreviousFinancialYearByDate(fromDate);
             final String prevFinancialYearId = prevFinancialYr.getId().toString();
             final Query query = HibernateUtil
                     .getCurrentSession()

@@ -44,42 +44,40 @@ import java.util.List;
 import org.egov.commons.CVoucherHeader;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.model.bills.EgBillregister;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class BillsService {
+    
+    @Autowired
+    private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
     public EgBillregister createBillRegister(final EgBillregister billregister)
     {
-        final EgBillRegisterHibernateDAO obj = new EgBillRegisterHibernateDAO();
-        return (EgBillregister) obj.create(billregister);
+        return (EgBillregister) egBillRegisterHibernateDAO.create(billregister);
     }
 
     public EgBillregister updateBillRegister(final EgBillregister billregister)
     {
-        final EgBillRegisterHibernateDAO obj = new EgBillRegisterHibernateDAO();
-        return (EgBillregister) obj.update(billregister);
+        return (EgBillregister) egBillRegisterHibernateDAO.update(billregister);
     }
 
     public EgBillregister getBillRegisterById(final Integer billid)
     {
-        final EgBillRegisterHibernateDAO obj = new EgBillRegisterHibernateDAO();
-        return (EgBillregister) obj.findById(new Long(billid), false);
+        return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
     }
 
     public List<String> getDistExpType()
     {
-        final EgBillRegisterHibernateDAO obj = new EgBillRegisterHibernateDAO();
-        return obj.getDistinctEXpType();
+        return egBillRegisterHibernateDAO.getDistinctEXpType();
     }
 
     public String getBillTypeforVoucher(final CVoucherHeader voucherHeader)
     {
-        final EgBillRegisterHibernateDAO obj = new EgBillRegisterHibernateDAO();
-        return obj.getBillTypeforVoucher(voucherHeader);
+        return egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherHeader);
     }
 
     public String getBillSubTypeforVoucher(final CVoucherHeader voucherHeader) {
-        final EgBillRegisterHibernateDAO obj = new EgBillRegisterHibernateDAO();
-        return obj.getBillSubTypeforVoucher(voucherHeader);
+        return egBillRegisterHibernateDAO.getBillSubTypeforVoucher(voucherHeader);
     }
 }

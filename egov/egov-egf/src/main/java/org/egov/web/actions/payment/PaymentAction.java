@@ -753,6 +753,7 @@ public class PaymentAction extends BasePaymentAction {
      * @throws ValidationException this api is called from searchbills method is changed to save to enable csrf fix actaul method
      * name was generate payment. I doesnot save data but forwards to screen where for selected bill we can make payment
      */
+    @ValidationErrorPage("searchbills")
     @Action(value = "/payment/payment-save")
     public String save() throws ValidationException {
         final List<PaymentBean> paymentList = new ArrayList<PaymentBean>();
@@ -815,9 +816,25 @@ public class PaymentAction extends BasePaymentAction {
                 LOGGER.info("Expenditure type is--------------------------------- " + expType);
             voucherdate = formatter.format(new Date());
         } catch (final ValidationException e) {
+            try {
+                search();
+            } catch (Exception e1) {
+                LOGGER.error(e.getMessage(), e1);
+                final List<ValidationError> errors = new ArrayList<ValidationError>();
+                errors.add(new ValidationError("exception", e1.getMessage()));
+                throw new ValidationException(errors);
+            }
             LOGGER.error(e.getErrors(), e);
             throw new ValidationException(e.getErrors());
         } catch (final ApplicationException e) {
+            try {
+                search();
+            } catch (Exception e1) {
+                LOGGER.error(e.getMessage(), e1);
+                final List<ValidationError> errors = new ArrayList<ValidationError>();
+                errors.add(new ValidationError("exception", e1.getMessage()));
+                throw new ValidationException(errors);
+            }
             LOGGER.error(e.getMessage(), e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
@@ -832,7 +849,7 @@ public class PaymentAction extends BasePaymentAction {
     private String populateBillListFor(final List<PaymentBean> list, String ids) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting populateBillListFor...");
-       
+
         String tempAttributes = "";
         if (list != null) {
             for (final PaymentBean bean : list)
@@ -960,7 +977,8 @@ public class PaymentAction extends BasePaymentAction {
     public String getComments() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getComments...");
-        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
+        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount()
+                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
     }
 
     @SkipValidation
@@ -970,21 +988,19 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting view...");
         paymentheader = getPayment();
-       /* if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty()
-                && paymentheader.getState().getValue().contains("Rejected"))
-        {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Completed view.");
-            return modify();
-        }*/
+        /*
+         * if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty() &&
+         * paymentheader.getState().getValue().contains("Rejected")) { if (LOGGER.isDebugEnabled())
+         * LOGGER.debug("Completed view."); return modify(); }
+         */
         miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
         getChequeInfo(paymentheader);
         if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view"))
             // if user is drilling down form source , parameter showMode is passed with value view, in this case we do not show
             // the
-
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("defaultDept in vew : " + getDefaultDept());
+            mode = parameters.get("showMode")[0];
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("defaultDept in vew : " + getDefaultDept());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed view.");
         return VIEW;
@@ -1069,7 +1085,8 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.info("Bankbranch id = " + parameters.get("bankbranch")[0]);
         final Bankbranch bankbranch = (Bankbranch) persistenceService.find("from Bankbranch where id = ?",
                 Integer.parseInt(parameters.get("bankbranch")[0]));
-        bankaccountList = getPersistenceService().findAllBy(" FROM Bankaccount where bankbranch=? and isactive=true ", bankbranch);
+        bankaccountList = getPersistenceService()
+                .findAllBy(" FROM Bankaccount where bankbranch=? and isactive=true ", bankbranch);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccounts.");
         return "bankaccount";

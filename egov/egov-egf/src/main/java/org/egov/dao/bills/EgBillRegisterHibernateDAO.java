@@ -52,20 +52,23 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("unchecked")
 @Transactional(readOnly = true)
+@Repository
 public class EgBillRegisterHibernateDAO extends GenericHibernateDAO {
     private final Logger LOGGER = Logger.getLogger(getClass());
+    @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService<EgBillregister, Long> egBillRegisterService;
     private Session session;
 
     public EgBillRegisterHibernateDAO(final Class persistentClass, final Session session) {
         super(persistentClass, session);
-        egBillRegisterService = new PersistenceService<EgBillregister, Long>();
-        // egBillRegisterService.setSessionFactory(new SessionFactory());
-        //egBillRegisterService.setType(EgBillregister.class);
     }
 
     public EgBillRegisterHibernateDAO() {

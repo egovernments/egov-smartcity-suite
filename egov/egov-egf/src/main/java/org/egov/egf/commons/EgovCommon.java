@@ -57,7 +57,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -100,9 +99,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * @author msahoo
@@ -124,9 +122,13 @@ public class EgovCommon {
 
     protected UserService userManager;
     private FundFlowService fundFlowService;
-    private FinancialYearHibernateDAO finDao = new FinancialYearHibernateDAO(
-            CFinancialYear.class, null);
+    
+    @Autowired
+    private  FinancialYearHibernateDAO financialYearDAO;
 
+    @Autowired
+    private ApplicationContext context;
+    
     public FundFlowService getFundFlowService() {
         return fundFlowService;
     }
@@ -159,13 +161,7 @@ public class EgovCommon {
         this.fundDAO = fundDAO;
     }
 
-    public FinancialYearHibernateDAO getFinDao() {
-        return finDao;
-    }
-
-    public void setFinDao(final FinancialYearHibernateDAO finDao) {
-        this.finDao = finDao;
-    }
+   
 
     public EgovCommon() {
 
@@ -189,7 +185,7 @@ public class EgovCommon {
                             " select is_primary, dept_id from EG_EIS_EMPLOYEEINFO employeevi0_ where upper(trim(employeevi0_.CODE))='"
                                     + employeeService.getEmpForUserId(user.getId())
                                     .getCode()
-                                    + "' and ((employeevi0_.TO_DATE is null) and employeevi0_.FROM_DATE<=SYSDATE or employeevi0_.FROM_DATE<=SYSDATE and employeevi0_.TO_DATE>SYSDATE or employeevi0_.FROM_DATE in (select MAX(employeevi1_.FROM_DATE) from EG_EIS_EMPLOYEEINFO employeevi1_ where employeevi1_.ID=employeevi0_.ID and  not (exists (select employeevi2_.ID from EG_EIS_EMPLOYEEINFO employeevi2_ where employeevi2_.ID=employeevi0_.ID and ((employeevi2_.TO_DATE is null) and employeevi2_.FROM_DATE<=SYSDATE or employeevi2_.FROM_DATE<=SYSDATE and employeevi2_.TO_DATE>SYSDATE))))) ");
+                                    + "' and ((employeevi0_.TO_DATE is null) and employeevi0_.FROM_DATE<=CURRENT_DATE or employeevi0_.FROM_DATE<=CURRENT_DATE and employeevi0_.TO_DATE>CURRENT_DATE or employeevi0_.FROM_DATE in (select MAX(employeevi1_.FROM_DATE) from EG_EIS_EMPLOYEEINFO employeevi1_ where employeevi1_.ID=employeevi0_.ID and  not (exists (select employeevi2_.ID from EG_EIS_EMPLOYEEINFO employeevi2_ where employeevi2_.ID=employeevi0_.ID and ((employeevi2_.TO_DATE is null) and employeevi2_.FROM_DATE<=CURRENT_DATE or employeevi2_.FROM_DATE<=CURRENT_DATE and employeevi2_.TO_DATE>CURRENT_DATE))))) ");
             final List<Object[]> employeeViewList = qry1.list();
             if (!employeeViewList.isEmpty())
                 if (employeeViewList.size() == 1)
@@ -1534,11 +1530,7 @@ public class EgovCommon {
         String simpleName = service.getSimpleName();
         simpleName = simpleName.substring(0, 1).toLowerCase()
                 + simpleName.substring(1) + "Service";
-        final WebApplicationContext wac = WebApplicationContextUtils
-                .getWebApplicationContext(ServletActionContext
-                        .getServletContext());
-        final EntityTypeService entityService = (EntityTypeService) wac
-                .getBean(simpleName);
+        final EntityTypeService entityService = (EntityTypeService) context.getBean(simpleName);
         return (List<EntityType>) entityService.getAllActiveEntities(detailType
                 .getId());
     }
@@ -2540,7 +2532,7 @@ public class EgovCommon {
         if (adk == null || adk.equals(null))
             throw new ApplicationRuntimeException("There is no project code");
 
-        final CFinancialYear finYear = finDao.getFinancialYearByDate(asOnDate);
+        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(asOnDate);
         final Date startDate = finYear.getStartingDate();
 
         final List<Map<String, String>> result = new ArrayList<Map<String, String>>();

@@ -40,6 +40,7 @@
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
 <title>Acknowledgement Slip for Trade License</title>
@@ -54,7 +55,7 @@
 </script>
 </head>
 <body onload="refreshInbox()">
-	<div id="main">
+	<div id="main" class="printable">
 		<div class="row">
 			<div class="col-md-12">
 			<s:form name="certificateform" action="viewTradeLicense">
@@ -144,10 +145,11 @@
 		</div>
 	</div>	
 		<div align="center" id="printDiv">
-			<input type="button" id="print" class="button" value="Print"
-				onclick="printDiv('main')" /> &nbsp;&nbsp; <input
+			<input type="button" id="print" class="button printbtn" value="Print"
+				/> &nbsp;&nbsp; <input
 				type="button" id="close" value="Close" class="button"
 				onclick="javascript:window.close();" />
 		</div>
+		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
 </body>
 </html>

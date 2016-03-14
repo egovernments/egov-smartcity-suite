@@ -39,6 +39,7 @@
  */
   function  populateService(serviceCategory){
 		    dom.get('fundId').value="-1";
+		    dom.get('functionId').value="-1";
         	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
         }
         
@@ -54,7 +55,7 @@
         	
     		
         	var url2 = path+"/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService.action";
-        	makeJSONCall(["functionIdDetail","functionDetail","glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
+        	makeJSONCall(["functionIdDetail","glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
         	,url2,{serviceId:service,deptId:dept},loadFinAccSuccessHandler,loadFinAccFailureHandler);
         
         	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
@@ -97,7 +98,7 @@ success: function(o) {
 				}
 				
 				if(null != dom.get('receiptMisc.idFunctionary.id') ){
-						 dom.get('receiptMisc.idFunctionary.id').value = parseInt(miscArray[4]);
+						 dom.get('receiptMisc.idFunctionary.id').selectedIndex = parseInt(miscArray[4]);
 				}
 				
 		}
@@ -177,8 +178,6 @@ loadFinAccSuccessHandler=function(req,res){
       billCreditDetailsTable.deleteRows(0,noOfRows); 
       billDetailTableIndex = 0;
 	  billCreditDetailsTable.addRow({SlNo:billCreditDetailsTable.getRecordSet().getLength()+1,
-	 		"functionid":"",
-	 		 "function":"",
              "glcodeid":"",
              "glcode":"",
              "accounthead":"",
@@ -188,10 +187,8 @@ loadFinAccSuccessHandler=function(req,res){
 	  totalcramt = "0.00";          
 	  billDetailTableIndex = 1;
 	for(i=0;i<res.results.length-1;i++){
-		
+		dom.get("functionId").value=res.results[i].functionIdDetail;
 	  	 billCreditDetailsTable.addRow({SlNo:billCreditDetailsTable.getRecordSet().getLength()+1,
-	  	 			"functionid":res.results[i].functionIdDetail,
-	  	 			"function":res.results[i].functionDetail,
                     "glcodeid":res.results[i].glcodeIdDetail,
                     "glcode":res.results[i].glcodeDetail,
                     "accounthead":res.results[i].accounthead,
@@ -201,8 +198,7 @@ loadFinAccSuccessHandler=function(req,res){
        }
        
         for(i=0;i<res.results.length;i++){  
-        		updateGridMisc(VOUCHERCREDITDETAILLIST,'functionIdDetail',i,res.results[i].functionIdDetail);
-      		 	updateGridMisc(VOUCHERCREDITDETAILLIST,'functionDetail',i,res.results[i].functionDetail);
+        	    dom.get("functionId").value=res.results[i].functionIdDetail;
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeIdDetail',i,res.results[i].glcodeIdDetail);
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeDetail',i,res.results[i].glcodeDetail);
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'accounthead',i,res.results[i].accounthead);

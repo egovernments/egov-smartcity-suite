@@ -287,6 +287,9 @@
     	<put-attribute name="page-title" value="title.adtax.updateTpbo" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/tpbo/tpbo-update.jsp"/>
     </definition>
-    
+    <definition name="renewal-error" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.adtax.renewal" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-error.jsp"/>
+    </definition>
    
 </tiles-definitions>

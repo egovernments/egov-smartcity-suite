@@ -148,6 +148,9 @@
 			function onBodyLoad(){
   				var currentState=document.getElementById("currentWfstate").value;
   				showHideAgreement();
+  				if (currentState=='Renewal License:generate Certificate'||currentState=='Create License:generate Certificate') {
+  			    	jQuery("span").remove(".mandatory");
+  			    }
 				if(document.getElementById("mode").value=='disableApprover')	
 					{
 					toggleFields(true,['Submit','Reject','button2','Approve','approverComments','Sign','Preview']); 
@@ -168,7 +171,7 @@
 					  jQuery('.add-padding').attr('onclick','').unbind('click');
 					  // renaming approver remarks label for second level of workflow
 					  <s:if test="%{getNextAction()!='END'}">
-					 	 jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+					  	jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
 					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
 					</s:if>
 				} 

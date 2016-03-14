@@ -52,6 +52,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.User;
@@ -60,11 +61,14 @@ import org.egov.model.instrument.InstrumentHeader;
 /**
  * The bill receipt information class. Provides details of a bill receipt.
  */
+
 public class BillReceiptInfoImpl implements BillReceiptInfo {
     /**
      * The private receipt header object. This is used by the getters to provide bill receipt information
      */
     private final ReceiptHeader receiptHeader;
+    
+   
 
     /**
      * Indicates the last event that has occurred on this receipt
@@ -91,15 +95,16 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      * Creates bill receipt information object for given receipt header
      *
      * @param receiptHeader the receipt header object
+     * @param chartOfAccountsHibernateDAO TODO
      */
-    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader) {
+    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
         additionalInfo = null;
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail));
+            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail,chartOfAccountsHibernateDAO));
 
         // Populate set of instrument headers that belong to this receipt
         for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
@@ -124,15 +129,16 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      * and additional message
      *
      * @param receiptHeader the receipt header object
+     * @param chartOfAccountsHibernateDAO TODO
      */
-    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final String additionalInfo) {
+    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final String additionalInfo, ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
         this.additionalInfo = additionalInfo;
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail));
+            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail,chartOfAccountsHibernateDAO));
 
         // Populate set of instrument headers that belong to this receipt
         for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
@@ -153,20 +159,20 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     }
 
     public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final EgovCommon egovCommon,
-            final ReceiptHeader receiptHeaderRefObj) {
+            final ReceiptHeader receiptHeaderRefObj, ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
         additionalInfo = null;
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail));
+            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail,chartOfAccountsHibernateDAO));
 
         // Populate set of instrument headers that belong to this receipt
         for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
             instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
         // String receiptStatus = receiptHeader.getEgwStatus().getCode();
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
-            challan = new ChallanInfo(receiptHeader, egovCommon, receiptHeaderRefObj);
+            challan = new ChallanInfo(receiptHeader, egovCommon, receiptHeaderRefObj, chartOfAccountsHibernateDAO);
             challanDetails.add(challan);
         }
     }

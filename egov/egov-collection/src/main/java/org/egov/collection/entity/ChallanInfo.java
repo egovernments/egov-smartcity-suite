@@ -49,6 +49,7 @@ import org.egov.collection.integration.models.ReceiptAccountInfoImpl;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfoImpl;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.model.instrument.InstrumentHeader;
@@ -56,6 +57,7 @@ import org.egov.model.instrument.InstrumentHeader;
 /**
  * The challan information class. Provides details of a challan.
  */
+
 public class ChallanInfo {
     /**
      * The private receipt header object. This is used by the getters to provide
@@ -66,22 +68,23 @@ public class ChallanInfo {
     private final Set<AccountPayeeDetailInfo> accountPayeeDetails = new HashSet<AccountPayeeDetailInfo>();
     private final Set<ReceiptInstrumentInfo> instrumentDetails = new HashSet<ReceiptInstrumentInfo>();
     private ReceiptHeader receipHeaderReferenceObj = new ReceiptHeader();
-
+   
     /**
      * Creates challan information object for given receipt header
      *
      * @param receiptHeader
      *            the receipt header object
+     * @param chartOfAccountsHibernateDAO TODO
      */
     public ChallanInfo(final ReceiptHeader receiptHeader, final EgovCommon egovCommon,
-            final ReceiptHeader receiptHeaderRefObj) {
+            final ReceiptHeader receiptHeaderRefObj, ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
         this.receiptHeader = receiptHeader;
         if (receiptHeaderRefObj != null && receiptHeaderRefObj.getChallan() != null)
             receipHeaderReferenceObj = receiptHeaderRefObj;
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
 
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail));
+            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail,chartOfAccountsHibernateDAO));
             for (final AccountPayeeDetail accountPayeeDetail : receiptDetail.getAccountPayeeDetails())
                 accountPayeeDetails.add(new AccountPayeeDetailInfo(accountPayeeDetail, egovCommon));
         }

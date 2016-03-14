@@ -145,4 +145,8 @@
 		<put-attribute name="page-title" value="title.feematrix.view" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-view.jsp" />
 	</definition>
+	<definition name="demand-generate" extends="base_layout">
+		<put-attribute name="page-title" value="title.demandGeneation" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/demandgeneration/demand-generate.jsp" />
+	</definition>
 </tiles-definitions>

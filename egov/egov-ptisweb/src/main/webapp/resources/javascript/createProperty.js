@@ -1125,7 +1125,7 @@ function enableOrDisableSiteOwnerDetails(obj) {
 	}
 }
 
-function enableOrDisableBPADetails(obj) {
+/*function enableOrDisableBPADetails(obj) {
 	if (jQuery(obj).is(":checked")) {
 		jQuery('tr.bpddetails').show();
 	} else {
@@ -1134,7 +1134,7 @@ function enableOrDisableBPADetails(obj) {
 		jQuery("#deviationPercentage").prop('selectedIndex', 0);
 		jQuery('tr.bpddetails').hide();
 	}
-}
+}*/
 
 function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 	if (propType != "select") {
@@ -1147,8 +1147,8 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('tr.extentSite').hide();
 			jQuery('tr.appurtenant').hide();
 			jQuery('tr.superStructureRow').hide();
-			jQuery('tr.bpddetailsheader').hide();
-			jQuery('tr.bpddetails').hide();
+			//jQuery('tr.bpddetailsheader').hide();
+			//jQuery('tr.bpddetails').hide();
 			jQuery("#apartment").prop('selectedIndex', 0);
 			jQuery('td.apartmentRow').hide();
 		} else {
@@ -1160,8 +1160,8 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();
 			jQuery('tr.superStructureRow').show();
-			jQuery('tr.bpddetailsheader').show();
-			jQuery('tr.bpddetails').show();
+			//jQuery('tr.bpddetailsheader').show();
+			//jQuery('tr.bpddetails').show();
 			jQuery('td.apartmentRow').show();
 			if (appurtenantLandChecked == 'true') {
 				jQuery('tr.vacantlanddetaills').show();

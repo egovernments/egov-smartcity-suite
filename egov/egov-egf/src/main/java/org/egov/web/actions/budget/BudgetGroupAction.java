@@ -88,7 +88,8 @@ public class BudgetGroupAction extends BaseFormAction {
     private String target = "";
     private String mode = "";
     private int majorcodelength = 0;
-
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
     @Override
     public Object getModel() {
         return budgetGroup;
@@ -186,7 +187,7 @@ public class BudgetGroupAction extends BaseFormAction {
     }
 
     private void clearBudgetGroupCache() {
-        EgovMasterDataCaching.getInstance().removeFromCache("egf-budgetGroup");
+        masterDataCache.removeFromCache("egf-budgetGroup");
     }
 
     @Transactional

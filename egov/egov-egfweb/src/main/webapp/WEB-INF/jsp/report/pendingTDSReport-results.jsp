@@ -63,6 +63,9 @@
 </table>
 <s:if test="%{pendingTDS.size()>0}">
 	<br />
+	<div class="subheadsmallnew">
+		<strong>Pending Deductions to be remitted</strong>
+	</div>
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td

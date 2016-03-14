@@ -48,15 +48,19 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -77,6 +81,12 @@ public class CashBook {
     NumberFormat numberformatter = new DecimalFormat("##############0.00");
     private final CommnFunctions commonFun = new CommnFunctions();
     private static final Logger LOGGER = Logger.getLogger(CashBook.class);
+    @Autowired
+    private FinancialYearHibernateDAO financialYearDAO;
+    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    final SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
+    private @Autowired EGovernCommon eGovernCommon; 
+    private @Autowired  ReportEngine engine;
 
     public CashBook() {
     }
@@ -95,7 +105,6 @@ public class CashBook {
             String glCode1 = "";
             String glCode2 = "";
             taskExc = new TaskFailedException();
-            final EGovernCommon egc = new EGovernCommon();
             final String cashPId = EGovConfig.getProperty("egf_config.xml",
                     "PURPOSEID", "", "CashInHand");
 
@@ -121,7 +130,7 @@ public class CashBook {
                 if (snapShotDateTime.equalsIgnoreCase(""))
                     effTime = "";
                 else
-                    effTime = egc.getEffectiveDateFilter(snapShotDateTime);
+                    effTime = eGovernCommon.getEffectiveDateFilter(snapShotDateTime);
             } catch (final Exception ex) {
                 LOGGER.error("exception in getGeneralLedgerList", ex);
                 throw taskExc;
@@ -135,8 +144,7 @@ public class CashBook {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(" fundId:" + fundId + " fundSourceId:"
                         + fundSourceId);
-            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            final SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
+            
             isCurDate(endDate1);
             try {
                 endDate = reportBean.getEndDate();
@@ -158,8 +166,21 @@ public class CashBook {
             }
 
             if (startDate.equalsIgnoreCase("null")) {
-                final String finId = commonFun.getFYID(formendDate);
-                startDate = commonFun.getStartDate(Integer.parseInt(finId));
+            	
+                try {
+					dt = sdf.parse(endDate);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
+               // final String finId = commonFun.getFYID(formendDate);
+                //startDate = commonFun.getStartDate(Integer.parseInt(finId));
+                if(finYearByDate!=null)
+            	{
+                		startDate =sdf.format(finYearByDate.getStartingDate());
+            	}
+                
             } else
                 startDate = formstartDate;
             // if(LOGGER.isInfoEnabled()) LOGGER.info("startDate22 "+startDate);
@@ -174,8 +195,17 @@ public class CashBook {
                 throw taskExc;
             }
 
-            setDates(startDate, endDate);
-            final String fyId = commonFun.getFYID(endDate);
+            
+            Date dt1=new Date();
+			try {
+				dt1 = sdf.parse(endDate);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+            CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt1);
+            final String fyId=finYearByDate.getId().toString();
+            //final String fyId = commonFun.getFYID(endDate);
             if (fyId.equalsIgnoreCase("")) {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Financial Year Not Valid");
@@ -187,7 +217,6 @@ public class CashBook {
             BigDecimal cashOpeningBalance = new BigDecimal("0.00");
             BigDecimal chequeOpeningBalance = new BigDecimal("0.00");
 
-            final ReportEngine engine = new ReportEngine();
             final ReportEngineBean reBean = engine
                     .populateReportEngineBean(reportBean);
             final String engineQry = engine.getVouchersListQuery(reBean);
@@ -772,124 +801,20 @@ public class CashBook {
         resultset = null;
         return opBal;
     }
+    /**
+     * 
+     * @param startDate
+     * @param endDate
+     * @throws TaskFailedException
+     * if start date is not provided then set financial year startdate
+     * if end date is not provided then set financial year end date
+     * 
+     *        
+     *     
+     */    
+    
 
-    private void setDates(String startDate, String endDate)
-            throws TaskFailedException {
-        List<Object[]> rs = null;
-        List<Object[]> rs1 = null;
-        String formstartDate = "";
-        String formendDate = "";
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
-        String isclosed = "";
-        try {
-
-            final String query = "select id as \"id\",isclosed as \"isclosed\" from financialYear where startingDate <=? AND endingDate >= ?";
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setString(0, startDate);
-            pstmt.setString(1, endDate);
-            rs = pstmt.list();
-
-            if (rs == null || rs.size() == 0)
-                throw new TaskFailedException();
-            else {
-                for (final Object[] element : rs)
-                    isclosed = element[0].toString();
-                if (isclosed.equals("1"))
-                    throw new TaskFailedException();
-            }
-        } catch (final Exception ex) {
-            // dc.addMessage("eGovFailure","Dates are not within financial year");
-            LOGGER.error("exception in setDates" + ex.getMessage(), ex);
-            if (isclosed.equals("1"))
-                throw new TaskFailedException(
-                        "Choosen Financial year is closed");
-            else
-                throw new TaskFailedException(
-                        "Dates are not within same financial year or This financial year does not Exist");
-        } finally {
-            try {
-            } catch (final Exception e) {
-                LOGGER.error("Exp in finally:" + e.getMessage(), e);
-            }
-        }
-        try {
-            formstartDate = sdf.format(formatter1.parse(startDate));
-            formendDate = sdf.format(formatter1.parse(endDate));
-        } catch (final Exception e) {
-            LOGGER.error("Inside setDates" + e.getMessage(), e);
-            throw taskExc;
-        }
-        startDate = formstartDate;
-        endDate = formendDate;
-        if ((startDate == null || startDate.equalsIgnoreCase(""))
-                && (endDate == null || endDate.equalsIgnoreCase("")))
-            try {
-
-                final String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" "
-                        + "FROM financialYear WHERE startingDate <= SYSDATE AND endingDate >= SYSDATE";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-                rs = pstmt.list();
-                for (final Object[] element : rs)
-                    startDate = element[0].toString();
-
-                final String query1 = "SELECT TO_CHAR(sysdate, 'dd-Mon-yyyy') AS \"endingDate\" FROM dual";
-                pstmt = HibernateUtil.getCurrentSession()
-                        .createSQLQuery(query1);
-                rs1 = pstmt.list();
-                for (final Object[] element : rs1)
-                    endDate = element[0].toString();
-            } catch (final Exception ex) {// dc.addMessage("eGovFailure","setDates");
-                LOGGER.error("In side setDates" + ex.getMessage(), ex);
-                throw new TaskFailedException();
-            }
-        if ((startDate == null || startDate.equalsIgnoreCase(""))
-                && endDate != null && !endDate.equalsIgnoreCase(""))
-            try {
-
-                final String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-                pstmt.setString(0, endDate);
-                pstmt.setString(1, endDate);
-                rs = pstmt.list();
-                for (final Object[] element : rs)
-                    startDate = element[0].toString();
-            } catch (final Exception ex) {
-                LOGGER.error("Inside setDates" + ex.getMessage(), ex);
-                throw taskExc;
-            }
-
-        if ((endDate == null || endDate.equalsIgnoreCase(""))
-                && startDate != null && !startDate.equalsIgnoreCase(""))
-            try {
-                final String query = "SELECT TO_CHAR(endingDate, 'dd-Mon-yyyy') AS \"endingDate\" "
-                        + "FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-                pstmt.setString(0, startDate);
-                pstmt.setString(1, startDate);
-                rs = pstmt.list();
-                pstmt = null;
-            } catch (final Exception ex) {
-                LOGGER.error("Inside setDates" + ex.getMessage(), ex);
-                throw taskExc;
-            }
-    }
-
-    public String getULBName() {
-        String ulbName = "";
-
-        try {
-            final String query = "select name from companydetail";
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            final List<Object[]> rset = pstmt.list();
-            for (final Object[] element : rset)
-                ulbName = element[0].toString();
-        } catch (final Exception sqlex) {
-            LOGGER.error("Inside getULBName" + sqlex.getMessage(), sqlex);
-            return null;
-        }
-        return ulbName;
-    }
+    
 
     public String getMinCode(final String minGlCode) throws TaskFailedException {
         // if(LOGGER.isInfoEnabled()) LOGGER.info("coming");
@@ -952,10 +877,9 @@ public class CashBook {
 
     public void isCurDate(final String VDate) throws TaskFailedException {
 
-        final EGovernCommon egc = new EGovernCommon();
         try {
 
-            final String today = egc.getCurrentDate();
+            final String today = eGovernCommon.getCurrentDate();
             final String[] dt2 = today.split("/");
             final String[] dt1 = VDate.split("/");
 
