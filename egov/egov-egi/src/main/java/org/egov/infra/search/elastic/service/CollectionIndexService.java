@@ -67,21 +67,20 @@ public class CollectionIndexService {
 
     @Transactional
     @Indexing(name = Index.COLLECTION, type = IndexType.COLLECTION_BIFURCATION)
-    public CollectionIndex createCollectionIndex(final CollectionIndex collectionIndex) {
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        collectionIndex.setUlbName(cityWebsite.getName());
-        if (cityWebsite.getDistrictName() != null)
-            collectionIndex.setDistrictName(cityWebsite.getDistrictName());
-        if (cityWebsite.getRegionName() != null)
-            collectionIndex.setRegionName(cityWebsite.getRegionName());
-        collectionIndexRepository.save(collectionIndex);
-        return collectionIndex;
-    }
-
-    @Transactional
-    @Indexing(name = Index.COLLECTION, type = IndexType.COLLECTION_BIFURCATION)
-    public CollectionIndex updateCollectionIndex(final CollectionIndex collectionIndex) {
-        collectionIndexRepository.save(collectionIndex);
+    public CollectionIndex pushCollectionIndex(final CollectionIndex collectionIndex) {
+        final CollectionIndex collectionIndexReceipt = findByReceiptNumber(collectionIndex.getReceiptNumber());
+        if (collectionIndexReceipt != null) {
+            collectionIndexReceipt.setStatus(collectionIndex.getStatus());
+            collectionIndexRepository.save(collectionIndexReceipt);
+        } else {
+            final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+            collectionIndex.setUlbName(cityWebsite.getName());
+            if (cityWebsite.getDistrictName() != null)
+                collectionIndex.setDistrictName(cityWebsite.getDistrictName());
+            if (cityWebsite.getRegionName() != null)
+                collectionIndex.setRegionName(cityWebsite.getRegionName());
+            collectionIndexRepository.save(collectionIndex);
+        }
         return collectionIndex;
     }
 
