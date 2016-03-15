@@ -11,7 +11,13 @@ function getFormData($form) {
 
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");
-	jQuery('.report-section').removeClass('display-hide');
+	console.log($("#reBudget option:selected").text());
+	console.log($("#referenceBudget").html());
+	$('#REBudgetName1').html($("#reBudget option:selected").text());
+	$('#REBudgetName2').html($("#reBudget option:selected").text());
+	$('#BEBudgetName1').html($("#referenceBudget").html());
+	$('#BEBudgetName2').html($("#referenceBudget").html());
+	$('.report-section').removeClass('display-hide');
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
