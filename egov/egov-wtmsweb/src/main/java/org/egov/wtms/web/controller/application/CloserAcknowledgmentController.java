@@ -91,7 +91,7 @@ public class CloserAcknowledgmentController {
         final ReportOutput reportOutput = reportGenerationService.generateClosureConnectionReport(waterConnectionDetails, null, cityMaunicipalityName, districtName);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
+        headers.add("content-disposition", "inline;filename=ClosureAcknowledgement.pdf");
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED); 
     }
 }
