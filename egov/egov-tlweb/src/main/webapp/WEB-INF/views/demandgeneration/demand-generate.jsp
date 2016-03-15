@@ -42,6 +42,7 @@
 
 
 <script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
+<script src="<c:url value='/resources/app/js/demand-generate.js?rnd=${app_release_no}' context='/tl'/>"></script>
 <div class="row">
     <div class="col-md-12">
       <div class="panel panel-primary" data-collapsed="0"> 
@@ -49,9 +50,6 @@
           <div class="panel-title">Demand Generation</div>
         </div>
         <div class="panel-body">
-        	<c:if test="${not empty message}">
-                <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-           	</c:if>
         	<form:form role="form" action="create"  id="generatedemand" name="generatedemand" modelAttribute="demandGenerationLog"
             cssClass="form-horizontal form-groups-bordered"  method="post">
 	            <div class="form-group">
@@ -61,7 +59,6 @@
 		          		<form:option value="" ><spring:message code="lbl.select"/></form:option>
 		          		<form:options items="${financialYearList}" itemLabel="finYearRange" itemValue="finYearRange"/>
 		          	</form:select>
-		          	<form:errors path="installmentYear" cssClass="error-msg" />
 		          </div>
 	            </div>
 	            <div class="form-group">
@@ -74,7 +71,49 @@
 	            	</div>
 	            </div>
 			</form:form>
+            <c:if test="${demandGenerationLog != null && not empty demandGenerationLog.details}">
+                <c:choose>
+                    <c:when test="${demandGenerationLog.demandGenerationStatus == 'INCOMPLETE'}">
+                        <div class="alert alert-success" role="alert"><spring:message code="${message}"/>, correct the data and select the license to retry demand generation.</div>
+                        <div class="col-md-12 text-center add-margin">
+                            <ul class="pagination pagination-xs pager" id="myPager"></ul>
+                        </div>
+                        <table class="table table-bordered" style="width:97%;margin:0 auto;">
+                            <thead>
+                            <tr>
+                                <th valign="top">Select&nbsp;[All <input id="chkall" type="checkbox" style="vertical-align:top">]</th>
+                                <th>License Number</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                            </tr>
+                            </thead>
+                            <tbody id="dgdtl">
+                            <c:forEach items="${demandGenerationLog.details}" var="detail">
+                                <tr>
+                                    <td><input type="checkbox" class='chkbx btn btn-primary'></td>
+                                    <td>${detail.license.licenseNumber}</td>
+                                    <td>${detail.status}</td>
+                                    <td>${detail.detail}</td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                        <div class="text-center add-margin">
+                            <button type="button" class='btn btn-primary' id="regenbtn" onclick="alert('Not done')">Retry Selected</button>
+                        </div>
+                    </c:when>
+                    <c:when test="${demandGenerationLog.demandGenerationStatus == 'COMPLETED'}">
+                        <div class="alert alert-success" role="alert"><spring:message code="${message}"/> Click on Regenerate to update the generated one.</div>
+                        <div class="text-center add-margin">
+                            <button type="button" class='btn btn-primary' id="regenbtn" onclick="alert('Not done')">Regenerate</button>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-success" role="alert">Please wait... <spring:message code="${message}"/></div>
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
 		</div>
 	  </div>
-    </div>
+	</div>
 </div>

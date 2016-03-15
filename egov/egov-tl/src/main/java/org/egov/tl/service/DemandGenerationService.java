@@ -110,6 +110,9 @@ public class DemandGenerationService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
     public DemandGenerationLog bulkDemandGeneration(DemandGenerationLog demandGenerationLog) {
+        DemandGenerationLog existingDemandGenLog = demandGenerationLogRepository.findByInstallmentYear(demandGenerationLog.getInstallmentYear());
+        if (existingDemandGenLog != null)
+            return existingDemandGenLog;
         final CFinancialYear financialYear = cFinancialYearRepository
                 .findByFinYearRange(demandGenerationLog.getInstallmentYear());
         final Module module = moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME);

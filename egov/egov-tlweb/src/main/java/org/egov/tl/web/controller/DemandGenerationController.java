@@ -71,12 +71,11 @@ public class DemandGenerationController {
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String demandGeneration(@Valid @ModelAttribute final DemandGenerationLog demandGenerationLog,
+    public String demandGeneration(@ModelAttribute DemandGenerationLog demandGenerationLog,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
-        if (resultBinder.hasErrors())
-            return "demand-generate";
-        demandGenerationService.bulkDemandGeneration(demandGenerationLog);
-        redirectAttributes.addFlashAttribute("message", "msg.demand.generation.success");
+        demandGenerationLog = demandGenerationService.bulkDemandGeneration(demandGenerationLog);
+        redirectAttributes.addFlashAttribute("demandGenerationLog", demandGenerationLog);
+        redirectAttributes.addFlashAttribute("message", "msg.demand.generation."+demandGenerationLog.getDemandGenerationStatus());
         return "redirect:/demand-generation/create";
     }
 }
