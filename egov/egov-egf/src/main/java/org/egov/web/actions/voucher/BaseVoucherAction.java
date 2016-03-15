@@ -231,7 +231,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     public boolean isBankBalanceMandatory()
     {
         final AppConfigValues appConfigValues = (AppConfigValues) persistenceService
-                .find("from AppConfigValues where key in (select id from AppConfig where key_name='bank_balance_mandatory' and module='EGF' )");
+                .find("from AppConfigValues where key in (select id from AppConfig where key_name='bank_balance_mandatory' and module.name='EGF' )");
         if (appConfigValues == null)
             throw new ValidationException("", "bank_balance_mandatory parameter is not defined");
         return appConfigValues.getValue().equals("Y") ? true : false;
