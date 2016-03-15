@@ -40,15 +40,15 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-<span class="mandatory"> <font
+ <font
 	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
 		<s:actionmessage /></font>
-</span>
-<s:if test="%{subLedgerScheduleDisplayList.size!=0}">
+
+<s:if test="%{subLedgerScheduleDisplayList.size!=0 }">
 	<display:table name="subLedgerScheduleDisplayList"
 		id="currentRowObject" uid="currentRowObject" class="tablebottom"
 		style="width:100%;" cellpadding="0" cellspacing="0" export="true"
-		requestURI="subLedgerScheduleReport!ajaxSearch.action">
+		requestURI="subLedgerScheduleReport-ajaxSearch.action">
 		<display:caption>
 			<div class="headingsmallbgnew" align="center"
 				style="text-align: center; width: 98%;">

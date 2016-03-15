@@ -56,7 +56,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -65,18 +65,20 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.exility.common.TaskFailedException;
 
 /**
- * @author Administrator
- *
- * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
+ * @author Administrator TODO To change the template for this generated type
+ *         comment go to Window - Preferences - Java - Code Style - Code
+ *         Templates
  */
-public class RptSubLedgerSchedule
-{
-    double totalDr = 0.0, totalCr = 0.0, totalOpgBal = 0.0, totalClosingBal = 0.0;
+@Service
+public class RptSubLedgerSchedule {
+    double totalDr, totalCr, totalOpgBal, totalClosingBal;
     List<Object[]> resultset;
     NumberFormat formatter;
     TaskFailedException taskExc;
@@ -84,11 +86,16 @@ public class RptSubLedgerSchedule
     private CFinancialYear fyObj;
     String subLedgerTable;
     HashMap hm_opBal;
-    LinkedList dataList = new LinkedList();
+    LinkedList dataList;
     private static final Logger LOGGER = Logger.getLogger(RptSubLedgerSchedule.class);
     private boolean isStartDateFirstApril = false;
     @Autowired
-    private FinancialYearDAO financialYearDao;
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+
+    @Autowired
+    private FinancialYearHibernateDAO financialYearDAO;
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -98,9 +105,7 @@ public class RptSubLedgerSchedule
     }
 
     // code for SubLedger type
-    public LinkedList getSubLedgerTypeSchedule(final GeneralLedgerBean reportBean)
-            throws TaskFailedException
-    {
+    public LinkedList getSubLedgerTypeSchedule(final GeneralLedgerBean reportBean) throws TaskFailedException {
         formatter = new DecimalFormat();
         formatter = new DecimalFormat("###############.00");
         glCode = reportBean.getGlcode();
@@ -115,11 +120,10 @@ public class RptSubLedgerSchedule
         String formendDate = "";
         String startDateDBFormat = "";
 
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+        final SimpleDateFormat formatter1 = new SimpleDateFormat("dd/mm/yyyy");
         Date dt = new Date();
-        try
-        {
+        try {
             endDate = reportBean.getEndDate();
             dt = sdf.parse(endDate);
             formendDate = formatter1.format(dt);
@@ -135,7 +139,8 @@ public class RptSubLedgerSchedule
         startDateDBFormat = formstartDate;
         endDate = formendDate;
 
-        fyObj = financialYearDao.getFinancialYearByDate(dt);
+        fyObj = financialYearDAO.getFinYearByDate(dt);
+        fyId = fyObj.getId().toString();
         // fyObj=cms.getFinancialYearById(Long.parseLong(fyId));
 
         final Date finYrStartingDate = fyObj.getStartingDate();
@@ -144,51 +149,53 @@ public class RptSubLedgerSchedule
             LOGGER.info(".............The formated date is " + formatedDateStr);
         if (startDateDBFormat.equalsIgnoreCase(formatedDateStr))
             isStartDateFirstApril = true;
-        try
-        {
+        try {
             getSubQuery(startDateDBFormat, endDate);
             formatSLTypeReport();
             reportBean.setAccName(getAccountname(glCode));
-        } catch (final Exception exception)
-        {
+        } catch (final Exception exception) {
             LOGGER.error("Exp=" + exception.getMessage());
         }
         return dataList;
     }
 
-    private void getSubQuery(final String startDate, final String endDate) throws Exception
-    {
+    private void getSubQuery(final String startDate, final String endDate) throws Exception {
         String defaultStatusExclude = null;
         String departmentFromCondition = "";
         String departmentWhereCondition = "";
         String departmentConditionTran = "";
+        dataList = new LinkedList();
+        totalCr = 0.0;
+        totalDr = 0.0;
+        totalOpgBal = 0.0;
+        totalClosingBal = 0.0;
         if (deptId != null && !deptId.equalsIgnoreCase("")) {
             departmentConditionTran = " and DEPARTMENTID=? ";
             departmentFromCondition = ",vouchermis vmis";
             departmentWhereCondition = "AND vh.id = vmis.voucherheaderid and vmis.departmentid=? ";
         }
-        final List<AppConfigValues> listAppConfVal = appConfigValuesService.
-                getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
+        final List<AppConfigValues> listAppConfVal = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "statusexcludeReport");
         if (null != listAppConfVal)
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
             throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
 
-        String query;// DEFINED STUFF startDate endDate fundId defaultStatusExclude glCode accEntityId
-        if (isStartDateFirstApril)
-        {
+        String query;// DEFINED STUFF startDate endDate fundId
+        // defaultStatusExclude glCode accEntityId
+        if (isStartDateFirstApril) {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Inside the First April block");
-            query = "SELECT case when a1.detkeyid = null then a3.detkeyid ELSE a1.detkeyid end as slid,nvl(a3.OpgCreditBal,0) as OpgCreditBal,nvl(a3.OpgDebitBal,0)  as OpgDebitBal,0 as PrevDebit, "
-                    + " 0 as PrevCredit,nvl(a1.Credit,0) as Credit,nvl(a1.Debit,0) as Debit "
+            query = "SELECT case when a1.detkeyid is null then a3.detkeyid ELSE a1.detkeyid end as slid,coalesce(a3.OpgCreditBal,0) as OpgCreditBal,coalesce(a3.OpgDebitBal,0)  as OpgDebitBal,0 as PrevDebit, "
+                    + " 0 as PrevCredit,coalesce(a1.Credit,0) as Credit,coalesce(a1.Debit,0) as Debit "
                     + " FROM ( select detkeyid,sum(Debit)as Debit,sum(Credit)as Credit FROM ("
                     + " SELECT gld.detailkeyid AS detkeyid, SUM (gld.amount)  AS Debit , 0 AS Credit "
                     + " FROM generalledgerdetail gld, generalledger gl,voucherheader vh "
                     + departmentFromCondition
                     + " "
                     + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) "
-                    + " AND gl.debitamount > 0  AND gl.voucherheaderid = vh .ID AND vh.voucherdate    >= TO_DATE (?) "
-                    + " AND vh.voucherdate    <= TO_DATE (?) "
+                    + " AND gl.debitamount > 0  AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') "
+                    + " AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')"
                     + departmentWhereCondition
                     + " AND vh.fundid= ? AND vh.status NOT IN ("
                     + defaultStatusExclude
@@ -199,13 +206,13 @@ public class RptSubLedgerSchedule
                     + departmentFromCondition
                     + " "
                     + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) "
-                    + " AND gl.creditamount > 0  AND gl.voucherheaderid = vh .ID AND vh.voucherdate    >= TO_DATE (?) "
-                    + " AND vh.voucherdate    <= TO_DATE (?) "
+                    + " AND gl.creditamount > 0  AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') "
+                    + " AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')"
                     + departmentWhereCondition
                     + " AND vh.fundid= ? AND vh.status NOT IN ("
                     + defaultStatusExclude
                     + ") GROUP BY gld.detailkeyid "
-                    + ") GROUP BY detkeyid ORDER BY detkeyid "
+                    + ") a2 GROUP BY detkeyid ORDER BY detkeyid "
                     + ") a1 FULL OUTER JOIN  "
                     + "(SELECT ACCOUNTDETAILKEY    AS detkeyid , SUM(openingcreditbalance) AS OpgCreditBal , SUM(openingdebitbalance)  AS OpgDebitBal "
                     + "FROM transactionsummary WHERE glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) AND (openingcreditbalance > 0 OR openingdebitbalance > 0) "
@@ -213,42 +220,40 @@ public class RptSubLedgerSchedule
                     + departmentConditionTran
                     + " GROUP BY ACCOUNTDETAILKEY ORDER BY accountdetailkey) a3 ON a1.detkeyid=a3.detkeyid";
 
-            int i = 1;
+            int i = 0;
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setInteger(i++, Integer.parseInt(accEntityId));
+            pst.setLong(i++, Long.parseLong(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setString(i++, deptId);
-            pst.setString(i++, fundId);
-            pst.setInteger(i++, Integer.parseInt(accEntityId));
+                pst.setLong(i++, Long.parseLong(deptId));
+            pst.setLong(i++, Long.parseLong(fundId));
+            pst.setLong(i++, Long.parseLong(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setString(i++, deptId);
-            pst.setString(i++, fundId);
+                pst.setLong(i++, Long.parseLong(deptId));
+            pst.setLong(i++, Long.parseLong(fundId));
 
             pst.setString(i++, glCode);
-            pst.setString(i++, accEntityId);
-            pst.setString(i++, fundId);
-            pst.setString(i++, fyId);
+            pst.setLong(i++, Long.parseLong(accEntityId));
+            pst.setLong(i++, Long.parseLong(fundId));
+            pst.setLong(i++, Long.parseLong(fyId));
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setString(i++, deptId);
-        }
-        else
-        {
+                pst.setLong(i++, Long.parseLong(deptId));
+        } else {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Inside the Else block");
-            query = "SELECT case when a1.detkeyid = null then a3.detkeyid else a1.detkeyid end as slid,nvl(a3.OpgCreditBal,0) as OpgCreditBal,nvl(a3.OpgDebitBal,0)  as OpgDebitBal,nvl(a2.PrevDebit,0) as PrevDebit, "
-                    + "nvl(a2.PrevCredit,0) as PrevCredit,nvl(a1.Credit,0) as Credit,nvl(a1.Debit,0) as Debit"
+            query = "SELECT case when a1.detkeyid is null then a3.detkeyid else a1.detkeyid end as slid,coalesce(a3.OpgCreditBal,0) as OpgCreditBal,coalesce(a3.OpgDebitBal,0)  as OpgDebitBal,coalesce(a2.PrevDebit,0) as PrevDebit, "
+                    + "coalesce(a2.PrevCredit,0) as PrevCredit,coalesce(a1.Credit,0) as Credit,coalesce(a1.Debit,0) as Debit"
                     + " FROM  (select detkeyid,sum(Debit)as Debit,sum(Credit)as Credit FROM("
                     + " SELECT gld.detailkeyid AS detkeyid,SUM (gld.amount)  AS Debit , 0 AS Credit "
                     + " FROM generalledgerdetail gld, generalledger gl,voucherheader vh "
                     + departmentFromCondition
                     + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) "
-                    + "AND gl.debitamount > 0 AND gl.voucherheaderid = vh .ID AND vh.voucherdate    >= TO_DATE (?) AND vh.voucherdate    <= TO_DATE (?) "
+                    + "AND gl.debitamount > 0 AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= to_date(?,'dd/mm/yyyy') "
                     + departmentWhereCondition
                     + " AND vh.fundid= ? AND vh.status NOT IN ("
                     + defaultStatusExclude
@@ -258,39 +263,39 @@ public class RptSubLedgerSchedule
                     + " FROM generalledgerdetail gld, generalledger gl,voucherheader vh "
                     + departmentFromCondition
                     + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) "
-                    + "AND gl.creditamount > 0 AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= TO_DATE (?) AND vh.voucherdate <= TO_DATE (?) "
+                    + "AND gl.creditamount > 0 AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= to_date(?,'dd/mm/yyyy') "
                     + departmentWhereCondition
                     + " AND vh.fundid= ? AND vh.status NOT IN ("
                     + defaultStatusExclude
                     + ") GROUP BY gld.detailkeyid "
-                    + " )group by  detkeyid "
+                    + " ) a4 group by  detkeyid "
                     + "ORDER BY detkeyid ) a1 "
                     + "FULL OUTER JOIN ("
                     + " SELECT detkeyid AS detkeyid , SUM (PrevDebit )  AS PrevDebit , SUM (PrevCredit) AS PrevCredit From("
-                    + " SELECT gld.detailkeyid AS detkeyid ,nvl( SUM (gld.amount ),0)  AS PrevDebit , 0 AS PrevCredit "
+                    + " SELECT gld.detailkeyid AS detkeyid ,coalesce( SUM (gld.amount ),0)  AS PrevDebit , 0 AS PrevCredit "
                     + " FROM generalledgerdetail gld, generalledger gl, voucherheader vh "
                     + departmentFromCondition
                     + " WHERE gld.detailtypeid  = ? "
                     + "AND gld.generalledgerid = gl.ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) AND gl.debitamount > 0 "
-                    + "AND gl.voucherheaderid = vh .ID AND vh.voucherdate >=(SELECT startingdate FROM financialyear WHERE startingdate <= TO_DATE(?) "
-                    + "AND endingdate >= TO_DATE (?) ) AND vh.voucherdate <= TO_DATE(TO_DATE (?) - 1) "
+                    + "AND gl.voucherheaderid = vh .ID AND vh.voucherdate >=(SELECT startingdate FROM financialyear WHERE startingdate <= to_date(?,'dd/mm/yyyy') "
+                    + "AND endingdate >= to_date(?,'dd/mm/yyyy')  AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')-1 )  "
                     + departmentWhereCondition
                     + "AND vh.fundid = ? AND vh.status NOT  IN ("
                     + defaultStatusExclude
                     + ") GROUP BY gld.detailkeyid "
                     + " UNION ALL"
-                    + " SELECT gld.detailkeyid AS detkeyid ,0 AS PrevDebit, nvl(SUM (gld.amount ),0) AS PrevCredit"
+                    + " SELECT gld.detailkeyid AS detkeyid ,0 AS PrevDebit, coalesce(SUM (gld.amount ),0) AS PrevCredit"
                     + " FROM generalledgerdetail gld, generalledger gl, voucherheader vh "
                     + departmentFromCondition
                     + " WHERE gld.detailtypeid  = ? "
                     + "AND gld.generalledgerid = gl.ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) AND gl.creditamount> 0 "
-                    + "AND gl.voucherheaderid = vh .ID AND vh.voucherdate >=(SELECT startingdate FROM financialyear WHERE startingdate <= TO_DATE(?) "
-                    + "AND endingdate >= TO_DATE (?) ) AND vh.voucherdate <= TO_DATE(TO_DATE (?) - 1) "
+                    + "AND gl.voucherheaderid = vh .ID AND vh.voucherdate >=(SELECT startingdate FROM financialyear WHERE startingdate <= to_date(?,'dd/mm/yyyy') "
+                    + "AND endingdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')-1 )"
                     + departmentWhereCondition
                     + "AND vh.fundid = ? AND vh.status NOT  IN ("
                     + defaultStatusExclude
                     + ") GROUP BY gld.detailkeyid "
-                    + " )group by detkeyid"
+                    + " ) a1 group by detkeyid"
                     + " ORDER BY detkeyid ) a2 ON a1.detkeyid=a2.detkeyid "
                     + "FULL OUTER JOIN (SELECT ACCOUNTDETAILKEY    AS detkeyid , SUM(openingcreditbalance) AS OpgCreditBal , SUM(openingdebitbalance)  AS OpgDebitBal "
                     + "FROM transactionsummary WHERE glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) AND (openingcreditbalance > 0 OR openingdebitbalance > 0) "
@@ -298,48 +303,48 @@ public class RptSubLedgerSchedule
                     + departmentConditionTran
                     + " GROUP BY ACCOUNTDETAILKEY ORDER BY accountdetailkey) a3 ON a2.detkeyid=a3.detkeyid";
 
-            int i = 1;
+            int i = 0;
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(i++, accEntityId);
+            pst.setLong(i++, Long.parseLong(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setString(i++, deptId);
-            pst.setString(i++, fundId);
+                pst.setLong(i++, Long.parseLong(deptId));
+            pst.setLong(i++, Long.parseLong(fundId));
 
-            pst.setString(i++, accEntityId);
+            pst.setLong(i++, Long.parseLong(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setString(i++, deptId);
-            pst.setString(i++, fundId);
+                pst.setLong(i++, Long.parseLong(deptId));
+            pst.setLong(i++, Long.parseLong(fundId));
 
-            pst.setString(i++, accEntityId);
-            pst.setString(i++, glCode);
-            pst.setString(i++, startDate);
-            pst.setString(i++, endDate);
-            pst.setString(i++, startDate);
-            if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setString(i++, deptId);
-            pst.setString(i++, fundId);
-
-            pst.setString(i++, accEntityId);
+            pst.setLong(i++, Long.parseLong(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
             pst.setString(i++, startDate);
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setString(i++, deptId);
-            pst.setString(i++, fundId);
+                pst.setLong(i++, Long.parseLong(deptId));
+            pst.setLong(i++, Long.parseLong(fundId));
+
+            pst.setLong(i++, Long.parseLong(accEntityId));
+            pst.setString(i++, glCode);
+            pst.setString(i++, startDate);
+            pst.setString(i++, endDate);
+            pst.setString(i++, startDate);
+            if (deptId != null && !deptId.equalsIgnoreCase(""))
+                pst.setLong(i++, Long.parseLong(deptId));
+            pst.setLong(i++, Long.parseLong(fundId));
 
             pst.setString(i++, glCode);
-            pst.setString(i++, accEntityId);
-            pst.setString(i++, fundId);
-            pst.setString(i++, fyId);
+            pst.setLong(i++, Long.parseLong(accEntityId));
+            pst.setLong(i++, Long.parseLong(fundId));
+            pst.setLong(i++, Long.parseLong(fyId));
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setString(i++, deptId);
+                pst.setLong(i++, Long.parseLong(deptId));
         }
 
         if (LOGGER.isInfoEnabled())
@@ -347,9 +352,9 @@ public class RptSubLedgerSchedule
         try {
             GeneralLedgerBean gb = null;
             resultset = pst.list();
-            final PersistenceService ps = new PersistenceService();
-            final Accountdetailtype accountdetailtype = (Accountdetailtype) ps.find(" from Accountdetailtype where id=?",
-                    Integer.valueOf(accEntityId));
+            // final PersistenceService ps = new PersistenceService();
+            final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
+                    " from Accountdetailtype where id=?", Integer.valueOf(accEntityId));
             EntityType entity;
             for (final Object[] element : resultset) {
                 gb = new GeneralLedgerBean();
@@ -361,15 +366,13 @@ public class RptSubLedgerSchedule
                 double prevCredit = 0.0;
                 double debitamount = 0.0;
                 double creditamount = 0.0;
-                try
-                {
-                    entity = (EntityType) ps.find(" from " + accountdetailtype.getFullQualifiedName() + " where id=? ",
-                            Integer.valueOf(element[0].toString()));
-                } catch (final Exception ee)
-                {
+                try {
+                    entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
+                            + " where id=? ", Long.valueOf(element[0].toString()));
+                } catch (final Exception ee) {
                     LOGGER.error(ee.getMessage(), ee);
-                    entity = (EntityType) ps.find(" from " + accountdetailtype.getFullQualifiedName() + " where id=? ",
-                            Long.valueOf(element[0].toString()));
+                    entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
+                            + " where id=? ", Long.valueOf(element[0].toString()));
                 }
                 if (entity != null) {
                     gb.setCode(entity.getCode());
@@ -395,58 +398,46 @@ public class RptSubLedgerSchedule
                 openingBal = opgCredit + prevCredit - (opgDebit + prevDebit);
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Hello............. " + openingBal + "==");
-                if (openingBal > 0)
-                {
+                if (openingBal > 0) {
                     gb.setOpeningBal("" + numberToString(((Double) openingBal).toString()) + " Cr");
                     totalOpgBal = totalOpgBal + openingBal;
-                }
-                else if (openingBal < 0)
-                {
+                } else if (openingBal < 0) {
                     totalOpgBal = totalOpgBal + openingBal;
                     final double openingBal1 = openingBal * -1;
                     gb.setOpeningBal("" + numberToString(((Double) openingBal1).toString()) + " Dr");
-                }
-                else
+                } else
                     gb.setOpeningBal("&nbsp;");
 
                 closingBal = openingBal + creditamount - debitamount;
                 if (closingBal > 0)
                     gb.setClosingBal("" + numberToString(((Double) closingBal).toString()) + " Cr");
-                else if (closingBal < 0)
-                {
+                else if (closingBal < 0) {
                     final double closingBal1 = closingBal * -1;
                     gb.setClosingBal("" + numberToString(((Double) closingBal1).toString()) + " Dr");
-                }
-                else
+                } else
                     gb.setClosingBal("&nbsp;");
 
-                if (debitamount > 0)
-                {
+                if (debitamount > 0) {
                     gb.setDebitamount("" + numberToString(((Double) debitamount).toString()));
                     totalDr = totalDr + debitamount;
-                }
-                else
+                } else
                     gb.setDebitamount("&nbsp;");
-                if (creditamount > 0)
-                {
+                if (creditamount > 0) {
                     gb.setCreditamount("" + numberToString(((Double) creditamount).toString()));
                     totalCr = totalCr + creditamount;
-                }
-                else
+                } else
                     gb.setCreditamount("&nbsp;");
                 gb.setAccEntityId(accEntityId);
                 totalClosingBal = totalOpgBal + totalCr - totalDr;
                 dataList.add(gb);
             }
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             LOGGER.error("Error in getReport==" + e.getMessage());
             throw new Exception();
         }
     }
 
-    private void formatSLTypeReport()
-    {
+    private void formatSLTypeReport() {
         final GeneralLedgerBean gb = new GeneralLedgerBean();
         gb.setAccEntityKey("");
         gb.setCode("<hr noshade color=black size=1><b>Total:<hr noshade color=black size=1></b>");
@@ -455,24 +446,20 @@ public class RptSubLedgerSchedule
         if (totalOpgBal > 0)
             gb.setOpeningBal("<hr noshade color=black size=1><b>" + numberToString(((Double) totalOpgBal).toString())
                     + " Cr<hr noshade color=black size=1></b>");
-        else if (totalOpgBal < 0)
-        {
+        else if (totalOpgBal < 0) {
             totalOpgBal = totalOpgBal * -1;
             gb.setOpeningBal("<hr noshade color=black size=1><b>" + numberToString(((Double) totalOpgBal).toString())
                     + " Dr<hr noshade color=black size=1></b>");
-        }
-        else if (totalOpgBal == 0.0)
+        } else if (totalOpgBal == 0.0)
             gb.setOpeningBal("");
         if (totalClosingBal > 0)
-            gb.setClosingBal("<hr noshade color=black size=1><b>" + numberToString(((Double) totalClosingBal).toString())
-                    + " Cr<hr noshade color=black size=1></b>");
-        else if (totalClosingBal < 0)
-        {
+            gb.setClosingBal("<hr noshade color=black size=1><b>"
+                    + numberToString(((Double) totalClosingBal).toString()) + " Cr<hr noshade color=black size=1></b>");
+        else if (totalClosingBal < 0) {
             totalClosingBal = totalClosingBal * -1;
-            gb.setClosingBal("<hr noshade color=black size=1><b>" + numberToString(((Double) totalClosingBal).toString())
-                    + " Dr<hr noshade color=black size=1></b>");
-        }
-        else if (totalClosingBal == 0.0)
+            gb.setClosingBal("<hr noshade color=black size=1><b>"
+                    + numberToString(((Double) totalClosingBal).toString()) + " Dr<hr noshade color=black size=1></b>");
+        } else if (totalClosingBal == 0.0)
             gb.setClosingBal("");
         gb.setDebitamount("<hr noshade color=black size=1><b>" + numberToString(((Double) totalDr).toString())
                 + "<hr noshade color=black size=1></b>");
@@ -488,9 +475,20 @@ public class RptSubLedgerSchedule
             final String query = "select name from chartofaccounts where glCode= ?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pst.setString(0, glCode);
-            final List<Object[]> rset = pst.list();
-            for (final Object[] element : rset)
-                accName = element[0].toString();
+            /*
+             * final List<Object[]> rset = pst.list(); for (final Object[]
+             * element : rset) accName = element[0].toString();
+             */
+
+            /*
+             * final Query query =
+             * HibernateUtil.getCurrentSession().createSQLQuery(
+             * "select name from chartofaccounts where glCode=" + glCode);
+             */
+            final List list = pst.list();
+            if (list.get(0) != null)
+                accName = list.get(0).toString();
+
         } catch (final Exception sqlex) {
             LOGGER.error("Exp=" + sqlex.getMessage(), sqlex);
             return null;
@@ -498,15 +496,12 @@ public class RptSubLedgerSchedule
         return accName;
     }
 
-    public static StringBuffer numberToString(final String strNumberToConvert)
-    {
+    public static StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
-        if (strNumberToConvert.startsWith("-"))
-        {
+        if (strNumberToConvert.startsWith("-")) {
             strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
             signBit = "-";
-        }
-        else
+        } else
             strNumber = "" + strNumberToConvert;
         final DecimalFormat dft = new DecimalFormat("##############0.00");
         final String strtemp = "" + dft.format(Double.parseDouble(strNumber));

@@ -102,6 +102,8 @@
 	src="/EGF/resources/javascript/jsCommonMethods.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/subLedgerScheduleHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
 <link rel="stylesheet" href="/EGF/struts/xhtml/styles.css"
 	type="text/css" />
 <div id="loading"
@@ -143,20 +145,20 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="bluebox"><s:text name="subLedger.accountCode" /><span
-							class="mandatory">*</span></td>
+							class="mandatory"></span></td>
 						<td class="bluebox"><s:textfield id="glcode" name="glcode"
 								value="%{glcode}" autocomplete="off"
 								onfocus='autocompleteAccountCodes(this);'
 								onblur='splitAccountCodes(this);' /></td>
 						<td class="bluebox"><s:text name="subLedger.fund" /><span
-							class="mandatory">*</span></td>
+							class="mandatory"></span></td>
 						<td class="bluebox"><s:select name="fund_id" id="fund_id"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="" headerValue="----Choose----" /></td>
 					</tr>
 					<tr>
 						<td class="greybox"><s:text name="subLedger.startDate" /><span
-							class="mandatory">*</span></td>
+							class="mandatory"></span></td>
 						<td class="greybox"><s:textfield name="startDate"
 								id="startDate" cssStyle="width:100px" value='%{startDate}'
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -164,7 +166,7 @@
 							style="text-decoration: none"><img
 								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 						<td class="greybox"><s:text name="subLedger.endDate" /><span
-							class="mandatory">*</span></td>
+							class="mandatory"></span></td>
 						<td class="greybox"><s:textfield name="endDate" id="endDate"
 								cssStyle="width:100px" value='%{endDate}'
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -175,9 +177,9 @@
 					<tr>
 						<egov:ajaxdropdown id="accEntityId" fields="['Text','Value']"
 							dropdownId="accEntityId"
-							url="voucher/common!ajaxLoadSubLedgerTypesByGlCode.action" />
+							url="voucher/common-ajaxLoadSubLedgerTypesByGlCode.action" />
 						<td class="bluebox"><s:text name="subLedger.subLedgerType" /><span
-							class="mandatory">*</span></td>
+							class="mandatory"></span></td>
 						<td class="bluebox"><s:select name="accEntityId"
 								id="accEntityId" value='%{accEntityId}'
 								list="dropdownData.subLedgerTypeList" listKey="id"
@@ -206,11 +208,11 @@
 			</div>
 		</s:push>
 
-		<span class="mandatory">
+	
 			<div id="resultDiv" style="display: none;">
 				<jsp:include page="subLedgerScheduleReport-result.jsp" />
 			</div>
-		</span>
+
 		<div id="codescontainer" />
 	</s:form>
 </body>
