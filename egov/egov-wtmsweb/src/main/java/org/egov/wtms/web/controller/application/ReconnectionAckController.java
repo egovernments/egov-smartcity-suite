@@ -93,7 +93,7 @@ public class ReconnectionAckController {
         final ReportOutput reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, null, cityMaunicipalityName, districtName);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
+        headers.add("content-disposition", "inline;filename=Re-ConnectionAcknowledgement.pdf");
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED); 
     }
 }
