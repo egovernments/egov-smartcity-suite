@@ -74,7 +74,13 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
                 return "renewal-error";
             }
         }
-            
+        if (parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getStatus()!=null && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.WORKFLOW_IN_PROGRESS)) {
+             model.addAttribute("message", "msg.renewal.alreadyInWorkFlow");
+                return "renewal-error";
+           
+        }
+        
+        
         loadBasicData(model, parentPermitDetail, renewalPermitDetail);
         model.addAttribute("renewalPermitDetail", renewalPermitDetail);
         model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
