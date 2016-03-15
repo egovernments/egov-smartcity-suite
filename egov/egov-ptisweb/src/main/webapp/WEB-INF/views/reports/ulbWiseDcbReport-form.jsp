@@ -102,20 +102,14 @@
 								<form:option value="PRIVATE">
 									PRIVATE
 								</form:option>
-									<form:option value="CENTRAL_GOVT_33.5">
-									Central Government 33.5%
+								<form:option value="PRIVATE_EXCLUDE_COURTCASE">
+									PRIVATE (Excluding Court Case)
 								</form:option>
-									<form:option value="CENTRAL_GOVT_50"> 
-									Central Government 50%
-								</form:option>
-								<form:option value="CENTRAL_GOVT_75">  
-									Central Government 75%
+								<form:option value="CENTRAL_GOVT">
+									Central Government
 								</form:option>
 								<form:option value="STATE_GOVT">    
 									State Government
-								</form:option>
-									<form:option value="EWSHS">  
-									EWSHS
 								</form:option>
 								<form:option value="COURTCASE">  
 									Court Cases
