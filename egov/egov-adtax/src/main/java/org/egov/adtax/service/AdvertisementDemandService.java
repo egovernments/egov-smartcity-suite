@@ -568,7 +568,8 @@ public class AdvertisementDemandService {
         
         // Boolean calculateTax=true;
         Boolean enchroachmentFeeAlreadyExistInDemand = false;
-
+        List<EgDemandDetails> removableDemandDetailList= new ArrayList<EgDemandDetails>();
+        
         //EgDemand demand = advertisement.getDemandId();
         if (demand == null) {
             demand = createDemand(advertisementPermitDetail);
@@ -618,14 +619,18 @@ public class AdvertisementDemandService {
                         // update encroachment fee..
                     } else {
                         totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
-                        demand.removeEgDemandDetails(dmdDtl);
+                      //  demand.removeEgDemandDetails(dmdDtl);
+                        removableDemandDetailList.add(dmdDtl);
                         // delete demand detail
                     }
 
                    
                 }
             }
+            for (EgDemandDetails removableDmdDtl : removableDemandDetailList) {
+                demand.removeEgDemandDetails(removableDmdDtl);
 
+            }
             if (!enchroachmentFeeAlreadyExistInDemand && advertisementPermitDetail.getEncroachmentFee() != null
                     && advertisementPermitDetail.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
                 demand.addEgDemandDetails(createDemandDetails(
@@ -651,7 +656,7 @@ public class AdvertisementDemandService {
         
          if(demand!=null) {
                 
-             
+             List<EgDemandDetails> removableDemandDetailList= new ArrayList<EgDemandDetails>();
              final Installment installment = demand.getEgInstallmentMaster();
                 
                 BigDecimal totalDemandAmount = BigDecimal.ZERO;
@@ -693,7 +698,8 @@ public class AdvertisementDemandService {
                                 // update encroachment fee..
                             } else {
                                 totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
-                                demand.removeEgDemandDetails(dmdDtl);
+                                //demand.removeEgDemandDetails(dmdDtl);
+                                removableDemandDetailList.add(dmdDtl);
                                 // delete demand detail
                             }
         
@@ -709,6 +715,9 @@ public class AdvertisementDemandService {
                                         installment), BigDecimal.ZERO));
                         totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee());
                       }
+            for (EgDemandDetails removableDmdDtl : removableDemandDetailList) {
+                demand.removeEgDemandDetails(removableDmdDtl);
+            }
                     demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
         
                         
