@@ -45,6 +45,7 @@
  */
 package com.exilant.eGov.src.transactions;
 
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -88,7 +89,7 @@ public class RptSubLedgerSchedule {
     HashMap hm_opBal;
     LinkedList dataList;
     private static final Logger LOGGER = Logger.getLogger(RptSubLedgerSchedule.class);
-    private boolean isStartDateFirstApril = false;
+ 
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -120,8 +121,8 @@ public class RptSubLedgerSchedule {
         String formendDate = "";
         String startDateDBFormat = "";
 
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
-        final SimpleDateFormat formatter1 = new SimpleDateFormat("dd/mm/yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
         Date dt = new Date();
         try {
             endDate = reportBean.getEndDate();
@@ -135,36 +136,37 @@ public class RptSubLedgerSchedule {
             }
         } catch (final Exception e) {
             LOGGER.error("Parse Error" + e);
+            throw new TaskFailedException();
         }
         startDateDBFormat = formstartDate;
         endDate = formendDate;
 
         fyObj = financialYearDAO.getFinYearByDate(dt);
         fyId = fyObj.getId().toString();
-        // fyObj=cms.getFinancialYearById(Long.parseLong(fyId));
-
+  
         final Date finYrStartingDate = fyObj.getStartingDate();
         final String formatedDateStr = formatter1.format(finYrStartingDate);
         if (LOGGER.isInfoEnabled())
             LOGGER.info(".............The formated date is " + formatedDateStr);
-        if (startDateDBFormat.equalsIgnoreCase(formatedDateStr))
-            isStartDateFirstApril = true;
+
         try {
             getSubQuery(startDateDBFormat, endDate);
             formatSLTypeReport();
             reportBean.setAccName(getAccountname(glCode));
         } catch (final Exception exception) {
-            LOGGER.error("Exp=" + exception.getMessage());
+            LOGGER.error("Exception in getSubLedgerTypeSchedule .." + exception.getMessage());
+            throw new TaskFailedException();
         }
         return dataList;
     }
 
-    private void getSubQuery(final String startDate, final String endDate) throws Exception {
+    private void getSubQuery(final String startDate, final String endDate) throws TaskFailedException {
         String defaultStatusExclude = null;
         String departmentFromCondition = "";
         String departmentWhereCondition = "";
         String departmentConditionTran = "";
-        dataList = new LinkedList();
+        dataList = new LinkedList();                
+
         totalCr = 0.0;
         totalDr = 0.0;
         totalOpgBal = 0.0;
@@ -179,148 +181,84 @@ public class RptSubLedgerSchedule {
         if (null != listAppConfVal)
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
-            throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
+            throw new ApplicationRuntimeException("Exlcude statuses not defined for Reports");
 
-        String query;// DEFINED STUFF startDate endDate fundId
-        // defaultStatusExclude glCode accEntityId
-        if (isStartDateFirstApril) {
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("Inside the First April block");
-            query = "SELECT case when a1.detkeyid is null then a3.detkeyid ELSE a1.detkeyid end as slid,coalesce(a3.OpgCreditBal,0) as OpgCreditBal,coalesce(a3.OpgDebitBal,0)  as OpgDebitBal,0 as PrevDebit, "
-                    + " 0 as PrevCredit,coalesce(a1.Credit,0) as Credit,coalesce(a1.Debit,0) as Debit "
-                    + " FROM ( select detkeyid,sum(Debit)as Debit,sum(Credit)as Credit FROM ("
-                    + " SELECT gld.detailkeyid AS detkeyid, SUM (gld.amount)  AS Debit , 0 AS Credit "
-                    + " FROM generalledgerdetail gld, generalledger gl,voucherheader vh "
-                    + departmentFromCondition
-                    + " "
-                    + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) "
-                    + " AND gl.debitamount > 0  AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') "
-                    + " AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')"
-                    + departmentWhereCondition
-                    + " AND vh.fundid= ? AND vh.status NOT IN ("
-                    + defaultStatusExclude
-                    + ") GROUP BY gld.detailkeyid "
-                    + " UNION ALL "
-                    + " SELECT gld.detailkeyid AS detkeyid,0 AS Debit, SUM (gld.amount)  AS Credit "
-                    + " FROM generalledgerdetail gld, generalledger gl,voucherheader vh "
-                    + departmentFromCondition
-                    + " "
-                    + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) "
-                    + " AND gl.creditamount > 0  AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') "
-                    + " AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')"
-                    + departmentWhereCondition
-                    + " AND vh.fundid= ? AND vh.status NOT IN ("
-                    + defaultStatusExclude
-                    + ") GROUP BY gld.detailkeyid "
-                    + ") a2 GROUP BY detkeyid ORDER BY detkeyid "
-                    + ") a1 FULL OUTER JOIN  "
-                    + "(SELECT ACCOUNTDETAILKEY    AS detkeyid , SUM(openingcreditbalance) AS OpgCreditBal , SUM(openingdebitbalance)  AS OpgDebitBal "
-                    + "FROM transactionsummary WHERE glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) AND (openingcreditbalance > 0 OR openingdebitbalance > 0) "
-                    + "AND accountdetailtypeid= ? AND fundid= ? AND financialyearid= ? "
-                    + departmentConditionTran
-                    + " GROUP BY ACCOUNTDETAILKEY ORDER BY accountdetailkey) a3 ON a1.detkeyid=a3.detkeyid";
-
+        String query ="Select complist.detkeyid as slid,sum(coalesce(complist.OpbCredit,0)) as OpgCreditBal,sum(coalesce(complist.OpbDebit,0)) as OpgDebitBal,"
+            +" sum(coalesce(complist.PrevDebit,0))  as PrvDb,sum(coalesce(complist.PrevCredit,0))  as PrvCr,"
+            +" sum(coalesce(complist.Credit,0)) as TxnCredit,sum(coalesce(complist.Debit,0)) as TxnDebit"
+            +" from("
+            +" Select gld.detailkeyid as detkeyid,0 as OpbCredit,0 as OpbDebit,0 as PrevDebit,0 as PrevCredit,SUM (gld.amount)  AS Debit , 0 AS Credit"
+            +" FROM generalledgerdetail gld, generalledger gl,voucherheader vh "
+            + departmentFromCondition
+            +" WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID "
+            +" AND gl.glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) AND gl.debitamount > 0 AND gl.voucherheaderid = vh .ID"
+             +" AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')  AND vh.fundid= ? "
+            + departmentWhereCondition
+            +"  AND vh.status NOT IN ("
+            + defaultStatusExclude
+            +") GROUP BY gld.detailkeyid "
+            +" UNION ALL "
+            +" Select gld.detailkeyid as detkeyid,0 as OpbCredit,0 as OpbDebit,0 as PrevDebit,0 as PrevCredit, 0 AS Debit , SUM (gld.amount) AS Credit "
+            +" FROM generalledgerdetail gld, generalledger gl,voucherheader vh  "
+            + departmentFromCondition
+            +" WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) "
+            +" AND gl.creditamount > 0 AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= "
+            +" to_date(?,'dd/mm/yyyy')  AND vh.fundid= ? "
+            + departmentWhereCondition
+            +" AND vh.status NOT IN ("
+            + defaultStatusExclude
+            +") GROUP BY gld.detailkeyid  "
+            +" UNION ALL"
+            +" Select gld.detailkeyid AS detkeyid ,0 as OpbCredit,0 as OpbDebit,coalesce( SUM (gld.amount ),0)  AS PrevDebit , 0 AS PrevCredit ,0 AS Debit,0 AS Credit "
+            +" FROM generalledgerdetail gld, generalledger gl, voucherheader vh  "
+            + departmentFromCondition
+            + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl.ID "
+            +" AND gl.glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) AND gl.debitamount > 0 AND gl.voucherheaderid = vh .ID "
+            +" AND vh.voucherdate >=(Select startingdate FROM financialyear WHERE startingdate <= to_date(?,'dd/mm/yyyy') "
+            +" AND endingdate >= to_date(?,'dd/mm/yyyy') ) AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')-1 "
+            + departmentWhereCondition
+            +" AND vh.fundid = ? AND vh.status NOT  IN ("
+            + defaultStatusExclude
+            +") GROUP BY gld.detailkeyid  "
+            +" UNION ALL"
+            +" Select gld.detailkeyid AS detkeyid ,0 as OpbCredit,0 as OpbDebit,0  AS PrevDebit , coalesce( SUM (gld.amount ),0) AS PrevCredit ,0 AS Debit,0 AS Credit "
+            +" FROM generalledgerdetail gld, generalledger gl, voucherheader vh  "
+            + departmentFromCondition
+            + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl.ID "
+            +" AND gl.glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) AND gl.creditamount > 0 AND gl.voucherheaderid = vh .ID "
+            +" AND vh.voucherdate >=(Select startingdate FROM financialyear WHERE startingdate <= to_date(?,'dd/mm/yyyy') "
+            +" AND endingdate >= to_date(?,'dd/mm/yyyy') ) AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')-1 "
+            + departmentWhereCondition
+            +" AND vh.fundid = ? AND vh.status NOT  IN ("
+            + defaultStatusExclude
+            +") GROUP BY gld.detailkeyid "
+            +" UNION ALL"
+            +" Select ACCOUNTDETAILKEY AS detkeyid , SUM(openingcreditbalance) AS OpbCredit , SUM(openingdebitbalance) AS OpbDebit,0  AS PrevDebit , 0 AS PrevCredit ,0 AS Debit,0 AS Credit "
+            +" FROM transactionsummary WHERE glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) "
+            +" AND (openingcreditbalance > 0 OR openingdebitbalance > 0) AND accountdetailtypeid= ? AND fundid= ? AND financialyearid= ?  "
+            + departmentConditionTran
+            +" GROUP BY detkeyid "
+            +") as complist"
+            +" group by  slid order by slid";
+            
             int i = 0;
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pst.setLong(i++, Long.parseLong(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
+            pst.setLong(i++, Long.parseLong(fundId));
             if (deptId != null && !deptId.equalsIgnoreCase(""))
                 pst.setLong(i++, Long.parseLong(deptId));
-            pst.setLong(i++, Long.parseLong(fundId));
+  
             pst.setLong(i++, Long.parseLong(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
+            pst.setLong(i++, Long.parseLong(fundId));
             if (deptId != null && !deptId.equalsIgnoreCase(""))
                 pst.setLong(i++, Long.parseLong(deptId));
-            pst.setLong(i++, Long.parseLong(fundId));
-
-            pst.setString(i++, glCode);
-            pst.setLong(i++, Long.parseLong(accEntityId));
-            pst.setLong(i++, Long.parseLong(fundId));
-            pst.setLong(i++, Long.parseLong(fyId));
-            if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setLong(i++, Long.parseLong(deptId));
-        } else {
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("Inside the Else block");
-            query = "SELECT case when a1.detkeyid is null then a3.detkeyid else a1.detkeyid end as slid,coalesce(a3.OpgCreditBal,0) as OpgCreditBal,coalesce(a3.OpgDebitBal,0)  as OpgDebitBal,coalesce(a2.PrevDebit,0) as PrevDebit, "
-                    + "coalesce(a2.PrevCredit,0) as PrevCredit,coalesce(a1.Credit,0) as Credit,coalesce(a1.Debit,0) as Debit"
-                    + " FROM  (select detkeyid,sum(Debit)as Debit,sum(Credit)as Credit FROM("
-                    + " SELECT gld.detailkeyid AS detkeyid,SUM (gld.amount)  AS Debit , 0 AS Credit "
-                    + " FROM generalledgerdetail gld, generalledger gl,voucherheader vh "
-                    + departmentFromCondition
-                    + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) "
-                    + "AND gl.debitamount > 0 AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= to_date(?,'dd/mm/yyyy') "
-                    + departmentWhereCondition
-                    + " AND vh.fundid= ? AND vh.status NOT IN ("
-                    + defaultStatusExclude
-                    + ") GROUP BY gld.detailkeyid "
-                    + " UNION ALL"
-                    + " SELECT gld.detailkeyid AS detkeyid,0 AS Debit,SUM (gld.amount)  AS Credit"
-                    + " FROM generalledgerdetail gld, generalledger gl,voucherheader vh "
-                    + departmentFromCondition
-                    + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) "
-                    + "AND gl.creditamount > 0 AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= to_date(?,'dd/mm/yyyy') "
-                    + departmentWhereCondition
-                    + " AND vh.fundid= ? AND vh.status NOT IN ("
-                    + defaultStatusExclude
-                    + ") GROUP BY gld.detailkeyid "
-                    + " ) a4 group by  detkeyid "
-                    + "ORDER BY detkeyid ) a1 "
-                    + "FULL OUTER JOIN ("
-                    + " SELECT detkeyid AS detkeyid , SUM (PrevDebit )  AS PrevDebit , SUM (PrevCredit) AS PrevCredit From("
-                    + " SELECT gld.detailkeyid AS detkeyid ,coalesce( SUM (gld.amount ),0)  AS PrevDebit , 0 AS PrevCredit "
-                    + " FROM generalledgerdetail gld, generalledger gl, voucherheader vh "
-                    + departmentFromCondition
-                    + " WHERE gld.detailtypeid  = ? "
-                    + "AND gld.generalledgerid = gl.ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) AND gl.debitamount > 0 "
-                    + "AND gl.voucherheaderid = vh .ID AND vh.voucherdate >=(SELECT startingdate FROM financialyear WHERE startingdate <= to_date(?,'dd/mm/yyyy') "
-                    + "AND endingdate >= to_date(?,'dd/mm/yyyy')  AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')-1 )  "
-                    + departmentWhereCondition
-                    + "AND vh.fundid = ? AND vh.status NOT  IN ("
-                    + defaultStatusExclude
-                    + ") GROUP BY gld.detailkeyid "
-                    + " UNION ALL"
-                    + " SELECT gld.detailkeyid AS detkeyid ,0 AS PrevDebit, coalesce(SUM (gld.amount ),0) AS PrevCredit"
-                    + " FROM generalledgerdetail gld, generalledger gl, voucherheader vh "
-                    + departmentFromCondition
-                    + " WHERE gld.detailtypeid  = ? "
-                    + "AND gld.generalledgerid = gl.ID AND gl.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) AND gl.creditamount> 0 "
-                    + "AND gl.voucherheaderid = vh .ID AND vh.voucherdate >=(SELECT startingdate FROM financialyear WHERE startingdate <= to_date(?,'dd/mm/yyyy') "
-                    + "AND endingdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')-1 )"
-                    + departmentWhereCondition
-                    + "AND vh.fundid = ? AND vh.status NOT  IN ("
-                    + defaultStatusExclude
-                    + ") GROUP BY gld.detailkeyid "
-                    + " ) a1 group by detkeyid"
-                    + " ORDER BY detkeyid ) a2 ON a1.detkeyid=a2.detkeyid "
-                    + "FULL OUTER JOIN (SELECT ACCOUNTDETAILKEY    AS detkeyid , SUM(openingcreditbalance) AS OpgCreditBal , SUM(openingdebitbalance)  AS OpgDebitBal "
-                    + "FROM transactionsummary WHERE glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode = ?) AND (openingcreditbalance > 0 OR openingdebitbalance > 0) "
-                    + "AND accountdetailtypeid= ? AND fundid= ? AND financialyearid= ? "
-                    + departmentConditionTran
-                    + " GROUP BY ACCOUNTDETAILKEY ORDER BY accountdetailkey) a3 ON a2.detkeyid=a3.detkeyid";
-
-            int i = 0;
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setLong(i++, Long.parseLong(accEntityId));
-            pst.setString(i++, glCode);
-            pst.setString(i++, startDate);
-            pst.setString(i++, endDate);
-            if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setLong(i++, Long.parseLong(deptId));
-            pst.setLong(i++, Long.parseLong(fundId));
-
-            pst.setLong(i++, Long.parseLong(accEntityId));
-            pst.setString(i++, glCode);
-            pst.setString(i++, startDate);
-            pst.setString(i++, endDate);
-            if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setLong(i++, Long.parseLong(deptId));
-            pst.setLong(i++, Long.parseLong(fundId));
-
+ 
             pst.setLong(i++, Long.parseLong(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
@@ -345,17 +283,17 @@ public class RptSubLedgerSchedule {
             pst.setLong(i++, Long.parseLong(fyId));
             if (deptId != null && !deptId.equalsIgnoreCase(""))
                 pst.setLong(i++, Long.parseLong(deptId));
-        }
 
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("QUERY..." + query);
+            if (LOGGER.isInfoEnabled())
+            LOGGER.info("Main QUERY..." + query);
         try {
             GeneralLedgerBean gb = null;
             resultset = pst.list();
-            // final PersistenceService ps = new PersistenceService();
+
             final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
                     " from Accountdetailtype where id=?", Integer.valueOf(accEntityId));
-            EntityType entity;
+            EntityType entity = null ;
+            
             for (final Object[] element : resultset) {
                 gb = new GeneralLedgerBean();
                 double openingBal = 0.0;
@@ -366,14 +304,15 @@ public class RptSubLedgerSchedule {
                 double prevCredit = 0.0;
                 double debitamount = 0.0;
                 double creditamount = 0.0;
+             
                 try {
-                    entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
-                            + " where id=? ", Long.valueOf(element[0].toString()));
-                } catch (final Exception ee) {
-                    LOGGER.error(ee.getMessage(), ee);
-                    entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
-                            + " where id=? ", Long.valueOf(element[0].toString()));
-                }
+                       entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
+                                + " where id=? ", Long.valueOf(element[0].toString()));
+                    } catch ( final Exception ee) {
+                        LOGGER.error(ee.getMessage(), ee);
+                        entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
+                                + " where id=? ", Integer.valueOf(element[0].toString()));
+                    }                
                 if (entity != null) {
                     gb.setCode(entity.getCode());
                     gb.setName(entity.getName());
@@ -397,7 +336,7 @@ public class RptSubLedgerSchedule {
 
                 openingBal = opgCredit + prevCredit - (opgDebit + prevDebit);
                 if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Hello............. " + openingBal + "==");
+                    LOGGER.debug("Calcualted opening balance... " + openingBal + "==");
                 if (openingBal > 0) {
                     gb.setOpeningBal("" + numberToString(((Double) openingBal).toString()) + " Cr");
                     totalOpgBal = totalOpgBal + openingBal;
@@ -432,8 +371,8 @@ public class RptSubLedgerSchedule {
                 dataList.add(gb);
             }
         } catch (final Exception e) {
-            LOGGER.error("Error in getReport==" + e.getMessage());
-            throw new Exception();
+            LOGGER.error("Error in subledger schedule report....." + e.getMessage());
+            throw new TaskFailedException();
         }
     }
 
@@ -475,22 +414,12 @@ public class RptSubLedgerSchedule {
             final String query = "select name from chartofaccounts where glCode= ?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pst.setString(0, glCode);
-            /*
-             * final List<Object[]> rset = pst.list(); for (final Object[]
-             * element : rset) accName = element[0].toString();
-             */
-
-            /*
-             * final Query query =
-             * HibernateUtil.getCurrentSession().createSQLQuery(
-             * "select name from chartofaccounts where glCode=" + glCode);
-             */
-            final List list = pst.list();
+              final List list = pst.list();
             if (list.get(0) != null)
                 accName = list.get(0).toString();
 
         } catch (final Exception sqlex) {
-            LOGGER.error("Exp=" + sqlex.getMessage(), sqlex);
+            LOGGER.error("Exp in getAccountname" + sqlex.getMessage(), sqlex);
             return null;
         }
         return accName;

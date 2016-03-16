@@ -2,8 +2,10 @@ package org.egov.web.actions.report;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -13,6 +15,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -99,8 +102,11 @@ public class SubLedgerScheduleReportAction extends BaseFormAction {
         try {
             subLedgerScheduleDisplayList = rptSubLedgerSchedule.getSubLedgerTypeSchedule(subLedgerScheduleReport);
         } catch (final ValidationException e) {
-            throw new ValidationException(e.getErrors());
-        }
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
+         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("SubLedgerScheduleReportAction | list | End");
         heading = getGLHeading();
