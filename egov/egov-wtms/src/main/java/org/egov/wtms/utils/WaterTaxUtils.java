@@ -278,11 +278,13 @@ public class WaterTaxUtils {
         messagingService.sendEmail(email, emailSubject, emailBody);
     }
 
-    public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
+    public Position getCityLevelCommissionerPosition(final String commissionerDesgn,String assessmentNumber) {
         String commdesgnname = "";
         final String[] degnName = commissionerDesgn.split(",");
         if (degnName.length > 1)
+        {
             commdesgnname = degnName[0];
+        }
         else
             commdesgnname = commissionerDesgn;
         final Designation desgnObj = designationService.getDesignationByName(commissionerDesgn);
@@ -298,9 +300,10 @@ public class WaterTaxUtils {
            
             return assignlist.get(0).getPosition();
         } else
-            return !assignmentService.findPrimaryAssignmentForDesignationName(commdesgnname).isEmpty() ? assignmentService
-                    .findPrimaryAssignmentForDesignationName(commdesgnname).get(0).getPosition()
-                    : null;
+        {
+        	Position userPosition = getZonalLevelClerkForLoggedInUser(assessmentNumber);
+        	return userPosition;
+        }
     }
 
     public String getApproverUserName(final Long approvalPosition) {
