@@ -1,0 +1,1 @@
+update eg_demand_reason set glcodeid=(select id from chartofaccounts where name='Licensing Fees-Trade License') where id_demand_reason_master=(select id from eg_demand_reason_master where reasonmaster='License Fee' and module=(select id from eg_module where name='Trade License'));
