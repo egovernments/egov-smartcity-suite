@@ -41,7 +41,7 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="estimateNumber" disabled>
+		<input type="text" class="form-control" id="estimateNumber" value="${lineEstimateDetails.estimateNumber}" disabled>
 	</div>
 	<label class="col-sm-2 control-label text-right">Work Identification Number</label>
 	<div class="col-sm-3 add-margin">
@@ -52,10 +52,10 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofwork" /></label>
 	<div class="col-sm-3 add-margin">
-		<textarea class="form-control" id="nameOfWork" disabled></textarea>
+		<textarea class="form-control" id="nameOfWork" disabled>${lineEstimateDetails.nameOfWork}</textarea>
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
 	<div class="col-sm-3 add-margin">	
-		<input type="text" class="form-control" id="department" disabled>
+		<input type="text" class="form-control" id="department" value="${lineEstimateDetails.lineEstimate.executingDepartment.name}" disabled>
 	</div>
 </div>

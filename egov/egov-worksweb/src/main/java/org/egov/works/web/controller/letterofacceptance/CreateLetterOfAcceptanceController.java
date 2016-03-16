@@ -39,7 +39,15 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -50,11 +58,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/letterofacceptance")
 public class CreateLetterOfAcceptanceController {
 
+    @Autowired
+    private LineEstimateService lineEstimateService;
+    @Autowired
+    private SecurityUtils securityUtils;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
-            final Model model) {
+            final Model model, final HttpServletRequest request) {
+        final String estimateNumber = request.getParameter("estimateNumber");
+        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
         setDropDownValues(model);
+        workOrder.setWorkOrderDate(new Date());
+        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("workOrder", workOrder);
+        model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         return "createLetterOfAcceptance-form";
     }
 

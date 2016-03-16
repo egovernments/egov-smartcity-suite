@@ -44,7 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="page-container">        
    <div class="main-content">			
-		<form:form id="createLetterOfAcceptanceForm" class="form-horizontal form-groups-bordered" role="form" action="letterofacceptance-create" method="post" enctype="multipart/form-data">
+		<form:form id="createLetterOfAcceptanceForm" class="form-horizontal form-groups-bordered" modelAttribute="workOrder" role="form" action="letterofacceptance-create" method="post" enctype="multipart/form-data">
 			<div class="row">
 				<div class="col-md-12"> 
 					<div class="panel panel-primary" data-collapsed="0">
@@ -58,12 +58,12 @@
 					</div>
 				</div>
 			</div>	
-		<%-- 	<div class="row">
+			<div class="row">
 				<div class="col-sm-12 text-center">
 					<form:button type="submit" name="submit" class="btn btn-primary" value="Save"><spring:message code="lbl.save"/></form:button>
 					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
 				</div>
-			</div>	 --%>	
+			</div>
 		</form:form>  
 	</div>
 </div>		

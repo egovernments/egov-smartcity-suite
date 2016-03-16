@@ -290,4 +290,8 @@ public class LineEstimateService {
         }
         return lineEstimateSearchResults;
     }
+    
+    public LineEstimateDetails findByEstimateNumber(final String estimateNumber) {
+        return lineEstimateDetailsRepository.findByEstimateNumber(estimateNumber);
+    }
 }
