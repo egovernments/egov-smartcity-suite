@@ -158,7 +158,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     public boolean hasApprovedBeForYear(final Long financialYear) {
         return checkForRe(
-                "from  Budget where financialYear.id=? and isbere='BE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and state.value='END'",
+                "from  Budget where financialYear.id=? and isbere='BE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and status.code='Approved'",
                 financialYear);
     }
 
@@ -178,7 +178,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
                 .createQuery(
                         "select name from  Budget where financialYear.id=:finYearId and isbere='RE' "
                                 +
-                                "and isActiveBudget=true and parent is null and isPrimaryBudget=true and state.value='END' and to_date(state.createdDate)<=:budgetApprovedDate");
+                                "and isActiveBudget=true and parent is null and isPrimaryBudget=true and status.code='Approved' and to_date(state.createdDate)<=:budgetApprovedDate");
         qry.setParameter("finYearId", finYearId);
         qry.setParameter("budgetApprovedDate", budgetApprovedDate);
         final String approvedBudgetName = (String) qry.uniqueResult();
@@ -354,7 +354,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     }
 
     public List getFYForNonApprovedBudgets() {
-        return findAllBy("select distinct b.financialYear from Budget b where b.state.value!='END' and isActiveBudget=true and isPrimaryBudget=true order by b.financialYear.finYearRange desc");
+        return findAllBy("select distinct b.financialYear from Budget b where b.status.code=!'Approved' and isActiveBudget=true and isPrimaryBudget=true order by b.financialYear.finYearRange desc");
     }
 
     public Budget getBudget(String budgetHead, String deptCode, String budgetType, String fyear) {

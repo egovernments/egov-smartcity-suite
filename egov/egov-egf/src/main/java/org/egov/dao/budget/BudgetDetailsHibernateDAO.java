@@ -643,7 +643,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         if (boundaryid != null && boundaryid != 0)
             query = query + getQuery(Boundary.class, boundaryid, " and bd.boundary=");
 
-        return " and bd.budget.status in (from org.egov.commons.EgwStatus where moduletype='BUDGET' and description='Approved' )"
+        return " and bd.budget.status.code = 'Approved' "
                 + query;
     }
 
