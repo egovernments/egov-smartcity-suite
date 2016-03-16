@@ -1080,6 +1080,22 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 if (StringUtils.isBlank(owner.getOwner().getGuardian()))
                     addActionError(getText("mandatory.guardian"));
             }
+        
+        int count=property.getBasicProperty().getPropertyOwnerInfoProxy().size();
+        for (int i=0;i<count;i++){
+            PropertyOwnerInfo owner = property.getBasicProperty().getPropertyOwnerInfoProxy().get(i);  
+            if (owner != null) {
+                for(int j=i+1; j<=count-1; j++){
+                    PropertyOwnerInfo owner1 = property.getBasicProperty().getPropertyOwnerInfoProxy().get(j);
+                    if(owner1 != null) {
+                        if(owner.getOwner().getMobileNumber().equalsIgnoreCase(owner1.getOwner().getMobileNumber()) && 
+                                owner.getOwner().getName().equalsIgnoreCase(owner1.getOwner().getName())){
+                            addActionError(getText("error.owner.duplicateMobileNo", "",owner.getOwner().getMobileNumber().concat(",").concat(owner.getOwner().getName())));
+                        }
+                    }
+                }
+            }
+        }  
 
         validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
                 northBoundary, propTypeId, (null != zoneId && zoneId != -1) ? String.valueOf(zoneId) : "", propOccId,
