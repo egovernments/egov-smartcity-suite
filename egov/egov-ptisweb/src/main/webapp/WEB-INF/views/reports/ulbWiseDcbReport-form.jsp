@@ -48,14 +48,14 @@
 		<form:form class="form-horizontal form-groups-bordered" action=""
 			id="bcDailyCollectionReportForm" modelAttribute="bcDailyCollectionReportResult" commandName="bcDailyCollectionReportResult"
 			method="get">
-		
 		<div class="panel-body">
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"> Region </label>
 					<div class="col-sm-3 add-margin">
+						<input type="hidden" id="typeDefaultVal" name="typeDefaultVal" value="${typeValue}"/>  
 						<form:select id="region" name="region" path="region"
 							cssClass="form-control" cssErrorClass="form-control error">
-							<form:option value="">
+							<form:option value=""> 
 								<spring:message code="lbl.default.all" />
 							</form:option>
 							<form:options items="${regions}" itemValue="name" itemLabel="name" />
@@ -149,9 +149,9 @@
 				<tr>
 					<th colspan="4">City Detail</th>
 					<th colspan="2">Commissioner</th>
-					<th colspan="6">Demand</th>
-					<th colspan="5">Collection</th>
-					<th colspan="5">Balance</th>
+					<th colspan="7">Demand</th>
+					<th colspan="6">Collection</th>
+					<th colspan="6">Balance</th>
 				</tr>
 
 				<tr>
@@ -167,16 +167,19 @@
 					<th> Current tax </th>
 					<th> Current interest </th>
 					<th>Total</th>
+					<th>Total Interest</th>
 					<th> Arrear tax </th>
 					<th> Arrear interest </th>
 					<th> Current tax </th>
 					<th> Current interest </th>
 					<th>Total</th>
+					<th>Total Interest</th>
 					<th> Arrear tax </th>
 					<th> Arrear interest </th>
 					<th> Current tax </th>
 					<th> Current interest </th>
-					<th>Total</th>		
+					<th>Total</th>
+					<th>Total Interest</th>		
 
 				</tr>
 			</thead>
@@ -198,7 +201,9 @@
 					<td></td>
 					<td></td>
 					<td></td>
-					
+					<td></td>
+					<td></td>
+					<td></td>
 				</tr>
 			</tfoot>
 				</table>

@@ -738,8 +738,8 @@ public class ReportService {
             if (bcResult.getTotalaccessments() == null)
                 bcResult.setTotalaccessments(BigDecimal.valueOf(0));
 
-            bcResult.setTarget_total_demand(bcResult.getArrears_demand() + bcResult.getCurrent_demand()
-                    + bcResult.getArrears_penalty() + bcResult.getCurrent_penalty());
+            bcResult.setTarget_total_demand(bcResult.getArrears_demand() + bcResult.getCurrent_demand());
+            bcResult.setTarget_total_demandInterest(bcResult.getArrears_penalty() + bcResult.getCurrent_penalty());
 
             if (bcResult.getCurrent_demand_collection() == null)
                 bcResult.setCurrent_demand_collection(0.0);
@@ -751,7 +751,8 @@ public class ReportService {
                 bcResult.setArrears_penalty_collection(0.0);
 
             bcResult.setCummulative_total_Collection(bcResult.getCurrent_demand_collection()
-                    + bcResult.getArrears_demand_collection() + bcResult.getCurrent_penalty_collection()
+                    + bcResult.getArrears_demand_collection());
+            bcResult.setCummulative_total_CollectionInterest(bcResult.getCurrent_penalty_collection() 
                     + bcResult.getArrears_penalty_collection());
 
             bcResult.setBalance_arrearTax(bcResult.getArrears_demand() - bcResult.getArrears_demand_collection());
@@ -760,7 +761,7 @@ public class ReportService {
             bcResult.setBalance_currentInterest(bcResult.getCurrent_penalty()
                     - bcResult.getCurrent_penalty_collection());
             bcResult.setBalance_total(bcResult.getTarget_total_demand() - bcResult.getCummulative_total_Collection());
-
+            bcResult.setBalance_totalInterest(bcResult.getTarget_total_demandInterest() - bcResult.getCummulative_total_CollectionInterest());
         }
 
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
@@ -770,6 +771,7 @@ public class ReportService {
             bcResult.setBalance_currentTax(formatAmt(bcResult.getBalance_currentTax()).doubleValue());
             bcResult.setBalance_currentInterest(formatAmt(bcResult.getBalance_currentInterest()).doubleValue());
             bcResult.setBalance_total(formatAmt(bcResult.getBalance_total()).doubleValue());
+            bcResult.setBalance_totalInterest(formatAmt(bcResult.getBalance_totalInterest()).doubleValue());
 
             bcResult.setArrears_demand(formatAmt(bcResult.getArrears_demand()).doubleValue());
             bcResult.setArrears_demand_collection(formatAmt(bcResult.getArrears_demand_collection()).doubleValue());
@@ -782,6 +784,9 @@ public class ReportService {
             bcResult.setCurrent_penalty_collection(formatAmt(bcResult.getCurrent_penalty_collection()).doubleValue());
             bcResult.setTarget_total_demand(formatAmt(bcResult.getTarget_total_demand()).doubleValue());
             bcResult.setCummulative_total_Collection(formatAmt(bcResult.getCummulative_total_Collection())
+                    .doubleValue());
+            bcResult.setTarget_total_demandInterest(formatAmt(bcResult.getTarget_total_demandInterest()).doubleValue());
+            bcResult.setCummulative_total_CollectionInterest(formatAmt(bcResult.getCummulative_total_CollectionInterest())
                     .doubleValue());
 
         }
