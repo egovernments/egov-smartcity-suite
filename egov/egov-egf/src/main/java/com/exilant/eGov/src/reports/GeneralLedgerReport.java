@@ -1094,10 +1094,10 @@ public class GeneralLedgerReport {
             final List<Object[]> list = pstmt.list();
             resultset = list;
             for (final Object[] element : resultset) {
+                if (element[0] != null)
+                    opDebit = opDebit + Double.parseDouble(element[0].toString());
                 if (element[1] != null)
-                    opDebit = opDebit + Double.parseDouble(element[1].toString());
-                if (element[2] != null)
-                    opCredit = opCredit + Double.parseDouble(element[2].toString());
+                    opCredit = opCredit + Double.parseDouble(element[1].toString());
             }
         } catch (final Exception ex) {
             LOGGER.error("Error GeneralLedger->getOpeningBalance() till the date: " + ex.toString(), ex);
