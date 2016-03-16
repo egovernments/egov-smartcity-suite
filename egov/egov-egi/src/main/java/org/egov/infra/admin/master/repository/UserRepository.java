@@ -67,8 +67,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByAadhaarNumber(String aadhaarNumber);
 
-    User findByAadhaarNumberAndType(String aadhaarNumber, UserType type);
-
+    List<User> findByAadhaarNumberAndType(String aadhaarNumber, UserType type);
+    
     User findByMobileNumber(String mobileNumber);
 
     @Query("select distinct usr.roles from User usr where usr.username = :usrName ")
