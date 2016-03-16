@@ -102,17 +102,10 @@
 	src="/EGF/resources/javascript/jsCommonMethods.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/subLedgerHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
 <link rel="stylesheet" href="/EGF/struts/xhtml/styles.css"
 	type="text/css" />
-<div id="loading"
-	style="position: absolute; left: 25%; top: 70%; padding: 2px; z-index: 20001; height: auto; width: 500px; display: none;">
-	<div class="loading-indicator"
-		style="background: white; color: #444; font: bold 13px tohoma, arial, helvetica; padding: 10px; margin: 0; height: auto;">
-		<img src="/egi/resources/erp2/images/loading.gif" width="32"
-			height="32" style="margin-right: 8px; vertical-align: top;" />
-		Loading...
-	</div>
-</div>
 </head>
 <script>
   function doAfterSubmit(){
@@ -156,20 +149,20 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td class="bluebox"><s:text name="subLedger.accountCode" /><span
-								class="mandatory">*</span></td>
+								class="mandatory"></span></td>
 							<td class="bluebox"><s:textfield id="glCode1" name="glCode1"
 									value="%{glCode1}" autocomplete="off"
 									onfocus='autocompleteAccountCodes(this);'
 									onblur='splitAccountCodes(this);' /></td>
 							<td class="bluebox"><s:text name="subLedger.fund" /><span
-								class="mandatory">*</span></td>
+								class="mandatory"></span></td>
 							<td class="bluebox"><s:select name="fund_id" id="fund_id"
 									list="dropdownData.fundList" listKey="id" listValue="name"
 									headerKey="" headerValue="----Choose----" /></td>
 						</tr>
 						<tr>
 							<td class="greybox"><s:text name="subLedger.startDate" /><span
-								class="mandatory">*</span></td>
+								class="mandatory"></span></td>
 							<td class="greybox"><s:textfield name="startDate"
 									id="startDate" cssStyle="width:100px" value='%{startDate}'
 									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -177,7 +170,7 @@
 								style="text-decoration: none"><img
 									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 							<td class="greybox"><s:text name="subLedger.endDate" /><span
-								class="mandatory">*</span></td>
+								class="mandatory"></span></td>
 							<td class="greybox"><s:textfield name="endDate" id="endDate"
 									cssStyle="width:100px" value='%{endDate}'
 									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -188,15 +181,15 @@
 						<tr>
 							<egov:ajaxdropdown id="subledger" fields="['Text','Value']"
 								dropdownId="subledger"
-								url="voucher/common!ajaxLoadSubLedgerTypesByGlCode.action" />
+								url="voucher/common-ajaxLoadSubLedgerTypesByGlCode.action" />
 							<td class="bluebox"><s:text name="subLedger.subLedgerType" /><span
-								class="mandatory">*</span></td>
+								class="mandatory"></span></td>
 							<td class="bluebox"><s:select name="subledger"
 									id="subledger" list="dropdownData.subLedgerTypeList"
 									listKey="id" listValue="description" headerKey=""
 									headerValue="----Choose----" /></td>
 							<td class="bluebox"><s:text name="subLedger.entityDetails" /><span
-								class="mandatory">*</span></td>
+								class="mandatory"></span></td>
 							<td class="bluebox"><s:textfield id="accEntitycode"
 									name="accEntitycode" autocomplete="off"
 									onfocus='autocompleteEntityDetails(this);'
@@ -219,8 +212,7 @@
 
 					</table>
 					<br />
-
-					<div class="buttonbottom">
+                  	<div class="buttonbottom">
 						<table align="center">
 							<tr>
 								<td><s:submit cssClass="buttonsubmit" value="Search"
@@ -365,7 +357,7 @@
 			</display:table>
 
 		</s:if>
-		<div id="codescontainer" />
+	<div id="codescontainer" />
 	</s:form>
 </body>
 </html>
