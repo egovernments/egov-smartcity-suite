@@ -347,7 +347,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private void processFailureMsg() {
 
         final EgwStatus receiptStatus = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
+                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
         onlinePaymentReceiptHeader.setStatus(receiptStatus);
 
         final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(

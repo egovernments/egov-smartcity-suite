@@ -209,7 +209,7 @@ public class ReconciliationService {
     public void processFailureMsg(final ReceiptHeader receiptHeader, final PaymentResponse paymentResponse) {
 
         final EgwStatus receiptStatus = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
+                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
         receiptHeader.setStatus(receiptStatus);
         EgwStatus paymentStatus;
         if (CollectionConstants.AXIS_ABORTED_STATUS_CODE.equals(paymentResponse.getAuthStatus()))
