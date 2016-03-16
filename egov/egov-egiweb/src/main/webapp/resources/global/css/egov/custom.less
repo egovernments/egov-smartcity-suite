@@ -1848,14 +1848,8 @@ b, label, strong{
     tbody tr:hover
     {
         background:#f7f7f7;
-        cursor:pointer;
     }
-    
-    tbody.no-pointer tr:hover
-    {
-        cursor:default;
-    }
-    
+     
 }
 
 table.dataTable{
@@ -1863,6 +1857,7 @@ table.dataTable{
     @media (max-width: 768px){
         display:block;
     }
+    
     thead{
         @media (max-width: 768px){
             display: none;
@@ -1875,6 +1870,7 @@ table.dataTable{
         }
         
     }
+    
     tbody{
     	.font-size(13px);
         @media (max-width: 768px){
@@ -1886,6 +1882,17 @@ table.dataTable{
                 }
             }
         }
+    }
+    
+    tbody tr:hover
+    {
+        background:#f7f7f7;
+        cursor:pointer;
+    }
+    
+    tbody.no-pointer tr:hover
+    {
+        cursor:default;
     }
 }
 
