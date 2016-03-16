@@ -377,10 +377,10 @@
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 	</bean>
 
-
+<!-- 
 	<bean id="depositCodeService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.masters.DepositCode" />
-	</bean>
+	</bean> -->
 
 	<bean class="org.egov.works.models.masters.DepositCodeGenerator"
 		id="depositCodeGenerator">
@@ -573,6 +573,9 @@
     </bean>
     <bean id="subSchemeService" class="org.egov.services.masters.SubSchemeService" >
       <constructor-arg index="0" value="org.egov.commons.SubScheme" />
+    </bean>
+    <bean id="natureOfWorkService" class="org.egov.works.master.services.NatureOfWorkService">
+      <constructor-arg index="0" value="org.egov.works.models.masters.NatureOfWork" />
     </bean>
     <bean id="lineEstimateNumberGenerator" class="org.egov.works.lineestimate.service.LineEstimateNumberGenerator"/>
 </beans>

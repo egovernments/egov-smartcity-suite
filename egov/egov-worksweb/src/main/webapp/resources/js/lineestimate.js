@@ -234,3 +234,93 @@ function validateEstimateAmount() {
 	});
 }
 
+function getSubTypeOfWorkId(typeofworkId) {
+	$.ajax({
+		url: "../lineestimate/getsubtypeofworkid/"+typeofworkId,     
+		type: "GET",
+		dataType: "json",
+		success: function (response) {
+			$('#subTypeOfWork').empty();
+			$('#subTypeOfWork').append($("<option value=''>Select from below</option>"));
+			var responseObj = JSON.parse(response);
+			$.each(responseObj, function(index, value) {
+				$('#subTypeOfWork').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
+			});
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+}
+
+$('#ward').change(function(){
+	$.ajax({
+		url: "../lineestimate/ajax-getchildlocation",
+		type: "GET",
+		data: {
+			id : $('#ward').val()
+		},
+		dataType: "json",
+		success: function (response) {
+			console.log("success"+response);
+			$('#location').empty();
+			
+			$('#location').val(response);
+			
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+});
+
+function disableSlumFields() {
+	var slum = document.getElementById("slum");
+	var slumfields = document.getElementById("slumfields");
+	slumfields.style.display = slum.checked ? "block" : "none";
+	document.getElementById("typeOfSlum").disabled = true;
+	document.getElementById("beneficiary").disabled = true;
+}
+
+function showSlumFields() {
+	replaceTypeOfSlumChar();
+	replaceBeneficiaryChar();
+	var slum = document.getElementById("slum");
+	var slumfields = document.getElementById("slumfields");
+	slumfields.style.display = slum.checked ? "block" : "none";
+	document.getElementById("typeOfSlum").disabled = false;
+	document.getElementById("beneficiary").disabled = false;
+}
+
+function replaceTypeOfSlumChar() {
+	$('#typeOfSlum option').each(function() {
+	   var $this = $(this);
+	   $this.text($this.text().replace(/_/g, ' '));
+	});
+}
+
+function replaceBeneficiaryChar() {
+	$('#beneficiary option').each(function() {
+	   var $this = $(this);
+	   $this.text($this.text().replace(/_/g, '/'));
+	});
+}
+
+function getsubtypeofwork(typeOfWorkId) {
+	$.ajax({
+		url: "../lineestimate/getsubtypeofwork/"+typeOfWorkId,     
+		type: "GET",
+		dataType: "json",
+		success: function (response) {
+			$('#subtypeofwork').append($("<option value=''>Select from below</option>"));
+			$('#subtypeofwork').empty();
+			var responseObj = JSON.parse(response);
+			$.each(responseObj, function(index, value) {
+				$('#subtypeofwork').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
+			});
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+}

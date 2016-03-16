@@ -46,6 +46,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -61,21 +63,24 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.works.models.masters.NatureOfWork;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_LINEESTIMATE")
 @Unique(id = "id", tableName = "EGW_LINEESTIMATE", columnName = { "lineestimatenumber" }, fields = {
-        "lineEstimateNumber" }, enableDfltMsg = true)
+"lineEstimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimate.SEQ_EGW_LINEESTIMATE, sequenceName = LineEstimate.SEQ_EGW_LINEESTIMATE, allocationSize = 1)
 public class LineEstimate extends StateAware {
 
@@ -135,15 +140,15 @@ public class LineEstimate extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "executingdepartment", nullable = false)
     private Department executingDepartment;
-    
+
     @SafeHtml
     @Length(max = 50)
     @Column(unique = true)
     private String adminSanctionNumber;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date adminSanctionDate;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adminSanctionBy")
     private User adminSanctionBy;
@@ -158,6 +163,36 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private TypeOfSlum typeOfSlum;
+
+    @Enumerated(EnumType.STRING)
+    private Beneficiary beneficiary;
+
+    @NotNull(message="lineestimate.update")
+    @Enumerated(EnumType.STRING)
+    private ModeOfAllotment modeOfAllotment;
+
+    @NotNull(message = "Please select a typeofwork")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "typeofwork")
+    private EgwTypeOfWork typeOfWork;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subtypeofwork")
+    private EgwTypeOfWork subTypeOfWork;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "natureofwork", nullable = false)
+    private NatureOfWork natureOfWork;
+    
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ward", nullable = false)
+    private Boundary ward;
+
+    
     @Override
     public Long getId() {
         return id;
@@ -293,7 +328,7 @@ public class LineEstimate extends StateAware {
         return adminSanctionNumber;
     }
 
-    public void setAdminSanctionNumber(String adminSanctionNumber) {
+    public void setAdminSanctionNumber(final String adminSanctionNumber) {
         this.adminSanctionNumber = adminSanctionNumber;
     }
 
@@ -301,7 +336,7 @@ public class LineEstimate extends StateAware {
         return adminSanctionDate;
     }
 
-    public void setAdminSanctionDate(Date adminSanctionDate) {
+    public void setAdminSanctionDate(final Date adminSanctionDate) {
         this.adminSanctionDate = adminSanctionDate;
     }
 
@@ -309,7 +344,65 @@ public class LineEstimate extends StateAware {
         return adminSanctionBy;
     }
 
-    public void setAdminSanctionBy(User adminSanctionBy) {
+    public void setAdminSanctionBy(final User adminSanctionBy) {
         this.adminSanctionBy = adminSanctionBy;
     }
+
+    public TypeOfSlum getTypeOfSlum() {
+        return typeOfSlum;
+    }
+
+    public void setTypeOfSlum(final TypeOfSlum typeOfSlum) {
+        this.typeOfSlum = typeOfSlum;
+    }
+
+    public Beneficiary getBeneficiary() {
+        return beneficiary;
+    }
+
+    public void setBeneficiary(final Beneficiary beneficiary) {
+        this.beneficiary = beneficiary;
+    }
+
+    public ModeOfAllotment getModeOfAllotment() {
+        return modeOfAllotment;
+    }
+
+    public void setModeOfAllotment(final ModeOfAllotment modeOfAllotment) {
+        this.modeOfAllotment = modeOfAllotment;
+    }
+
+    public EgwTypeOfWork getTypeOfWork() {
+        return typeOfWork;
+    }
+
+    public void setTypeOfWork(final EgwTypeOfWork typeOfWork) {
+        this.typeOfWork = typeOfWork;
+    }
+
+    public NatureOfWork getNatureOfWork() {
+        return natureOfWork;
+    }
+
+    public void setNatureOfWork(final NatureOfWork natureOfWork) {
+        this.natureOfWork = natureOfWork;
+    }
+
+    public Boundary getWard() {
+        return ward;
+    }
+
+    public void setWard(final Boundary ward) {
+        this.ward = ward;
+    }
+
+    public EgwTypeOfWork getSubTypeOfWork() {
+        return subTypeOfWork;
+    }
+
+    public void setSubTypeOfWork(EgwTypeOfWork subTypeOfWork) {
+        this.subTypeOfWork = subTypeOfWork;
+    }
+
+
 }

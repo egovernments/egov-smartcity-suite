@@ -40,12 +40,16 @@
 package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.web.adaptor.SubSchemeAdaptor;
@@ -56,6 +60,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -67,6 +72,15 @@ public class AjaxLineEstimateController {
     @Autowired
     private SchemeService schemeService;
 
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
+
+    @RequestMapping(value = "/ajax-getlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
+        final List<Boundary> boundaries = crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
+        return boundaries;
+    }
+
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
@@ -75,6 +89,7 @@ public class AjaxLineEstimateController {
         final String jsonResponse = toJSON(subSchemes);
         return jsonResponse;
     }
+    
 
     public String toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();

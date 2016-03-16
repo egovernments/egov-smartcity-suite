@@ -92,6 +92,18 @@ public class LineEstimateDetails extends AbstractAuditable {
     @Length(max = 50)
     @Column(unique = true)
     private String estimateNumber;
+    
+    @Length(max = 50)
+    @Column
+    private String quantity;
+    
+    @Length(max = 50)
+    @Column
+    private String uom;
+    
+    @Length(max = 50)
+    @Column
+    private String beneficiary;
 
     @Override
     public Long getId() {
@@ -133,6 +145,30 @@ public class LineEstimateDetails extends AbstractAuditable {
 
     public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getUom() {
+        return uom;
+    }
+
+    public void setUom(String uom) {
+        this.uom = uom;
+    }
+
+    public String getBeneficiary() {
+        return beneficiary;
+    }
+
+    public void setBeneficiary(String beneficiary) {
+        this.beneficiary = beneficiary;
     }
 
 }
