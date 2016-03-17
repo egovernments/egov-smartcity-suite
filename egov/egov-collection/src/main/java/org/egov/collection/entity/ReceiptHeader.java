@@ -89,7 +89,6 @@ public class ReceiptHeader extends StateAware implements Auditable {
 
     private ServiceDetails service;
     private Character collectiontype;
-    @Size(min = 1)
     private Set<ReceiptDetail> receiptDetails = new LinkedHashSet<ReceiptDetail>(0);
     private ReceiptMisc receiptMisc;
     private Set<InstrumentHeader> receiptInstrument = new HashSet<InstrumentHeader>(0);
