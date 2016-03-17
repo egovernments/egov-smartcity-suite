@@ -553,13 +553,15 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         // update billing system about successfully created online receipt
         // payments.
         try {
-            if (!billReceipts.isEmpty())
+            if (!billReceipts.isEmpty()) {
+                receiptHeaderService.updateBillingSystem(receipts[0].getService().getCode(), billReceipts);
                 // Update IS_RECONCILED to true in EGCL_COLLECTIONHEADER
                 for (final ReceiptHeader receiptHeader : receipts) {
                     receiptHeader.setIsReconciled(true);
                     receiptHeaderService.persist(receiptHeader);
 
                 }
+            }   
         } catch (final ApplicationRuntimeException ex) {
             errors.add(new ValidationError("Manual Reconciliation of Online Payments Rolled back as "
                     + "update to billing system failed.", "Manual Reconciliation of Online Payments Rolled back as "
