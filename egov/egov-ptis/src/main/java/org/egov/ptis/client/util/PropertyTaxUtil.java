@@ -64,6 +64,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTH
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_COURT_CASE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PENALTY_WATERTAX_EFFECTIVE_DATE;
@@ -2478,7 +2479,9 @@ public class PropertyTaxUtil {
                 query.append(" and pmv.propTypeMstrID.code = '"+ownerShipType+"' ");
             } else if(ownerShipType.equals(OWNERSHIP_TYPE_CENTRAL_GOVT)) {
                 query.append(" and pmv.propTypeMstrID.code like  '"+ownerShipType+"%' "); 
-            } 
+            } else if(ownerShipType.equals(OWNERSHIP_TYPE_COURT_CASE)){
+                query.append(" and cast(pmv.propertyId as integer) in (select propertyId from PropertyCourtCase)");
+            }
         }
         orderByClause = orderByClause.concat(arrearBalanceCond+" desc, pmv.ward.id asc ");
         query.append(orderByClause);
