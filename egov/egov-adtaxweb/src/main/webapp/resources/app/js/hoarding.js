@@ -6,7 +6,7 @@ $(document).ready(function(){
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: '/adtax/agency/agencies?name=%QUERY',
+			url: '/adtax/agency/active-agencies?name=%QUERY',
 			filter: function (data) {
 				return $.map(data, function (ct) {
 					return {

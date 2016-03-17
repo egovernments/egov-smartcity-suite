@@ -10,7 +10,7 @@ $(document).ready(function(){
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: '../agency/agencies?name=%QUERY',
+			url: '../agency/active-agencies?name=%QUERY',
 			filter: function (data) {
 				return $.map(data, function (ct) {
 					return {
