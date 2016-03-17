@@ -123,7 +123,7 @@ public class SubLedgerReportAction extends BaseFormAction {
                 + fund.getName() + " from " + subLedgerReport.getStartDate() + " to " + subLedgerReport.getEndDate();
         if (checkNullandEmpty(subLedgerReport.getDepartmentId())) {
             final Department dept = (Department) persistenceService.find("from Department where id = ?",
-                    Integer.parseInt(subLedgerReport.getDepartmentId()));
+                    Long.parseLong(subLedgerReport.getDepartmentId()));
             heading = heading + " under " + dept.getName() + " ";
         }
 
