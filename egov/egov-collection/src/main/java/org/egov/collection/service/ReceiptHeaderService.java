@@ -1326,11 +1326,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         }
         // For bill based collection, push data to index only upon successful update to billing system
         if (!receiptHeader.getService().getServiceType()
-                .equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING) && !CollectionConstants.RECEIPT_STATUS_CODE_FAILED.equals(receiptHeader.getStatus().getCode())
-                && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())) {
-                final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
-                collectionIndexService.pushCollectionIndex(collectionIndex);
-        }        
+                .equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)
+                && !CollectionConstants.RECEIPT_STATUS_CODE_FAILED.equals(receiptHeader.getStatus().getCode())
+                && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode()))
+            updateCollectionIndex(receiptHeader);
 
         return super.persist(receiptHeader);
     }
@@ -1643,8 +1642,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .withNextAction(nextAction);
         getSession().flush();
         super.persist(receiptHeader);
-        final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
-        collectionIndexService.pushCollectionIndex(collectionIndex);
+        updateCollectionIndex(receiptHeader);
     }
 
     public Set<InstrumentHeader> createOnlineInstrument(final Date transactionDate, final String transactionId,
@@ -1802,12 +1800,17 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             receiptHeader.setIsReconciled(true);
             // the receipts should be persisted again
             super.persist(receiptHeader);
-            final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
-            collectionIndexService.pushCollectionIndex(collectionIndex);
+            updateCollectionIndex(receiptHeader);
         }
         LOGGER.info("$$$$$$ Billing system updated for Service Code :"
                 + receiptHeader.getService().getCode()
                 + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
                         : ""));
+    }
+
+    @Transactional
+    public void updateCollectionIndex(final ReceiptHeader receiptHeader) {
+        final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
+        collectionIndexService.pushCollectionIndex(collectionIndex);
     }
 }
