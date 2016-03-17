@@ -39,17 +39,24 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.master.services.ContractorService;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,6 +69,12 @@ public class CreateLetterOfAcceptanceController {
     private LineEstimateService lineEstimateService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private LetterOfAcceptanceService letterOfAcceptanceService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private ContractorService contractorService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
@@ -77,6 +90,26 @@ public class CreateLetterOfAcceptanceController {
     }
 
     private void setDropDownValues(final Model model) {
+    }
+
+    @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
+    public String create(@ModelAttribute("workOrder") final WorkOrder workOrder,
+            final Model model, final BindingResult errors)
+                    throws ApplicationException, IOException {
+
+        // TODO:Fixme - hard coded following values for time being. Need to change the below code.
+        workOrder.setWorkOrderNumber("WO/" + workOrder.getEstimateNumber()); // Replace with WIN from line estimate
+        workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                WorksConstants.APPROVED));
+        workOrder.setContractor(contractorService.findById(13l, false));// Replace with binding contractor from UI
+        if (errors.hasErrors()) {
+            setDropDownValues(model);
+            return "createLetterOfAcceptance-form";
+        } else {
+            final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder);
+            model.addAttribute("savedWorkOrder", savedWorkOrder);
+            return "createLetterOfAcceptance-form";
+        }
     }
 
 }

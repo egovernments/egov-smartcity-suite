@@ -330,7 +330,7 @@ public class WorksGISReportAction extends BaseFormAction {
                             workOrderDatesBuf.append(sdf.format(wo.getWorkOrderDate()) + ",");
                             contractorNameBuf.append(wo.getContractor().getName() + ",");
                             if (wo.getContractPeriod() != null) {
-                                workOrderContractPeriod = Long.parseLong(wo.getContractPeriod());
+                                workOrderContractPeriod = Long.valueOf(wo.getContractPeriod());
                                 workOrderContractPeriodBuf.append(wo.getContractPeriod() + ",");
                             } else
                                 workOrderContractPeriodBuf.append("NA,");

@@ -287,4 +287,8 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         adk.setAccountdetailtype(accountdetailtype);
         accountdetailkeyHibernateDAO.create(adk);
     }
+
+    public List<Contractor> getContractorsByCodeOrName(final String queryString) {
+        return filterActiveEntities(queryString, 0, null);
+    }
 }

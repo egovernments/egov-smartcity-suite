@@ -219,23 +219,23 @@ public class WorksConstants {
     public static final String WORKS_SETSTATUS_VALUE = "Set offline status";
 
     public static final String WP_OFFLINE_STATUS = "WP_OFFLINE_STATUS";
-    
+
     public static final String GRADE = "grade";
     public static final String MIN_AMOUNT = "minAmount";
     public static final String MAX_AMOUNT = "maxAmount";
-    
+
     public static final String CONTRACTOR_NAME = "contractorName";
     public static final String CONTRACTOR_CODE = "contractorCode";
     public static final String DEPARTMENT_ID = "departmentId";
     public static final String STATUS_ID = "statusId";
     public static final String GRADE_ID = "gradeId";
     public static final String SEARCH_DATE = "searchDate";
-    
+
     public static final String CANCEL_ACTION = "Cancel";
     public static final String SAVE_ACTION = "Save";
     public static final Object REJECT_ACTION = "Reject";
     public static final Object FORWARD_ACTION = "Forward";
-    
+
     // Module types
     public static final String MODULE_NAME_LINEESTIMATE = "LineEstimate";
 
@@ -246,9 +246,11 @@ public class WorksConstants {
     public static final String WF_STATE_APPROVED_LINEESTIMATE = "APPROVED";
     public static final String WF_STATE_REJECTED_LINEESTIMATE = "REJECTED";
     public static final String WF_STATE_CANCELLED_LINEESTIMATE = "CANCELLED";
-    
+
     public static final String LINEESTIMATE_CREATE = "create";
     public static final String LINEESTIMATE_UPDATE = "update";
-    
+
     public static final String FILESTORE_MODULECODE = "WMS";
+
+    public static final String WORKORDER = "WorkOrder";
 }

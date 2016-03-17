@@ -514,7 +514,6 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
             revisionWO.setWorkOrderDate(revisionEstimate.getEstimateDate());
             revisionWO.setWorkOrderNumber(workOrder.getWorkOrderNumber() + "/RW".concat(Integer.toString(reCount)));
             revisionWO.setContractor(workOrder.getContractor());
-            revisionWO.setWorkOrderPreparedBy(workOrder.getWorkOrderPreparedBy());
             revisionWO.setEngineerIncharge(workOrder.getEngineerIncharge());
             revisionWO.setEmdAmountDeposited(0.00001);
             revisionWO.setEgwStatus(commonsService.getStatusByModuleAndCode("WorkOrder", "NEW"));

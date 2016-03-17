@@ -407,7 +407,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                         workProgress.setSiteHandedOverDate(DateUtils.getFormattedDate(
                                 objStatusForSiteHandOver.getStatusDate(), dateFormat));
                 }
-                workProgress.setContractPeriod(workOrder.getContractPeriod());
+                workProgress.setContractPeriod(workOrder.getContractPeriod().toString());
                 workProgress.setWorkOrderDate(DateUtils.getFormattedDate(workOrder.getWorkOrderDate(), dateFormat));
                 if (trackMilestone != null && "APPROVED".equalsIgnoreCase(trackMilestone.getEgwStatus().getCode())) {
                     workProgress.setTrackMilestoneActivities(trackMilestone.getActivities());

@@ -66,7 +66,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
@@ -226,7 +225,7 @@ public class WorkOrderAction extends BaseFormAction {
     private Date contractPeriodCutOffDate;
     private Integer defaultPreparedBy;
     private Long defaultDepartmentId;
-    private String loggedInUserEmployeeCode = null;
+    private final String loggedInUserEmployeeCode = null;
     private Long estimateId;
     private AbstractEstimate abstractEstimate = null;
     private Boolean isWorkCommenced;
@@ -291,20 +290,6 @@ public class WorkOrderAction extends BaseFormAction {
                             .getContractor().getId(),
                     tenderResponse.getId());
             tenderRespContrId = tenderResponseContractor.getId();
-
-            if (workOrder.getEngineerIncharge() != null && getAssignedTo1() == null)
-                setAssignedTo1(Long.valueOf(employeeServiceOld
-                        .getAssignmentByEmpAndDate(new Date(),
-                                workOrder.getEngineerIncharge().getIdPersonalInformation())
-                        .getDesignation()
-                        .getId()));
-            if (workOrder.getEngineerIncharge2() != null && getAssignedTo2() == null)
-                setAssignedTo2(Long.valueOf(employeeServiceOld
-                        .getAssignmentByEmpAndDate(new Date(),
-                                workOrder.getEngineerIncharge2().getIdPersonalInformation())
-                        .getDesignation()
-                        .getId()));
-
             setWorkOrderActivities(workOrder);
         }
         super.prepare();
@@ -320,7 +305,6 @@ public class WorkOrderAction extends BaseFormAction {
             populatePreparedByList(ajaxEstimateAction, deptId != null);
         } else {
             final List<EmployeeView> empViewList = getUsersInDepartment();
-            empId = getEmployee().getId();
             if (empViewList != null && empViewList.size() == 1)
                 defaultPreparedBy = empViewList.get(0).getId().intValue();
             addDropdownData(PREPARED_BY_LIST, empViewList);
@@ -340,9 +324,6 @@ public class WorkOrderAction extends BaseFormAction {
         populateWorkOrderUsersList1(ajaxWorkOrderAction, assignedTo1 != null, deptId != null);
         populateWorkOrderUsersList2(ajaxWorkOrderAction, assignedTo2 != null, deptId != null);
 
-        if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
-            workOrder.setWorkflowDepartmentId(abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
-                    .getDepartment().getId());
         addDropdownData("deptListForSearch", departmentService.getAllDepartments());
         getDeptList();
 
@@ -368,13 +349,7 @@ public class WorkOrderAction extends BaseFormAction {
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
         ajaxEstimateAction.setEisService(eisService);
-        if (workOrder != null && workOrder.getWorkOrderPreparedBy() != null)
-            loggedInUserEmployeeCode = workOrder.getWorkOrderPreparedBy().getEmployeeCode();
-        else {
-            final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
-            if (latestAssignment != null)
-                loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
-        }
+
         if (deptId != null)
             ajaxEstimateAction.setExecutingDepartment(deptId);
         else if (tenderResponse != null)
@@ -391,12 +366,8 @@ public class WorkOrderAction extends BaseFormAction {
 
     @Action(value = "/workorder/worksOrder-newform")
     public String newform() {
-        final PersonalInformation pi = getEmployee();
-        final Assignment assignment = getAssignment(pi);
         workOrder.setSecurityDeposit(getSecurityDepositConfValue() / 100 * workOrder.getWorkOrderAmount());
         workOrder.setLabourWelfareFund(getLabourWelfareFundConfValue() / 100 * workOrder.getWorkOrderAmount());
-        if (assignment != null && "no".equalsIgnoreCase(getCreatedBy()))
-            workOrder.setWorkOrderPreparedBy(pi);
         return NEW;
     }
 
@@ -431,7 +402,7 @@ public class WorkOrderAction extends BaseFormAction {
             workOrder.setEgwStatus(commonsService.getStatusByModuleAndCode("WorkOrder", "NEW"));
 
         workOrder = workOrderService.persist(workOrder);
-        workOrder = workOrderWorkflowService.transition(actionName, workOrder, workOrder.getWorkflowapproverComments());
+        workOrder = workOrderWorkflowService.transition(actionName, workOrder, "");
 
         if (workOrder.getEgwStatus() != null && APPROVED.equalsIgnoreCase(workOrder.getEgwStatus().getCode())) {
             messageKey = "workOrder.approved";
@@ -455,7 +426,7 @@ public class WorkOrderAction extends BaseFormAction {
     public String cancel() {
         final String actionName = parameters.get("actionName")[0];
         if (workOrder.getId() != null) {
-            workOrderWorkflowService.transition(actionName, workOrder, workOrder.getWorkflowapproverComments());
+            workOrderWorkflowService.transition(actionName, workOrder, "");
             workOrder = workOrderService.persist(workOrder);
         }
         messageKey = "workorder.cancel";
@@ -508,8 +479,6 @@ public class WorkOrderAction extends BaseFormAction {
         Double negotiatedAmount = null;
         Double estimateAmt = null;
         TenderResponse tenderResponse;
-        workOrder.setSiteHandOverDate(getSiteHandOverDate());
-        workOrder.setWorkCommencedDate(getWorkCommencedDate());
 
         if (workOrder.getEgwStatus().getCode().equalsIgnoreCase("cancelled"))
             tenderResponse = (TenderResponse) persistenceService.findByNamedQuery("getTenderFortenderIdCanceledWO",
@@ -635,8 +604,6 @@ public class WorkOrderAction extends BaseFormAction {
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 
-        workOrder.setSiteHandOverDate(getSiteHandOverDate());
-        workOrder.setWorkCommencedDate(getWorkCommencedDate());
         return EDIT;
     }
 
@@ -951,21 +918,6 @@ public class WorkOrderAction extends BaseFormAction {
             addDropdownData(ASSIGNED_USER_LIST2, ajaxWorkOrderAction.getUserList());
         } else
             addDropdownData(ASSIGNED_USER_LIST2, Collections.EMPTY_LIST);
-    }
-
-    private PersonalInformation getEmployee() {
-        if (workOrder.getWorkOrderPreparedBy() == null)
-            return employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
-        else
-            return workOrder.getWorkOrderPreparedBy();
-    }
-
-    private Assignment getAssignment(final PersonalInformation pi) {
-        if (workOrder.getWorkOrderPreparedBy() == null)
-            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
-        else
-            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), workOrder.getWorkOrderPreparedBy()
-                    .getIdPersonalInformation());
     }
 
     public String viewWorkOrderNotice() {
@@ -1417,7 +1369,7 @@ public class WorkOrderAction extends BaseFormAction {
         final Collection<WorkOrderActivity> woActivityList = workOrderService
                 .getActionWorkOrderActivitiesList(actionWorkOrderActivities);
 
-        final String contractPrd = workOrder.getContractPeriod();
+        final String contractPrd = workOrder.getContractPeriod().toString();
 
         if (parameters.get("actionName") != null) {
             final String actionName = parameters.get("actionName")[0];
@@ -1427,7 +1379,6 @@ public class WorkOrderAction extends BaseFormAction {
                         && (estimateId != null || tenderRespId != null && tenderRespContrId != null)
                         && (SAVE_ACTION.equals(actionName) || "submit_for_approval".equals(actionName))) {
                     validateMandatoryFields();
-                    validateWOAllocatedToUser();
                     validateContractPeriod(contractPrd);
                 }
                 if (workOrder.getEgwStatus() != null
@@ -1435,7 +1386,6 @@ public class WorkOrderAction extends BaseFormAction {
                                 .getCode().equalsIgnoreCase("REJECTED"))
                         && id != null) {
                     validateMandatoryFields();
-                    validateWOAllocatedToUser();
                     if (contractPeriodCutOffDate != null) {
                         final Date createdDate = workOrder.getCreatedDate() == null ? new Date() : workOrder
                                 .getCreatedDate();
@@ -1469,19 +1419,9 @@ public class WorkOrderAction extends BaseFormAction {
             addActionError(getText("contractPeriod.greater.than.zero"));
     }
 
-    private void validateWOAllocatedToUser() {
-        if (assignedTo1 != -1 && assignedTo2 != -1 && assignedTo1 != null && assignedTo2 != null
-                && workOrder.getEngineerIncharge() != null && workOrder.getEngineerIncharge2() != null
-                && assignedTo1.equals(assignedTo2)
-                && workOrder.getEngineerIncharge().equals(workOrder.getEngineerIncharge2()))
-            addActionError(getText("same.allocatedTo.selected"));
-    }
-
     private void validateMandatoryFields() {
         if (workOrder.getWorkOrderDate() == null)
             addActionError(getText("workorder.date.null"));
-        if (workOrder.getWorkOrderPreparedBy() == null)
-            addActionError(getText("workorder.preparedBy.null"));
         if (workOrder.getEmdAmountDeposited() == 0.00)
             addActionError(getText("workOrder.emdAmount.invalid"));
     }
@@ -1510,16 +1450,8 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private void validateDLP() {
-        if (id == null
-                || workOrder.getEgwStatus() != null
-                        && (workOrder.getEgwStatus().getCode().equalsIgnoreCase(NEW) || workOrder.getEgwStatus().getCode()
-                                .equalsIgnoreCase(WorksConstants.REJECTED))) {
-            if (workOrder.getDefectLiabilityPeriod() == null)
-                addActionError(getText("defectLiabilityPeriod.null"));
-            else if (workOrder.getDefectLiabilityPeriod() <= 0.0)
-                addActionError(getText("defectLiabilityPeriod.validate"));
-        } else if (workOrder.getDefectLiabilityPeriod() == null)
-            addActionError(getText("defectLiabilityPeriod.workflow.validate"));
+        if (workOrder.getDefectLiabilityPeriod() <= 0.0)
+            addActionError(getText("defectLiabilityPeriod.validate"));
     }
 
     private double getAssignedQuantity(final Long activityId, final String negotiationNumber) {
