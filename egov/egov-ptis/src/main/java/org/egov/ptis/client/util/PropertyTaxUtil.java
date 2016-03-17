@@ -2467,18 +2467,18 @@ public class PropertyTaxUtil {
             query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
         } else if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
                 query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
-                query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
+                query.append(" or "+arrearBalanceCond+" <= ").append(toDemand);
         }
         if(wardId != null && wardId != -1){
                 query.append(" and pmv.ward.id = ").append(wardId); 
         }
         if(StringUtils.isNotBlank(ownerShipType)) {
             if(ownerShipType.equals(OWNERSHIP_TYPE_PRIVATE)) {
-                query.append(" and pmv.propTypeMstrID.code = '"+ownerShipType+"' or pmv.propTypeMstrID.code = 'EWSHS'"); 
+                query.append(" and (pmv.propTypeMstrID.code = '"+ownerShipType+"' or pmv.propTypeMstrID.code = 'EWSHS') and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) "); 
             } else if(ownerShipType.equals(OWNERSHIP_TYPE_STATE_GOVT)){
-                query.append(" and pmv.propTypeMstrID.code = '"+ownerShipType+"' ");
+                query.append(" and (pmv.propTypeMstrID.code = '"+ownerShipType+"') and  cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
             } else if(ownerShipType.equals(OWNERSHIP_TYPE_CENTRAL_GOVT)) {
-                query.append(" and pmv.propTypeMstrID.code like  '"+ownerShipType+"%' "); 
+                query.append(" and (pmv.propTypeMstrID.code like  '"+ownerShipType+"%') and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) "); 
             } else if(ownerShipType.equals(OWNERSHIP_TYPE_COURT_CASE)){
                 query.append(" and cast(pmv.propertyId as integer) in (select propertyId from PropertyCourtCase)");
             }
