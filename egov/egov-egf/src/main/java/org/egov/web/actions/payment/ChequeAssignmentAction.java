@@ -133,6 +133,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
         @Result(name = "before_salary_search", location = "chequeAssignment-before_salary_search.jsp"),
         @Result(name = "searchRtgsResult", location = "chequeAssignment-searchRtgsResult.jsp"),
         @Result(name = "surrendersearch", location = "chequeAssignment-surrendersearch.jsp"),
+        @Result(name = "searchremittance", location = "chequeAssignment-searchremittance.jsp"),
         @Result(name = "searchpayment", location = "chequeAssignment-searchpayment.jsp"),
         @Result(name = "surrendercheques", location = "chequeAssignment-surrendercheques.jsp"),
         @Result(name = "rtgsSearch", location = "chequeAssignment-rtgsSearch.jsp"),
@@ -911,6 +912,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     }
 
     @ValidationErrorPage(value = "before_remittance_search")
+    @Action(value = "/payment/chequeAssignment-searchChequesOfRemittance")
     public String searchChequesOfRemittance() throws ApplicationException, ParseException
     {
         if (LOGGER.isDebugEnabled())
