@@ -1324,7 +1324,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
                 updateBillingSystemWithReceiptInfo(receiptHeader);
         }
-        if (!CollectionConstants.RECEIPT_STATUS_CODE_FAILED.equals(receiptHeader.getStatus().getCode())
+        // For bill based collection, push data to index only upon successful update to billing system
+        if (!receiptHeader.getService().getServiceType()
+                .equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING) && !CollectionConstants.RECEIPT_STATUS_CODE_FAILED.equals(receiptHeader.getStatus().getCode())
                 && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())) {
                 final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
                 collectionIndexService.pushCollectionIndex(collectionIndex);
@@ -1800,6 +1802,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             receiptHeader.setIsReconciled(true);
             // the receipts should be persisted again
             super.persist(receiptHeader);
+            final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
+            collectionIndexService.pushCollectionIndex(collectionIndex);
         }
         LOGGER.info("$$$$$$ Billing system updated for Service Code :"
                 + receiptHeader.getService().getCode()
