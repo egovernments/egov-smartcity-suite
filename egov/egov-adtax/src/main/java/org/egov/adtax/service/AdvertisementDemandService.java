@@ -938,4 +938,26 @@ public int generateDemandForNextInstallment(final List<Advertisement> advertisem
 
         return demand;
     }
+    
+    public Map<String, BigDecimal> checkPendingAmountByDemand(final EgDemand demand, Date penaltyCalculationDate) {
+
+        final Map<String, BigDecimal> demandFeeType = new LinkedHashMap<String, BigDecimal>();
+        BigDecimal totalDemand = BigDecimal.ZERO;
+        BigDecimal totalCollection = BigDecimal.ZERO;
+        BigDecimal totalPending = BigDecimal.ZERO;
+        BigDecimal penaltyAmount = BigDecimal.ZERO;
+        if (demand != null) {
+            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
+                totalDemand = totalDemand.add(demandDtl.getAmount());
+                totalCollection = totalCollection.add(demandDtl.getAmtCollected());
+                totalPending= totalPending.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
+                penaltyAmount = calculatePenalty(penaltyAmount, demandDtl, demandDtl.getAmount().subtract(demandDtl.getAmtCollected()), penaltyCalculationDate);
+            }
+        }
+        demandFeeType.put(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT, totalPending);
+        demandFeeType.put(AdvertisementTaxConstants.TOTAL_DEMAND, totalDemand);
+        demandFeeType.put(AdvertisementTaxConstants.TOTALCOLLECTION, totalCollection);
+        demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmount);
+        return demandFeeType;
+    }
   }

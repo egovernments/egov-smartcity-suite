@@ -104,5 +104,6 @@ public class AdvertisementTaxConstants {
     public static final String RENEWAL_ADDITIONAL_RULE = "RENEWADVERTISEMENT";
     public static final String TOTAL_DEMAND = "Demand";
     public static final String PENDINGAMOUNT = "Pending Amount";
+    public static final String TOTALCOLLECTION = " Total Collection";
 
 }

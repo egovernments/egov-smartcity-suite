@@ -48,6 +48,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.entity.HoardingAgencyWiseSearch;
+import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
 import org.egov.adtax.search.contract.HoardingSearch;
@@ -60,6 +62,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infstr.utils.StringUtils;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -456,6 +459,107 @@ public class AdvertisementPermitDetailService {
         }
         return hoardingSearchResults;
 
+    }
+   
+    
+    public List<HoardingAgencyWiseSearch> getAgencyWiseAdvertisementSearchResult(final AdvertisementPermitDetail advPermitDetail) {
+
+        final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
+                .searchAdvertisementPermitDetailBySearchParams(advPermitDetail);
+        HashMap<String, HoardingAgencyWiseSearch> agencyWiseHoardingMap = new HashMap<String, HoardingAgencyWiseSearch>();
+        final List<HoardingAgencyWiseSearch> agencyWiseFinalHoardingList = new ArrayList<HoardingAgencyWiseSearch>();
+
+        advPermitDtl.forEach(result -> {
+            if (result.getAgency() != null) {
+                final HoardingAgencyWiseSearch hoardingSearchResult = new HoardingAgencyWiseSearch();
+                hoardingSearchResult.setAdvertisementNumber(result.getAdvertisement().getAdvertisementNumber());
+                hoardingSearchResult.setAgencyName(result.getAgency() != null ? result.getAgency().getName() : "");
+                hoardingSearchResult.setCategoryName(result.getAdvertisement().getCategory().getName());
+                hoardingSearchResult.setSubCategoryName(result.getAdvertisement().getSubCategory().getDescription());
+                BigDecimal totalDemandAmount = BigDecimal.ZERO;
+                BigDecimal totalCollectedAmount = BigDecimal.ZERO;
+                BigDecimal totalPending = BigDecimal.ZERO;
+                BigDecimal totalPenalty = BigDecimal.ZERO;
+                final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
+                        .checkPendingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
+                                .getPenaltyCalculationDate());
+                totalDemandAmount = totalDemandAmount.add(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTAL_DEMAND));
+                totalCollectedAmount = totalCollectedAmount
+                        .add(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTALCOLLECTION));
+                totalPending = totalPending.add(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                totalPenalty = totalPenalty.add(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
+                final HoardingAgencyWiseSearch hoardingSearchObj = agencyWiseHoardingMap.get(result.getAgency().getName());
+                if (hoardingSearchObj == null) {
+                    hoardingSearchResult.setAgency(result.getAgency().getId());
+                    hoardingSearchResult.setTotalDemand(totalDemandAmount);
+                    hoardingSearchResult.setCollectedAmount(totalCollectedAmount);
+                    hoardingSearchResult.setPendingAmount(totalDemandAmount.subtract(totalCollectedAmount));
+                    hoardingSearchResult.setPenaltyAmount(totalPenalty);
+                    hoardingSearchResult.setTotalHoardingInAgency(1);
+                    hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
+                    agencyWiseHoardingMap.put(result.getAgency().getName(), hoardingSearchResult);
+                } else {
+
+                    hoardingSearchResult.setAgency(result.getAgency().getId());
+                    hoardingSearchResult.setTotalDemand(
+                            agencyWiseHoardingMap.get(result.getAgency().getName()).getTotalDemand().add(totalDemandAmount));
+                    hoardingSearchResult.setCollectedAmount(agencyWiseHoardingMap.get(result.getAgency().getName())
+                            .getCollectedAmount().add(totalCollectedAmount));
+                    hoardingSearchResult.setPendingAmount(
+                            agencyWiseHoardingMap.get(result.getAgency().getName()).getPendingAmount().add(totalPending));
+                    hoardingSearchResult.setPenaltyAmount(
+                            agencyWiseHoardingMap.get(result.getAgency().getName()).getPenaltyAmount().add(totalPenalty));
+                    hoardingSearchResult.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
+                    agencyWiseHoardingMap.put(result.getAgency().getName(), hoardingSearchResult);
+                }
+
+            }
+
+        });
+        if (agencyWiseHoardingMap.size() > 0) {
+            agencyWiseHoardingMap.forEach((key, value) -> {
+                agencyWiseFinalHoardingList.add(value);
+            });
+
+        }
+
+        return agencyWiseFinalHoardingList;
+    }
+    public List<AdvertisementPermitDetail> getAdvertisementPermitDetailBySearchParam(final Long id, final Long category,
+            final Long subcategory, final Long zone, final Long ward) {
+
+        StringBuilder queryString = new StringBuilder();
+        queryString
+                .append(" Select B From Advertisement A , AdvertisementPermitDetail B where B.agency.id=:id  and B.id=A.id and B.isActive=true and A.status="
+                        + AdvertisementStatus.ACTIVE.ordinal() + "");
+        if (category != null) {
+            queryString.append(" and B.advertisement.category.id =:category");
+        }
+        if (subcategory != null) {
+            queryString.append("and B.advertisement.subCategory.id =:subcategory");
+        }
+        if (zone != null) {
+            queryString.append("and B.advertisement.locality.id =:zone");
+        }
+        if (ward != null) {
+            queryString.append("and B.advertisement.ward.id =:ward");
+        }
+        Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
+        query.setParameter("id", id);
+        if (category != null) {
+            query.setParameter("category", category);
+        }
+        if (subcategory != null) {
+            query.setParameter("subCategory", subcategory);
+        }
+        if (zone != null) {
+            query.setParameter("zone", zone);
+        }
+        if (ward != null) {
+            query.setParameter("ward", ward);
+        }
+        List<AdvertisementPermitDetail> advertisements = query.list();
+        return advertisements;
     }
    
 }
