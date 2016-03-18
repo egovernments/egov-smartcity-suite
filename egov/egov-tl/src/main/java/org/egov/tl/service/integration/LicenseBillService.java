@@ -181,7 +181,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         if ("New".equals(license.getLicenseAppType().getName()))
             installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(), demand);
         else if ("Renew".equals(license.getLicenseAppType().getName()))
-            installmentPenalty = billable.getCalculatedPenalty(license.getDateOfExpiry(), new Date(), demand);
+            installmentPenalty = billable.getCalculatedPenalty(null, new Date(), demand);
         installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license.getCurrentDemand());
         for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet()) {
             EgDemandDetails penaltyDemandDetail = null;
@@ -301,7 +301,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private EgDemandDetails insertPenaltyDmdDetail(final Installment inst, final BigDecimal penaltyAmount) {
         EgDemandDetails demandDetail = null;
         if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
-            System.out.println();
             final Module module = license.getTradeName().getLicenseType().getModule();
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
                     Constants.PENALTY_DMD_REASON_CODE,
