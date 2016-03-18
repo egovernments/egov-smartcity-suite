@@ -128,10 +128,10 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
     private @Autowired CreateVoucher createVoucher;
     Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
-    
+
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     public BaseVoucherAction()
     {
         voucherHeader.setVouchermis(new Vouchermis());
@@ -406,7 +406,6 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         return voucherHeader;
 
     }
-
 
     protected boolean validateData(final List<VoucherDetails> billDetailslist, final List<VoucherDetails> subLedgerList) {
         BigDecimal totalDrAmt = BigDecimal.ZERO;
@@ -748,7 +747,8 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected void removeEmptyRowsAccoutDetail(final List list) {
         for (final Iterator<VoucherDetails> detail = list.iterator(); detail.hasNext();) {
             final VoucherDetails next = detail.next();
-            if (next != null && next.getGlcodeDetail().trim().isEmpty() && next.getFunctionDetail().trim().isEmpty()
+            if (next != null && (next.getGlcodeDetail() == null || next.getGlcodeDetail().trim().isEmpty())
+                    && (next.getFunctionDetail() == null || next.getFunctionDetail().trim().isEmpty())
                     &&
                     next.getDebitAmountDetail().equals(BigDecimal.ZERO) && next.getCreditAmountDetail().equals(BigDecimal.ZERO))
                 detail.remove();
