@@ -444,8 +444,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+        
+        final String cityGrade = (request.getSession().getAttribute("cityGrade") != null ? request.getSession()
+                .getAttribute("cityGrade").toString() : null);
+        Boolean isCorporation;
+        if (cityGrade != null && cityGrade != ""
+                && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+            isCorporation = true;
+        } else
+            isCorporation = false;
+        
         ReportOutput reportOutput = transferOwnerService.generateTransferNotice(basicproperty, propertyMutation,
-                cityName, cityLogo, actionType);
+                cityName, cityLogo, actionType,isCorporation);
         if (!WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(actionType)) {
             getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
             reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
