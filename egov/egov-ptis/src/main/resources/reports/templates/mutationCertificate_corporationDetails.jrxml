@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-03-18T08:08:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mutationCertificate_details" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a002afff-59b5-4b48-b40a-06d60ceff39d">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="402"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="municipalityName" class="java.lang.String"/>
@@ -30,14 +28,7 @@
 	<title>
 		<band height="603" splitType="Prevent">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement isPrintRepeatedValues="false" x="120" y="38" width="373" height="17" uuid="94813a4c-826a-45bb-a86d-0d007a99560f"/>
-				<textElement textAlignment="Center" markup="none">
-					<font size="13" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{municipalityName}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement isPrintRepeatedValues="false" x="20" y="55" width="524" height="17" uuid="f0a1341f-1330-486b-8e65-71d3ba7dc827"/>
+				<reportElement isPrintRepeatedValues="false" x="20" y="45" width="524" height="17" uuid="f0a1341f-1330-486b-8e65-71d3ba7dc827"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="13" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
@@ -139,7 +130,7 @@
 				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[ 	In exercise of the powers vested with the Municipal Commissioner under Section 93 of APM Act, 1965 read with Rule 8(2) of Taxation and Finance Rules and as per Alteration of Ownership of property in Assessment Books Rules 1966, on the request made by applicant and based on the strength of documentary evidence produced, the transfer of the title is hereby effected on the building premises within the Municipal limits as follows:-]]></text>
+				<text><![CDATA[ 	In exercise of the powers vested with the Municipal Commissioner under Section 207 of GHMC/MCH Act, 1955 on the request made by applicant and based on the strength of documentary evidence produced, the transfer of the title is hereby effected on the building premises within the Corporation limits as follows:-]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="280" width="230" height="30" uuid="a99d0860-4b50-4ae8-9673-8e253d253b61"/>
@@ -178,9 +169,9 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Justified">
-					<font size="10" isBold="false" isStrikeThrough="false"/>
+					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Name of the Transferor and his/her Father or Husband Name as per Assessment Books, whose name is changed due to effect of this title transfer]]></text>
+				<text><![CDATA[Name of the Transferor and his/her Father or Husband Name (if any) as per Assessment Books, whose name is changed due to effect of this title transfer]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="260" y="310" width="280" height="50" uuid="703a2f09-9896-40a5-a4f5-56f5bb13d143"/>
@@ -342,7 +333,7 @@
 				<textElement textAlignment="Right">
 					<font size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Municipal Commissioner]]></text>
+				<text><![CDATA[Commissioner]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="280" y="81" width="263" height="25" uuid="95279cf3-2c18-4cdd-87eb-e3baaf7ddddc"/>
