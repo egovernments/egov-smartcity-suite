@@ -2467,7 +2467,7 @@ public class PropertyTaxUtil {
             query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
         } else if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
                 query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
-                query.append(" or "+arrearBalanceCond+" <= ").append(toDemand);
+                query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
         }
         if(wardId != null && wardId != -1){
                 query.append(" and pmv.ward.id = ").append(wardId); 

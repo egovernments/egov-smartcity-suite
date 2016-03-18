@@ -1353,6 +1353,7 @@ public interface PropertyTaxConstants {
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_STR = "Central Government";
     public static final String OWNERSHIP_TYPE_COURT_CASE = "COURT_CASE";
     public static final String OWNERSHIP_TYPE_COURT_CASE_STR = "Court case";
+    public static final String OWNERSHIP_TYPE_PRIVATE_DEFAULTERS_STR = "Private(excluding court case)";
     public static final TreeMap<String, String> OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT = new TreeMap<String, String>() {
         /**
          *
@@ -1360,10 +1361,11 @@ public interface PropertyTaxConstants {
         private static final long serialVersionUID = -8758751964576480520L;
 
         {
-            put(OWNERSHIP_TYPE_PRIVATE, OWNERSHIP_TYPE_PRIVATE_STR);
-            put(OWNERSHIP_TYPE_COURT_CASE,OWNERSHIP_TYPE_COURT_CASE_STR);
-            put(OWNERSHIP_TYPE_STATE_GOVT,OWNERSHIP_TYPE_STATE_GOVT_STR);
             put(OWNERSHIP_TYPE_CENTRAL_GOVT, OWNERSHIP_TYPE_CENTRAL_GOVT_STR);
+            put(OWNERSHIP_TYPE_STATE_GOVT,OWNERSHIP_TYPE_STATE_GOVT_STR);
+            put(OWNERSHIP_TYPE_COURT_CASE,OWNERSHIP_TYPE_COURT_CASE_STR);
+            put(OWNERSHIP_TYPE_PRIVATE, OWNERSHIP_TYPE_PRIVATE_DEFAULTERS_STR);
+            
         }
     };
 }
