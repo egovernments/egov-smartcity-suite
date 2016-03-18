@@ -102,6 +102,15 @@
 										list="dropdownData.limitList" cssClass="form-control" value="%{limit}"/>
 								
 								</div>
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="ownership.type" /> :</label>
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey=""
+										headerValue="%{getText('default.select')}"
+										id="ownerShipType"  name="ownerShipType"
+										listKey="key" listValue="value" list="ownerShipMap" cssClass="form-control" value="%{ownerShipType}"/>
+								
+								</div>
 							</div>
 						</div>
 					</div>

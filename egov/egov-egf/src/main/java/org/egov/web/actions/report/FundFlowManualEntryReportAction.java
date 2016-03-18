@@ -73,7 +73,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
@@ -88,7 +88,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validation
-@Transactional(readOnly = true)
+
 public class FundFlowManualEntryReportAction extends BaseFormAction {
 
     /**

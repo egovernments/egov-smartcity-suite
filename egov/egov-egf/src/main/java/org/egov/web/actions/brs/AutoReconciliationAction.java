@@ -89,13 +89,10 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 @Results({
     @Result(name = AutoReconciliationAction.NEW, location = "autoReconciliation-" + AutoReconciliationAction.NEW + ".jsp"),
     @Result(name = "upload", location = "autoReconciliation-upload.jsp"),
@@ -250,7 +247,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         return "upload";
     }
 
-    @Transactional
+    
     @ValidationErrorPage("upload")
     public String upload()
     {
@@ -497,7 +494,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     /**
      * @return
      */
-    @Transactional
+    
     public String schedule()
     {
         // Step1: mark which are all we are going to process

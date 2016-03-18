@@ -65,13 +65,12 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.pims.commons.Position;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
-@Transactional(readOnly = true)
 @Results({
     @Result(name = BudgetAction.NEW, location = "budget-" + BudgetAction.NEW + ".jsp"),
     @Result(name = "referenceBudgets", location = "budget-referenceBudgets.jsp"),
@@ -137,7 +136,7 @@ public class BudgetAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
+    
     @Action(value = "/budget/budget-create")
     public String create() {
         addMaterializedPath(budget);
@@ -220,7 +219,7 @@ public class BudgetAction extends BaseFormAction {
         return String.valueOf(val);
     }
 
-    @Transactional
+    
     @Action(value = "/budget/budget-save")
     public String save()
     {
@@ -251,7 +250,7 @@ public class BudgetAction extends BaseFormAction {
         return SEARCH;
     }
 
-    @Transactional
+    
     @SkipValidation
     @Action(value = "/budget/budget-edit")
     public String edit() {

@@ -71,7 +71,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -80,7 +80,7 @@ import org.springframework.transaction.annotation.Transactional;
                         "application/xls", "contentDisposition", "no-cache;filename=OutstandingPaymentReport.xls" })
 })
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 public class OutstandingPaymentAction extends BaseFormAction {
     /**
      *

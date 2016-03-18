@@ -55,7 +55,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.eGov.src.reports.DishonoredChequeBean;
 import com.exilant.eGov.src.reports.DishonoredChequeReport;
@@ -63,7 +63,7 @@ import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 @Results({
     @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "dishonoredChequeReport-"

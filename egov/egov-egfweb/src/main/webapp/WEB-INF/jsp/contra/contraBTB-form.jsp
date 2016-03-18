@@ -51,18 +51,18 @@
 <tr>
 	<td class="greybox"></td>
 	<egov:ajaxdropdown id="fromBankId" fields="['Text','Value']"
-		dropdownId="fromBankId" url="/voucher/common!ajaxLoadBanks.action" />
+		dropdownId="fromBankId" url="/voucher/common-ajaxLoadBanks.action" />
 	<td class="greybox"><s:text name="contra.fromBank" /> <span
-		class="greybox"><span class="mandatory">*</span></span></td>
+		class="greybox"><span class="mandatory1">*</span></span></td>
 	<s:hidden name="temp" value="contraBean.fromBankId" />
 	<td class="greybox"><s:select name="contraBean.fromBankId"
 			id="fromBankId" list="%{fromBankBranchMap}" headerKey="-1"
 			headerValue="----Choose----" onChange="loadFromAccNum(this);" /></td>
 	<egov:ajaxdropdown id="fromAccountNumber" fields="['Text','Value']"
 		dropdownId="fromAccountNumber"
-		url="/voucher/common!ajaxLoadAccountNumbers.action" />
+		url="/voucher/common-ajaxLoadAccountNumbers.action" />
 	<td class="greybox"><s:text name="contra.fromBankAccount" /> <span
-		class="greybox"><span class="mandatory">*</span></span></td>
+		class="greybox"><span class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:select name="contraBean.fromBankAccountId"
 			value="%{contraBean.fromBankAccountId}" id="fromAccountNumber"
 			list="dropdownData.fromAccNumList" listKey="id"
@@ -75,17 +75,17 @@
 <tr>
 	<td class="bluebox"></td>
 	<egov:updatevalues id="fromBankBalance" fields="['Text']"
-		url="/payment/payment!ajaxGetAccountBalance.action" />
-	<td class="bluebox"><s:text name="contra.fromBankBalance" /> (Rs.)
-		<span class="bluebox"><span class="mandatory">*</span></span></td>
-	<td class="bluebox"><s:textfield
-			name="contraBean.fromBankBalance" id="fromBankBalance"
-			readonly="true" tabindex="-1" cssStyle="text-align:right" /></td>
+		url="/payment/payment-ajaxGetAccountBalance.action" />
+	<td class="bluebox"><s:text name="contra.fromBankBalance" />
+		(Rs.) <span class="bluebox"><span class="mandatory1">*</span></span></td>
+	<td class="bluebox"><s:textfield name="contraBean.fromBankBalance"
+			id="fromBankBalance" readonly="true" tabindex="-1"
+			cssStyle="text-align:right" /></td>
 	<td class="bluebox"></td>
 	<td class="bluebox"></td>
 </tr>
 <tr>
-	<td class="bluebox" colspan="6">
+	<td class="bluebox" colspan="5">
 		<table width="100%" cellspacing="0" cellpadding="0" border="0">
 			<tr>
 				<th class="bluebgheadtd" width="100%" colspan="5"><STRONG><s:text
@@ -98,7 +98,7 @@
 	<td class="greybox"></td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
 		<td class="greybox"><s:text name="voucher.fund" /><span
-			class="mandatory">*</span></td>
+			class="mandatory1">*</span></td>
 		<td class="greybox"><s:select name="contraBean.toFundId"
 				id="toFundId" list="dropdownData.fundList" listKey="id"
 				listValue="name" onChange="loadToBank(this);checkInterFund();"
@@ -107,7 +107,7 @@
 	<s:if test="%{shouldShowHeaderField('department')}">
 		<td class="greybox"><s:text name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
-				<span class="bluebox"><span class="mandatory">*</span></span>
+				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
 		<td class="greybox"><s:select name="contraBean.toDepartment"
 				id="contraBean.toDepartment" list="dropdownData.departmentList"
@@ -120,18 +120,18 @@
 <tr>
 	<td class="bluebox"></td>
 	<egov:ajaxdropdown id="toBankId" fields="['Text','Value']"
-		dropdownId="toBankId" url="/voucher/common!ajaxLoadBanks.action" />
+		dropdownId="toBankId" url="/voucher/common-ajaxLoadBanks.action" />
 
 	<td class="bluebox"><s:text name="contra.toBank" /> <span
-		class="bluebox"><span class="mandatory">*</span></span></td>
+		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:select name="contraBean.toBankId"
 			id="toBankId" list="%{toBankBranchMap}" headerKey="-1"
 			headerValue="----Choose----" onChange="loadToAccNum(this);" /></td>
 	<egov:ajaxdropdown id="toAccountNumber" fields="['Text','Value']"
 		dropdownId="toAccountNumber"
-		url="/voucher/common!ajaxLoadAccountNumbers.action" />
+		url="/voucher/common-ajaxLoadAccountNumbers.action" />
 	<td class="bluebox"><s:text name="contra.toBankAccount" /> <span
-		class="bluebox"><span class="mandatory">*</span></span></td>
+		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:select name="contraBean.toBankAccountId"
 			id="toAccountNumber" list="dropdownData.toAccNumList" listKey="id"
 			listValue="accountnumber" headerKey="-1" headerValue="----Choose----"
@@ -143,9 +143,9 @@
 <tr>
 	<td class="greybox"></td>
 	<egov:updatevalues id="toBankBalance" fields="['Text']"
-		url="/payment/payment!ajaxGetAccountBalance.action" />
-	<td class="greybox"><s:text name="contra.toBankBalance" /> (Rs.) <span
-		class="greybox"><span class="mandatory">*</span></span></td>
+		url="/payment/payment-ajaxGetAccountBalance.action" />
+	<td class="greybox"><s:text name="contra.toBankBalance" /> (Rs.)
+		<span class="greybox"><span class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:textfield name="contraBean.toBankBalance"
 			id="toBankBalance" readonly="true" tabindex="-1"
 			cssStyle="text-align:right" /></td>
@@ -155,14 +155,14 @@
 <tr id="interFundRow" style="visibility: hidden">
 	<td class="greybox"></td>
 	<td class="greybox"><s:text name="Source Fund" />
-	<td class="greybox"><span class="mandatory">*</span>
-	<s:select name="contraBean.sourceGlcode" id="sourceGlcode"
+	<td class="greybox"><span class="mandatory1">*</span> <s:select
+			name="contraBean.sourceGlcode" id="sourceGlcode"
 			list="dropdownData.interFundList" listKey="glcode"
 			listValue="glcode+'-'+name" headerKey="-1"
 			headerValue="----Choose----" /></td>
 	<td class="greybox"><s:text name="Destination Fund" /></td>
-	<td class="greybox"><span class="mandatory">*</span>
-	<s:select name="contraBean.destinationGlcode" id="destinationGlcode"
+	<td class="greybox"><span class="mandatory1">*</span> <s:select
+			name="contraBean.destinationGlcode" id="destinationGlcode"
 			list="dropdownData.interFundList" listKey="glcode"
 			listValue="glcode+'-'+name" headerKey="-1"
 			headerValue="----Choose----" /></td>
@@ -172,19 +172,19 @@
 <tr>
 	<td class="bluebox"></td>
 	<td class="bluebox"><s:text name="contra.modeOfCollection" /> <span
-		class="bluebox"><span class="mandatory">*</span></span></td>
+		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:radio name="contraBean.modeOfCollection"
 			id="modeOfCollection" list="%{modeOfCollectionMap}"
 			onclick="toggleChequeAndRefNumber(this)" /></td>
-	<td></td>
-	<td></td>
+	<td class="bluebox"></td>
+	<td class="bluebox"></td>
 </tr>
 
 <tr id="chequeGrid">
 	<td class="greybox"></td>
 	<td class="greybox"><span id="mdcNumber"><s:text
 				name="contra.chequeNumber" /></span> <span class="greybox"><span
-			class="mandatory">*</span></span></td>
+			class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:textfield name="contraBean.chequeNumber"
 			id="chequeNum" value="%{contraBean.chequeNumber}" /></td>
 	<td class="greybox"><span id="mdcDate"><s:text
@@ -200,9 +200,11 @@
 <tr>
 	<td class="bluebox"></td>
 	<td class="bluebox"><s:text name="contra.amount" /> (Rs.) <span
-		class="bluebox"><span class="mandatory">*</span></span></td>
+		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:textfield name="amount" id="amount"
 			cssStyle="text-align:right" /></td>
+	<td class="bluebox"></td>
+	<td class="bluebox"></td>
 </tr>
 
 <tr>
@@ -210,6 +212,8 @@
 	<td class="greybox"><s:text name="voucher.narration" /></td>
 	<td class="greybox" colspan="3"><s:textarea name="description"
 			id="description" style="width:580px" /></td>
+	<td class="greybox"></td>
+	<td class="greybox"></td>
 </tr>
 
 <script>

@@ -48,9 +48,9 @@ import org.egov.egf.revenue.Grant;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.instrument.InstrumentHeader;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 public class BaseRevenueAction extends BaseFormAction {
     private static final long serialVersionUID = 1594209619636642478L;
     protected List<Grant> grantsList;

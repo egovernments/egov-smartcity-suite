@@ -54,9 +54,9 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @Results({
     @Result(name = FundingAgencyAction.NEW, location = "fundingAgency-" + FundingAgencyAction.NEW + ".jsp"),
     @Result(name = "search", location = "fundingAgency-search.jsp"),

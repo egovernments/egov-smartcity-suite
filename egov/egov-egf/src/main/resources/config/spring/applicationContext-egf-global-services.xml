@@ -32,8 +32,9 @@
 		base-package="org.egov.billsaccounting.* , org.egov.dao.* , org.egov.deduction.* , org.egov.egf.* , org.egov.masters.* , org.egov.model.* , org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*" />
 
 
-	<bean id="instrumentTypeService" class = "org.egov.services.instrument.InstrumentTypeService" >
-		<constructor-arg index="0" value="org.egov.model.instrument.InstrumentType" />
+	<bean id="instrumentTypeService" class="org.egov.services.instrument.InstrumentTypeService">
+		<constructor-arg index="0"
+			value="org.egov.model.instrument.InstrumentType" />
 	</bean>
 
 	<bean id="bankService" class="org.egov.services.masters.BankService"
@@ -41,30 +42,42 @@
 		<property name="type" value="org.egov.commons.Bank" />
 	</bean>
 
-	<bean id="instrumentVoucherService" class="org.egov.services.instrument.InstrumentVoucherService" >
-		<constructor-arg index="0" value="org.egov.model.instrument.InstrumentVoucher" />
+	<bean id="instrumentVoucherService" class="org.egov.services.instrument.InstrumentVoucherService">
+		<constructor-arg index="0"
+			value="org.egov.model.instrument.InstrumentVoucher" />
 	</bean>
 
 	<bean id="bankReconciliationService" class="org.egov.services.instrument.BankReconciliationService">
-		<constructor-arg index="0" value="org.egov.commons.Bankreconciliation" />
+		<constructor-arg index="0"
+			value="org.egov.commons.Bankreconciliation" />
 	</bean>
 
-	<bean id="instrumentOtherDetailsService" class="org.egov.services.instrument.InstrumentOtherDetailsService" >
-		<constructor-arg index="0"  	value="org.egov.model.instrument.InstrumentOtherDetails" />
+	<bean id="instrumentOtherDetailsService"
+		class="org.egov.services.instrument.InstrumentOtherDetailsService">
+		<constructor-arg index="0"
+			value="org.egov.model.instrument.InstrumentOtherDetails" />
 	</bean>
-	
-	<bean id="instrumentAccountCodesService" class="org.egov.services.instrument.InstrumentAccountCodesService" >
-		<constructor-arg index="0"  	value="org.egov.model.instrument.InstrumentAccountCodes" />
+
+	<bean id="instrumentAccountCodesService"
+		class="org.egov.services.instrument.InstrumentAccountCodesService">
+		<constructor-arg index="0"
+			value="org.egov.model.instrument.InstrumentAccountCodes" />
 	</bean>
-	
+
 	<bean id="instrumentHeaderService" class="org.egov.services.instrument.InstrumentHeaderService">
-		<constructor-arg index="0" value="org.egov.model.instrument.InstrumentHeader" />
+		<constructor-arg index="0"
+			value="org.egov.model.instrument.InstrumentHeader" />
 	</bean>
 
 	<bean id="instrumentService" class="org.egov.services.instrument.InstrumentService"
 		scope="prototype">
-	</bean>  
+	</bean>
 
+	<bean id="contraJournalVoucherService"
+		class="org.egov.services.voucher.ContraJournalVoucherService">
+		<constructor-arg index="0"
+			value="org.egov.model.contra.ContraJournalVoucher" />
+	</bean>
 
 	<bean id="contrajournalService" class="org.egov.infstr.services.PersistenceService"
 		scope="prototype">
@@ -213,7 +226,7 @@
 		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-	
+
 	<bean id="billsService" class="org.egov.services.bills.BillsService"
 		scope="prototype">
 	</bean>
@@ -274,10 +287,12 @@
 		<property name="type" value="org.egov.commons.Accountdetailkey" />
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-	<bean id="generalLedgerService" class = "org.egov.services.voucher.GeneralLedgerService" >
-               <constructor-arg index="0" value="org.egov.commons.CGeneralLedger" />
-    </bean>
-	<bean id="generalLedgerDetailService" class = "org.egov.services.voucher.GeneralLedgerDetailService" >
-               <constructor-arg index="0" value="org.egov.commons.CGeneralLedgerDetail" />
-    </bean>
+	<bean id="generalLedgerService" class="org.egov.services.voucher.GeneralLedgerService">
+		<constructor-arg index="0"
+			value="org.egov.commons.CGeneralLedger" />
+	</bean>
+	<bean id="generalLedgerDetailService" class="org.egov.services.voucher.GeneralLedgerDetailService">
+		<constructor-arg index="0"
+			value="org.egov.commons.CGeneralLedgerDetail" />
+	</bean>
 </beans>

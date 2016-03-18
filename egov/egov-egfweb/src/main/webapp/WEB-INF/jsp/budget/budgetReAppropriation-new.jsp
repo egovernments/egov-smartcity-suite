@@ -98,7 +98,7 @@
 				opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
 			}
 		
-			function validate(checkUser){
+			function validate(checkUser,method){
 				if(validateMandatoryFields() == false)
 					return false;
 				anticipatory = false;
@@ -152,7 +152,8 @@
 				if(!checkUser){
 					document.getElementById("actionName").value = 'save';
 				}
-				document.budgetDetailForm.submit();
+				document.budgetDetailForm.action='/EGF/budget/budgetReAppropriation-'+method+'.action';
+	    		document.budgetDetailForm.submit();
 				return;
 			}
 
@@ -191,7 +192,7 @@
 			function getBeRe(){
 				element = document.getElementById('financialYear')
 				id = element.options[element.selectedIndex].value;
-				var transaction = YAHOO.util.Connect.asyncRequest('GET', 'budgetReAppropriation!ajaxLoadBeRe.action?id='+id, callback, null);
+				var transaction = YAHOO.util.Connect.asyncRequest('GET', 'budgetReAppropriation-ajaxLoadBeRe.action?id='+id, callback, null);
 			}
 			function updateBudgetDropDown(){
 				newBudgetList=document.getElementById('newBudgetDropDownList')
@@ -209,6 +210,10 @@
 					copyOptions(newBudgetList,element)
 				}
 			}
+			function loadActuals(){
+				document.budgetDetailForm.action='/EGF/budget/budgetReAppropriation-loadActuals.action';
+	    		document.budgetDetailForm.submit();
+				}
 		</script>
 	<s:actionmessage theme="simple" />
 	<s:actionerror />
@@ -216,199 +221,190 @@
 	<s:form name="budgetDetailForm" action="budgetReAppropriation"
 		theme="simple">
 		<s:token />
-		<div align="left">
-			<br />
-			<table border="0" cellspacing="0" cellpadding="0" width="100%">
-				<tr>
-					<td>
-						<div class="tabber">
-							<div class="tabbertab" style="height: 430px;">
-								<h2>Additional Appropriation</h2>
-								<span>
-									<table width="60%" border="0" cellspacing="0" cellpadding="0">
-										<tr>
-											<td>
-												<div class="subheadnew">
-													<s:text name="budget.reappropriation.title" />
-												</div>
-												<br>
-											</td>
-										</tr>
-									</table>
-									<table width="50%" border="0" cellspacing="0" cellpadding="0">
-										<tr>
-											<td width="10%" class="bluebox">&nbsp;</td>
-											<td class="bluebox"><s:text name="budget.financialYear" /><span
-												class="mandatory">*</span></td>
-											<td class="bluebox"><s:select
-													list="dropdownData.financialYearList" listKey="id"
-													listValue="finYearRange" name="financialYear.id"
-													value="financialYear.id" id="financialYear" headerKey="0"
-													headerValue="--- Select ---" onchange="getBeRe();"></s:select></td>
-											<td class="bluebox" width="19%"><s:text
-													name="budget.bere" /></td>
-											<td class="bluebox"><s:select name="isBeRe" id="isBeRe"
-													list="#{'BE':'BE','RE':'RE'}" value="beRe" disabled="true" /></td>
-										</tr>
-										<tr>
-											<s:if test="%{shouldShowHeaderField('executingDepartment')}">
-												<td class="greybox">&nbsp;</td>
-												<td class="greybox"><s:text
-														name="budgetdetail.executingDepartment" /> <s:if
-														test="%{isFieldMandatory('executingDepartment')}">
-														<span class="mandatory">*</span>
-													</s:if></td>
-												<td width="22%" class="greybox"><s:select
-														list="dropdownData.executingDepartmentList" listKey="id"
-														listValue="deptName"
-														name="budgetDetail.executingDepartment.id" headerKey="0"
-														headerValue="--- Select ---"
-														onchange="updateGrid('budgetDetail.executingDepartment.id',document.getElementById('budgetReAppropriation_executingDepartment').selectedIndex);updateReAppGrid('budgetDetail.executingDepartment.id',document.getElementById('budgetReAppropriation_executingDepartment').selectedIndex);"
-														value="budgetDetail.executingDepartment.id"
-														id="budgetReAppropriation_executingDepartment"></s:select></td>
-											</s:if>
-											<s:if test="%{shouldShowHeaderField('fund')}">
-												<td class="greybox"><s:text name="fund" /> <s:if
-														test="%{isFieldMandatory('fund')}">
-														<span class="mandatory">*</span>
-													</s:if></td>
-												<td class="greybox"><s:select
-														list="dropdownData.fundList" listKey="id" listValue="name"
-														name="budgetDetail.fund.id" headerKey="0"
-														headerValue="--- Select ---"
-														onchange="updateGrid('budgetDetail.fund.id',document.getElementById('budgetReAppropriation_fund').selectedIndex);updateReAppGrid('budgetDetail.fund.id',document.getElementById('budgetReAppropriation_fund').selectedIndex)"
-														value="fund.id" id="budgetReAppropriation_fund"></s:select></td>
-											</s:if>
-										</tr>
-										<tr>
-											<s:if test="%{shouldShowHeaderField('function')}">
-												<td class="bluebox">&nbsp;</td>
-												<td class="bluebox"><s:text name="function" /> <s:if
-														test="%{isFieldMandatory('function')}">
-														<span class="mandatory">*</span>
-													</s:if></td>
-												<td class="bluebox"><s:select
-														list="dropdownData.functionList" listKey="id"
-														listValue="name" name="budgetDetail.function.id"
-														headerKey="0" headerValue="--- Select ---"
-														onchange="updateGrid('budgetDetail.function.id',document.getElementById('budgetReAppropriation_function').selectedIndex);updateReAppGrid('budgetDetail.function.id',document.getElementById('budgetReAppropriation_function').selectedIndex)"
-														value="function.id" id="budgetReAppropriation_function"></s:select></td>
-											</s:if>
-											<s:if test="%{shouldShowHeaderField('functionary')}">
-												<td class="bluebox"><s:text name="functionary" /> <s:if
-														test="%{isFieldMandatory('functionary')}">
-														<span class="mandatory">*</span>
-													</s:if></td>
-												<td class="bluebox"><s:select
-														list="dropdownData.functionaryList" listKey="id"
-														listValue="name" headerKey="0"
-														headerValue="--- Select ---"
-														name="budgetDetail.functionary.id"
-														onchange="updateGrid('budgetDetail.functionary.id',document.getElementById('budgetReAppropriation_functionary').selectedIndex);updateReAppGrid('budgetDetail.functionary.id',document.getElementById('budgetReAppropriation_functionary').selectedIndex)"
-														value="functionary.id"
-														id="budgetReAppropriation_functionary"></s:select></td>
-											</s:if>
-										</tr>
-										<tr>
-											<s:if test="%{shouldShowHeaderField('scheme')}">
-												<td width="10%" class="bluebox">&nbsp;</td>
-												<td class="greybox"><s:text name="scheme" /> <s:if
-														test="%{isFieldMandatory('scheme')}">
-														<span class="mandatory">*</span>
-													</s:if></td>
-												<td class="greybox"><s:select
-														list="dropdownData.schemeList" listKey="id"
-														listValue="name" headerKey="0"
-														headerValue="--- Select ---" name="budgetDetail.scheme.id"
-														onchange="updateGrid('budgetDetail.scheme.id',document.getElementById('budgetReAppropriation_scheme').selectedIndex);populateSubSchemes(this);"
-														value="scheme.id" id="budgetReAppropriation_scheme"></s:select></td>
-											</s:if>
-											<s:if test="%{shouldShowHeaderField('subScheme')}">
-												<egov:ajaxdropdown id="subScheme" fields="['Text','Value']"
-													dropdownId="budgetReAppropriation_subScheme"
-													url="budget/budgetDetail!ajaxLoadSubSchemes.action"
-													afterSuccess="onHeaderSubSchemePopulation" />
-												<td class="greybox"><s:text name="subscheme" /> <s:if
-														test="%{isFieldMandatory('subScheme')}">
-														<span class="mandatory">*</span>
-													</s:if></td>
-												<td class="greybox"><s:select
-														list="dropdownData.subSchemeList" listKey="id"
-														listValue="name" headerKey="0"
-														headerValue="--- Select ---" name="budgetDetail.subScheme"
-														onchange="updateGrid('budgetDetail.subScheme.id',document.getElementById('budgetReAppropriation_subScheme').selectedIndex);updateReAppGrid('budgetDetail.subScheme.id',document.getElementById('budgetReAppropriation_subScheme').selectedIndex)"
-														value="subScheme.id" id="budgetReAppropriation_subScheme"></s:select></td>
-											</s:if>
+		<div class="formmainbox">
+			<div class="tabber">
+				<div class="tabbertab">
+					<h2>Additional Appropriation</h2>
+					<span>
+						<table width="60%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td>
+									<div class="subheadnew">
+										<s:text name="budget.reappropriation.title" />
+									</div> <br />
+								</td>
+							</tr>
+						</table>
+						<table width="50%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="10%" class="bluebox">&nbsp;</td>
+								<td class="bluebox"><s:text name="budget.financialYear" /><span
+									class="mandatory1">*</span></td>
+								<td class="bluebox"><s:select
+										list="dropdownData.financialYearList" listKey="id"
+										listValue="finYearRange" name="financialYear.id"
+										value="financialYear.id" id="financialYear" headerKey="0"
+										headerValue="--- Select ---" onchange="getBeRe();"></s:select></td>
+								<td class="bluebox" width="19%"><s:text name="budget.bere" /></td>
+								<td class="bluebox"><s:select name="isBeRe" id="isBeRe"
+										list="#{'BE':'BE','RE':'RE'}" value="beRe" disabled="true" /></td>
+							</tr>
+							<tr>
+								<s:if test="%{shouldShowHeaderField('executingDepartment')}">
+									<td class="greybox">&nbsp;</td>
+									<td class="greybox"><s:text
+											name="budgetdetail.executingDepartment" /> <s:if
+											test="%{isFieldMandatory('executingDepartment')}">
+											<span class="mandatory1">*</span>
+										</s:if></td>
+									<td width="22%" class="greybox"><s:select
+											list="dropdownData.executingDepartmentList" listKey="id"
+											listValue="name" name="budgetDetail.executingDepartment.id"
+											headerKey="0" headerValue="--- Select ---"
+											onchange="updateGrid('budgetDetail.executingDepartment.id',document.getElementById('budgetReAppropriation_executingDepartment').selectedIndex);updateReAppGrid('budgetDetail.executingDepartment.id',document.getElementById('budgetReAppropriation_executingDepartment').selectedIndex);"
+											value="budgetDetail.executingDepartment.id"
+											id="budgetReAppropriation_executingDepartment"></s:select></td>
+								</s:if>
+								<s:if test="%{shouldShowHeaderField('fund')}">
+									<td class="greybox"><s:text name="fund" /> <s:if
+											test="%{isFieldMandatory('fund')}">
+											<span class="mandatory1">*</span>
+										</s:if></td>
+									<td class="greybox"><s:select list="dropdownData.fundList"
+											listKey="id" listValue="name" name="budgetDetail.fund.id"
+											headerKey="0" headerValue="--- Select ---"
+											onchange="updateGrid('budgetDetail.fund.id',document.getElementById('budgetReAppropriation_fund').selectedIndex);updateReAppGrid('budgetDetail.fund.id',document.getElementById('budgetReAppropriation_fund').selectedIndex)"
+											value="fund.id" id="budgetReAppropriation_fund"></s:select></td>
+								</s:if>
+							</tr>
+							<tr>
+								<s:if test="%{shouldShowHeaderField('function')}">
+									<td class="bluebox">&nbsp;</td>
+									<td class="bluebox"><s:text name="function" /> <s:if
+											test="%{isFieldMandatory('function')}">
+											<span class="mandatory1">*</span>
+										</s:if></td>
+									<td class="bluebox"><s:select
+											list="dropdownData.functionList" listKey="id"
+											listValue="name" name="budgetDetail.function.id"
+											headerKey="0" headerValue="--- Select ---"
+											onchange="updateGrid('budgetDetail.function.id',document.getElementById('budgetReAppropriation_function').selectedIndex);updateReAppGrid('budgetDetail.function.id',document.getElementById('budgetReAppropriation_function').selectedIndex)"
+											value="function.id" id="budgetReAppropriation_function"></s:select></td>
+								</s:if>
+								<s:if test="%{shouldShowHeaderField('functionary')}">
+									<td class="bluebox"><s:text name="functionary" /> <s:if
+											test="%{isFieldMandatory('functionary')}">
+											<span class="mandatory1">*</span>
+										</s:if></td>
+									<td class="bluebox"><s:select
+											list="dropdownData.functionaryList" listKey="id"
+											listValue="name" headerKey="0" headerValue="--- Select ---"
+											name="budgetDetail.functionary.id"
+											onchange="updateGrid('budgetDetail.functionary.id',document.getElementById('budgetReAppropriation_functionary').selectedIndex);updateReAppGrid('budgetDetail.functionary.id',document.getElementById('budgetReAppropriation_functionary').selectedIndex)"
+											value="functionary.id" id="budgetReAppropriation_functionary"></s:select></td>
+								</s:if>
+							</tr>
+							<tr>
+								<s:if test="%{shouldShowHeaderField('scheme')}">
+									<td width="10%" class="bluebox">&nbsp;</td>
+									<td class="greybox"><s:text name="scheme" /> <s:if
+											test="%{isFieldMandatory('scheme')}">
+											<span class="mandatory1">*</span>
+										</s:if></td>
+									<td class="greybox"><s:select
+											list="dropdownData.schemeList" listKey="id" listValue="name"
+											headerKey="0" headerValue="--- Select ---"
+											name="budgetDetail.scheme.id"
+											onchange="updateGrid('budgetDetail.scheme.id',document.getElementById('budgetReAppropriation_scheme').selectedIndex);populateSubSchemes(this);"
+											value="scheme.id" id="budgetReAppropriation_scheme"></s:select></td>
+								</s:if>
+								<s:if test="%{shouldShowHeaderField('subScheme')}">
+									<egov:ajaxdropdown id="subScheme" fields="['Text','Value']"
+										dropdownId="budgetReAppropriation_subScheme"
+										url="budget/budgetDetail-ajaxLoadSubSchemes.action"
+										afterSuccess="onHeaderSubSchemePopulation" />
+									<td class="greybox"><s:text name="subscheme" /> <s:if
+											test="%{isFieldMandatory('subScheme')}">
+											<span class="mandatory1">*</span>
+										</s:if></td>
+									<td class="greybox"><s:select
+											list="dropdownData.subSchemeList" listKey="id"
+											listValue="name" headerKey="0" headerValue="--- Select ---"
+											name="budgetDetail.subScheme"
+											onchange="updateGrid('budgetDetail.subScheme.id',document.getElementById('budgetReAppropriation_subScheme').selectedIndex);updateReAppGrid('budgetDetail.subScheme.id',document.getElementById('budgetReAppropriation_subScheme').selectedIndex)"
+											value="subScheme.id" id="budgetReAppropriation_subScheme"></s:select></td>
+								</s:if>
 
-										</tr>
-										<tr>
-											<s:if test="%{shouldShowHeaderField('boundary')}">
-												<td class="bluebox"><s:text name="field" /> <s:if
-														test="%{isFieldMandatory('boundary')}">
-														<span class="mandatory">*</span>
-													</s:if></td>
-												<td class="bluebox"><s:select
-														list="dropdownData.boundaryList" listKey="id"
-														listValue="name" headerKey="0"
-														headerValue="--- Select ---"
-														name="budgetDetail.boundary.id"
-														onchange="updateGrid('budgetDetail.boundary.id',document.getElementById('budgetReAppropriation_boundary').selectedIndex)"
-														value="boundary.id" id="budgetReAppropriation_boundary"></s:select></td>
-											</s:if>
-											<s:else>
-												<td class="bluebox">&nbsp;</td>
-												<td class="bluebox">&nbsp;</td>
-											</s:else>
-										</tr>
-										<tr>
-											<td class="greybox">&nbsp;</td>
-											<td class="greybox"><s:text
-													name="budgetReAppropriation.asOnDate" /></td>
-											<td class="greybox"><input type="text" id="date"
-												name="appropriationMisc.reAppropriationDate"
-												style="width: 100px"
-												value='<s:date name="appropriationMisc.reAppropriationDate" format="dd/MM/yyyy"/>' /><a
-												href="javascript:show_calendar('budgetDetailForm.date');"
-												style="text-decoration: none">&nbsp;<img
-													src="/egi/resources/erp2/images/calendaricon.gif"
-													border="0" /></a>(dd/mm/yyyy)</td>
-											<td class="greybox"><s:text
-													name="budgetReAppropriation.comments" /></td>
-											<td class="greybox"><s:textarea
-													id="appropriationMisc.remarks"
-													name="appropriationMisc.remarks" cols="50" /></td>
-											<td class="greybox"></td>
-										</tr>
-									</table> <br />
-									<table width="60%" border="0" cellspacing="0" cellpadding="0">
-										<tr>
-											<td>
-												<div align="center">
-													<s:submit method="loadActuals" value="Get Actuals"
-														cssClass="buttonsubmit" />
-												</div>
-											</td>
-										</tr>
-									</table>
-									<table width="100%" border="0" cellspacing="0" cellpadding="0"
-										id="budgetDetailFormTable">
-										<tr>
-											<td>&nbsp;</td>
-										</tr>
-										<tr>
-											<td colspan="9">
-												<div class="subheadsmallnew">
-													<strong><s:text
-															name="budget.reappropriation.add.release" /></strong>
-												</div>
-											</td>
-										</tr>
-									</table>
-									<div class="yui-skin-sam"
-										style="width: 100%; overflow-x: auto; overflow-y: hidden;">
-										<div id="budgetDetailTable"></div>
-										<br />
-									</div> <script>
+							</tr>
+							<tr>
+								<s:if test="%{shouldShowHeaderField('boundary')}">
+									<td width="10%" class="bluebox">&nbsp;</td>
+									<td class="bluebox"><s:text name="field" /> <s:if
+											test="%{isFieldMandatory('boundary')}">
+											<span class="mandatory1">*</span>
+										</s:if></td>
+									<td class="bluebox"><s:select
+											list="dropdownData.boundaryList" listKey="id"
+											listValue="name" headerKey="0" headerValue="--- Select ---"
+											name="budgetDetail.boundary.id"
+											onchange="updateGrid('budgetDetail.boundary.id',document.getElementById('budgetReAppropriation_boundary').selectedIndex)"
+											value="boundary.id" id="budgetReAppropriation_boundary"></s:select></td>
+								</s:if>
+								<s:else>
+									<td class="bluebox">&nbsp;</td>
+									<td class="bluebox">&nbsp;</td>
+								</s:else>
+								<td class="bluebox">&nbsp;</td>
+								<td class="bluebox">&nbsp;</td>
+							</tr>
+							<tr>
+								<td class="greybox">&nbsp;</td>
+								<td class="greybox"><s:text
+										name="budgetReAppropriation.asOnDate" /></td>
+								<td class="greybox"><input type="text" id="date"
+									name="appropriationMisc.reAppropriationDate"
+									style="width: 100px"
+									value='<s:date name="appropriationMisc.reAppropriationDate" format="dd/MM/yyyy"/>' /><a
+									href="javascript:show_calendar('budgetDetailForm.date');"
+									style="text-decoration: none">&nbsp;<img
+										src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+								<td class="greybox"><s:text
+										name="budgetReAppropriation.comments" /></td>
+								<td class="greybox"><s:textarea
+										id="appropriationMisc.remarks"
+										name="appropriationMisc.remarks" cols="50" /></td>
+								<td class="greybox"></td>
+							</tr>
+						</table> <br />
+						<table width="60%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td>
+									<div align="center">
+										<s:submit method="loadActuals" value="Get Actuals"
+											cssClass="buttonsubmit" onclick="loadActuals()" />
+									</div>
+								</td>
+							</tr>
+						</table>
+						<table width="100%" border="0" cellspacing="0" cellpadding="0"
+							id="budgetDetailFormTable">
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="9">
+									<div class="subheadsmallnew">
+										<strong><s:text
+												name="budget.reappropriation.add.release" /></strong>
+									</div>
+								</td>
+							</tr>
+						</table>
+						<div class="yui-skin-sam"
+							style="width: 100%; overflow-x: auto; overflow-y: hidden;">
+							<div id="budgetDetailTable"></div>
+							<br />
+						</div> <script>
 			makeBudgetDetailTable();
 			hideColumns();
 			document.getElementById('budgetDetailTable').getElementsByTagName('table')[0].width = "100%";
@@ -421,24 +417,24 @@
 				computeAvailable("budgetReAppropriationList",i);
 			}
 		</script> <br />
-									<table width="100%" border="0" cellspacing="0" cellpadding="0"
-										id="budgetReAppropriationFormTable">
-										<tr>
-											<td>&nbsp;</td>
-										</tr>
-										<tr>
-											<td colspan="9">
-												<div class="subheadsmallnew">
-													<strong><s:text name="budget.reappropriation.add" /></strong>
-												</div>
-											</td>
-										</tr>
-									</table>
-									<div class="yui-skin-sam"
-										style="width: 100%; overflow-x: auto; overflow-y: hidden;">
-										<div id="budgetReAppropriationsTable"></div>
-										<br />
-									</div> <script>
+						<table width="100%" border="0" cellspacing="0" cellpadding="0"
+							id="budgetReAppropriationFormTable">
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="9">
+									<div class="subheadsmallnew">
+										<strong><s:text name="budget.reappropriation.add" /></strong>
+									</div>
+								</td>
+							</tr>
+						</table>
+						<div class="yui-skin-sam"
+							style="width: 100%; overflow-x: auto; overflow-y: hidden;">
+							<div id="budgetReAppropriationsTable"></div>
+							<br />
+						</div> <script>
 			makeBudgetReAppropriationTable();
 			hideReAppropriationTableColumns();
 			document.getElementById('budgetReAppropriationsTable').getElementsByTagName('table')[0].width = "70%";
@@ -448,34 +444,49 @@
 				setValuesForReAppropriation();
 			</s:if>
 		</script>
-								</span>
-							</div>
-							<div class="tabbertab" style="height: 430px;">
-								<h2>Approval Details</h2>
-								<span> <input type="hidden" name="scriptName"
-									id="scriptName" value="BudgetDetail.nextDesg" /> <s:hidden
-										name="miscId" id="miscId" /> <%@include
-										file="../voucher/workflowApproval.jsp"%>
-								</span>
-							</div>
-							<!-- Individual tab -->
-						</div>
-					</td>
-				</tr>
+					</span>
+					<table width="60%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td>
+								<div class="buttonbottom" style="padding-bottom: 10px;">
+									<input type="submit" value="Save"
+										id="budgetReAppropriation__create" name="method:create"
+										onClick="javascript: return validate(false,'create');"
+										class="buttonsubmit" />
+									<!-- <input type="submit" value="Forward"
+													id="budgetReAppropriation__createAndForward"
+													name="method:createAndForward"
+													onClick="javascript: return validate(true,'createAndForward');"
+													class="buttonsubmit" /> -->
+									<s:submit value="Close" onclick="javascript: self.close()"
+										cssClass="button" />
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<%-- <div class="tabbertab" style="height: 430px;">
+									<h2>Approval Details</h2>
+									<div class="buttonbottom" style="padding-bottom: 10px;">
+										<input type="submit" value="Save"
+											id="budgetReAppropriation__create" name="method:create"
+											onClick="javascript: return validate(false,'create');"
+											class="buttonsubmit" />
+										<!-- <input type="submit" value="Forward"
+											id="budgetReAppropriation__createAndForward"
+											name="method:createAndForward"
+											onClick="javascript: return validate(true,'createAndForward');"
+											class="buttonsubmit" /> -->
+										<s:submit value="Close" onclick="javascript: self.close()"
+											cssClass="button" />
+									</div>
+								</div> --%>
+				<!-- Individual tab -->
 
-			</table>
+			</div>
+
+			<s:hidden name="actionName" id="actionName" />
 		</div>
-		<div class="buttonbottom" style="padding-bottom: 10px;">
-			<input type="submit" value="Save" id="budgetReAppropriation__create"
-				name="method:create" onClick="javascript: return validate(false);"
-				class="buttonsubmit" /> <input type="submit" value="Forward"
-				id="budgetReAppropriation__createAndForward"
-				name="method:createAndForward"
-				onClick="javascript: return validate(true);" class="buttonsubmit" />
-			<s:submit value="Close" onclick="javascript: self.close()"
-				cssClass="button" />
-		</div>
-		<s:hidden name="actionName" id="actionName" />
 	</s:form>
 	<div id="beReGrid" style="display: none"></div>
 </body>

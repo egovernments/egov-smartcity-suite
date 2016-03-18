@@ -63,11 +63,11 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.eGov.src.domain.BillRegisterBean;
 
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = "search", location = "cancelBill-search.jsp")
 })

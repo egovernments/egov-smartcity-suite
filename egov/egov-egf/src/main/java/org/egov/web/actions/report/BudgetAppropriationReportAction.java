@@ -60,7 +60,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import net.sf.jasperreports.engine.JasperPrint;
 
@@ -73,7 +73,7 @@ import net.sf.jasperreports.engine.JasperPrint;
         "no-cache;filename=BudgetAppropriationReport.xls" })
 })
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 public class BudgetAppropriationReportAction extends BaseFormAction {
     /**
      *

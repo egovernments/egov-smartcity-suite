@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-02-02T16:25:13 -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-03-18T08:08:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mutationCertificate_details" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a002afff-59b5-4b48-b40a-06d60ceff39d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="402"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="municipalityName" class="java.lang.String"/>
@@ -84,7 +87,7 @@
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="100" y="121" width="444" height="40" uuid="c3a0c63f-290f-4873-8fa6-dd5812dac316"/>
-				<textElement textAlignment="Left" markup="none">
+				<textElement textAlignment="Justified" markup="none">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["TAXATION - "+$P{municipalityName}+" - Transfer of the title on the building bearing, H. No. "+$P{doorNo}+" situated at "+$P{localityName}+" area within the Municipality limits – Orders – Issued."]]></textFieldExpression>
@@ -133,10 +136,10 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[ 	In exercise of the powers vested with the Municipal Commissioner under Section 93 of APM Act, 1965 read with Rile 8(2) of Taxation and Finance Rules and as per Alteration of Ownership of property in Assessment Books Riles 1966, on the request made by applicant and based on the strength of documentary evidence produced, the transfer of the title is hereby effected on the building premises within the Municipal limits as follows:-]]></text>
+				<text><![CDATA[ 	In exercise of the powers vested with the Municipal Commissioner under Section 93 of APM Act, 1965 read with Rule 8(2) of Taxation and Finance Rules and as per Alteration of Ownership of property in Assessment Books Rules 1966, on the request made by applicant and based on the strength of documentary evidence produced, the transfer of the title is hereby effected on the building premises within the Municipal limits as follows:-]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="280" width="230" height="30" uuid="a99d0860-4b50-4ae8-9673-8e253d253b61"/>
@@ -147,7 +150,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[House No. & Assessment No. of the premises for which transfer is effected]]></text>
@@ -174,8 +177,8 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
-					<font size="10" isBold="false"/>
+				<textElement textAlignment="Justified">
+					<font size="10" isBold="false" isStrikeThrough="false"/>
 				</textElement>
 				<text><![CDATA[Name of the Transferor and his/her Father or Husband Name as per Assessment Books, whose name is changed due to effect of this title transfer]]></text>
 			</staticText>
@@ -201,7 +204,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Nature of the Documents / Proceedings/Order basing on which the Transfer is effected ( No. & Date to be mentioned)]]></text>
@@ -217,7 +220,7 @@
 				<textElement textAlignment="Left" markup="none">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{regDocNo}+", "+$P{regDocDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Registered document number: "+$P{regDocNo}+",\nRegistered document date: "+$P{regDocDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="360" width="230" height="50" uuid="b239dc55-05a1-41bd-a347-29db70568804"/>
@@ -228,7 +231,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Name of the Transferee and his/her Father or Husband Name on whose name the transfer is effected]]></text>
@@ -255,7 +258,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[	This order is issued on the following conditions and any objections raised in future on the title of property, the transfer of title (mutation) deemed to be cancelled without giving any notice in this regard.]]></text>
@@ -269,7 +272,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[1. This transfer orders is not the regulation of un-authorised construction made against the sanctioned plan or without sanctioned plan.]]></text>
@@ -283,7 +286,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[2. This transfer order will not confer the ownership & Civil rights over the site and buildings.]]></text>
@@ -297,7 +300,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[3. Any evidenced objection  is raised in this effect, in future, the transfer of title (mutation) will be cancelled immediately.]]></text>
@@ -307,7 +310,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isItalic="true" isUnderline="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">PARTY COPY</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">OFFICIAL COPY</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">ORIGINAL COPY</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">OFFICE COPY</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="430" y="94" width="110" height="15" uuid="fda958c0-f0ea-4350-9289-0d1dbc1cfc51"/>

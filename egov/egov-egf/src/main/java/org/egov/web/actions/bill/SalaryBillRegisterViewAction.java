@@ -49,9 +49,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class SalaryBillRegisterViewAction extends BaseFormAction {
     /**
      *

@@ -61,6 +61,9 @@
 		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
                <column name="STATE_ID"/>
         </many-to-one>
+        <many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
+            <column name="STATUS" precision="22" scale="0" />
+        </many-to-one>
         <set name="budgetReAppropriations" cascade="all">
             <key>
                 <column name="REAPPROPRIATION_MISC"/>

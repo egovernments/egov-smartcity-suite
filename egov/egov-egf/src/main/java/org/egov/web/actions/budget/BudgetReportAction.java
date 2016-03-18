@@ -89,9 +89,9 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @ParentPackage("egov")
 @Results(value = {
         @Result(name = "department-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,

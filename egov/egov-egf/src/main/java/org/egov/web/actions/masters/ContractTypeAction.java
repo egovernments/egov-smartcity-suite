@@ -56,7 +56,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -64,7 +64,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validation()
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = ContractTypeAction.NEW, location = "contractType-" + ContractTypeAction.NEW + ".jsp"),
     @Result(name = "search", location = "contractType-search.jsp"),

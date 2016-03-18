@@ -63,6 +63,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_COURT_CASE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PENALTY_WATERTAX_EFFECTIVE_DATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
@@ -2452,7 +2456,7 @@ public class PropertyTaxUtil {
      * @return
      */
     public Query prepareQueryforDefaultersReport(final Long wardId, final String fromDemand,
-            final String toDemand, final Integer limit) {
+            final String toDemand, final Integer limit,final String ownerShipType) {
         final StringBuffer query = new StringBuffer(300);
         query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true and pmv.isExempted=false ");
         String arrearBalanceCond = " ((pmv.aggrArrDmd - pmv.aggrArrColl) + (pmv.aggrCurrDmd - pmv.aggrCurrColl)) ";
@@ -2463,10 +2467,21 @@ public class PropertyTaxUtil {
             query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
         } else if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
                 query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
-                query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
+                query.append(" or "+arrearBalanceCond+" <= ").append(toDemand);
         }
         if(wardId != null && wardId != -1){
                 query.append(" and pmv.ward.id = ").append(wardId); 
+        }
+        if(StringUtils.isNotBlank(ownerShipType)) {
+            if(ownerShipType.equals(OWNERSHIP_TYPE_PRIVATE)) {
+                query.append(" and (pmv.propTypeMstrID.code = '"+ownerShipType+"' or pmv.propTypeMstrID.code = 'EWSHS') and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) "); 
+            } else if(ownerShipType.equals(OWNERSHIP_TYPE_STATE_GOVT)){
+                query.append(" and (pmv.propTypeMstrID.code = '"+ownerShipType+"') and  cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
+            } else if(ownerShipType.equals(OWNERSHIP_TYPE_CENTRAL_GOVT)) {
+                query.append(" and (pmv.propTypeMstrID.code like  '"+ownerShipType+"%') and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) "); 
+            } else if(ownerShipType.equals(OWNERSHIP_TYPE_COURT_CASE)){
+                query.append(" and cast(pmv.propertyId as integer) in (select propertyId from PropertyCourtCase)");
+            }
         }
         orderByClause = orderByClause.concat(arrearBalanceCond+" desc, pmv.ward.id asc ");
         query.append(orderByClause);

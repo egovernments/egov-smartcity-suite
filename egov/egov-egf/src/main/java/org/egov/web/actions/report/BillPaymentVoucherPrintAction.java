@@ -81,7 +81,7 @@ import org.egov.web.actions.voucher.VoucherReport;
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Results(value = {
 		@Result(name=BillPaymentVoucherPrintAction.PRINT , location="billPaymentVoucherPrint-print.jsp"),
@@ -92,7 +92,7 @@ import org.springframework.transaction.annotation.Transactional;
                         @Result(name = "HTML", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                         "text/html" })
 })
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 public class BillPaymentVoucherPrintAction extends BaseFormAction {
     Long chequeNumberPass;

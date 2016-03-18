@@ -69,9 +69,9 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.payment.Paymentheader;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @Results({
     @Result(name = "reversalVouchers", location = "paymentReversal-reversalVouchers.jsp")
 })

@@ -58,9 +58,9 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.FlushMode;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @Results({
     @Result(name = "search", location = "searchAdvanceRequisitionForPayment-search.jsp")
 })

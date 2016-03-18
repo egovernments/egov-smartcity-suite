@@ -3,7 +3,8 @@ var reportdatatable;
 $(document)
 		.ready(
 				function() {
-					usagetableContainer = $("#tblulbDCBcollection");
+					$('#type').val($('#typeDefaultVal').val());
+					usagetableContainer = $("#tblulbDCBcollection"); 
 					$('#tblulbDCBcollection').hide();
 					$('#tblulbDCBcollectionheader').hide();
 					$('#uldDCBCollectionReportSearch')
@@ -78,6 +79,11 @@ $(document)
 									"sTitle" : "Total", "sClass": "text-right"
 								},
 								{
+									"data" : "target_total_demandInterest",
+									"sTitle" : "Total Interest", "sClass": "text-right"
+								},
+								
+								{
 									"data" : "arrears_demand_collection",
 									"sTitle" : "Arrear tax", "sClass": "text-right"
 								},
@@ -96,7 +102,13 @@ $(document)
 								{
 									"data" : "cummulative_total_Collection",
 									"sTitle" : "Total", "sClass": "text-right"
-								},{
+								},
+								{
+								"data" : "cummulative_total_CollectionInterest",
+								"sTitle" : "Total Interest", "sClass": "text-right"
+								},
+								
+								{
 									"data" : "balance_arrearTax",
 									"sTitle" : "Arrear tax", "sClass": "text-right"
 								},
@@ -115,7 +127,11 @@ $(document)
 								{
 									"data" : "balance_total",
 									"sTitle" : "Total", "sClass": "text-right"
+								},{
+								"data" : "balance_totalInterest",
+								"sTitle" : "Total Interest", "sClass": "text-right"
 								}
+							
 								 ],"footerCallback" : function(row, data, start, end, display) {
 										var api = this.api(), data;
 										if (data.length == 0) {
@@ -139,6 +155,9 @@ $(document)
 											updateTotalFooter(19, api);
 											updateTotalFooter(20, api);
 											updateTotalFooter(21, api);
+											updateTotalFooter(22, api);
+											updateTotalFooter(23, api);
+											updateTotalFooter(24, api);
 
 										}
 									},

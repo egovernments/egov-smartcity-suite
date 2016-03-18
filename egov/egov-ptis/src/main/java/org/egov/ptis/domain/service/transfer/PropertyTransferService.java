@@ -408,9 +408,20 @@ public class PropertyTransferService {
             for(PropertyMutationTransferee transferee : transferees){ 
             if (transferee!=null) { 
                 User user = null;
-                if (null != transferee.getTransferee().getAadhaarNumber() && !transferee.getTransferee().getAadhaarNumber().isEmpty())
-                    user = userService.getUserByAadhaarNumberAndType(transferee.getTransferee().getAadhaarNumber(), 
+                if (null != transferee.getTransferee().getAadhaarNumber() && !transferee.getTransferee().getAadhaarNumber().isEmpty()){
+                    List<User> userList =  new ArrayList<User>(); 
+                    userList = userService.getUserByAadhaarNumberAndType(transferee.getTransferee().getAadhaarNumber(), 
                             transferee.getTransferee().getType());
+                    if(userList!=null && !userList.isEmpty()){
+                        for(int i=0; i<userList.size();i++){
+                            if(userList.get(i).getAadhaarNumber().equalsIgnoreCase(transferee.getTransferee().getAadhaarNumber()) && 
+                                    userList.get(i).getMobileNumber().equalsIgnoreCase(transferee.getTransferee().getMobileNumber()) &&
+                                    userList.get(i).getName().equalsIgnoreCase(transferee.getTransferee().getName())){
+                                user=userList.get(i);
+                            }
+                        }
+                    }
+                }
                 else
                     user = (User) basicPropertyService.find(
                             "From User where name = ? and mobileNumber = ? and gender = ? ", transferee.getTransferee().getName(),

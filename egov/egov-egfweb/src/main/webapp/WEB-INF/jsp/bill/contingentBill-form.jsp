@@ -42,7 +42,7 @@
 <jsp:include page="../voucher/vouchertrans-filter-new-contingent.jsp" />
 <tr>
 	<td class="greybox"></td>
-	<td class="greybox"><s:text name="function" /></td>
+	<td class="greybox"><s:text name="function" /><span	class="mandatory1"> *</span></td>
 	<td class="greybox"><s:textfield name="commonBean.functionName"
 			id="commonBean.functionName"
 			onkeyup="autocompletecodeFunctionHeader(this,event)"

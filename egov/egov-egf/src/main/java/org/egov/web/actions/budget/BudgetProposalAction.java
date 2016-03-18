@@ -98,9 +98,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @ParentPackage("egov")
 /*
  * @Results(value={
@@ -1017,7 +1017,7 @@ public class BudgetProposalAction extends BaseFormAction {
             LOGGER.info("Finished computeTotal");
     }
 
-    @Transactional
+    
     @SkipValidation
     @Action(value = "/budget/budgetProposal-update")
     public String update()
@@ -1087,7 +1087,7 @@ public class BudgetProposalAction extends BaseFormAction {
         return "message";
     }
 
-    @Transactional
+    
     private void save(final BigDecimal multiplicationFactor)
     {
         String columntoupdate = "originalAmount";
@@ -1145,7 +1145,7 @@ public class BudgetProposalAction extends BaseFormAction {
             LOGGER.debug("Completed Save .....");
     }
 
-    @Transactional
+    
     private void saveWithForward(final Position pos, final String name, final boolean hod)
     {
 
@@ -1185,7 +1185,7 @@ public class BudgetProposalAction extends BaseFormAction {
             LOGGER.debug("Completed saveWithForward .....");
     }
 
-    @Transactional
+    
     public String modifyList()
     {
         if (budgetDetail.getBudget().getId() != null)

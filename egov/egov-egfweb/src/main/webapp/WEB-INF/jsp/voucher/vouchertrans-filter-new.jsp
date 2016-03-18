@@ -68,7 +68,7 @@
 	</s:if>
 </tr>
 <tr>
-<td class="bluebox"></td>
+	<td class="bluebox"></td>
 	<s:if test="%{shouldShowHeaderField('subscheme')}">
 		<egov:ajaxdropdown id="subscheme" fields="['Text','Value']"
 			dropdownId="subschemeid"
@@ -98,8 +98,8 @@
 	</s:if>
 </tr>
 <tr>
-<td class="greybox"></td>
-	
+	<td class="greybox"></td>
+
 	<s:if test="%{shouldShowHeaderField('department')}">
 		<td class="greybox"><s:text name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
@@ -125,8 +125,7 @@
 	</s:if>
 </tr>
 <tr>
-<td class="bluebox"></td>
-	
+	<td class="bluebox"></td>
 	<s:if test="%{shouldShowHeaderField('functionary')}">
 		<td class="bluebox"><s:text name="voucher.functionary" /> <s:if
 				test="%{isFieldMandatory('functionary')}">

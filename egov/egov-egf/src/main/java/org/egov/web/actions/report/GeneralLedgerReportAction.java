@@ -65,7 +65,7 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.eGov.src.reports.GeneralLedgerReport;
 import com.exilant.eGov.src.reports.GeneralLedgerReportBean;
@@ -73,7 +73,7 @@ import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 @Results({
     @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "generalLedgerReport-"

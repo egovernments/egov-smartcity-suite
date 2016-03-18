@@ -57,6 +57,7 @@ public class BillCollectorDailyCollectionReportResult {
     private Double target_arrears_demand = 0.0;
     private Double target_current_demand = 0.0;
     private Double target_total_demand = 0.0;
+    private Double target_total_demandInterest = 0.0;
     private BigDecimal day_target = BigDecimal.ZERO;
 
     private Double today_arrears_collection = 0.0;
@@ -68,6 +69,7 @@ public class BillCollectorDailyCollectionReportResult {
     private Double cummulative_currentyear_collection = 0.0;
 
     private Double cummulative_total_Collection = 0.0;
+    private Double cummulative_total_CollectionInterest = 0.0;
     private BigDecimal cummulative_currentYear_Percentage = BigDecimal.ZERO;
     private Double Percentage_compareWithLastYear = 0.0;
     private BigDecimal growth = BigDecimal.ZERO;
@@ -92,6 +94,7 @@ public class BillCollectorDailyCollectionReportResult {
     private Double balance_currentTax;
     private Double balance_currentInterest;
     private Double balance_total;
+    private Double balance_totalInterest;
     
     
     public String getGeneratedDate() {
@@ -413,6 +416,30 @@ public class BillCollectorDailyCollectionReportResult {
 
     public void setBalance_total(Double balance_total) {
         this.balance_total = balance_total;
+    }
+
+    public Double getTarget_total_demandInterest() {
+        return target_total_demandInterest;
+    }
+
+    public void setTarget_total_demandInterest(Double target_total_demandInterest) {
+        this.target_total_demandInterest = target_total_demandInterest;
+    }
+
+    public Double getCummulative_total_CollectionInterest() {
+        return cummulative_total_CollectionInterest;
+    }
+
+    public void setCummulative_total_CollectionInterest(Double cummulative_total_CollectionInterest) {
+        this.cummulative_total_CollectionInterest = cummulative_total_CollectionInterest;
+    }
+
+    public Double getBalance_totalInterest() {
+        return balance_totalInterest;
+    }
+
+    public void setBalance_totalInterest(Double balance_totalInterest) {
+        this.balance_totalInterest = balance_totalInterest;
     }
 
 }

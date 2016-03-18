@@ -68,6 +68,7 @@ public class CreateChairPersonMasterController {
 
     @RequestMapping(value = "/ajax-addChairPersonName", method = RequestMethod.GET)
     public @ResponseBody void addChairPersonName(@RequestParam final String name) {
+    	final Calendar cal = Calendar.getInstance();
         if (chairPersonService.getActiveChairPersonByCurrentDate() != null) {
             ChairPerson chairPerson = new ChairPerson();
             chairPerson = chairPersonService.getActiveChairPersonByCurrentDate();
@@ -76,17 +77,29 @@ public class CreateChairPersonMasterController {
 
         } else {
             final ChairPerson chairPersonDetails = chairPersonService.getActiveChairPerson();
-            chairPersonDetails.setActive(false);
-            final Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -1);
-            chairPersonDetails.setToDate(cal.getTime());
-            final ChairPerson chairPerson = new ChairPerson();
-            chairPerson.setName(name);
-            chairPerson.setFromDate(new Date());
-            chairPerson.setToDate(null);
-            chairPerson.setActive(true);
-            chairPersonService.updateChairPerson(chairPersonDetails);
-            chairPersonService.createChairPerson(chairPerson);
+            if(chairPersonDetails !=null)
+            {
+            	chairPersonDetails.setActive(false);
+                cal.add(Calendar.DATE, -1);
+                chairPersonDetails.setToDate(cal.getTime());
+                final ChairPerson chairPerson = new ChairPerson();
+                chairPerson.setName(name);
+                chairPerson.setFromDate(new Date());
+                chairPerson.setToDate(null);
+                chairPerson.setActive(true);
+                chairPersonService.updateChairPerson(chairPersonDetails);
+                chairPersonService.createChairPerson(chairPerson);
+            }
+            else
+            {
+            	final ChairPerson chairPerson = new ChairPerson();
+            	chairPerson.setActive(true);
+            	chairPerson.setName(name);
+            	chairPerson.setFromDate(new Date());
+            	chairPerson.setToDate(null);
+            	chairPersonService.createChairPerson(chairPerson);
+            
+            }
         }
     }
 

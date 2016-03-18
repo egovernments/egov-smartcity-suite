@@ -66,9 +66,7 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.utils.Constants;
 import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({
     @Result(name = Constants.VIEW, location = "billView-" + Constants.VIEW + ".jsp")

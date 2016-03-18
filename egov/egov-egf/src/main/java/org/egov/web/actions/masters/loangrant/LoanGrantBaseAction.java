@@ -48,9 +48,9 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 public class LoanGrantBaseAction extends BaseFormAction {
     private static final long serialVersionUID = -7332696247479705085L;
 

@@ -79,10 +79,10 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = BankAdviceReportAction.NEW, location = "bankAdviceReport-" + BankAdviceReportAction.NEW + ".jsp"),
     @Result(name = "downloadText", location = "bankAdviceReport-downloadText.jsp"),
