@@ -44,16 +44,15 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,11 +73,11 @@ public class CreateLetterOfAcceptanceController {
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    @Autowired
     private AssignmentService assignmentService;
     @Autowired
     private DesignationService designationService;
+    @Autowired
+    private LetterOfAcceptanceNumberGenerator letterOfAcceptanceNumberGenerator;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
@@ -108,11 +107,10 @@ public class CreateLetterOfAcceptanceController {
             final Model model, final BindingResult errors)
                     throws ApplicationException, IOException {
 
-        // TODO:Fixme - hard coded following values for time being. Need to change the below code.
-        workOrder.setWorkOrderNumber("WO/" + workOrder.getEstimateNumber()); // Replace with WIN from line estimate
+        // TODO:Fixme - workOrder.getEstimateNumber() - Replace with WIN from line estimate
+        workOrder.setWorkOrderNumber(
+                letterOfAcceptanceNumberGenerator.generateLetterOfAcceptanceNumber(workOrder.getEstimateNumber()));
 
-        workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
-                WorksConstants.APPROVED));
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return "createLetterOfAcceptance-form";

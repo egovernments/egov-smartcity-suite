@@ -39,56 +39,13 @@
  */
 package org.egov.works.letterofacceptance.service;
 
-import java.io.IOException;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.utils.WorksConstants;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
-public class LetterOfAcceptanceService {
+public class LetterOfAcceptanceNumberGenerator {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    private final LetterOfAcceptanceRepository letterOfAcceptanceRepository;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
+    public String generateLetterOfAcceptanceNumber(final String projectCode) {
+        return "WO/" + projectCode;
     }
-
-    @Autowired
-    public LetterOfAcceptanceService(final LetterOfAcceptanceRepository letterOfAcceptanceRepository) {
-        this.letterOfAcceptanceRepository = letterOfAcceptanceRepository;
-    }
-
-    public WorkOrder getWorkOrderById(final Long id) {
-        return letterOfAcceptanceRepository.findById(id);
-    }
-
-    @Transactional
-    public WorkOrder create(final WorkOrder workOrder) throws IOException {
-
-        workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
-                WorksConstants.APPROVED));
-        return letterOfAcceptanceRepository.save(workOrder);
-    }
-
-    public WorkOrder getWorkOrderByWorkOrderNumber(final String workOrderNumber) {
-        return letterOfAcceptanceRepository.findByWorkOrderNumberAndEgwStatus_codeNotLike(workOrderNumber,
-                WorksConstants.CANCELLED_STATUS);
-    }
-
+    
 }

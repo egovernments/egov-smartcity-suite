@@ -38,6 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -144,31 +145,20 @@
 	<div class="col-sm-3 add-margin">
 		<form:input path="defectLiabilityPeriod" name="defectLiabilityPeriod" type="text" class="form-control text-right patternvalidation" maxlength="4" data-pattern="decimalvalue" required="required" />
 		<form:errors path="defectLiabilityPeriod" cssClass="add-margin error-msg" />
-	</div>
+	</div> 
 </div>
 
 <div class="form-group">
-<%-- 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.work.allocated.to" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<select id="" name="workAllocatedTo" class="form-control" data-first-option="false" required="required">
-			<option value="">
-				<spring:message code="lbl.select" />
-			</option>
-		</select>		
-	</div> --%>
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.engineer.incharge" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="engineerIncharge" data-first-option="false" id="engineerIncharge" class="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<form:options items="${engineerInchargeList}" itemValue="employee.id" itemLabel="employee.name" />  
+			<c:forEach var="emp" items="${engineerInchargeList}">
+		        <form:option value="${emp.id}"><c:out value="${emp.employee.name} - ${emp.designation.name}"/></form:option>
+		    </c:forEach>   
 		</form:select>
 		<form:errors path="engineerIncharge" cssClass="add-margin error-msg" />
-		<%-- <select id="" name="engineerIncharge" class="form-control" data-first-option="false">
-			<option value="1">
-				<spring:message code="lbl.select" />
-			</option>
-		</select>  --%>
 	</div>
 </div>	
