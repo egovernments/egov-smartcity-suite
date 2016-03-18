@@ -48,12 +48,12 @@
 		<table class="table table-bordered" id="tblestimate">
 			<thead>
 				<tr>
-					<th><spring:message code="lineestimate.slNo"/></th>
-					<th><spring:message code="lineestimate.nameofwork"/></th>
-					<th><spring:message code="lineestimate.estimatedamount"/></th>
-					<th><spring:message code="lbl.quantity"/></th>
-					<th><spring:message code="lbl.uom"/></th>
-					<th><spring:message code="lbl.beneficiary"/></th>
+					<th><spring:message code="lbl.slNo"/></th>
+					<th><spring:message code="lineestimate.nameofwork"/><span class="mandatory"></span></th>
+					<th><spring:message code="lineestimate.estimatedamount"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.quantity"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.uom"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.beneficiary"/><span class="mandatory"></span></th>
 					<th><spring:message code="lineestimate.action"/></th>
 				</tr>
 			</thead>
@@ -74,15 +74,15 @@
 								<form:errors path="lineEstimateDetails[0].estimateAmount" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].quantity" name="lineEstimateDetails[0].quantity" value="${lineEstimateDetails[0].quantity}" data-errormsg="quantity is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" maxlength="8" required="required"/>
+								<form:input path="lineEstimateDetails[0].quantity" name="lineEstimateDetails[0].quantity" value="${lineEstimateDetails[0].quantity}" data-errormsg="quantity is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" maxlength="8" onkeyup="validateQuantity();" required="required"/>
 								<form:errors path="lineEstimateDetails[0].quantity" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].uom" name="lineEstimateDetails[0].uom" value="${lineEstimateDetails[0].uom}" data-errormsg="UOM is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="15" required="required"/>
+								<form:input path="lineEstimateDetails[0].uom" name="lineEstimateDetails[0].uom" value="${lineEstimateDetails[0].uom}" data-errormsg="UOM is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="15"  required="required"/>
 								<form:errors path="lineEstimateDetails[0].uom" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].beneficiary" name="lineEstimateDetails[0].beneficiary" value="${lineEstimateDetails[0].beneficiary}" data-errormsg="Beneficiary is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
+								<form:input path="lineEstimateDetails[0].beneficiary" id="quantity" name="lineEstimateDetails[0].beneficiary" value="${lineEstimateDetails[0].beneficiary}" data-errormsg="Beneficiary is mandatory!" onkedata-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
 								<form:errors path="lineEstimateDetails[0].beneficiary" cssClass="add-margin error-msg" />
 							</td>
 							<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
@@ -104,15 +104,15 @@
 									<form:errors path="lineEstimateDetails[${item.index}].estimateAmount" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:textarea path="lineEstimateDetails[${item.index}].quantity" name="lineEstimateDetails[${item.index}].quantity" value="${lineEstimateDtls.quantity}" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount"  required="required"/>
+									<form:input path="lineEstimateDetails[${item.index}].quantity" name="lineEstimateDetails[${item.index}].quantity" value="${lineEstimateDtls.quantity}" onkeypress="" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right quantity"  onkeyup="validateQuantity();" required="required"/>
 									<form:errors path="lineEstimateDetails[${item.index}].quantity" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:textarea path="lineEstimateDetails[${item.index}].uom" name="lineEstimateDetails[${item.index}].uom" value="${lineEstimateDtls.uom}" data-errormsg="UOM is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateEstimatedAmountTotal();" required="required"/>
+									<form:input path="lineEstimateDetails[${item.index}].uom" name="lineEstimateDetails[${item.index}].uom" value="${lineEstimateDtls.uom}" data-errormsg="UOM is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text" onkeyup="calculateEstimatedAmountTotal();" required="required"/>
 									<form:errors path="lineEstimateDetails[${item.index}].uom" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:textarea path="lineEstimateDetails[${item.index}].beneficiary" name="lineEstimateDetails[${item.index}].beneficiary" value="${lineEstimateDtls.beneficiary}" data-errormsg="Beneficiary is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" required="required"/>
+									<form:input path="lineEstimateDetails[${item.index}].beneficiary" name="lineEstimateDetails[${item.index}].beneficiary" value="${lineEstimateDtls.beneficiary}" data-errormsg="Beneficiary is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text" required="required"/>
 									<form:errors path="lineEstimateDetails[${item.index}].beneficiary" cssClass="add-margin error-msg" />
 								</td>
 								<td> 

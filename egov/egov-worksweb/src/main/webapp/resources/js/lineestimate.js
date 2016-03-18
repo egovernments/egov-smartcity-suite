@@ -38,8 +38,11 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $deletedAmt = 0;
+$locationId = 0;
 $(document).ready(function(){
 	getLineEstimateDate();
+	$locationId = $('#locationValue').val();
+	$('#wardInput').trigger('blur');
 });
 
 $(document).bind("input propertychange", function (e) {
@@ -234,45 +237,36 @@ function validateEstimateAmount() {
 	});
 }
 
-function getSubTypeOfWorkId(typeofworkId) {
-	$.ajax({
-		url: "../lineestimate/getsubtypeofworkid/"+typeofworkId,     
-		type: "GET",
-		dataType: "json",
-		success: function (response) {
-			$('#subTypeOfWork').empty();
-			$('#subTypeOfWork').append($("<option value=''>Select from below</option>"));
-			var responseObj = JSON.parse(response);
-			$.each(responseObj, function(index, value) {
-				$('#subTypeOfWork').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
+$('#wardInput').blur(function(){
+	   if ($('#ward').val() === '') {
+		   $('#locationBoundary').empty();
+		   $('#locationBoundary').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "/egworks/lineestimate/ajax-getLocation",
+				cache: true,
+				dataType: "json",
+				data:{'id' : $('#ward').val()}
+			}).done(function(value) {
+				console.log(value);
+				$('#locationBoundary').empty();
+				$('#locationBoundary').append($('<option>').text('Select from below').attr('value', ''));
+				$.each(value, function(index, val) {
+					var selected="";
+					if($locationId)
+					{
+						if($locationId==val.id)
+						{
+							selected="selected";
+						}
+					}
+				    $('#locationBoundary').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
+				});
 			});
-		}, 
-		error: function (response) {
-			console.log("failed");
 		}
 	});
-}
-
-$('#ward').change(function(){
-	$.ajax({
-		url: "../lineestimate/ajax-getchildlocation",
-		type: "GET",
-		data: {
-			id : $('#ward').val()
-		},
-		dataType: "json",
-		success: function (response) {
-			console.log("success"+response);
-			$('#location').empty();
-			
-			$('#location').val(response);
-			
-		}, 
-		error: function (response) {
-			console.log("failed");
-		}
-	});
-});
 
 function disableSlumFields() {
 	var slum = document.getElementById("slum");
@@ -306,21 +300,68 @@ function replaceBeneficiaryChar() {
 	});
 }
 
-function getsubtypeofwork(typeOfWorkId) {
-	$.ajax({
-		url: "../lineestimate/getsubtypeofwork/"+typeOfWorkId,     
-		type: "GET",
-		dataType: "json",
-		success: function (response) {
-			$('#subtypeofwork').append($("<option value=''>Select from below</option>"));
-			$('#subtypeofwork').empty();
-			var responseObj = JSON.parse(response);
-			$.each(responseObj, function(index, value) {
-				$('#subtypeofwork').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
+$('#typeofwork').change(function(){
+	   if (this.value === '') {
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "/egworks/lineestimate/getsubtypeofwork",
+				cache: true,
+				dataType: "json",
+				data:{'id' : this.value}
+			}).done(function(value) {
+				console.log(value);
+				$('#subTypeOfWork').empty();
+				$('#subTypeOfWork').append($("<option value=''>Select from below</option>"));
+				$.each(value, function(index, val) {
+				     $('#subTypeOfWork').append($('<option>').text(val.description).attr('value', val.id));
+				});
 			});
-		}, 
-		error: function (response) {
-			console.log("failed");
 		}
+	});
+
+$(document).ready(function(){
+    var ward = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/egworks/lineestimate/ajax-getward?name=%QUERY',
+            filter: function (data) {
+                return $.map(data, function (ct) {
+                    return {
+                        name: ct.name,
+                        value: ct.id
+                    };
+                });
+            }
+        }
+    });
+    
+    ward.initialize();
+	var ward_typeahead = $('#wardInput').typeahead({
+		hint : false,
+		highlight : false,
+		minLength : 3
+	}, {
+		displayKey : 'name',
+		source : ward.ttAdapter(),
+	});
+	
+	typeaheadWithEventsHandling(ward_typeahead,
+	'#ward');
+});
+
+function validateQuantity() {
+	$( "input[name$='quantity']" ).on("keyup", function(){
+	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
+	        val = this.value;
+	    
+	    if(!valid){
+	        console.log("Invalid input!");
+	        this.value = val.substring(0, val.length - 1);
+	    }
 	});
 }

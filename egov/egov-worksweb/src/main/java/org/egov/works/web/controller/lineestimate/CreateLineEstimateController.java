@@ -64,6 +64,7 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.TypeOfSlum;
+import org.egov.works.lineestimate.entity.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.services.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
@@ -139,17 +140,17 @@ public class CreateLineEstimateController {
         }
     }
 
-    private void setDropDownValues(final Model model) {
+    private void setDropDownValues(final Model model ) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("workCategory",WorkCategory.values());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getAllParentOrderByCode());
-        model.addAttribute("ward", boundaryService.getAllBoundaries());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         
     }

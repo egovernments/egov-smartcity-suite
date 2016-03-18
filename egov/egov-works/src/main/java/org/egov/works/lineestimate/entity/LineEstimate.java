@@ -70,10 +70,12 @@ import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.works.models.masters.NatureOfWork;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -143,6 +145,7 @@ public class LineEstimate extends StateAware {
 
     @SafeHtml
     @Length(max = 50)
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "lineestimate.adminsanctionnumber.alphanumeric")
     @Column(unique = true)
     private String adminSanctionNumber;
 
@@ -169,11 +172,11 @@ public class LineEstimate extends StateAware {
     @Enumerated(EnumType.STRING)
     private Beneficiary beneficiary;
 
-    @NotNull(message="lineestimate.update")
+    @NotNull
     @Enumerated(EnumType.STRING)
     private ModeOfAllotment modeOfAllotment;
 
-    @NotNull(message = "Please select a typeofwork")
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "typeofwork")
     private EgwTypeOfWork typeOfWork;
@@ -186,12 +189,20 @@ public class LineEstimate extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "natureofwork", nullable = false)
     private NatureOfWork natureOfWork;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ward", nullable = false)
     private Boundary ward;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location", nullable = false)
+    private Boundary location;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private WorkCategory workCategory;
     
     @Override
     public Long getId() {
@@ -400,9 +411,24 @@ public class LineEstimate extends StateAware {
         return subTypeOfWork;
     }
 
-    public void setSubTypeOfWork(EgwTypeOfWork subTypeOfWork) {
+    public void setSubTypeOfWork(final EgwTypeOfWork subTypeOfWork) {
         this.subTypeOfWork = subTypeOfWork;
     }
 
+    public Boundary getLocation() {
+        return location;
+    }
+
+    public void setLocation(final Boundary location) {
+        this.location = location;
+    }
+
+    public WorkCategory getWorkCategory() {
+        return workCategory;
+    }
+
+    public void setWorkCategory(WorkCategory workCategory) {
+        this.workCategory = workCategory;
+    }
 
 }

@@ -46,15 +46,21 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
+import org.egov.works.lineestimate.entity.Beneficiary;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.ModeOfAllotment;
+import org.egov.works.lineestimate.entity.TypeOfSlum;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.master.services.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +78,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class UpdateLineEstimateController {
-    
+
     @Autowired
     private LineEstimateService lineEstimateService;
 
@@ -90,9 +96,18 @@ public class UpdateLineEstimateController {
 
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private WorksUtils worksUtils;
+
+    @Autowired
+    private NatureOfWorkService natureOfWorkService;
+
+    @Autowired
+    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+
+    @Autowired
+    private BoundaryService boundaryService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -103,7 +118,7 @@ public class UpdateLineEstimateController {
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.GET)
     public String viewLineEstimate(final Model model, @PathVariable final String lineEstimateId,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         setDropDownValues(model);
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
         model.addAttribute("message", WorksConstants.LINEESTIMATE_CREATE);
@@ -111,15 +126,15 @@ public class UpdateLineEstimateController {
     }
 
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("lineEstimate") LineEstimate lineEstimate, final BindingResult errors,
+    public String update(@Valid @ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam final String removedLineEstimateDetailsIds, @RequestParam("file") final MultipartFile[] files)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
         setDropDownValues(model);
         if (errors.hasErrors())
             return loadViewData(model, request, lineEstimate);
         else {
-            LineEstimate newLineEstimate = lineEstimateService.update(lineEstimate, removedLineEstimateDetailsIds, files);
+            final LineEstimate newLineEstimate = lineEstimateService.update(lineEstimate, removedLineEstimateDetailsIds, files);
             setDropDownValues(model);
             redirectAttributes.addFlashAttribute("lineEstimate", newLineEstimate);
             redirectAttributes.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
@@ -132,21 +147,27 @@ public class UpdateLineEstimateController {
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
-        model.addAttribute("executingDepartments", departmentService.getAllDepartments());
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("typeOfSlum", TypeOfSlum.values());
+        model.addAttribute("beneficiary", Beneficiary.values());
+        model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
+        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getAllParentOrderByCode());
+        model.addAttribute("natureOfWork", natureOfWorkService.findAll());
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final LineEstimate lineEstimate) {
-        LineEstimate newLineEstimate = getEstimateDocuments(lineEstimate);
+        final LineEstimate newLineEstimate = getEstimateDocuments(lineEstimate);
         model.addAttribute("lineEstimate", newLineEstimate);
         if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
         return "newLineEstimate-edit";
     }
-    
-    private LineEstimate getEstimateDocuments(LineEstimate lineEstimate) {
+
+    private LineEstimate getEstimateDocuments(final LineEstimate lineEstimate) {
         List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-        documentDetailsList = worksUtils.findByObjectIdAndObjectType(lineEstimate.getId(), WorksConstants.MODULE_NAME_LINEESTIMATE);
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(lineEstimate.getId(),
+                WorksConstants.MODULE_NAME_LINEESTIMATE);
         lineEstimate.setDocumentDetails(documentDetailsList);
         return lineEstimate;
     }

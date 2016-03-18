@@ -46,7 +46,7 @@
 			<spring:message code="lineestimate.header" />
 		</div>
 	</div>
-	<div class="panel-body">
+	<div class="panel-body custom-form">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lineestimate.date" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
@@ -83,37 +83,38 @@
 				<form:textarea name="description" path="description" id="description" class="form-control" value="${description}" maxlength="1024" required="required"></form:textarea>
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
+		</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.ward" /><span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.ward" /><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:select path="ward" data-first-option="false" id="ward" cssClass="form-control" required="required">
+					<form:hidden path="ward" id="ward" value="" cssClass="selectwk" />
+					<form:input id="wardInput" path="ward.name" class="form-control" type="text" required="required"/>
+					<form:errors path="ward" cssClass="add-margin error-msg" />
+				</div>
+				<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.location" /><span class="mandatory"></span>
+				</label>
+				<div class="col-sm-3 add-margin">
+					<input type="hidden" id="locationValue" value="${lineEstimate.location.id }"/>
+					<form:select path="location" data-first-option="false" id="locationBoundary" cssClass="form-control" required="required">
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<form:options items="${ward}" itemLabel="name" itemValue="id" />
 					</form:select>
-					<form:errors path="ward" cssClass="add-margin error-msg" />
-				</div>
-				<div>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.location" /></label>
-					<div class="col-sm-3 add-margin">
-						<%-- <form:select path="location" id="location" class="form-control" />
-						<form:errors path="location" cssClass="add-margin error-msg" /> --%>
-					</div>
+					<form:errors path="location" cssClass="add-margin error-msg" />
 				</div>
 			</div>
-		</div>
-		<div class="form-group">
+			
+			<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.slum" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<input type="radio" name="slum" id="slum" onclick="showSlumFields();" required="required" />
+				<form:radiobutton path="workCategory" id="slum" value="SLUM_WORK" onclick="showSlumFields();" required="required" />
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.nonslum" /><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<input type="radio" name="slum" id="nonslum" onclick="disableSlumFields()" required="required" />
+					<form:radiobutton path="workCategory" id="nonslum" value="NON_SLUM_WORK" onclick="disableSlumFields()" required="required" />
 				</div>
 			</div>
 		</div>
@@ -157,7 +158,7 @@
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.typeofwork" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="typeOfWork.id" data-first-option="false" id="subtypeofwork" class="form-control" onchange="getsubtypeofwork(this.value)" required="required"  >
+				<form:select path="typeOfWork.id" data-first-option="false" id="typeofwork" class="form-control" required="required"  >
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -169,11 +170,8 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.subtypeofwork" /></label>
 			<div class="col-sm-3 add-margin">
- 				<form:select path="typeOfWork.id" data-first-option="false"	id="subTypeOfWork" class="form-control">
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-<%-- 					<form:options items="${typeOfWork}" itemLabel="code" itemValue="id" /> --%>
+				<form:select path="subTypeOfWork.id" id="subTypeOfWork" class="form-control" >
+					<form:option value=""><spring:message code="lbl.select"/></form:option>
 				</form:select>
 				<form:errors path="typeOfWork" cssClass="add-margin error-msg" />
 			</div>
@@ -189,9 +187,9 @@
 			</div>
 		</div>
 		
-		<div class="panel-heading" >
+		<div class="panel-heading custom_form_panel_heading" >
 			<div class="panel-title" style="text-align: left;">
-				<spring:message code="lbl.workdetail" />
+				<spring:message code="lbl.financialdetails" />
 			</div>
 		</div>
 		<div class="form-group">

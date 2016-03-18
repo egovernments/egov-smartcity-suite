@@ -62,7 +62,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGW_LINEESTIMATE_DETAILS")
 @Unique(id = "id", tableName = "EGW_LINEESTIMATE_DETAILS", columnName = { "estimatenumber" }, fields = {
-        "estimateNumber" }, enableDfltMsg = true)
+"estimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, sequenceName = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, allocationSize = 1)
 public class LineEstimateDetails extends AbstractAuditable {
 
@@ -92,17 +92,17 @@ public class LineEstimateDetails extends AbstractAuditable {
     @Length(max = 50)
     @Column(unique = true)
     private String estimateNumber;
-    
+
+    @NotNull
     @Length(max = 50)
-    @Column
-    private String quantity;
-    
+    private Double quantity;
+
+    @NotNull
     @Length(max = 50)
-    @Column
     private String uom;
-    
+
+    @NotNull
     @Length(max = 50)
-    @Column
     private String beneficiary;
 
     @Override
@@ -147,19 +147,11 @@ public class LineEstimateDetails extends AbstractAuditable {
         this.estimateNumber = estimateNumber;
     }
 
-    public String getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
-    }
-
     public String getUom() {
         return uom;
     }
 
-    public void setUom(String uom) {
+    public void setUom(final String uom) {
         this.uom = uom;
     }
 
@@ -167,8 +159,16 @@ public class LineEstimateDetails extends AbstractAuditable {
         return beneficiary;
     }
 
-    public void setBeneficiary(String beneficiary) {
+    public void setBeneficiary(final String beneficiary) {
         this.beneficiary = beneficiary;
+    }
+
+    public Double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Double quantity) {
+        this.quantity = quantity;
     }
 
 }

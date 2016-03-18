@@ -48,10 +48,14 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.SubSchemeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -75,11 +79,14 @@ public class AjaxLineEstimateController {
     @Autowired
     private CrossHierarchyService crossHierarchyService;
 
-    @RequestMapping(value = "/ajax-getlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
-        final List<Boundary> boundaries = crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
-        return boundaries;
-    }
+    @Autowired
+    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private BoundaryService boundaryService;
 
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
@@ -89,7 +96,22 @@ public class AjaxLineEstimateController {
         final String jsonResponse = toJSON(subSchemes);
         return jsonResponse;
     }
-    
+
+    @RequestMapping(value = "/ajax-getLocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
+        return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
+    }
+
+    @RequestMapping(value = "/getsubtypeofwork", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<EgwTypeOfWork> getSubTypeOfWork(@RequestParam("id") final Long id) {
+        return egwTypeOfWorkHibernateDAO.getSubTypeOfWorkByParentId(id);
+    }
+
+    @RequestMapping(value = "/ajax-getward", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Boundary> findWard(@RequestParam("name") final String name) {
+        List<Boundary> boundaries = boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType(WorksConstants.WORKS_LINEESTIMATE_WARD,WorksConstants.WORKS_LINEESTIMATE_ADMINSTRATION,name); 
+        return boundaries;
+    }
 
     public String toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();

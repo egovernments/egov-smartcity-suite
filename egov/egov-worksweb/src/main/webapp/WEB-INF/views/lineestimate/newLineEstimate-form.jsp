@@ -42,8 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="page-container" id="page-container">
-	<div class="main-content">
 		<div style="font-weight:bold; color:green; text-align:center;">
 			<c:if test="${lineEstimate.getId() != null}">
 				<spring:message code="lineestimate.create.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
@@ -64,6 +62,4 @@
 				</div>
 			</div>
 		</form:form>  
-	</div>
-</div>
 <script src="<c:url value='/resources/js/lineestimate.js'/>"></script>

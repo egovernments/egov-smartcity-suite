@@ -6,7 +6,7 @@ public enum TypeOfSlum {
 
     NOTIFIED,
     NON_NOTIFIED;
-    
+
     @Override
     public String toString() {
         return StringUtils.capitalize(name());
