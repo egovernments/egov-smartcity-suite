@@ -71,10 +71,10 @@ import org.egov.utils.Constants;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = "new-re", location = "budgetProposalDetail-new-re.jsp"),
     @Result(name = "newDetail-re", location = "budgetProposalDetail-newDetail-re.jsp"),
@@ -113,7 +113,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     }
 
     @Override
-    @Transactional
+    
     protected void saveAndStartWorkFlow(final BudgetDetail detail) {
         try {
             if (budgetDocumentNumber != null && budgetDetail.getBudget() != null) {
@@ -233,7 +233,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
 
     }
 
-    @Transactional
+    
     public String addNewDetails() {
         final Long id = budgetDetail.getBudget().getId();
         addNewDetails = true;
@@ -323,12 +323,12 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         return "budgetGroup";
     }
 
-    @Transactional
+    
     public String saveAndNew() {
         return create();
     }
 
-    @Transactional
+    
     public String saveAndNewRe() {
         return createRe();
     }
@@ -387,7 +387,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     }
 
     @Override
-    @Transactional
+    
     protected void saveAndStartWorkFlowForRe(final BudgetDetail detail, final int index, final CFinancialYear finYear,
             final Budget refBudget) {
         try {

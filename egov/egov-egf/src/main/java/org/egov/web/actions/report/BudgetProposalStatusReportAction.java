@@ -58,9 +58,9 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.utils.BudgetDetailHelper;
 import org.hibernate.FlushMode;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @ParentPackage("egov")
 @Results({
     @Result(name = "reportSearch", location = "budgetProposalStatusReport-reportSearch.jsp")

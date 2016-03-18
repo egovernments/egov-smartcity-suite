@@ -59,13 +59,13 @@ import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = BudgetGroupAction.NEW, location = "budgetGroup-" + BudgetGroupAction.NEW + ".jsp"),
     @Result(name = "search", location = "budgetGroup-search.jsp"),
@@ -138,7 +138,7 @@ public class BudgetGroupAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
+    
     @Action(value = "/budget/budgetGroup-create")
     public String create()
     {
@@ -170,7 +170,7 @@ public class BudgetGroupAction extends BaseFormAction {
         return SEARCH;
     }
 
-    @Transactional
+    
     @Action(value = "/budget/budgetGroup-save")
     public String save()
     {
@@ -190,7 +190,7 @@ public class BudgetGroupAction extends BaseFormAction {
         masterDataCache.removeFromCache("egf-budgetGroup");
     }
 
-    @Transactional
+    
     @SkipValidation
     @Action(value = "/budget/budgetGroup-edit")
     public String edit()

@@ -62,7 +62,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.GLEngine.DayBook;
 import com.exilant.eGov.src.reports.DayBookReportBean;
@@ -70,7 +70,7 @@ import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 @Results({
         @Result(name = "result", location = "dayBookReport-result.jsp"),

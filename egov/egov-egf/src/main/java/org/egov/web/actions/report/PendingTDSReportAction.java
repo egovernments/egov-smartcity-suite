@@ -82,7 +82,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -99,7 +99,7 @@ import org.springframework.transaction.annotation.Transactional;
         @Result(name = "reportForm", location = "pendingTDSReport-reportForm.jsp"),
         @Result(name = "summaryResults", location = "pendingTDSReport-summaryResults.jsp")
 })
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 public class PendingTDSReportAction extends BaseFormAction {
     /**

@@ -70,11 +70,9 @@ import org.egov.model.bills.EgSalaryCodes;
 import org.egov.model.voucher.PreApprovedVoucher;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.CommonMethodsImpl;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 public class SalaryBillRegisterAction extends BaseFormAction {
     /**
@@ -267,7 +265,6 @@ public class SalaryBillRegisterAction extends BaseFormAction {
         billregistermis.setLastupdatedtime(new Date());
     }
 
-    @Transactional
     public String saveAndNew() {
         save();
         message = getText("salary.bill.saved.successfully") + " " + getBillregister().getBillnumber();
@@ -277,7 +274,6 @@ public class SalaryBillRegisterAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
     public String saveAndClose() {
         save();
         message = getText("salary.bill.saved.successfully") + " " + getBillregister().getBillnumber();

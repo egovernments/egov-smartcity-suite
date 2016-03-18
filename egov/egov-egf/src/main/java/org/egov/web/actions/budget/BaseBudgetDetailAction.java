@@ -82,12 +82,9 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 
-@Transactional(readOnly = true)
 public abstract class BaseBudgetDetailAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     protected BudgetDetail budgetDetail = new BudgetDetail();
@@ -218,7 +215,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
+    
     public String create() {
         validateMandatoryFields();
         budgetDetailHelper.removeEmptyBudgetDetails(budgetDetailList);
@@ -229,7 +226,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
+    
     @ValidationErrorPage(value = "new-re")
     public String createRe() {
         showRe = true;
@@ -257,7 +254,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return "new-re";
     }
 
-    @Transactional
+    
     @ValidationErrorPage(value = "newDetail-re")
     public String createBudgetDetail() {
 
@@ -295,7 +292,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return "newDetail-re";
     }
 
-    @Transactional
+    
     @ValidationErrorPage(value = "new-re")
     public String createReAndForward() {
         showRe = true;
@@ -330,7 +327,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     /**
      * @param budget deletes the existing selected budgets from db
      */
-    @Transactional
+    
     private void deleteExisting() {
 
         if (LOGGER.isInfoEnabled())

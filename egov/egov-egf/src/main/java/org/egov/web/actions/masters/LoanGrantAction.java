@@ -74,9 +74,9 @@ import org.egov.web.actions.voucher.CommonAction;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @Results({
     @Result(name = LoanGrantAction.NEW, location = "loanGrant-" + LoanGrantAction.NEW + ".jsp"),
     @Result(name = "search", location = "loanGrant-search.jsp"),

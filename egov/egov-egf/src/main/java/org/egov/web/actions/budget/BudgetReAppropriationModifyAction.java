@@ -84,12 +84,12 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 @Results({
     @Result(name = "approvalList", location = "budgetReAppropriationModify-approvalList.jsp"),
@@ -301,7 +301,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         return budgetDetail;
     }
 
-    @Transactional
+    
     @Action(value = "/budget/budgetReAppropriationModify-update")
     public String update() {
         for (final BudgetReAppropriationView entry : savedBudgetReAppropriationList) {

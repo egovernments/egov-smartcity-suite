@@ -57,13 +57,13 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation()
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = PartyTypeAction.NEW, location = "partyType-" + PartyTypeAction.NEW + ".jsp"),
     @Result(name = "search", location = "partyType-search.jsp"),

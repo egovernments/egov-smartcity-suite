@@ -484,7 +484,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     List getFinancialYearDropDown() {
         List<Long> ids = new ArrayList<Long>();
         ids = (List<Long>) persistenceService
-                .findAllBy("select distinct financialYear.id from Budget where isActiveBudget=true and isPrimaryBudget=true and state.value='END'");
+                .findAllBy("select distinct financialYear.id from Budget where isActiveBudget=true and isPrimaryBudget=true and status.code='Approved'");
         Query query;
         if (!ids.isEmpty()) {
             query = persistenceService.getSession()
@@ -545,7 +545,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
             LOGGER.info("search query==" + sql);
         reAppropriationList = getPersistenceService()
                 .findAllBy(
-                        " from BudgetReAppropriation ba where ba.state.value='END' and "
+                        " from BudgetReAppropriation ba where ba.status.code='Approved' and "
                                 + sql
                                 + " order by ba.budgetDetail.fund,ba.budgetDetail.executingDepartment,ba.budgetDetail.function,ba.reAppropriationMisc.sequenceNumber");
         return "search";

@@ -64,9 +64,9 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.services.recoveries.RecoveryService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @ParentPackage("egov")
 @Results({
     @Result(name = AutoRemittanceSchedulerReportAction.NEW, location = "autoRemittanceSchedulerReport-"
