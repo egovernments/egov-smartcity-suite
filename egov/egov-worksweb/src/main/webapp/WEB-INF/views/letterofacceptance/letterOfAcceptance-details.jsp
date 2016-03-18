@@ -37,18 +37,19 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.file.no" /></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.file.no" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="fileNumber" path="fileNumber" maxlength="34" />
+		<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="fileNumber" path="fileNumber" maxlength="34" required="required" />
 		<form:errors path="fileNumber" cssClass="add-margin error-msg" />		
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.file.date" /></label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.file.date" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input id="fileDate" path="fileDate" class="form-control datepicker" data-date-end-date="0d" />
+		<form:input id="fileDate" path="fileDate" class="form-control datepicker" data-date-end-date="0d" required="required" />
 		<form:errors path="fileDate" cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -92,15 +93,16 @@
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofagency" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 0;">
 		<div class="input-group">
-			<input id="contractorSearch" name="contractorSearch" min="3" class="form-control patternvalidation" required="required" type="text" > 
+			<input id="contractorSearch" name="contractorSearch" min="3" class="form-control" required="required" type="text" > 
 			<span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
-			<form:hidden path="contractor" name="contractor" id="contractor" />
-		    <form:errors path="contractor" cssClass="add-margin error-msg" />
+			<%-- <form:input path="contractor" id="contractor" class="form-control"/> --%>
+			<form:hidden path="contractor.id" name="contractor" id="contractor" />
+		    <form:errors path="contractor.id" cssClass="add-margin error-msg" />
 		</div>
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor.code" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="contractorCode" disabled>
+		<input type="text" class="form-control" id="contractorCode" name="contractorCode" disabled>
 	</div>
 </div>
 
@@ -125,9 +127,9 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.emd.amount" /><span class="mandatory"></span></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.emd.amount" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="emdAmountDeposited" name="emdAmountDeposited" type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" required="required" />
+		<form:input path="emdAmountDeposited" name="emdAmountDeposited" type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" />
 		<form:errors path="emdAmountDeposited" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contract.period" /><span class="mandatory"></span></label>
@@ -156,10 +158,17 @@
 	</div> --%>
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.engineer.incharge" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<select id="" name="engineerIncharge" class="form-control" data-first-option="false">
+		<form:select path="engineerIncharge" data-first-option="false" id="engineerIncharge" class="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${engineerInchargeList}" itemValue="employee.id" itemLabel="employee.name" />  
+		</form:select>
+		<form:errors path="engineerIncharge" cssClass="add-margin error-msg" />
+		<%-- <select id="" name="engineerIncharge" class="form-control" data-first-option="false">
 			<option value="1">
 				<spring:message code="lbl.select" />
 			</option>
-		</select> 
+		</select>  --%>
 	</div>
-</div>		
+</div>	

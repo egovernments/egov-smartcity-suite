@@ -46,6 +46,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,11 @@ public class LetterOfAcceptanceService {
     @Transactional
     public WorkOrder create(final WorkOrder workOrder) throws IOException {
         return letterOfAcceptanceRepository.save(workOrder);
+    }
+
+    public WorkOrder getWorkOrderByWorkOrderNumber(final String workOrderNumber) {
+        return letterOfAcceptanceRepository.findByWorkOrderNumberAndEgwStatus_codeNotLike(workOrderNumber,
+                WorksConstants.CANCELLED_STATUS);
     }
 
 }

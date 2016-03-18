@@ -45,12 +45,13 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.master.services.ContractorService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -74,13 +76,21 @@ public class CreateLetterOfAcceptanceController {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
-    private ContractorService contractorService;
+    private AssignmentService assignmentService;
+    @Autowired
+    private DesignationService designationService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
             final Model model, final HttpServletRequest request) {
         final String estimateNumber = request.getParameter("estimateNumber");
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
+
+        // TODO: Replace designation hard coding by App config value
+        model.addAttribute("engineerInchargeList", assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(
+                lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId(),
+                designationService.getDesignationByName("Assistant engineer").getId(), new Date()));
+
         setDropDownValues(model);
         workOrder.setWorkOrderDate(new Date());
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
@@ -90,6 +100,7 @@ public class CreateLetterOfAcceptanceController {
     }
 
     private void setDropDownValues(final Model model) {
+
     }
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
@@ -99,17 +110,23 @@ public class CreateLetterOfAcceptanceController {
 
         // TODO:Fixme - hard coded following values for time being. Need to change the below code.
         workOrder.setWorkOrderNumber("WO/" + workOrder.getEstimateNumber()); // Replace with WIN from line estimate
+
         workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                 WorksConstants.APPROVED));
-        workOrder.setContractor(contractorService.findById(13l, false));// Replace with binding contractor from UI
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return "createLetterOfAcceptance-form";
         } else {
             final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder);
-            model.addAttribute("savedWorkOrder", savedWorkOrder);
-            return "createLetterOfAcceptance-form";
+            return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber();
         }
+    }
+
+    @RequestMapping(value = "/loa-success", method = RequestMethod.GET)
+    public String getSeweragerates(@RequestParam("loaNumber") final String loaNumber, final Model model) {
+        final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(loaNumber);
+        model.addAttribute("workOrder", workOrder);
+        return "letterofacceptance-success";
     }
 
 }

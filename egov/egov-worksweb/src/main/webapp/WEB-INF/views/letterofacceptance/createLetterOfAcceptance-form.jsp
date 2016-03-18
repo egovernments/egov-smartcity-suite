@@ -53,7 +53,7 @@
 						</div>
 						<div class="panel-body">
 							<jsp:include page="estimateDetails-view.jsp"/>
-							<jsp:include page="letterOfAcceptanceDetails.jsp"/>
+							<jsp:include page="letterOfAcceptance-details.jsp"/>
 						</div>
 					</div>
 				</div>
@@ -66,5 +66,5 @@
 			</div>
 		</form:form>  
 	</div>
-</div>		
+</div>
 <script src="<c:url value='/resources/js/letterofacceptance.js'/>"></script>

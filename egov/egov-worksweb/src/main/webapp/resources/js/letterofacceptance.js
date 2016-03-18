@@ -38,7 +38,35 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
-	
+	var contractorSearch = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/egworks/letterofacceptance/ajaxcontractors-loa?name=%QUERY',
+            filter: function (data) {
+                return $.map(data, function (ct) {
+                    return {
+                        name: ct.name,
+                        value: ct.id
+                    };
+                });
+            }
+        }
+    });
+   
+	contractorSearch.initialize();
+		var contractorSearch_typeahead = $('#contractorSearch').typeahead({ 
+			hint : true,
+			highlight : true,
+			minLength : 3
+		}, {
+			displayKey : 'name',
+			source : contractorSearch.ttAdapter()
+		});
+		typeaheadWithEventsHandling(contractorSearch_typeahead,
+		'#contractor');
 });
 
 jQuery('#searchLoa').click(function(e) {

@@ -80,10 +80,15 @@
         <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/createLetterOfAcceptance-form.jsp"/>
     </definition>
+    
+    <definition name="createLetterOfAcceptance-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/createLetterOfAcceptance-form.jsp"/>
+    </definition>
     	
-    <definition name="search-searchloa" extends="base_layout">
-        <put-attribute name="page-title" value="title.new.create.milestone" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptance-search.jsp"/>
+    <definition name="letterofacceptance-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.letterofacceptance" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-success.jsp"/>
     </definition>
     
     <definition name="searchLineEstimateForLoa-form" extends="base_layout">
