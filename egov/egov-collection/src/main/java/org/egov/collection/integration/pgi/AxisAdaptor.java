@@ -406,6 +406,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                 if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(axisResponse.getAuthStatus())) {
                     axisResponse.setTxnReferenceNo(responseAxisMap.get(CollectionConstants.AXIS_TXN_NO));
                     axisResponse.setTxnAmount(new BigDecimal(responseAxisMap.get(CollectionConstants.AXIS_AMOUNT)));
+                    axisResponse.setAdditionalInfo2(responseAxisMap.get(CollectionConstants.AXIS_ORDER_INFO));
                     final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
                     Date transactionDate = null;
                     try {

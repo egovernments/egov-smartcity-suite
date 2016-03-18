@@ -106,7 +106,9 @@ public class SchedularService {
                     LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
                     LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
                     LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
-                    onlinePaymentReceiptHeader = receiptHeaderService.findById(Long.valueOf(paymentResponse.getReceiptId()), false);
+                    String ulbCode = paymentResponse.getAdditionalInfo2().split("-")[0];
+                    onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                            CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()), ulbCode);
                     if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                         reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
                     else

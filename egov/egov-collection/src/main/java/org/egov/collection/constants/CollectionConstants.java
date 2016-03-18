@@ -192,6 +192,7 @@ public final class CollectionConstants {
     public static final String QUERY_ACCOUNTDETAILKEY_BY_DETAILKEY = "getAccountDetailkeyByDetailKey";
     public static final String QUERY_ALL_STATUSES_FOR_MODULE = "getAllStatusesForModule";
     public static final String QUERY_STATUSES_FOR_MODULE_AND_CODES = "getStatusesForModuleAndCodes";
+    public static final String QUERY_RECEIPT_BY_ID_AND_CITYCODE = "QUERY_RECEIPT_BY_ID_AND_CITYCODE";
 
     public static final String QUERY_ALL_DEPARTMENTS = "getAllDepartment";
     public static final String QUERY_ALL_LOCATIONS = "getAllLocations";
