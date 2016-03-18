@@ -51,54 +51,56 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository(value = "egBillDAO")
+@Transactional(readOnly = true)
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EgBillHibernateDao implements EgBillDao {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Override
-	public EgBillType getBillTypeByCode(String code) {
-		final Query qry = this.getCurrentSession().createQuery(
-				"from EgBillType bt where bt.code =:BTCODE");
-		qry.setString("BTCODE", code);
-		qry.setMaxResults(1);
-		return (EgBillType) qry.uniqueResult();
-	}
+    @Override
+    public EgBillType getBillTypeByCode(String code) {
+        final Query qry = this.getCurrentSession().createQuery(
+                "from EgBillType bt where bt.code =:BTCODE");
+        qry.setString("BTCODE", code);
+        qry.setMaxResults(1);
+        return (EgBillType) qry.uniqueResult();
+    }
 
-	@Override
-	public EgBill findById(Long id, boolean lock) {
-		return (EgBill) getCurrentSession().load(EgBill.class, id);
-	}
+    @Override
+    public EgBill findById(Long id, boolean lock) {
+        return (EgBill) getCurrentSession().get(EgBill.class, id);
+    }
 
-	@Override
-	public List<EgBill> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<EgBill> findAll() {
+        return getCurrentSession().createQuery("from EgBill").list();
+    }
 
-	@Override
-	public EgBill create(EgBill egBill) {
-	    getCurrentSession().saveOrUpdate(egBill);
-	    getCurrentSession().flush();
-	    return egBill;
-	}
+    @Override
+    public EgBill create(EgBill egBill) {
+        getCurrentSession().saveOrUpdate(egBill);
+        getCurrentSession().flush();
+        return egBill;
+    }
 
-	@Override
-	public void delete(EgBill egBill) {
-		// TODO Auto-generated method stub
+    @Override
+    public void delete(EgBill egBill) {
+        getCurrentSession().delete(egBill);
+    }
 
-	}
-
-	@Override
-	public EgBill update(EgBill egBill) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public EgBill update(EgBill egBill) {
+        getCurrentSession().saveOrUpdate(egBill);
+        getCurrentSession().flush();
+        return egBill;
+    }
 }
