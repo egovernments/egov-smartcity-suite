@@ -102,8 +102,8 @@ public class AdvertisementPermitDetailService {
     @Autowired
     private AssignmentService assignmentService;
     
-    /*@Autowired
-    private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;*/
+    @Autowired
+    private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;
 
     @Transactional
     public AdvertisementPermitDetail createAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
@@ -127,7 +127,7 @@ public class AdvertisementPermitDetailService {
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         //create or update index
-//        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
 
@@ -142,7 +142,7 @@ public class AdvertisementPermitDetailService {
 
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
         // update index for legacy advertisement
-//        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
     @Transactional
@@ -150,7 +150,7 @@ public class AdvertisementPermitDetailService {
             final AdvertisementPermitDetail advertisementPermitDetail) throws HoardingValidationError {
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
         //update index on advertisement deactivation
-//        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
 
@@ -196,7 +196,7 @@ public class AdvertisementPermitDetailService {
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         //update index on permit generation
-//        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
 
@@ -333,7 +333,7 @@ public class AdvertisementPermitDetailService {
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         //update index on collection
-//        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
     }
 
     public AdvertisementPermitDetail findByApplicationNumber(final String applicationNumber) {
@@ -366,7 +366,7 @@ public class AdvertisementPermitDetailService {
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         //update index on renewal
-//        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
     //TODO : CODE REVIEW PENDING
