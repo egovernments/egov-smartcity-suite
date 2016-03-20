@@ -69,7 +69,9 @@ public class BillCollectorDailyCollectionReportResult {
     private Double cummulative_currentyear_collection = 0.0;
 
     private Double cummulative_total_Collection = 0.0;
+    private BigDecimal cummulative_total_CollectionPercentage = BigDecimal.ZERO;
     private Double cummulative_total_CollectionInterest = 0.0;
+    private BigDecimal cummulative_total_CollectionInterestPercentage = BigDecimal.ZERO;
     private BigDecimal cummulative_currentYear_Percentage = BigDecimal.ZERO;
     private Double Percentage_compareWithLastYear = 0.0;
     private BigDecimal growth = BigDecimal.ZERO;
@@ -437,9 +439,25 @@ public class BillCollectorDailyCollectionReportResult {
     public Double getBalance_totalInterest() {
         return balance_totalInterest;
     }
-
+ 
     public void setBalance_totalInterest(Double balance_totalInterest) {
         this.balance_totalInterest = balance_totalInterest;
+    }
+
+    public BigDecimal getCummulative_total_CollectionPercentage() {
+        return cummulative_total_CollectionPercentage;
+    }
+
+    public BigDecimal getCummulative_total_CollectionInterestPercentage() {
+        return cummulative_total_CollectionInterestPercentage;
+    }
+
+    public void setCummulative_total_CollectionPercentage(BigDecimal cummulative_total_CollectionPercentage) {
+        this.cummulative_total_CollectionPercentage = cummulative_total_CollectionPercentage;
+    }
+
+    public void setCummulative_total_CollectionInterestPercentage(BigDecimal cummulative_total_CollectionInterestPercentage) {
+        this.cummulative_total_CollectionInterestPercentage = cummulative_total_CollectionInterestPercentage;
     }
 
 }
