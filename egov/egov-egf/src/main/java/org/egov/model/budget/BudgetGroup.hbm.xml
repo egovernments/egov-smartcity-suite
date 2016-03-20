@@ -53,8 +53,8 @@
 		<property name="name" column="NAME"/>
 		<property name="description" column="DESCRIPTION" />
 		<property name="accountType" column="ACCOUNTTYPE">
-			<type name="org.egov.infstr.models.EnumUserType">       
-				<param name="enumClassName">org.egov.utils.BudgetAccountType</param>     
+			<type name="org.hibernate.type.EnumType">       
+				<param name="enumClass">org.egov.utils.BudgetAccountType</param>     
 			</type>   
 		</property>
 		<property name="budgetingType" column="BUDGETINGTYPE" >
