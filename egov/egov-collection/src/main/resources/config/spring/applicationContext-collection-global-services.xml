@@ -165,7 +165,6 @@
 	
 	<bean class="org.egov.collection.integration.services.SchedularService" id="schedularService" scope="prototype">
 	   <property name="persistenceService" ref="persistenceService" />
-	   <property name="receiptHeaderService" ref="receiptHeaderService" />
 	   <property name="reconciliationService" ref="reconciliationService" />
 	</bean>
 

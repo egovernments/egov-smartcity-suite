@@ -379,7 +379,6 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, onlinePayment.getReceiptHeader().getId().toString());
             formData.add(CollectionConstants.AXIS_OPERATOR_ID, collectionApplicationProperties.axisOperator());
             formData.add(CollectionConstants.AXIS_PASSWORD, collectionApplicationProperties.axisPassword());
-            LOGGER.info("formData: " + formData);
             final String responseAxis = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(String.class,
                     formData);
             final Map<String, String> responseAxisMap = new LinkedHashMap<String, String>();

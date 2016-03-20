@@ -49,10 +49,10 @@ import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
-import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.StringUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +62,6 @@ public class SchedularService {
 
     private static final Logger LOGGER = Logger.getLogger(SchedularService.class);
     protected PersistenceService persistenceService;
-    private ReceiptHeaderService receiptHeaderService;
     private ReceiptHeader onlinePaymentReceiptHeader;
     private PaymentResponse paymentResponse;
     private ReconciliationService reconciliationService;
@@ -102,7 +101,7 @@ public class SchedularService {
                 LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
                 paymentResponse = axisAdaptor.createOfflinePaymentRequest(paymentService, onlinePaymentObj);
 
-                if (null != paymentResponse && paymentResponse.getReceiptId()!=null && !paymentResponse.getReceiptId().equals("") ) {
+                if (null != paymentResponse && paymentResponse.getReceiptId()!=null && !paymentResponse.getReceiptId().equals("") && !StringUtils.isBlank(paymentResponse.getAdditionalInfo2())) {
                     LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
                     LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
                     LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
@@ -127,10 +126,6 @@ public class SchedularService {
 
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
-    }
-
-    public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
-        this.receiptHeaderService = receiptHeaderService;
     }
 
     public void setReconciliationService(final ReconciliationService reconciliationService) {
