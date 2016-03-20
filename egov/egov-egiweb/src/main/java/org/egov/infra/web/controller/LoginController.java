@@ -63,6 +63,8 @@ public class LoginController {
     @Autowired
     private LocationService locationService;
 
+    @Autowired
+    private ValidatorUtils validatorUtils;
 
     @RequestMapping(value = "/password/recover", method = RequestMethod.POST)
     public String sendPasswordRecoveryURL(@RequestParam final String identity, @RequestParam final String originURL,
@@ -85,7 +87,7 @@ public class LoginController {
             return "redirect:/login/password/reset?token=" + token;
         }
 
-        if (!ValidatorUtils.isValidPassword(newPassword)) {
+        if (!validatorUtils.isValidPassword(newPassword)) {
             redirectAttrib.addAttribute("error", "err.login.pwd.length");
             return "redirect:/login/password/reset?token=" + token;
         }
