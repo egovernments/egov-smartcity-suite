@@ -941,19 +941,18 @@ function validate()
 			validation=false;
 		}
 	    // display error if actual payt amt < original billed amt and system has not done apportioning(part payt is false)
-		if(collectiontotal < billingtotal && checkpartpaymentvalue=="false"){
+		if(collectiontotal < billingtotal && checkpartpaymentvalue==false){
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.total.errormessage" />' + '<br>';
 			validation=false;
 		}
 		// display error if actual payt amt < original billed amt after system has done apportioning 
 		// (citizen might have manually changed credit amounts after system apportioning of account head amounts
-		else if(collectiontotal < billingtotal && checkpartpaymentvalue=="true"){
+		else if(collectiontotal < billingtotal && checkpartpaymentvalue==true){
 		        if(collectiontotal < minimumAmt){
 		        	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />' + '<br>';
 		        	validation=false;
 		        }
 		}
-		
 		else
 		{
 			if(!checkaccountheaderwiseamount()){
