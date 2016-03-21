@@ -42,25 +42,32 @@
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="title.lineestimate.search" /></div>
+	<div id="errorMessage" style="display: none;"><spring:message code="error.lineestimate.loa.search" /></div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.department" /></th>
-					<th><spring:message code="lbl.lineestimatenumber" /></th>
-					<th><spring:message code="lbl.administartive.sanctionno" /></th>
-					<th><spring:message code="lbl.fund" /></th>
-					<th><spring:message code="lbl.function" /></th>
-					<th><spring:message code="lbl.budgethead" /></th>
+					<th><spring:message code="hdr.select" /></th>
+					<th><spring:message code="lbl.sino" /></th>
+					<th><spring:message code="lbl.proceedingnumber" /></th>
+					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.nameofwork" /></th>
+					<th><spring:message code="lbl.currentowner" /></th>
 					<th><spring:message code="lbl.createdby" /></th>
-					<th><spring:message code="lbl.approvedby" /></th>
-					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.totalamount" /></th>
-					<th><spring:message code="lbl.action" /></th>
+					<th><spring:message code="lbl.adminsanctionby" /></th>
+					<th><spring:message code="lbl.estimateamount" /></th>
 				</tr>
 			</thead>
 		</table>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type='button' class='btn btn-primary' id="btncreateloa">
+				<spring:message code='btn.createloa' />
+			</button>
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lineestimate.btn.close' /></a>
+		</div>
 	</div>
 </div>

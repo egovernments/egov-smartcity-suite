@@ -84,7 +84,9 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.estimateNumber +'"/>');
 					$('td:eq(1)',row).html(index+1);
-					$('td:eq(7)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
+					if(data.adminSanctionNumber != null)
+						$('td:eq(2)',row).html('<a href="/egworks/lineestimate/update/'+ data.id +'"> '+ data.adminSanctionNumber + '</a>');
+					$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
 					return row;
 				},
 				aaSorting: [],				
@@ -94,8 +96,9 @@ function callAjaxSearch() {
 					"data" : "adminSanctionNumber", "sClass" : "text-left"} ,{ 
 					"data" : "estimateNumber", "sClass" : "text-left"} ,{ 
 					"data" : "nameOfWork", "sClass" : "text-left"} ,{
+					"data" : "currentOwner", "sClass" : "text-left"} ,{
 					"data" : "createdBy", "sClass" : "text-left"} ,{
-					"data" : "approvedBy", "sClass" : "text-left"}, {
+					"data" : "adminSanctionBy", "sClass" : "text-left"}, {
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"
 					}]				
 				});

@@ -40,6 +40,7 @@
 package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -56,11 +57,18 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
+import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
+import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
+import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
+import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SubSchemeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -75,15 +83,15 @@ import com.google.gson.GsonBuilder;
 public class AjaxLineEstimateController {
     @Autowired
     private SchemeService schemeService;
+    
+    @Autowired
+    private LineEstimateService lineEstimateService;
 
     @Autowired
     private CrossHierarchyService crossHierarchyService;
 
     @Autowired
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -118,5 +126,48 @@ public class AjaxLineEstimateController {
         final Gson gson = gsonBuilder.registerTypeAdapter(SubScheme.class, new SubSchemeAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
+    }
+    
+    @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxsearch(Model model, @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
+        List<LineEstimate> searchResultList = lineEstimateService.searchLineEstimates(lineEstimateSearchRequest);
+        String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateResultJson(searchResultList)).append("}").toString();
+        return result;
+    }
+    
+    @RequestMapping(value = "/ajaxsearchlineestimatesforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchLineEstimatesForLOA(Model model, @ModelAttribute final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest) {
+        List<LineEstimateForLoaSearchResult> searchResultList = lineEstimateService.searchLineEstimatesForLOA(lineEstimateForLoaSearchRequest);
+        String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateForLOAResultJson(searchResultList)).append("}").toString();
+        return result;
+    }
+
+    public Object toSearchLineEstimateResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateJsonAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    public Object toSearchLineEstimateForLOAResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateForLOAJsonAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    @RequestMapping(value = "/lineEstimateNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findLineEstimateNumbers(@RequestParam final String name) {
+        return lineEstimateService.findLineEstimateNumbers(name);
+    }
+    
+    @RequestMapping(value = "/adminSanctionNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findAdminSanctionNumbers(@RequestParam final String name) {
+        return lineEstimateService.findAdminSanctionNumbers(name);
+    }
+    
+    @RequestMapping(value = "/ajaxvalidate-technicalsanction-date", method = RequestMethod.GET)
+    public @ResponseBody boolean validateTechnicalSanctionDate(@RequestParam("id") Long id, @RequestParam("date") final Date technicalSanctionDate) {
+        return lineEstimateService.validateTechnicalSanctionDate(id, technicalSanctionDate);
     }
 }

@@ -48,6 +48,7 @@
 			</c:if>
 		</div>
 		<form:form name="lineEstimateForm" role="form" action="create" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+			<form:hidden id="mode" path=""  value="${mode}"/>
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="lineEstimateHeader.jsp"/>
@@ -55,11 +56,9 @@
 					<jsp:include page="uploadDocuments.jsp"/>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" class="btn btn-primary" value="Submit"><spring:message code="lbl.submit"/></form:button>
-					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
-				</div>
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+			<div class="buttonbottom" align="center">
+				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</form:form>  
-<script src="<c:url value='/resources/js/lineestimate.js'/>"></script>
+<script src="<c:url value='/resources/js/lineestimate.js?rnd=${app_release_no}'/>"></script>

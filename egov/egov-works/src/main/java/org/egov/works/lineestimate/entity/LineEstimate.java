@@ -59,6 +59,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CFunction;
@@ -165,6 +166,12 @@ public class LineEstimate extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
+    
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
 
     @Enumerated(EnumType.STRING)
     private TypeOfSlum typeOfSlum;
@@ -194,6 +201,14 @@ public class LineEstimate extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ward", nullable = false)
     private Boundary ward;
+    
+    @SafeHtml
+    @Length(max = 50)
+    @Column(unique = true)
+    private String technicalSanctionNumber;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date technicalSanctionDate;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -332,7 +347,7 @@ public class LineEstimate extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return null;
+        return "Line Estimate Number : " + getLineEstimateNumber();
     }
 
     public String getAdminSanctionNumber() {
@@ -431,4 +446,35 @@ public class LineEstimate extends StateAware {
         this.workCategory = workCategory;
     }
 
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
+
+    public String getTechnicalSanctionNumber() {
+        return technicalSanctionNumber;
+    }
+
+    public void setTechnicalSanctionNumber(String technicalSanctionNumber) {
+        this.technicalSanctionNumber = technicalSanctionNumber;
+    }
+
+    public Date getTechnicalSanctionDate() {
+        return technicalSanctionDate;
+    }
+
+    public void setTechnicalSanctionDate(Date technicalSanctionDate) {
+        this.technicalSanctionDate = technicalSanctionDate;
+    }
 }

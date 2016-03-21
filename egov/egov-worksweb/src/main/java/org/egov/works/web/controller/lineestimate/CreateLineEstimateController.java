@@ -55,9 +55,13 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.Beneficiary;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -65,24 +69,29 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.TypeOfSlum;
 import org.egov.works.lineestimate.entity.WorkCategory;
+import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.services.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
-public class CreateLineEstimateController {
-
+public class CreateLineEstimateController extends GenericWorkFlowController{
+    
     private static final int BUFFER_SIZE = 4096;
 
     @Autowired
@@ -117,26 +126,74 @@ public class CreateLineEstimateController {
 
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    protected AssignmentService assignmentService;
+    
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("lineEstimate", lineEstimate);
+        
+        model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
+
+        model.addAttribute("additionalRule", WorksConstants.NEWLINEESTIMATE);
+
+        prepareWorkflow(model, lineEstimate, new WorkflowContainer());
+        
+        model.addAttribute("mode", null);
+        
         return "newLineEstimate-form";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
-            final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files)
-            throws ApplicationException, IOException {
+
+            final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
+            final RedirectAttributes redirectAttributes, final HttpServletRequest request,
+            @RequestParam String workFlowAction, final BindingResult resultBinder)
+                    throws ApplicationException, IOException {
         setDropDownValues(model);
-        if (errors.hasErrors())
-            return "newLineEstimate-edit";
+        
+        if (errors.hasErrors()) {
+            model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
+
+            model.addAttribute("additionalRule", WorksConstants.NEWLINEESTIMATE);
+
+            prepareWorkflow(model, lineEstimate, new WorkflowContainer());
+            
+            model.addAttribute("mode", null);
+            
+            return "newLineEstimate-form";
+        }
         else {
-            final LineEstimate newLineEstimate = lineEstimateService.create(lineEstimate, files);
+            if (lineEstimate.getState() == null)
+                lineEstimate.setStatus(worksUtils.getStatusByCodeAndModuleType(
+                        LineEstimateStatus.CREATED.toString(), WorksConstants.MODULETYPE));
+            
+            Long approvalPosition = 0l;
+            String approvalComment = "";
+            if (request.getParameter("approvalComment") != null)
+                approvalComment = request.getParameter("approvalComent");
+            if (request.getParameter("workFlowAction") != null)
+                workFlowAction = request.getParameter("workFlowAction");
+            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            
+            final LineEstimate newLineEstimate = lineEstimateService.create(lineEstimate, files, approvalPosition,
+                    approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction);
             model.addAttribute("lineEstimate", newLineEstimate);
-            return "redirect:/lineestimate/update/" + newLineEstimate.getId();
+            
+            String pathVars = worksUtils.getPathVars(newLineEstimate, approvalPosition);
+
+            return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
         }
     }
 
@@ -154,7 +211,7 @@ public class CreateLineEstimateController {
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         
     }
-
+    
     @RequestMapping(value = "/downloadLineEstimateDoc", method = RequestMethod.GET)
     public void getLineEstimateDoc(final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
@@ -177,7 +234,6 @@ public class CreateLineEstimateController {
         if (mimeType == null)
             // set to binary type if MIME mapping not found
             mimeType = "application/octet-stream";
-        System.out.println("MIME type: " + mimeType);
 
         // set content attributes for the response
         response.setContentType(mimeType);
@@ -208,5 +264,77 @@ public class CreateLineEstimateController {
                 WorksConstants.MODULE_NAME_LINEESTIMATE);
         lineEstimate.setDocumentDetails(documentDetailsList);
         return lineEstimate;
+    }
+    
+    @RequestMapping(value = "/lineestimate-success", method = RequestMethod.GET)
+    public ModelAndView successView(@ModelAttribute LineEstimate lineEstimate,
+            final HttpServletRequest request, final Model model, final ModelMap modelMap) {
+
+        final String[] keyNameArray = request.getParameter("pathVars").split(",");
+        Long id = 0L;
+        String approverName = "";
+        String currentUserDesgn = "";
+        String nextDesign = "";
+        if (keyNameArray.length != 0 && keyNameArray.length > 0)
+            if (keyNameArray.length == 1)
+                id = Long.parseLong(keyNameArray[0]);
+            else if (keyNameArray.length == 3) {
+                id = Long.parseLong(keyNameArray[0]);
+                approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
+            } else {
+                id = Long.parseLong(keyNameArray[0]);
+                approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
+                nextDesign = keyNameArray[3];
+            }
+
+        if (id != null)
+            lineEstimate = lineEstimateService
+                    .getLineEstimateById(id);
+        model.addAttribute("approverName", approverName);
+        model.addAttribute("currentUserDesgn", currentUserDesgn);
+        model.addAttribute("nextDesign", nextDesign);
+
+        String message = getMessageByStatus(lineEstimate, approverName, nextDesign);;
+        
+        model.addAttribute("message", message);
+        
+        return new ModelAndView("lineestimate-success", "lineEstimate", lineEstimate);
+    }
+
+    private String getMessageByStatus(LineEstimate lineEstimate, String approverName, String nextDesign) {
+        String message = "";
+        
+        if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString()) && !lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED)) {
+            message = messageSource.getMessage("msg.lineestimate.create.success",
+                    new String[] { approverName, nextDesign, lineEstimate.getLineEstimateNumber() }, null);
+        }
+        else if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())) {
+            message = messageSource.getMessage("msg.lineestimate.check.success",
+                    new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);
+        }
+        else if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
+            message = messageSource.getMessage("msg.lineestimate.budgetsanction.success",
+                    new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);
+        }
+        else if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())) {
+            message = messageSource.getMessage("msg.lineestimate.adminsanction.success",
+                    new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign, lineEstimate.getAdminSanctionNumber() }, null);
+        }
+        else if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.TECHNICAL_SANCTIONED.toString())) {
+            message = messageSource.getMessage("msg.lineestimate.techsanction.success",
+                    new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getTechnicalSanctionNumber() }, null);
+        }
+        else if(lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED)) {
+            message = messageSource.getMessage("msg.lineestimate.reject",
+                    new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);
+        }
+        else if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CANCELLED.toString())) {
+            message = messageSource.getMessage("msg.lineestimate.cancel",
+                    new String[] { lineEstimate.getLineEstimateNumber() }, null);
+        }
+        
+        return message;
     }
 }

@@ -71,4 +71,10 @@
 	
 	<bean id="worksUtils" class="org.egov.works.utils.WorksUtils"/>
 	
+	<bean id="LineEstimatePersistenceService" parent="persistenceService">
+        <property name="type" value="org.egov.works.lineestimate.entity.LineEstimate" />
+    </bean>
+    <bean id="LineEstimateInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="LineEstimatePersistenceService"/>
+    </bean>
 </beans>

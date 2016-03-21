@@ -43,13 +43,27 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.egov.commons.EgwStatus;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.commons.Position;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.repository.DocumentDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.multipart.MultipartFile;
 
 public class WorksUtils {
@@ -59,6 +73,22 @@ public class WorksUtils {
     
     @Autowired
     private FileStoreService fileStoreService;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private PositionMasterService positionMasterService;
+    
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     public void persistDocuments(List<DocumentDetails> documentDetailsList) {
         if(documentDetailsList != null && !documentDetailsList.isEmpty()) {
@@ -94,5 +124,85 @@ public class WorksUtils {
     
     public List<DocumentDetails> findByObjectIdAndObjectType(Long objectId, String objectType) {
         return documentDetailsRepository.findByObjectIdAndObjectType(objectId, objectType);
+    }
+    
+    public Long getApproverPosition(final String designationName, final LineEstimate lineEstimate) {
+        final List<StateHistory> stateHistoryList = lineEstimate.getState().getHistory();
+        Long approverPosition = 0l;
+        final String[] desgnArray = designationName.split(",");
+        if (stateHistoryList != null && !stateHistoryList.isEmpty()) {
+                for (final StateHistory stateHistory : stateHistoryList)
+                    if (stateHistory.getOwnerPosition() != null) {
+                        final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
+                                stateHistory.getOwnerPosition().getId(), new Date());
+                        for (final Assignment assgn : assignmentList)
+                            for (final String str : desgnArray)
+                                if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
+                                    approverPosition = stateHistory.getOwnerPosition().getId();
+                                    break;
+                                }
+
+                    }
+                if (approverPosition == 0) {
+                    final State stateObj = lineEstimate.getState();
+                    final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
+                            .getOwnerPosition().getId(), new Date());
+                    for (final Assignment assgn : assignmentList)
+                        if (assgn.getDesignation().getName().equalsIgnoreCase(designationName)) {
+                            approverPosition = stateObj.getOwnerPosition().getId();
+                            break;
+                        }
+                }
+        } else {
+                final Position posObjToClerk = positionMasterService
+                        .getCurrentPositionForUser(lineEstimate.getCreatedBy().getId());
+                approverPosition = posObjToClerk.getId();
+            }
+        return approverPosition;
+    }
+    
+    public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
+        return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
+    }
+    
+    public String getApproverName(final Long approvalPosition) {
+        Assignment assignment = null;
+        List<Assignment> asignList = null;
+        if (approvalPosition != null)
+            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
+        if (assignment != null)
+        {
+            asignList = new ArrayList<Assignment>();
+            asignList.add(assignment);
+        }
+        else if (assignment == null)
+        {
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        }
+        return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
+    }
+
+    public String getPathVars(LineEstimate newLineEstimate, Long approvalPosition) {
+        final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
+                .getCurrentUser().getId(), new Date(), new Date());
+
+        Assignment assignObj = null;
+        List<Assignment> asignList = null;
+        if (approvalPosition != null)
+            assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
+
+        if (assignObj != null) {
+            asignList = new ArrayList<Assignment>();
+            asignList.add(assignObj);
+        } else if (assignObj == null && approvalPosition != null)
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+
+        final String nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+
+        final String pathVars = newLineEstimate.getId() + ","
+                + getApproverName(approvalPosition) + ","
+                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
+                + (nextDesign != null ? nextDesign : "");
+        return pathVars;
     }
 }

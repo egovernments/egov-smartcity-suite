@@ -47,7 +47,7 @@
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.administartive.sanctionno" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.proceedingnumber" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control"/>
 				<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
@@ -55,55 +55,43 @@
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control">
-					<form:option value=""><spring:message code="lbl.select" /></form:option>
+					<%-- <form:option value=""><spring:message code="lbl.select" /></form:option> --%>
 					<form:options items="${departments}" itemValue="id" itemLabel="name" />
 				</form:select>
 				<form:errors path="executingDepartment" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.fromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionFromDate" class="form-control datepicker"	id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctiontodate" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.todate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionToDate" class="form-control datepicker"	id="v" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionToDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fund" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:select path="fund" data-first-option="false" class="form-control" id="fund">
-					<form:option value=""><spring:message code="lbl.select" /></form:option>
-					<form:options items="${funds}" itemValue="id" itemLabel="name"/>
-				</form:select>
-				<form:errors path="fund" cssClass="add-margin error-msg" />
-			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.function" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:select path="function" data-first-option="false" name="function" class="form-control" id="function">
-					<form:option value=""><spring:message code="lbl.select" /></form:option>
-					<form:options items="${functions}" itemValue="id" itemLabel="name"/>
-				</form:select>
-				<form:errors path="function" cssClass="add-margin error-msg" />
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.budgethead" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:select path="budgetHead" data-first-option="false" id="budgetHead" class="form-control">
-					<form:option value=""><spring:message code="lbl.select" /></form:option>
-					<form:options items="${budgetHeads}" itemValue="id" itemLabel="name"/>
-				</form:select>
-				<form:errors path="budgetHead" cssClass="add-margin error-msg" />
-			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimateno" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.estimateno" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="estimateNumber" id="estimateNumber" class="form-control"/>
 				<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
+			</div>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimate.createdby" /></label>
+			<div class="col-sm-3 add-margin">
+				<form:select path="lineEstimateCreatedBy" data-first-option="false" id="lineEstimateCreatedBy" class="form-control">
+					<form:option value=""><spring:message code="lbl.select" /></form:option>
+					<form:options items="${lineEstimateCreatedByUsers}" itemValue="id" itemLabel="name"/>
+				</form:select>
+				<form:errors path="lineEstimateCreatedBy" cssClass="add-margin error-msg" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
+			<div class="col-sm-3 add-margin">
+				Admin Sanctioned
 			</div>
 		</div>
 	</div>

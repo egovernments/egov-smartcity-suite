@@ -55,6 +55,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.works.models.estimate.ProjectCode;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -104,6 +105,12 @@ public class LineEstimateDetails extends AbstractAuditable {
     @NotNull
     @Length(max = 50)
     private String beneficiary;
+    
+    private BigDecimal actualEstimateAmount;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "projectCode")
+    private ProjectCode projectCode;
 
     @Override
     public Long getId() {
@@ -171,4 +178,19 @@ public class LineEstimateDetails extends AbstractAuditable {
         this.quantity = quantity;
     }
 
+    public BigDecimal getActualEstimateAmount() {
+        return actualEstimateAmount;
+    }
+
+    public void setActualEstimateAmount(BigDecimal actualEstimateAmount) {
+        this.actualEstimateAmount = actualEstimateAmount;
+    }
+
+    public ProjectCode getProjectCode() {
+        return projectCode;
+    }
+
+    public void setProjectCode(ProjectCode projectCode) {
+        this.projectCode = projectCode;
+    }
 }

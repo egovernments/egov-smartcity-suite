@@ -44,45 +44,45 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="page-container" id="page-container">
 	<div class="main-content">
-		<form:form name="lineEstimateForm" action="" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST" enctype="multipart/form-data">
-			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
-			<form:hidden path="" name="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
-			<input type="hidden" value="${mode}" id="mode"/>
+		<form:form name="lineEstimateSearchForm" role="form" action="" modelAttribute="lineEstimateForLoaSearchRequest" id="lineEstimatesearchform" class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="col-md-12">
-					<c:if test="${mode != 'view' }">
-						<jsp:include page="lineEstimateHeader.jsp"/>
-						<jsp:include page="lineEstimateDetails.jsp"/>
-						<c:if test="${!lineEstimate.documentDetails.isEmpty() }">
-							<jsp:include page="uploadDocuments.jsp"/>
-						</c:if>
-					</c:if>
-					<c:if test="${mode == 'view' }">
-						<jsp:include page="lineEstimateHeader-view.jsp"/>
-						<jsp:include page="lineEstimateDetails-view.jsp"/>
-						<c:if test="${!lineEstimate.documentDetails.isEmpty() }">
-							<jsp:include page="uploadDocuments.jsp"/>
-						</c:if>
-					</c:if>
+					<jsp:include page="searchLineEstimateForLoa-form.jsp"/>
 				</div>
 			</div>
-			<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message  code="lbl.apphistory"/>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button type='button' class='btn btn-primary' id="btnsearch">
+						<spring:message code='lineestimate.btn.search' />
+					</button>
 				</div>
-			</div>
-			<jsp:include page="lineestimatehistory-view.jsp"></jsp:include>
-		</div>
-		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
-			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
-		</c:if>
-			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-			<div class="buttonbottom" align="center">
-				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</form:form>  
 	</div>
 </div>
-<script src="<c:url value='/resources/js/lineestimate.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<jsp:include page="lineEstimateForLoa-searchresults.jsp"/>
+<script>
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/lineestimate/searchlinestimateforloahelper.js?rnd=${app_release_no}'/>"></script>

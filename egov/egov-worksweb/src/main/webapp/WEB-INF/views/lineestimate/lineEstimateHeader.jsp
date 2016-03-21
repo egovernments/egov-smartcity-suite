@@ -43,7 +43,7 @@
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">
-			<spring:message code="lineestimate.header" />
+			<spring:message code="header.lineestimate" />
 		</div>
 	</div>
 	<div class="panel-body custom-form">

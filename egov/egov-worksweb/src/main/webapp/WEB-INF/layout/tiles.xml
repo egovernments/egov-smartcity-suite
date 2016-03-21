@@ -93,6 +93,11 @@
     
     <definition name="searchLineEstimateForLoa-form" extends="base_layout">
         <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForLOA-header.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForLoa-header.jsp"/>
     </definition>
+    
+    <definition name="lineestimate-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.new.lineestimate"	cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/lineestimate/lineestimate-success.jsp" />
+	</definition>
 </tiles-definitions>

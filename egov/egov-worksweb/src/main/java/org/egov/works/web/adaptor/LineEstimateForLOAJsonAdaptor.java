@@ -1,47 +1,52 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
-import org.egov.works.lineestimate.entity.LineEstimateSearchResult;
+
+import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class LineEstimateForLOAJsonAdaptor implements JsonSerializer<LineEstimateSearchResult>
+public class LineEstimateForLOAJsonAdaptor implements JsonSerializer<LineEstimateForLoaSearchResult>
 {
     @Override
-    public JsonElement serialize(final LineEstimateSearchResult lineEstimateSearchResult, final Type type,
+    public JsonElement serialize(final LineEstimateForLoaSearchResult lineEstimateForLoaSearchResult, final Type type,
             final JsonSerializationContext jsc)
     {
         final JsonObject jsonObject = new JsonObject();
-        if (lineEstimateSearchResult != null)
+        if (lineEstimateForLoaSearchResult != null)
         {
-            if (lineEstimateSearchResult.getAdminSanctionNumber() != null)
-                jsonObject.addProperty("adminSanctionNumber", lineEstimateSearchResult.getAdminSanctionNumber());
+            if (lineEstimateForLoaSearchResult.getAdminSanctionNumber() != null)
+                jsonObject.addProperty("adminSanctionNumber", lineEstimateForLoaSearchResult.getAdminSanctionNumber());
             else
                 jsonObject.addProperty("adminSanctionNumber", "");
-            if (lineEstimateSearchResult.getApprovedBy() != null)
-                jsonObject.addProperty("approvedBy", lineEstimateSearchResult.getApprovedBy());
+            if (lineEstimateForLoaSearchResult.getAdminSanctionBy() != null)
+                jsonObject.addProperty("adminSanctionBy", lineEstimateForLoaSearchResult.getAdminSanctionBy());
             else
-                jsonObject.addProperty("approvedBy", "");
-            if (lineEstimateSearchResult.getEstimateAmount() != null)
-                jsonObject.addProperty("estimateAmount", lineEstimateSearchResult.getEstimateAmount());
+                jsonObject.addProperty("adminSanctionBy", "");
+            if (lineEstimateForLoaSearchResult.getEstimateAmount() != null)
+                jsonObject.addProperty("estimateAmount", lineEstimateForLoaSearchResult.getEstimateAmount());
             else
                 jsonObject.addProperty("estimateAmount", "");
-            if (lineEstimateSearchResult.getEstimateNumber() != null)
-                jsonObject.addProperty("estimateNumber", lineEstimateSearchResult.getEstimateNumber());
+            if (lineEstimateForLoaSearchResult.getEstimateNumber() != null)
+                jsonObject.addProperty("estimateNumber", lineEstimateForLoaSearchResult.getEstimateNumber());
             else
                 jsonObject.addProperty("estimateNumber", "");
-            if (lineEstimateSearchResult.getNameOfWork() != null)
-                jsonObject.addProperty("nameOfWork", lineEstimateSearchResult.getNameOfWork());
+            if (lineEstimateForLoaSearchResult.getNameOfWork() != null)
+                jsonObject.addProperty("nameOfWork", lineEstimateForLoaSearchResult.getNameOfWork());
             else
                 jsonObject.addProperty("nameOfWork", "");
-            if (lineEstimateSearchResult.getCreatedBy() != null)
-                jsonObject.addProperty("createdBy", lineEstimateSearchResult.getCreatedBy());
+            if (lineEstimateForLoaSearchResult.getCreatedBy() != null)
+                jsonObject.addProperty("createdBy", lineEstimateForLoaSearchResult.getCreatedBy());
             else
                 jsonObject.addProperty("createdBy", "");
-            jsonObject.addProperty("id", lineEstimateSearchResult.getId());
+            if (lineEstimateForLoaSearchResult.getCurrentOwner() != null)
+                jsonObject.addProperty("currentOwner", lineEstimateForLoaSearchResult.getCurrentOwner());
+            else
+                jsonObject.addProperty("currentOwner", "");
+            jsonObject.addProperty("id", lineEstimateForLoaSearchResult.getId());
         }
         return jsonObject;
     }

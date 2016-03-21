@@ -52,36 +52,48 @@
 </style>
 <div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 	<div class="panel-heading">
-		<div class="panel-title"><spring:message code="lbl.uploaddocument" /></div>
+		<div class="panel-title">
+			<c:if test="${mode != 'view' }">
+				<spring:message code="lbl.upload.document" />
+			</c:if>
+			<c:if test="${mode == 'view' }">
+				<spring:message code="lbl.documents" />
+			</c:if>
+		</div>
 	</div>
 	<c:if test="${lineEstimate.documentDetails != null &&  !lineEstimate.documentDetails.isEmpty()}">
 		<c:forEach items="${lineEstimate.documentDetails }" var="documentDetials">
 			<a href="/egworks/lineestimate/downloadLineEstimateDoc?lineEstimateId=${lineEstimate.id }&fileStoreId=${documentDetials.fileStore.fileStoreId }">${documentDetials.fileStore.fileName }</a><br />
 		</c:forEach>
 	</c:if>
+	<c:if test="${(mode == 'edit' || mode == 'view') && lineEstimate.documentDetails.isEmpty()}">
+		<spring:message code="msg.no.documents" />
+	</c:if>
 	<input type="hidden" value="${fn:length(lineEstimate.documentDetails)}" id="documentsSize">
-	<div>
-		<table width="100%">
-			<c:if test="${lineEstimate.documentDetails != null &&  fn:length(lineEstimate.documentDetails) lt 4}">
-			<tbody>
-				<tr>
-					<td valign="top">
-					 	<table id="uploadertbl" width="100%"><tbody>
-					 		<tr id="row1">			 				
-								<td>
-									<input type="file" name="file" id="file1" onchange="isValidFile(this.id)">
-								</td>
-							</tr>									 										
-					 	</tbody></table>
-					</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
-					</td>
-				</tr>
-			</tbody>
-			</c:if>
-		</table>
-	</div>
+	<c:if test="${mode != 'view' }">
+		<div>
+			<table width="100%">
+				<c:if test="${lineEstimate.documentDetails != null &&  fn:length(lineEstimate.documentDetails) lt 4}">
+				<tbody>
+					<tr>
+						<td valign="top">
+						 	<table id="uploadertbl" width="100%"><tbody>
+						 		<tr id="row1">			 				
+									<td>
+										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)">
+									</td>
+								</tr>									 										
+						 	</tbody></table>
+						</td>
+					</tr>
+					<tr>
+						<td align="center">
+							<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
+						</td>
+					</tr>
+				</tbody>
+				</c:if>
+			</table>
+		</div>
+	</c:if>
 </div>

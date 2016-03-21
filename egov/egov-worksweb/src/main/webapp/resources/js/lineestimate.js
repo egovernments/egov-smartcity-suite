@@ -46,6 +46,28 @@ $(document).ready(function(){
 	$('#wardInput').trigger('blur');
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$('#typeofwork').trigger('blur');
+	$('#subTypeOfWork').trigger('blur');
+	
+	$('#technicalSanctionDate').change(function(){
+		var date = this.value;
+		if(date != "") {
+			$.ajax({
+				url: "/egworks/lineestimate/ajaxvalidate-technicalsanction-date",
+				data: {id : $('#id').val(), date : this.value},
+				type: "GET",
+				dataType: "json",
+				success: function (response) {
+					if(response != true) {
+						bootbox.alert($('#errorTechDate').val());
+						$('#technicalSanctionDate').val("");
+					}
+				}, 
+				error: function (response) {
+					console.log("failed");
+				}
+			});
+		}
+	});
 });
 
 $(document).bind("input propertychange", function (e) {

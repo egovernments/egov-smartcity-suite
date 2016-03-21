@@ -44,27 +44,21 @@ import java.util.List;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
-import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
-import org.egov.works.lineestimate.entity.LineEstimateSearchResult;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
-import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -87,6 +81,9 @@ public class SearchLineEstimateController {
 
     @Autowired
     private DepartmentService departmentService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForm(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
@@ -97,10 +94,14 @@ public class SearchLineEstimateController {
     }
     
     @RequestMapping(value = "/searchlineestimateforloa-form", method = RequestMethod.GET)
-    public String create(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
+    public String create(@ModelAttribute final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest,
             final Model model) {
         setDropDownValues(model);
-        model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
+        List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
+        List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        model.addAttribute("lineEstimateForLoaSearchRequest", lineEstimateForLoaSearchRequest);
+        model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
+        model.addAttribute("departments", departments);
         return "searchLineEstimateForLoa-form";
     }
 
@@ -110,43 +111,5 @@ public class SearchLineEstimateController {
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", departmentService.getAllDepartments());
-    }
-    
-    @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(Model model, @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
-        List<LineEstimate> searchResultList = lineEstimateService.searchLineEstimates(lineEstimateSearchRequest);
-        String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateResultJson(searchResultList)).append("}").toString();
-        return result;
-    }
-    
-    @RequestMapping(value = "/ajaxsearchlineestimatesforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxSearchLineEstimatesForLOA(Model model, @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
-        List<LineEstimateSearchResult> searchResultList = lineEstimateService.searchLineEstimatesForLOA(lineEstimateSearchRequest);
-        String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateForLOAResultJson(searchResultList)).append("}").toString();
-        return result;
-    }
-
-    public Object toSearchLineEstimateResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateJsonAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-    
-    public Object toSearchLineEstimateForLOAResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateForLOAJsonAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-    
-    @RequestMapping(value = "/lineEstimateNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findLineEstimateNumbers(@RequestParam final String name) {
-        return lineEstimateService.findLineEstimateNumbers(name);
-    }
-    
-    @RequestMapping(value = "/adminSanctionNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findAdminSanctionNumbers(@RequestParam final String name) {
-        return lineEstimateService.findAdminSanctionNumbers(name);
     }
 }

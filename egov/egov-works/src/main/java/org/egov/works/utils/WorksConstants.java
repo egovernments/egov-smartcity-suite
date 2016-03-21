@@ -52,6 +52,7 @@ public class WorksConstants {
     public static final String YES = "yes";
     public static final String NO = "no";
     public static final String PREVIOUS_APPROPRIATION_YEAR = "previous";
+    public static final String MODULETYPE = "LINEESTIMATE";
     // Pagination
     public static final int PAGE_SIZE = 30;
 
@@ -238,18 +239,20 @@ public class WorksConstants {
 
     // Module types
     public static final String MODULE_NAME_LINEESTIMATE = "LineEstimate";
-
-    // Workflow States
-    public static final String WF_STATE_NEW_LINEESTIMATE = "NEW";
-    public static final String WF_STATE_CREATED_LINEESTIMATE = "CREATED";
-    public static final String WF_STATE_CHECKED_LINEESTIMATE = "CHECKED";
-    public static final String WF_STATE_APPROVED_LINEESTIMATE = "APPROVED";
-    public static final String WF_STATE_REJECTED_LINEESTIMATE = "REJECTED";
-    public static final String WF_STATE_CANCELLED_LINEESTIMATE = "CANCELLED";
+    
+    public static final String NEWLINEESTIMATE = "NEWLINEESTIMATE";
+    
+    // User roles
+    public static final String ROLE_SUPERUSER = "Super User";
 
     public static final String LINEESTIMATE_CREATE = "create";
     public static final String LINEESTIMATE_UPDATE = "update";
-
+    
+    public static final String WF_STATE_CREATED = "Created";
+    public static final String WF_STATE_CHECKED = "Checked";
+    public static final String WF_STATE_REJECTED = "Rejected";
+    public static final String WF_STATE_CANCELLED = "Cancelled";
+    
     public static final String FILESTORE_MODULECODE = "WMS";
 
     public static final String WORKORDER = "WorkOrder";
@@ -259,4 +262,6 @@ public class WorksConstants {
 
     public static final String APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION = "ENGINEERINCHARGE_DESIGNATION";
 
+    
+    public static final String WORKFLOWTYPE_DISPLAYNAME = "Line Estimate";
 }

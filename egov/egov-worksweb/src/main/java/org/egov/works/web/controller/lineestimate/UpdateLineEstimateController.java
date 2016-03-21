@@ -41,6 +41,7 @@ package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,8 +52,14 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.Beneficiary;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -77,8 +84,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
-public class UpdateLineEstimateController {
-
+public class UpdateLineEstimateController extends GenericWorkFlowController{
     @Autowired
     private LineEstimateService lineEstimateService;
 
@@ -108,6 +114,15 @@ public class UpdateLineEstimateController {
 
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    protected AssignmentService assignmentService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -129,16 +144,53 @@ public class UpdateLineEstimateController {
     public String update(@Valid @ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam final String removedLineEstimateDetailsIds, @RequestParam("file") final MultipartFile[] files)
-            throws ApplicationException, IOException {
+                    throws ApplicationException, IOException {
+        
+        String mode = "";
+        String workFlowAction = "";
+        LineEstimate newLineEstimate = null;
+        
+        if (request.getParameter("mode") != null)
+            mode = request.getParameter("mode");
+
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+
+        Long approvalPosition = 0l;
+        String approvalComment = "";
+
+        if (request.getParameter("approvalComent") != null)
+            approvalComment = request.getParameter("approvalComent");
+
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+        // For Get Configured ApprovalPosition from workflow history
+        if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0))) {
+            approvalPosition = lineEstimateService.getApprovalPositionByMatrixDesignation(
+                    lineEstimate, approvalPosition, WorksConstants.NEWLINEESTIMATE,
+                    mode, workFlowAction);
+        }
+
+        if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
+                && request.getParameter("approvalPosition") != null
+                && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        
         setDropDownValues(model);
         if (errors.hasErrors())
             return loadViewData(model, request, lineEstimate);
         else {
-            final LineEstimate newLineEstimate = lineEstimateService.update(lineEstimate, removedLineEstimateDetailsIds, files);
+             if (null != workFlowAction)
+                 newLineEstimate = lineEstimateService.updateLineEstimateDetails(lineEstimate, approvalPosition,
+                        approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction,
+                        mode, null, removedLineEstimateDetailsIds, files);
             setDropDownValues(model);
             redirectAttributes.addFlashAttribute("lineEstimate", newLineEstimate);
-            redirectAttributes.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
-            return "redirect:/lineestimate/update/" + lineEstimate.getId();
+            
+            final String pathVars = worksUtils.getPathVars(newLineEstimate, approvalPosition);
+            
+            return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
         }
     }
 
@@ -157,7 +209,22 @@ public class UpdateLineEstimateController {
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final LineEstimate lineEstimate) {
-        final LineEstimate newLineEstimate = getEstimateDocuments(lineEstimate);
+        
+        model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
+
+        model.addAttribute("additionalRule", WorksConstants.NEWLINEESTIMATE);
+        model.addAttribute("currentState", lineEstimate.getCurrentState().getValue());
+
+        prepareWorkflow(model, lineEstimate, new WorkflowContainer());
+        if(lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+            model.addAttribute("mode", "edit");
+        else
+            model.addAttribute("mode", "view");
+
+        model.addAttribute("applicationHistory", lineEstimateService.getHistory(lineEstimate));
+        model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+
+        LineEstimate newLineEstimate = getEstimateDocuments(lineEstimate);
         model.addAttribute("lineEstimate", newLineEstimate);
         if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
