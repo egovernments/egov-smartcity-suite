@@ -45,7 +45,7 @@ $(document).ready(function(){
 	$locationId = $('#locationValue').val();
 	$('#wardInput').trigger('blur');
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
-	$('#subTypeOfWork').trigger('blur');
+	$('#typeofwork').trigger('blur');
 });
 
 $(document).bind("input propertychange", function (e) {
@@ -303,10 +303,13 @@ function replaceBeneficiaryChar() {
 	});
 }
 
-$('#typeofwork').change(function(){
-	   if (this.value === '') {
+
+$('#typeofwork').blur(function(){
+	 if ($('#typeofwork').val() === '') {
+		   $('#subTypeOfWork').empty();
+		   $('#subTypeOfWork').append($('<option>').text('Select from below').attr('value', ''));
 			return;
-		} else {
+			} else {
 			$.ajax({
 				type: "GET",
 				url: "/egworks/lineestimate/getsubtypeofwork",
@@ -326,7 +329,7 @@ $('#typeofwork').change(function(){
 							selected="selected";
 						}
 					}
-				     $('#subTypeOfWork').append($('<option>').text(val.description).attr('value', val.id));
+				     $('#subTypeOfWork').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
 				});
 			});
 		}
@@ -375,7 +378,7 @@ function validateQuantity() {
 	        this.value = val.substring(0, val.length - 1);
 	    }
 	});
-} validateNumberChar
+}
 
 function validateNumberChar() {
 	$( "input[name$='quantity']" ).on("keyup", function(){
