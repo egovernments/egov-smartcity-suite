@@ -1,8 +1,6 @@
+delete from eg_roleaction where actionid  in (select id from eg_action where name in ('CreateMiscReceipts', 'AjaxReceiptAccountDetailTypeService', 'AjaxFinAccDtlsByService', 'AjaxServiceByCategory', 'AjaxFinSubledgerByService', 'AjaxFinMiscByService'));
 
-Insert into egcl_servicecategory (id,name,code,isactive,version,createdby,createddate,lastmodifiedby,lastmodifieddate) values (nextval('SEQ_EG_MODULE'),'Collections','CL',true,0,1,current_timestamp,1,current_timestamp);
-
-Insert into egcl_servicedetails (id,name,serviceurl,isenabled,callbackurl,servicetype,code,fund,fundsource,functionary,vouchercreation,scheme,subscheme,servicecategory,isvoucherapproved,vouchercutoffdate,created_by,created_date,modified_by,modified_date,ordernumber) values (nextval('seq_egcl_servicedetails'),'Collections','/receipts/receipt-createMisc.action',true,'/receipts/receipt-create.action','C','CL',1,null,null,true,null,null,(select id from egcl_servicecategory where code='CL'),true,current_timestamp,1,current_timestamp,1,current_timestamp,null);
-
+delete from eg_action where name in ('CreateMiscReceipts', 'AjaxReceiptAccountDetailTypeService', 'AjaxFinAccDtlsByService', 'AjaxServiceByCategory', 'AjaxFinSubledgerByService', 'AjaxFinMiscByService');
 
 Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'CreateMiscReceipts','/receipts/receipt-newform.action','Receipt=Misc',(select id from eg_module where name='Receipt Services'),1,'Miscellaneous Receipt',true,'collection',0,1,current_timestamp,1,current_timestamp,(select id from eg_module where name='Collection'));
 
