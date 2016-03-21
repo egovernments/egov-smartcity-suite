@@ -48,13 +48,13 @@
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="hdr.select" /></th>
-					<th><spring:message code="lbl.sino" /></th>
-					<th><spring:message code="lineestimate.administartive.sanctionno" /></th>
+					<th><spring:message code="lbl.select" /></th>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.administartivesanctionno" /></th>
 					<th><spring:message code="lbl.estimatenumber" /></th>
-					<th><spring:message code="lineestimate.nameofwork" /></th>
-					<th><spring:message code="lineestimate.createdby" /></th>
-					<th><spring:message code="lineestimate.approvedby" /></th>
+					<th><spring:message code="lbl.nameofwork" /></th>
+					<th><spring:message code="lbl.createdby" /></th>
+					<th><spring:message code="lbl.approvedby" /></th>
 					<th><spring:message code="lbl.estimateamount" /></th>
 				</tr>
 			</thead>
@@ -63,10 +63,10 @@
 	<div class="row">
 		<div class="col-sm-12 text-center">
 			<button type='button' class='btn btn-primary' id="btncreateloa">
-				<spring:message code='btn.createloa' />
+				<spring:message code='lbl.createloa' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lineestimate.btn.close' /></a>
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 </div>

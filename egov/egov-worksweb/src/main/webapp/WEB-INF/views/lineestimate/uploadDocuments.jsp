@@ -52,7 +52,7 @@
 </style>
 <div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 	<div class="panel-heading">
-		<div class="panel-title"><spring:message code="lineestimate.upload.document" /></div>
+		<div class="panel-title"><spring:message code="lbl.uploaddocument" /></div>
 	</div>
 	<c:if test="${lineEstimate.documentDetails != null &&  !lineEstimate.documentDetails.isEmpty()}">
 		<c:forEach items="${lineEstimate.documentDetails }" var="documentDetials">
@@ -77,7 +77,7 @@
 				</tr>
 				<tr>
 					<td align="center">
-						<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lineestimate.btn.addfile" /></button>
+						<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
 					</td>
 				</tr>
 			</tbody>

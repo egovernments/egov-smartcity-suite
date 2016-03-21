@@ -57,8 +57,8 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" class="btn btn-primary" value="Submit"><spring:message code="lineestimate.btn.submit"/></form:button>
-					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lineestimate.btn.close"/></form:button>
+					<form:button type="submit" name="submit" class="btn btn-primary" value="Submit"><spring:message code="lbl.submit"/></form:button>
+					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
 				</div>
 			</div>
 		</form:form>  

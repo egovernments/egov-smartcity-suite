@@ -47,7 +47,7 @@
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.administartive.sanctionno" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.administartivesanctionno" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control"/>
 				<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
@@ -62,19 +62,19 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.fromdate" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionFromDate" class="form-control datepicker"	id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.todate" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctiontodate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionToDate" class="form-control datepicker"	id="v" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionToDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.fund" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fund" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="fund" data-first-option="false" class="form-control" id="fund">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -82,7 +82,7 @@
 				</form:select>
 				<form:errors path="fund" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.function" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.function" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="function" data-first-option="false" name="function" class="form-control" id="function">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -92,7 +92,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.budgethead" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.budgethead" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="budgetHead" data-first-option="false" id="budgetHead" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -100,7 +100,7 @@
 				</form:select>
 				<form:errors path="budgetHead" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.estimateno" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimateno" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="estimateNumber" id="estimateNumber" class="form-control"/>
 				<form:errors path="estimateNumber" cssClass="add-margin error-msg" />

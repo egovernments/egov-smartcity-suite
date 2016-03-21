@@ -42,19 +42,19 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
-		<div class="panel-title"><spring:message code="lineestimate.workdetails" /></div>
+		<div class="panel-title"><spring:message code="lbl.workdetails" /></div>
 	</div>
 	<div class="panel-body">
 		<table class="table table-bordered" id="tblestimate">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.slNo"/></th>
-					<th><spring:message code="lineestimate.nameofwork"/><span class="mandatory"></span></th>
-					<th><spring:message code="lineestimate.estimatedamount"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.slno"/></th>
+					<th><spring:message code="lbl.nameofwork"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.estimatedamount"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.quantity"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.uom"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.beneficiary"/><span class="mandatory"></span></th>
-					<th><spring:message code="lineestimate.action"/></th>
+					<th><spring:message code="lbl.action"/></th>
 				</tr>
 			</thead>
 			<tbody id="lineEstimateDetailsTbl">
@@ -82,7 +82,7 @@
 								<form:errors path="lineEstimateDetails[0].uom" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].beneficiary" id="quantity" name="lineEstimateDetails[0].beneficiary" value="${lineEstimateDetails[0].beneficiary}" data-errormsg="Beneficiary is mandatory!" onkedata-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
+								<form:input path="lineEstimateDetails[0].beneficiary" id="quantity" name="lineEstimateDetails[0].beneficiary" value="${lineEstimateDetails[0].beneficiary}" data-errormsg="Beneficiary is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
 								<form:errors path="lineEstimateDetails[0].beneficiary" cssClass="add-margin error-msg" />
 							</td>
 							<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
@@ -131,7 +131,7 @@
 					</c:forEach>
 				</c:if>
 				<tr>
-					<td colspan="2" class="text-right"><spring:message code="lineestimate.estimate.total" /></td>
+					<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
 					<td></td>
 				</tr>
@@ -140,7 +140,7 @@
 		<div id="documentDetails">
 		</div>
 		<div class="col-sm-12 text-center">
-			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lineestimate.btn.addrow" /></button>
+			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lbl.addrow" /></button>
 		</div>
 	</div>
 </div>

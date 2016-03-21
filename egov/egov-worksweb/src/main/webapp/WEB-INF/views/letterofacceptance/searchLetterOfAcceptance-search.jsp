@@ -53,11 +53,11 @@
 		</div>
 		<div class="panel-body">
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right" for="tags"><spring:message code="milestone.workorder.number" /></label>
+				<label class="col-sm-3 control-label text-right" for="tags"><spring:message code="lbl.search.estimate" /></label>
 				<div class="col-sm-3 add-margin">
 					<input type="workIdentificationNumber" class="form-control" id="tags">
 				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message code="milestone.estimate.department" /> <span class="mandatory"></span></label>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /> <span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="department" data-first-option="false" class="form-control" id="department" required="required">
 						<form:option value="">
@@ -70,21 +70,21 @@
 			</div>
 			<input type="hidden" id="mode" name="mode" value="${mode}" />
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message code="milestone.estimate.estimateNumber" /></label>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimateNumber" /></label>
 				<div class="col-sm-3 add-margin">
 					<form:input path="estimateNumber" class="form-control" />
 				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message code="milestone.search.admin.fromdate" /></label>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
 				<div class="col-sm-3 add-margin">
 					<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'"/>
  				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message code="milestone.search.loanumber" /></label>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 				<div class="col-sm-3 add-margin">
 					<input type="LOANumber" class="form-control" id="LOANumber">
 				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message code="milestone.search.admin.todate" /></label>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctiontodate" /></label>
 				<div class="col-sm-3 add-margin">
 						<input type="adminSanctionToDate" class="form-control datepicker" id="adminSanctionToDate" data-inputmask="'mask': 'd/m/y'" value>
 				</div>
@@ -92,10 +92,10 @@
 		</div>
 		<div align="center">
 			<button type='button' class='btn btn-primary' id="searchLoa">
-				<spring:message code='lbl.search.milestone' />
+				<spring:message code='lbl.search' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lineestimate.btn.close' /></a>
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 </form:form>
@@ -106,11 +106,11 @@
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="milestone.estimate.estimateNumber" /></th>
-					<th><spring:message code="lbl.milestone.date" /></th>
+					<th><spring:message code="lbl.estimateNumber" /></th>
+					<th><spring:message code="lbl.estimate.date" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
-					<th><spring:message code="milestone.workorder.number" /></th>
-					<th><spring:message code="milestone.search.loanumber" /></th>
+					<th><spring:message code="lbl.workidentificationnumber" /></th>
+					<th><spring:message code="lbl.loanumber" /></th>
 					<th><spring:message code="lbl.LOADate" /></th>
 					<th><spring:message code="lbl.workvalue" /></th>
 				</tr>
@@ -118,29 +118,6 @@
 			</table>
 		</div>
 		</div>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
-  <script type="text/javascript"
-	src="<c:url value='/resources/js/letterofacceptance.js'/>"></script>
+		
+<script type="text/javascript" src="<c:url value='/resources/js/searchletterofacceptance.js'/>"></script>
   

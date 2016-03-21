@@ -48,12 +48,12 @@
 	</div>
 	<div class="panel-body custom-form">
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lineestimate.date" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.date" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="lineEstimateDate" name="lineEstimateDate" type="text" class="form-control" value="${lineEstimateDate}" maxlength="12" readonly="true" />
 				<form:errors path="lineEstimateDate" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.executingdepartment" /><span class="mandatory"></span></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required">
 					<form:option value="">
@@ -65,7 +65,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lineestimate.subject" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.subject" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:hidden path="id" name="id" value="${id}" class="form-control table-input hidden-input" />
 				<form:textarea name="subject" path="subject" id="subject" class="form-control" value="${subject}" maxlength="256" required="required"></form:textarea>
@@ -73,12 +73,12 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lineestimate.reference" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reference" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea name="reference" path="reference" id="lineestimate.reference" value="${reference}" class="form-control" maxlength="1024" required="required"></form:textarea>
+				<form:textarea name="reference" path="reference" id="reference" value="${reference}" class="form-control" maxlength="1024" required="required"></form:textarea>
 				<form:errors path="reference" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.description" /><span class="mandatory"></span></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:textarea name="description" path="description" id="description" class="form-control" value="${description}" maxlength="1024" required="required"></form:textarea>
 				<form:errors path="description" cssClass="add-margin error-msg" />
@@ -170,7 +170,8 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.subtypeofwork" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="subTypeOfWork.id" id="subTypeOfWork" class="form-control" >
+			<input type="hidden" id="subTypeOfWorkValue" value="${lineEstimate.subTypeOfWork.id }"/>
+				<form:select path="subTypeOfWork.id" data-first-option="false" id="subTypeOfWork" class="form-control" >
 					<form:option value=""><spring:message code="lbl.select"/></form:option>
 				</form:select>
 				<form:errors path="typeOfWork" cssClass="add-margin error-msg" />
@@ -193,7 +194,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lineestimate.fund" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="fund" data-first-option="false"
 					class="form-control" id="fund" required="required">
@@ -204,7 +205,7 @@
 				</form:select>
 				<form:errors path="fund" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.function" /><span class="mandatory"></span></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.function" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="function" data-first-option="false" name="function" class="form-control" id="function" required="required">
 					<form:option value="">
@@ -216,7 +217,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lineestimate.budgethead" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.budgethead" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="budgetHead" data-first-option="false" id="budgetHead" class="form-control" required="required">
 					<form:option value="">
@@ -228,7 +229,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lineestimate.scheme" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="scheme" data-first-option="false" id="scheme" class="form-control" >
 					<form:option value="">
@@ -239,7 +240,7 @@
 					</c:if>
 				</form:select>
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.subscheme" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="subScheme" data-first-option="false"	id="subScheme" class="form-control">
 					<form:option value="">
