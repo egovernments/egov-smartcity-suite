@@ -253,8 +253,10 @@ public class WorksConstants {
     public static final String FILESTORE_MODULECODE = "WMS";
 
     public static final String WORKORDER = "WorkOrder";
-    
+
     public static final String BOUNDARY_TYPE_WARD = "Ward";
     public static final String HIERARCHY_TYPE_ADMINISTRATION = "ADMINISTRATION";
+
+    public static final String APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION = "ENGINEERINCHARGE_DESIGNATION";
 
 }

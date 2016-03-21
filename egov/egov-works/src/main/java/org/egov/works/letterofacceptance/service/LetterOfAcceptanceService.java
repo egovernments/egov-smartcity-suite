@@ -40,13 +40,21 @@
 package org.egov.works.letterofacceptance.service;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.pims.commons.Designation;
 import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +72,14 @@ public class LetterOfAcceptanceService {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private WorksService worksService;
+
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private DesignationService designationService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -89,6 +105,26 @@ public class LetterOfAcceptanceService {
     public WorkOrder getWorkOrderByWorkOrderNumber(final String workOrderNumber) {
         return letterOfAcceptanceRepository.findByWorkOrderNumberAndEgwStatus_codeNotLike(workOrderNumber,
                 WorksConstants.CANCELLED_STATUS);
+    }
+
+    public String getEngineerInchargeDesignationAppConfigValue() {
+        return worksService.getWorksConfigValue(WorksConstants.APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION);
+    }
+
+    public Long getEngineerInchargeDesignationId() {
+        final String engineerInchargeDesignation = getEngineerInchargeDesignationAppConfigValue();
+        Designation designation = null;
+        Long designationId = null;
+        if (StringUtils.isNotBlank(engineerInchargeDesignation))
+            designation = designationService.getDesignationByName(engineerInchargeDesignation);
+        if (designation != null)
+            designationId = designation.getId();
+        return designationId;
+    }
+
+    public List<Assignment> getEngineerInchargeList(final Long departmentId, final Long designationId) {
+        return assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(
+                departmentId, designationId, new Date());
     }
 
 }

@@ -44,8 +44,6 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.DesignationService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceNumberGenerator;
@@ -73,10 +71,6 @@ public class CreateLetterOfAcceptanceController {
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
     @Autowired
-    private AssignmentService assignmentService;
-    @Autowired
-    private DesignationService designationService;
-    @Autowired
     private LetterOfAcceptanceNumberGenerator letterOfAcceptanceNumberGenerator;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
@@ -84,13 +78,7 @@ public class CreateLetterOfAcceptanceController {
             final Model model, final HttpServletRequest request) {
         final String estimateNumber = request.getParameter("estimateNumber");
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
-
-        // TODO: Replace designation hard coding by App config value
-        model.addAttribute("engineerInchargeList", assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(
-                lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId(),
-                designationService.getDesignationByName("Assistant engineer").getId(), new Date()));
-
-        setDropDownValues(model);
+        setDropDownValues(model, lineEstimateDetails);
         workOrder.setWorkOrderDate(new Date());
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("workOrder", workOrder);
@@ -98,21 +86,25 @@ public class CreateLetterOfAcceptanceController {
         return "createLetterOfAcceptance-form";
     }
 
-    private void setDropDownValues(final Model model) {
-
+    private void setDropDownValues(final Model model, final LineEstimateDetails lineEstimateDetails) {
+        model.addAttribute("engineerInchargeList",
+                letterOfAcceptanceService.getEngineerInchargeList(
+                        lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId(),
+                        letterOfAcceptanceService.getEngineerInchargeDesignationId()));
     }
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
     public String create(@ModelAttribute("workOrder") final WorkOrder workOrder,
             final Model model, final BindingResult errors)
                     throws ApplicationException, IOException {
+        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
 
         // TODO:Fixme - workOrder.getEstimateNumber() - Replace with WIN from line estimate
         workOrder.setWorkOrderNumber(
                 letterOfAcceptanceNumberGenerator.generateLetterOfAcceptanceNumber(workOrder.getEstimateNumber()));
 
         if (errors.hasErrors()) {
-            setDropDownValues(model);
+            setDropDownValues(model, lineEstimateDetails);
             return "createLetterOfAcceptance-form";
         } else {
             final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder);
