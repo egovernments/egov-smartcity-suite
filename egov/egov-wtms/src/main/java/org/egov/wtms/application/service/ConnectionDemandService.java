@@ -519,7 +519,7 @@ public class ConnectionDemandService {
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
             && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) == 1
-            && ((demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) == -1)|| (demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) == 1))) {
+            && ((demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) == -1)|| (demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) == 0))) {
                 demandObj.setBaseDemand(getTotalAmountForBaseDemand(demanddetailBean, demandObj.getBaseDemand()));
                 demandObj.setAmtCollected(getTotalCollectedAmountForDemand(demanddetailBean,
                         demandObj.getAmtCollected()));
