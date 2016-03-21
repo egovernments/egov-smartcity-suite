@@ -150,7 +150,8 @@
 			document.getElementById("bankbranch").value = brId;
 			populatebankaccount({
 				bankId : bankId,
-				branchId : brId + '&asOnDate=' + date
+				branchId : brId + '&asOnDate=' + date,
+				type : 'ADVICE'
 			});
 		}
 	</script>

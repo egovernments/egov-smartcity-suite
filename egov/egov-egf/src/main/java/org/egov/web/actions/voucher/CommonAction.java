@@ -1665,20 +1665,23 @@ public class CommonAction extends BaseFormAction {
                             "egf_instrumentvoucher eiv,egf_instrumentheader ih,egw_status egws ")
                     .append("where ph.voucherheaderid=vh.id and coa.id=bankaccount.glcodeid and vh.id=eiv.VOUCHERHEADERID and ")
                     .append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' ")
-                    .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque='1' ")
+                    .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)=:type) and ispaycheque='1' ")
                     .append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ")
                     .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
                             + branchId + "  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
 
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
+            if(type==null || type.equalsIgnoreCase("")) 
+                type = "CHEQUE";
             final List<Object[]> bankAccounts = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
                     .setDate("date", getAsOnDate())
+                    .setString("type", type)
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[1].toString();
+                final String accountNumberAndType = account[0].toString() + "-" + account[4]!=null?account[4].toString():"";
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0].toString());

@@ -243,17 +243,17 @@ function validateMIS(){
 			return  true;
 }
 function populateApproverDept(dept){
-	
+}
+	/* 
 		if(null != document.getElementById('departmentid') &&  null != document.getElementById('approverUserId')){
 			if(dept.options[dept.selectedIndex].value != ""){
 				document.getElementById('departmentid').value = dept.options[dept.selectedIndex].value;
 			}else{
 				document.getElementById('departmentid').value = -1;
-			}
+			} */
 		
 			
-		}
-if(null != document.getElementById('departmentid')){
+/* if(null != document.getElementById('departmentid')){
 		<s:if test="%{isFieldMandatory('department')}"> 
 				document.getElementById('departmentid').disabled="true";
 				populateUser();
@@ -261,6 +261,7 @@ if(null != document.getElementById('departmentid')){
 		<s:else>
 			populateDesg();
 		</s:else>
-	}
-}
+	} */
+
+			
 	</script>
