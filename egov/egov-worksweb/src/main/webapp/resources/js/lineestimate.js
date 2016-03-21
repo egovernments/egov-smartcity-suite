@@ -39,10 +39,13 @@
 #-------------------------------------------------------------------------------*/
 $deletedAmt = 0;
 $locationId = 0;
+$subTypeOfWorkId = 0;
 $(document).ready(function(){
 	getLineEstimateDate();
 	$locationId = $('#locationValue').val();
 	$('#wardInput').trigger('blur');
+	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
+	$('#subTypeOfWork').trigger('blur');
 });
 
 $(document).bind("input propertychange", function (e) {
@@ -245,7 +248,7 @@ $('#wardInput').blur(function(){
 		} else {
 			$.ajax({
 				type: "GET",
-				url: "/egworks/lineestimate/ajax-getLocation",
+				url: "/egworks/lineestimate/ajax-getlocation",
 				cache: true,
 				dataType: "json",
 				data:{'id' : $('#ward').val()}
@@ -309,12 +312,20 @@ $('#typeofwork').change(function(){
 				url: "/egworks/lineestimate/getsubtypeofwork",
 				cache: true,
 				dataType: "json",
-				data:{'id' : this.value}
+				data:{'id' : $('#typeofwork').val()}
 			}).done(function(value) {
 				console.log(value);
 				$('#subTypeOfWork').empty();
 				$('#subTypeOfWork').append($("<option value=''>Select from below</option>"));
 				$.each(value, function(index, val) {
+					var selected="";
+					if($subTypeOfWorkId)
+					{
+						if($subTypeOfWorkId==val.id)
+						{
+							selected="selected";
+						}
+					}
 				     $('#subTypeOfWork').append($('<option>').text(val.description).attr('value', val.id));
 				});
 			});
@@ -359,6 +370,17 @@ function validateQuantity() {
 	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
 	        val = this.value;
 	    
+	    if(!valid){
+	        console.log("Invalid input!");
+	        this.value = val.substring(0, val.length - 1);
+	    }
+	});
+} validateNumberChar
+
+function validateNumberChar() {
+	$( "input[name$='quantity']" ).on("keyup", function(){
+		var valid = /^[0-9\\\/.-]*$/.test(this.value),
+	        val = this.value;
 	    if(!valid){
 	        console.log("Invalid input!");
 	        this.value = val.substring(0, val.length - 1);

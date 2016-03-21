@@ -97,7 +97,7 @@ public class AjaxLineEstimateController {
         return jsonResponse;
     }
 
-    @RequestMapping(value = "/ajax-getLocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/ajax-getlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
         return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
     }
@@ -109,7 +109,7 @@ public class AjaxLineEstimateController {
 
     @RequestMapping(value = "/ajax-getward", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> findWard(@RequestParam("name") final String name) {
-        List<Boundary> boundaries = boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType(WorksConstants.WORKS_LINEESTIMATE_WARD,WorksConstants.WORKS_LINEESTIMATE_ADMINSTRATION,name); 
+        List<Boundary> boundaries = boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType(WorksConstants.WORKS_BOUNDARY_TYPE,WorksConstants.WORKS_HIERARCHY_TYPE,name); 
         return boundaries;
     }
 
