@@ -191,5 +191,30 @@
 	<put-attribute name="page-title" value="title.approvebudget.search" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/approvebudget/approvebudget-search.jsp"/>
 </definition>
+<definition name="function-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.function.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/function/function-new.jsp"/>
+</definition>
+
+<definition name="function-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.function.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/function/function-view.jsp"/>
+</definition>
+
+<definition name="function-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.function.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/function/function-edit.jsp"/>
+</definition>
+
+<definition name="function-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.function.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/function/function-result.jsp"/>
+</definition>
+
+<definition name="function-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.function.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/function/function-search.jsp"/>
+</definition>
+
 
 </tiles-definitions>
