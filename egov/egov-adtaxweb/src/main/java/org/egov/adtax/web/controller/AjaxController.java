@@ -98,8 +98,8 @@ public class AjaxController {
                         return BigDecimal
                                 .valueOf(rate.getAmount())
                                 .multiply(
-                                        BigDecimal.valueOf(measurement).divide(unitRate, 2, RoundingMode.HALF_UP)
-                                                .setScale(0, RoundingMode.UP)).setScale(2, BigDecimal.ROUND_HALF_UP)
+                                        BigDecimal.valueOf(measurement).divide(unitRate, 4, RoundingMode.HALF_UP)
+                                                .setScale(0, RoundingMode.UP)).setScale(4, BigDecimal.ROUND_HALF_UP)
                                 .doubleValue();
                     else
                         return Double.valueOf(0);
