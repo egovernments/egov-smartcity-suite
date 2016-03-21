@@ -574,8 +574,5 @@
     <bean id="subSchemeService" class="org.egov.services.masters.SubSchemeService" >
       <constructor-arg index="0" value="org.egov.commons.SubScheme" />
     </bean>
-    <bean id="natureOfWorkService" class="org.egov.works.master.services.NatureOfWorkService">
-      <constructor-arg index="0" value="org.egov.works.models.masters.NatureOfWork" />
-    </bean>
     <bean id="lineEstimateNumberGenerator" class="org.egov.works.lineestimate.service.LineEstimateNumberGenerator"/>
 </beans>
