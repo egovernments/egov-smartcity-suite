@@ -1819,6 +1819,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         this.persist(receiptHeader);
         LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
         updateBillingSystemWithReceiptInfo(receiptHeader);
+        this.getSession().flush();
         LOGGER.info("Billing system updated with receipt info");
     }
 }
