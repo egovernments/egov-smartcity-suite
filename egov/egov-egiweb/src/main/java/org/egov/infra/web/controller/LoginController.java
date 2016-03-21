@@ -42,6 +42,7 @@ package org.egov.infra.web.controller;
 import org.egov.infra.admin.common.service.IdentityRecoveryService;
 import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.service.LocationService;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -66,6 +67,9 @@ public class LoginController {
     @Autowired
     private ValidatorUtils validatorUtils;
 
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
     @RequestMapping(value = "/password/recover", method = RequestMethod.POST)
     public String sendPasswordRecoveryURL(@RequestParam final String identity, @RequestParam final String originURL,
                                           final RedirectAttributes redirectAttrib) {
@@ -88,7 +92,7 @@ public class LoginController {
         }
 
         if (!validatorUtils.isValidPassword(newPassword)) {
-            redirectAttrib.addAttribute("error", "err.login.pwd.length");
+            redirectAttrib.addAttribute("error", "usr.pwd.strength.msg."+applicationProperties.passwordStrength());
             return "redirect:/login/password/reset?token=" + token;
         }
 
