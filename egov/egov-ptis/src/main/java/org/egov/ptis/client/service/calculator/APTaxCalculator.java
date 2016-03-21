@@ -453,7 +453,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 depreciationPct = BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct());
             }
         } else {
-            if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER)) {
+            if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER) && floor.getPropertyUsage().getUsageCode().equals(USAGE_RESIDENTIAL)) {
                 depreciationPct = RESD_OWNER_DEPRECIATION;
             } else {
                 depreciationPct = BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct());
