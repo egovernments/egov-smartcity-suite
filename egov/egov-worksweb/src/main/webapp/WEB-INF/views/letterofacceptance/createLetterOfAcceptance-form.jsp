@@ -60,11 +60,11 @@
 			</div>	
 			<div class="row">
 				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" class="btn btn-primary" value="Save"><spring:message code="lbl.save"/></form:button>
+					<form:button type="submit" name="submit" class="btn btn-primary" value="Save" ><spring:message code="lbl.save"/></form:button>
 					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
 				</div>
 			</div>
 		</form:form>  
 	</div>
 </div>
-<script src="<c:url value='/resources/js/letterofacceptance.js'/>"></script>
+<script src="<c:url value='/resources/js/letterofacceptance.js?rnd=${app_release_no}'/>"></script>

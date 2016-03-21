@@ -67,11 +67,10 @@
                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">+ &nbsp;<span class="caret"></span></button>
                <ul class="dropdown-menu">
                   <li><a href="#">+</a></li>
-                  <li><a href="#">-</a></li>
-                  
+                  <li><a href="#">-</a></li>                  
                </ul>
             </div>
-            <form:input path="tenderFinalizedPercentage" name="tenderFinalizedPercentage" type="text" class="form-control patternvalidation" maxlength="8" />
+            <form:input path="tenderFinalizedPercentage" name="tenderFinalizedPercentage" id="tenderFinalizedPercentage" type="text" class="form-control patternvalidation" maxlength="8" />
 			<form:errors path="tenderFinalizedPercentage" cssClass="add-margin error-msg" />
         </div> 
 	</div>
@@ -80,7 +79,7 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.agreement.amount" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		 <form:input path="workOrderAmount" name="workOrderAmount" type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" required="required"/>
+		 <form:input path="workOrderAmount" name="workOrderAmount" id="workOrderAmount"  type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" required="required"/>
 		 <form:errors path="workOrderAmount" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.dateofagreement" /></label>
@@ -94,12 +93,11 @@
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofagency" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 0;">
 		<div class="input-group">
-			<input id="contractorSearch" name="contractorSearch" min="3" class="form-control" required="required" type="text" > 
+			<input id="contractorSearch" name="contractorSearch" class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="50" required="required" type="text" > 
 			<span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
-			<%-- <form:input path="contractor" id="contractor" class="form-control"/> --%>
 			<form:hidden path="contractor.id" name="contractor" id="contractor" />
-		    <form:errors path="contractor.id" cssClass="add-margin error-msg" />
-		</div>
+		</div>		
+		<form:errors path="contractor.id" cssClass="add-margin error-msg" />  
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor.code" /></label>
 	<div class="col-sm-3 add-margin">
@@ -130,12 +128,12 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.emd.amount" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="emdAmountDeposited" name="emdAmountDeposited" type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" />
+		<form:input path="emdAmountDeposited" name="emdAmountDeposited" id="emdAmountDeposited" type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" />
 		<form:errors path="emdAmountDeposited" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contract.period" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="contractPeriod" name="contractPeriod" type="text" class="form-control text-right patternvalidation" maxlength="4" data-pattern="number" required="required" />
+		<form:input path="contractPeriod" name="contractPeriod" id="contractPeriod" type="text" class="form-control text-right patternvalidation" maxlength="4" data-pattern="number" required="required" />
 		<form:errors path="contractPeriod" cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -143,13 +141,10 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.dlp" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="defectLiabilityPeriod" name="defectLiabilityPeriod" type="text" class="form-control text-right patternvalidation" maxlength="4" data-pattern="decimalvalue" required="required" />
+		<form:input path="defectLiabilityPeriod" name="defectLiabilityPeriod" id="defectLiabilityPeriod" type="text" class="form-control text-right patternvalidation" maxlength="4" data-pattern="decimalvalue" required="required" />
 		<form:errors path="defectLiabilityPeriod" cssClass="add-margin error-msg" />
 	</div> 
-</div>
-
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.engineer.incharge" /><span class="mandatory"></span></label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.engineer.incharge" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="engineerIncharge" data-first-option="false" id="engineerIncharge" class="form-control" required="required">
 			<form:option value="">
@@ -161,4 +156,4 @@
 		</form:select>
 		<form:errors path="engineerIncharge" cssClass="add-margin error-msg" />
 	</div>
-</div>	
+</div>

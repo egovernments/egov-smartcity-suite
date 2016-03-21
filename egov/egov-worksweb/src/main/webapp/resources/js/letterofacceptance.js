@@ -67,4 +67,37 @@ $(document).ready(function(){
 		});
 		typeaheadWithEventsHandling(contractorSearch_typeahead,
 		'#contractor');
+		
+		if($('#tenderFinalizedPercentage').val() <= 0) 
+			$('#tenderFinalizedPercentage').val('');
+		if($('#workOrderAmount').val() <= 0) 
+			$('#workOrderAmount').val('');
+		if($('#securityDeposit').val() <= 0) 
+			$('#securityDeposit').val('');
+		if($('#emdAmountDeposited').val() <= 0) 
+			$('#emdAmountDeposited').val('');
+		if($('#defectLiabilityPeriod').val() <= 0) 
+			$('#defectLiabilityPeriod').val('');
+	
+		$("form").submit(function() {
+			if($('form').valid())	{
+				$('.loader-class').modal('show', {backdrop: 'static'});
+				loadDefaultsOnSubmit();
+			}
+			else 
+				$('.loader-class').modal('hide');
+		});
+		
+		function loadDefaultsOnSubmit()	{
+			if($('#tenderFinalizedPercentage').val() == '' || $('#tenderFinalizedPercentage').val() < 0) 
+				$('#tenderFinalizedPercentage').val(0);
+			if($('#workOrderAmount').val() == '' || $('#workOrderAmount').val() < 0) 
+				$('#workOrderAmount').val(0);
+			if($('#securityDeposit').val() == '' || $('#securityDeposit').val() < 0) 
+				$('#securityDeposit').val(0);
+			if($('#emdAmountDeposited').val() == '' || $('#emdAmountDeposited').val() < 0) 
+				$('#emdAmountDeposited').val(0);
+			if($('#defectLiabilityPeriod').val() == '' || $('#defectLiabilityPeriod').val() < 0) 
+				$('#defectLiabilityPeriod').val(0);
+		 }
 });
