@@ -2129,13 +2129,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             throw new ValidationException("", "exclude_status_forbudget_actual is not defined in AppConfig");
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-                .append(" (select bg1.id as id,bg1.accounttype as accounttype ,case when c1.glcode is  NULL then -1 else to_number(c1.glcode,'999999999') end "
-                        +
-                        "as mincode,case when c2.glcode is null then  '999999999' else c2.glcode end as maxcode,case when c3.glcode is null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
-                        +
-                        "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-                        +
-                        "c2.id=bg1.maxcode left outer join chartofaccounts  c3 on c3.id=bg1.majorcode )  bg ");
+                .append(" (select bg1.id as id,bg1.accounttype as accounttype ,c1.glcode as mincode, c2.glcode as maxcode,c3.glcode as majorcode "
+                        +"from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
+                        +"c2.id=bg1.maxcode left outer join chartofaccounts  c3 on c3.id=bg1.majorcode )  bg ");
         final String voucherstatusExclude = list.get(0).getValue();
         StringBuffer query = new StringBuffer();
         query = query
@@ -2155,7 +2151,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + toVoucherDate
                         + ",'dd/MM/yyyy') "
                         + miscQuery
-                        + " and ((gl.glcode between cast(bg.mincode as char) and cast(bg.maxcode as char)) or gl.glcode=cast(bg.majorcode as char)) group by bd.id"
+                        + " and (gl.glcode =bg.mincode or gl.glcode=bg.majorcode ) group by bd.id"
                         +
                         " union "
                         +
@@ -2175,7 +2171,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + toVoucherDate
                         + ",'dd/MM/yyyy') "
                         + miscQuery
-                        + " and ((gl.glcode between cast(bg.mincode as char) and cast(bg.maxcode as char)) or gl.glcode=cast(bg.majorcode as char)) group by bd.id");
+                        + " and (gl.glcode = bg.mincode  or gl.glcode=bg.majorcode ) group by bd.id");
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
 
         return result;
