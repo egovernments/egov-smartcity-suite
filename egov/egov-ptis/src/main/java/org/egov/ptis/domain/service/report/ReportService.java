@@ -724,7 +724,7 @@ public class ReportService {
     }
 
     private void buildCollectionReportForUlbWiseDCb(List<BillCollectorDailyCollectionReportResult> listBcPayment) {
-
+        Double percentage =0.0;
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             if (bcResult.getArrears_demand() == null)
@@ -754,8 +754,11 @@ public class ReportService {
                     + bcResult.getArrears_demand_collection());
             bcResult.setCummulative_total_CollectionInterest(bcResult.getCurrent_penalty_collection() 
                     + bcResult.getArrears_penalty_collection()); 
-            bcResult.setCummulative_total_CollectionPercentage(BigDecimal.valueOf((bcResult.getCummulative_total_Collection()*100)/bcResult.getTarget_total_demand()));
-            bcResult.setCummulative_total_CollectionInterestPercentage(BigDecimal.valueOf((bcResult.getCummulative_total_CollectionInterest()*100)/bcResult.getTarget_total_demandInterest()));
+            
+            percentage=(bcResult.getCummulative_total_Collection()*100)/bcResult.getTarget_total_demand();
+            bcResult.setCummulative_total_CollectionPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage));
+            percentage=(bcResult.getCummulative_total_CollectionInterest()*100)/bcResult.getTarget_total_demandInterest();
+            bcResult.setCummulative_total_CollectionInterestPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage)); 
 
             bcResult.setBalance_arrearTax(bcResult.getArrears_demand() - bcResult.getArrears_demand_collection());
             bcResult.setBalance_arrearInterest(bcResult.getArrears_penalty() - bcResult.getArrears_penalty_collection());
