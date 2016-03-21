@@ -254,7 +254,7 @@ public class WorksConstants {
 
     public static final String WORKORDER = "WorkOrder";
     
-    public static final String WORKS_LINEESTIMATE_WARD = "Ward";
-    public static final String WORKS_LINEESTIMATE_ADMINSTRATION = "ADMINISTRATION";
+    public static final String BOUNDARY_TYPE_WARD = "Ward";
+    public static final String HIERARCHY_TYPE_ADMINISTRATION = "ADMINISTRATION";
 
 }
