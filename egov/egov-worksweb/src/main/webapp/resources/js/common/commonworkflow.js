@@ -116,6 +116,12 @@ function validateWorkFlowApprover(name) {
 	document.getElementById("workFlowAction").value = name;
 	var approverPosId = document.getElementById("approvalPosition");
 	var rejectbutton = document.getElementById("workFlowAction").value;
+	if (rejectbutton != null && rejectbutton == 'Submit') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+	}
 	if (rejectbutton != null && rejectbutton == 'Reject') {
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
@@ -127,6 +133,8 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');
+		
+		return confirm($('#confirm').val());
 	}
 	if (rejectbutton != null && rejectbutton == 'Forward') {
 		$('#approvalDepartment').attr('required', 'required');
@@ -136,6 +144,15 @@ function validateWorkFlowApprover(name) {
 	}
 	if (rejectbutton != null && rejectbutton == 'Approve') {
 		$('#approvalComent').removeAttr('required');
+		
+		var adminSanctionDate = $('#adminSanctionDate').val();
+		var technicalSanctionDate = $('#technicalSanctionDate').val()
+		
+		if(adminSanctionDate > technicalSanctionDate) {
+			bootbox.alert($('#errorTechDate').val());
+			$('#technicalSanctionDate').val("");
+			return false;
+		}
 
 		var message = $('#errorActualAmount').val();
 		var flag = false;
@@ -162,15 +179,6 @@ function validateWorkFlowApprover(name) {
 		}
 	}
 
-	if (rejectbutton != null && rejectbutton == 'Reset') {
-		$('#approvalComent').val("");
-
-		$("input[name$='actualEstimateAmount']").each(function() {
-			this.value = "";
-		});
-		$('#technicalSanctionNumber').val("");
-		$('#technicalSanctionDate').val("");
-	}
 	document.forms[0].submit;
 	return true;
 }

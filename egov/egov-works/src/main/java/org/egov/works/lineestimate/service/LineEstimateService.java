@@ -54,7 +54,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
@@ -84,6 +83,7 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,8 +129,6 @@ public class LineEstimateService {
     @Autowired
     private AssignmentService assignmentService;
     
-    private final AssignmentRepository assignmentRepository;
-    
     @Autowired
     private SecurityUtils securityUtils;
     
@@ -146,11 +144,9 @@ public class LineEstimateService {
 
     @Autowired
     public LineEstimateService(final LineEstimateRepository lineEstimateRepository,
-            final LineEstimateDetailsRepository lineEstimateDetailsRepository,
-            final AssignmentRepository assignmentRepository) {
+            final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
         this.lineEstimateRepository = lineEstimateRepository;
         this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
-        this.assignmentRepository = assignmentRepository;
     }
 
     public LineEstimate getLineEstimateById(final Long id) {
@@ -305,7 +301,7 @@ public class LineEstimateService {
             if(lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy() != null) {
                 criteria.add(Restrictions.le("createdBy.id", lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
             }
-            criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
+            //criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
@@ -346,6 +342,8 @@ public class LineEstimateService {
                         result.setNameOfWork(led.getNameOfWork());
                         if(le.getAdminSanctionBy() != null)
                             result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
+                        result.setActualEstimateAmount(led.getActualEstimateAmount());
+                        result.setCurrentOwner(worksUtils.getApproverName(le.getState().getOwnerPosition().getId()));
                         lineEstimateForLoaSearchResults.add(result);
                     }
                 }
@@ -357,6 +355,9 @@ public class LineEstimateService {
                     result.setEstimateAmount(led.getEstimateAmount());
                     result.setEstimateNumber(led.getEstimateNumber());
                     result.setNameOfWork(led.getNameOfWork());
+                    result.setActualEstimateAmount(led.getActualEstimateAmount());
+                    if(le.getState().getOwnerPosition() != null)
+                        result.setCurrentOwner(worksUtils.getApproverName(le.getState().getOwnerPosition().getId()));
                     if(le.getAdminSanctionBy() != null)
                         result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
                     lineEstimateForLoaSearchResults.add(result);
@@ -449,10 +450,16 @@ public class LineEstimateService {
             final String workFlowAction, final String mode, final ReportOutput reportOutput,
             final String removedLineEstimateDetailsIds,
             final MultipartFile[] files) throws ValidationException, IOException {
-        lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
-
-        LineEstimate updatedLineEstimate = update(lineEstimate, removedLineEstimateDetailsIds, files);
+        LineEstimate updatedLineEstimate = null; 
         
+        if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
+            updatedLineEstimate = update(lineEstimate, removedLineEstimateDetailsIds, files);
+            lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
+        } else {
+            updatedLineEstimate = lineEstimateRepository.save(lineEstimate);
+            lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
+        }
+
         createLineEstimateWorkflowTransition(updatedLineEstimate,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
 
@@ -464,36 +471,43 @@ public class LineEstimateService {
         if (null != lineEstimate && null != lineEstimate.getStatus()
                 && null != lineEstimate.getStatus().getCode()) {
             if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString())
-                    && lineEstimate.getState() != null && workFlowAction.equals("Submit"))
-                lineEstimate.setStatus(worksUtils.getStatusByCodeAndModuleType(
-                        LineEstimateStatus.CHECKED.toString(), WorksConstants.MODULETYPE));
+                    && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE, 
+                        LineEstimateStatus.CHECKED.toString()));
             else if (lineEstimate.getStatus().getCode()
-                    .equals(LineEstimateStatus.CHECKED.toString()))
-                lineEstimate.setStatus(worksUtils.getStatusByCodeAndModuleType(
-                        LineEstimateStatus.BUDGET_SANCTIONED.toString(), WorksConstants.MODULETYPE));
+                    .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE, 
+                        LineEstimateStatus.BUDGET_SANCTIONED.toString()));
             else if (lineEstimate.getStatus().getCode()
-                    .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()))
-                lineEstimate.setStatus(worksUtils.getStatusByCodeAndModuleType(
-                        LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(), WorksConstants.MODULETYPE));
+                    .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE, 
+                        LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
             else if (lineEstimate.getStatus().getCode()
-                    .equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())) {
-                lineEstimate.setStatus(worksUtils.getStatusByCodeAndModuleType(
-                        LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.MODULETYPE));
+                    .equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE, 
+                        LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
             }
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
-                lineEstimate.setStatus(worksUtils.getStatusByCodeAndModuleType(
-                        LineEstimateStatus.CREATED.toString(), WorksConstants.MODULETYPE));
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE, 
+                        LineEstimateStatus.REJECTED.toString()));
             }
             else if(lineEstimate.getStatus().getCode()
-                    .equals(LineEstimateStatus.CREATED.toString()) && workFlowAction.equals(WorksConstants.CANCEL_ACTION)) {
-                lineEstimate.setStatus(worksUtils.getStatusByCodeAndModuleType(
-                        LineEstimateStatus.CANCELLED.toString(), WorksConstants.MODULETYPE));
+                    .equals(LineEstimateStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.CANCEL_ACTION)) {
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE, 
+                        LineEstimateStatus.CANCELLED.toString()));
+            }
+            else if(lineEstimate.getStatus().getCode()
+                    .equals(LineEstimateStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.FORWARD_ACTION)) {
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE, 
+                        LineEstimateStatus.CREATED.toString()));
             }
         }
     }
 
     public List<User> getLineEstimateCreatedByUsers() {
-        List<LineEstimate> lineEstimates = lineEstimateRepository.findAll();
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class);
+        criteria.add(Restrictions.isNotNull("technicalSanctionNumber"));
+        List<LineEstimate> lineEstimates = criteria.list();
         List<User> users = new ArrayList<User>();
         for(LineEstimate le : lineEstimates) {
             if(users.isEmpty())
@@ -508,10 +522,16 @@ public class LineEstimateService {
     }
 
     public List<Department> getUserDepartments(User currentUser) {
-        List<Assignment> assignments = assignmentRepository.findByEmployeeAndGivenDate(currentUser.getId(), new Date());
+        List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(currentUser.getId(), new Date());
         List<Department> departments = new ArrayList<Department>();
-        for(Assignment assignment : assignments)
-            departments.add(assignment.getDepartment());
+        for(Assignment assignment : assignments){
+            if(departments.isEmpty())
+                departments.add(assignment.getDepartment());
+            for(Department d : departments) {
+                if(!d.getName().equals(assignment.getDepartment().getName()))
+                    departments.add(assignment.getDepartment());
+            }
+        }
         return departments;
     }
     
@@ -537,9 +557,6 @@ public class LineEstimateService {
         }
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
-                lineEstimate.setStatus(worksUtils.getStatusByCodeAndModuleType(
-                        LineEstimateStatus.CREATED.toString(), WorksConstants.MODULETYPE));
-
                 lineEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             } else {
@@ -550,14 +567,15 @@ public class LineEstimateService {
                         .withOwner(wfInitiator.getPosition())
                         .withNatureOfTask(natureOfwork);
             }
-        } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+        } /*else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             final String stateValue = WorksConstants.WF_STATE_CANCELLED;
+            pos = positionMasterService.getPositionById(approvalPosition);
             lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator.getPosition())
+                    .withOwner(pos)
                     .withNatureOfTask(natureOfwork);
-        } else {
+        }*/ else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
             WorkFlowMatrix wfmatrix = null;
@@ -567,14 +585,22 @@ public class LineEstimateService {
                 lineEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+                        .withNatureOfTask(natureOfwork);
+            } else if(WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+                final String stateValue = WorksConstants.WF_STATE_CANCELLED;
+                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
+                        null, additionalRule, lineEstimate.getCurrentState().getValue(), null);
+                lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent)
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+                        .withNatureOfTask(natureOfwork);
             }
         }
         if (LOG.isDebugEnabled())

@@ -11,6 +11,6 @@ public enum Beneficiary {
     
     @Override
     public String toString() {
-        return StringUtils.replace("_", "_", "/");
+        return StringUtils.replace(name(), "_", "/");
     }
 }

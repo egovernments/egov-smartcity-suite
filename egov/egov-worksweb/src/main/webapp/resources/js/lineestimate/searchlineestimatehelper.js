@@ -72,7 +72,7 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
-					$('td:eq(10)',row).html(parseFloat(Math.round(data.totalAmount * 100) / 100).toFixed(2));
+					$('td:eq(9)',row).html(parseFloat(Math.round(data.totalAmount * 100) / 100).toFixed(2));
 					return row;
 				},
 				aaSorting: [],				
@@ -85,10 +85,9 @@ function callAjaxSearch() {
 					"data" : "function", "sClass" : "text-left"} ,{ 
 					"data" : "budgetHead", "sClass" : "text-left"} ,{
 					"data" : "createdBy", "sClass" : "text-left"} ,{
-					"data" : "approvedBy", "sClass" : "text-left"} ,{
 					"data" : "status", "sClass" : "text-left"} ,{
 					"data" : "totalAmount", "sClass" : "text-right"}, {
-					"data" : "", "target":-1, "sClass" : "text-left","defaultContent": '<select id="actionDropdown" class="form-control"><option value="">Select from below</option><option value="1">View Lineestimate</option><option value="2">View PDF</option><option value="3">View Workflow history</option><option value="4">View Documents</option></select>'
+					"data" : "", "target":-1, "sClass" : "text-left","defaultContent": '<select id="actionDropdown" class="form-control"><option value="">Select from below</option><option value="1">View Line Estimate</option><option value="2">View PDF</option></select>'
 					}]				
 				});
 			}

@@ -87,6 +87,7 @@ function callAjaxSearch() {
 					if(data.adminSanctionNumber != null)
 						$('td:eq(2)',row).html('<a href="/egworks/lineestimate/update/'+ data.id +'"> '+ data.adminSanctionNumber + '</a>');
 					$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
+					$('td:eq(9)',row).html(parseFloat(Math.round(data.actualEstimateAmount * 100) / 100).toFixed(2));
 					return row;
 				},
 				aaSorting: [],				
@@ -99,6 +100,7 @@ function callAjaxSearch() {
 					"data" : "currentOwner", "sClass" : "text-left"} ,{
 					"data" : "createdBy", "sClass" : "text-left"} ,{
 					"data" : "adminSanctionBy", "sClass" : "text-left"}, {
+					"data" : "", "sClass" : "text-right", "sType" : "decimal"}, {
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"
 					}]				
 				});

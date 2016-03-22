@@ -40,13 +40,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title"><spring:message code="lbl.techsanctiondetails" /></div>
 	</div>
-	<input type="hidden" id="errorTechnDate" value="<spring:message code='error.technicalsanctiondate' />" />
+	<input type="hidden" id="errorTechDate" value="<spring:message code='error.technicalsanctiondate' />" />
 	<input type="hidden" id="errorActualAmount" value="<spring:message code='error.actualamount' />" />
 	<input type="hidden" id="errorActualAmountContinued" value="<spring:message code='error.actualamount.continued' />" />
+	<input type="hidden" id="adminSanctionDate" value='<fmt:formatDate value="${lineEstimate.adminSanctionDate }" pattern="dd/MM/yyyy"/>' />
 	<div class="panel-body">
 		<table class="table table-bordered" id="tblestimate">
 			<thead>
@@ -55,7 +57,7 @@
 					<th><spring:message code="lbl.technicalsanctiondate"/><span class="mandatory"></span></th>
 				</tr>
 			</thead>
-			<tbody >
+			<tbody>
 				<tr>
 					<td>
 						<form:input path="technicalSanctionNumber" id="technicalSanctionNumber" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="Technical Sanction Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="32" required="required" />

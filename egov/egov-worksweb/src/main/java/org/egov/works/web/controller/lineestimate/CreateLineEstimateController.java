@@ -50,6 +50,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -135,6 +136,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController{
     
     @Autowired
     private ResourceBundleMessageSource messageSource;
+    
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -175,8 +179,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController{
         }
         else {
             if (lineEstimate.getState() == null)
-                lineEstimate.setStatus(worksUtils.getStatusByCodeAndModuleType(
-                        LineEstimateStatus.CREATED.toString(), WorksConstants.MODULETYPE));
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE, 
+                        LineEstimateStatus.CREATED.toString()));
             
             Long approvalPosition = 0l;
             String approvalComment = "";

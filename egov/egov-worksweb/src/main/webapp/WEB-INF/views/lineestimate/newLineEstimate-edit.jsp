@@ -53,9 +53,7 @@
 					<c:if test="${mode != 'view' }">
 						<jsp:include page="lineEstimateHeader.jsp"/>
 						<jsp:include page="lineEstimateDetails.jsp"/>
-						<c:if test="${!lineEstimate.documentDetails.isEmpty() }">
-							<jsp:include page="uploadDocuments.jsp"/>
-						</c:if>
+						<jsp:include page="uploadDocuments.jsp"/>
 					</c:if>
 					<c:if test="${mode == 'view' }">
 						<jsp:include page="lineEstimateHeader-view.jsp"/>

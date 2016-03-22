@@ -56,6 +56,7 @@
 					</c:if>
 					<th><spring:message code="lbl.quantity"/></th>
 					<th><spring:message code="lbl.uom"/></th>
+					<th><spring:message code="lbl.beneficiary"/></th>
 				</tr>
 			</thead>
 			<tbody id="lineEstimateDetailsTbl">
@@ -74,14 +75,17 @@
 						</td>
 						<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
 							<td class="text-right">
-								<form:input path="lineEstimateDetails[${item.index }].actualEstimateAmount" id="actualEstimateAmount${item.index}" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="decimalvalue(this);" required="required"/>
+								<form:input path="lineEstimateDetails[${item.index }].actualEstimateAmount" id="actualEstimateAmount${item.index}" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" required="required"/>
 							</td>
 						</c:if>
-						<td>
+						<td class="text-right">
 							<c:out value="${lineEstimate.lineEstimateDetails[item.index].quantity}"/>
 						</td>
 						<td>
 							<c:out value="${lineEstimate.lineEstimateDetails[item.index].uom}"/>
+						</td>
+						<td>
+							<c:out value="${lineEstimate.lineEstimateDetails[item.index].beneficiary}"/>
 						</td>
 					</tr>
 				</c:forEach>
@@ -93,12 +97,19 @@
 						<c:set var="total" value="${total + lineEstimateDtls.estimateAmount}"/>
 					</c:forEach>
 				</c:if>
+				<c:set var="actualEstimateTotal" value="${0}" scope="session"/>
+				<c:if test="${lineEstimate.getLineEstimateDetails() != null}">
+					<c:forEach items="${lineEstimate.getLineEstimateDetails()}" var="lineEstimateDtls">
+						<c:set var="actualEstimateTotal" value="${actualEstimateTotal + lineEstimateDtls.actualEstimateAmount}"/>
+					</c:forEach>
+				</c:if>
 				<tr>
 					<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
 					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
-						<td></td>
+						<td class="text-right"> <span id="actualEstimateTotal"><c:out value="${actualEstimateTotal}"/></span> </td>
 					</c:if>
+					<td></td>
 					<td></td>
 					<td></td>
 				</tr>

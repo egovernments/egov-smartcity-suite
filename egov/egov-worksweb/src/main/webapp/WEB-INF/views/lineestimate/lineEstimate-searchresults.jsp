@@ -55,7 +55,6 @@
 					<th><spring:message code="lbl.function" /></th>
 					<th><spring:message code="lbl.budgethead" /></th>
 					<th><spring:message code="lbl.createdby" /></th>
-					<th><spring:message code="lbl.approvedby" /></th>
 					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.totalamount" /></th>
 					<th><spring:message code="lbl.action" /></th>

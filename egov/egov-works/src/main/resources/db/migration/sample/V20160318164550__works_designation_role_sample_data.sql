@@ -12,7 +12,7 @@ UPDATE egeis_assignment SET isprimary = false WHERE employee = (select id from e
 INSERT INTO egeis_assignment(id, fund, function, designation, functionary, department, "position", grade, lastmodifiedby, lastmodifieddate, createddate, createdby, fromdate, todate, version, employee, isprimary) VALUES (nextval('seq_egeis_assignment'), null, null, (select id from eg_designation where name = 'Superintendent'), null, (select id from eg_department where name = 'Accounts'), (select id from eg_position where name = 'AC-Superintendent-01'), null, 1, now(), now(), 1, now(), '2016-12-31', 0, (select id from egeis_employee where id = (select id from eg_user where username = 'shahid')), true);
 
 ---------------Map Users to Role--------------------
-INSERT INTO eg_userrole(roleid, userid) VALUES ((select id from eg_role where name = 'Works Creator'), (select id from eg_user where username = 'narasappa'));
+INSERT INTO eg_userrole(roleid, userid) VALUES ((select id from eg_role where name = 'Works Creator'), (select id from eg_user where username = 'suresh'));
 
 INSERT INTO eg_userrole(roleid, userid) VALUES ((select id from eg_role where name = 'Works Approver'), (select id from eg_user where username = 'sathish'));
 INSERT INTO eg_userrole(roleid, userid) VALUES ((select id from eg_role where name = 'Employee'), (select id from eg_user where username = 'sathish'));

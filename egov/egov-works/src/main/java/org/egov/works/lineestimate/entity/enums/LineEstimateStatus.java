@@ -33,7 +33,7 @@ package org.egov.works.lineestimate.entity.enums;
 import org.apache.commons.lang3.StringUtils;
 
 public enum LineEstimateStatus {
-    CREATED, CHECKED, BUDGET_SANCTIONED, ADMINISTRATIVE_SANCTIONED, TECHNICAL_SANCTIONED, CANCELLED;
+    CREATED, CHECKED, BUDGET_SANCTIONED, ADMINISTRATIVE_SANCTIONED, TECHNICAL_SANCTIONED, REJECTED, CANCELLED;
 
     @Override
     public String toString() {

@@ -47,27 +47,6 @@ $(document).ready(function(){
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$('#typeofwork').trigger('blur');
 	$('#subTypeOfWork').trigger('blur');
-	
-	$('#technicalSanctionDate').change(function(){
-		var date = this.value;
-		if(date != "") {
-			$.ajax({
-				url: "/egworks/lineestimate/ajaxvalidate-technicalsanction-date",
-				data: {id : $('#id').val(), date : this.value},
-				type: "GET",
-				dataType: "json",
-				success: function (response) {
-					if(response != true) {
-						bootbox.alert($('#errorTechDate').val());
-						$('#technicalSanctionDate').val("");
-					}
-				}, 
-				error: function (response) {
-					console.log("failed");
-				}
-			});
-		}
-	});
 });
 
 $(document).bind("input propertychange", function (e) {
@@ -239,6 +218,15 @@ function calculateEstimatedAmountTotal(){
 		estimateTotal = estimateTotal + parseFloat(($(this).val()?$(this).val():"0"));
 	});
 	$('#estimateTotal').html(estimateTotal);
+}
+
+function calculateActualEstimatedAmountTotal(obj) {
+	decimalvalue(obj);
+	var actualEstimateTotal = 0;
+	$( "input[name$='actualEstimateAmount']" ).each(function(){
+		actualEstimateTotal = actualEstimateTotal + parseFloat(($(this).val()?$(this).val():"0"));
+	});
+	$('#actualEstimateTotal').html(actualEstimateTotal);
 }
 
 function getLineEstimateDate() {

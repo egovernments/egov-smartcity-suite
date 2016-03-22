@@ -1,0 +1,18 @@
+---------------Map the Action urls to the Super User role--------------------
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksCreateLineEstimateNewForm' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksGetSubScheme' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksCreateNewLineEstimate' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksLineEstimateSuccess' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksUpdateLineEstimateForm' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksUpdateLineEstimate' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'DownloadLineEstimateDoc' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'ajaxSearchWardLocation' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksGetSubTypeOfWork' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksSearchLineEstimateForm' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'Search LineEstimate' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'Ajax Search Line Estimate Numbers' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'Ajax Search Admin Sanction Numbers' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksSearchLineEstimatesToCreateLOA' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'WorksSearchLineEstimateForLOA' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'ajaxsearchloa' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'AjaxValidateTechnicalSanction' and contextroot = 'egworks'));

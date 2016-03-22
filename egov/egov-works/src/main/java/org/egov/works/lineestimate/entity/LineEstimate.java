@@ -147,7 +147,6 @@ public class LineEstimate extends StateAware {
     @SafeHtml
     @Length(max = 50)
     @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "lineestimate.adminsanctionnumber.alphanumeric")
-    @Column(unique = true)
     private String adminSanctionNumber;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -204,7 +203,6 @@ public class LineEstimate extends StateAware {
     
     @SafeHtml
     @Length(max = 50)
-    @Column(unique = true)
     private String technicalSanctionNumber;
 
     @Temporal(TemporalType.TIMESTAMP)

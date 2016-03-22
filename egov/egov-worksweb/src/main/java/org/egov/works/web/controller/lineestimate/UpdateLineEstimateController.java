@@ -65,6 +65,7 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.TypeOfSlum;
 import org.egov.works.lineestimate.entity.WorkCategory;
+import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.services.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
@@ -133,8 +134,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController{
     public String viewLineEstimate(final Model model, @PathVariable final String lineEstimateId,
             final HttpServletRequest request)
             throws ApplicationException {
-        setDropDownValues(model);
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
+        if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
+            setDropDownValues(model);
+        
         model.addAttribute("message", WorksConstants.LINEESTIMATE_CREATE);
         return loadViewData(model, request, lineEstimate);
     }
@@ -176,15 +179,15 @@ public class UpdateLineEstimateController extends GenericWorkFlowController{
                 && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         
-        setDropDownValues(model);
-        if (errors.hasErrors())
+        if (errors.hasErrors()) {
+            setDropDownValues(model);
             return loadViewData(model, request, lineEstimate);
+        }
         else {
              if (null != workFlowAction)
                  newLineEstimate = lineEstimateService.updateLineEstimateDetails(lineEstimate, approvalPosition,
                         approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction,
                         mode, null, removedLineEstimateDetailsIds, files);
-            setDropDownValues(model);
             redirectAttributes.addFlashAttribute("lineEstimate", newLineEstimate);
             
             final String pathVars = worksUtils.getPathVars(newLineEstimate, approvalPosition);

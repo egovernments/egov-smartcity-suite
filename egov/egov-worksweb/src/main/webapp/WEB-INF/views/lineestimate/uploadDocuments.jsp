@@ -66,7 +66,7 @@
 			<a href="/egworks/lineestimate/downloadLineEstimateDoc?lineEstimateId=${lineEstimate.id }&fileStoreId=${documentDetials.fileStore.fileStoreId }">${documentDetials.fileStore.fileName }</a><br />
 		</c:forEach>
 	</c:if>
-	<c:if test="${(mode == 'edit' || mode == 'view') && lineEstimate.documentDetails.isEmpty()}">
+	<c:if test="${mode == 'view' && lineEstimate.documentDetails.isEmpty()}">
 		<spring:message code="msg.no.documents" />
 	</c:if>
 	<input type="hidden" value="${fn:length(lineEstimate.documentDetails)}" id="documentsSize">

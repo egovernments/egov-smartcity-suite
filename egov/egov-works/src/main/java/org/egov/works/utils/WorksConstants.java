@@ -234,6 +234,7 @@ public class WorksConstants {
 
     public static final String CANCEL_ACTION = "Cancel";
     public static final String SAVE_ACTION = "Save";
+    public static final String SUBMIT_ACTION = "Submit";
     public static final Object REJECT_ACTION = "Reject";
     public static final Object FORWARD_ACTION = "Forward";
 

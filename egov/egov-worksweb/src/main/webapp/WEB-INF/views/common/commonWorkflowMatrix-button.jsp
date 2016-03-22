@@ -44,10 +44,6 @@
 	<table>
 		<tr>
 			<td>
-			<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
-				<input type="button" id="reset" value="Reset"
-				class="btn btn-primary" onclick="validateWorkFlowApprover('Reset')" />
-			</c:if>
 		<c:forEach items="${validActionList}" var="validButtons">
 				<input type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						</input>
@@ -56,4 +52,5 @@
 				class="btn btn-default" onclick="window.close();" /></td>
 		</tr>
 	</table>
+	<input id="confirm" type="hidden" value="<spring:message code="lbl.confirm" />" />
 </div>

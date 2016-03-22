@@ -61,6 +61,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.DocumentDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -82,10 +83,6 @@ public class WorksUtils {
     
     @Autowired
     private PositionMasterService positionMasterService;
-    
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
     
     @Autowired
     private SecurityUtils securityUtils;
@@ -161,10 +158,6 @@ public class WorksUtils {
         return approverPosition;
     }
     
-    public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
-        return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
-    }
-    
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
         List<Assignment> asignList = null;
@@ -197,12 +190,22 @@ public class WorksUtils {
         } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
-        final String nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+        String nextDesign = "";
+        if(asignList != null)
+            nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
 
-        final String pathVars = newLineEstimate.getId() + ","
-                + getApproverName(approvalPosition) + ","
-                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
-                + (nextDesign != null ? nextDesign : "");
+        String pathVars = "";
+        if(!newLineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
+            pathVars = newLineEstimate.getId() + ","
+                    + getApproverName(approvalPosition) + ","
+                    + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
+                    + (nextDesign != null ? nextDesign : "");
+        } else {
+            pathVars = newLineEstimate.getId() + ","
+                    + getApproverName(newLineEstimate.getState().getOwnerPosition().getId()) + ","
+                    + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
+                    + (nextDesign != null ? newLineEstimate.getState().getOwnerPosition().getDeptDesig().getDesignation().getName() : "");
+        }
         return pathVars;
     }
 }

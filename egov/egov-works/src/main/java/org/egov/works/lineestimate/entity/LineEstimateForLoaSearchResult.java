@@ -50,6 +50,7 @@ public class LineEstimateForLoaSearchResult {
     private String createdBy;
     private String adminSanctionBy;
     private BigDecimal estimateAmount;
+    private BigDecimal actualEstimateAmount;
 
     public LineEstimateForLoaSearchResult() {
     }
@@ -116,5 +117,13 @@ public class LineEstimateForLoaSearchResult {
 
     public void setAdminSanctionBy(String adminSanctionBy) {
         this.adminSanctionBy = adminSanctionBy;
+    }
+
+    public BigDecimal getActualEstimateAmount() {
+        return actualEstimateAmount;
+    }
+
+    public void setActualEstimateAmount(BigDecimal actualEstimateAmount) {
+        this.actualEstimateAmount = actualEstimateAmount;
     }
 }

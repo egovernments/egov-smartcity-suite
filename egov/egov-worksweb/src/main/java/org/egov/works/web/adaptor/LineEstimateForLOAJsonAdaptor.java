@@ -46,6 +46,10 @@ public class LineEstimateForLOAJsonAdaptor implements JsonSerializer<LineEstimat
                 jsonObject.addProperty("currentOwner", lineEstimateForLoaSearchResult.getCurrentOwner());
             else
                 jsonObject.addProperty("currentOwner", "");
+            if (lineEstimateForLoaSearchResult.getActualEstimateAmount() != null)
+                jsonObject.addProperty("actualEstimateAmount", lineEstimateForLoaSearchResult.getActualEstimateAmount());
+            else
+                jsonObject.addProperty("actualEstimateAmount", "");
             jsonObject.addProperty("id", lineEstimateForLoaSearchResult.getId());
         }
         return jsonObject;
