@@ -62,19 +62,19 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.fromdate" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionFromDate" class="form-control datepicker"	id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.adminsanctioned.todate" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctiontodate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionToDate" class="form-control datepicker"	id="v" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionToDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lineestimate.estimateno" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimateno" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="estimateNumber" id="estimateNumber" class="form-control"/>
 				<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
@@ -91,7 +91,7 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
 			<div class="col-sm-3 add-margin">
-				Admin Sanctioned
+				<spring:message code="lbl.adminsanctioned" />
 			</div>
 		</div>
 	</div>
