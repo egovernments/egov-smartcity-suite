@@ -37,10 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 
@@ -50,11 +47,7 @@
 <script type="text/javascript"
 	src="/EGF/resources/javascript/calender.js"></script>
 <script type="text/javascript"
-	src="/EGF/resources/javascript/calendar.js"></script>
-<script type="text/javascript"
 	src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript"
-	src="/EGF/resources/javascript/jquery.min.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/accountCheque.js"></script>
 <script type="text/javascript"
@@ -95,6 +88,7 @@
 				<table border="0" width="100%">
 
 					<tr>
+						<td class="bluebox "></td>
 						<td class="bluebox">Bank</td>
 						<td class="bluebox"><s:property
 								value="bankaccount.bankbranch.bank.name" /></td>
@@ -103,6 +97,7 @@
 								value="bankaccount.bankbranch.branchname" /></td>
 					</tr>
 					<tr>
+						<td class="bluebox "></td>
 						<td class="greybox">Account Number</td>
 						<td class="greybox"><s:property
 								value="bankaccount.accountnumber" /></td>
@@ -130,49 +125,50 @@
 			<table border="0" width="100%">
 
 				<tr>
-
-					<td class="greybox " width="25%">From Cheque Number<span
+					<td class="bluebox "></td>
+					<td class="greybox " >From Cheque Number<span
 						class="mandatory1">*</span></td>
-					<td class="greybox" width="25%"><s:textfield name="fromChqNo"
+					<td class="greybox" ><s:textfield name="fromChqNo"
 							class="patternvalidation" data-pattern="number" id="fromChqNo"
 							maxlength="6" size="6" onkeyup="validateOnlyNumber(this);" /></td>
-					<td class="greybox" width="25%">To Cheque Number<span
+					<td class="greybox" >To Cheque Number<span
 						class="mandatory1">*</span></td>
-					<td class="greybox" width="25%"><s:textfield name="toChqNo"
+					<td class="greybox" ><s:textfield name="toChqNo"
 							class="patternvalidation" data-pattern="number" id="toChqNo"
 							maxlength="6" size="6" onkeyup="validateOnlyNumber(this);" /></td>
 
 				</tr>
 
 				<tr>
-
-					<td class="bluebox" width="25%">Received Date<span
+					<td class="bluebox "></td>
+					<td class="bluebox" >Received Date<span
 						class="mandatory1">*</span></td>
-					<td class="bluebox" width="25%"><s:textfield
+					<td class="bluebox" ><s:textfield
 							name="receivedDate" id="receivedDate" maxlength="10"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
 						href="javascript:show_calendar('chequeMaster.receivedDate',null,null,'DD/MM/YYYY');"
 						style="text-decoration: none">&nbsp;<img
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
 					</td>
-					<td class="bluebox" width="25%">Department<span
+					<td class="bluebox" >Department<span
 						class="mandatory1">*</span></td>
-					<td class="bluebox" width="25%"><s:select
+					<td class="bluebox" ><s:select
 							name="departmentList" id="departmentList"
-							list="dropdownData.departmentList" listKey="id" listValue="name"
-							multiple="true" required="true" /></td>
+							list="dropdownData.departmentList" listKey="id" listValue="name" 
+							multiple="true" required="true" style="height:auto;"/></td>
 
 				</tr>
 
 				<tr>
-
-					<td class="greybox" width="25%">Year Code<span
+					<td class="bluebox "></td>
+					<td class="greybox" >Financial Year<span
 						class="mandatory1">*</span></td>
-					<td class="greybox" width="25%"><s:textfield name="serialNo"
-							class="patternvalidation" data-pattern="number" id="serialNo"
-							required="true" /></td>
-					<td class="greybox" width="25%"></td>
-					<td class="greybox" width="25%"></td>
+					<td class="greybox" ><s:select name="serialNo"
+							id="serialNo" list="dropdownData.financialYearList" listKey="id"
+							listValue="finYearRange" headerKey="-1"
+							headerValue="----Choose----"  required="true" value ="-1"/>
+					<td class="greybox" ></td>
+					<td class="greybox" ></td>
 
 				</tr>
 

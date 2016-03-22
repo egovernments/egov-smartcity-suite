@@ -55,6 +55,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
@@ -84,7 +85,7 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -93,7 +94,8 @@ import com.opensymphony.xwork2.util.ValueStack;
 @ParentPackage("egov")
 @Results({
     @Result(name = Constants.DETAILLIST, location = "budgetSearch-" + Constants.DETAILLIST + ".jsp"),
-    @Result(name = Constants.BUDGETS, location = "budgetSearch-" + Constants.BUDGETS + ".jsp")
+    @Result(name = Constants.BUDGETS, location = "budgetSearch-" + Constants.BUDGETS + ".jsp"),
+    @Result(name = Constants.LIST, location = "budgetSearch-" + Constants.LIST + ".jsp")
 })
 public class BudgetSearchAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -139,12 +141,14 @@ public class BudgetSearchAction extends BaseFormAction {
     protected String nextfinYearRange = "";
     private String previousfinYearRange = "";
     private String twopreviousfinYearRange = "";
-    private @Autowired AppConfigValueService appConfigValuesService;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     private boolean shouldShowREAppropriations = true;
     List<AppConfigValues> excludeList = new ArrayList<AppConfigValues>();
     @Autowired
+    @Qualifier("masterDataCache")
     private EgovMasterDataCaching masterDataCache;
-    
+  
     public String getMessage() {
         return message;
     }
@@ -276,7 +280,7 @@ public class BudgetSearchAction extends BaseFormAction {
                 dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
             if (shouldShowField(Constants.FUND))
                 dropdownData.put("fundList",
-                        persistenceService.findAllBy("from Fund where isNotLeaf=true and isActive=true order by name"));
+                        persistenceService.findAllBy("from Fund where isActive=true order by name"));
         }
     }
 
@@ -323,6 +327,7 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     // serach screen
+    @Action(value = "/budget/budgetSearch-groupedBudgets")
     public String groupedBudgets() {
         final Budget budget = budgetDetail.getBudget();
         // Dont restrict search by the selected budget, but by all budgets in the tree of selected budget
@@ -407,10 +412,12 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     // for search screen
-    @Action(value = "/budget/budgetSearch-groupedBudgetDetailList")
+	@Action(value = "/budget/budgetSearch-groupedBudgetDetailList")
     public String groupedBudgetDetailList() {
-        final BudgetDetail criteria = (BudgetDetail) HibernateUtil.getCurrentSession().createCriteria(
-                Constants.SEARCH_CRITERIA_KEY);
+    	
+    	final BudgetDetail criteria = new BudgetDetail();
+        /*final BudgetDetail criteria =  (BudgetDetail) persistenceService.getSession().createCriteria(
+                Constants.SEARCH_CRITERIA_KEY);*/
         Budget budget = budgetDetail.getBudget();
         if (budget != null && budget.getId() != null) {
             budget = (Budget) persistenceService.find("from Budget where id=?", budget.getId());
@@ -501,14 +508,20 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     private void populateActualData(final CFinancialYear financialYear) {
-        String fromDate = Constants.DDMMYYYYFORMAT1.format(financialYear.getStartingDate());
+        String fromDate = Constants.DDMMYYYYFORMAT2.format(financialYear.getStartingDate());
+        String toVoucherDate=Constants.DDMMYYYYFORMAT2.format(new Date());
         final List<Object[]> result = budgetDetailService.fetchActualsForFYDate(fromDate,
-                "case when b.as_on_date = null then current_date else b.as_on_date end", mandatoryFields);
+        		toVoucherDate, mandatoryFields);
         for (final Object[] row : result)
             budgetDetailIdsAndAmount.put(row[0].toString(), row[1].toString());
-        fromDate = Constants.DDMMYYYYFORMAT1.format(subtractYear(financialYear.getStartingDate()));
-        final List<Object[]> previousYearResult = budgetDetailService.fetchActualsForFYDate(fromDate,
-                "case when b.as_on_date = null then current_date+numtoyminterval(-1,'year') else b.as_on_date+numtoyminterval(-1,'year') end",
+        fromDate = Constants.DDMMYYYYFORMAT2.format(subtractYear(financialYear.getStartingDate()));
+        
+        Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());       
+		cal.add(Calendar.YEAR, -1);
+		String	toVoucherDate1=Constants.DDMMYYYYFORMAT2.format(cal.getTime());
+        
+        final List<Object[]> previousYearResult = budgetDetailService.fetchActualsForFYDate(fromDate,toVoucherDate1,
                 mandatoryFields);
         for (final Object[] row : previousYearResult)
             previousYearBudgetDetailIdsAndAmount.put(row[0].toString(), row[1].toString());
@@ -677,5 +690,23 @@ public class BudgetSearchAction extends BaseFormAction {
     public void setNextfinYearRange(final String nextfinYearRange) {
         this.nextfinYearRange = nextfinYearRange;
     }
+
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
+
+	public EgovMasterDataCaching getMasterDataCache() {
+		return masterDataCache;
+	}
+
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
+	}
+
+	public void setMasterDataCache(EgovMasterDataCaching masterDataCache) {
+		this.masterDataCache = masterDataCache;
+	}
+    
 
 }

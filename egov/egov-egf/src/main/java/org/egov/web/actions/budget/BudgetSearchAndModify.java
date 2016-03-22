@@ -72,9 +72,7 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class BudgetSearchAndModify extends BudgetSearchAction {
     private static final String ACTIONNAME = "actionName";
     boolean enableApprovedAmount = false;
@@ -98,7 +96,6 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         this.scriptService = scriptService;
     }
 
-    @Transactional
     public String modifyList() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting modifyList...");
@@ -129,7 +126,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 
     /*
      * this api is used fro budget detail workflow list
-     */@Transactional
+     */
      public String modifyDetailList() {
          if (LOGGER.isInfoEnabled())
              LOGGER.info("starting modifyDetailList...");
@@ -216,7 +213,6 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
          addDropdownData("userList", Collections.EMPTY_LIST);
      }
 
-     @Transactional
      public String update() {
          Budget budget = null;
          Budget b = null;
@@ -801,5 +797,14 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
      public void setConsolidatedScreen(final boolean consolidatedScreen) {
          this.consolidatedScreen = consolidatedScreen;
      }
+
+	public EgovMasterDataCaching getMasterDataCache() {
+		return masterDataCache;
+	}
+
+	public void setMasterDataCache(EgovMasterDataCaching masterDataCache) {
+		this.masterDataCache = masterDataCache;
+	}
+     
 
 }
