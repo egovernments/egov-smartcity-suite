@@ -270,6 +270,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
      */
 
     @Override
+    @Transactional
     public BudgetUsage releaseEncumbranceBudget(final String appropriationnumber, final Long financialyearid,
             final Integer moduleid,
             final String referencenumber, final Integer departmentid, final Long functionid,
@@ -611,13 +612,13 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         if (financialyear == null)
             throw new ValidationException(EMPTY_STRING, "Financial year is null or empty");
 
-        final CFunction function = (CFunction) functionDAO.findById(functionid,false);
+        final CFunction function = (CFunction) functionDAO.findById(functionid, false);
         if (function == null)
             throw new ValidationException(EMPTY_STRING, "Function is null or empty");
 
         for (final Long bgId : budgetheadid)
         {
-            final BudgetGroup budgetGroup = budgetGroupService.findById(bgId,false);
+            final BudgetGroup budgetGroup = budgetGroupService.findById(bgId, false);
             if (budgetGroup == null)
                 throw new ValidationException(EMPTY_STRING, "Budget head is null or empty");
         }
@@ -779,11 +780,11 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             final String query = prepareQuery(departmentid, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid);
 
             session = HibernateUtil.getCurrentSession();
-            final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid,false);
+            final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid, false);
 
             // check any RE is available for the passed parameters.if RE is not exist, take BE's available Amount
             final String finalquery = "select sum (budgetAvailable) from BudgetDetail bd where bd.budget.isbere=:type and bd.budget.financialYear.id=:financialyearid"
-                    +" and bd.budgetGroup.id in (:budgetheadid) " + query;
+                    + " and bd.budgetGroup.id in (:budgetheadid) " + query;
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
