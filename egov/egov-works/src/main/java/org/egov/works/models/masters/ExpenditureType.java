@@ -39,7 +39,7 @@
  */
 package org.egov.works.models.masters;
 
-public class ExpenditureType {
+public class ExpenditureType implements java.io.Serializable {
     private String value;
 
     private ExpenditureType() {

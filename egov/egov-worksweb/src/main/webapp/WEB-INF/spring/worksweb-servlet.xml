@@ -85,7 +85,9 @@
                 <ref bean="budgetHeadFormatter"/>
                 <ref bean="schemeFormatter"/>
                 <ref bean="subSchemeFormatter"/>
-                <ref bean="contractorFormatter"/>                
+                <ref bean="contractorFormatter"/> 
+                <ref bean="natureOfWorkFormatter"/>
+                <ref bean="egwTypeOfWorkFormatter"/>                                
             </set>
         </property>
     </bean>

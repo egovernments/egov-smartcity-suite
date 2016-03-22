@@ -412,3 +412,24 @@ function validateNumberChar() {
 	    }
 	});
 }
+
+$('#councilResolutionDate').change(function(){
+	var date = this.value;
+	if(date != "") {
+		$.ajax({
+			url: "/egworks/lineestimate/ajaxvalidate-councilresolution-date",
+			data: {id : $('#id').val(), date : this.value},
+			type: "GET",
+			dataType: "json",
+			success: function (response) {
+				if(response != true) {
+					bootbox.alert("Council Resolution date should not be less than Admin Sanction Date Line Estimate Date.");
+					$('#councilResolutionDate').val("");
+				}
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	}
+});

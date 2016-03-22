@@ -40,7 +40,7 @@
 package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -55,12 +55,12 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
-import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.utils.WorksConstants;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SubSchemeAdaptor;
@@ -120,7 +120,7 @@ public class AjaxLineEstimateController {
         List<Boundary> boundaries = boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType(WorksConstants.BOUNDARY_TYPE_WARD,WorksConstants.HIERARCHY_TYPE_ADMINISTRATION,name); 
         return boundaries;
     }
-
+ 
     public String toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(SubScheme.class, new SubSchemeAdaptor()).create();
@@ -169,5 +169,10 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/ajaxvalidate-technicalsanction-date", method = RequestMethod.GET)
     public @ResponseBody boolean validateTechnicalSanctionDate(@RequestParam("id") Long id, @RequestParam("date") final Date technicalSanctionDate) {
         return lineEstimateService.validateTechnicalSanctionDate(id, technicalSanctionDate);
+    }
+    
+    @RequestMapping(value = "/ajaxvalidate-councilresolution-date", method = RequestMethod.GET)
+    public @ResponseBody boolean validateLineEstimateDate(@RequestParam("id") Long id, @RequestParam("date") final Date lineEstimateDate) {
+        return lineEstimateService.validateLineEstimateDate(id, lineEstimateDate);
     }
 }

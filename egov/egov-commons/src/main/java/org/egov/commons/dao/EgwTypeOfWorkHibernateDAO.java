@@ -171,6 +171,10 @@ public class EgwTypeOfWorkHibernateDAO extends GenericHibernateDAO {
                 return getCurrentSession().createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null and etw1.id in (select etw2.parentid from EgwTypeOfWork etw2 where etw2.parentid = etw1.id) order by upper(code)").list();
         }
 
+        public List<EgwTypeOfWork> getTypeOfWorkForPartyTypeContractor() {
+            return getCurrentSession().createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null and etw1.id in (select etw2.parentid from EgwTypeOfWork etw2 where etw2.parentid = etw1.id) and egPartytype.description='Contractor' order by upper(description)").list();
+        }
+
         public List findAllParentPartyType() {
                 return getCurrentSession().createQuery("from EgwTypeOfWork tw where tw.parentid is null and tw.egPartytype is not null order by upper(code)").list();
         }

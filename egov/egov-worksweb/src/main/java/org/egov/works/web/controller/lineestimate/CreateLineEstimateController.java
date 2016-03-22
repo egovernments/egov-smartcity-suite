@@ -207,7 +207,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController{
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getAllParentOrderByCode());
+        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         
     }

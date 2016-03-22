@@ -41,7 +41,6 @@ package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,11 +50,10 @@ import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
@@ -66,6 +64,7 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.TypeOfSlum;
+import org.egov.works.lineestimate.entity.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.services.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
@@ -203,8 +202,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController{
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getAllParentOrderByCode());
+        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
+        model.addAttribute("workCategory",WorkCategory.values());
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
