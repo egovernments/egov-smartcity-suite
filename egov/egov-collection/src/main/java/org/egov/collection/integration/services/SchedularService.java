@@ -49,10 +49,11 @@ import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.StringUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +66,8 @@ public class SchedularService {
     private ReceiptHeader onlinePaymentReceiptHeader;
     private PaymentResponse paymentResponse;
     private ReconciliationService reconciliationService;
+    @Autowired
+    private  CityService cityService;
     @Autowired
     AxisAdaptor axisAdaptor;
 
@@ -101,13 +104,13 @@ public class SchedularService {
                 LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
                 paymentResponse = axisAdaptor.createOfflinePaymentRequest(paymentService, onlinePaymentObj);
 
-                if (null != paymentResponse && paymentResponse.getReceiptId()!=null && !paymentResponse.getReceiptId().equals("") && !StringUtils.isBlank(paymentResponse.getAdditionalInfo2())) {
+                if (null != paymentResponse && paymentResponse.getReceiptId()!=null && !paymentResponse.getReceiptId().equals("")) {
                     LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
                     LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
                     LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
-                    String ulbCode = paymentResponse.getAdditionalInfo2().split("-")[0];
+                    final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
                     onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
-                            CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()), ulbCode);
+                            CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()), cityWebsite.getCode());
                     if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                         reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
                     else
