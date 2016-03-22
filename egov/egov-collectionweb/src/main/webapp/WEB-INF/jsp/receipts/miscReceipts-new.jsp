@@ -738,7 +738,7 @@ var totaldbamt=0,totalcramt=0;
          
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /><span class="mandatory"/> </td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory.id" id="serviceCategoryid" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategory.id}" onChange="populateService(this);" />
-       	<egov:ajaxdropdown id="service"fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
+       	<egov:ajaxdropdown id="service" fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /><span class="mandatory"/> </td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="service.id" id="serviceId" cssClass="selectwk"
 	list="dropdownData.serviceList" listKey="id" listValue="code" value="%{service.id}" onchange="loadFinDetails(this);"/>
