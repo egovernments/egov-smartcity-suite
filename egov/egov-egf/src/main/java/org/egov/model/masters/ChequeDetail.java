@@ -58,6 +58,7 @@ public class ChequeDetail {
     private Long accountChequeId;
     private Long chequeDeptId;
     private String serialNo;
+    private String serialNoH;
 
     public String getDeptName() {
         return deptName;
@@ -139,4 +140,11 @@ public class ChequeDetail {
         this.serialNo = serialNo;
     }
 
+    public String getSerialNoH() {
+        return serialNoH;
+    }
+
+    public void setSerialNoH(String serialNoH) {
+        this.serialNoH = serialNoH;
+    }
 }
