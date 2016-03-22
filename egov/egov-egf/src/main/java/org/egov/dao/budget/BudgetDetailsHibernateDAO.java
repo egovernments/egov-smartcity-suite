@@ -58,6 +58,7 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FunctionDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -74,8 +75,10 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
+import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetGroupService;
 import org.egov.services.budget.BudgetService;
+import org.egov.services.budget.BudgetUsageService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.Constants;
 import org.hibernate.Query;
@@ -111,7 +114,9 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     @Autowired
     @Qualifier("budgetService")
     private BudgetService budgetService;
-
+    @Autowired
+    @Qualifier("budgetDetailService")
+    private BudgetDetailService budgetDetailService;
     @Autowired
     @Qualifier("budgetGroupService")
     private BudgetGroupService budgetGroupService;
@@ -122,9 +127,11 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     @Autowired
     @Qualifier("financialYearDAO")
     private FinancialYearHibernateDAO financialYearHibDAO;
-
     @Autowired
-    private BudgetUsageHibernateDAO budgetUsageHibernateDAO;
+    private FunctionDAO functionDAO;
+    @Autowired
+    @Qualifier("budgetUsageService")
+    private BudgetUsageService budgetUsageService;
 
     /**
      * This API is to check whether the planning budget is available or not.For the amount passed if there is sufficient budget
@@ -383,7 +390,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     budgetUsage.setReleasedAmount(amount);
                 }
                 budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
-                budgetUsageHibernateDAO.create(budgetUsage);
+                budgetUsageService.create(budgetUsage);
                 return BigDecimal.ONE;
             }
             else
@@ -478,7 +485,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     budgetUsage.setReleasedAmount(amount);
                 }
                 budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
-                budgetUsageHibernateDAO.create(budgetUsage);
+                budgetUsageService.create(budgetUsage);
                 return BigDecimal.ONE;
             }
             else
@@ -495,6 +502,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     }
 
     @Deprecated
+    @Transactional
     private BudgetUsage getBudgetUsageDetails(final Long financialyearid, final Integer moduleid, final String referencenumber,
             final Integer departmentid, final Long functionid,
             final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
@@ -553,7 +561,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 }
                 final BudgetDetail bd = bdList.get(0);
                 bd.setBudgetAvailable(amtavailable);
-                update(bd);
+                budgetDetailService.update(bd);
 
                 final BudgetUsage budgetUsage = new BudgetUsage();
                 budgetUsage.setFinancialYearId(financialyearid.intValue());
@@ -572,7 +580,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     budgetUsage.setReleasedAmount(amount);
                 }
                 budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
-                budgetUsageHibernateDAO.create(budgetUsage);
+                budgetUsageService.create(budgetUsage);
                 return budgetUsage;
             }
             else
@@ -599,17 +607,17 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
         session = HibernateUtil.getCurrentSession();
         // fetch mandatory parameters
-        final CFinancialYear financialyear = (CFinancialYear) findById(CFinancialYear.class, financialyearid);
+        final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid, false);
         if (financialyear == null)
             throw new ValidationException(EMPTY_STRING, "Financial year is null or empty");
 
-        final CFunction function = (CFunction) findById(CFunction.class, functionid);
+        final CFunction function = (CFunction) functionDAO.findById(functionid,false);
         if (function == null)
             throw new ValidationException(EMPTY_STRING, "Function is null or empty");
 
         for (final Long bgId : budgetheadid)
         {
-            final BudgetGroup budgetGroup = (BudgetGroup) findById(BudgetGroup.class, bgId);
+            final BudgetGroup budgetGroup = budgetGroupService.findById(bgId,false);
             if (budgetGroup == null)
                 throw new ValidationException(EMPTY_STRING, "Budget head is null or empty");
         }
@@ -771,12 +779,11 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             final String query = prepareQuery(departmentid, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid);
 
             session = HibernateUtil.getCurrentSession();
-            final CFinancialYear financialyear = (CFinancialYear) findById(CFinancialYear.class, financialyearid);
+            final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid,false);
 
             // check any RE is available for the passed parameters.if RE is not exist, take BE's available Amount
             final String finalquery = "select sum (budgetAvailable) from BudgetDetail bd where bd.budget.isbere=:type and bd.budget.financialYear.id=:financialyearid"
-                    +
-                    " and bd.budgetGroup.id in (:budgetheadid) " + query;
+                    +" and bd.budgetGroup.id in (:budgetheadid) " + query;
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
