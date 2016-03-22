@@ -194,7 +194,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     private EntityManager entityManager;
     @Autowired
-	private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+        private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
 
     public Boundary getBoundaryForUser(final CVoucherHeader rv)
     {
@@ -595,7 +595,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long
                         .valueOf(financialYearId));
                 if (existingVH.getFiscalPeriodId().equals(voucherHeader.getFiscalPeriodId())
-                        && fiscalPeriod.getFinancialYearId().longValue() == financialYear.getId().longValue()) {
+                        && fiscalPeriod.getcFinancialYear().getId().longValue() == financialYear.getId().longValue()) {
                     final String vDate = Constants.DDMMYYYYFORMAT2.format(voucherHeader.getVoucherDate());
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Voucher Number  : " + existingVH.getVoucherNumber());

@@ -150,7 +150,7 @@
 					<th colspan="4">City Detail</th>
 					<th colspan="2">Commissioner</th>
 					<th colspan="7">Demand</th>
-					<th colspan="6">Collection</th>
+					<th colspan="8">Collection</th>
 					<th colspan="6">Balance</th>
 				</tr>
 
@@ -173,7 +173,9 @@
 					<th> Current tax </th>
 					<th> Current interest </th>
 					<th>Total</th>
+					<th>Total Percentage</th>
 					<th>Total Interest</th>
+					<th>Total Interest Percentage</th>
 					<th> Arrear tax </th>
 					<th> Arrear interest </th>
 					<th> Current tax </th>
@@ -186,6 +188,8 @@
 				<tfoot id="report-footer">
 				<tr>
 					<td colspan="7" align="center">Total</td>
+					<td></td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

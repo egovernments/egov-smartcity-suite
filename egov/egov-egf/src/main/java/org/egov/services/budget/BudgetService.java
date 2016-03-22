@@ -164,7 +164,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     public boolean hasApprovedReForYear(final Long financialYear) {
         return checkForRe(
-                "from  Budget where financialYear.id=? and isbere='RE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and status.moduletype='BUDGET' and status.code='Approved'",
+                "from  Budget where financialYear.id=? and isbere='RE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and status.code='Approved'",
                 financialYear);
     }
 

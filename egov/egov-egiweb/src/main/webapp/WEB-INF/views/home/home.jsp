@@ -38,6 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <!DOCTYPE html>
 <html class="no-js" oncontextmenu="return false;">
 	<head>
@@ -47,7 +48,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta name="description" content="eGov Urban Portal" />
 		<meta name="author" content="" />
-		
+		<spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
+		<spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="true"/>
 		<title>eGov Urban Portal</title>
 		
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
@@ -370,7 +372,7 @@
 									<label class="control-label">New Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="new-pass" minlength="8" maxlength="32" data-container="#wrap" data-toggle="popover" data-content="Minimum 8 to 32 characters long and should contain upper case, lower case alphabet,number and special character except [& < > # % \" ' / and space]">
+									<input type="password" class="form-control check-password" id="new-pass" maxlength="32" data-container="#wrap" data-toggle="popover" data-content="${pwdmsg}">
 								</div>
 							</div>
 							<div class="form-group">
@@ -378,7 +380,7 @@
 									<label class="control-label">Re-type Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="retype-pass" minlength="8" maxlength="32">
+									<input type="password" class="form-control check-password" id="retype-pass" maxlength="32">
 									<div class="password-error error-msg display-hide">Password is incorrect</div>
 								</div>
 							</div>

@@ -724,7 +724,7 @@ public class ReportService {
     }
 
     private void buildCollectionReportForUlbWiseDCb(List<BillCollectorDailyCollectionReportResult> listBcPayment) {
-
+        Double percentage =0.0;
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             if (bcResult.getArrears_demand() == null)
@@ -753,7 +753,12 @@ public class ReportService {
             bcResult.setCummulative_total_Collection(bcResult.getCurrent_demand_collection()
                     + bcResult.getArrears_demand_collection());
             bcResult.setCummulative_total_CollectionInterest(bcResult.getCurrent_penalty_collection() 
-                    + bcResult.getArrears_penalty_collection());
+                    + bcResult.getArrears_penalty_collection()); 
+            
+            percentage=(bcResult.getCummulative_total_Collection()*100)/bcResult.getTarget_total_demand();
+            bcResult.setCummulative_total_CollectionPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage));
+            percentage=(bcResult.getCummulative_total_CollectionInterest()*100)/bcResult.getTarget_total_demandInterest();
+            bcResult.setCummulative_total_CollectionInterestPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage)); 
 
             bcResult.setBalance_arrearTax(bcResult.getArrears_demand() - bcResult.getArrears_demand_collection());
             bcResult.setBalance_arrearInterest(bcResult.getArrears_penalty() - bcResult.getArrears_penalty_collection());
@@ -788,8 +793,9 @@ public class ReportService {
             bcResult.setTarget_total_demandInterest(formatAmt(bcResult.getTarget_total_demandInterest()).doubleValue());
             bcResult.setCummulative_total_CollectionInterest(formatAmt(bcResult.getCummulative_total_CollectionInterest())
                     .doubleValue());
-
-        }
+            bcResult.setCummulative_total_CollectionPercentage(bcResult.getCummulative_total_CollectionPercentage().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+            bcResult.setCummulative_total_CollectionInterestPercentage(bcResult.getCummulative_total_CollectionInterestPercentage().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        } 
 
     }
 

@@ -104,6 +104,9 @@ public class HomeController {
     @Autowired
     private CityService cityService;
 
+    @Autowired
+    private ValidatorUtils validatorUtils;
+
     @RequestMapping
     public String showHome(final HttpSession session, final HttpServletRequest request,
             final HttpServletResponse response, final ModelMap modelData) {
@@ -131,7 +134,7 @@ public class HomeController {
             @RequestParam final String retypeNewPwd) {
         final User user = securityUtils.getCurrentUser();
         if (passwordEncoder.matches(currentPwd, user.getPassword())) {
-            if (!ValidatorUtils.isValidPassword(newPwd))
+            if (!validatorUtils.isValidPassword(newPwd))
                 return "NEWPWD_INVALID";
             if (newPwd.equals(retypeNewPwd)) {
                 user.setPassword(passwordEncoder.encode(newPwd));

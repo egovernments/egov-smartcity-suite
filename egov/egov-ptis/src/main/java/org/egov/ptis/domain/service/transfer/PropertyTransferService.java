@@ -335,7 +335,7 @@ public class PropertyTransferService {
 
     @Transactional
     public ReportOutput generateTransferNotice(final BasicProperty basicProperty,
-            final PropertyMutation propertyMutation, final String cityName, final String cityLogo, String actionType) {
+            final PropertyMutation propertyMutation, final String cityName, final String cityLogo, String actionType,boolean isCorporation) {
         PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
                 propertyMutation.getApplicationNo());
         ReportOutput reportOutput = new ReportOutput();
@@ -358,6 +358,7 @@ public class PropertyTransferService {
             BasicProperty basicProp = propertyMutation.getBasicProperty();
             final Map<String, Object> reportParams = new HashMap<String, Object>();
             reportParams.put("userId", EgovThreadLocals.getUserId());
+            reportParams.put("isCorporation", isCorporation);
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());

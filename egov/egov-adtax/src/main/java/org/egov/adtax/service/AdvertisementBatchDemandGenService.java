@@ -106,7 +106,7 @@ public class AdvertisementBatchDemandGenService {
         int totalRecordsProcessed = 0;
 
         List<AdvertisementBatchDemandGenerate> advBatchDmdGenResult = findActiveBatchDemands();
-
+        LOGGER.info("advBatchDmdGenResult "+advBatchDmdGenResult.size());        
         if (advBatchDmdGenResult != null && !advBatchDmdGenResult.isEmpty()) {
 
             final AppConfigValues totalRecordToFeatch = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -121,20 +121,19 @@ public class AdvertisementBatchDemandGenService {
              * YEAR, GET ADVERTISEMENTS. Check count, if count greater than 300
              * then
              */
-            if (advDmdGen != null && advDmdGen.getFinancialYear() != null) {
+            if (advDmdGen != null && advDmdGen.getInstallment() != null) {
 
                 List<Installment> previousInstallment = advertisementDemandService.getPreviousInstallment(advDmdGen
-                        .getFinancialYear().getEndingDate());
+                        .getInstallment().getToDate());
 
                 Installment advDmdGenerationInstallment = advertisementDemandService
-                        .getInsatllmentByModuleForGivenDate(advDmdGen.getFinancialYear().getEndingDate());
+                        .getInsatllmentByModuleForGivenDate(advDmdGen.getInstallment().getToDate());
 
                 /*
                  * Assumption : selected installment data not present in
                  * advertisement demand.
                  */
                 if (advDmdGenerationInstallment != null) {
-
                     if (previousInstallment != null && previousInstallment.size() > 0) {
 
                         List<Advertisement> advertisements = advertisementService

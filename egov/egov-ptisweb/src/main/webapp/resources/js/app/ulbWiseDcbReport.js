@@ -104,10 +104,17 @@ $(document)
 									"sTitle" : "Total", "sClass": "text-right"
 								},
 								{
+									"data" : "cummulative_total_CollectionPercentage",
+									"sTitle" : "Total Percentage", "sClass": "text-right"
+								},
+								{
 								"data" : "cummulative_total_CollectionInterest",
 								"sTitle" : "Total Interest", "sClass": "text-right"
 								},
-								
+								{
+									"data" : "cummulative_total_CollectionInterestPercentage",
+									"sTitle" : "Total Interest Percentage", "sClass": "text-right"
+								},
 								{
 									"data" : "balance_arrearTax",
 									"sTitle" : "Arrear tax", "sClass": "text-right"
@@ -158,6 +165,8 @@ $(document)
 											updateTotalFooter(22, api);
 											updateTotalFooter(23, api);
 											updateTotalFooter(24, api);
+											updateTotalFooter(25, api);
+											updateTotalFooter(26, api);
 
 										}
 									},

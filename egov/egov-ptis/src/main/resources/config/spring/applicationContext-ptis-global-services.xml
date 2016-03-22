@@ -118,7 +118,6 @@
 	
 	 <bean id="ptBillServiceImpl" class="org.egov.ptis.client.bill.PTBillServiceImpl" scope="prototype" lazy-init="false">
 		<property name="propertyTaxUtil" ref="propertyTaxUtil" />
-		<property name="propertyTaxCollection" ref="propertyTaxCollection" />
 	</bean>
 	
 	<bean id="propertyTaxBillable" class="org.egov.ptis.domain.bill.PropertyTaxBillable" scope="prototype" />

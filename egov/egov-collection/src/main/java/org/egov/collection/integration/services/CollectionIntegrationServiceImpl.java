@@ -349,21 +349,7 @@ CollectionIntegrationService {
         receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                 chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList.get(0).getInstrumentType().toString()));
 
-        receiptHeaderService.persist(receiptHeader);
-        receiptHeaderService.getSession().flush();
-        LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
-
-        /*
-         * try { receiptHeaderService.createVoucherForReceipt(receiptHeader, Boolean.FALSE);
-         * LOGGER.debug("Updated financial systems and created voucher."); } catch (ApplicationRuntimeException ex) {
-         * errors.add(new ValidationError(
-         * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state." ,
-         * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state." ));
-         * LOGGER.error("Update to financial systems failed"); }
-         */
-
-        receiptHeaderService.updateBillingSystemWithReceiptInfo(receiptHeader);
-        LOGGER.info("Billing system updated with receipt info");
+        receiptHeaderService.persistFieldReceipt(receiptHeader);
 
         // Create Vouchers
         /*

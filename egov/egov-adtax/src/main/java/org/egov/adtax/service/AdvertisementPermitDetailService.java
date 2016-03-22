@@ -240,7 +240,8 @@ public class AdvertisementPermitDetailService {
             if (result.getAdvertisement().getDemandId() != null) {
                 hoardingSearchResult
                         .setFinancialYear(result.getAdvertisement().getDemandId().getEgInstallmentMaster().getDescription());
-                if (searchType != null && searchType.equalsIgnoreCase("agency") && result.getAgency() != null) {
+                if (searchType != null && searchType.equalsIgnoreCase("agency") ) {
+                   if(result.getAgency() != null){
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
                             .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
@@ -268,6 +269,7 @@ public class AdvertisementPermitDetailService {
                         hoardingSearchObj.setHordingIdsSearchedByAgency(hoardingIds.toString());
                         agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchObj);
                     }
+                   }
                 } else {
 
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService

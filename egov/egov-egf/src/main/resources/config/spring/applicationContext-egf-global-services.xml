@@ -186,6 +186,11 @@
 			value="org.egov.model.budget.BudgetDetail">
 		</constructor-arg>
 	</bean>
+	<bean id="budgetUsageService" class="org.egov.services.budget.BudgetUsageService">
+		<constructor-arg index="0"
+			value="org.egov.model.budget.BudgetUsage">
+		</constructor-arg>
+	</bean>
 	<bean id="budgetService" class="org.egov.services.budget.BudgetService"
 		scope="prototype">
 		<property name="eisCommonService" ref="eisCommonService" />

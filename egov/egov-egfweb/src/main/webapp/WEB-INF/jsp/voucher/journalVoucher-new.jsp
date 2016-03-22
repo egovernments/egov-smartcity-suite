@@ -239,7 +239,15 @@
 		
 		var currDate = cDate.getDate()+"/"+(parseInt(cDate.getMonth())+1)+"/"+cDate.getYear();
 		var vhDate=document.getElementById('voucherDate').value;
-	
+		var vhType=document.getElementById('vType').value;
+
+		console.log(vhType);
+		
+		if(vhType =='-1' )	{
+			document.getElementById('lblError').innerHTML = "Please select voucher sub type ";
+			document.getElementById('voucherDate').focus();
+			return false;
+		}
 		if(vhDate == '' )	{
 			document.getElementById('lblError').innerHTML = "Please enter the Voucher date ";
 			document.getElementById('voucherDate').focus();

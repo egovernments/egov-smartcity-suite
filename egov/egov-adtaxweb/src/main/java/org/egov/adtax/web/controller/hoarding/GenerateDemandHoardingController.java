@@ -49,9 +49,11 @@ import org.egov.adtax.entity.AdvertisementBatchDemandGenerate;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.AdvertisementBatchDemandGenService;
 import org.egov.adtax.service.AdvertisementRateService;
+import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.GenericController;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.repository.CFinancialYearRepository;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -61,18 +63,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hoarding")
-public class generateDemandHoardingController extends GenericController {
+public class GenerateDemandHoardingController extends GenericController {
 
     @Autowired
     private AdvertisementRateService advertisementRateService;
 
-    private @Autowired CFinancialYearRepository cFinancialYearRepository;
+    @Autowired
+    private InstallmentDao installmentDao;
+    @Autowired
+    private ModuleService moduleService;
     @Autowired
     private AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
 
-    public @ModelAttribute("financialYears") List<CFinancialYear> financialyear() {
+    public @ModelAttribute("financialYears") List<Installment> financialyear() {
 
-        return advertisementRateService.getAllFinancialYears();
+        return installmentDao.getInsatllmentByModule(moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME));
     }
 
     @RequestMapping(value = "/generate-search", method = GET)
@@ -84,20 +89,20 @@ public class generateDemandHoardingController extends GenericController {
     public String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch,
             final RedirectAttributes redirectAttributes, final BindingResult resultBinder) {
 
-        CFinancialYear cFinancialYear = null;
+        Installment installment = null;
 
         if (hoardingSearch.getFinancialYear() != null) {
-            cFinancialYear = cFinancialYearRepository.getOne(Long.valueOf(hoardingSearch.getFinancialYear()));
+            installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME), Integer.valueOf(hoardingSearch.getFinancialYear()));//   cFinancialYearRepository.getOne(Long.valueOf(hoardingSearch.getFinancialYear()));
         } else {
             resultBinder.rejectValue("financialYear", "*");
             return "hoarding-generate";
         }
 
-        if (cFinancialYear != null) {
+        if (installment != null) {
             AdvertisementBatchDemandGenerate advBatchDmdGenerate = new AdvertisementBatchDemandGenerate();
             advBatchDmdGenerate.setActive(true);
-            advBatchDmdGenerate.setFinancialYear(cFinancialYear);
-            advBatchDmdGenerate.setJobName("Generate Demand For " + cFinancialYear.getFinYearRange() + new Date());
+            advBatchDmdGenerate.setInstallment(installment);
+            advBatchDmdGenerate.setJobName("Generate Demand For " + installment.getFinYearRange() + new Date());
             advertisementBatchDemandGenService.createAdvertisementBatchDemandGenerate(advBatchDmdGenerate);
         }
 

@@ -38,6 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
@@ -48,23 +49,18 @@
 		</c:if>
 		<form:form id="agencywisehoardingformview" action="" class="form-horizontal form-groups-bordered" modelAttribute="advertisementPermitDetail" 
 		commandName="advertisementPermitDetail" >
-			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<ul class="nav nav-tabs" id="settingstab">
-						<li class="active"><a data-toggle="tab"
-						href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message code="lbl.hoardingReport.Result"/></a></li>
-					</ul>
+					<div class="panel-title" style="color: orange;">
+						<strong><spring:message code="lbl.hoardingReport.Result" /></strong>
+					</div>
 				</div>
 				<div class="panel-body custom-form">
-					<div class="tab-content">
-						<div class="tab-pane fade active in" id="hoardingdetails">
-							<div class="col-md-3 add-margin text-right"><spring:message code="lbl.hoardingReport.agency"/></div>
-							<div class="col-sm-1 add-margin view-content">${agency}</div><br/><br/>
-							<div>
-								<table class="table table-bordered datatable dt-responsive dataTable no-footer" role="grid">
+						
+							<div class="col-md-12 add-margin text-left"><spring:message code="lbl.agency.name"/> <b class="view-content">&nbsp;&nbsp;${agency}</b></div><br/><br/>
+								<table  cellpadding="10" class="table table-bordered datatable dt-responsive multiheadertbl" role="grid" id="agencyReportTable" sortable="sortable">
 									<thead>
 										<tr role="row">
-											<th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-controls="adtax_searchagencywiserecord"><spring:message code="lbl.srl.no"/></th>
+											<th><spring:message code="lbl.srl.no"/></th>
 											<th><spring:message code="lbl.advertisement.application.no"/></th>
 											<th><spring:message code="lbl.advertisement.permission.no"></spring:message></th>
 											<th><spring:message code="lbl.hoarding.category"/></th>
@@ -82,15 +78,15 @@
 										<c:set var="totalPenaltyAmount" value="${0}"/>
 										<c:forEach var="dcb" items="${dcbResult}" varStatus="status" >	
 											<tr class="odd" role="row">
-												<td>${status.index+1}</td>
-												<td>${dcb.applicationNumber}</td>
-												<td>${dcb.permissionNumber}</td>
-												<td>${dcb.category}</td>
-												<td>${dcb.subcategory}</td>
-												<td>${dcb.demandAmount}</td>
-												<td>${dcb.collectedAmount}</td>
-												<td>${dcb.pendingAmount}</td>
-												<td>${dcb.penaltyAmount}</td>
+												<td align="right" >${status.index+1}</td>
+												<td align="right">${dcb.applicationNumber}</td>
+												<td align="right">${dcb.permissionNumber}</td>
+												<td align="right">${dcb.category}</td>
+												<td align="right">${dcb.subcategory}</td>
+												<td align="right">${dcb.demandAmount}</td>
+												<td align="right">${dcb.collectedAmount}</td>
+												<td align="right">${dcb.pendingAmount}</td>
+												<td align="right">${dcb.penaltyAmount}</td>
 												<c:set var="totalDemandAmount" value="${totalDemandAmount + dcb.demandAmount}" />
 												<c:set var="totalCollectionAmount" value="${totalCollectionAmount+dcb.collectedAmount}" />
 												<c:set var="totalPendingAmount" value="${totalPendingAmount+dcb.pendingAmount}" />
@@ -102,22 +98,26 @@
 											<td></td>
 											<td></td>
 											<td></td>
-											<td><span style="font-weight: bolder;">TOTAL</span></td>
-											<td><span style="font-weight: bolder;">${totalDemandAmount}</span></td>
-											<td><span style="font-weight: bolder;">${totalCollectionAmount}</span></td>
-											<td><span style="font-weight: bolder;">${totalPendingAmount}</span></td>
-											<td><span style="font-weight: bolder;">${totalPenaltyAmount}</span></td>
+											<td align="right"><span style="font-weight: bolder;">TOTAL</span></td>
+											<td align="right"><span style="font-weight: bolder;">${totalDemandAmount}</span></td>
+											<td align="right"><span style="font-weight: bolder;">${totalCollectionAmount}</span></td>
+											<td align="right"><span style="font-weight: bolder;">${totalPendingAmount}</span></td>
+											<td align="right"><span style="font-weight: bolder;">${totalPenaltyAmount}</span></td>
 										</tfoot>
 									</tbody>
 								</table>
 							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 			<div class="text-center">
 		    	<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 			</div>
 		</form:form>
 	</div>
 </div>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/app/js/agencywiseReport.js'/>"></script>

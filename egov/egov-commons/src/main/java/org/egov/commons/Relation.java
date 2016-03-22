@@ -57,263 +57,236 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 
-
 @Entity
-@Table(name="Supplier")
+@Table(name = "Supplier")
 @SequenceGenerator(name = Relation.SEQ, sequenceName = Relation.SEQ)
 @Unique(id = "id", tableName = "Supplier", fields = { "code" }, columnName = { "code" }, enableDfltMsg = true)
-public class Relation extends AbstractPersistable<Integer>implements java.io.Serializable,EntityType {
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ = "SEQ_Supplier";
+public class Relation extends AbstractPersistable<Integer> implements java.io.Serializable, EntityType {
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ = "SEQ_Supplier";
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Integer id;
-	
-	
-	
-	
-	@Column(unique = true)
-	@NotNull
-	@Length(max=50)
-	private String code;
-	
-	
-	@NotNull
-	@Length(max=50)
-	private String name;
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Integer id;
 
-	@Length(max=300)
-	private String address;
-	
-	
-	@Length(max=10)
-	private String mobile;
-	@Length(max=25)
-	private String email;
-	@Length(max=250)
-	private String narration;
-	
-	private Boolean isactive;
-	
-	
-	@Length(max=10)
-	private String panno;
+    @Column(unique = true)
+    @NotNull
+    @Length(max = 50)
+    private String code;
 
-	@Length(max=20)
-	private String tinno;
+    @NotNull
+    @Length(max = 50)
+    private String name;
 
-	
-	
-	@Length(max=25)
-	private String regno;
-	
-	@Length(max=25)
-	private String bankaccount;
-	
-	@Length(max=12)
-	private String ifsccode;
-	
-	@ManyToOne
-	@JoinColumn(name="bank")
-	private Bank bank;
-	
-	private Date lastmodifieddate;
-	private Date createddate;
-	private Long modifiedby;
-	private Long createdby;
+    @Length(max = 300)
+    private String address;
 
+    @Length(max = 10)
+    private String mobile;
+    @Length(max = 25)
+    private String email;
+    @Length(max = 250)
+    private String narration;
 
-	public Integer getId() {
-		return id;
-	}
+    private Boolean isactive;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Length(max = 10)
+    private String panno;
 
-	
-	public String getCode() {
-		return code;
-	}
+    @Length(max = 20)
+    private String tinno;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    @Length(max = 25)
+    private String regno;
 
-	public String getName() {
-		return name;
-	}
+    @Length(max = 25)
+    private String bankaccount;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Length(max = 12)
+    private String ifsccode;
 
-	 
+    @ManyToOne
+    @JoinColumn(name = "bank")
+    private Bank bank;
 
-	 
-	public String getMobile() {
-		return mobile;
-	}
+    private Date lastmodifieddate;
+    private Date createddate;
+    private Long modifiedby;
+    private Long createdby;
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public String getNarration() {
-		return narration;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setNarration(String narration) {
-		this.narration = narration;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Boolean getIsactive() {
-		return isactive;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setIsactive(Boolean isactive) {
-		this.isactive = isactive;
-	}
+    public String getMobile() {
+        return mobile;
+    }
 
-	
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
-	
+    public String getEmail() {
+        return email;
+    }
 
-	public String getPanno() {
-		return panno;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setPanno(String panno) {
-		this.panno = panno;
-	}
+    public String getNarration() {
+        return narration;
+    }
 
-	public String getTinno() {
-		return tinno;
-	}
+    public void setNarration(String narration) {
+        this.narration = narration;
+    }
 
-	public void setTinno(String tinno) {
-		this.tinno = tinno;
-	}
+    public Boolean getIsactive() {
+        return isactive;
+    }
 
-	
+    public void setIsactive(Boolean isactive) {
+        this.isactive = isactive;
+    }
 
-	public String getRegno() {
-		return regno;
-	}
+    public String getPanno() {
+        return panno;
+    }
 
-	public void setRegno(String regno) {
-		this.regno = regno;
-	}
+    public void setPanno(String panno) {
+        this.panno = panno;
+    }
 
-	public String getBankaccount() {
-		return bankaccount;
-	}
+    public String getTinno() {
+        return tinno;
+    }
 
-	public void setBankaccount(String bankaccount) {
-		this.bankaccount = bankaccount;
-	}
+    public void setTinno(String tinno) {
+        this.tinno = tinno;
+    }
 
-	 
+    public String getRegno() {
+        return regno;
+    }
 
-	public String getIfsccode() {
-		return ifsccode;
-	}
+    public void setRegno(String regno) {
+        this.regno = regno;
+    }
 
-	public void setIfsccode(String ifsccode) {
-		this.ifsccode = ifsccode;
-	}
+    public String getBankaccount() {
+        return bankaccount;
+    }
 
-	 
-	@Override
-	public String getModeofpay() {
-		return "";
-	}
+    public void setBankaccount(String bankaccount) {
+        this.bankaccount = bankaccount;
+    }
 
-	@Override
-	public Integer getEntityId() {
-		return id;
-	}
+    public String getIfsccode() {
+        return ifsccode;
+    }
 
-	@Override
-	public String getEntityDescription() {
-		return this.name;
-	}
+    public void setIfsccode(String ifsccode) {
+        this.ifsccode = ifsccode;
+    }
 
-	@Override
-	public EgwStatus getEgwStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getModeofpay() {
+        return "";
+    }
 
-	//this needs to be fixed after JPA conversion of bank
-	@Override
-	public String getBankname() {
-		/*if(bank!=null) return bank.getName();
-		else return null;*/
-		return null;
-		
-	}
+    @Override
+    public Integer getEntityId() {
+        return id;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    @Override
+    public String getEntityDescription() {
+        return this.name;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    @Override
+    public EgwStatus getEgwStatus() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	
+    // this needs to be fixed after JPA conversion of bank
+    @Override
+    public String getBankname() {
+        if (bank != null)
+            return bank.getName();
+        else
+            return null;
 
-	public Date getCreateddate() {
-		return createddate;
-	}
+    }
 
-	public void setCreateddate(Date createddate) {
-		this.createddate = createddate;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public Long getModifiedby() {
-		return modifiedby;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setModifiedby(Long modifiedby) {
-		this.modifiedby = modifiedby;
-	}
+    public Date getCreateddate() {
+        return createddate;
+    }
 
-	public Long getCreatedby() {
-		return createdby;
-	}
+    public void setCreateddate(Date createddate) {
+        this.createddate = createddate;
+    }
 
-	public void setCreatedby(Long createdby) {
-		this.createdby = createdby;
-	}
+    public Long getModifiedby() {
+        return modifiedby;
+    }
 
+    public void setModifiedby(Long modifiedby) {
+        this.modifiedby = modifiedby;
+    }
 
-	public void setBank(Bank bank) {
-		this.bank = bank;
-	}
+    public Long getCreatedby() {
+        return createdby;
+    }
 
-	public Bank getBank() {
-		return bank;
-	}
+    public void setCreatedby(Long createdby) {
+        this.createdby = createdby;
+    }
 
-	public Date getLastmodifieddate() {
-		return lastmodifieddate;
-	}
+    public void setBank(Bank bank) {
+        this.bank = bank;
+    }
 
-	public void setLastmodifieddate(Date lastmodifieddate) {
-		this.lastmodifieddate = lastmodifieddate;
-	}
- 
-	
-	
+    public Bank getBank() {
+        return bank;
+    }
+
+    public Date getLastmodifieddate() {
+        return lastmodifieddate;
+    }
+
+    public void setLastmodifieddate(Date lastmodifieddate) {
+        this.lastmodifieddate = lastmodifieddate;
+    }
+
 }

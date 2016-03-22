@@ -40,6 +40,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
+		<spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="true"/>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -57,7 +59,7 @@
 						</label>
 						<div class="col-sm-4" >
 							<input style="display:none" type="password">
-							<input type="password" name="newPassword" class="form-control check-password" id="new-pass" required="required" minlength="8" maxlength="32"/>
+							<input type="password" name="newPassword" class="form-control check-password" id="new-pass" required="required" maxlength="32" data-toggle="popover" data-content='${pwdmsg}'/>
 						</div>
 					</div>
 					
@@ -66,7 +68,7 @@
 							<spring:message code="lbl.pwd.confirm"/> <span class="mandatory"></span> 
 						</label>
 						<div class="col-sm-4" >
-							<input type="password" name="confirmPwd" class="form-control check-password" id="retype-pass" required="required" minlength="8" maxlength="32"/>
+							<input type="password" name="confirmPwd" class="form-control check-password" id="retype-pass" required="required" maxlength="32"/>
 							<div class="password-error error-msg display-hide"><spring:message code="lbl.pwd.mismatch"/> </div>
 						</div>
 					</div>
@@ -95,4 +97,5 @@ $('.check-password').blur(function(){
 		}
 	}
 });
+$('#new-pass').popover({ trigger: "focus",placement: "bottom"})
 </script>

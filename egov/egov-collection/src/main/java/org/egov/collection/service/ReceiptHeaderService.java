@@ -1813,4 +1813,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final CollectionIndex collectionIndex = collectionsUtil.constructCollectionIndex(receiptHeader);
         collectionIndexService.pushCollectionIndex(collectionIndex);
     }
+
+    @Transactional
+    public void persistFieldReceipt(final ReceiptHeader receiptHeader) {
+        this.persist(receiptHeader);
+        LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
+        updateBillingSystemWithReceiptInfo(receiptHeader);
+        this.getSession().flush();
+        LOGGER.info("Billing system updated with receipt info");
+    }
 }

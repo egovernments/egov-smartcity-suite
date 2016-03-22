@@ -63,138 +63,142 @@ public class ApplicationProperties {
     private Environment environment;
 
     public String fileStoreBaseDir() {
-        return environment.getProperty("filestore.base.dir");
+        return this.environment.getProperty("filestore.base.dir");
     }
 
     public String filestoreServiceBeanName() {
-        return environment.getProperty("filestoreservice.beanname");
+        return this.environment.getProperty("filestoreservice.beanname");
     }
 
     public String defaultDatePattern() {
-        return environment.getProperty("default.date.pattern");
+        return this.environment.getProperty("default.date.pattern");
     }
 
     public Integer mailPort() {
-        return environment.getProperty("mail.port", Integer.class);
+        return this.environment.getProperty("mail.port", Integer.class);
     }
 
     public String mailHost() {
-        return environment.getProperty("mail.host");
+        return this.environment.getProperty("mail.host");
     }
 
     public String mailProtocol() {
-        return environment.getProperty("mail.protocol");
+        return this.environment.getProperty("mail.protocol");
     }
 
     public String mailSenderUsername() {
-        return environment.getProperty("mail.sender.username");
+        return this.environment.getProperty("mail.sender.username");
     }
 
     public String mailSenderPassword() {
-        return environment.getProperty("mail.sender.password");
+        return this.environment.getProperty("mail.sender.password");
     }
 
     public String mailSMTPSAuth() {
-        return environment.getProperty("mail.smtps.auth");
+        return this.environment.getProperty("mail.smtps.auth");
     }
 
     public String mailStartTLSEnabled() {
-        return environment.getProperty("mail.smtps.starttls.enable");
+        return this.environment.getProperty("mail.smtps.starttls.enable");
     }
 
     public String mailSMTPSDebug() {
-        return environment.getProperty("mail.smtps.debug");
+        return this.environment.getProperty("mail.smtps.debug");
     }
 
     public String smsProviderURL() {
-        return environment.getProperty("sms.provider.url");
+        return this.environment.getProperty("sms.provider.url");
     }
 
     public String smsSenderUsername() {
-        return environment.getProperty("sms.sender.username");
+        return this.environment.getProperty("sms.sender.username");
     }
 
     public String smsSenderPassword() {
-        return environment.getProperty("sms.sender.password");
+        return this.environment.getProperty("sms.sender.password");
     }
 
     public String smsSender() {
-        return environment.getProperty("sms.sender");
+        return this.environment.getProperty("sms.sender");
     }
 
     public String[] commonMessageFiles() {
-        return environment.getProperty("common.properties.files").split(",");
+        return this.environment.getProperty("common.properties.files").split(",");
     }
 
     public boolean devMode() {
-        return environment.getProperty("dev.mode", Boolean.class);
+        return this.environment.getProperty("dev.mode", Boolean.class);
     }
 
     public boolean emailEnabled() {
-        return environment.getProperty("mail.enabled", Boolean.class);
+        return this.environment.getProperty("mail.enabled", Boolean.class);
     }
 
     public boolean smsEnabled() {
-        return environment.getProperty("sms.enabled", Boolean.class);
+        return this.environment.getProperty("sms.enabled", Boolean.class);
     }
 
     public Integer userPasswordExpiryInDays() {
-        return environment.getProperty("user.pwd.expiry.days", Integer.class);
+        return this.environment.getProperty("user.pwd.expiry.days", Integer.class);
     }
 
     public List<String> smsErrorCodes() {
-        return Arrays.asList(environment.getProperty("sms.error.codes").split(","));
+        return Arrays.asList(this.environment.getProperty("sms.error.codes").split(","));
     }
 
-    public String smsResponseMessageForCode(final String errorCode) {
-        return environment.getProperty(errorCode, "No Message");
+    public String smsResponseMessageForCode(String errorCode) {
+        return this.environment.getProperty(errorCode, "No Message");
     }
 
     public boolean multiTenancyEnabled() {
-        return environment.getProperty("multitenancy.enabled", Boolean.class);
+        return this.environment.getProperty("multitenancy.enabled", Boolean.class);
     }
 
     public String redisHost() {
-        return environment.getProperty("redis.host.name");
+        return this.environment.getProperty("redis.host.name");
     }
 
     public int redisPort() {
-        return environment.getProperty("redis.host.port", Integer.class);
+        return this.environment.getProperty("redis.host.port", Integer.class);
     }
 
-    public String getProperty(final String propKey) {
-        return environment.getProperty(propKey, EMPTY);
+    public String getProperty(String propKey) {
+        return this.environment.getProperty(propKey, EMPTY);
     }
 
-    public <T> T getProperty(final String propKey, final Class<T> type) {
-        return environment.getProperty(propKey, type);
+    public <T> T getProperty(String propKey, Class<T> type) {
+        return this.environment.getProperty(propKey, type);
     }
 
     public String appVersion() {
-        return environment.getProperty("app.version", EMPTY);
+        return this.environment.getProperty("app.version", EMPTY);
     }
 
     public String appBuildNo() {
-        return environment.getProperty("app.build.no", EMPTY);
+        return this.environment.getProperty("app.build.no", EMPTY);
     }
 
     public String appCoreBuildNo() {
-        return environment.getProperty("app.core.build.no", EMPTY);
+        return this.environment.getProperty("app.core.build.no", EMPTY);
     }
 
     public String issueReportingUrl() {
-        return environment.getProperty("issue.report.url", EMPTY);
+        return this.environment.getProperty("issue.report.url", EMPTY);
     }
 
     public List<String> portalEnabledFeatures() {
-        return Arrays.asList(environment.getProperty("portal.feature.enabled").split(","));
+        return Arrays.asList(this.environment.getProperty("portal.feature.enabled").split(","));
     }
 
     public boolean statewideMigrationRequired() {
-        return environment.getProperty("statewide.migration.required", Boolean.class, Boolean.FALSE);
+        return this.environment.getProperty("statewide.migration.required", Boolean.class, Boolean.FALSE);
     }
 
     public Integer getBatchUpdateSize() {
-        return environment.getProperty("hibernate.jdbc.batch_size", Integer.class);
+        return this.environment.getProperty("hibernate.jdbc.batch_size", Integer.class);
+    }
+
+    public String passwordStrength() {
+        return this.environment.getProperty("user.pwd.strength");
     }
 }

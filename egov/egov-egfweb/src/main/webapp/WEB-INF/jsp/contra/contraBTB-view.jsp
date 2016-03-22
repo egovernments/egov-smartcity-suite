@@ -60,68 +60,64 @@
 				<div id="listid" style="display: block">
 					<br />
 				</div>
-			</div>
-			</div>
-			<div align="center">
-				<font style='color: red;'>
-					<p class="error-block" id="lblError"></p>
-				</font> <span class="mandatory"> <s:actionerror /> <s:fielderror />
-					<s:actionmessage />
-				</span>
-				<table border="0" width="100%" cellspacing="0" cellpadding="0">
-					<tr>
-						<td class="bluebox" width="10%"></td>
-						<td class="bluebox" width="22%"><s:text name="voucher.number" /></td>
-						<td class="bluebox" width="22%"><s:textfield
-								name="voucherNumber" id="voucherNumber" /></td>
-						<s:hidden name="id" />
-						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
-							class="mandatory">*</span></td>
-						<td class="bluebox" width="38%"><input type="text"
-							name="voucherDate"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
-							href="javascript:show_calendar('cbtbform.voucherDate');"
-							style="text-decoration: none">&nbsp;<img tabIndex="-1"
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
-					</tr>
-					<%@include file="contraBTB-form.jsp"%>
 
-				</table>
-			</div>
-			<div class="buttonbottom">
-				<input type="button" id="closeButton" value="Close"
-					onclick="javascript:window.close()" class="button" />
-			</div>
+				<div align="center">
+					<font style='color: red;'>
+						<p class="error-block" id="lblError"></p>
+					</font> <span class="mandatory1"> <s:actionerror /> <s:fielderror />
+						<s:actionmessage />
+					</span>
+					<table border="0" width="100%" cellspacing="0" cellpadding="0">
+						<tr>
+							<td class="bluebox" width="10%"></td>
+							<td class="bluebox" width="22%"><s:text
+									name="voucher.number" /></td>
+							<td class="bluebox" width="22%"><s:textfield
+									name="voucherNumber" id="voucherNumber" /></td>
+							<s:hidden name="id" />
+							<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
+								class="mandatory1">*</span></td>
+							<td class="bluebox" width="38%"><input type="text"
+								name="voucherDate"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
+								href="javascript:show_calendar('cbtbform.voucherDate');"
+								style="text-decoration: none">&nbsp;<img tabIndex="-1"
+									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+						</tr>
+						<%@include file="contraBTB-form.jsp"%>
 
-			<input type="hidden" id="voucherTypeBean.voucherName"
-				name="voucherTypeBean.voucherName" value="BankToBank" />
-			<input type="hidden" id="voucherTypeBean.voucherType"
-				name="voucherTypeBean.voucherType" value="Contra" />
-			<input type="hidden" id="voucherTypeBean.voucherNumType"
-				name="voucherTypeBean.voucherNumType" value="Contra" />
-			<input type="hidden" id="voucherTypeBean.cgnType"
-				name="voucherTypeBean.cgnType" value="BTB" />
+					</table>
+				</div>
+				<div class="buttonbottom">
+					<input type="button" id="closeButton" value="Close"
+						onclick="javascript:window.close()" class="button" />
+				</div>
+
+				<input type="hidden" id="voucherTypeBean.voucherName"
+					name="voucherTypeBean.voucherName" value="BankToBank" /> <input
+					type="hidden" id="voucherTypeBean.voucherType"
+					name="voucherTypeBean.voucherType" value="Contra" /> <input
+					type="hidden" id="voucherTypeBean.voucherNumType"
+					name="voucherTypeBean.voucherNumType" value="Contra" /> <input
+					type="hidden" id="voucherTypeBean.cgnType"
+					name="voucherTypeBean.cgnType" value="BTB" />
+			</div>
 		</s:push>
 	</s:form>
 	<SCRIPT type="text/javascript">
+		function onloadTask_view() {
 
-		function onloadTask_view()
-		{
-		
-			var srcFund='<s:property value="contraBean.fromFundId"/>'
-			var desFund='<s:property value="contraBean.toFundId"/>'
-			if(srcFund==desFund){
-				document.getElementById("interFundRow").style.visibility="hidden";
+			var srcFund = '<s:property value="contraBean.fromFundId"/>'
+			var desFund = '<s:property value="contraBean.toFundId"/>'
+			if (srcFund == desFund) {
+				document.getElementById("interFundRow").style.visibility = "hidden";
+			} else {
+				document.getElementById("interFundRow").style.visibility = "visible";
 			}
-			else{
-				document.getElementById("interFundRow").style.visibility="visible";
-			}
-			disableControls(0,true);
-			document.getElementById("closeButton").disabled=false;
+			disableControls(0, true);
+			document.getElementById("closeButton").disabled = false;
 		}
-
-
-</SCRIPT>
+	</SCRIPT>
 </body>
 </html>

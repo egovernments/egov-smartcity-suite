@@ -205,7 +205,7 @@ public class ContraBTBActionHelper {
                 // change this to advice type later
                 iMap
                         .put("Instrument type",
-                                FinancialConstants.INSTRUMENT_TYPE_BANK);
+                                FinancialConstants.INSTRUMENT_TYPE_ONLINE);
             }
             iMap.put("Is pay cheque", "0");
             iList.add(iMap);
@@ -294,7 +294,7 @@ public class ContraBTBActionHelper {
             // change this to advice type later
             iMap
                     .put("Instrument type",
-                            FinancialConstants.INSTRUMENT_TYPE_BANK);
+                            FinancialConstants.INSTRUMENT_TYPE_ONLINE);
         }
         iMap.put("Is pay cheque", "1");
         iList.add(iMap);
@@ -375,6 +375,7 @@ public class ContraBTBActionHelper {
             headerDetails.remove(VoucherConstant.FUNDSOURCECODE);
             headerDetails.remove(VoucherConstant.DIVISIONID);
             headerDetails.remove(VoucherConstant.FUNCTIONARYCODE);
+            headerDetails.put(VoucherConstant.REFVOUCHER,voucher.getId());
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, contraBean.getAmount()
                     .toString());

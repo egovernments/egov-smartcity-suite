@@ -394,7 +394,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         
         
         for (Map.Entry<String, BigDecimal> entry : taxMap.entrySet()) {
-            entry.setValue(roundOffToNearestEven(entry.getValue()));
+            entry.setValue(entry.getValue().setScale(0, BigDecimal.ROUND_HALF_UP));
         }
         return taxMap;
     }
@@ -453,7 +453,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 depreciationPct = BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct());
             }
         } else {
-            if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER)) {
+            if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER) && floor.getPropertyUsage().getUsageCode().equals(USAGE_RESIDENTIAL)) {
                 depreciationPct = RESD_OWNER_DEPRECIATION;
             } else {
                 depreciationPct = BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct());

@@ -276,7 +276,7 @@ public class BudgetSearchAction extends BaseFormAction {
                 dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
             if (shouldShowField(Constants.FUND))
                 dropdownData.put("fundList",
-                        persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
+                        persistenceService.findAllBy("from Fund where isNotLeaf=true and isActive=true order by name"));
         }
     }
 

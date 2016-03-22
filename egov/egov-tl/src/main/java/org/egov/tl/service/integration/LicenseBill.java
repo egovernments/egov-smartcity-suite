@@ -315,14 +315,19 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 
-    public Map<Installment, BigDecimal> getCalculatedPenalty(final Date commencementDate, final Date collectionDate,
+    public Map<Installment, BigDecimal> getCalculatedPenalty(final Date fromDate, final Date collectionDate,
             final EgDemand demand) {
         final Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
         for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
             if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.PENALTY_DMD_REASON_CODE)
                     && demandDetails.getAmtCollected().signum() == 0)
-                installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
-                        calculatePenalty(commencementDate, collectionDate, demandDetails.getAmount()));
+                if (fromDate != null)
+                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
+                            calculatePenalty(fromDate, collectionDate, demandDetails.getAmount()));
+                else
+                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
+                            calculatePenalty(demandDetails.getEgDemandReason().getEgInstallmentMaster().getToDate(),
+                                    collectionDate, demandDetails.getAmount()));
         return installmentPenalty;
     }
 }

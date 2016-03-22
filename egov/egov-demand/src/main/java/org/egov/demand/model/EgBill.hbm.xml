@@ -124,7 +124,7 @@
 			<column name="CONSUMER_ID" />
 		</property>
 
-		<set name="egBillDetails" cascade="all-delete-orphan" table="EG_BILL_DETAILS"
+		<set name="egBillDetails" inverse="true" cascade="all,delete-orphan" table="EG_BILL_DETAILS"
 			order-by="ORDER_NO">
 			<key>
 				<column name="ID_BILL" not-null="true" />

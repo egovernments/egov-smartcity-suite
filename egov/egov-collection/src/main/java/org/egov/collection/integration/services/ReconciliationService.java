@@ -187,6 +187,7 @@ public class ReconciliationService {
         receipt.getOnlinePayment().setAuthorisationStatusCode(authStatusCode);
         receipt.getOnlinePayment().setTransactionNumber(transactionId);
         receipt.getOnlinePayment().setTransactionDate(transactionDate);
+        receipt.getOnlinePayment().setTransactionAmount(receipt.getTotalAmount());
         receipt.getOnlinePayment().setRemarks(remarks);
 
         // set online payment status as SUCCESS

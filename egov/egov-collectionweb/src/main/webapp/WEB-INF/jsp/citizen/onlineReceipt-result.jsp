@@ -80,7 +80,8 @@ function onBodyLoad(){
 
 <br/>
 <div class="buttonbottom">
-<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
+<a href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>' class="btn btn-primary">Generate Receipt</a>
+<input name="button2" type="button" class="btn btn-default" id="button" onclick="window.close()" value="Close"/>
 </div>
 </body>
 </html>

@@ -291,7 +291,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         getHibObjectsFromContraBean();
         final CVoucherHeader oldVoucher = voucherService.updateVoucherHeader(voucherHeader, voucherTypeBean);
 
-        if (oldVoucher.getRefcgNo() != null) {
+        if (oldVoucher.getRefvhId() != null) {
             voucherHeader2 = oldVoucher;
             voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where voucherNumber=?",
                     oldVoucher.getVoucherNumber());

@@ -343,13 +343,16 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (financialYear != null && financialYear.getId() != 0)
             financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?", financialYear.getId());
         try {
-            misc = budgetReAppropriationService.createBudgetReAppropriationMisc(parameters.get(ACTIONNAME)[0] + "|" + userId,beRe,financialYear,appropriationMisc,getPosition());
+            misc = budgetReAppropriationService.createBudgetReAppropriationMisc(parameters.get(ACTIONNAME)[0] + "|" + userId,
+                    beRe, financialYear, appropriationMisc, getPosition());
             removeEmptyReAppropriation(budgetReAppropriationList);
-            reAppropriationCreated = budgetReAppropriationService.createReAppropriation(parameters.get(ACTIONNAME)[0] + "|" + userId,
+            reAppropriationCreated = budgetReAppropriationService.createReAppropriation(parameters.get(ACTIONNAME)[0] + "|"
+                    + userId,
                     budgetReAppropriationList, getPosition(), financialYear, beRe, misc,
                     parameters.get("appropriationMisc.reAppropriationDate")[0]);
             removeEmptyReAppropriation(newBudgetReAppropriationList);
-            reAppForNewBudgetCreated =budgetReAppropriationService.createReAppropriationForNewBudgetDetail(parameters.get(ACTIONNAME)[0] + "|" + userId,
+            reAppForNewBudgetCreated = budgetReAppropriationService.createReAppropriationForNewBudgetDetail(
+                    parameters.get(ACTIONNAME)[0] + "|" + userId,
                     newBudgetReAppropriationList, getPosition(), misc);
             if (!reAppropriationCreated && !reAppForNewBudgetCreated)
                 throw new ValidationException(Arrays.asList(new ValidationError("budgetDetail.budgetGroup.mandatory",
@@ -403,7 +406,17 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     }
 
     protected Position getPosition() {
-        return eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+        try {
+            return eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError("Do transaction with proper user",
+                    "Do transaction with proper user")));
+        }
     }
 
     public void removeEmptyReAppropriation(final List<BudgetReAppropriationView> reAppropriationList) {
@@ -550,7 +563,6 @@ public class BudgetReAppropriationAction extends BaseFormAction {
                                 + " order by ba.budgetDetail.fund,ba.budgetDetail.executingDepartment,ba.budgetDetail.function,ba.reAppropriationMisc.sequenceNumber");
         return "search";
     }
-
 
     public void transition(final String actionName, final BudgetReAppropriation detail, final String comment) {
         budgetReAppropriationWorkflowService.transition(actionName, detail, comment);

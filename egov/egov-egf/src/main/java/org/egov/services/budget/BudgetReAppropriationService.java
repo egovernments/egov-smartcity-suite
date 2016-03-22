@@ -50,6 +50,7 @@ import javax.script.ScriptContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -500,6 +501,8 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
             final String asOnDate) {
         final BudgetReAppropriation appropriation = new BudgetReAppropriation();
+        EgwStatus status =egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL","Approved");
+        reAppView.getBudgetDetail().setStatus(status);
         final List<BudgetDetail> searchBy = budgetDetailService.searchByCriteriaWithTypeAndFY(financialYear.getId(), beRe,
                 reAppView.getBudgetDetail());
         if (searchBy.size() != 1)
@@ -586,11 +589,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             final BudgetReAppropriationView appropriation, final Position position, final BudgetReAppropriationMisc misc) {
         final BudgetReAppropriation reAppropriation = new BudgetReAppropriation();
         detail.setPlanningPercent(appropriation.getPlanningPercent());
-        detail.setApprovedAmount(appropriation.getDeltaAmount());
-        detail.setOriginalAmount(appropriation.getDeltaAmount());
-        detail.setBudgetAvailable(detail.getApprovedAmount().multiply(detail.getPlanningPercent())
-                .divide(new BigDecimal(String
-                        .valueOf(100))));
+        detail.setBudgetAvailable(appropriation.getPlanningBudgetApproved());
         reAppropriation.setBudgetDetail(detail);
         reAppropriation.setReAppropriationMisc(misc);
         reAppropriation.setAnticipatoryAmount(appropriation.getAnticipatoryAmount());

@@ -192,6 +192,7 @@ public final class CollectionConstants {
     public static final String QUERY_ACCOUNTDETAILKEY_BY_DETAILKEY = "getAccountDetailkeyByDetailKey";
     public static final String QUERY_ALL_STATUSES_FOR_MODULE = "getAllStatusesForModule";
     public static final String QUERY_STATUSES_FOR_MODULE_AND_CODES = "getStatusesForModuleAndCodes";
+    public static final String QUERY_RECEIPT_BY_ID_AND_CITYCODE = "QUERY_RECEIPT_BY_ID_AND_CITYCODE";
 
     public static final String QUERY_ALL_DEPARTMENTS = "getAllDepartment";
     public static final String QUERY_ALL_LOCATIONS = "getAllLocations";
@@ -497,7 +498,10 @@ public final class CollectionConstants {
     public static final String MESSAGEKEY_AXIS_PASSWORD = "axis.password";
     public static final String MESSAGEKEY_AXIS_RECONCILE_URL = "axis.reconcile.url";
     public static final String AXIS_SECURE_SECRET = "axis.secure.secret";
-
+    public static final String AXIS_FAILED_ABORTED_MESSAGE= "Failed/Aborted Transaction.";
+    public static final String AXIS_CHECK_DR_EXISTS="vpc_DRExists=N";
+    public static final String AXIS_ABORTED_AUTH_STATUS="A";
+    
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
             'B', 'C', 'D', 'E', 'F' };

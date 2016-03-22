@@ -64,6 +64,15 @@ $('#categories').change(function(){
 	});
 });
 
+$('#agencyReportTable').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"aoColumnDefs": [ { "bSortable": false, "aTargets": [0]}],
+		"autoWidth": false,
+		"bDestroy": true
+});
+
+
 $('#zoneList').change(function(){
 	$.ajax({
 		type: "GET",
@@ -142,4 +151,3 @@ function reportFunction(id,category,subcategory,zone,ward)
 	var ward = document.getElementById("wardlist").value;
 	window.open("/adtax/reports/report-view?id="+id+"&category="+category+"&subcategory="+subcategory+"&zone="+zone+"&ward="+ward,'_blank',"width=800, height=600 , scrollbars=yes");
 }
-
