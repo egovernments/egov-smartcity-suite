@@ -24,172 +24,163 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.commons;
 
-import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class CFinancialYear implements java.io.Serializable {
-    /**
-    * 
-    */
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+
+@Entity
+@Table(name = "financialyear")
+@Unique(id = "id", tableName = "financialyear", fields = { "finYearRange" }, columnName = { "financialyear" }, enableDfltMsg = true)
+@SequenceGenerator(name = CFinancialYear.SEQ_CFINANCIALYEAR, sequenceName = CFinancialYear.SEQ_CFINANCIALYEAR, allocationSize = 1)
+public class CFinancialYear extends AbstractAuditable {
+
     private static final long serialVersionUID = -1563670460427134487L;
-    private Long id = null;
-    private String finYearRange = "";
+    public static final String SEQ_CFINANCIALYEAR = "SEQ_FINANCIALYEAR";
+
+    @Id
+    @GeneratedValue(generator = SEQ_CFINANCIALYEAR, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @Length(min = 1, max = 25)
+    @NotBlank
+    @Column(name="financialyear")
+    private String finYearRange;
+
+  
+    @NotNull
     private Date startingDate;
+
+    @NotNull
     private Date endingDate;
-    private Boolean isActive ;
-    private Date created;
-    private Timestamp lastModified;
-    private Integer modifiedBy  ;
-    private Boolean isActiveForPosting  ;
-    private Boolean isClosed  ;
-    private Boolean transferClosingBalance ;
+    
+    private Boolean isActive;
+  
+    private Boolean isActiveForPosting;
+    
+    private Boolean isClosed;
+ 
+    private Boolean transferClosingBalance;
+    
+    @OneToMany(mappedBy = "cFinancialYear", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id DESC ")
+    @NotAudited
+    private final List<CFiscalPeriod> cFiscalPeriod = new ArrayList<CFiscalPeriod>(0);
 
-    /**
-     * @return Returns the created.
-     */
-    public Date getCreated() {
-        return created;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    /**
-     * @param created The created to set.
-     */
-    public void setCreated(final Date created) {
-        this.created = created;
+    public Boolean getIsClosed() {
+        return isClosed;
     }
 
-    /**
-     * @return Returns the endingDate.
-     */
-    public Date getEndingDate() {
-        return endingDate;
+    public Boolean getTransferClosingBalance() {
+        return transferClosingBalance;
     }
 
-    /**
-     * @param endingDate The endingDate to set.
-     */
-    public void setEndingDate(final Date endingDate) {
-        this.endingDate = endingDate;
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
     }
 
-    /**
-     * @return Returns the finYearRange.
-     */
+    public void setIsClosed(final Boolean isClosed) {
+        this.isClosed = isClosed;
+    }
+
+    public void setTransferClosingBalance(final Boolean transferClosingBalance) {
+        this.transferClosingBalance = transferClosingBalance;
+    }
+
     public String getFinYearRange() {
         return finYearRange;
     }
 
-    /**
-     * @param finYearRange The finYearRange to set.
-     */
-    public void setFinYearRange(final String finYearRange) {
-        this.finYearRange = finYearRange;
-    }
-
-    /**
-     * @return Returns the id.
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id The id to set.
-     */
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    
-
-    /**
-     * @return Returns the lastModified.
-     */
-    public Timestamp getLastModified() {
-        return lastModified;
-    }
-
-    /**
-     * @param lastModified The lastModified to set.
-     */
-    public void setLastModified(final Timestamp lastModified) {
-        this.lastModified = lastModified;
-    }
-
-    /**
-     * @return Returns the modifiedBy.
-     */
-    public Integer getModifiedBy() {
-        return modifiedBy;
-    }
-
-    /**
-     * @param modifiedBy The modifiedBy to set.
-     */
-    public void setModifiedBy(final Integer modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
-    /**
-     * @return Returns the startingDate.
-     */
     public Date getStartingDate() {
         return startingDate;
     }
 
-    /**
-     * @param startingDate The startingDate to set.
-     */
+    public Date getEndingDate() {
+        return endingDate;
+    }
+
+    public Boolean getIsActiveForPosting() {
+        return isActiveForPosting;
+    }
+
+    public void setFinYearRange(final String finYearRange) {
+        this.finYearRange = finYearRange;
+    }
+
     public void setStartingDate(final Date startingDate) {
         this.startingDate = startingDate;
     }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public void setEndingDate(final Date endingDate) {
+        this.endingDate = endingDate;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActiveForPosting(final Boolean isActiveForPosting) {
+        this.isActiveForPosting = isActiveForPosting;
+    }
 
-	public Boolean getIsActiveForPosting() {
-		return isActiveForPosting;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setIsActiveForPosting(Boolean isActiveForPosting) {
-		this.isActiveForPosting = isActiveForPosting;
-	}
-
-	public Boolean getIsClosed() {
-		return isClosed;
-	}
-
-	public void setIsClosed(Boolean isClosed) {
-		this.isClosed = isClosed;
-	}
-
-	public Boolean getTransferClosingBalance() {
-		return transferClosingBalance;
-	}
-
-	public void setTransferClosingBalance(Boolean transferClosingBalance) {
-		this.transferClosingBalance = transferClosingBalance;
-	}
-
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
     
+
+    public List<CFiscalPeriod> getcFiscalPeriod() {
+        return cFiscalPeriod;
+    }
+    
+
+    public void setcFiscalPeriod(final List<CFiscalPeriod> cFiscalPeriod) {
+        this.cFiscalPeriod.clear();
+        if (cFiscalPeriod != null)
+            this.cFiscalPeriod.addAll(cFiscalPeriod);
+    }
+    
+    public void addCFiscalPeriod(final CFiscalPeriod cFiscalPeriod) {
+        getcFiscalPeriod().add(cFiscalPeriod);
+    }
+
 }
