@@ -44,7 +44,7 @@
 	<div class="col-sm-3 add-margin">  
 		<form:input path="estimateNumber" name="estimateNumber" type="text" class="form-control" readonly="true" /> 
 	</div>
-	<label class="col-sm-2 control-label text-right">Work Identification Number</label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="projectCode" disabled>
 	</div>

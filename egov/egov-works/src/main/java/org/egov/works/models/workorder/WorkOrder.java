@@ -142,6 +142,7 @@ public class WorkOrder extends StateAware implements Auditable {
     private String tenderType;
     private String owner;
     private String status;
+    private transient String percentageSign;
 
     private List<WorkOrderEstimate> workOrderEstimates = new LinkedList<WorkOrderEstimate>();
     private Set<OfflineStatus> offlineStatuses = new HashSet<OfflineStatus>();
@@ -471,6 +472,14 @@ public class WorkOrder extends StateAware implements Auditable {
     @Override
     public String toString() {
         return "WorkOrder ( Id : " + getId() + "Work Order No: " + workOrderNumber + ")";
+    }
+
+    public String getPercentageSign() {
+        return percentageSign;
+    }
+
+    public void setPercentageSign(final String percentageSign) {
+        this.percentageSign = percentageSign;
     }
 
 }

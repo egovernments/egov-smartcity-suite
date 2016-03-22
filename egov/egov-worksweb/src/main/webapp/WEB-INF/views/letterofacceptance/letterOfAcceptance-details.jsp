@@ -63,12 +63,13 @@
 	
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.tender.finalized.percentage" /></label><div class="col-sm-3">
 		<div class="input-group" style="margin-bottom: 0;">
-            <div class="input-group-btn">
-               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">+ &nbsp;<span class="caret"></span></button>
+		    <div class="input-group-btn number-sign">
+               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="sign-text">+</span> &nbsp;<span class="caret"></span></button>
                <ul class="dropdown-menu">
-                  <li><a href="#">+</a></li>
-                  <li><a href="#">-</a></li>                  
+                  <li><a href="javascript:void(0);">+</a></li>
+                  <li><a href="javascript:void(0);">-</a></li>                  
                </ul>
+               <form:hidden path="percentageSign" name="percentageSign" id="percentageSign" />
             </div>
             <form:input path="tenderFinalizedPercentage" name="tenderFinalizedPercentage" id="tenderFinalizedPercentage" type="text" class="form-control patternvalidation" maxlength="8" />
 			<form:errors path="tenderFinalizedPercentage" cssClass="add-margin error-msg" />

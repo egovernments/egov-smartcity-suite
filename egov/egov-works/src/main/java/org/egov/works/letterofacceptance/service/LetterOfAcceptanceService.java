@@ -39,7 +39,6 @@
  */
 package org.egov.works.letterofacceptance.service;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -95,10 +94,12 @@ public class LetterOfAcceptanceService {
     }
 
     @Transactional
-    public WorkOrder create(final WorkOrder workOrder) throws IOException {
+    public WorkOrder create(final WorkOrder workOrder) {
 
         workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                 WorksConstants.APPROVED));
+        if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
+            workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
         return letterOfAcceptanceRepository.save(workOrder);
     }
 

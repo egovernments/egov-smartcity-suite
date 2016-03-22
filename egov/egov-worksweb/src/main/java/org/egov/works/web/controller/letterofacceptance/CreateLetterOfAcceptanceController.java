@@ -39,12 +39,10 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -95,15 +93,14 @@ public class CreateLetterOfAcceptanceController {
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
     public String create(@ModelAttribute("workOrder") final WorkOrder workOrder,
-            final Model model, final BindingResult errors)
-                    throws ApplicationException, IOException {
+            final Model model, final BindingResult resultBinder) {
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
 
         // TODO:Fixme - workOrder.getEstimateNumber() - Replace with WIN from line estimate
         workOrder.setWorkOrderNumber(
                 letterOfAcceptanceNumberGenerator.generateLetterOfAcceptanceNumber(workOrder.getEstimateNumber()));
 
-        if (errors.hasErrors()) {
+        if (resultBinder.hasErrors()) {
             setDropDownValues(model, lineEstimateDetails);
             return "createLetterOfAcceptance-form";
         } else {
@@ -113,7 +110,7 @@ public class CreateLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/loa-success", method = RequestMethod.GET)
-    public String getSeweragerates(@RequestParam("loaNumber") final String loaNumber, final Model model) {
+    public String showLetterOfAcceptanceSuccessPage(@RequestParam("loaNumber") final String loaNumber, final Model model) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(loaNumber);
         model.addAttribute("workOrder", workOrder);
         return "letterofacceptance-success";

@@ -55,6 +55,14 @@ $(document).ready(function(){
             }
         }
     });
+	
+	$('.number-sign li a').click(function(e){
+		
+		$('.number-sign span.sign-text').html($(this).html());
+		$('#percentageSign').val($(this).html())
+		calculateAgreementAmount();
+		
+	});
    
 	contractorSearch.initialize();
 		var contractorSearch_typeahead = $('#contractorSearch').typeahead({ 
@@ -78,6 +86,7 @@ $(document).ready(function(){
 			$('#emdAmountDeposited').val('');
 		if($('#defectLiabilityPeriod').val() <= 0) 
 			$('#defectLiabilityPeriod').val('');
+		$('#estimateAmount').val(roundTo($('#estimateAmount').val()));
 	
 		$("form").submit(function() {
 			if($('form').valid())	{
@@ -100,4 +109,50 @@ $(document).ready(function(){
 			if($('#defectLiabilityPeriod').val() == '' || $('#defectLiabilityPeriod').val() < 0) 
 				$('#defectLiabilityPeriod').val(0);
 		 }
+		
+
+		$('#tenderFinalizedPercentage').blur(function(){
+			calculateAgreementAmount();		
+		});
+		
+		function calculateAgreementAmount() {
+	    	var tenderFinalizedPercentage = $('#tenderFinalizedPercentage').val();
+			if(tenderFinalizedPercentage != ''){
+			    	percentageVal = assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage);
+			    	var agreementAmount = eval($('#estimateAmount').val())+(eval($('#estimateAmount').val())*percentageVal)/100;
+				   $('#workOrderAmount').val(roundTo(agreementAmount));
+			}
+			else 
+					$('#workOrderAmount').val('');
+		}
+
+		function assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage){
+			var percentageSign = $('#percentageSign').val();
+			if(percentageSign=='-'){
+			      return -tenderFinalizedPercentage;
+			  }else{
+			     return tenderFinalizedPercentage;
+			  }
+		}
+		
+		function roundTo(value,decimals,decimal_padding){
+			  if(!decimals) decimals=2;
+			  if(!decimal_padding) decimal_padding='0';
+			  if(isNaN(value)) value=0;
+			  value=Math.round(value*Math.pow(10,decimals));
+			  var stringValue= (value/Math.pow(10,decimals)).toString();
+			  var padding=0;
+			  var parts=stringValue.split(".");
+			  if(parts.length==1) {
+			  	padding=decimals;
+			  	stringValue+=".";
+			  } 
+			  else 
+				 padding=decimals-parts[1].length;
+			  for(var i=0;i<padding;i++)
+			  {
+				  stringValue+=decimal_padding;
+			  }
+			  return stringValue;
+			}
 });
