@@ -233,6 +233,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
 
         for (final ReceiptAccountInfo recAccInfo : billReceiptInfo.getAccountDetails()) {
             String demandMasterReasonDesc = null;
+            String financialYearDesc = null;
             if (recAccInfo.getDescription() != null) {
                 demandMasterReasonDesc = recAccInfo
                         .getDescription()
@@ -241,8 +242,15 @@ public class AdvertisementTaxCollection extends TaxCollection {
                                 recAccInfo.getDescription().indexOf(
                                         AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX))
                                         .trim();
+                financialYearDesc=recAccInfo 
+                        .getDescription()
+                        .substring(
+                                recAccInfo.getDescription().indexOf(
+                                        AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
+                                        .trim();
+      
                 if (eventType.equals(EVENT_RECEIPT_CREATED))
-                    totalAmountCollected = totalAmountCollected.add(createOrUpdateDemandDetails(demandMasterReasonDesc,
+                    totalAmountCollected = totalAmountCollected.add(createOrUpdateDemandDetails(demandMasterReasonDesc,financialYearDesc,
                             demand, billReceiptInfo, recAccInfo, totalAmount));
             }
         }
@@ -265,6 +273,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         String demandMasterReasonDesc = null;
+        String financialYearDesc = null;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
             && !rcptAccInfo.getIsRevenueAccount()) {
@@ -275,10 +284,18 @@ public class AdvertisementTaxCollection extends TaxCollection {
                                 billRcptInfo.getDescription().indexOf(
                                         AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX))
                                         .trim();
-
+                financialYearDesc=billRcptInfo
+                        .getDescription()
+                        .substring(
+                                      billRcptInfo.getDescription().indexOf(
+                                        AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
+                                        .trim();
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (demandMasterReasonDesc.equalsIgnoreCase(demandDetail.getEgDemandReason()
-                            .getEgDemandReasonMaster().getReasonMaster())) {
+                            .getEgDemandReasonMaster().getReasonMaster()) && financialYearDesc!=null &&
+                            demandDetail.getEgDemandReason()
+                            .getEgInstallmentMaster().getFinYearRange().equalsIgnoreCase(financialYearDesc)
+                            ) {
                         if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
                             throw new ApplicationRuntimeException(
                                     "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
@@ -305,13 +322,14 @@ public class AdvertisementTaxCollection extends TaxCollection {
 
     /**
      * @param demandMasterReasonDesc
+     * @param financialYearDesc 
      * @param demand
      * @param billReceiptInfo
      * @param recAccInfo
      * @param totalAmount
      * @return
      */
-    private BigDecimal createOrUpdateDemandDetails(final String demandMasterReasonDesc, final EgDemand demand,
+    private BigDecimal createOrUpdateDemandDetails(final String demandMasterReasonDesc, String financialYearDesc, final EgDemand demand,
             final BillReceiptInfo billReceiptInfo, final ReceiptAccountInfo recAccInfo, final BigDecimal totalAmount) {
         BigDecimal totalAmountCollected = BigDecimal.ZERO;
 
@@ -323,7 +341,10 @@ public class AdvertisementTaxCollection extends TaxCollection {
                 if (demandDetail.getEgDemandReason() != null
                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster() != null
                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().trim()
-                .equalsIgnoreCase(demandMasterReasonDesc)) {
+                .equalsIgnoreCase(demandMasterReasonDesc)
+                        && financialYearDesc != null
+                        && financialYearDesc.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster()
+                                .getFinYearRange())) {
                     // && (demandDetail.getAmount().compareTo(BigDecimal.ZERO) >
                     // 0)) {
 

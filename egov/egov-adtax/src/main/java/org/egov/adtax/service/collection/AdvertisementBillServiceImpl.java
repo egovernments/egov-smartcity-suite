@@ -52,6 +52,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.commons.Installment;
 import org.egov.demand.interfaces.BillServiceInterface;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBillDetails;
@@ -110,10 +111,9 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                     else {
 
                         final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, creaditAmt,
-                                demandDetail.getEgDemandReason().getGlcodeId().getGlcode(), demandDetail
-                                .getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX);
-                        orderNo++;
+                                demandDetail.getEgDemandReason().getGlcodeId().getGlcode(), getReceiptDetailDescription(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                        +" "+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,demandDetail.getEgDemandReason().getEgInstallmentMaster()));
+                         orderNo++;
                         billDetailList.add(billdetail);
                     }
             }
@@ -127,25 +127,30 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                             AdvertisementTaxConstants.DEMANDREASON_PENALTY,
                             advertisementDemandService.getCurrentInstallment());
                     final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, penaltyAmount,
-                            demandReason.getGlcodeId().getGlcode(), demandReason.getEgDemandReasonMaster()
-                            .getReasonMaster() + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX);
+                            demandReason.getGlcodeId().getGlcode(),  getReceiptDetailDescription(demandReason.getEgDemandReasonMaster().getReasonMaster()
+                                    +" "+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,demandReason.getEgInstallmentMaster()));
+                            
                     billDetailList.add(billdetail);
                 } else {
                     final BigDecimal creaditAmt = penaltyExistingDemandDetail.getAmount().subtract(
                             penaltyExistingDemandDetail.getAmtCollected());
                     final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO,
                             creaditAmt.add(penaltyAmount), penaltyExistingDemandDetail.getEgDemandReason()
-                            .getGlcodeId().getGlcode(), penaltyExistingDemandDetail.getEgDemandReason()
-                            .getEgDemandReasonMaster().getReasonMaster()
-                            + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX);
+                            .getGlcodeId().getGlcode(),  getReceiptDetailDescription(penaltyExistingDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                    +" "+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,penaltyExistingDemandDetail.getEgDemandReason().getEgInstallmentMaster()));
+                  
                     billDetailList.add(billdetail);
                 }
         }
 
         // TODO: IF LIST SIZE IS ZERO THEN RETURN NULL OR THROW EXCEPTION.
         return billDetailList;
-    }
-
+    }   
+    
+    private String getReceiptDetailDescription(String reasonType, Installment instlment) {
+             return reasonType+(instlment!=null? " "+instlment.getFinYearRange():"");
+         
+        }
     private EgBillDetails createBillDetailObject(final int orderNo, final BigDecimal debitAmount,
             final BigDecimal creditAmount, final String glCodeForDemandDetail, final String description) {
 
