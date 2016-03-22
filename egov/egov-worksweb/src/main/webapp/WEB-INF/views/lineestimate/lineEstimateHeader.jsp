@@ -50,7 +50,7 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.date" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="lineEstimateDate" name="lineEstimateDate" type="text" class="form-control" value="${lineEstimateDate}" maxlength="12" readonly="true" />
+				<form:input path="lineEstimateDate" id="lineEstimateDate" name="lineEstimateDate" type="text" class="form-control" value="${lineEstimateDate}" maxlength="12" readonly="true" />
 				<form:errors path="lineEstimateDate" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /><span class="mandatory"></span></label>

@@ -613,12 +613,5 @@ public class LineEstimateService {
             return false;
         return true;
     }
-    
-    public boolean validateLineEstimateDate(Long id, Date lineestimatedate) {
-        LineEstimate lineEstimate = lineEstimateRepository.findOne(id);
-        if(lineEstimate.getLineEstimateDate() != null && lineEstimate.getLineEstimateDate().after(lineestimatedate))
-            return false;
-        return true;
-    }
 
 }

@@ -72,6 +72,17 @@
 			</div>
 			<jsp:include page="lineestimatehistory-view.jsp"></jsp:include>
 		</div>
+		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' }">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<spring:message  code="lbl.adminsanctiondetails"/>
+					</div>
+				</div>
+			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
+			</div>
+		</c:if>
+		
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
 			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
 		</c:if>

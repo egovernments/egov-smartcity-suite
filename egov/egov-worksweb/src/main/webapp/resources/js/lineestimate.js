@@ -47,6 +47,39 @@ $(document).ready(function(){
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$('#typeofwork').trigger('blur');
 	$('#subTypeOfWork').trigger('blur');
+
+	$('#technicalSanctionDate').change(function(){
+		var date = this.value;
+		if(date != "") {
+			$.ajax({
+				url: "/egworks/lineestimate/ajaxvalidate-technicalsanction-date",
+				data: {id : $('#id').val(), date : this.value},
+				type: "GET",
+				dataType: "json",
+				success: function (response) {
+					if(response != true) {
+						bootbox.alert($('#errorTechDate').val());
+						$('#technicalSanctionDate').val("");
+					}
+				}, 
+				error: function (response) {
+					console.log("failed");
+				}
+			});
+		}
+	});
+return showSlumFieldsValue();
+});
+
+$('#councilResolutionDate').change(function(){
+	var lineEstimateDate = $('#lineEstimateDate').val();
+	var councilResolutionDate = $('#councilResolutionDate').val()
+
+	if(lineEstimateDate > councilResolutionDate) {
+	bootbox.alert($('#errorCouncilResolutionDate').val());
+	$('#councilResolutionDate').val("");
+	return false;
+	}
 });
 
 $(document).bind("input propertychange", function (e) {
@@ -390,8 +423,8 @@ function validateQuantity() {
 	});
 }
 
-function validateNumberChar() {
-	$( "input[name$='quantity']" ).on("keyup", function(){
+function validateadminSanctionNumber() {
+	$( "input[name$='adminSanctionNumber']" ).on("keyup", function(){
 		var valid = /^[0-9\\\/.-]*$/.test(this.value),
 	        val = this.value;
 	    if(!valid){
@@ -401,23 +434,24 @@ function validateNumberChar() {
 	});
 }
 
-$('#councilResolutionDate').change(function(){
-	var date = this.value;
-	if(date != "") {
-		$.ajax({
-			url: "/egworks/lineestimate/ajaxvalidate-councilresolution-date",
-			data: {id : $('#id').val(), date : this.value},
-			type: "GET",
-			dataType: "json",
-			success: function (response) {
-				if(response != true) {
-					bootbox.alert("Council Resolution date should not be less than Admin Sanction Date Line Estimate Date.");
-					$('#councilResolutionDate').val("");
-				}
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
+function validatecouncilResolutionNumber() {
+	$( "input[name$='councilResolutionNumber']" ).on("keyup", function(){
+		var valid = /^[0-9\\\/.-]*$/.test(this.value),
+	        val = this.value;
+	    if(!valid){
+	        console.log("Invalid input!");
+	        this.value = val.substring(0, val.length - 1);
+	    }
+	});
+}
+
+function showSlumFieldsValue() {
+	var slum = document.getElementById("slum").checked;
+	if (slum) {
+		showSlumFields();
+		return true;
+	} else {
+		return false;
 	}
-});
+	
+}

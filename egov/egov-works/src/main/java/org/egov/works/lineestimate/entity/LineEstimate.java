@@ -71,19 +71,17 @@ import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.works.models.masters.NatureOfWork;
-import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_LINEESTIMATE")
 @Unique(id = "id", tableName = "EGW_LINEESTIMATE", columnName = { "lineestimatenumber" }, fields = {
-"lineEstimateNumber" }, enableDfltMsg = true)
+        "lineEstimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimate.SEQ_EGW_LINEESTIMATE, sequenceName = LineEstimate.SEQ_EGW_LINEESTIMATE, allocationSize = 1)
 public class LineEstimate extends StateAware {
 
@@ -146,7 +144,7 @@ public class LineEstimate extends StateAware {
 
     @SafeHtml
     @Length(max = 50)
-    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "lineestimate.adminsanctionnumber.alphanumeric")
+    @Column(unique = true)
     private String adminSanctionNumber;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -165,7 +163,7 @@ public class LineEstimate extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
-    
+
     @Transient
     private Long approvalDepartment;
 
@@ -200,7 +198,7 @@ public class LineEstimate extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ward", nullable = false)
     private Boundary ward;
-    
+
     @SafeHtml
     @Length(max = 50)
     private String technicalSanctionNumber;
@@ -216,7 +214,12 @@ public class LineEstimate extends StateAware {
     @NotNull
     @Enumerated(EnumType.STRING)
     private WorkCategory workCategory;
-    
+
+    private String councilResolutionNumber;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date councilResolutionDate;
+
     @Override
     public Long getId() {
         return id;
@@ -440,7 +443,7 @@ public class LineEstimate extends StateAware {
         return workCategory;
     }
 
-    public void setWorkCategory(WorkCategory workCategory) {
+    public void setWorkCategory(final WorkCategory workCategory) {
         this.workCategory = workCategory;
     }
 
@@ -448,7 +451,7 @@ public class LineEstimate extends StateAware {
         return approvalDepartment;
     }
 
-    public void setApprovalDepartment(Long approvalDepartment) {
+    public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
 
@@ -456,7 +459,7 @@ public class LineEstimate extends StateAware {
         return approvalComent;
     }
 
-    public void setApprovalComent(String approvalComent) {
+    public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
 
@@ -464,7 +467,7 @@ public class LineEstimate extends StateAware {
         return technicalSanctionNumber;
     }
 
-    public void setTechnicalSanctionNumber(String technicalSanctionNumber) {
+    public void setTechnicalSanctionNumber(final String technicalSanctionNumber) {
         this.technicalSanctionNumber = technicalSanctionNumber;
     }
 
@@ -472,7 +475,23 @@ public class LineEstimate extends StateAware {
         return technicalSanctionDate;
     }
 
-    public void setTechnicalSanctionDate(Date technicalSanctionDate) {
+    public void setTechnicalSanctionDate(final Date technicalSanctionDate) {
         this.technicalSanctionDate = technicalSanctionDate;
+    }
+
+    public String getCouncilResolutionNumber() {
+        return councilResolutionNumber;
+    }
+
+    public void setCouncilResolutionNumber(final String councilResolutionNumber) {
+        this.councilResolutionNumber = councilResolutionNumber;
+    }
+
+    public Date getCouncilResolutionDate() {
+        return councilResolutionDate;
+    }
+
+    public void setCouncilResolutionDate(final Date councilResolutionDate) {
+        this.councilResolutionDate = councilResolutionDate;
     }
 }

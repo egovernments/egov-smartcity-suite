@@ -171,8 +171,4 @@ public class AjaxLineEstimateController {
         return lineEstimateService.validateTechnicalSanctionDate(id, technicalSanctionDate);
     }
     
-    @RequestMapping(value = "/ajaxvalidate-councilresolution-date", method = RequestMethod.GET)
-    public @ResponseBody boolean validateLineEstimateDate(@RequestParam("id") Long id, @RequestParam("date") final Date lineEstimateDate) {
-        return lineEstimateService.validateLineEstimateDate(id, lineEstimateDate);
-    }
 }
