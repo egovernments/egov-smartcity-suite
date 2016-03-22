@@ -250,6 +250,11 @@ public class AdvertisementDemandService {
                 AdvertisementTaxConstants.YEARLY);
 
     }
+    public Installment getInstallmentByDescription(String description) {
+        return installmentDao.getInsatllmentByModuleAndDescription(
+                moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME),description);
+
+    }
  
     @Transactional
  public Installment getInsatllmentByModuleForGivenDate(final Date installmentDate) {

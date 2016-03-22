@@ -109,7 +109,7 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
         return billDetailList;
     }
     private String getReceiptDetailDescription(String reasonType, Installment instlment) {
-        return reasonType+(instlment!=null? " "+instlment.getFinYearRange():"");
+        return reasonType+(instlment!=null? " "+instlment.getDescription():"");
     
    }
     private EgBillDetails createBillDetailObject(final int orderNo, final BigDecimal debitAmount,

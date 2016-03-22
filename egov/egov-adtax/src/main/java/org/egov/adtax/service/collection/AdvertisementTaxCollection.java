@@ -367,7 +367,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
                 // part of collection system.
                 final EgDemandDetails demandDetail = advertisementDemandService.createDemandDetails(recAccInfo
                         .getCrAmount(), advertisementDemandService.getDemandReasonByCodeAndInstallment(
-                        demandMasterReasonDesc, advertisementDemandService.getCurrentInstallment()),
+                        demandMasterReasonDesc, advertisementDemandService.getInstallmentByDescription(financialYearDesc)),
                                 recAccInfo
                                 .getCrAmount());
                 demand.addEgDemandDetails(demandDetail);
