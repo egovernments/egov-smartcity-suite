@@ -537,9 +537,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final StringBuffer miscQuery = getMiscQuery(mandatoryFields, "vmis", "gl", "vh");
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-                .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'9999999999') end "
+                .append(" (select bg1.id as id,bg1.accounttype as accounttype, c1.glcode "
                         +
-                        "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end   as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
+                        "as mincode,c2.glcode as maxcode,c3.glcode as majorcode "
                         +
                         "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
                         +
@@ -559,11 +559,11 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         "vh.voucherDate>= to_date('"
                         + fromDate
-                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date("
+                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date('"
                         + toVoucherDate
-                        + ",'dd/MM/yyyy') "
+                        + "','dd/MM/yyyy') "
                         + miscQuery
-                        + " and ((gl.glcode between bg.mincode and bg.maxcode) or gl.glcode=bg.majorcode) group by bd.id"
+                        + " and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) group by bd.id"
                         +
                         " union "
                         +
@@ -579,11 +579,11 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         "vh.voucherDate>= to_date('"
                         + fromDate
-                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date("
+                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date('"
                         + toVoucherDate
-                        + ",'dd/MM/yyyy') "
+                        + "','dd/MM/yyyy') "
                         + miscQuery
-                        + " and ((gl.glcode between bg.mincode and bg.maxcode) or gl.glcode=bg.majorcode) group by bd.id");
+                        + " and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) group by bd.id");
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Finished fetchActualsForFY" + fromDate);
@@ -2092,9 +2092,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         "bmis.voucherheaderid is null and br.billdate>=to_date('"
                         + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
+                        + "','dd/MM/yyyy') and br.billdate <= to_date('"
                         + toVoucherDate
-                        + ",'dd/MM/yyyy') "
+                        + "','dd/MM/yyyy') "
                         + miscQuery
                         + " and "
                         +
@@ -2114,8 +2114,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         "is null and br.billdate>= to_date('"
                         + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
-                        + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery + " and ((bdetail.glcodeid between bg.mincode " +
+                        + "','dd/MM/yyyy') and br.billdate <= to_date('"
+                        + toVoucherDate + "','dd/MM/yyyy') " + miscQuery + " and ((bdetail.glcodeid between bg.mincode " +
                         "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id");
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         return result;

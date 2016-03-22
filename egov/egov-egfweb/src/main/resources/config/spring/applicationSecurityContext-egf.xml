@@ -56,6 +56,7 @@
 				<security:filter-chain pattern="/error/**" filters="none" />
 				<security:filter-chain pattern="/struts/**" filters="none" /> 
 				<security:filter-chain pattern="/commonyui/build/**" filters="none" />
+				<security:filter-chain pattern="/commonyui/yui2.7/**" filters="none" />
 				<security:filter-chain pattern="/script/**" filters="none" />
 				<security:filter-chain pattern="/javascript/**" filters="none" /> 
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />

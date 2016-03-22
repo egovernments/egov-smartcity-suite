@@ -41,9 +41,9 @@
 <%@ page language="java"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css"
-	href="/EGF/commonyui/yui2.7/paginator/assets/skins/sam/paginator.css">
-<script src="/EGF/commonyui/yui2.7/paginator/paginator-min.js"></script>
+ <link rel="stylesheet" type="text/css"
+	href="/EGF/resources/commonyui/yui2.7/paginator/assets/skins/sam/paginator.css">
+<script src="/EGF/resources/commonyui/yui2.7/paginator/paginator-min.js"></script>
 
 <title><s:text name="budget.search" /></title>
 <style>
@@ -76,43 +76,43 @@
 			var budgetDetailTable = function() {
 				var budgetDetailColumns = [ 
 					{key:"budget.id",label:'Budget',width:90,className:"budgetSearch", sortable:true},
-					{key:"budgetGroup.id",label:'Budget Group',className:"budgetSearch",sortable:true,width:250},
+					{key:"budgetGroup.id",label:'Budget Group',className:"budgetSearch",sortable:true,width:200},
 					<s:if test="%{shouldShowHeaderField('executingDepartment') || shouldShowGridField('executingDepartment')}">
-						{key:"executingDepartment.id", label:'Executing Department',className:"budgetSearch",sortable:true,width:95},
+						{key:"executingDepartment.id", label:'Executing Department',className:"budgetSearch",sortable:true},
 					</s:if>
 					<s:if test="%{shouldShowHeaderField('functionary') || shouldShowGridField('functionary')}">				
-						{key:"functionary.id",label:'Functionary',className:"budgetSearch",sortable:true,width:90} ,
+						{key:"functionary.id",label:'Functionary',className:"budgetSearch",sortable:true} ,
 					</s:if>
 					<s:if test="%{shouldShowHeaderField('function') || shouldShowGridField('function')}">
 						{key:"function.id",label:'Function',className:"budgetSearch",sortable:true,width:90} ,
 					</s:if>
 					<s:if test="%{shouldShowHeaderField('scheme') || shouldShowGridField('scheme')}">
-						{key:"scheme.id",label:'Scheme',className:"budgetSearch",sortable:true,width:90} ,
+						{key:"scheme.id",label:'Scheme',className:"budgetSearch",sortable:true} ,
 					</s:if>
 					<s:if test="%{shouldShowHeaderField('subScheme') || shouldShowGridField('subScheme')}">
-						{key:"subScheme.id",label:'Sub Scheme',className:"budgetSearch",sortable:true,width:90} ,
+						{key:"subScheme.id",label:'Sub Scheme',className:"budgetSearch",sortable:true} ,
 					</s:if>
 					<s:if test="%{shouldShowHeaderField('fund') || shouldShowGridField('fund')}">
 						{key:"fund.id",label:'Fund',width:90,className:"budgetSearch",sortable:true} ,
 					</s:if>
 					<s:if test="%{shouldShowHeaderField('boundary') || shouldShowGridField('boundary')}">
-						{key:"boundary.id",label:'Field',width:90,className:"budgetSearch",sortable:true} ,
+						{key:"boundary.id",label:'Field',className:"budgetSearch",sortable:true} ,
 					</s:if>
-						{key:"anticipatoryAmount",label:'Anticipatory Upto<br/>31 March',className:"budgetSearch",width:90},
+						{key:"anticipatoryAmount",label:'Anticipatory Upto<br/>31 March',className:"budgetSearch"},
 						{key:"amount",label:'Estimate Amount',width:"50em"},
-						{key:"actual_previous_year",label:'<s:property value="previousfinYearRange"/> Actual <br/> Amount',className:"budgetSearch",width:85},
+						{key:"actual_previous_year",label:'<s:property value="previousfinYearRange"/> Actual <br/> Amount',className:"budgetSearch"},
 						<s:if test="%{re}">
-							{key:"actual_current_year",label:'<s:property value="currentfinYearRange"/> Revised<br/> Actual Amount',className:"budgetSearch", width:90},
-							{key:"estimate_current_year",label:'<s:property value="currentfinYearRange"/> Revised<br/> Approved Amount',className:"budgetSearch",width:95},
+							{key:"actual_current_year",label:'<s:property value="currentfinYearRange"/> Revised<br/> Actual Amount',className:"budgetSearch"},
+							{key:"estimate_current_year",label:'<s:property value="currentfinYearRange"/> Revised<br/> Approved Amount',className:"budgetSearch"},
 						</s:if>
 						<s:else>
-							{key:"actual_current_year",label:'<s:property value="currentfinYearRange"/> Actual<br/> Amount',className:"budgetSearch", width:90},
-							{key:"estimate_current_year",label:'<s:property value="currentfinYearRange"/> Approved<br/> Amount',className:"budgetSearch",width:95},
+							{key:"actual_current_year",label:'<s:property value="currentfinYearRange"/> Actual<br/> Amount',className:"budgetSearch"},
+							{key:"estimate_current_year",label:'<s:property value="currentfinYearRange"/> Approved<br/> Amount',className:"budgetSearch"},
 						</s:else>
-						{key:"reappropriation_amount",label:'Total <br/>Reappropriation Amount',className:"budgetSearch",width:125},
-						{key:"approved_amount",label:'Total <br/>Approved Amount',className:"budgetSearch",width:95},
-						{key:"comment",label:'Comments',className:"budgetSearch",width:80},
-						{key:"document",label:'Documents',className:"budgetSearch",width:80}
+						{key:"reappropriation_amount",label:'Total <br/>Reappropriation Amount',className:"budgetSearch"},
+						{key:"approved_amount",label:'Total <br/>Approved Amount',className:"budgetSearch"},
+						{key:"comment",label:'Comments',className:"budgetSearch"},
+						/* {key:"document",label:'Documents',className:"budgetSearch"} */
 				];
 				var myConfigs = {
     				paginator : new YAHOO.widget.Paginator({
@@ -181,7 +181,7 @@
 							"reappropriation_amount":'<s:property value="approvedReAppropriationsTotal.setScale(2).toString()"/>',
 							"approved_amount":'<s:property value="%{calculateTotal(#p)}"/>',
 							"comment":'<s:property value="comment"/>',
-							"document":'<input type="submit" class="buttonsubmit" value="View" onclick="'+'viewDocumentManager(<s:property value="#p.documentNumber"/>);return false;"/>'
+							/* "document":'<input type="submit" class="buttonsubmit" value="View" onclick="'+'viewDocumentManager(<s:property value="#p.documentNumber"/>);return false;"/>' */
 						});
 					</s:iterator>
 			}
