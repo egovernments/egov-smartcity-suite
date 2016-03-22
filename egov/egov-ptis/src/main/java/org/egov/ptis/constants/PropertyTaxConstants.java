@@ -942,6 +942,7 @@ public interface PropertyTaxConstants {
         {
             add(DEMANDRSN_CODE_GENERAL_TAX);
             add(DEMANDRSN_CODE_VACANT_TAX);
+            add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
             add(DEMANDRSN_CODE_LIBRARY_CESS);
             add(DEMANDRSN_CODE_SEWERAGE_TAX);
             add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
