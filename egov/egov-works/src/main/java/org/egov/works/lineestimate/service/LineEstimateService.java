@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -83,7 +84,6 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -523,16 +523,17 @@ public class LineEstimateService {
 
     public List<Department> getUserDepartments(User currentUser) {
         List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(currentUser.getId(), new Date());
-        List<Department> departments = new ArrayList<Department>();
-        for(Assignment assignment : assignments){
-            if(departments.isEmpty())
-                departments.add(assignment.getDepartment());
-            for(Department d : departments) {
-                if(!d.getName().equals(assignment.getDepartment().getName()))
-                    departments.add(assignment.getDepartment());
+        List<Department> uniqueDepartmentList= new ArrayList<Department>();
+        Department prevDepartment = new Department();
+        Iterator iterator = assignments.iterator(); 
+        while(iterator.hasNext()) {
+            Assignment assignment=(Assignment)iterator.next();
+            if(!((assignment.getDepartment().getName().equals(prevDepartment.getName())))){
+                uniqueDepartmentList.add(assignment.getDepartment()); 
             }
+            prevDepartment=assignment.getDepartment();
         }
-        return departments;
+        return uniqueDepartmentList;
     }
     
     public LineEstimateDetails findByEstimateNumber(final String estimateNumber) {
