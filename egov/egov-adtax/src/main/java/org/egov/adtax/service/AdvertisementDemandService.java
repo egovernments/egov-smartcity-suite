@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -430,23 +431,39 @@ public class AdvertisementDemandService {
     /**
      * 
      * @param demand
+     * @param penaltyCalculationDate
      * @return
      */
-    public BigDecimal checkPenaltyAmountByDemand(final EgDemand demand,Date penaltyCalculationDate) {
+    public Map<String, BigDecimal> checkPenaltyAmountByDemand(final EgDemand demand, Date penaltyCalculationDate) {
+        Map<String, BigDecimal> penaltyReasons = new HashMap<String, BigDecimal>();
         BigDecimal penaltyAmt = BigDecimal.ZERO;
-       // final Installment currentInstallment = getCurrentInstallment();
-        if (demand != null){
-            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails())
+        // final Installment currentInstallment = getCurrentInstallment();
+        if (demand != null) {
+            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
+                penaltyAmt = BigDecimal.ZERO;
                 // Mean if installment is different than current, then calculate
                 // penalty
                 if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0
-                //        && currentInstallment.getId() != demandDtl.getEgDemandReason().getEgInstallmentMaster().getId())
-                ){
+                // && currentInstallment.getId() !=
+                // demandDtl.getEgDemandReason().getEgInstallmentMaster().getId())
+                ) {
                     final BigDecimal amount = demandDtl.getAmount().subtract(demandDtl.getAmtCollected());
-                    penaltyAmt = calculatePenalty(penaltyAmt, demandDtl, amount,penaltyCalculationDate);
+                    penaltyAmt = calculatePenalty(penaltyAmt, demandDtl, amount, penaltyCalculationDate);
+
+                    if (penaltyReasons.get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription()) == null)
+                        penaltyReasons.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(),
+                                penaltyAmt);
+                    else
+                        penaltyReasons.put(
+                                demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(),
+                                penaltyReasons.get(
+                                        demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription()).add(
+                                        penaltyAmt));
+
                 }
+            }
         }
-        return penaltyAmt;
+        return penaltyReasons;
 
     }
     /**
