@@ -31,7 +31,16 @@ function callAjaxSearch() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : [ {
+						"sExtends" : "pdf",
+						"sTitle" : "Budget Upload Report Result"
+					}, {
+						"sExtends" : "xls",
+						"sTitle" : "Budget Upload Report Result"
+					}, {
+						"sExtends" : "print",
+						"sTitle" : "Budget Upload Report Result"
+					} ]
 				},
 				aaSorting : [],
 				columns : [ {
@@ -52,7 +61,7 @@ function callAjaxSearch() {
 				}, {
 					"data" : "planningReAmount",
 					"sClass" : "text-right"
-				} , {
+				}, {
 					"data" : "approvedBeAmount",
 					"sClass" : "text-right"
 				}, {
@@ -68,7 +77,7 @@ $('#reBudget').change(function() {
 		url : '/EGF/budgetuploadreport/ajax/getReferenceBudget',
 		type : "get",
 		data : {
-			budgetId :$('#reBudget').val()
+			budgetId : $('#reBudget').val()
 		},
 		success : function(data, textStatus, jqXHR) {
 			$('#referenceBudget').html(data.name)

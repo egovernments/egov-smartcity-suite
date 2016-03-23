@@ -253,7 +253,16 @@
 			document.getElementById('voucherDate').focus();
 			return false;
 		}
-	
+
+		var voucherdate = vhDate.substring(0, 2);
+	    var vouchermonth = vhDate.substring(3, 5);
+	    var voucheryear = vhDate.substring(6, 10);
+	    var voucherDate = new Date(voucheryear, vouchermonth - 1, voucherdate);
+	    var today = new Date();
+	    if (voucherDate > today) {
+	        bootbox.alert("Voucher date is greater than today's date ");
+	        return false
+	    }
 		var vVoucherSubType = document.getElementById('vType').value;
 		if(vVoucherSubType != 'JVGeneral' && vVoucherSubType != '-1' )	{
 			if(document.getElementById('voucherTypeBean.partyName').value == '' ) {
@@ -267,7 +276,6 @@
 	    var month = billDate.substring(3, 5);
 	    var year = billDate.substring(6, 10);
 	    var myBillDate = new Date(year, month - 1, date);
-	    var today = new Date();
 
 	    if (myBillDate > today) {
 	        bootbox.alert("Bill date is greater than today's date ");

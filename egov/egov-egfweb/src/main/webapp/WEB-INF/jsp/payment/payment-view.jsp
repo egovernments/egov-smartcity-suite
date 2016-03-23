@@ -133,7 +133,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 																	<td class="greybox"><strong><s:text
 																				name="voucher.department" /></strong></td>
 																	<td class="greybox"><s:property
-																			value="%{paymentheader.voucherheader.vouchermis.departmentid.deptName}" /></td>
+																			value="%{paymentheader.voucherheader.vouchermis.departmentid.name}" /></td>
 																</s:if>
 																<s:if test="%{shouldShowHeaderField('functionary')}">
 																	<td class="greybox"><strong><s:text
