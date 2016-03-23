@@ -1681,14 +1681,14 @@ public class CommonAction extends BaseFormAction {
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[4]!=null?account[4].toString():"";
+                final String accountNumberAndType = account[0]!=null?account[0].toString():"" + "-" + account[4]!=null?account[4].toString():"";
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
-                    bankaccount.setAccountnumber(account[0].toString());
-                    bankaccount.setAccounttype(account[1].toString());
-                    bankaccount.setId(Long.valueOf(account[2].toString()));
+                    bankaccount.setAccountnumber(account[0]!=null?account[0].toString():"");
+                    bankaccount.setAccounttype(account[1]!=null?account[1].toString():"");
+                    bankaccount.setId(Long.valueOf(account[2]!=null?account[2].toString():""));
                     final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                    chartofaccounts.setGlcode(account[3].toString());
+                    chartofaccounts.setGlcode(account[3]!=null?account[3].toString():"");
                     bankaccount.setChartofaccounts(chartofaccounts);
                     addedBanks.add(accountNumberAndType);
                     accNumList.add(bankaccount);

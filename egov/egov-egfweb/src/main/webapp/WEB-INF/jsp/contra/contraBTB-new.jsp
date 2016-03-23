@@ -122,8 +122,8 @@
 	<SCRIPT type="text/javascript">
 function	onLoadTask_new()
 {
-	loadFromDepartment();
-	loadToDepartment();
+	//loadFromDepartment();
+	//loadToDepartment();
 	var 	button='<s:property value="button"/>';
 	var 	srcFund='<s:property value="contraBean.fromFundId"/>'
 	var 	desFund='<s:property value="contraBean.toFundId"/>'
@@ -203,7 +203,6 @@ function	onLoadTask_new()
 			if(document.getElementById('vouchermis.departmentid'))
 			{
 				var d = document.getElementById('vouchermis.departmentid');
-				d.options[d.selectedIndex].text='----Choose----';
 				d.options[d.selectedIndex].text.value=d;
 			}
 			</s:if>
