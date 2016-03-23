@@ -53,7 +53,6 @@
 					<th><spring:message code="lbl.proceedingnumber" /></th>
 					<th><spring:message code="lbl.estimatenumber" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
-					<th><spring:message code="lbl.currentowner" /></th>
 					<th><spring:message code="lbl.createdby" /></th>
 					<th><spring:message code="lbl.adminsanctionby" /></th>
 					<th><spring:message code="lbl.adminsanctionedamount" /></th>

@@ -47,6 +47,7 @@ public class LineEstimateSearchResult {
     private String estimateNumber;
     private String nameOfWork;
     private String createdBy;
+    private String owner;
     private String approvedBy;
     private BigDecimal estimateAmount;
 
@@ -107,5 +108,13 @@ public class LineEstimateSearchResult {
 
     public void setEstimateAmount(BigDecimal estimateAmount) {
         this.estimateAmount = estimateAmount;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

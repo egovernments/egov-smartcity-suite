@@ -567,15 +567,7 @@ public class LineEstimateService {
                         .withOwner(wfInitiator.getPosition())
                         .withNatureOfTask(natureOfwork);
             }
-        } /*else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-            final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-            pos = positionMasterService.getPositionById(approvalPosition);
-            lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approvalComent)
-                    .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                    .withOwner(pos)
-                    .withNatureOfTask(natureOfwork);
-        }*/ else {
+        } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
             WorkFlowMatrix wfmatrix = null;
