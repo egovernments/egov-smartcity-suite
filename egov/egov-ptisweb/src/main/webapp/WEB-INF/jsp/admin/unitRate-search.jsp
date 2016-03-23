@@ -184,7 +184,7 @@
 									style="text-align:center">
 									<a href="../admin/unitRate-newForm.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=edit"> Edit</a>
 									</display:column> 
-									<display:column title=""media="html"
+									<display:column title="" media="html"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center">
 									<a href="javascript:void(0);" onclick="confirmClose('${currentRowObject.category.id}','${currentRowObject.bndry.id}');">Deactivate</a>

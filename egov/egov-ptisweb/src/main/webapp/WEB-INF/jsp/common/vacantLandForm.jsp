@@ -104,7 +104,7 @@
 						<td class="blueborderfortd" align="center"><s:textfield name="northBoundary" id="northBoundary" maxlength="32"
 								value="%{northBoundary}" title="North side of Land"/></td>
 						<td class="blueborderfortd" align="center"><s:textfield name="eastBoundary" id="eastBoundary" maxlength="32"
-								value="%{eastBoundary}"title="East side of Land" /></td>
+								value="%{eastBoundary}" title="East side of Land" /></td>
 						<td class="blueborderfortd" align="center"><s:textfield name="westBoundary" id="westBoundary" maxlength="32"
 								value="%{westBoundary}" title="West side of land"/></td>
 						<td class="blueborderfortd" align="center"><s:textfield	name="southBoundary" id="southBoundary" maxlength="32"
