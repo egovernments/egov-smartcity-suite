@@ -72,12 +72,18 @@
 						onclick="javascript:window.close()" class="button" /></td>
 					<td><s:submit type="submit" cssClass="buttonsubmit"
 							value="GenearateReport" name="generateReport"
-							method="generateReport" /></td>
+							method="generateReport" onclick="validate();" /></td>
 				</tr>
 			</table>
 		</div>
 
 	</s:form>
 </body>
+<Script>
+function validate()
+{
+  document.form[0].action='autoReconciliation-generateReport.action';
+}
 
+</Script>
 </html>

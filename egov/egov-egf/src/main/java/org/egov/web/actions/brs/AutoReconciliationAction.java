@@ -95,6 +95,8 @@ import com.exilant.exility.common.TaskFailedException;
 @ParentPackage("egov")
 @Results({
     @Result(name = AutoReconciliationAction.NEW, location = "autoReconciliation-" + AutoReconciliationAction.NEW + ".jsp"),
+    @Result(name = "result", location = "autoReconciliation-" + "result" + ".jsp"),
+    @Result(name = "report", location = "autoReconciliation-" + "report" + ".jsp"),
     @Result(name = "upload", location = "autoReconciliation-upload.jsp"),
     @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
             "application/pdf", "contentDisposition", "no-cache;filename=AutoReconcileReport.pdf" }),
@@ -150,7 +152,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     private SQLQuery insertQuery;
     private final String insertsql = "insert into egf_brs_bankstatements (ID,ACCOUNTNUMBER,ACCOUNTID,TXDATE,TYPE,INSTRUMENTNO,DEBIT,CREDIT,BALANCE"
             +
-            ",NARRATION,CSLNO,CREATEDDATE) values (seq_egf_brs_bankstatements.nextval,:accNo,:accountId,to_date(:txDate,"
+            ",NARRATION,CSLNO,CREATEDDATE) values (nextval('seq_egf_brs_bankstatements'),:accNo,:accountId,to_date(:txDate,"
             + "'"
             + dateInDotFormat + "'),:type,:instrumentNo,:debit" +
             ",:credit,:balance,:narration,:cslNo,CURRENT_DATE)";
@@ -247,14 +249,14 @@ public class AutoReconciliationAction extends BaseFormAction {
         return "upload";
     }
 
-    
+    @Action(value = "/brs/autoReconciliation-upload")
     @ValidationErrorPage("upload")
     public String upload()
     {
         try {
-            HibernateUtil.getCurrentSession().getTransaction().setTimeout(600);
-            insertQuery = HibernateUtil.getCurrentSession().createSQLQuery(insertsql);
-            final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?", accountId);
+          persistenceService.getSession().getTransaction().setTimeout(600);
+            insertQuery = persistenceService.getSession().createSQLQuery(insertsql);
+            final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?", Long.valueOf(accountId));
             accNo = ba.getAccountnumber();
             final POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(bankStatmentInXls));
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -325,7 +327,7 @@ public class AutoReconciliationAction extends BaseFormAction {
                         LOGGER.info(detailRow.getRowNum() + "   " + ab.toString());
                     insert(ab);
                     if (count % 20 == 0)
-                        HibernateUtil.getCurrentSession().flush();
+                        persistenceService.getSession().flush();
 
                 } catch (final NumberFormatException e) {
                     if (!isFailed)
@@ -494,16 +496,16 @@ public class AutoReconciliationAction extends BaseFormAction {
     /**
      * @return
      */
-    
+    @Action(value = "/brs/autoReconciliation-schedule")
     public String schedule()
     {
         // Step1: mark which are all we are going to process
         count = 0;
-        HibernateUtil.getCurrentSession().getTransaction().setTimeout(900);
+        persistenceService.getSession().getTransaction().setTimeout(900);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Started at " + new Date());
         markForProcessing(BRS_TRANSACTION_TYPE_CHEQUE);
-
+        persistenceService.getSession().flush();
         // step2 :find duplicate and mark to be processed manually
         findandUpdateDuplicates();
 
@@ -544,16 +546,16 @@ public class AutoReconciliationAction extends BaseFormAction {
                 +
                 " and id_status=(select id from Egw_Status where upper(moduletype)=upper('instrument') and  upper(description)=upper(:instrumentStatus)))";
 
-        final SQLQuery updateQuery = HibernateUtil.getCurrentSession().createSQLQuery(recociliationQuery);
-        final SQLQuery updateQuery2 = HibernateUtil.getCurrentSession().createSQLQuery(recociliationAmountQuery);
+        final SQLQuery updateQuery = persistenceService.getSession().createSQLQuery(recociliationQuery);
+        final SQLQuery updateQuery2 = persistenceService.getSession().createSQLQuery(recociliationAmountQuery);
 
         final String backUpdateBankStmtquery = "update " + TABLENAME + " set action='" + BRS_ACTION_PROCESSED
                 + "' ,reconciliationDate=:reconciliationDate where id=:id";
 
         final String backUpdateFailureBRSquery = "update " + TABLENAME + " set action='" + BRS_ACTION_TO_BE_PROCESSED_MANUALLY
                 + "',errormessage=:e where id=:id";
-        final SQLQuery backupdateQuery = HibernateUtil.getCurrentSession().createSQLQuery(backUpdateBankStmtquery);
-        final SQLQuery backupdateFailureQuery = HibernateUtil.getCurrentSession().createSQLQuery(backUpdateFailureBRSquery);
+        final SQLQuery backupdateQuery = persistenceService.getSession().createSQLQuery(backUpdateBankStmtquery);
+        final SQLQuery backupdateFailureQuery = persistenceService.getSession().createSQLQuery(backUpdateFailureBRSquery);
         rowCount = 0;
         for (final AutoReconcileBean bean : detailList)
         {
@@ -574,13 +576,13 @@ public class AutoReconciliationAction extends BaseFormAction {
                 if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0)
                 {
                     updateQuery.setBigDecimal("amount", bean.getDebit());
-                    updateQuery.setInteger("ispaycheque", 1);
+                    updateQuery.setCharacter("ispaycheque", '1');
                     updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS);
                     updated = updateQuery.executeUpdate();
                     if (updated != 0)
                     {
                         updateQuery2.setBigDecimal("amount", bean.getDebit());
-                        updateQuery2.setInteger("ispaycheque", 1);
+                        updateQuery2.setCharacter("ispaycheque", '1');
                         updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
                         updated = updateQuery2.executeUpdate();
                     }
@@ -588,13 +590,13 @@ public class AutoReconciliationAction extends BaseFormAction {
                 } else
                 {
                     updateQuery.setBigDecimal("amount", bean.getCredit());
-                    updateQuery.setInteger("ispaycheque", 0);
+                    updateQuery.setCharacter("ispaycheque", '0');
                     updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_DEPOSITED_STATUS);
                     updated = updateQuery.executeUpdate();
                     if (updated != 0)
                     {
                         updateQuery2.setBigDecimal("amount", bean.getCredit());
-                        updateQuery2.setInteger("ispaycheque", 0);
+                        updateQuery2.setCharacter("ispaycheque", '0');
                         updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
                         updated = updateQuery2.executeUpdate();
                     }
@@ -619,7 +621,7 @@ public class AutoReconciliationAction extends BaseFormAction {
                     LOGGER.debug("out of " + rowCount + "==>succesfull " + count);
 
                 if (rowCount % 20 == 0)
-                    HibernateUtil.getCurrentSession().flush();
+                    persistenceService.getSession().flush();
 
                 // These exception might be because the other entires in instrument which is not in egf_brs_bankstatements
                 // so any issues leave it for manual update
@@ -659,7 +661,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         .append("' and accountid=:accountId and txdate>=:fromDate and txDate<=:toDate and  (action is null or action!='processed')");
         if (BRS_TRANSACTION_TYPE_BANK.equalsIgnoreCase(type))
             sql.append(" and CSLno is not null ");
-        final SQLQuery markQuery = HibernateUtil.getCurrentSession().createSQLQuery(sql.toString());
+        final SQLQuery markQuery = persistenceService.getSession().createSQLQuery(sql.toString());
         markQuery.setDate("fromDate", fromDate);
         markQuery.setDate("toDate", toDate);
         markQuery.setLong("accountId", accountId);
@@ -696,16 +698,16 @@ public class AutoReconciliationAction extends BaseFormAction {
                 +
                 " upper(:instrumentStatus)) and iv.instrumentheaderid=ih.id and iv.voucherheaderid=ih.id and vh.vouchernumber=:cslNo ) ";
 
-        final SQLQuery updateQuery = HibernateUtil.getCurrentSession().createSQLQuery(recociliationQuery);
-        final SQLQuery updateQuery2 = HibernateUtil.getCurrentSession().createSQLQuery(recociliationAmountQuery);
+        final SQLQuery updateQuery = persistenceService.getSession().createSQLQuery(recociliationQuery);
+        final SQLQuery updateQuery2 = persistenceService.getSession().createSQLQuery(recociliationAmountQuery);
 
         final String backUpdateBankStmtquery = "update " + TABLENAME + " set action='" + BRS_ACTION_PROCESSED
                 + "' ,reconciliationDate=:reconciliationDate where id=:id";
 
         final String backUpdateFailureBRSquery = "update " + TABLENAME + " set action='" + BRS_ACTION_TO_BE_PROCESSED_MANUALLY
                 + "',errormessage=:e where id=:id";
-        final SQLQuery backupdateQuery = HibernateUtil.getCurrentSession().createSQLQuery(backUpdateBankStmtquery);
-        final SQLQuery backupdateFailureQuery = HibernateUtil.getCurrentSession().createSQLQuery(backUpdateFailureBRSquery);
+        final SQLQuery backupdateQuery = persistenceService.getSession().createSQLQuery(backUpdateBankStmtquery);
+        final SQLQuery backupdateFailureQuery = persistenceService.getSession().createSQLQuery(backUpdateFailureBRSquery);
         for (final AutoReconcileBean bean : CSLList)
         {
             int updated = -1;
@@ -725,13 +727,13 @@ public class AutoReconciliationAction extends BaseFormAction {
                 if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0)
                 {
                     updateQuery.setBigDecimal("amount", bean.getDebit());
-                    updateQuery.setInteger("ispaycheque", 1);
+                    updateQuery.setCharacter("ispaycheque", '1');
                     updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS);
                     updated = updateQuery.executeUpdate();
                     if (updated != 0)
                     {
                         updateQuery2.setBigDecimal("amount", bean.getDebit());
-                        updateQuery2.setInteger("ispaycheque", 1);
+                        updateQuery2.setCharacter("ispaycheque", '1');
                         updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
                         updated = updateQuery2.executeUpdate();
                     }
@@ -741,13 +743,13 @@ public class AutoReconciliationAction extends BaseFormAction {
                 else
                 {
                     updateQuery.setBigDecimal("amount", bean.getCredit());
-                    updateQuery.setInteger("ispaycheque", 1);
+                    updateQuery.setCharacter("ispaycheque", '1');
                     updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS);
                     updated = updateQuery.executeUpdate();
                     if (updated != 0)
                     {
                         updateQuery2.setBigDecimal("amount", bean.getCredit());
-                        updateQuery2.setInteger("ispaycheque", 1);
+                        updateQuery2.setCharacter("ispaycheque", '1');
                         updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
                         updated = updateQuery2.executeUpdate();
                     }
@@ -785,7 +787,7 @@ public class AutoReconciliationAction extends BaseFormAction {
                     LOGGER.debug("out of " + rowCount + "==>succesfull " + count);
 
                 if (rowCount % 20 == 0)
-                    HibernateUtil.getCurrentSession().flush();
+                    persistenceService.getSession().flush();
 
                 // These exception might be because the other entires in instrument which is not in egf_brs_bankstatements
                 // so any issues leave it for manual update
@@ -808,7 +810,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     }
 
     private List<AutoReconcileBean> getStatmentsForProcessing(final String type) {
-        final SQLQuery detailQuery = HibernateUtil.getCurrentSession().createSQLQuery(
+        final SQLQuery detailQuery = persistenceService.getSession().createSQLQuery(
                 "select id,txDate,instrumentNo,debit,credit,CSLno  from " + TABLENAME +
                 " where accountId=:accountId  and type='" + type + "' and action='" + BRS_ACTION_TO_BE_PROCESSED + "'");
         detailQuery.setLong("accountId", accountId);
@@ -819,6 +821,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         return detailList;
     }
 
+    @Action(value = "/brs/autoReconciliation-generateReport")
     @SuppressWarnings({ "unchecked", "deprecation" })
     public String generateReport() {
         // bankStatments not in BankBook
@@ -838,7 +841,7 @@ public class AutoReconciliationAction extends BaseFormAction {
                 +
                 " and txdate<=:toDate and reconciliationdate is null and (errorMesSage is null or errorMessage !=:multipleEntryErrorMessage)"
                 + " order by  txDate ";
-        final Query statmentsNotInBankBookQry = HibernateUtil.getCurrentSession().createSQLQuery(statmentsNotInBankBookStr)
+        final Query statmentsNotInBankBookQry = persistenceService.getSession().createSQLQuery(statmentsNotInBankBookStr)
                 .addScalar("instrumentNo")
                 .addScalar("credit")
                 .addScalar("debit")
@@ -898,7 +901,7 @@ public class AutoReconciliationAction extends BaseFormAction {
                 " and  instrumentnumber is not null   and instrumentamount is not null and instrumentnumber||'-'||instrumentamount not in  (select  instrumentno||'-'|| debit from egf_brs_bankstatements"
                 +
                 " where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage  and instrumentno is not null and debit is not null and debit>0) order by \"txDate\"";
-        Query entriesNotInBankStamentQry = HibernateUtil.getCurrentSession().createSQLQuery(entriesNotInBankStamentStr)
+        Query entriesNotInBankStamentQry = persistenceService.getSession().createSQLQuery(entriesNotInBankStamentStr)
                 .addScalar("instrumentNo")
                 .addScalar("credit")
                 .addScalar("debit")
@@ -954,7 +957,7 @@ public class AutoReconciliationAction extends BaseFormAction {
                 " and  instrumentnumber is not null   and instrumentamount is not null and instrumentnumber||'-'||instrumentamount not in  (select  instrumentno||'-'|| debit from egf_brs_bankstatements"
                 +
                 " where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage  and instrumentno is not null and debit is not null and debit>0) ";
-        entriesNotInBankStamentQry = HibernateUtil.getCurrentSession().createSQLQuery(entriesNotInBankStamentStr)
+        entriesNotInBankStamentQry = persistenceService.getSession().createSQLQuery(entriesNotInBankStamentStr)
                 // .addScalar("instrumentNo")
                 .addScalar("credit")
                 // .addScalar("debit")
@@ -1106,7 +1109,7 @@ public class AutoReconciliationAction extends BaseFormAction {
             String duplicates = "select instrumentNo,debit,accountId from " + TABLENAME + " where accountId=:accountId" +
                     " and debit>0 and action='" + BRS_ACTION_TO_BE_PROCESSED
                     + "'  group by  instrumentNo,debit,accountId having count(*)>1";
-            final SQLQuery paymentDuplicateChequesQuery = HibernateUtil.getCurrentSession().createSQLQuery(duplicates);
+            final SQLQuery paymentDuplicateChequesQuery = persistenceService.getSession().createSQLQuery(duplicates);
             paymentDuplicateChequesQuery.addScalar("instrumentNo")
             .addScalar("debit")
             .addScalar("accountId", LongType.INSTANCE)
@@ -1121,7 +1124,7 @@ public class AutoReconciliationAction extends BaseFormAction {
                     + "' where debit=:debit and accountid=:accountId and instrumentNo=:instrumentNo " +
                     " and action='" + BRS_ACTION_TO_BE_PROCESSED + "'";
 
-            final SQLQuery paymentDuplicateUpdate = HibernateUtil.getCurrentSession().createSQLQuery(
+            final SQLQuery paymentDuplicateUpdate = persistenceService.getSession().createSQLQuery(
                     backUpdateDuplicatePaymentquery);
             for (final AutoReconcileBean bean : duplicatePaymentCheques)
             {
@@ -1136,7 +1139,7 @@ public class AutoReconciliationAction extends BaseFormAction {
             duplicates = "select instrumentNo,credit,accountId from " + TABLENAME + " where accountid=:accountId" +
                     " and  credit>0 and action='" + BRS_ACTION_TO_BE_PROCESSED
                     + "' group by  instrumentNo,credit,accountId having count(*)>1";
-            final SQLQuery receiptsDuplicateChequesQuery = HibernateUtil.getCurrentSession().createSQLQuery(duplicates);
+            final SQLQuery receiptsDuplicateChequesQuery = persistenceService.getSession().createSQLQuery(duplicates);
             receiptsDuplicateChequesQuery.addScalar("instrumentNo")
             .addScalar("credit")
             .addScalar("accountId", LongType.INSTANCE)
@@ -1149,7 +1152,7 @@ public class AutoReconciliationAction extends BaseFormAction {
                     " ,errorMessage='" + BRS_MESSAGE_DUPPLICATE_IN_BANKSTATEMENT
                     + "' where credit=:credit and accountid=:accountId and instrumentNo=:instrumentNo " +
                     " and action='" + BRS_ACTION_TO_BE_PROCESSED + "'";
-            final SQLQuery receiptDuplicateUpdate = HibernateUtil.getCurrentSession().createSQLQuery(
+            final SQLQuery receiptDuplicateUpdate = persistenceService.getSession().createSQLQuery(
                     backUpdateDuplicateReceiptsQuery);
 
             for (final AutoReconcileBean bean : duplicateReceiptsCheques)
