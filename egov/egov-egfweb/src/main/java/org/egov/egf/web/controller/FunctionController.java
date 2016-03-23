@@ -38,7 +38,7 @@ public class FunctionController {
 	
 
 	private void prepareNewForm(Model model) {
-		model.addAttribute("functions", functionService.findAll());
+		model.addAttribute("functions", functionService.findAllIsNotLeafTrue());
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)

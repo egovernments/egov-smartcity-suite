@@ -1,11 +1,17 @@
 package org.egov.commons.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.Metamodel;
 
-import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFunction;
 import org.egov.commons.repository.FunctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,21 +57,53 @@ public class FunctionService {
 	public CFunction findOne(Long id) {
 		return functionRepository.findOne(id);
 	}
+	public List<CFunction> findAllIsNotLeafTrue() {
+		return functionRepository.findByIsNotLeaf(true);
+	}
 	
 	public List<CFunction> search(CFunction function){
-		if(function.getName()!=null && function.getCode()!=null)
+		
+		
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<CFunction> createQuery = cb.createQuery(CFunction.class);
+		Root<CFunction> functions = createQuery.from(CFunction.class);
+		createQuery.select(functions);
+		Metamodel m = entityManager.getMetamodel();
+		javax.persistence.metamodel.EntityType<CFunction> CFunction_ = m.entity(CFunction.class);
+    
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		if(function.getName()!=null)
 		{
-			return functionRepository.findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(function.getName(),function.getCode());
-		}else if(function.getName()!=null)
-		{
-			return functionRepository.findByNameContainingIgnoreCase(function.getName());
-		}else if(function.getCode()!=null)
-		{
-			return functionRepository.findByCodeContainingIgnoreCase(function.getCode());
+		String name="%"+function.getName().toLowerCase()+"%";
+		predicates.add(cb.isNotNull(functions.get("name")));
+		predicates.add(cb.like(cb.lower(functions.get(CFunction_.getDeclaredSingularAttribute("name", String.class))),name));
 		}
-		else
+		if(function.getCode()!=null)
 		{
-		return functionRepository.findAll();
+		String code="%"+function.getCode().toLowerCase()+"%";
+		predicates.add(cb.isNotNull(functions.get("code")));
+		predicates.add(cb.like(cb.lower(functions.get(CFunction_.getDeclaredSingularAttribute("code", String.class))),code));
 		}
+		if(function.getIsActive()==true)
+		{
+			predicates.add(cb.equal(functions.get(CFunction_.getDeclaredSingularAttribute("isActive", Boolean.class)),true));
+		}
+		if(function.getParentId()!=null)
+		{
+			/*predicates.add(cb.isNotNull(functions.get("id")));
+			predicates.add(cb.equal(functions.get(CFunction_.getDeclaredSingularAttribute("id", Long.class)),function.getParentId().getId()));*/
+			predicates.add(cb.equal(functions.get("parentId"), function.getParentId()));
+		}
+		
+		
+		
+		createQuery.where(predicates.toArray(new Predicate[]{}));
+		TypedQuery<CFunction> query=entityManager.createQuery(createQuery);
+
+		List<CFunction> resultList = query.getResultList();
+		return resultList;
 	}
+	
+	
+	
 }
