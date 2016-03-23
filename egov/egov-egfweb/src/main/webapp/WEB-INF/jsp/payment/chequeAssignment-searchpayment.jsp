@@ -532,7 +532,9 @@
 					res = res.split('~');
 					if(res[1]=='false')
 					{
-						bootbox.alert('Enter valid cheque number or This Cheque number has been already used');
+						bootbox.alert('Enter valid cheque number or This Cheque number has been already used', function() {
+							return true;
+						});
 						document.getElementById('chequeNumber'+parseInt(res[0])).value='';
 					}
 			    },

@@ -43,7 +43,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
@@ -104,17 +106,20 @@ public class AgencyWiseCollectionService {
         final AgencyWiseCollection agencyWiseCollection = new AgencyWiseCollection();
 
         final Installment installment = advertisementDemandService.getCurrentInstallment();
-        final EgDemandReason pendingTaxReason = advertisementDemandService.getDemandReasonByCodeAndInstallment(
-                AdvertisementTaxConstants.DEMANDREASON_PENALTY, installment);
-
+        //final EgDemandReason pendingTaxReason = advertisementDemandService.getDemandReasonByCodeAndInstallment(
+        //        AdvertisementTaxConstants.DEMANDREASON_PENALTY, installment);
+        
+         Map<String,BigDecimal> penaltyReasons= null;
+        
         final AppConfigValues penaltyCalculationRequired = appConfigValuesService.getConfigValuesByModuleAndKey(
                 AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.PENALTYCALCULATIONREQUIRED).get(0);
 
         for (final String hoardingId : hoardingList) {
             final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(hoardingId.trim()));
-
+            penaltyReasons= new HashMap<String,BigDecimal>();
+            
             if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement()!=null) {
-                BigDecimal penaltyAmount = BigDecimal.ZERO;
+                //BigDecimal penaltyAmount = BigDecimal.ZERO;
                 BigDecimal penaltyAmt = BigDecimal.ZERO;
 
                 for (final EgDemandDetails demandDtl : advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails())
@@ -130,7 +135,14 @@ public class AgencyWiseCollectionService {
                             penaltyAmt = advertisementDemandService.calculatePenalty(demandDtl, amount,
                                     advertisementPermitDetail.getAdvertisement().getPenaltyCalculationDate());
                             totalAmount = totalAmount.add(penaltyAmt);
-                            penaltyAmount = penaltyAmount.add(penaltyAmt);
+                           // penaltyAmount = penaltyAmount.add(penaltyAmt);
+                            
+                            
+                           if(penaltyReasons.get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())==null)
+                            penaltyReasons.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), penaltyAmt);
+                           else
+                               penaltyReasons.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(),
+                                       penaltyReasons.get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription()).add(penaltyAmt));
                         }
                         totalAmount = totalAmount.add(amount);
 
@@ -140,22 +152,37 @@ public class AgencyWiseCollectionService {
                     }
 
                 if (penaltyCalculationRequired != null && "YES".equalsIgnoreCase(penaltyCalculationRequired.getValue()))
-                    if (penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
+                    
+                    if (penaltyReasons != null && penaltyReasons.size() > 0) {
                         // check any demand reason already present
-                        final List<EgDemandDetails> penaltyDmtDtails = advertisementDemandService
-                                .getDemandDetailByPassingDemandDemandReason(advertisementPermitDetail.getAdvertisement().getDemandId(), pendingTaxReason);
+                        BigDecimal penaltyAmount = BigDecimal.ZERO;
 
-                        final AgencyWiseCollectionDetail agencyWiseDt = new AgencyWiseCollectionDetail();
-                        agencyWiseDt.setDemand(advertisementPermitDetail.getAdvertisement().getDemandId());
-                        agencyWiseDt.setDemandreason(pendingTaxReason);
-                        agencyWiseDt.setAmount(penaltyAmount);
-                        agencyWiseDt.setAgencyWiseCollection(agencyWiseCollection);
+                        for (Map.Entry<String, BigDecimal> penaltyReason : penaltyReasons.entrySet()) {
+                            penaltyAmount = penaltyReason.getValue();
 
-                        if (penaltyDmtDtails != null && penaltyDmtDtails.size() > 0)
-                            agencyWiseDt.setDemandDetail(penaltyDmtDtails.get(0));
-                        else
-                            agencyWiseDt.setDemandDetail(null);
-                        agencyWiseCollectionDetails.add(agencyWiseDt);
+                            if(penaltyAmount.compareTo(BigDecimal.ZERO) > 0 ) {
+                            EgDemandReason pendingTaxReason = advertisementDemandService
+                                    .getDemandReasonByCodeAndInstallment(
+                                            AdvertisementTaxConstants.DEMANDREASON_PENALTY, advertisementDemandService
+                                                    .getInstallmentByDescription(penaltyReason.getKey()));
+
+                            final List<EgDemandDetails> penaltyDmtDtails = advertisementDemandService
+                                    .getDemandDetailByPassingDemandDemandReason(advertisementPermitDetail
+                                            .getAdvertisement().getDemandId(), pendingTaxReason);
+
+                            final AgencyWiseCollectionDetail agencyWiseDt = new AgencyWiseCollectionDetail();
+                            agencyWiseDt.setDemand(advertisementPermitDetail.getAdvertisement().getDemandId());
+                            agencyWiseDt.setDemandreason(pendingTaxReason);
+                            agencyWiseDt.setAmount(penaltyAmount);
+                            agencyWiseDt.setAgencyWiseCollection(agencyWiseCollection);
+
+                            if (penaltyDmtDtails != null && penaltyDmtDtails.size() > 0)
+                                agencyWiseDt.setDemandDetail(penaltyDmtDtails.get(0));
+                            else
+                                agencyWiseDt.setDemandDetail(null);
+                            agencyWiseCollectionDetails.add(agencyWiseDt);
+                         }
+                        }
                     }
             }
         }

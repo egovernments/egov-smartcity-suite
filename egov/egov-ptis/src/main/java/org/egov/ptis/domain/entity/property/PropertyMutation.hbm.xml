@@ -76,10 +76,12 @@
 			<key column="MUTATION" not-null="true" />
 			<many-to-many class="org.egov.infra.admin.master.entity.User" column="TRANSFEROR"/>
 		</bag>
-		<bag name="transfereeInfos" table="EGPT_MUTATION_TRANSFEREE" cascade="all">
+		
+		<bag name="transfereeInfos" cascade="all-delete-orphan" >
 			<key column="MUTATION" not-null="true" />
-			<many-to-many class="org.egov.infra.admin.master.entity.User" column="TRANSFEREE"/>
+			<one-to-many class="org.egov.ptis.domain.entity.property.PropertyMutationTransferee"/>
 		</bag>
+		
 		<bag name="documents" table="EGPT_MUTATION_DOCS" cascade="all">
 			<key column="MUTATION" not-null="true" />
 			<many-to-many class="org.egov.ptis.domain.entity.property.Document" column="DOCUMENT"/>

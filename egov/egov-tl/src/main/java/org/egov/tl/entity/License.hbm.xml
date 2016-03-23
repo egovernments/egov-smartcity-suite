@@ -118,7 +118,7 @@
 		</many-to-one>
 		<property name="nameOfEstablishment" column="NAME_OF_ESTAB" />
 		
-		<many-to-one name="buildingType" class="org.egov.tl.entity.NatureOfBusiness" column="BUILDINGTYPE"/>
+		<many-to-one name="natureOfBusiness" class="org.egov.tl.entity.NatureOfBusiness" column="NATUREOFBUSINESS"/>
 		
 		<property name="noOfRooms" column="NOOFROOMS" type="java.lang.Integer" />
 		<property name="phoneNumber" column="PHONENUMBER" />

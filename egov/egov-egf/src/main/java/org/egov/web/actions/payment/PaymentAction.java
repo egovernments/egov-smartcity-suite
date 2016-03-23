@@ -998,9 +998,9 @@ public class PaymentAction extends BasePaymentAction {
         if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view"))
             // if user is drilling down form source , parameter showMode is passed with value view, in this case we do not show
             // the
-
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("defaultDept in vew : " + getDefaultDept());
+            mode = parameters.get("showMode")[0];
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("defaultDept in vew : " + getDefaultDept());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed view.");
         return VIEW;

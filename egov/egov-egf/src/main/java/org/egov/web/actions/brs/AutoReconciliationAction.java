@@ -89,13 +89,10 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 @Results({
     @Result(name = AutoReconciliationAction.NEW, location = "autoReconciliation-" + AutoReconciliationAction.NEW + ".jsp"),
     @Result(name = "upload", location = "autoReconciliation-upload.jsp"),
@@ -217,7 +214,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     public void prepare()
     {
         final List bankList = persistenceService
-                .findAllBy("select distinct b from Bank b , Bankbranch bb , Bankaccount ba WHERE bb.bank=b and ba.bankbranch=bb and b.isactive=true order by upper(b.name)");
+                .findAllBy("select   b from Bank b , Bankbranch bb , Bankaccount ba WHERE bb.bank=b and ba.bankbranch=bb and b.isactive=true order by upper(b.name)");
         dropdownData.put("bankList", bankList);
         dropdownData.put("branchList", branchList);
         dropdownData.put("accountList", accountList);
@@ -225,7 +222,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         {
             branchList = persistenceService
                     .findAllBy(
-                            "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=true",
+                            "select  bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=true",
                             bankId);
             dropdownData.put("branchList", branchList);
 
@@ -250,7 +247,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         return "upload";
     }
 
-    @Transactional
+    
     @ValidationErrorPage("upload")
     public String upload()
     {
@@ -497,7 +494,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     /**
      * @return
      */
-    @Transactional
+    
     public String schedule()
     {
         // Step1: mark which are all we are going to process

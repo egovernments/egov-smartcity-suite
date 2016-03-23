@@ -53,9 +53,9 @@ import org.egov.egf.revenue.Grant;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @Results({
     @Result(name = "view", location = "searchRevenueReport-view.jsp")
 })

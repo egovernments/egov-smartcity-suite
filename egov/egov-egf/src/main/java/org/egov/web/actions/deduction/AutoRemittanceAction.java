@@ -66,9 +66,9 @@ import org.egov.services.deduction.ScheduledRemittanceService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @Results({
     @Result(name = "manual", location = "autoRemittance-manual.jsp")
 })

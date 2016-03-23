@@ -139,10 +139,10 @@ public class ContingentBillAction extends BaseBillAction {
     private boolean showPrintPreview;
     private String sanctionedMessge;
     private Department primaryDepartment;
-  
+
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     @Override
     public StateAware getModel() {
         return super.getModel();
@@ -324,7 +324,7 @@ public class ContingentBillAction extends BaseBillAction {
             if (commonBean.getFunctionId() != null) {
                 CFunction function1 = (CFunction) getPersistenceService().find(" from CFunction where id=?",
                         commonBean.getFunctionId().longValue());
-                
+
                 voucherHeader.getVouchermis().setFunction(function1);
             }
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
@@ -336,8 +336,6 @@ public class ContingentBillAction extends BaseBillAction {
             validateLedgerAndSubledger();
             bill = checkBudgetandGenerateNumber(bill);
             // this code should be removed when we enable single function centre change
-
-            
 
             validateFields();
             if (!isBillNumberGenerationAuto())
@@ -403,7 +401,6 @@ public class ContingentBillAction extends BaseBillAction {
         return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
-   
     @SkipValidation
     @ValidationErrorPage(value = EDIT)
     public String edit()
@@ -543,7 +540,6 @@ public class ContingentBillAction extends BaseBillAction {
         return billDetailsTableSubledger;
     }
 
-   
     @SuppressWarnings("unchecked")
     private void recreateCheckList(final EgBillregister bill) {
         final List<EgChecklists> checkLists = persistenceService.findAllBy(
@@ -554,7 +550,6 @@ public class ContingentBillAction extends BaseBillAction {
         createCheckList(bill);
     }
 
-   
     private EgBillregister updateBill(EgBillregister bill) {
         final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
         headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill!beforeView.action?billRegisterId=");
@@ -594,8 +589,7 @@ public class ContingentBillAction extends BaseBillAction {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -675,7 +669,8 @@ public class ContingentBillAction extends BaseBillAction {
             vd.setGlcodeDetail(coa.getGlcode());
             vd.setGlcodeIdDetail(coa.getId());
             vd.setAccounthead(coa.getName());
-            vd.setCreditAmountDetail(detail.getCreditamount());
+            vd.setCreditAmountDetail(detail.getCreditamount() != null ? detail.getCreditamount().setScale(2,
+                    BigDecimal.ROUND_HALF_EVEN) : null);
             if (detail.getFunctionid() != null)
             {
                 final CFunction functionById = (CFunction) functionHibernateDAO.findById(detail.getFunctionid().longValue(),
@@ -689,19 +684,20 @@ public class ContingentBillAction extends BaseBillAction {
                 vd.setIsSubledger(FALSE);
             if (netPayList.contains(coa))
             {
-                vd.setCreditAmountDetail(detail.getCreditamount());
+                vd.setCreditAmountDetail(detail.getCreditamount() != null ? detail.getCreditamount().setScale(2,
+                        BigDecimal.ROUND_HALF_EVEN) : null);
                 billDetailsTableNetFinal.add(vd);
 
             }
             else if (detail.getCreditamount() != null && !detail.getCreditamount().equals(BigDecimal.ZERO))
             {
-                vd.setCreditAmountDetail(detail.getCreditamount());
+                vd.setCreditAmountDetail(detail.getCreditamount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 billDetailsTableCreditFinal.add(vd);
             }
 
             if (detail.getDebitamount() != null && !detail.getDebitamount().equals(BigDecimal.ZERO))
             {
-                vd.setDebitAmountDetail(detail.getDebitamount());
+                vd.setDebitAmountDetail(detail.getDebitamount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 billDetailsTableFinal.add(vd);
             }
             final Set<EgBillPayeedetails> egBillPaydetailes = detail.getEgBillPaydetailes();
@@ -753,19 +749,19 @@ public class ContingentBillAction extends BaseBillAction {
         if (cbill.getStatus().getDescription().equalsIgnoreCase(FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS)
                 && null != cbill.getState())
         {
-            final BigDecimal amt = cbill.getPassedamount().setScale(2);
+            final BigDecimal amt = cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
             final String amountInWords = NumberToWord.convertToWord(amt.toString());
             sanctionedMessge = getText(
                     "cbill.getsanctioned.message",
-                    new String[] { amountInWords, cbill.getPassedamount().toString(),
+                    new String[] { amountInWords, cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString(),
                             voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition()) });
 
         }
         else {
-            final BigDecimal amt = cbill.getPassedamount().setScale(2);
+            final BigDecimal amt = cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
             final String amountInWords = NumberToWord.convertToWord(amt.toString());
             sanctionedMessge = getText("cbill.getsanctioned.message", new String[] { amountInWords,
-                    cbill.getPassedamount().toString() });
+                    cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString() });
             sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);
         }
         // persistenceService.setType(EgChecklists.class);
@@ -1236,8 +1232,8 @@ public class ContingentBillAction extends BaseBillAction {
     // setters
 
     public String getComments() {
-        if (!(BigDecimal.ZERO.compareTo(billAmount)==0))
-            return getText("bill.comments", new String[] { billAmount.toPlainString() });
+        if (!(BigDecimal.ZERO.compareTo(billAmount) == 0))
+            return getText("bill.comments", new String[] { billAmount.setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
         else
             return "";
     }

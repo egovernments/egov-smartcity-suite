@@ -41,6 +41,7 @@
 jQuery(document).ready(function() {
 	$('#dailyCollectionReport-header').hide();
 	$('#report-footer').hide();
+	
 $('#dailyCollectionReportSearch').click(function(e){
 		if($('form').valid()){
 			var fromDate = $("#fromDate").val();
@@ -94,6 +95,7 @@ $('#dailyCollectionReportSearch').click(function(e){
 							  { "data" : "consumerCode", "title": "Consumer Number"},
 							  { "data" : "consumerName", "title": "Consumer Name"},
 							  { "data" : "doorNumber", "title": "Door no"},
+							  { "data" : "wardName", "title": "Ward Name"},
 							  { "data" : "paidAt", "title": "Paid at"},
 							  { "data" : "paymentMode", "title": "Pay mode"},
 							  { "data" : "connectionType", "title": "Connection Type"},
@@ -111,13 +113,13 @@ $('#dailyCollectionReportSearch').click(function(e){
 										jQuery('#report-footer').show(); 
 									}
 									if (data.length > 0) {
-										updateTotalFooter(8, api);
 										updateTotalFooter(9, api);
 										updateTotalFooter(10, api);
+										updateTotalFooter(11, api);
 									}
 								},
 								"aoColumnDefs" : [ {
-									"aTargets" : [8,9,10],
+									"aTargets" : [9,10,11],
 									"mRender" : function(data, type, full) {
 										return formatNumberInr(data);    
 									}

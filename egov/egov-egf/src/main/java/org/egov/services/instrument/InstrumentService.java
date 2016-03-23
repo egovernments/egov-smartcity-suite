@@ -513,6 +513,7 @@ public class InstrumentService {
         return iVouherList;
 
     }
+
     @Transactional
     public List<InstrumentVoucher> modifyInstrumentVoucher(
             final List<Map<String, Object>> paramList) {
@@ -642,7 +643,7 @@ public class InstrumentService {
 
     }
 
-  /**
+    /**
      * Accepts list of following Objects in a Map and updates them into InstrumnetOtherdetails and statusid in InstrumentHeader.
      * accepted values are<br>
      * <b> Instrument Header,payinSlipId,instrumentStatusDate,reconciledAmount,statusId ,BankAccount</b><br>
@@ -722,6 +723,7 @@ public class InstrumentService {
 
         return iOtherDetailsList;
     }
+
     @Transactional
     public boolean cancelInstrument(final InstrumentHeader ih)
             throws ApplicationRuntimeException {
@@ -870,6 +872,7 @@ public class InstrumentService {
         instrumentTypeService.persist(iType);
         return iType;
     }
+
     @Transactional
     public InstrumentAccountCodes createInstrumentAccountCodes(
             final InstrumentAccountCodes iAccCodes) {
@@ -879,14 +882,20 @@ public class InstrumentService {
 
     // setters for Spring injection
 
-
     public boolean isChequeNumberWithinRange(final String chequeNumber,
             final Long bankAccountId, final Integer departmentId,
             final String serialNo) {
-        final AccountCheques accountCheques = (AccountCheques) persistenceService
-                .find("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "
-                        + " ac.bankAccountId.id=? and cd.allotedTo.id=? and ? between ac.fromChequeNumber and ac.toChequeNumber and ac.serialNo=? ",
-                        bankAccountId, departmentId.longValue(), chequeNumber, serialNo);
+        AccountCheques accountCheques = new AccountCheques();
+        if (serialNo != null)
+            accountCheques = (AccountCheques) persistenceService
+                    .find("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "
+                            + " ac.bankAccountId.id=? and cd.allotedTo.id=? and ? between ac.fromChequeNumber and ac.toChequeNumber and ac.serialNo=? ",
+                            bankAccountId, departmentId.longValue(), chequeNumber, serialNo);
+        else
+            accountCheques = (AccountCheques) persistenceService
+                    .find("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "
+                            + " ac.bankAccountId.id=? and cd.allotedTo.id=? and ? between ac.fromChequeNumber and ac.toChequeNumber ",
+                            bankAccountId, departmentId.longValue(), chequeNumber);
         if (accountCheques == null)
             return false;
         return true;
@@ -895,11 +904,19 @@ public class InstrumentService {
     boolean isChequeNumberUnique(final String chequeNumber,
             final Long bankAccountId, final String serialNo) {
         final InstrumentType instrumentType = getInstrumentTypeByType("cheque");
-        final List<InstrumentHeader> list = instrumentHeaderService
-                .findAllBy(
-                        "from InstrumentHeader where instrumentNumber=? and instrumentType.id=? and bankAccountId.id=? and isPayCheque='1' and "
-                                + "serialNo=?", chequeNumber,
-                        instrumentType.getId(), bankAccountId, serialNo);
+        List<InstrumentHeader> list = new ArrayList<InstrumentHeader>();
+        if (serialNo != null)
+            list = instrumentHeaderService
+                    .findAllBy(
+                            "from InstrumentHeader where instrumentNumber=? and instrumentType.id=? and bankAccountId.id=? and isPayCheque='1' and "
+                                    + "serialNo=?", chequeNumber,
+                            instrumentType.getId(), bankAccountId, serialNo);
+        else
+            list = instrumentHeaderService
+                    .findAllBy(
+                            "from InstrumentHeader where instrumentNumber=? and instrumentType.id=? and bankAccountId.id=? and isPayCheque='1' ",
+                            chequeNumber,
+                            instrumentType.getId(), bankAccountId);
         if (list != null && list.size() > 0)
             return false;
         return true;
@@ -969,6 +986,7 @@ public class InstrumentService {
     /**
      * @param suurenderChequelist
      */
+    @Transactional
     public void surrenderCheques(
             final List<InstrumentHeader> suurenderChequelist) {
 
@@ -1011,6 +1029,7 @@ public class InstrumentService {
         }
 
     }
+
     @Transactional
     public void updateInstrumentOtherDetailsStatus(
             final InstrumentHeader instrumentHeader, final Date statusDate,
@@ -1022,6 +1041,7 @@ public class InstrumentService {
         instrumentOtherDetails.setReconciledAmount(reconciledAmount);
         instrumentOtherDetailsService.persist(instrumentOtherDetails);
     }
+
     @Transactional
     public void editInstruments(
             final InstrumentOtherDetails instrumentOtherDetails) {
@@ -1060,6 +1080,5 @@ public class InstrumentService {
             return false;
         return true;
     }
-    
-    
+
 }

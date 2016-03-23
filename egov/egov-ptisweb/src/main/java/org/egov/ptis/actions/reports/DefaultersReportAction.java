@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -91,6 +93,8 @@ public class DefaultersReportAction extends BaseFormAction {
     private BoundaryService boundaryService;
     @Autowired
     public PropertyTaxUtil propertyTaxUtil;
+    private Map<String, String> ownerShipMap;
+    private String ownerShipType;
 
     @Override
     public Object getModel() {
@@ -107,6 +111,7 @@ public class DefaultersReportAction extends BaseFormAction {
                 REVENUE_HIERARCHY_TYPE);
         addDropdownData("wardList", wardList);
         addDropdownData("limitList", buildLimitList());
+        setOwnerShipMap(OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT);
     }
 
     @SkipValidation
@@ -133,8 +138,8 @@ public class DefaultersReportAction extends BaseFormAction {
     public void getDefaultersList() {
         List<DefaultersInfo> resultList = new ArrayList<DefaultersInfo>();
         String result = null;
-        final Query query = propertyTaxUtil.prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit);
-        resultList = prepareOutput(query.list());
+        final Query query = propertyTaxUtil.prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit,ownerShipType);
+        resultList = prepareOutput( (List<PropertyMaterlizeView>)query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
         result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
@@ -243,6 +248,22 @@ public class DefaultersReportAction extends BaseFormAction {
 
     public void setLimit(Integer limit) {
         this.limit = limit;
+    }
+
+    public Map<String, String> getOwnerShipMap() {
+        return ownerShipMap;
+    }
+
+    public void setOwnerShipMap(Map<String, String> ownerShipMap) {
+        this.ownerShipMap = ownerShipMap;
+    }
+
+    public String getOwnerShipType() {
+        return ownerShipType;
+    }
+
+    public void setOwnerShipType(String ownerShipType) {
+        this.ownerShipType = ownerShipType;
     }
 
 }

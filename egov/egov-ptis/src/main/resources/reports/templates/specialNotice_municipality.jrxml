@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-03-11T11:14:51 -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-03-17T18:31:54 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_municipality" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="10"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="144"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -245,7 +245,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isItalic="true" isUnderline="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">PARTY COPY</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">OFFICIAL COPY</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">ORIGINAL COPY</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">OFFICE COPY</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
 				<reportElement x="37" y="305" width="245" height="15" uuid="79a902fe-2e91-42fa-a896-bb9df4cb3b23"/>
@@ -259,7 +259,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getNew_rev_ARV()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingARV()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="37" y="290" width="245" height="15" uuid="2f6fbf3d-e0bc-41b8-a183-b2dd1b8e7c64"/>
@@ -273,7 +273,7 @@
 				<textElement textAlignment="Center">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Revision or New Assessment ARV (Rs.)]]></text>
+				<text><![CDATA[Existing Assessment ARV (Rs.)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="37" y="330" width="245" height="25" uuid="35763ea7-8cbe-41c9-86fc-42a93a8da1ad"/>

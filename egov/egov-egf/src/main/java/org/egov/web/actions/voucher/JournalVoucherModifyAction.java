@@ -179,7 +179,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         getBillInfo();
         loadSchemeSubscheme();
         loadFundSource();
-        loadApproverUser("default");
+      //  loadApproverUser("default");
         if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view")) {
             return "view";
         }

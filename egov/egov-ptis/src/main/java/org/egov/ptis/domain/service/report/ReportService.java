@@ -48,6 +48,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,6 +83,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ReportService {
 
+    private static final String COURTCASE = "COURTCASE";
+    private static final String CENTRAL_GOVT_33_5 = "CENTRAL_GOVT_33.5";
+    private static final String CENTRAL_GOVT_75 = "CENTRAL_GOVT_75";
+    private static final String CENTRAL_GOVT_50 = "CENTRAL_GOVT_50";
+    private static final String COURTCASE_CENTRAL_GOVT_33_5 = "COURTCASE-CENTRAL_GOVT_33.5";
+    private static final String COURTCASE_CENTRAL_GOVT_75 = "COURTCASE-CENTRAL_GOVT_75";
+    private static final String COURTCASE_CENTRAL_GOVT_50 = "COURTCASE-CENTRAL_GOVT_50";
+    private static final String CENTRAL_GOVT = "CENTRAL_GOVT";
+    private static final String STATE_GOVT = "STATE_GOVT";
+    private static final String COURTCASE_STATE_GOVT = "COURTCASE-STATE_GOVT";
+    private static final String PRIVATE_EXCLUDE_COURTCASE = "PRIVATE_EXCLUDE_COURTCASE";
+    private static final String COURTCASE_PRIVATE = "COURTCASE-PRIVATE";
+    private static final String COURTCASE_EWSHS = "COURTCASE-EWSHS";
+    private static final String EWSHS = "EWSHS";
+    private static final String PRIVATE = "PRIVATE";
     private PersistenceService propPerServ;
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     @Autowired
@@ -619,10 +635,10 @@ public class ReportService {
                     && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
 
                 if (whereConditionAdded)
-                    queryBuilder.append(" and category =:typeOfSearch ");
+                    queryBuilder.append(" and category in (:typeOfSearch) ");
                 else {
                     whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
-                    queryBuilder.append(" category =:typeOfSearch ");
+                    queryBuilder.append(" category in (:typeOfSearch) ");
                 }
             }
 
@@ -663,7 +679,7 @@ public class ReportService {
 
             if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
                     && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
-                query.setString("typeOfSearch", bcDailyCollectionReportResult.getType());
+                query.setParameterList("typeOfSearch", prepareTypeOfSearch(bcDailyCollectionReportResult.getType()));
             }
         }
 
@@ -676,8 +692,39 @@ public class ReportService {
 
     }
 
-    private void buildCollectionReportForUlbWiseDCb(List<BillCollectorDailyCollectionReportResult> listBcPayment) {
+    private List<String> prepareTypeOfSearch(String type) {
+        List<String> types = new ArrayList<String>();
+        if (PRIVATE.equals(type)) {
+            types.add(PRIVATE);
+            types.add(EWSHS);
+            types.add(COURTCASE_PRIVATE);
+            types.add(COURTCASE_EWSHS);
+        } else if (PRIVATE_EXCLUDE_COURTCASE.equals(type)) {
+            types.add(PRIVATE);
+            types.add(EWSHS);
+        } else if (CENTRAL_GOVT.equals(type)) {
+            types.add(CENTRAL_GOVT_50);
+            types.add(CENTRAL_GOVT_75);
+            types.add(CENTRAL_GOVT_33_5);
+            types.add(COURTCASE_CENTRAL_GOVT_50);
+            types.add(COURTCASE_CENTRAL_GOVT_75);
+            types.add(COURTCASE_CENTRAL_GOVT_33_5);
+        } else if (STATE_GOVT.equals(type)) {
+            types.add(STATE_GOVT);
+            types.add(COURTCASE_STATE_GOVT);
+        } else if (COURTCASE.equals(type)) {
+            types.add(COURTCASE_PRIVATE);
+            types.add(COURTCASE_EWSHS);
+            types.add(COURTCASE_CENTRAL_GOVT_50);
+            types.add(COURTCASE_CENTRAL_GOVT_75);
+            types.add(COURTCASE_CENTRAL_GOVT_33_5);
+            types.add(COURTCASE_STATE_GOVT);
+        }
+        return types;
+    }
 
+    private void buildCollectionReportForUlbWiseDCb(List<BillCollectorDailyCollectionReportResult> listBcPayment) {
+        Double percentage =0.0;
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             if (bcResult.getArrears_demand() == null)
@@ -691,8 +738,8 @@ public class ReportService {
             if (bcResult.getTotalaccessments() == null)
                 bcResult.setTotalaccessments(BigDecimal.valueOf(0));
 
-            bcResult.setTarget_total_demand(bcResult.getArrears_demand() + bcResult.getCurrent_demand()
-                    + bcResult.getArrears_penalty() + bcResult.getCurrent_penalty());
+            bcResult.setTarget_total_demand(bcResult.getArrears_demand() + bcResult.getCurrent_demand());
+            bcResult.setTarget_total_demandInterest(bcResult.getArrears_penalty() + bcResult.getCurrent_penalty());
 
             if (bcResult.getCurrent_demand_collection() == null)
                 bcResult.setCurrent_demand_collection(0.0);
@@ -704,8 +751,14 @@ public class ReportService {
                 bcResult.setArrears_penalty_collection(0.0);
 
             bcResult.setCummulative_total_Collection(bcResult.getCurrent_demand_collection()
-                    + bcResult.getArrears_demand_collection() + bcResult.getCurrent_penalty_collection()
-                    + bcResult.getArrears_penalty_collection());
+                    + bcResult.getArrears_demand_collection());
+            bcResult.setCummulative_total_CollectionInterest(bcResult.getCurrent_penalty_collection() 
+                    + bcResult.getArrears_penalty_collection()); 
+            
+            percentage=(bcResult.getCummulative_total_Collection()*100)/bcResult.getTarget_total_demand();
+            bcResult.setCummulative_total_CollectionPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage));
+            percentage=(bcResult.getCummulative_total_CollectionInterest()*100)/bcResult.getTarget_total_demandInterest();
+            bcResult.setCummulative_total_CollectionInterestPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage)); 
 
             bcResult.setBalance_arrearTax(bcResult.getArrears_demand() - bcResult.getArrears_demand_collection());
             bcResult.setBalance_arrearInterest(bcResult.getArrears_penalty() - bcResult.getArrears_penalty_collection());
@@ -713,7 +766,7 @@ public class ReportService {
             bcResult.setBalance_currentInterest(bcResult.getCurrent_penalty()
                     - bcResult.getCurrent_penalty_collection());
             bcResult.setBalance_total(bcResult.getTarget_total_demand() - bcResult.getCummulative_total_Collection());
-
+            bcResult.setBalance_totalInterest(bcResult.getTarget_total_demandInterest() - bcResult.getCummulative_total_CollectionInterest());
         }
 
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
@@ -723,6 +776,7 @@ public class ReportService {
             bcResult.setBalance_currentTax(formatAmt(bcResult.getBalance_currentTax()).doubleValue());
             bcResult.setBalance_currentInterest(formatAmt(bcResult.getBalance_currentInterest()).doubleValue());
             bcResult.setBalance_total(formatAmt(bcResult.getBalance_total()).doubleValue());
+            bcResult.setBalance_totalInterest(formatAmt(bcResult.getBalance_totalInterest()).doubleValue());
 
             bcResult.setArrears_demand(formatAmt(bcResult.getArrears_demand()).doubleValue());
             bcResult.setArrears_demand_collection(formatAmt(bcResult.getArrears_demand_collection()).doubleValue());
@@ -736,8 +790,12 @@ public class ReportService {
             bcResult.setTarget_total_demand(formatAmt(bcResult.getTarget_total_demand()).doubleValue());
             bcResult.setCummulative_total_Collection(formatAmt(bcResult.getCummulative_total_Collection())
                     .doubleValue());
-
-        }
+            bcResult.setTarget_total_demandInterest(formatAmt(bcResult.getTarget_total_demandInterest()).doubleValue());
+            bcResult.setCummulative_total_CollectionInterest(formatAmt(bcResult.getCummulative_total_CollectionInterest())
+                    .doubleValue());
+            bcResult.setCummulative_total_CollectionPercentage(bcResult.getCummulative_total_CollectionPercentage().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+            bcResult.setCummulative_total_CollectionInterestPercentage(bcResult.getCummulative_total_CollectionInterestPercentage().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        } 
 
     }
 

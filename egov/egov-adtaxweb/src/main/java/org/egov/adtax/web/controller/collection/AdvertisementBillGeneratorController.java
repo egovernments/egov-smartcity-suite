@@ -138,10 +138,13 @@ public class AdvertisementBillGeneratorController {
             
              advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);
             
-             if (collectionType != null && !"".equals(collectionType))
-                advertisementBillable.setCollectionType(collectionType);
+             if (collectionType != null && !"".equals(collectionType)){
+                 if(collectionType.equalsIgnoreCase("hoarding"))
+                     advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);  
+                 else
+                     advertisementBillable.setCollectionType(collectionType);
                            
-             
+             }
             advertisementBillable.setAdvertisement(advertisement);
 
             final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(ADVERTISEMENT_BILLNUMBER);

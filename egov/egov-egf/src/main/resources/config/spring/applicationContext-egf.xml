@@ -89,9 +89,7 @@
 
 	<bean id="budgetReAppropriationService" class="org.egov.services.budget.BudgetReAppropriationService"
 		scope="prototype">
-		<constructor-arg ref="budgetDetailConfig" />
-		<constructor-arg index="0"
-			value="org.egov.model.budget.BudgetReAppropriation" />
+		<constructor-arg index="0" value="org.egov.model.budget.BudgetReAppropriation" />
 		<property name="sequenceGenerator" ref="sequenceGenerator" />
 		<property name="budgetDetailService" ref="budgetDetailService" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
@@ -162,12 +160,10 @@
 	</bean>
 
 
-	<!-- <bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService">
-		<constructor-arg index="0"
-			value="org.egov.model.recoveries.Recovery" />
-		<property name="egDeductionDetHibernateDao" ref="egDeductionDetHibernateDao" />
-		<property name="tdsHibernateDAO" ref="tdsHibernateDAO" />
-	</bean> -->
+	<!-- <bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService"> 
+		<constructor-arg index="0" value="org.egov.model.recoveries.Recovery" /> 
+		<property name="egDeductionDetHibernateDao" ref="egDeductionDetHibernateDao" 
+		/> <property name="tdsHibernateDAO" ref="tdsHibernateDAO" /> </bean> -->
 
 
 	<bean id="sharedFundSourceService" class="org.egov.commons.service.SharedFundSourceService">

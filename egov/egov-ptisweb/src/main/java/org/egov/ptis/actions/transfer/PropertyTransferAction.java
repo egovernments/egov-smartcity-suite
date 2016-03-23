@@ -44,13 +44,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
@@ -58,11 +55,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJ
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -70,7 +68,6 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -102,7 +99,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
@@ -114,6 +110,7 @@ import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyMutationTransferee;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
@@ -305,6 +302,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String currState = propertyMutation.getState().getValue();
         final String nextAction = propertyMutation.getState().getNextAction();
         final String userDesignation = transferOwnerService.getLoggedInUserDesignation();
+        propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
         if (currState.endsWith(WF_STATE_REJECTED)
                 || (nextAction != null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 || currState.equals(WFLOW_ACTION_NEW)) {
@@ -408,7 +406,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/approve")
     public String approve() {
         transitionWorkFlow(propertyMutation);
-        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
+        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation); 
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         approverName = "";
         Assignment assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
@@ -446,8 +444,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+        
+        final String cityGrade = (request.getSession().getAttribute("cityGrade") != null ? request.getSession()
+                .getAttribute("cityGrade").toString() : null);
+        Boolean isCorporation;
+        if (cityGrade != null && cityGrade != ""
+                && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+            isCorporation = true;
+        } else
+            isCorporation = false;
+        
         ReportOutput reportOutput = transferOwnerService.generateTransferNotice(basicproperty, propertyMutation,
-                cityName, cityLogo, actionType);
+                cityName, cityLogo, actionType,isCorporation);
         if (!WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(actionType)) {
             getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
             reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
@@ -548,22 +556,39 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     if (document.isEnclosed() && document.getFiles().isEmpty())
                         addActionError(document.getType()
                                 + " document marked as enclosed, please add the relavent documents.");
+        // To set proxy list at approval stage 
+        if(propertyMutation.getState()!=null && propertyMutation.getState().getValue()!=null && 
+                propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED))
+            propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
 
-        if (propertyMutation.getTransfereeInfos().isEmpty())
+        if (propertyMutation.getTransfereeInfosProxy().isEmpty())
             addActionError("Transfree info is mandatory, add atleast one transferee info.");
-        else
-            for (final User propOwnerInfo : propertyMutation.getTransfereeInfos()) {
-                if (StringUtils.isBlank(propOwnerInfo.getName()))
+        else{
+            for (final PropertyMutationTransferee propOwnerInfo : propertyMutation.getTransfereeInfosProxy()) {
+                if (StringUtils.isBlank(propOwnerInfo.getTransferee().getName()))
                     addActionError(getText("mandatory.ownerName"));
-                if (StringUtils.isBlank(propOwnerInfo.getMobileNumber()))
+                if (StringUtils.isBlank(propOwnerInfo.getTransferee().getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
-                if(propOwnerInfo.getGender()==null)
+                if(propOwnerInfo.getTransferee().getGender()==null)
                 	addActionError(getText("mandatory.gender"));
-                if (StringUtils.isBlank(propOwnerInfo.getGuardianRelation()))
+                if (StringUtils.isBlank(propOwnerInfo.getTransferee().getGuardianRelation()))
                     addActionError(getText("mandatory.guardianrelation"));
-                if (StringUtils.isBlank(propOwnerInfo.getGuardian()))
+                if (StringUtils.isBlank(propOwnerInfo.getTransferee().getGuardian()))
                     addActionError(getText("mandatory.guardian"));
             }
+              
+            int count=propertyMutation.getTransfereeInfosProxy().size();
+            for (int i=0;i<count;i++){
+                PropertyMutationTransferee owner = propertyMutation.getTransfereeInfosProxy().get(i);  
+                for(int j=i+1; j<=count-1; j++){
+                    PropertyMutationTransferee owner1 = propertyMutation.getTransfereeInfosProxy().get(j);
+                    if(owner.getTransferee().getMobileNumber().equalsIgnoreCase(owner1.getTransferee().getMobileNumber()) && 
+                            owner.getTransferee().getName().equalsIgnoreCase(owner1.getTransferee().getName())){
+                        addActionError(getText("error.transferee.duplicateMobileNo", "",owner.getTransferee().getMobileNumber().concat(",").concat(owner.getTransferee().getName())));
+                    }
+                }
+            } 
+        }
 
         if (getMutationId() != null && null != propertyMutation
                 && propertyMutation.getState().getValue().equals(WF_STATE_BILL_COLLECTOR_APPROVED)) {
@@ -576,7 +601,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             else if (propertyMutation.getMarketValue().compareTo(BigDecimal.ZERO) < 1)
                 addActionError("Please enter a valid Market Value");
         }
-
+       
         if (loggedUserIsMeesevaUser || !propertyByEmployee) {
             if (null != basicproperty && null == propertyService.getUserPositionByZone(basicproperty)) {
                 addActionError(getText("notexists.position"));

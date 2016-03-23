@@ -46,17 +46,17 @@
    var chqDetailsIndex = 0;
 	var makeChequeDetailsGridTable = function() {    
     var chequeDetailsGridColumns = [ 
-	{key:"fromChqNo",label:'From Cheque Number',width:130, formatter:createTextField(CHQDETAILSLIST,".fromChqNo")},
+	{key:"fromChqNo",label:'From Cheque Number', formatter:createTextField(CHQDETAILSLIST,".fromChqNo")},
 	{key:"isExhaustedH",hidden:true,formatter:createHiddenField(CHQDETAILSLIST,".isExhusted","hidden")},
-	{key:"toChqNo",label:'To Cheque Number',width:130, formatter:createTextField(CHQDETAILSLIST,".toChqNo")},
+	{key:"toChqNo",label:'To Cheque Number', formatter:createTextField(CHQDETAILSLIST,".toChqNo")},
 	{key:"chequeDeptId",hidden:true,formatter:createHiddenField(CHQDETAILSLIST,".chequeDeptId","hidden")},
-	{key:"deptName",label:'Department',width:165, formatter:createLabelSamll(CHQDETAILSLIST,".deptName")},
+	{key:"deptName",label:'Department', formatter:createLabelSamll(CHQDETAILSLIST,".deptName")},
 	{key:"deptId",hidden:true,formatter:createHiddenField(CHQDETAILSLIST,".deptId","hidden")},
-	{key:"receivedDateL",label:'Received Date',width:100, formatter:createLabelSamll(CHQDETAILSLIST,".receivedDateL")},
+	{key:"receivedDateL",label:'Received Date', formatter:createLabelSamll(CHQDETAILSLIST,".receivedDateL")},
 	{key:"receivedDateH",hidden:true,formatter:createHiddenField(CHQDETAILSLIST,".receivedDate","hidden")},
-	{key:"serialNoL",label:'Serial No.',width:100, formatter:createLabelSamll(CHQDETAILSLIST,".serialNoL")},
+	{key:"serialNoL",label:'Financial Year', formatter:createLabelSamll(CHQDETAILSLIST,".serialNoL")},
 	{key:"serialNoH",hidden:true,formatter:createHiddenField(CHQDETAILSLIST,".serialNo","hidden")},
-   	{key:"isExhaustedL",label:'Exhausted',width:100, formatter:createLabelSamll(CHQDETAILSLIST,".isExhustedL")},
+   	{key:"isExhaustedL",label:'Exhausted', formatter:createLabelSamll(CHQDETAILSLIST,".isExhustedL")},
 	{key:"nextChqPresent",hidden:true,formatter:createHiddenField(CHQDETAILSLIST,".nextChqPresent","hidden")},
 	{key:"accountChequeId",hidden:true,formatter:createHiddenField(CHQDETAILSLIST,".accountChequeId","hidden")},
         {key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
@@ -95,7 +95,7 @@
 			"deptId":'<s:property value="deptId"/>',
 			"receivedDateL":'<s:property value="receivedDate"/>',
 			"receivedDateH":'<s:property value="receivedDate"/>',
-			"serialNoL":'<s:property value="serialNo"/>',
+			"serialNoL":'<s:property value="serialNoH"/>',
 			"serialNoH":'<s:property value="serialNo"/>',
 			"isExhustedL":'<s:property value="isExhusted"/>',
 			"isExhustedH":'<s:property value="isExhusted"/>',
@@ -109,7 +109,7 @@
 		updateField('deptId',chqDetailsIndex,'<s:property value="deptId"/>');
 		updateLabel('receivedDateL',chqDetailsIndex,'<s:property value="receivedDate"/>');
 		updateField('receivedDate',chqDetailsIndex,'<s:property value="receivedDate"/>');
-		updateLabel('serialNoL',chqDetailsIndex,'<s:property value="serialNo"/>');
+		updateLabel('serialNoL',chqDetailsIndex,'<s:property value="serialNoH"/>');
 		updateField('serialNo',chqDetailsIndex,'<s:property value="serialNo"/>');
 		updateLabel('isExhustedL',chqDetailsIndex,'<s:property value="isExhusted"/>');
 		updateField('isExhusted',chqDetailsIndex,'<s:property value="isExhusted"/>');

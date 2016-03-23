@@ -79,7 +79,7 @@ import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
@@ -92,7 +92,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 })
 @ParentPackage("egov")
 @Validation
-@Transactional(readOnly = true)
+
 public class VoucherStatusReportAction extends BaseFormAction
 {
     private static final Logger LOGGER = Logger.getLogger(VoucherSearchAction.class);

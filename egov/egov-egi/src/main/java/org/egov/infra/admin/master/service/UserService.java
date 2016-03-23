@@ -104,10 +104,10 @@ public class UserService {
         return userRepository.findByAadhaarNumber(aadhaarNumber);
     }
 
-    public User getUserByAadhaarNumberAndType(final String aadhaarNumber, final UserType type) {
+    public List<User> getUserByAadhaarNumberAndType(final String aadhaarNumber, final UserType type) {
         return userRepository.findByAadhaarNumberAndType(aadhaarNumber, type);
     }
-
+    
     public User getUserByMobileNumber(final String mobileNumber) {
         return userRepository.findByMobileNumber(mobileNumber);
     }

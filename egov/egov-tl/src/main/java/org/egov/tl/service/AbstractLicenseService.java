@@ -615,7 +615,7 @@ public abstract class AbstractLicenseService<T extends License> {
     
     public List<T> getAllLicensesByNatureOfBusiness(final String natureOfBusiness) {
         return licensePersitenceService.getSession().createCriteria(License.class).
-                createAlias("buildingType", "bt", JoinType.LEFT_OUTER_JOIN).add(Restrictions.eq("bt.name", natureOfBusiness))
+                createAlias("natureOfBusiness", "nb", JoinType.LEFT_OUTER_JOIN).add(Restrictions.eq("nb.name", natureOfBusiness))
                 .setCacheMode(CacheMode.IGNORE).list();
     }
     

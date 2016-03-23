@@ -1595,7 +1595,7 @@ public class CreateVoucher {
                     cVoucherHeader.setOriginalvcId(origionalVId);
             }
 
-            cVoucherHeader.setRefcgNo((String) headerdetails.get(VoucherConstant.REFVOUCHER));
+            cVoucherHeader.setRefvhId((Long) headerdetails.get(VoucherConstant.REFVOUCHER));
             cVoucherHeader.setEffectiveDate(new Date());
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Printing Voucher Details------------------------------------------------------------------------------");

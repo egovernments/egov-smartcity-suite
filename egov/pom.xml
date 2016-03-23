@@ -108,7 +108,7 @@
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 
 		<!-- Application core dependency versions -->
-		<egov-search-version>1.0.2-SNAPSHOT</egov-search-version>
+		<egov-search-version>1.0.2</egov-search-version>
 
 		<!-- Application server provided dependency versions -->
 		<lucene-version>4.10.4</lucene-version>

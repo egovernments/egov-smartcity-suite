@@ -233,7 +233,13 @@
     
     <query name="QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE">
 	<![CDATA[
-	select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.id = ? and replace(replace(rh.consumerCode,'-',''),'/','') = ?
+	select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id = ? and replace(replace(rh.consumerCode,'-',''),'/','') = ?
+	]]>
+	</query>
+	
+	<query name="QUERY_RECEIPT_BY_ID_AND_CITYCODE">
+	<![CDATA[
+	select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.infra.admin.master.entity.City city where rh.id = ? and city.code = ?
 	]]>
 	</query>
 	

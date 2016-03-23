@@ -100,10 +100,10 @@ public class ValidityService {
     public void applyLicenseValidity(final License license) {
 
         List<Validity> validityList = validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(
-                license.getBuildingType().getId(), license.getTradeName().getCategory().getId());
+                license.getNatureOfBusiness().getId(), license.getTradeName().getCategory().getId());
 
         if (validityList.isEmpty())
-            validityList = validityRepository.findByNatureOfBusinessId(license.getBuildingType().getId());
+            validityList = validityRepository.findByNatureOfBusinessId(license.getNatureOfBusiness().getId());
 
         if (validityList.isEmpty())
             throw new ValidationException("TL-001", "License validity not defined.");

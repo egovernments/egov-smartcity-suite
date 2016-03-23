@@ -1710,11 +1710,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                     " group by   vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,misbill.paidto,ba.accountnumber,"
                                     +
                                     " ba.id , bill.id, bill.billnumber ,bill.expenditureType order by ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid").addScalar("voucherNumber")
-                    .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount")
+                    .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber")
+                    .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount",BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
-                    .addScalar("bankAccNumber").addScalar("bankAccountId")
-                    .addScalar("billId").addScalar("billNumber").addScalar("expenditureType")
+                    .addScalar("bankAccNumber").addScalar("bankAccountId",BigDecimalType.INSTANCE) 
+                    .addScalar("billId",BigDecimalType.INSTANCE).addScalar("billNumber").addScalar("expenditureType")
                     .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Surrendered rtgs nos" + query);
@@ -1850,10 +1850,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                     + "') "
                                     +
                                     " GROUP BY vh.id,vh.voucherNumber,dept.name , vh.voucherDate, ba.accountnumber, ba.id , ph.paymentamount ORDER BY ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid").addScalar("voucherNumber")
+                    .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber")
                     .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo", StringType.INSTANCE)
-                    .addScalar("paidAmount")
-                    .addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId")
+                    .addScalar("paidAmount",BigDecimalType.INSTANCE)
+                    .addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId",BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
             if (LOGGER.isDebugEnabled())
@@ -1907,10 +1907,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                     + "') "
                                     +
                                     " GROUP BY vh.id,vh.voucherNumber,dept.name , vh.voucherDate, ba.accountnumber, ba.id , ph.paymentamount ORDER BY ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid").addScalar("voucherNumber")
+                    .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber")
                     .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo", StringType.INSTANCE)
-                    .addScalar("paidAmount").addScalar("chequeDate")
-                    .addScalar("bankAccNumber").addScalar("bankAccountId")
+                    .addScalar("paidAmount",BigDecimalType.INSTANCE).addScalar("chequeDate")
+                    .addScalar("bankAccNumber").addScalar("bankAccountId",BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Surrendered rtgs nos" + query);
@@ -2152,7 +2152,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "'"
                                         +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
                         .addScalar("chequeDate").addScalar("paidTo")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2183,7 +2183,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "'"
                                         +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate").addScalar("paidTo")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2237,7 +2237,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "'"
                                         +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate").addScalar("paidTo")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -2268,7 +2268,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         + "'"
                                         +
                                         " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate").addScalar("paidTo")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
@@ -3108,10 +3108,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         " ba.accountnumber, ba.id ," +
                                         " gl.glcodeid,DO.name,do.tan,recovery.remitted " +
                                         " order by ba.id,dept.name,vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber")
-                        .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount")
-                        .addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId")
-                        .addScalar("glcodeId").addScalar("drawingOfficerNameTAN")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber")
+                        .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount",BigDecimalType.INSTANCE)
+                        .addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId",BigDecimalType.INSTANCE)
+                        .addScalar("glcodeId",BigDecimalType.INSTANCE).addScalar("drawingOfficerNameTAN")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 // TODO Changet the debug statement to appropriate sentence
                 if (LOGGER.isDebugEnabled())
@@ -3176,11 +3176,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         " ba.id ,"
                                         +
                                         " gl.glcodeid,DO.name,do.tan,recovery.remitted  order by ba.id,dept.name,vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber")
-                        .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber")
+                        .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate")
-                        .addScalar("bankAccNumber").addScalar("bankAccountId")
-                        .addScalar("glcodeId").addScalar("drawingOfficerNameTAN")
+                        .addScalar("bankAccNumber").addScalar("bankAccountId",BigDecimalType.INSTANCE)
+                        .addScalar("glcodeId",BigDecimalType.INSTANCE).addScalar("drawingOfficerNameTAN")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(" Surrendered rtgs nos" + query);
@@ -3223,8 +3223,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         " ba.accountnumber, ba.id ," +
                                         " gl.glcodeid,DO.name,do.tan " +
                                         " order by ba.id,dept.name,vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber")
-                        .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber")
+                        .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId")
                         .addScalar("glcodeId").addScalar("drawingOfficerNameTAN")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
@@ -3288,11 +3288,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                         +
                                         " ba.id ," +
                                         " gl.glcodeid,DO.name,do.tan  order by ba.id,dept.name,vh.voucherNumber ")
-                        .addScalar("voucherid").addScalar("voucherNumber")
-                        .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount")
+                        .addScalar("voucherid",BigDecimalType.INSTANCE).addScalar("voucherNumber")
+                        .addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount",BigDecimalType.INSTANCE)
                         .addScalar("chequeDate")
-                        .addScalar("bankAccNumber").addScalar("bankAccountId")
-                        .addScalar("glcodeId").addScalar("drawingOfficerNameTAN")
+                        .addScalar("bankAccNumber").addScalar("bankAccountId",BigDecimalType.INSTANCE)
+                        .addScalar("glcodeId",BigDecimalType.INSTANCE).addScalar("drawingOfficerNameTAN")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(" Surrendered rtgs nos" + query);

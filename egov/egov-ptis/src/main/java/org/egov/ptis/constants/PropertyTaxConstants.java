@@ -942,6 +942,7 @@ public interface PropertyTaxConstants {
         {
             add(DEMANDRSN_CODE_GENERAL_TAX);
             add(DEMANDRSN_CODE_VACANT_TAX);
+            add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
             add(DEMANDRSN_CODE_LIBRARY_CESS);
             add(DEMANDRSN_CODE_SEWERAGE_TAX);
             add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
@@ -1346,6 +1347,26 @@ public interface PropertyTaxConstants {
             add(WRITEOFF_REASON_DOUBLE_ASSESSMENT);
             add(WRITEOFF_REASON_NOT_TRACED);
             add(WRITEOFF_REASON_OTHER_REASONS);
+        }
+    };
+    
+    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT = "CENTRAL_GOVT";
+    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_STR = "Central Government";
+    public static final String OWNERSHIP_TYPE_COURT_CASE = "COURT_CASE";
+    public static final String OWNERSHIP_TYPE_COURT_CASE_STR = "Court case";
+    public static final String OWNERSHIP_TYPE_PRIVATE_DEFAULTERS_STR = "Private(excluding court case)";
+    public static final TreeMap<String, String> OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT = new TreeMap<String, String>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -8758751964576480520L;
+
+        {
+            put(OWNERSHIP_TYPE_CENTRAL_GOVT, OWNERSHIP_TYPE_CENTRAL_GOVT_STR);
+            put(OWNERSHIP_TYPE_STATE_GOVT,OWNERSHIP_TYPE_STATE_GOVT_STR);
+            put(OWNERSHIP_TYPE_COURT_CASE,OWNERSHIP_TYPE_COURT_CASE_STR);
+            put(OWNERSHIP_TYPE_PRIVATE, OWNERSHIP_TYPE_PRIVATE_DEFAULTERS_STR);
+            
         }
     };
 }

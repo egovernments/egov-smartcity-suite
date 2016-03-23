@@ -90,9 +90,7 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @Results({
     @Result(name = AdvancePaymentAction.NEW, location = "advancePayment-" + AdvancePaymentAction.NEW + ".jsp"),
     @Result(name = "view", location = "advancePayment-view.jsp")

@@ -64,10 +64,10 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.budget.BudgetProposalBean;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.utils.ReportHelper;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 /*
  * @Results(value={
  * @Result(name="PDF",type="stream",location=Constants.INPUT_STREAM,

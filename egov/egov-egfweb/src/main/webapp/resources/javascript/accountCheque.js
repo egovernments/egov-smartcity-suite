@@ -83,24 +83,36 @@ function updateGridData() {
 	var deptSelectedText = new Array();
 	var deptObj = document.getElementById("departmentList");
 
+	var serialNoSelectedValue = new Array();
+	var serialNoSelectedText = new Array();
+	var serialNoObj = document.getElementById("serialNo");
+
+	
 	for (var i = 0; i < deptObj.length; i++) {
-		if ($("#departmentList option")[i]['selected'] == true) {
+		if (jQuery("#departmentList option")[i]['selected'] == true) {
 			deptSelectedValue.push(deptObj.options[i].value);
 			deptSelectedText.push(deptObj.options[i].text);
 		}
 	}
+	
+	for (var i = 0; i < serialNoObj.length; i++) {
+		if (jQuery("#serialNo option")[i]['selected'] == true) {
+			serialNoSelectedValue.push(serialNoObj.options[i].value);
+			serialNoSelectedText.push(serialNoObj.options[i].text);
+		}
+	}
+	
 	if (deptSelectedValue == "") {
 		document.getElementById("lblError").innerHTML = "Please select a department";
 		return false;
 	}
-	if (document.getElementById("serialNo").value == "") {
-		document.getElementById("lblError").innerHTML = "Please enter year code";
+	if (document.getElementById("serialNo").value == "-1") {
+		document.getElementById("lblError").innerHTML = "Please enter financial year";
 		return false;
 	}
 	// validate invalid cheque range.
 	var fromchqNum = parseInt(document.getElementById("fromChqNo").value.trim() * 1);
 	var tochqNum = parseInt(document.getElementById("toChqNo").value.trim() * 1);
-	var serialNo = document.getElementById("serialNo").value;
 	if (fromchqNum >= tochqNum) {
 		document.getElementById("lblError").innerHTML = "from cheque number should be less than to cheque number";
 		return false;
@@ -112,10 +124,10 @@ function updateGridData() {
 			 if (fromchqNum == parseInt(tokens[0] * 1)
 					&& tochqNum == parseInt(tokens[1] * 1)
 					&& deptSelectedValue[i] == tokens[2]
-					&& serialNo == tokens[3]) {
+					&& serialNoSelectedValue[0] == tokens[3]) {
 
 				document.getElementById("lblError").innerHTML = "Cheque Range is already assigned for department :"
-						+ deptSelectedText[i] + " & SerialNo :" + serialNo;
+						+ deptSelectedText[i] + " & SerialNo :" + serialNoSelectedText[0];
 				return false;
 			} else if (deptSelectedValue[i] != tokens[2]) {
 				continue;
@@ -157,10 +169,9 @@ function updateGridData() {
 				+ '].receivedDate').value = document
 				.getElementById("receivedDate").value;
 		document.getElementById(CHQDETAILSLIST + '[' + chqDetailsIndex
-				+ '].serialNoL').innerHTML = document
-				.getElementById("serialNo").value;
+				+ '].serialNoL').innerHTML =serialNoSelectedText[0];
 		document.getElementById(CHQDETAILSLIST + '[' + chqDetailsIndex
-				+ '].serialNo').value = document.getElementById("serialNo").value;
+				+ '].serialNo').value = serialNoSelectedValue[0];
 		document.getElementById(CHQDETAILSLIST + '[' + chqDetailsIndex
 				+ '].nextChqPresent').value = "No";
 		document.getElementById(CHQDETAILSLIST + '[' + chqDetailsIndex
@@ -175,7 +186,7 @@ function updateGridData() {
 		chequeRangeArray.push(document.getElementById("fromChqNo").value.trim()
 				+ "-" + document.getElementById("toChqNo").value.trim() + "-"
 				+ deptSelectedValue[i] + "-"
-				+ document.getElementById("serialNo").value);
+				+ serialNoSelectedValue[0]);
 	}
 	clearHeaderData();
 	return true;
@@ -186,7 +197,7 @@ function clearHeaderData() {
 	document.getElementById("fromChqNo").value = "";
 	document.getElementById("toChqNo").value = "";
 	document.getElementById("receivedDate").value = "";
-	document.getElementById("serialNo").value = "";
+	document.getElementById("serialNo").value = "-1";
 	var deptObj = document.getElementById("departmentList");
 	while (deptObj.selectedIndex != -1) {
 		deptObj.options[deptObj.selectedIndex].selected = false;
@@ -217,8 +228,9 @@ function validateCheque(obj) {
 				+ '].deptId').value;
 		var deptName = document.getElementById(CHQDETAILSLIST + '[' + index
 				+ '].deptName').innerHTML;
-		var serialNo = document.getElementById(CHQDETAILSLIST + '[' + index
-				+ '].serialNo').value;
+		var serialNo1 = document.getElementById(CHQDETAILSLIST + '[' + index
+				+ '].serialNo');
+		var serialNo =serialNo1.options[serialNo1.selectedIndex].value; 
 		chequeRangeArray.splice(index, 1, fromchqNum + "-" + tochqNum + "-"
 				+ deptId + "-" + serialNo);
 

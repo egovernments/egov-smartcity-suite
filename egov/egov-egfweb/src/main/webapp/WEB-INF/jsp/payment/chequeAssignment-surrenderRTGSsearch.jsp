@@ -41,11 +41,13 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css" />
 <title><s:text name="surrender.rtgs.search" /></title>
 </head>
 <body>
-	<s:form action="chequeAssignment" theme="simple">
+	<s:form action="chequeAssignment" theme="simple"
+		name="chequeAssignment" id="chequeAssignment">
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="RTGS Surrender Search" />
 		</jsp:include>
@@ -93,7 +95,7 @@
 							headerValue="----Choose----" onchange="loadBankAccount(this)" /></td>
 					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
 						dropdownId="bankaccount"
-						url="voucher/common!ajaxLoadBanksAccountsWithAssignedCheques.action" />
+						url="voucher/common-ajaxLoadBanksAccountsWithAssignedCheques.action" />
 					<td class="greybox"><s:text name="bankaccount" /><span
 						class="mandatory"></span></td>
 					<td class="greybox" colspan="2"><s:select name="bankaccount"
@@ -120,7 +122,7 @@
 
 			</table>
 			<div class="buttonbottom">
-				<s:submit method="searchForRTGSSurrender" value="Search"
+				<s:submit onclick = "onSubmit();" value="Search"
 					id="searchBtn" cssClass="buttonsubmit" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
@@ -130,22 +132,29 @@
 	</s:form>
 	<s:if test="%{!validateUser('chequeassignment')}">
 		<script>
-					document.getElementById('searchBtn').disabled=true;
-					document.getElementById('errorSpan').innerHTML='<s:text name="chq.assignment.invalid.user"/>'
-				</script>
+			document.getElementById('searchBtn').disabled = true;
+			document.getElementById('errorSpan').innerHTML = '<s:text name="chq.assignment.invalid.user"/>'
+		</script>
 	</s:if>
 	<script>
-				var date='<s:date name="currentDate" format="dd/MM/yyyy"/>';			
-				function loadBankAccount(obj)
-				{
-						var bankbranchId = obj.options[obj.selectedIndex].value;
-						var index=bankbranchId.indexOf("-");
-						var bankId = bankbranchId.substring(0,index);
-						var brId=bankbranchId.substring(index+1,bankbranchId.length);
-						document.getElementById("bankbranch").value=brId;
-						populatebankaccount({bankId:bankId,branchId:brId+'&asOnDate='+date});
-				}
-			</script>
+		function onSubmit() {
+			document.chequeAssignment.action = '/EGF/payment/chequeAssignment-searchForRTGSSurrender.action';
+			document.chequeAssignment.submit();
+		}
+		var date = '<s:date name="currentDate" format="dd/MM/yyyy"/>';
+		function loadBankAccount(obj) {
+			var bankbranchId = obj.options[obj.selectedIndex].value;
+			var index = bankbranchId.indexOf("-");
+			var bankId = bankbranchId.substring(0, index);
+			var brId = bankbranchId.substring(index + 1, bankbranchId.length);
+			document.getElementById("bankbranch").value = brId;
+			populatebankaccount({
+				bankId : bankId,
+				branchId : brId + '&asOnDate=' + date,
+				type : 'ADVICE'
+			});
+		}
+	</script>
 
 </body>
 </html>

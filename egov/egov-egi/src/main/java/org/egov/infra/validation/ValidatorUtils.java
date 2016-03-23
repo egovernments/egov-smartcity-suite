@@ -43,13 +43,29 @@ package org.egov.infra.validation;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.regex.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service("validatorUtils")
 public class ValidatorUtils {
 
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile(Constants.PASSWORD);
+    private static Pattern PASSWORD_PATTERN;
 
-    public static boolean isValidPassword(final String passwd) {
-        return StringUtils.isNotBlank(passwd) && passwd.length() > 7 && passwd.length() < 31&& PASSWORD_PATTERN.matcher(passwd).find();
+    @Autowired
+    public ValidatorUtils(ApplicationProperties applicationProperties) {
+        String passwordStrength = applicationProperties.passwordStrength();
+        if ("HIGH".equals(passwordStrength)) {
+            PASSWORD_PATTERN = Pattern.compile(Constants.STRONG_PASSWORD);
+        } else if ("MEDIUM".equals(passwordStrength)) {
+            PASSWORD_PATTERN = Pattern.compile(Constants.MEDIUM_PASSWORD);
+        } else {
+            PASSWORD_PATTERN = Pattern.compile(Constants.LOW_PASSWORD);
+        }
+    }
+
+    public boolean isValidPassword(String pwd) {
+        return StringUtils.isNotBlank(pwd) && PASSWORD_PATTERN.matcher(pwd).find();
     }
 }

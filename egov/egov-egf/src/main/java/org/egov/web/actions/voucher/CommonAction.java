@@ -114,7 +114,7 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -1658,27 +1658,30 @@ public class CommonAction extends BaseFormAction {
             accNumList = new ArrayList<Bankaccount>();
             StringBuffer queryString = new StringBuffer();
             queryString = queryString
-                    .append("select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
+                    .append("select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode ,bank.name as bankName"
                             +
                             " from  voucherheader vh,chartofaccounts coa,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,paymentheader ph,  "
                             +
                             "egf_instrumentvoucher eiv,egf_instrumentheader ih,egw_status egws ")
                     .append("where ph.voucherheaderid=vh.id and coa.id=bankaccount.glcodeid and vh.id=eiv.VOUCHERHEADERID and ")
                     .append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' ")
-                    .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque=1 ")
+                    .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)=:type) and ispaycheque='1' ")
                     .append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ")
                     .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
                             + branchId + "  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
 
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
+            if(type==null || type.equalsIgnoreCase("")) 
+                type = "CHEQUE";
             final List<Object[]> bankAccounts = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
                     .setDate("date", getAsOnDate())
+                    .setString("type", type)
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[1].toString();
+                final String accountNumberAndType = account[0].toString() + "-" + account[4]!=null?account[4].toString():"";
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0].toString());
@@ -1700,7 +1703,7 @@ public class CommonAction extends BaseFormAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBanksAccountsWithAssignedCheques.");
-        return "bankAccNum";
+        return "bankAccNum-bankName";
     }
 
     public Integer getBranchId() {
@@ -2052,7 +2055,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vh1.id =iv.VOUCHERHEADERID,egw_status egws where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
                             +
-                            "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and "
+                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and "
                             +
                             "ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and "
                             +
@@ -2084,7 +2087,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
                             +
-                            "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
+                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
                             "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
@@ -2152,7 +2155,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vh1.id =iv.VOUCHERHEADERID,egw_status egws where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
                             +
-                            "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and "
+                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and "
                             +
                             "ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and "
                             +
@@ -2183,7 +2186,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
                             +
-                            "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
+                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
                             "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
@@ -2250,7 +2253,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "vh1.id =iv.VOUCHERHEADERID,egw_status egws where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
                             +
-                            "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and "
+                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and "
                             +
                             "ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and "
                             +
@@ -2281,7 +2284,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
                             +
-                            "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
+                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
                             "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
@@ -2347,7 +2350,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id =iv.VOUCHERHEADERID,egw_status egws "
                             +
-                            "where  ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id_dept and vh.status=0 "
+                            "where  ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id and vh.status=0 "
                             +
                             "and rem.paymentvhid=vh.id and rem.tdsid="
                             + recoveryId
@@ -2380,7 +2383,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
                             +
-                            "vmis.departmentid= d.id_dept and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
+                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
                             "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
@@ -2762,7 +2765,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id =iv.VOUCHERHEADERID  "
                             +
-                            "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id_dept and vh.status=0 "
+                            "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id and vh.status=0 "
                             +
                             " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
                             +
@@ -2793,7 +2796,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
                             +
-                            "vmis.departmentid= d.id_dept and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
+                            "vmis.departmentid= d.id and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
                             "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
@@ -2857,7 +2860,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id =iv.VOUCHERHEADERID  "
                             +
-                            "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id_dept and vh.status=0 "
+                            "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id and vh.status=0 "
                             +
                             " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
                             +
@@ -2888,7 +2891,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
                             +
-                            "vmis.departmentid= d.id_dept and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
+                            "vmis.departmentid= d.id and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
                             "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
                             +
@@ -2943,7 +2946,7 @@ public class CommonAction extends BaseFormAction {
             accNumList = new ArrayList<Bankaccount>();
             StringBuffer queryString = new StringBuffer();
             queryString = queryString
-                    .append("select distinct bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
+                    .append("select distinct bankaccount.accountnumber as accountnumber,bank.name as bankName,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
                             +
                             "from chartofaccounts coa,voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,EG_REMITTANCE rem ,"
                             +
@@ -2951,7 +2954,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id =iv.VOUCHERHEADERID  "
                             +
-                            "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id_dept and vh.status=0 "
+                            "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id and vh.status=0 "
                             +
                             "and rem.paymentvhid=vh.id and rem.tdsid="
                             + recoveryId
@@ -2970,7 +2973,7 @@ public class CommonAction extends BaseFormAction {
                     + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "'");
 
             queryString
-                    .append(" union select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
+                    .append(" union select bankaccount.accountnumber as accountnumber,bank.name as bankName,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
                             +
                             " from chartofaccounts coa,egf_instrumentvoucher iv,voucherheader vh,"
                             +
@@ -2987,7 +2990,7 @@ public class CommonAction extends BaseFormAction {
                             " and rem.paymentvhid=vh.id and rem.tdsid="
                             + recoveryId
                             +
-                            " and vmis.departmentid= d.id_dept and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
+                            " and vmis.departmentid= d.id and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
                             +
                             " and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
                             + branchId
@@ -3030,7 +3033,7 @@ public class CommonAction extends BaseFormAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccountsWithApprovedRemittances.");
-        return "bankAccNum";
+        return "bankAccNum-bankName";
     }
 
     public void setAsOnDate(final Date asOnDate) {

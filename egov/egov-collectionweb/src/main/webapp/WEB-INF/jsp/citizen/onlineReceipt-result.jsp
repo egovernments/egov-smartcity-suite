@@ -56,8 +56,8 @@ function onBodyLoad(){
       <s:fielderror/>
     </div>
 </s:if>
+<div class="text-center">
 <s:else>
-	<table cellpadding="0" cellspacing="0" border="0" class="main" align="center">
 	<!-- <tr>RECEIVED SUCCESS RESPONSE FROM PAYMENT GATEWAY</tr>
 	<tr>
 			<td>Bill Number : <s:property value="%{onlinePaymentReceiptHeader.referencenumber}" /> </td>
@@ -72,15 +72,10 @@ function onBodyLoad(){
 			<td>Transaction Number : <s:property value="%{onlinePaymentReceiptHeader.onlinePayment.transactionNumber}" /></td>
 	</tr> -->
 	
-	<tr>Your payment of Amount Rs.  <s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> for Property tax has been received. The Reference Number is <a href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>'><font size="3px"><s:property value="%{onlinePaymentReceiptHeader.referencenumber}" /></font></a>. Please click  to generate and print the receipt</tr>
-	
-	</table>
-	
+	<div style="text-align: center;padding-bottom: 15px;">Your payment of Amount Rs.  <s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> has been received. The Reference Number is <a href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>'><s:property value="%{onlinePaymentReceiptHeader.referencenumber}" /></a>. Please click  to generate and print the receipt</div>
+    <a href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>' class="btn btn-primary">Generate Receipt</a>&nbsp;
 </s:else>
-
-<br/>
-<div class="buttonbottom">
-<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
+ <input name="button2" type="button" class="btn btn-default" id="button" onclick="window.close()" value="Close"/>
 </div>
 </body>
 </html>

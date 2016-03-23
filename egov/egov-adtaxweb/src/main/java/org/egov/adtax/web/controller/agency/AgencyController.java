@@ -47,6 +47,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.Agency;
+import org.egov.adtax.entity.enums.AgencyStatus;
 import org.egov.adtax.service.AgencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -118,5 +119,10 @@ public class AgencyController {
     @RequestMapping(value = "agencies", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Agency> findAgencies(@RequestParam final String name) {
         return agencyService.findAllByNameLike(name);
+    }
+    
+    @RequestMapping(value = "active-agencies", method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Agency> findActiveAgencies(@RequestParam final String name) {
+        return agencyService.findAllActiveByName(name, AgencyStatus.ACTIVE);
     }
 }

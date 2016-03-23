@@ -1,47 +1,36 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ * Copyright (C) <2015> eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 /*
- * Created on Jan 17, 2006
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Created on Jan 17, 2006 TODO To change the template for this generated file go to Window - Preferences - Java - Code Style -
+ * Code Templates
  */
 package org.egov.dao.budget;
 
@@ -69,6 +58,7 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FunctionDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -85,7 +75,10 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
+import org.egov.services.budget.BudgetDetailService;
+import org.egov.services.budget.BudgetGroupService;
 import org.egov.services.budget.BudgetService;
+import org.egov.services.budget.BudgetUsageService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.Constants;
 import org.hibernate.Query;
@@ -109,6 +102,8 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     private Session session;
     private static final Logger LOGGER = Logger.getLogger(BudgetDetailsHibernateDAO.class);
     private static final String EMPTY_STRING = "";
+    @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -116,18 +111,27 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     protected ScriptService scriptService;
     @Autowired
     protected SequenceGenerator sequenceGenerator;
+    @Autowired
+    @Qualifier("budgetService")
     private BudgetService budgetService;
-    
+    @Autowired
+    @Qualifier("budgetDetailService")
+    private BudgetDetailService budgetDetailService;
+    @Autowired
+    @Qualifier("budgetGroupService")
+    private BudgetGroupService budgetGroupService;
+
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    
+
     @Autowired
-    @Qualifier("financialYearDAO") 
-    private  FinancialYearHibernateDAO financialYearHibDAO;
-    
+    @Qualifier("financialYearDAO")
+    private FinancialYearHibernateDAO financialYearHibDAO;
     @Autowired
-    private BudgetUsageHibernateDAO budgetUsageHibernateDAO;
-    
+    private FunctionDAO functionDAO;
+    @Autowired
+    @Qualifier("budgetUsageService")
+    private BudgetUsageService budgetUsageService;
 
     /**
      * This API is to check whether the planning budget is available or not.For the amount passed if there is sufficient budget
@@ -266,6 +270,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
      */
 
     @Override
+    @Transactional
     public BudgetUsage releaseEncumbranceBudget(final String appropriationnumber, final Long financialyearid,
             final Integer moduleid,
             final String referencenumber, final Integer departmentid, final Long functionid,
@@ -386,7 +391,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     budgetUsage.setReleasedAmount(amount);
                 }
                 budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
-                budgetUsageHibernateDAO.create(budgetUsage);
+                budgetUsageService.create(budgetUsage);
                 return BigDecimal.ONE;
             }
             else
@@ -481,7 +486,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     budgetUsage.setReleasedAmount(amount);
                 }
                 budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
-                budgetUsageHibernateDAO.create(budgetUsage);
+                budgetUsageService.create(budgetUsage);
                 return BigDecimal.ONE;
             }
             else
@@ -498,6 +503,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     }
 
     @Deprecated
+    @Transactional
     private BudgetUsage getBudgetUsageDetails(final Long financialyearid, final Integer moduleid, final String referencenumber,
             final Integer departmentid, final Long functionid,
             final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
@@ -556,7 +562,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 }
                 final BudgetDetail bd = bdList.get(0);
                 bd.setBudgetAvailable(amtavailable);
-                update(bd);
+                budgetDetailService.update(bd);
 
                 final BudgetUsage budgetUsage = new BudgetUsage();
                 budgetUsage.setFinancialYearId(financialyearid.intValue());
@@ -575,7 +581,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     budgetUsage.setReleasedAmount(amount);
                 }
                 budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
-                budgetUsageHibernateDAO.create(budgetUsage);
+                budgetUsageService.create(budgetUsage);
                 return budgetUsage;
             }
             else
@@ -602,17 +608,17 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
         session = HibernateUtil.getCurrentSession();
         // fetch mandatory parameters
-        final CFinancialYear financialyear = (CFinancialYear) findById(CFinancialYear.class, financialyearid);
+        final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid, false);
         if (financialyear == null)
             throw new ValidationException(EMPTY_STRING, "Financial year is null or empty");
 
-        final CFunction function = (CFunction) findById(CFunction.class, functionid);
+        final CFunction function = (CFunction) functionDAO.findById(functionid, false);
         if (function == null)
             throw new ValidationException(EMPTY_STRING, "Function is null or empty");
 
         for (final Long bgId : budgetheadid)
         {
-            final BudgetGroup budgetGroup = (BudgetGroup) findById(BudgetGroup.class, bgId);
+            final BudgetGroup budgetGroup = budgetGroupService.findById(bgId, false);
             if (budgetGroup == null)
                 throw new ValidationException(EMPTY_STRING, "Budget head is null or empty");
         }
@@ -640,8 +646,8 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         if (boundaryid != null && boundaryid != 0)
             query = query + getQuery(Boundary.class, boundaryid, " and bd.boundary=");
 
-
-        return " and bd.budget.status in (from org.egov.commons.EgwStatus where moduletype='BUDGET' and description='Approved' )" + query;
+        return " and bd.budget.status.code = 'Approved' "
+                + query;
     }
 
     private String prepareQuery(final Integer departmentid, final Long functionid, final Integer functionaryid,
@@ -711,7 +717,8 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 else
                     throw new ValidationException(EMPTY_STRING, "budgetaryCheck_groupby_values is not matching=" + value);
         }
-        return " and bd.budget.status in (from org.egov.commons.EgwStatus where moduletype='BUDGET' and description='Approved' )"+ query;
+        return " and bd.budget.status in (from org.egov.commons.EgwStatus where moduletype='BUDGET' and description='Approved' )"
+                + query;
     }
 
     private Object findById(final Class clazz, final Serializable id) throws ValidationException {
@@ -773,12 +780,11 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             final String query = prepareQuery(departmentid, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid);
 
             session = HibernateUtil.getCurrentSession();
-            final CFinancialYear financialyear = (CFinancialYear) findById(CFinancialYear.class, financialyearid);
+            final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid, false);
 
             // check any RE is available for the passed parameters.if RE is not exist, take BE's available Amount
             final String finalquery = "select sum (budgetAvailable) from BudgetDetail bd where bd.budget.isbere=:type and bd.budget.financialYear.id=:financialyearid"
-                    +
-                    " and bd.budgetGroup.id in (:budgetheadid) " + query;
+                    + " and bd.budgetGroup.id in (:budgetheadid) " + query;
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
@@ -827,7 +833,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     @Override
     public BigDecimal getActualBudgetUtilized(final Map<String, Object> paramMap) throws ValidationException
     {
-        Integer deptid = null;
+        Long deptid = null;
         Long functionid = null;
         Integer functionaryid = null;
         Integer schemeid = null;
@@ -843,7 +849,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         try
         {
             if (paramMap.get(Constants.DEPTID) != null)
-                deptid = (Integer) paramMap.get(Constants.DEPTID);
+                deptid = (Long) paramMap.get(Constants.DEPTID);
             if (paramMap.get(Constants.FUNCTIONID) != null)
                 functionid = (Long) paramMap.get(Constants.FUNCTIONID);
             if (paramMap.get(Constants.FUNCTIONARYID) != null)
@@ -869,7 +875,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
             final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
-           
+
             final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
             if (finyear == null)
                 throw new ValidationException(EMPTY_STRING, "Financial year is not fefined for this date ["
@@ -886,9 +892,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 
             if (budgetheadid == null || budgetheadid.equals(EMPTY_STRING))
                 throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
-
-            //persistenceService.setType(BudgetGroup.class);
-            budgetgroup = (BudgetGroup) persistenceService.findById(budgetheadid, false);
+            budgetgroup = (BudgetGroup) budgetGroupService.findById(budgetheadid, false);
             if (budgetgroup == null || budgetgroup.getId() == null)
                 throw new ValidationException(EMPTY_STRING, "Budget Head is not defined for this id [ " + budgetheadid + " ]");
 
@@ -911,13 +915,15 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             }
             else if (budgetgroup.getMajorCode() != null)
                 query = query + " and substr(gl.glcode,1," + majorcodelength + ")='" + budgetgroup.getMajorCode().getGlcode()
-                + "'";
+                        + "'";
 
             if (BudgetAccountType.REVENUE_RECEIPTS.equals(budgetgroup.getAccountType())
                     || BudgetAccountType.CAPITAL_RECEIPTS.equals(budgetgroup.getAccountType()))
                 select = " SELECT SUM(gl.creditAmount)-SUM(gl.debitAmount) ";
             else if (BudgetAccountType.REVENUE_EXPENDITURE.equals(budgetgroup.getAccountType())
                     || BudgetAccountType.CAPITAL_EXPENDITURE.equals(budgetgroup.getAccountType()))
+                select = " SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
+            else
                 select = " SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
 
             final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
@@ -942,7 +948,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 return new BigDecimal(ob.toString());
         } catch (final ValidationException v)
         {
-            LOGGER.error("Exp in getActualBudgetUtilized API()===" + v.getErrors());
+            LOGGER.error("Exp in getActualBudgetUtilized API()####" + v.getErrors());
             throw new ValidationException(v.getErrors());
         } catch (final Exception e)
         {
@@ -1015,7 +1021,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
             final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
-           
+
             final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
             if (finyear == null)
                 throw new ValidationException(EMPTY_STRING, "Financial year is not fefined for this date ["
@@ -1056,7 +1062,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 throw new ValidationException(EMPTY_STRING, "Glcode is null");
 
             query = query + " and gl.glcode='" + glcode + "'";
-           
+
             final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glcode);
             if (coa == null)
                 throw new ValidationException(EMPTY_STRING, "Chartofaccounts is null for this glcode:" + glcode);
@@ -1109,26 +1115,30 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             LOGGER.debug("Budget Detail =" + bd.getUniqueNo() + " budget= " + bd.getBudget().getId() + " FinYear="
                     + bd.getBudget().getFinancialYear().getId());
 
-        final List<Long> budgetDetailIds = persistenceService.findAllBy(
-                "select id from BudgetDetail bd where uniqueNo=? and bd.budget.financialYear.id=? and bd.state.value='END' ",
-                bd.getUniqueNo(), bd.getBudget().getFinancialYear().getId());
+        final List<Long> budgetDetailIds = persistenceService
+                .findAllBy(
+                        "select id from BudgetDetail bd where uniqueNo=? and bd.budget.financialYear.id=? and bd.status.code='Approved' ",
+                        bd.getUniqueNo(), bd.getBudget().getFinancialYear().getId());
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ids returned if be then 1 id should return else 2 ids should return =" + budgetDetailIds);
-
-        final Query sumQuery = HibernateUtil.getCurrentSession().createQuery(
-                "select sum(consumedAmount)-sum(releasedAmount) from BudgetUsage WHERE budgetDetail.id  in ( :IDS )");
-        sumQuery.setParameterList("IDS", budgetDetailIds);
-        final Double planningbudgetusage = (Double) sumQuery.list().get(0);
-
-        if (planningbudgetusage == null) {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("NO Consumed Amount");
+        if (budgetDetailIds == null || budgetDetailIds.size() == 0)
             return BigDecimal.ZERO;
-        } else {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Consumed Amount =" + BigDecimal.valueOf(planningbudgetusage));
-            return BigDecimal.valueOf(planningbudgetusage);
+        else {
+            final Query sumQuery = HibernateUtil.getCurrentSession().createQuery(
+                    "select sum(consumedAmount)-sum(releasedAmount) from BudgetUsage WHERE budgetDetail.id  in ( :IDS )");
+            sumQuery.setParameterList("IDS", budgetDetailIds);
+            final Double planningbudgetusage = (Double) sumQuery.list().get(0);
+
+            if (planningbudgetusage == null) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("NO Consumed Amount");
+                return BigDecimal.ZERO;
+            } else {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Consumed Amount =" + BigDecimal.valueOf(planningbudgetusage));
+                return BigDecimal.valueOf(planningbudgetusage);
+            }
         }
 
     }
@@ -1632,7 +1642,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
             // check the account code needs budget checking
-           
+
             final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
             if (coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq())
             {
@@ -1652,7 +1662,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 
                 paramMap.put("glcodeid", coa.getId());
                 // get the financialyear from asondate
-  
+
                 final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
                 if (finyear == null)
                     throw new ValidationException(EMPTY_STRING, "Financial Year is not defined for-" + asondate);
@@ -1709,7 +1719,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 
                     if (bill == null || bill.getEgBillregistermis().getBudgetaryAppnumber() == null)
                         if (paramMap.get("voucherHeader") != null
-                        && ((CVoucherHeader) paramMap.get("voucherHeader")).getVouchermis().getBudgetaryAppnumber() == null)
+                                && ((CVoucherHeader) paramMap.get("voucherHeader")).getVouchermis().getBudgetaryAppnumber() == null)
                         {
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("Bill level budget app no not generated so generating voucher level");
@@ -1749,9 +1759,12 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     public String getBudgetApprNumber(final Map<String, Object> paramMap) {
         final CFinancialYear financialyear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?",
                 (Long) paramMap.get("financialyearid"));
-        ScriptContext scriptContext = ScriptService.createContext("wfItem", financialyear, "sequenceGenerator", sequenceGenerator);
-    //    final Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "egf.reappropriation.sequence.generator").get(0);
-        final String budgetApprNumber = (String) scriptService.executeScript("egf.reappropriation.sequence.generator",scriptContext);
+        ScriptContext scriptContext = ScriptService
+                .createContext("wfItem", financialyear, "sequenceGenerator", sequenceGenerator);
+        // final Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,
+        // "egf.reappropriation.sequence.generator").get(0);
+        final String budgetApprNumber = (String) scriptService.executeScript("egf.reappropriation.sequence.generator",
+                scriptContext);
         return budgetApprNumber;
     }
 
@@ -1811,13 +1824,13 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                         + "' and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("getBudgetHeadByGlcode minorcode query=====" + query);
-                //persistenceService.setType(BudgetGroup.class);
+                // persistenceService.setType(BudgetGroup.class);
                 bgList = persistenceService.findAllBy(query);
                 if (bgList.isEmpty())
                 {
                     query = " from BudgetGroup bg where bg.majorCode.glcode='" + coa.getGlcode().substring(0, majorcodelength)
                             + "' and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true ";
-                    //persistenceService.setType(BudgetGroup.class);
+                    // persistenceService.setType(BudgetGroup.class);
                     bgList = persistenceService.findAllBy(query);
                     if (bgList.isEmpty())
                         throw new ValidationException(EMPTY_STRING,
@@ -1874,7 +1887,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     + " and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true order by bg.name";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadForGlcodeList detailcode query=====" + query);
-            //persistenceService.setType(BudgetGroup.class);
+            // persistenceService.setType(BudgetGroup.class);
             final List bgList = persistenceService.findAllBy(query);
             return bgList;
 
@@ -1909,8 +1922,6 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         }
         return query;
     }
-
-   
 
     /**
      * This API is handling the budget checking
@@ -2005,7 +2016,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
                 // check the account code needs budget checking
-               final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
                 if (coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq())
                 {
                     // get budgethead for the glcode
@@ -2235,7 +2246,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 query = query + " and  br.billdate>=? ";
 
             query = query + " and bd.glcodeid='" + glcodeid + "'";
-            query1 = "select sum(case when bd.debitamount = null then 0 ELSE bd.debitamount end -case when bd.creditamount = null then 0 else bd.creditamount end)  "
+            query1 = "select sum(case when bd.debitamount is null then 0 ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end)  "
                     +
                     " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis  "
                     +
@@ -2283,7 +2294,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     private BigDecimal getBillAmountWhereCancelledVouchers(final String query, final Date fromdate, final Date asondate)
             throws ValidationException {
 
-        final String newQuery = "select sum(case when bd.debitamount = null then 0 else bd.debitamount end - case when bd.creditamount = null then 0 else bd.creditamount end )  "
+        final String newQuery = "select sum(case when bd.debitamount is null then 0 else bd.debitamount end - case when bd.creditamount is null then 0 else bd.creditamount end )  "
                 +
                 " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  "
                 +
@@ -2583,7 +2594,6 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
         else
             return false;
     }
-
 
     public SequenceGenerator getSequenceGenerator() {
         return sequenceGenerator;

@@ -183,13 +183,13 @@ public class FeeMatrixService<T extends License> {
     }
 
     private String generateFeeMatirixUniqueNo(final T license) {
-        return new StringBuilder().append(license.getBuildingType().getId()).append("-")
+        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append("-")
                 .append(license.getLicenseAppType().getId()).append("-").append(license.getCategory().getId())
                 .append("-").append(license.getTradeName().getId()).toString();
     }
 
     private String generateFeeMatirixUniqueNo(final T license, final LicenseAppType apptype) {
-        return new StringBuilder().append(license.getBuildingType().getId()).append("-").append(apptype.getId())
+        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append("-").append(apptype.getId())
                 .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
     }
 

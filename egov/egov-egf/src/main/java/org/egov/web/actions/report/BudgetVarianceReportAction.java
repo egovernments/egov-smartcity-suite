@@ -306,7 +306,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         }
         final List<BudgetDetail> result = persistenceService.findAllBy("from BudgetDetail where budget.isbere='" + budgetType
                 + "' and " +
-                "budget.isActiveBudget=true and budget.state.value='END' and budget.financialYear.id=" + financialYear.getId()
+                "budget.isActiveBudget=true and budget.status.code='Approved' and budget.financialYear.id=" + financialYear.getId()
                 + getMiscQuery() + " order by budget.name,budgetGroup.name");
         if (budgetVarianceEntries == null)
             budgetVarianceEntries = new ArrayList<BudgetVarianceEntry>();

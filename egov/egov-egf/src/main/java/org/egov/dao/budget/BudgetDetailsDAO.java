@@ -70,7 +70,7 @@ public interface BudgetDetailsDAO extends GenericDAO {
     public BudgetUsage consumeEncumbranceBudget(String appropriationnumber, Long financialyearid, Integer moduleid,
             String referencenumber, Integer departmentid, Long functionid, Integer functionaryid, Integer schemeid,
             Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Integer fundid, double amount)
-                    throws ValidationException;
+            throws ValidationException;
 
     public void releaseEncumbranceBudget(Long financialyearid, Integer moduleid, String referencenumber, Integer departmentid,
             Long functionid, Integer functionaryid, Integer schemeid, Integer subschemeid, Integer fieldid,
@@ -79,7 +79,7 @@ public interface BudgetDetailsDAO extends GenericDAO {
     public BudgetUsage releaseEncumbranceBudget(String appropriationnumber, Long financialyearid, Integer moduleid,
             String referencenumber, Integer departmentid, Long functionid, Integer functionaryid, Integer schemeid,
             Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Integer fundid, double amount)
-                    throws ValidationException;
+            throws ValidationException;
 
     public BigDecimal getActualBudgetUtilized(Map<String, Object> paramMap) throws ValidationException;
 

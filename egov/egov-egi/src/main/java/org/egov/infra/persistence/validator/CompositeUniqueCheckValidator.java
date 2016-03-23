@@ -89,6 +89,8 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
             final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
             if (unique.checkForNull() && fieldValue == null)
                 conjunction.add(Restrictions.isNull(fieldName));
+            else if (fieldValue instanceof String)
+                conjunction.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
             else
                 conjunction.add(Restrictions.eq(fieldName, fieldValue));
         }

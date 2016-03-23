@@ -80,12 +80,12 @@ import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = Constants.VIEW, location = "contraBTC-" + Constants.VIEW + ".jsp"),
     @Result(name = ContraBTCAction.NEW, location = "contraBTC-" + ContraBTCAction.NEW + ".jsp"),
@@ -144,7 +144,7 @@ public class ContraBTCAction extends BaseVoucherAction {
                 : null);
     }
 
-    @Transactional
+    
     @Action(value = "/contra/contraBTC-create")
     public String create() {
         if (validateInputData()) {
@@ -187,7 +187,7 @@ public class ContraBTCAction extends BaseVoucherAction {
         // return false;
     }
 
-    @Transactional
+    
     public String saveAndView() {
         // if(create()){
         message = getText("transaction.success")
@@ -195,7 +195,7 @@ public class ContraBTCAction extends BaseVoucherAction {
         return Constants.VIEW;
     }
 
-    @Transactional
+    
     public String saveAndClose() {
         // if(create()){
         setClose(true);

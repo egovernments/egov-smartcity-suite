@@ -421,11 +421,12 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
         final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
         final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(basicProperty.getAssessmentdate(), new Date()) - 1;
-        
+        setIsNagarPanchayat(propertyTaxUtil.checkIsNagarPanchayat());
         /**
          * Not calculating penalty if collection is happening within two months from the assessment date
          */
-        if (noOfMonths <= 3) {
+        //To be replaced with (noOfMonths <= 3) end of this financial year
+        if (!isNagarPanchayat && noOfMonths <= 3) {
                 return installmentPenaltyAndRebate;
         }
         
@@ -435,7 +436,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         BigDecimal tax = BigDecimal.ZERO;
         BigDecimal collection = BigDecimal.ZERO;
         BigDecimal balance = BigDecimal.ZERO;
-        setIsNagarPanchayat(propertyTaxUtil.checkIsNagarPanchayat());
 
         if (getLevyPenalty()) {
             final EgDemand currentDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());

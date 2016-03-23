@@ -66,11 +66,11 @@ import org.egov.services.report.LoanGrantService;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.masters.loangrant.LoanGrantBaseAction;
 import org.hibernate.SQLQuery;
-import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = "searchGC", location = "loanGrantReport-searchGC.jsp"),
     @Result(name = "searchLoan", location = "loanGrantReport-searchLoan.jsp"),

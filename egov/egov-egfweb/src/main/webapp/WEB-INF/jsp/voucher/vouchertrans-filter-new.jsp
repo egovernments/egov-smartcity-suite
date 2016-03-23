@@ -68,7 +68,7 @@
 	</s:if>
 </tr>
 <tr>
-<td class="bluebox"></td>
+	<td class="bluebox"></td>
 	<s:if test="%{shouldShowHeaderField('subscheme')}">
 		<egov:ajaxdropdown id="subscheme" fields="['Text','Value']"
 			dropdownId="subschemeid"
@@ -98,8 +98,8 @@
 	</s:if>
 </tr>
 <tr>
-<td class="greybox"></td>
-	
+	<td class="greybox"></td>
+
 	<s:if test="%{shouldShowHeaderField('department')}">
 		<td class="greybox"><s:text name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
@@ -125,8 +125,7 @@
 	</s:if>
 </tr>
 <tr>
-<td class="bluebox"></td>
-	
+	<td class="bluebox"></td>
 	<s:if test="%{shouldShowHeaderField('functionary')}">
 		<td class="bluebox"><s:text name="voucher.functionary" /> <s:if
 				test="%{isFieldMandatory('functionary')}">
@@ -244,17 +243,17 @@ function validateMIS(){
 			return  true;
 }
 function populateApproverDept(dept){
-	
+}
+	/* 
 		if(null != document.getElementById('departmentid') &&  null != document.getElementById('approverUserId')){
 			if(dept.options[dept.selectedIndex].value != ""){
 				document.getElementById('departmentid').value = dept.options[dept.selectedIndex].value;
 			}else{
 				document.getElementById('departmentid').value = -1;
-			}
+			} */
 		
 			
-		}
-if(null != document.getElementById('departmentid')){
+/* if(null != document.getElementById('departmentid')){
 		<s:if test="%{isFieldMandatory('department')}"> 
 				document.getElementById('departmentid').disabled="true";
 				populateUser();
@@ -262,6 +261,7 @@ if(null != document.getElementById('departmentid')){
 		<s:else>
 			populateDesg();
 		</s:else>
-	}
-}
+	} */
+
+			
 	</script>

@@ -39,197 +39,123 @@
  */
 package org.egov.commons;
 
-import java.io.Serializable;
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.Field;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 
-public class CFunction implements Serializable{
+@Entity
+@Table(name="Function")
+@SequenceGenerator(name = CFunction.SEQ, sequenceName = CFunction.SEQ)
+@Unique(id = "id", tableName = "Function", fields = { "code" }, columnName = { "code" }, enableDfltMsg = true)
+public class CFunction extends AbstractAuditable{
+	
+	private static final long serialVersionUID = 1L;
+	public static final String SEQ = "SEQ_FUNCTION";
 
-	private Long id = null;
+	@Id
+	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+	private Long id ;
+	
+	@NotNull
+	@Length(max=100)
 	private String name;
+	
+	@Column(unique = true)
+	@NotNull
+	@Length(max=50)
 	private String code;
+	
+	@Length(max=50)
 	private String type;
-	private int level;
-	private Long parentId;
+	
+	private int llevel;
+	
 	private Boolean isActive;
-	private Date created;
-	private Date lastModified;
-	private String modifiedBy;
+	
 	private Boolean isNotLeaf;
-	private String funcNameActual;
-	private CFunction function;
-	/**
-	 * @return Returns the id.
-	 */
+	 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "parentId")	
+	private CFunction parentId;
+
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * @param id The id to set.
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return Returns the name.
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * @return Returns the code.
-	 */
 	public String getCode() {
 		return code;
 	}
 
-	/**
-	 * @param code The code to set.
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	/**
-	 * @return Returns the created.
-	 */
-	public Date getCreated() {
-		return created;
-	}
-
-	/**
-	 * @param created The created to set.
-	 */
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	/**
-	 * @return Returns the isActive.
-	 */
-	public boolean isIsActive() {
-		return this.isActive;
-	}
-	/**
-	 * @param isActive The isActive to set.
-	 */
-	public void setIsActive(boolean isActive) {
-		this.isActive = isActive;
-	}
-	
-	/**
-	 * @return Returns the lastModified.
-	 */
-	public Date getLastModified() {
-		return lastModified;
-	}
-
-	/**
-	 * @param lastModified The lastModified to set.
-	 */
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
-
-	/**
-	 * @return Returns the lLevel.
-	 */
-	public int getLevel() {
-		return level;
-	}
-
-	/**
-	 * @param level The lLevel to set.
-	 */
-	public void setLevel(int level) {
-		this.level = level;
-	}
-
-	/**
-	 * @return Returns the modifiedBy.
-	 */
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
-
-	/**
-	 * @param modifiedBy The modifiedBy to set.
-	 */
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
-
-	/**
-	 * @return Returns the parentId.
-	 */
-	public Long getParentId() {
-		return parentId;
-	}
-
-	/**
-	 * @param parentId The parentId to set.
-	 */
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	/**
-	 * @return Returns the type.
-	 */
 	public String getType() {
 		return type;
 	}
 
-	/**
-	 * @param type The type to set.
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getFuncNameActual() {
-		return funcNameActual;
-	}
-	
-	public void setFuncNameActual(String funcNameActual) {
-		this.funcNameActual = funcNameActual;
-	}
-	/**
-	 * @return the function
-	 */
-	public CFunction getFunction() {
-		return function;
-	}
-	/**
-	 * @param function the function to set
-	 */
-	public void setFunction(CFunction function) {
-		this.function = function;
+	public int getLlevel() {
+		return llevel;
 	}
 
 	public Boolean getIsActive() {
 		return isActive;
 	}
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-
 	public Boolean getIsNotLeaf() {
 		return isNotLeaf;
+	}
+
+	public CFunction getParentId() {
+		return parentId;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setLlevel(int llevel) {
+		this.llevel = llevel;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public void setIsNotLeaf(Boolean isNotLeaf) {
 		this.isNotLeaf = isNotLeaf;
 	}
+
+	public void setParentId(CFunction parentId) {
+		this.parentId = parentId;
+	}
+	 
+	
+	
+	
+	
 }

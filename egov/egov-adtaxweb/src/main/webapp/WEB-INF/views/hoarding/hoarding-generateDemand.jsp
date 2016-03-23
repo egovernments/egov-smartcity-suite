@@ -60,7 +60,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:select path="financialYear" data-first-option="false"	id="financialyear" cssClass="form-control"  >
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${financialYears}" itemLabel="finYearRange" itemValue="id"/>
+								<form:options items="${financialYears}" itemLabel="finYearRange" itemValue="installmentNumber"/>
 							</form:select>
 								<form:errors path="financialYear" cssClass="error-msg" />
 						</div>	

@@ -74,7 +74,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -88,7 +88,7 @@ import org.springframework.transaction.annotation.Transactional;
         "no-cache;filename=DepartmentwiseExpenditureReport.html" })
 })
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
 
     /**

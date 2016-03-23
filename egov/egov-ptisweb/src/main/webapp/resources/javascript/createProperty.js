@@ -1125,7 +1125,7 @@ function enableOrDisableSiteOwnerDetails(obj) {
 	}
 }
 
-/*function enableOrDisableBPADetails(obj) {
+function enableOrDisableBPADetails(obj) {
 	if (jQuery(obj).is(":checked")) {
 		jQuery('tr.bpddetails').show();
 	} else {
@@ -1134,7 +1134,7 @@ function enableOrDisableSiteOwnerDetails(obj) {
 		jQuery("#deviationPercentage").prop('selectedIndex', 0);
 		jQuery('tr.bpddetails').hide();
 	}
-}*/
+}
 
 function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 	if (propType != "select") {

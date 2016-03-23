@@ -48,14 +48,14 @@
 		<form:form class="form-horizontal form-groups-bordered" action=""
 			id="bcDailyCollectionReportForm" modelAttribute="bcDailyCollectionReportResult" commandName="bcDailyCollectionReportResult"
 			method="get">
-		
 		<div class="panel-body">
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"> Region </label>
 					<div class="col-sm-3 add-margin">
+						<input type="hidden" id="typeDefaultVal" name="typeDefaultVal" value="${typeValue}"/>  
 						<form:select id="region" name="region" path="region"
 							cssClass="form-control" cssErrorClass="form-control error">
-							<form:option value="">
+							<form:option value=""> 
 								<spring:message code="lbl.default.all" />
 							</form:option>
 							<form:options items="${regions}" itemValue="name" itemLabel="name" />
@@ -102,20 +102,17 @@
 								<form:option value="PRIVATE">
 									PRIVATE
 								</form:option>
-									<form:option value="CENTRAL_GOVT_33.5">
-									Central Government 33.5%
+								<form:option value="PRIVATE_EXCLUDE_COURTCASE">
+									PRIVATE (Excluding Court Case)
 								</form:option>
-									<form:option value="CENTRAL_GOVT_50"> 
-									Central Government 50%
-								</form:option>
-								<form:option value="CENTRAL_GOVT_75">  
-									Central Government 75%
+								<form:option value="CENTRAL_GOVT">
+									Central Government
 								</form:option>
 								<form:option value="STATE_GOVT">    
 									State Government
 								</form:option>
-									<form:option value="EWSHS">  
-									EWSHS
+								<form:option value="COURTCASE">  
+									Court Cases
 								</form:option>
 							</form:select>
 						</div>
@@ -152,9 +149,9 @@
 				<tr>
 					<th colspan="4">City Detail</th>
 					<th colspan="2">Commissioner</th>
-					<th colspan="6">Demand</th>
-					<th colspan="5">Collection</th>
-					<th colspan="5">Balance</th>
+					<th colspan="7">Demand</th>
+					<th colspan="8">Collection</th>
+					<th colspan="6">Balance</th>
 				</tr>
 
 				<tr>
@@ -170,16 +167,21 @@
 					<th> Current tax </th>
 					<th> Current interest </th>
 					<th>Total</th>
+					<th>Total Interest</th>
 					<th> Arrear tax </th>
 					<th> Arrear interest </th>
 					<th> Current tax </th>
 					<th> Current interest </th>
 					<th>Total</th>
+					<th>Total Percentage</th>
+					<th>Total Interest</th>
+					<th>Total Interest Percentage</th>
 					<th> Arrear tax </th>
 					<th> Arrear interest </th>
 					<th> Current tax </th>
 					<th> Current interest </th>
-					<th>Total</th>		
+					<th>Total</th>
+					<th>Total Interest</th>		
 
 				</tr>
 			</thead>
@@ -201,7 +203,11 @@
 					<td></td>
 					<td></td>
 					<td></td>
-					
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
 				</tr>
 			</tfoot>
 				</table>

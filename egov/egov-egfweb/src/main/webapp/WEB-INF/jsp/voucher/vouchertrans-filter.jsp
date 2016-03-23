@@ -52,11 +52,10 @@
 				onChange="populateSchemes(this);loadBank(this);"
 				value="%{fundId.id}" /></td>
 	</s:if>
-</tr>
-
-<tr>
-<td style="width: 5%"></td>
-	
+	<s:else>
+		<td class="greybox"></td>
+		<td class="greybox"></td>
+	</s:else>
 	<s:if test="%{shouldShowHeaderField('fundsource')}">
 		<egov:ajaxdropdown id="fundsource" fields="['Text','Value']"
 			dropdownId="fundsourceId"
@@ -70,9 +69,14 @@
 				listValue="name" headerKey="-1" headerValue="----Choose----"
 				value="voucherHeader.vouchermis.fundsource.id" /></td>
 	</s:if>
+	<s:else>
+		<td class="greybox"></td>
+		<td class="greybox"></td>
+	</s:else>
 </tr>
+
 <tr>
-<td style="width: 5%"></td>
+	<td style="width: 5%"></td>
 	<s:if test="%{shouldShowHeaderField('scheme')}">
 		<egov:ajaxdropdown id="scheme" fields="['Text','Value']"
 			dropdownId="schemeid" url="voucher/common-ajaxLoadSchemes.action" />
@@ -87,9 +91,10 @@
 				onChange="populatesubSchemes(this)"
 				value="voucherHeader.vouchermis.schemeid.id" /></td>
 	</s:if>
-</tr>
-<tr>
-<td style="width: 5%"></td>
+	<s:else>
+		<td class="greybox"></td>
+		<td class="greybox"></td>
+	</s:else>
 	<s:if test="%{shouldShowHeaderField('subscheme')}">
 		<egov:ajaxdropdown id="subscheme" fields="['Text','Value']"
 			dropdownId="subschemeid"
@@ -104,9 +109,13 @@
 				value="voucherHeader.vouchermis.subschemeid.id"
 				onChange="populateFundSource(this)" /></td>
 	</s:if>
+	<s:else>
+		<td class="greybox"></td>
+		<td class="greybox"></td>
+	</s:else>
 </tr>
 <tr>
-<td style="width: 5%"></td>
+	<td style="width: 5%"></td>
 
 	<s:if test="%{shouldShowHeaderField('department')}">
 		<td class="greybox" id="deptLabel"><s:text
@@ -120,10 +129,10 @@
 				headerValue="----Choose----"
 				value="voucherHeader.vouchermis.departmentid.id" /></td>
 	</s:if>
-</tr>
-<tr>
-<td style="width: 5%"></td>
-
+	<s:else>
+		<td class="greybox"></td>
+		<td class="greybox"></td>
+	</s:else>
 	<s:if test="%{shouldShowHeaderField('field')}">
 		<td class="greybox"><s:text name="voucher.field" /> <s:if
 				test="%{isFieldMandatory('field')}">
@@ -135,24 +144,13 @@
 				headerValue="----Choose----"
 				value="voucherHeader.vouchermis.divisionid.id" /></td>
 	</s:if>
+	<s:else>
+		<td class="greybox"></td>
+		<td class="greybox"></td>
+	</s:else>
 </tr>
 <tr>
-<td style="width: 5%"></td>
-
-	<s:if test="%{shouldShowHeaderField('functionary')}">
-		<td class="bluebox"><s:text name="voucher.functionary" /> <s:if
-				test="%{isFieldMandatory('functionary')}">
-				<span class="bluebox"><span class="mandatory1">*</span></span>
-			</s:if></td>
-		<td class="bluebox"><s:select name="vouchermis.functionary"
-				id="vouchermis.functionary" list="dropdownData.functionaryList"
-				listKey="id" listValue="name" headerKey="-1"
-				headerValue="----Choose----"
-				value="voucherHeader.vouchermis.functionary.id" /></td>
-	</s:if>
-</tr>
-<tr>
-<td style="width: 5%"></td>
+	<td style="width: 5%"></td>
 	<s:if test="%{shouldShowHeaderField('function')}">
 		<td id="functionnametext" class="bluebox"><s:text
 				name="voucher.function" /> <s:if
@@ -164,6 +162,26 @@
 				listKey="id" listValue="name" headerKey="-1"
 				headerValue="----Choose----" value="%{vouchermis.function.id}" /></td>
 	</s:if>
+
+	<s:else>
+		<td class="greybox"></td>
+		<td class="greybox"></td>
+	</s:else>
+	<s:if test="%{shouldShowHeaderField('functionary')}">
+		<td class="bluebox"><s:text name="voucher.functionary" /> <s:if
+				test="%{isFieldMandatory('functionary')}">
+				<span class="bluebox"><span class="mandatory1">*</span></span>
+			</s:if></td>
+		<td class="bluebox"><s:select name="vouchermis.functionary"
+				id="vouchermis.functionary" list="dropdownData.functionaryList"
+				listKey="id" listValue="name" headerKey="-1"
+				headerValue="----Choose----"
+				value="voucherHeader.vouchermis.functionary.id" /></td>
+	</s:if>
+	<s:else>
+		<td class="greybox"></td>
+		<td class="greybox"></td>
+	</s:else>
 
 </tr>
 <script type="text/javascript">

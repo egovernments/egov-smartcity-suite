@@ -48,6 +48,7 @@ public class DailyWTCollectionReport {
     private Date receiptDate;
     private String consumerCode;
     private String consumerName;
+    private String wardName;
     private String doorNumber;
     private String connectionType;
     private String paymentMode;
@@ -59,8 +60,17 @@ public class DailyWTCollectionReport {
     private String fromInstallment;
     private String toInstallment;
     private String status;
+    
+    
+    public String getWardName() {
+		return wardName;
+	}
 
-    public String getReceiptNumber() {
+	public void setWardName(String wardName) {
+		this.wardName = wardName;
+	}
+
+	public String getReceiptNumber() {
         return receiptNumber;
     }
 

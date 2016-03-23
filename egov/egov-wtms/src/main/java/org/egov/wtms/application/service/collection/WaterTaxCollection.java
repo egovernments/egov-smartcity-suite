@@ -165,7 +165,7 @@ public class WaterTaxCollection extends TaxCollection {
             final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails
                     .getStateType(), null, null, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
                     waterConnectionDetails.getCurrentState().getValue(), null);
-            final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
+            final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation(),waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (posobj != null)
                 approvalPosition = posobj.getId();
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService

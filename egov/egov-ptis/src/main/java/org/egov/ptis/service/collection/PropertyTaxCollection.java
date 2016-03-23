@@ -80,6 +80,8 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
@@ -97,6 +99,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.MoneyUtils;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -137,6 +140,14 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     private MessagingService messagingService;
+    
+    @Autowired
+    private FunctionHibernateDAO functionDAO;
+    
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    
+    private PTBillServiceImpl ptBillServiceImpl;
 
     @Override
     protected Module module() {
@@ -265,9 +276,9 @@ public class PropertyTaxCollection extends TaxCollection {
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         EgDemandDetails dmdDet = null;
 
-        final EgDemandDetails penaltyDmdDet = getDemandDetail(demand, currInstallment, DEMANDRSN_STR_CHQ_BOUNCE_PENALTY);
+        final EgDemandDetails penaltyDmdDet = ptBillServiceImpl.getDemandDetail(demand, currInstallment, DEMANDRSN_STR_CHQ_BOUNCE_PENALTY);
         if (penaltyDmdDet == null)
-            dmdDet = insertPenalty(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty, currInstallment);
+            dmdDet = ptBillServiceImpl.insertPenalty(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty, currInstallment);
         else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
             existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.equals(BigDecimal.ZERO) ? existDmdDetAmt = BigDecimal.ZERO
@@ -627,37 +638,6 @@ public class PropertyTaxCollection extends TaxCollection {
         return CHQ_BOUNCE_PENALTY;
     }
 
-    /**
-     * Method used to insert penalty in EgDemandDetail table. Penalty Amount will be calculated depending upon the cheque Amount.
-     *
-     * @see createDemandDetails() -- EgDemand Details are created
-     * @see getPenaltyAmount() --Penalty Amount is calculated
-     * @param chqBouncePenalty
-     * @return New EgDemandDetails Object
-     */
-    public EgDemandDetails insertPenalty(final String demandReason, final BigDecimal penaltyAmount, final Installment inst) {
-        EgDemandDetails demandDetail = null;
-        Module ptModule = null;
-
-        if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
-
-            ptModule = module();
-            final EgDemandReasonMaster egDemandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(demandReason,
-                    ptModule);
-
-            if (egDemandReasonMaster == null)
-                throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
-
-            final EgDemandReason egDemandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(
-                    egDemandReasonMaster, inst, ptModule);
-
-            if (egDemandReason == null)
-                throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
-
-            demandDetail = createDemandDetails(egDemandReason, BigDecimal.ZERO, penaltyAmount);
-        }
-        return demandDetail;
-    }
 
     /**
      * Method used to create new EgDemandDetail Object depending upon the EgDemandReason , Collected amount and Demand
@@ -745,8 +725,21 @@ public class PropertyTaxCollection extends TaxCollection {
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber, final BigDecimal actualAmountPaid,
             final List<ReceiptDetail> receiptDetailList) {
-        // TODO Auto-generated method stub
-        return null;
+        final Long billID = Long.valueOf(billReferenceNumber);
+        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(0);
+        final EgBill bill = ptBillServiceImpl.updateBillWithLatest(billID);
+        LOGGER.debug("Reconstruct consumer code :" + bill.getConsumerId() + ", with bill reference number: "
+                + billReferenceNumber + ", for Amount Paid :"
+                + actualAmountPaid);
+        boolean isEligibleForCurrentRebate = false;
+        final boolean isEligibleForAdvanceRebate = false;
+        if (isRebatePeriodActive())
+            isEligibleForCurrentRebate = true;
+
+        final CollectionApportioner apportioner = new CollectionApportioner(isEligibleForCurrentRebate,
+                isEligibleForAdvanceRebate, actualAmountPaid);
+        billDetails.addAll(bill.getEgBillDetails());
+        return apportioner.reConstruct(actualAmountPaid, billDetails, functionDAO, chartOfAccountsDAO);
     }
 
     @Override
@@ -808,6 +801,10 @@ public class PropertyTaxCollection extends TaxCollection {
         receiptAmountInfo.setCurrentCess(currLibCess);
         receiptAmountInfo.setArrearCess(arrearLibCess);
         return receiptAmountInfo;
+    }
+
+    public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
+        this.ptBillServiceImpl = ptBillServiceImpl;
     }
 
 }

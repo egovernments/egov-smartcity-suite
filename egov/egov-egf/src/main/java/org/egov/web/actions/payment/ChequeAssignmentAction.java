@@ -133,7 +133,9 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
         @Result(name = "before_salary_search", location = "chequeAssignment-before_salary_search.jsp"),
         @Result(name = "searchRtgsResult", location = "chequeAssignment-searchRtgsResult.jsp"),
         @Result(name = "surrendersearch", location = "chequeAssignment-surrendersearch.jsp"),
+        @Result(name = "searchremittance", location = "chequeAssignment-searchremittance.jsp"),
         @Result(name = "searchpayment", location = "chequeAssignment-searchpayment.jsp"),
+        @Result(name = "surrendercheques", location = "chequeAssignment-surrendercheques.jsp"),
         @Result(name = "rtgsSearch", location = "chequeAssignment-rtgsSearch.jsp"),
         @Result(name = "tnebRtgsSearch", location = "chequeAssignment-tnebRtgsSearch.jsp"),
         @Result(name = "bankAdvice-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -147,9 +149,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 })
 public class ChequeAssignmentAction extends BaseVoucherAction
 {
-    /**
-     *
-     */
     private static final long serialVersionUID = -3721873563220007939L;
     private static final String SURRENDERSEARCH = "surrendersearch";
     private static final String SURRENDERRTGSSEARCH = "surrenderRTGSsearch";
@@ -245,7 +244,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private BigDecimal totalDeductedAmount;
     private Boolean nonSubledger = false;
     private FinancialYearDAO financialYearDAO;
-
+    private boolean containsRTGS = false;
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
     }
@@ -913,6 +912,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     }
 
     @ValidationErrorPage(value = "before_remittance_search")
+    @Action(value = "/payment/chequeAssignment-searchChequesOfRemittance")
     public String searchChequesOfRemittance() throws ApplicationException, ParseException
     {
         if (LOGGER.isDebugEnabled())
@@ -1102,8 +1102,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                             .getVouchermis().getDepartmentid());
                     instVoucherList.addAll(paymentService.getInstVoucherList());
                     List<InstrumentVoucher> tempInstVoucherList = new ArrayList<InstrumentVoucher>();
-                    for(InstrumentVoucher iv:instVoucherList){
-                        iv.getInstrumentHeaderId().setInstrumentAmount(iv.getInstrumentHeaderId().getInstrumentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                    for (InstrumentVoucher iv : instVoucherList) {
+                        iv.getInstrumentHeaderId().setInstrumentAmount(
+                                iv.getInstrumentHeaderId().getInstrumentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                         tempInstVoucherList.add(iv);
                     }
                     instVoucherList = new ArrayList<InstrumentVoucher>();
@@ -1412,6 +1413,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
     @SkipValidation
     @ValidationErrorPage(value = SURRENDERSEARCH)
+    @Action(value = "/payment/chequeAssignment-searchChequesForSurrender")
     public String searchChequesForSurrender()
     {
         if (LOGGER.isDebugEnabled())
@@ -1436,17 +1438,17 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             if (!"".equals(toDate))
                 sql.append(" and iv.voucherHeaderId.voucherDate<='" + sdf.format(formatter.parse(toDate)) + "'");
             if (bankaccount != null && bankaccount != -1)
-                sql.append(" and  iv.instrumentHeaderId.bankAccountId.id=" + bankaccount);
+                sql.append(" and  ih.bankAccountId.id=" + bankaccount);
             if (instrumentNumber != null && !instrumentNumber.isEmpty())
-                sql.append(" and  iv.instrumentHeaderId.instrumentNumber='" + instrumentNumber + "'");
+                sql.append(" and  ih.instrumentNumber='" + instrumentNumber + "'");
             if (department != null && department != -1)
                 sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=" + department);
             if (voucherHeader.getVoucherNumber() != null && !voucherHeader.getVoucherNumber().isEmpty())
                 sql.append(" and  iv.voucherHeaderId.voucherNumber='" + voucherHeader.getVoucherNumber() + "'");
-            final String mainquery = "select iv.instrumentHeaderId from  InstrumentVoucher iv  where   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
+            final String mainquery = "select ih from  InstrumentVoucher iv ,InstrumentHeader ih ,InstrumentType it where iv.instrumentHeaderId.id =ih.id and ih.instrumentNumber is not null and ih.instrumentType=it.id and ( it.type = 'cheque' or it.type = 'cash' ) and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "'  " + sql + " "
 
-                    + " and iv.instrumentHeaderId.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
+                    + " and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
             instrumentHeaderList = persistenceService.findAllBy(mainquery, created.getId());
             final LinkedHashSet lhs = new LinkedHashSet();
@@ -1472,6 +1474,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         getheader();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed searchChequesForSurrender.");
+        containsRTGS = false;
         return "surrendercheques";
     }
 
@@ -1502,17 +1505,17 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             if (!"".equals(toDate))
                 sql.append(" and iv.voucherHeaderId.voucherDate<='" + sdf.format(formatter.parse(toDate)) + "'");
             if (bankaccount != null && bankaccount != -1)
-                sql.append(" and  iv.instrumentHeaderId.bankAccountId.id=" + bankaccount);
+                sql.append(" and  ih.bankAccountId.id=" + bankaccount);
             if (instrumentNumber != null && !instrumentNumber.isEmpty())
-                sql.append(" and  iv.instrumentHeaderId.transactionNumber='" + instrumentNumber + "'");
+                sql.append(" and  ih.transactionNumber='" + instrumentNumber + "'");
             if (department != null && department != -1)
                 sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=" + department);
             if (voucherHeader.getVoucherNumber() != null && !voucherHeader.getVoucherNumber().isEmpty())
                 sql.append(" and  iv.voucherHeaderId.voucherNumber='" + voucherHeader.getVoucherNumber() + "'");
-            final String mainquery = "select iv.instrumentHeaderId from  InstrumentVoucher iv,InstrumentHeader ih where iv.instrumentHeaderId =ih.id and ih.transactionNumber is not null and ih.instrumentType=6 and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
+            final String mainquery = "select ih from  InstrumentVoucher iv,InstrumentHeader ih ,InstrumentType it where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "'  " + sql + " "
 
-                    + " and iv.instrumentHeaderId.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
+                    + " and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
             instrumentHeaderList = persistenceService.findAllBy(mainquery, created.getId());
             final LinkedHashSet lhs = new LinkedHashSet();
@@ -1527,7 +1530,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
             if (instrumentVoucherList.size() > 0)
                 loadReasonsForSurrendaring();
-            // loadChequeSerialNo(bankaccount);
+            loadChequeSerialNo(bankaccount);
 
         } catch (final ParseException e) {
             LOGGER.error(e.getMessage());
@@ -1611,12 +1614,12 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private void getheader() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getheader...");
-        final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount);
+        final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.longValue());
         bank_account_dept = account.getBankbranch().getBank().getName() + "-" + account.getBankbranch().getBranchname()
                 + "-" + account.getAccountnumber();
         if (department != null && department != -1)
         {
-            final Department dept = (Department) persistenceService.find("from Department where id=?", department);
+            final Department dept = (Department) persistenceService.find("from Department where id=?", department.longValue());
             bank_account_dept = bank_account_dept + "-" + dept.getName();
         }
         if (LOGGER.isDebugEnabled())
@@ -1652,7 +1655,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         loadChequeSerialNo(bankaccount);
 
         try {
-            boolean containsRTGS = false;
+            
             if (surrender == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception while surrender Cheque ",
                         "Please select the atleast one Cheque for Surrendering ")));
@@ -2534,5 +2537,14 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     public void setFinancialYearDAO(final FinancialYearDAO financialYearDAO) {
         this.financialYearDAO = financialYearDAO;
     }
+
+    public boolean isContainsRTGS() {
+        return containsRTGS;
+    }
+
+    public void setContainsRTGS(boolean containsRTGS) {
+        this.containsRTGS = containsRTGS;
+    }
+
 
 }

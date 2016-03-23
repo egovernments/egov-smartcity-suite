@@ -65,7 +65,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -79,7 +79,7 @@ import net.sf.jasperreports.engine.JRException;
         @Result(name = "functionwiseIE-HTML", type = "stream", location = Constants.INPUT_STREAM, params = {
                 Constants.INPUT_NAME, Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "text/html" })
 })
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 public class FunctionwiseIEAction extends ReportAction
 {

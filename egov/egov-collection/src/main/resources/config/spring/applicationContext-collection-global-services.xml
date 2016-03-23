@@ -106,6 +106,7 @@
 
 	<bean id="PTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
+		<property name="ptBillServiceImpl" ref="ptBillServiceImpl"/>
     </bean>
     
 	<bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype"/>
@@ -164,7 +165,6 @@
 	
 	<bean class="org.egov.collection.integration.services.SchedularService" id="schedularService" scope="prototype">
 	   <property name="persistenceService" ref="persistenceService" />
-	   <property name="receiptHeaderService" ref="receiptHeaderService" />
 	   <property name="reconciliationService" ref="reconciliationService" />
 	</bean>
 
