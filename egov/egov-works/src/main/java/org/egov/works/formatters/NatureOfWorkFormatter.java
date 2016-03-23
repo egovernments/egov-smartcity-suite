@@ -62,6 +62,6 @@ public class NatureOfWorkFormatter implements Formatter<NatureOfWork> {
 
     @Override
     public NatureOfWork parse(final String id, final Locale locale) throws ParseException {
-        return StringUtils.isNotBlank(id) ? persistenceService.load(id, NatureOfWork.class) : null;
+        return StringUtils.isNotBlank(id) ? persistenceService.load(Long.valueOf(id), NatureOfWork.class) : null;
     }
 }

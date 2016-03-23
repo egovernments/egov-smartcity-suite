@@ -148,17 +148,17 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofwork" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="natureOfWork.id" data-first-option="false" id="natureOfWork" class="form-control" required="required">
+				<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${natureOfWork}" itemLabel="name" itemValue="id" />
 				</form:select>
-				<form:errors path="natureOfWork" cssClass="add-margin error-msg" />
+				<form:errors path="natureOfWork" cssClass="add-margin error-msg" /> 
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.typeofwork" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="typeOfWork.id" data-first-option="false" id="typeofwork" class="form-control" required="required"  >
+				<form:select path="typeOfWork" data-first-option="false" id="typeofwork" class="form-control" required="required"  >
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -171,10 +171,10 @@
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.subtypeofwork" /></label>
 			<div class="col-sm-3 add-margin">
 			<input type="hidden" id="subTypeOfWorkValue" value="${lineEstimate.subTypeOfWork.id }"/>
-				<form:select path="subTypeOfWork.id" data-first-option="false" id="subTypeOfWork" class="form-control" >
+				<form:select path="subTypeOfWork" data-first-option="false" id="subTypeOfWork" class="form-control" >
 					<form:option value=""><spring:message code="lbl.select"/></form:option>
 				</form:select>
-				<form:errors path="typeOfWork" cssClass="add-margin error-msg" />
+				<form:errors path="subTypeOfWork" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.modeofallotment" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">

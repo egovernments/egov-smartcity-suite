@@ -62,6 +62,6 @@ public class ContractorFormatter implements Formatter<Contractor> {
 
     @Override
     public Contractor parse(final String id, final Locale locale) throws ParseException {
-        return StringUtils.isNotBlank(id) ? persistenceService.load(id, Contractor.class) : null;
+        return StringUtils.isNotBlank(id) ? persistenceService.load(Long.valueOf(id), Contractor.class) : null;
     }
 }

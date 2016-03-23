@@ -62,6 +62,6 @@ public class EgwTypeOfWorkFormatter  implements Formatter<EgwTypeOfWork> {
 
     @Override
     public EgwTypeOfWork parse(final String id, final Locale locale) throws ParseException {
-        return StringUtils.isNotBlank(id) ? persistenceService.load(id, EgwTypeOfWork.class) : null;
+        return StringUtils.isNotBlank(id) ? persistenceService.load(Long.valueOf(id), EgwTypeOfWork.class) : null;
     }
 }
