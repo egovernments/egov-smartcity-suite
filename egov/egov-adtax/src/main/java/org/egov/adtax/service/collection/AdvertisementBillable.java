@@ -88,11 +88,12 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
         { 
             if (collectionType != null && advPermit != null
                     && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType)) {
-                return advPermit.getOwnerDetail();
+                
+                return (advPermit.getAgency() != null && advPermit.getAgency().getName()!=null? advPermit.getAgency().getName():(advPermit.getOwnerDetail()!=null ? advPermit.getOwnerDetail(): " ") );
             } else
             {
                 return advPermit != null
-                        && advPermit.getAgency() != null ? advPermit.getAgency().getName() : " ";
+                        && advPermit.getAgency() != null && advPermit.getAgency().getName()!=null ? advPermit.getAgency().getName() : " ";
             }
         }
         return null;
@@ -103,7 +104,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
         AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
         if (advertisement != null){
             if (collectionType != null && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType))
-                return advPermit != null && advPermit.getOwnerDetail()!=null?advPermit.getOwnerDetail():" ";
+                return (advPermit!=null && advPermit.getAgency() != null && advPermit.getAgency().getAddress()!=null) ? advPermit.getAgency().getAddress() : ( advPermit != null && advPermit.getOwnerDetail()!=null?advPermit.getOwnerDetail():" ");
             else
             {
             //     advPermit=  advertisement.getActiveAdvertisementPermit();
