@@ -173,9 +173,9 @@
 					<th> Current tax </th>
 					<th> Current interest </th>
 					<th>Total</th>
-					<th>Total Percentage</th>
 					<th>Total Interest</th>
-					<th>Total Interest Percentage</th>
+					<th>Total collection % (without interest)</th>
+					<th>Total collection % (with interest)</th>
 					<th> Arrear tax </th>
 					<th> Arrear interest </th>
 					<th> Current tax </th>

@@ -170,4 +170,11 @@ public class InstallmentHibDao<T, id extends Serializable> extends GenericHibern
                 .createQuery("from Installment I where I.module=:module and I.installmentNumber =:installmentNumber").
                 setEntity("module", module).setInteger("installmentNumber", installmentNumber).uniqueResult();
     }
+
+    @Override
+    public Installment getInsatllmentByModuleAndDescription(Module module, String description) {
+        return (Installment)getCurrentSession()
+                .createQuery("from Installment I where I.module=:module and I.description =:description").
+                setEntity("module", module).setString("description", description).uniqueResult();
+    }
 }

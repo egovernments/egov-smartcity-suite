@@ -518,8 +518,8 @@ public class ConnectionDemandService {
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
-            && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) == 1
-            && ((demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) == -1)|| (demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) == 0))) {
+            && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO)  >= 0
+            && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) < 1) {
                 demandObj.setBaseDemand(getTotalAmountForBaseDemand(demanddetailBean, demandObj.getBaseDemand()));
                 demandObj.setAmtCollected(getTotalCollectedAmountForDemand(demanddetailBean,
                         demandObj.getAmtCollected()));

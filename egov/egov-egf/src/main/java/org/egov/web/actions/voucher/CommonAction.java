@@ -114,7 +114,6 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -1681,14 +1680,19 @@ public class CommonAction extends BaseFormAction {
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[4]!=null?account[4].toString():"";
+                final String accountNumberAndType = account[0]!=null?account[0].toString():"" + "-" + account[4]!=null?account[4].toString():"";
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
-                    bankaccount.setAccountnumber(account[0].toString());
-                    bankaccount.setAccounttype(account[1].toString());
-                    bankaccount.setId(Long.valueOf(account[2].toString()));
+                    bankaccount.setAccountnumber(account[0]!=null?account[0].toString():"");
+                    //bankaccount.setAccounttype(account[1]!=null?account[1].toString():"");
+                    bankaccount.setId(Long.valueOf(account[2]!=null?account[2].toString():""));
                     final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                    chartofaccounts.setGlcode(account[3].toString());
+                    chartofaccounts.setGlcode(account[3]!=null?account[3].toString():"");
+                    final Bankbranch branch = new Bankbranch();
+                    final Bank bank = new Bank();
+                    bank.setName(account[4].toString());
+                    branch.setBank(bank);
+                    bankaccount.setBankbranch(branch);
                     bankaccount.setChartofaccounts(chartofaccounts);
                     addedBanks.add(accountNumberAndType);
                     accNumList.add(bankaccount);
@@ -1703,7 +1707,7 @@ public class CommonAction extends BaseFormAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBanksAccountsWithAssignedCheques.");
-        return "bankAccNum-bankName";
+        return "bankAccNum";
     }
 
     public Integer getBranchId() {
@@ -2652,7 +2656,7 @@ public class CommonAction extends BaseFormAction {
             StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
             queryString = queryString
-                    .append("SELECT  bankaccount.accountnumber AS accountnumber,  bank.name AS accounttype,"
+                    .append("SELECT  bankaccount.accountnumber AS accountnumber,  bank.name AS bankName,"
                             +
                             " CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode  FROM chartofaccounts coa, bankaccount bankaccount ,bankbranch branch,bank bank "
                             +
@@ -2674,7 +2678,7 @@ public class CommonAction extends BaseFormAction {
             // queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"+FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT+"' and vh.name NOT IN ( '"+FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE+"','"+FinancialConstants.PAYMENTVOUCHER_NAME_SALARY+"' ) ");
             // query to fetch vouchers for which cheque has been assigned and surrendered
             queryString
-                    .append(" union select bankaccount.accountnumber as accountnumber,bank.name as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
+                    .append(" union select bankaccount.accountnumber as accountnumber,bank.name as bankName,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
                             +
                             " from chartofaccounts coa, "
                             +
@@ -2724,8 +2728,13 @@ public class CommonAction extends BaseFormAction {
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0].toString());
-                    bankaccount.setAccounttype(account[1].toString());
+                    //bankaccount.setAccounttype(account[1].toString());
                     final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
+                    final Bankbranch branch = new Bankbranch();
+                    final Bank bank = new Bank();
+                    bank.setName(account[1].toString());
+                    branch.setBank(bank);
+                    bankaccount.setBankbranch(branch);
                     chartofaccounts.setGlcode(account[3].toString());
                     bankaccount.setChartofaccounts(chartofaccounts);
                     bankaccount.setId(Long.valueOf(account[2].toString()));
@@ -2744,7 +2753,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Done | ajaxLoadBankAccountsWithApprovedPayments ");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccountsWithApprovedPayments.");
-        return "bankAccNum-bankName";
+        return "bankAccNum";
     }
 
     @SuppressWarnings("unchecked")

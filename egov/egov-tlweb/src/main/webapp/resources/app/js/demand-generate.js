@@ -149,4 +149,9 @@ $(document).ready(function(){
     $('.chkbx').change(function(){
         $('#chkall').prop("checked", false);
     });
+    
+    $('#regenbtn').click(function() {
+		$('#generatedemand').attr('method', 'post');
+		$('#generatedemand').attr('action', '/tl/demand-generation/regenerate');
+	});
 });

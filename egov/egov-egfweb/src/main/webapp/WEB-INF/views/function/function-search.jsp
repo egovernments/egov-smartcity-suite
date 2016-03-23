@@ -28,6 +28,33 @@
 									data-pattern="alphanumeric" maxlength="50" />
 								<form:errors path="code" cssClass="error-msg" />
 							</div>
+							
+							<div class="form-group">
+							<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.isactive" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:checkbox path="isActive" />
+							<form:errors path="isActive" cssClass="error-msg" />
+						</div>
+						
+					</div>
+					<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.parentType" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="parentId" id="parentId"
+								
+								cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${functions}" itemValue="id"
+									itemLabel="name" />
+									<lable></lable>
+									<div></div>
+							</form:select>
+							<form:errors path="parentId" cssClass="error-msg" />
+						</div>
 						</div>
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
 						<div class="form-group">

@@ -264,6 +264,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                     e.getErrors().get(0).getMessage())));
         } catch (final Exception e)
         {
+            LoadAjaxedDropDowns();
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
@@ -1617,11 +1618,10 @@ public class ContraBTBAction extends BaseVoucherAction {
     private void prepareForViewModifyReverse() {
         voucherHeader = (CVoucherHeader) persistenceService.find(
                 "from CVoucherHeader where id=?", voucherHeader.getId());
-        if (voucherHeader.getVoucherNumber() != null) {
+        if (voucherHeader.getRefvhId() != null) {
             voucherHeaderDes = voucherHeader;
             voucherHeader = (CVoucherHeader) persistenceService.find(
-                    "from CVoucherHeader where voucherNumber=?", voucherHeader
-                            .getVoucherNumber());
+                    "from CVoucherHeader where id =?", voucherHeader.getRefvhId());
         }
 
         if (LOGGER.isDebugEnabled())
@@ -1651,9 +1651,16 @@ public class ContraBTBAction extends BaseVoucherAction {
                     "from CGeneralLedger where voucherHeaderId = ?",
                     voucherHeaderDes);
             for (final CGeneralLedger generalled : generalLedgerDesList)
-                if (!generalled.getGlcode().equals(
-                        contraVoucher.getToBankAccountId().getChartofaccounts()
-                                .getGlcode()))
+                if (!generalled.getGlcode().equalsIgnoreCase(contraVoucher.getToBankAccountId().getChartofaccounts()
+                        .getGlcode()))
+                    contraBean.setDestinationGlcode(generalled.getGlcode());
+        }else{
+            generalLedgerDesList = persistenceService.findAllBy(
+                    "from CGeneralLedger where voucherHeaderId.refvhId = ?",
+                    voucherHeader.getId());
+            for (final CGeneralLedger generalled : generalLedgerDesList)
+                if (!generalled.getGlcode().equalsIgnoreCase(contraVoucher.getToBankAccountId().getChartofaccounts()
+                        .getGlcode()))
                     contraBean.setDestinationGlcode(generalled.getGlcode());
         }
 

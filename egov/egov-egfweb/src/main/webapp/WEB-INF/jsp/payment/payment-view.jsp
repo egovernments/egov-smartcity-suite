@@ -133,7 +133,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 																	<td class="greybox"><strong><s:text
 																				name="voucher.department" /></strong></td>
 																	<td class="greybox"><s:property
-																			value="%{paymentheader.voucherheader.vouchermis.departmentid.deptName}" /></td>
+																			value="%{paymentheader.voucherheader.vouchermis.departmentid.name}" /></td>
 																</s:if>
 																<s:if test="%{shouldShowHeaderField('functionary')}">
 																	<td class="greybox"><strong><s:text
@@ -200,7 +200,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 																<td class="greybox"><strong><s:text
 																			name="payment.bankaccount" /></strong></td>
 																<td class="greybox" colspan="2"><s:property
-																		value="%{paymentheader.bankaccount.accountnumber+'---'+paymentheader.bankaccount.accounttype}" /></td>
+																		value="%{paymentheader.bankaccount.accountnumber+'---'+paymentheader.bankaccount.bankbranch.bank.name}" /></td>
 															</tr>
 															<tr id="bankbalanceRow" style="visibility: hidden">
 																<td class="bluebox">&nbsp;</td>

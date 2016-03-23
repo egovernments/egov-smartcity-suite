@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -88,7 +89,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
         final AdvertisementBillable advBillable = (AdvertisementBillable) billObj;
         final EgDemand dmd = advBillable.getCurrentDemand();
         final List<EgDemandDetails> details = new ArrayList<EgDemandDetails>(dmd.getEgDemandDetails());
-        EgDemandDetails penaltyExistingDemandDetail = null;
+    //    EgDemandDetails penaltyExistingDemandDetail = null;
 
         final AppConfigValues penaltyCalculationRequired = appConfigValuesService.getConfigValuesByModuleAndKey(
                 AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.PENALTYCALCULATIONREQUIRED).get(0);
@@ -104,43 +105,79 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
 
                 // If Amount- collected amount greather than zero, then send
                 // these demand details to collection.
-                if (creaditAmt.compareTo(BigDecimal.ZERO) > 0)
-                    if (AdvertisementTaxConstants.DEMANDREASON_PENALTY.equalsIgnoreCase(demandDetail
+                if (creaditAmt.compareTo(BigDecimal.ZERO) > 0
+                        && !AdvertisementTaxConstants.DEMANDREASON_PENALTY.equalsIgnoreCase(demandDetail
+                                .getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())) {
+                  /*  if (AdvertisementTaxConstants.DEMANDREASON_PENALTY.equalsIgnoreCase(demandDetail
                             .getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
                         penaltyExistingDemandDetail = demandDetail;
-                    else {
+                    else {*/
 
                         final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, creaditAmt,
                                 demandDetail.getEgDemandReason().getGlcodeId().getGlcode(), getReceiptDetailDescription(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
                                         +" "+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,demandDetail.getEgDemandReason().getEgInstallmentMaster()));
                          orderNo++;
                         billDetailList.add(billdetail);
-                    }
+                    //}
+                }
             }
         if (penaltyCalculationRequired != null && "YES".equalsIgnoreCase(penaltyCalculationRequired.getValue())) {
-            final BigDecimal penaltyAmount = advertisementDemandService.checkPenaltyAmountByDemand(dmd,
+            // Penalty to be collected. Based on fiancial year wise.
+            final Map<String, BigDecimal> penaltyReasons = advertisementDemandService.checkPenaltyAmountByDemand(dmd,
                     billObj.getLastDate());
-            if (penaltyAmount.compareTo(BigDecimal.ZERO) > 0)
-                // Update penalty to existing demand
-                if (penaltyExistingDemandDetail == null) {
-                    final EgDemandReason demandReason = advertisementDemandService.getDemandReasonByCodeAndInstallment(
-                            AdvertisementTaxConstants.DEMANDREASON_PENALTY,
-                            advertisementDemandService.getCurrentInstallment());
-                    final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, penaltyAmount,
-                            demandReason.getGlcodeId().getGlcode(),  getReceiptDetailDescription(demandReason.getEgDemandReasonMaster().getReasonMaster()
-                                    +" "+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,demandReason.getEgInstallmentMaster()));
-                            
-                    billDetailList.add(billdetail);
-                } else {
-                    final BigDecimal creaditAmt = penaltyExistingDemandDetail.getAmount().subtract(
-                            penaltyExistingDemandDetail.getAmtCollected());
-                    final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO,
-                            creaditAmt.add(penaltyAmount), penaltyExistingDemandDetail.getEgDemandReason()
-                            .getGlcodeId().getGlcode(),  getReceiptDetailDescription(penaltyExistingDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                    +" "+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,penaltyExistingDemandDetail.getEgDemandReason().getEgInstallmentMaster()));
-                  
-                    billDetailList.add(billdetail);
+
+            if (penaltyReasons != null && penaltyReasons.size() > 0) {
+
+                BigDecimal penaltyAmount = BigDecimal.ZERO;
+
+                for (Map.Entry<String, BigDecimal> penaltyReason : penaltyReasons.entrySet()) {
+                    penaltyAmount = penaltyReason.getValue();
+
+                    if (penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+                        EgDemandReason pendingTaxReason = advertisementDemandService
+                                .getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_PENALTY,
+                                        advertisementDemandService.getInstallmentByDescription(penaltyReason.getKey()));
+
+                        final List<EgDemandDetails> penaltyDmtDtails = advertisementDemandService
+                                .getDemandDetailByPassingDemandDemandReason(dmd, pendingTaxReason);
+                      
+                        if (penaltyDmtDtails != null && penaltyDmtDtails.size() > 0) {
+                            EgDemandDetails penaltyExistingDemandDetail = penaltyDmtDtails.get(0);
+                            final BigDecimal creaditAmt = penaltyExistingDemandDetail.getAmount().subtract(
+                                    penaltyExistingDemandDetail.getAmtCollected());
+                            final EgBillDetails billdetail = createBillDetailObject(
+                                    orderNo,
+                                    BigDecimal.ZERO,
+                                    creaditAmt.add(penaltyAmount),
+                                    penaltyExistingDemandDetail.getEgDemandReason().getGlcodeId().getGlcode(),
+                                    getReceiptDetailDescription(penaltyExistingDemandDetail.getEgDemandReason()
+                                            .getEgDemandReasonMaster().getReasonMaster()
+                                            + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,
+                                            penaltyExistingDemandDetail.getEgDemandReason().getEgInstallmentMaster()));
+                            orderNo++;
+                            billDetailList.add(billdetail); 
+
+                        } else {
+                            // Mean, with specific demand reason, there is no
+                            // entry present in current demand
+                            final EgBillDetails billdetail = createBillDetailObject(
+                                    orderNo,
+                                    BigDecimal.ZERO,
+                                    penaltyAmount, pendingTaxReason.getGlcodeId().getGlcode(),
+                                    getReceiptDetailDescription(pendingTaxReason.getEgDemandReasonMaster()
+                                            .getReasonMaster() + " "
+                                            + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,
+                                            pendingTaxReason.getEgInstallmentMaster()));
+                            orderNo++;
+                            billDetailList.add(billdetail);
+
+                        }
+
+                    }
                 }
+            }
+           
         }
 
         // TODO: IF LIST SIZE IS ZERO THEN RETURN NULL OR THROW EXCEPTION.
@@ -148,7 +185,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
     }   
     
     private String getReceiptDetailDescription(String reasonType, Installment instlment) {
-             return reasonType+(instlment!=null? " "+instlment.getFinYearRange():"");
+             return reasonType+(instlment!=null? " "+instlment.getDescription():"");
          
         }
     private EgBillDetails createBillDetailObject(final int orderNo, final BigDecimal debitAmount,
