@@ -202,6 +202,9 @@ public class RestApiConstants {
         public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_REQUIRED = "WTMS-REST-13";
         public static final String THIRD_PARTY_ERR_MSG_APPLICATION__NO_REQUIRED = "Either Cosumer Code or Application number is required";
         
+        public static final String THIRD_PARTY_ERR_CODE_INACTIVE_CONSUMERNO = "WCMS-REST-14";
+        public static final String THIRD_PARTY_ERR_MSG_INACTIVE_CONSUMERNO = "Consumer number is InActive";
+        
         public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_LEN = "WTMS-REST-10";
         public static final String THIRD_PARTY_ERR_MSG_APPLICATION_NO_LEN = "Application number length can not less than 13 digits";
 	

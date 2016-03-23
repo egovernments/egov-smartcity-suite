@@ -168,19 +168,28 @@ public class RestWaterConnectionCollection {
     }
 
     public ErrorDetails validatePaymentDetails(final PayWaterTaxDetails payWaterTaxDetails) {
-        ErrorDetails errorDetails = null;
+    	ErrorDetails errorDetails = null;
         WaterConnectionDetails waterConnDetailsObj = null;
         errorDetails = validateConsumerAndApplicationNumber(payWaterTaxDetails);
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
             waterConnDetailsObj = waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails
                     .getApplicaionNumber());
         else if (payWaterTaxDetails.getConsumerNo() != null)
-            waterConnDetailsObj = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                    payWaterTaxDetails.getConsumerNo(), ConnectionStatus.ACTIVE);
+        {
+            waterConnDetailsObj = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(
+                    payWaterTaxDetails.getConsumerNo());
+        }
         if (waterConnDetailsObj == null) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CONSUMER_NO_VALID);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMER_NO_VALID);
+        }
+        else if (waterConnDetailsObj.getConnectionStatus().equals(ConnectionStatus.INACTIVE)) 
+        {
+        	errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_INACTIVE_CONSUMERNO);
+            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_INACTIVE_CONSUMERNO);
+            waterConnDetailsObj = null;
         }
         if (waterConnDetailsObj != null) {
             final BigDecimal totalAmountDue = waterConnectionDetailsService.getTotalAmount(waterConnDetailsObj);
