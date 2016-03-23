@@ -95,6 +95,9 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    private LineEstimateJsonAdaptor lineEstimateJsonAdaptor;
 
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
@@ -144,7 +147,7 @@ public class AjaxLineEstimateController {
 
     public Object toSearchLineEstimateResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateJsonAdaptor()).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, lineEstimateJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -161,9 +164,19 @@ public class AjaxLineEstimateController {
         return lineEstimateService.findLineEstimateNumbers(name);
     }
     
+    @RequestMapping(value = "/lineEstimateNumbersForLoa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findLineEstimateNumbersForLoa(@RequestParam final String name) {
+        return lineEstimateService.findLineEstimateNumbersForLoa(name);
+    }
+    
     @RequestMapping(value = "/adminSanctionNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findAdminSanctionNumbers(@RequestParam final String name) {
         return lineEstimateService.findAdminSanctionNumbers(name);
+    }
+    
+    @RequestMapping(value = "/adminSanctionNumbersForLoa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findAdminSanctionNumbersForLoa(@RequestParam final String name) {
+        return lineEstimateService.findAdminSanctionNumbersForLoa(name);
     }
     
     @RequestMapping(value = "/ajaxvalidate-technicalsanction-date", method = RequestMethod.GET)

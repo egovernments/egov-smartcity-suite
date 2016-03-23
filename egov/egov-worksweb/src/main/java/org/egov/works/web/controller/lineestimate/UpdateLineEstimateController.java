@@ -131,7 +131,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController{
     }
 
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.GET)
-    public String viewLineEstimate(final Model model, @PathVariable final String lineEstimateId,
+    public String updateLineEstimate(final Model model, @PathVariable final String lineEstimateId,
             final HttpServletRequest request)
             throws ApplicationException {
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
@@ -140,6 +140,18 @@ public class UpdateLineEstimateController extends GenericWorkFlowController{
         
         model.addAttribute("message", WorksConstants.LINEESTIMATE_CREATE);
         return loadViewData(model, request, lineEstimate);
+    }
+    
+    @RequestMapping(value = "/view/{lineEstimateId}", method = RequestMethod.GET)
+    public String viewLineEstimate(final Model model, @PathVariable final String lineEstimateId,
+            final HttpServletRequest request)
+            throws ApplicationException {
+        final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
+        
+        model.addAttribute("message", WorksConstants.LINEESTIMATE_CREATE);
+        String responsePage = loadViewData(model, request, lineEstimate);
+        model.addAttribute("mode", "readOnly");
+        return responsePage;
     }
 
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.POST)
@@ -179,6 +191,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController{
                 && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         
+        if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())) {
+            validateTechSanctionDetails(lineEstimate, errors);
+        }
+        
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return loadViewData(model, request, lineEstimate);
@@ -193,6 +209,20 @@ public class UpdateLineEstimateController extends GenericWorkFlowController{
             final String pathVars = worksUtils.getPathVars(newLineEstimate, approvalPosition);
             
             return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
+        }
+    }
+
+    private void validateTechSanctionDetails(LineEstimate lineEstimate, BindingResult errors) {
+        if(lineEstimate.getTechnicalSanctionDate() == null)
+            errors.rejectValue("technicalSanctionDate", "error.techdate.notnull");
+        if(lineEstimate.getTechnicalSanctionDate() != null && lineEstimate.getTechnicalSanctionDate().before(lineEstimate.getAdminSanctionDate()))
+            errors.rejectValue("technicalSanctionDate", "error.technicalsanctiondate");
+        if(lineEstimate.getTechnicalSanctionNumber() == null)
+            errors.rejectValue("technicalSanctionNumber", "error.technumber.notnull");
+        if(lineEstimate.getTechnicalSanctionNumber() != null) {
+            LineEstimate existingLineEstimate = lineEstimateService.getLineEstimateByTechnicalSanctionNumber(lineEstimate.getTechnicalSanctionNumber());
+            if(existingLineEstimate != null)
+                errors.rejectValue("technicalSanctionNumber", "error.technumber.duplicate");
         }
     }
 

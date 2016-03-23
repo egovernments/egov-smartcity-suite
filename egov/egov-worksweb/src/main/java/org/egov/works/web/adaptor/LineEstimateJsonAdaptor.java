@@ -1,16 +1,24 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
+
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.utils.WorksUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+@Component
 public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate>
 {
+    @Autowired
+    private WorksUtils worksUtils;
+    
     @Override
     public JsonElement serialize(final LineEstimate lineEstimate, final Type type, final JsonSerializationContext jsc)
     {
@@ -54,7 +62,7 @@ public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate>
             else
                 jsonObject.addProperty("status", "");
             if (lineEstimate.getState().getOwnerPosition() != null)
-                jsonObject.addProperty("owner", lineEstimate.getState().getOwnerPosition().getName());
+                jsonObject.addProperty("owner", worksUtils.getApproverName(lineEstimate.getState().getOwnerPosition().getId()));
             else
                 jsonObject.addProperty("owner", "");
             Long totalAmount = 0L;

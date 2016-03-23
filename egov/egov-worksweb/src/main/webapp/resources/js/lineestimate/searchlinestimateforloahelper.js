@@ -85,15 +85,18 @@ function callAjaxSearch() {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.estimateNumber +'"/>');
 					$('td:eq(1)',row).html(index+1);
 					if(data.adminSanctionNumber != null)
-						$('td:eq(2)',row).html('<a href="/egworks/lineestimate/update/'+ data.id +'"> '+ data.adminSanctionNumber + '</a>');
+						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.id +'\')">' + data.adminSanctionNumber + '</a>');
 					$('td:eq(7)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
-					$('td:eq(8)',row).html(parseFloat(Math.round(data.actualEstimateAmount * 100) / 100).toFixed(2));
+					if(data.actualEstimateAmount != null)
+						$('td:eq(8)',row).html(parseFloat(Math.round(data.actualEstimateAmount * 100) / 100).toFixed(2));
+					else
+						$('td:eq(8)',row).html('0.00');
 					return row;
 				},
 				aaSorting: [],				
 				columns : [ { 
 					"data" : "", "sClass" : "text-center"} ,{ 
-					"data" : "", "sClass" : "text-right"} ,{ 
+					"data" : "", "sClass" : "text-right"} , {
 					"data" : "adminSanctionNumber", "sClass" : "text-left"} ,{ 
 					"data" : "estimateNumber", "sClass" : "text-left"} ,{ 
 					"data" : "nameOfWork", "sClass" : "text-left"} ,{
@@ -104,6 +107,11 @@ function callAjaxSearch() {
 					}]				
 				});
 			}
+
+function openLineEstimate(id) {
+	window.open("/egworks/lineestimate/view/"+ id , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
+
 $(document).ready(function(){
 	var estimateNumber = new Bloodhound({
         datumTokenizer: function (datum) {
@@ -111,7 +119,7 @@ $(document).ready(function(){
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/egworks/lineestimate/lineEstimateNumbers?name=%QUERY',
+            url: '/egworks/lineestimate/lineEstimateNumbersForLoa?name=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
@@ -138,7 +146,7 @@ $(document).ready(function(){
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/egworks/lineestimate/adminSanctionNumbers?name=%QUERY',
+            url: '/egworks/lineestimate/adminSanctionNumbersForLoa?name=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {

@@ -60,12 +60,22 @@
 			<tbody>
 				<tr>
 					<td>
-						<form:input path="technicalSanctionNumber" id="technicalSanctionNumber" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="Technical Sanction Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="32" required="required" />
-						<form:errors path="technicalSanctionNumber" cssClass="add-margin error-msg" />
+						<c:if test="${mode != 'readOnly' }">
+							<form:input path="technicalSanctionNumber" id="technicalSanctionNumber" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="Technical Sanction Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="32" required="required" />
+							<form:errors path="technicalSanctionNumber" cssClass="add-margin error-msg" />
+						</c:if>
+						<c:if test="${mode == 'readOnly' }">
+							<c:out value="${lineEstimate.technicalSanctionNumber }"></c:out>
+						</c:if>
 					</td>
 					<td>
-						<form:input path="technicalSanctionDate" id="technicalSanctionDate" data-errormsg="Technical Sanction Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
-						<form:errors path="technicalSanctionDate" cssClass="add-margin error-msg" />	
+						<c:if test="${mode != 'readOnly' }">
+							<form:input path="technicalSanctionDate" id="technicalSanctionDate" data-errormsg="Technical Sanction Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
+							<form:errors path="technicalSanctionDate" cssClass="add-margin error-msg" />
+						</c:if>
+						<c:if test="${mode == 'readOnly' }">
+							<fmt:formatDate value="${lineEstimate.adminSanctionDate }" pattern="dd/MM/yyyy"/>
+						</c:if>
 					</td>
 				</tr>
 			</tbody>

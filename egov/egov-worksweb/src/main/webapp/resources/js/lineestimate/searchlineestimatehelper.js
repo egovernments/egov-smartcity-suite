@@ -51,6 +51,11 @@ function getFormData($form){
 
     return indexed_array;
 }
+
+function renderAction(id, value) {
+	if(value == 1)
+		window.open("/egworks/lineestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
  
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");		
@@ -73,6 +78,7 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
 					$('td:eq(10)',row).html(parseFloat(Math.round(data.totalAmount * 100) / 100).toFixed(2));
+					$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Line Estimate</option><option value="2">View PDF</option></select>');
 					return row;
 				},
 				aaSorting: [],				
@@ -88,7 +94,7 @@ function callAjaxSearch() {
 					"data" : "owner", "sClass" : "text-left"} ,{
 					"data" : "status", "sClass" : "text-left"} ,{
 					"data" : "totalAmount", "sClass" : "text-right"}, {
-					"data" : "", "target":-1, "sClass" : "text-left","defaultContent": '<select id="actionDropdown" class="form-control"><option value="">Select from below</option><option value="1">View Line Estimate</option><option value="2">View PDF</option></select>'
+					"data" : "", "target":-1, "sClass" : "text-left"
 					}]				
 				});
 			}
@@ -147,4 +153,9 @@ $(document).ready(function(){
 			displayKey : 'name',
 			source : adminSanctionNumber.ttAdapter()
 		});
+		
+	$('#actionDropdown').change(function() {
+		if(this.value == 1)
+			window.location.href = "";
 	});
+});

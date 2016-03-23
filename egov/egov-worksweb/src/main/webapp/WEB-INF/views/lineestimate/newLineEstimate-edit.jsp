@@ -47,15 +47,16 @@
 		<form:form name="lineEstimateForm" action="" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST" enctype="multipart/form-data">
 			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
 			<form:hidden path="" name="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
+			<input type="hidden" value="${lineEstimate.status.code }" id=lineEstimateStatus />
 			<input type="hidden" value="${mode}" id="mode"/>
 			<div class="row">
 				<div class="col-md-12">
-					<c:if test="${mode != 'view' }">
+					<c:if test="${mode != 'view' && mode != 'readOnly' }">
 						<jsp:include page="lineEstimateHeader.jsp"/>
 						<jsp:include page="lineEstimateDetails.jsp"/>
 						<jsp:include page="uploadDocuments.jsp"/>
 					</c:if>
-					<c:if test="${mode == 'view' }">
+					<c:if test="${mode == 'view' || mode == 'readOnly' }">
 						<jsp:include page="lineEstimateHeader-view.jsp"/>
 						<jsp:include page="lineEstimateDetails-view.jsp"/>
 						<c:if test="${!lineEstimate.documentDetails.isEmpty() }">
@@ -83,10 +84,12 @@
 			</div>
 		</c:if>
 		
-		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
+		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
 		</c:if>
+		<c:if test="${mode != 'readOnly' }">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+		</c:if>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>

@@ -48,7 +48,8 @@ $(document).ready(function(){
 	$('#typeofwork').trigger('blur');
 	$('#subTypeOfWork').trigger('blur');
 
-return showSlumFieldsValue();
+
+	return showSlumFieldsValue();
 });
 
 $('#councilResolutionDate').change(function(){
@@ -434,4 +435,78 @@ function showSlumFieldsValue() {
 		return false;
 	}
 	
+}
+
+function validateWorkFlowApprover(name) {
+	document.getElementById("workFlowAction").value = name;
+	var approverPosId = document.getElementById("approvalPosition");
+	var button = document.getElementById("workFlowAction").value;
+	if (button != null && button == 'Submit') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Reject') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+	}
+	if (button != null && button == 'Cancel') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+		
+		return confirm($('#confirm').val());
+	}
+	if (button != null && button == 'Forward') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Approve') {
+		$('#approvalComent').removeAttr('required');
+		
+		var lineEstimateStatus = $('#lineEstimateStatus').val();
+		if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED') {
+			var adminSanctionDate = $('#adminSanctionDate').val();
+			var technicalSanctionDate = $('#technicalSanctionDate').val();
+			
+			if(adminSanctionDate > technicalSanctionDate) {
+				bootbox.alert($('#errorTechDate').val());
+				$('#technicalSanctionDate').val("");
+				return false;
+			}
+
+			var message = $('#errorActualAmount').val();
+			var flag = false;
+
+			$("input[name$='actualEstimateAmount']")
+					.each(
+							function() {
+								var index = getRow(this).rowIndex - 1;
+								var estimateAmount = $(
+										'#estimateAmount' + index).html();
+								var actualAmount = $(
+										'#actualEstimateAmount' + index).val();
+								if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
+									var estimateNumber = $(
+											'#estimateNumber' + index).val();
+									message += estimateNumber + ", ";
+									flag = true;
+								}
+							});
+			message += $('#errorActualAmountContinued').val();
+			if (flag) {
+				bootbox.alert(message);
+				return false;
+			}
+		}
+	}
+
+	document.forms[0].submit;
+	return true;
 }

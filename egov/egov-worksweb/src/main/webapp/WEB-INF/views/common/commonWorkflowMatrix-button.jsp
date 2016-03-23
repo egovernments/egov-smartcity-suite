@@ -44,10 +44,12 @@
 	<table>
 		<tr>
 			<td>
-		<c:forEach items="${validActionList}" var="validButtons">
-				<input type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
-						</input>
-			</c:forEach>
+				<c:if test="${mode != 'readOnly' }">
+					<c:forEach items="${validActionList}" var="validButtons">
+						<input type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+							</input>
+					</c:forEach>
+				</c:if>
 				<input type="button" name="button2" id="button2" value="Close"
 				class="btn btn-default" onclick="window.close();" /></td>
 		</tr>

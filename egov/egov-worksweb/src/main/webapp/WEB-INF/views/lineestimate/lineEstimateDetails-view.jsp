@@ -51,7 +51,7 @@
 					<th><spring:message code="lbl.slNo"/></th>
 					<th><spring:message code="lbl.nameofwork"/></th>
 					<th><spring:message code="lbl.estimatedamount"/></th>
-					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
+					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 						<th><spring:message code="lbl.actualamount"/><span class="mandatory"></span></th>
 					</c:if>
 					<th><spring:message code="lbl.quantity"/></th>
@@ -73,9 +73,14 @@
 						<td class="text-right" id="estimateAmount${item.index}">
 							<c:out value="${lineEstimate.lineEstimateDetails[item.index].estimateAmount}"/>
 						</td>
-						<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
+						<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view' }">
 							<td class="text-right">
 								<form:input path="lineEstimateDetails[${item.index }].actualEstimateAmount" id="actualEstimateAmount${item.index}" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" required="required"/>
+							</td>
+						</c:if>
+						<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED') && mode == 'readOnly' }">
+							<td class="text-right">
+								<c:out value="${lineEstimate.lineEstimateDetails[item.index].actualEstimateAmount}"/>
 							</td>
 						</c:if>
 						<td class="text-right">
@@ -106,7 +111,7 @@
 				<tr>
 					<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
-					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
+					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 						<td class="text-right"> <span id="actualEstimateTotal"><c:out value="${actualEstimateTotal}"/></span> </td>
 					</c:if>
 					<td></td>
