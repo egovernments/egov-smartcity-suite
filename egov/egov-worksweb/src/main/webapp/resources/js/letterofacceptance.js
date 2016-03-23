@@ -49,21 +49,14 @@ $(document).ready(function(){
                 return $.map(data, function (ct) {
                     return {
                         name: ct.name,
-                        value: ct.id
+                        value: ct.id,
+                        code: ct.code
                     };
                 });
             }
         }
     });
-	
-	$('.number-sign li a').click(function(e){
-		
-		$('.number-sign span.sign-text').html($(this).html());
-		$('#percentageSign').val($(this).html())
-		calculateAgreementAmount();
-		
-	});
-   
+	   
 	contractorSearch.initialize();
 		var contractorSearch_typeahead = $('#contractorSearch').typeahead({ 
 			hint : true,
@@ -72,9 +65,18 @@ $(document).ready(function(){
 		}, {
 			displayKey : 'name',
 			source : contractorSearch.ttAdapter()
+		}).on('typeahead:selected', function(event, data){            
+			$("#contractorCode").val(data.code);    
+			$("#contractor").val(data.value);   
+	    });		
+
+		$('.number-sign li a').click(function(e){
+			
+			$('.number-sign span.sign-text').html($(this).html());
+			$('#percentageSign').val($(this).html())
+			calculateAgreementAmount();
+			
 		});
-		typeaheadWithEventsHandling(contractorSearch_typeahead,
-		'#contractor');
 		
 		if($('#tenderFinalizedPercentage').val() <= 0) 
 			$('#tenderFinalizedPercentage').val('');
