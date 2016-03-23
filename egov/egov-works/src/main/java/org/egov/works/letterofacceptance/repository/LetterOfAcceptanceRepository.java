@@ -49,4 +49,6 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     WorkOrder findById(final Long id);
 
     WorkOrder findByWorkOrderNumberAndEgwStatus_codeNotLike(final String workOrderNumber, final String statusCode);
+
+    WorkOrder findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);
 }

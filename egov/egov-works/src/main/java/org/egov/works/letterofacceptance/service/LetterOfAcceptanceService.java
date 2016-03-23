@@ -128,4 +128,9 @@ public class LetterOfAcceptanceService {
                 departmentId, designationId, new Date());
     }
 
+    public WorkOrder getWorkOrderByEstimateNumber(final String estimateNumber) {
+        return letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeNotLike(estimateNumber,
+                WorksConstants.CANCELLED_STATUS);
+    }
+
 }

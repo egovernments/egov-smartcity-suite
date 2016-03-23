@@ -49,6 +49,7 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,17 +94,29 @@ public class CreateLetterOfAcceptanceController {
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
     public String create(@ModelAttribute("workOrder") final WorkOrder workOrder,
-            final Model model, final BindingResult resultBinder) {
+            final Model model, final BindingResult resultBinder, final HttpServletRequest request) {
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
+        final WorkOrder existingWorkOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(workOrder.getEstimateNumber());
 
-        // TODO:Fixme - workOrder.getEstimateNumber() - Replace with WIN from line estimate
-        workOrder.setWorkOrderNumber(
-                letterOfAcceptanceNumberGenerator.generateLetterOfAcceptanceNumber(workOrder.getEstimateNumber()));
+        if (existingWorkOrder != null)
+            resultBinder.reject("error.loa.exists.for.estimate",
+                    new String[] { existingWorkOrder.getWorkOrderNumber(), workOrder.getEstimateNumber() },
+                    "error.loa.exists.for.estimate");
+
+        validateInput(workOrder, resultBinder);
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model, lineEstimateDetails);
+            model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+            model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
+            model.addAttribute("contractorSearch", request.getParameter("contractorSearch"));
+            model.addAttribute("contractorCode", request.getParameter("contractorCode"));
+            model.addAttribute("engineerIncharge", request.getParameter("engineerIncharge"));
             return "createLetterOfAcceptance-form";
         } else {
+            // TODO:Fixme - workOrder.getEstimateNumber() - Replace with WIN from line estimate
+            workOrder.setWorkOrderNumber(
+                    letterOfAcceptanceNumberGenerator.generateLetterOfAcceptanceNumber(workOrder.getEstimateNumber()));
             final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder);
             return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber();
         }
@@ -116,4 +129,21 @@ public class CreateLetterOfAcceptanceController {
         return "letterofacceptance-success";
     }
 
+    private void validateInput(final WorkOrder workOrder, final BindingResult resultBinder) {
+        if (StringUtils.isBlank(workOrder.getFileNumber()))
+            resultBinder.rejectValue("fileNumber", "error.fileno.required");
+        if (workOrder.getFileDate() == null)
+            resultBinder.rejectValue("fileDate", "error.filedate.required");
+        if (workOrder.getWorkOrderAmount() <= 0)
+            resultBinder.rejectValue("workOrderAmount", "error.workorderamount.required");
+        if (workOrder.getContractor() == null || workOrder.getContractor().getId() == null)
+            resultBinder.rejectValue("contractor", "error.contractor.required");
+        if (workOrder.getContractPeriod() == null || workOrder.getContractPeriod() <= 0)
+            resultBinder.rejectValue("contractPeriod", "error.contractorperiod.required");
+        if (workOrder.getDefectLiabilityPeriod() <= 0)
+            resultBinder.rejectValue("defectLiabilityPeriod", "error.defectliabilityperiod.required");
+        if (workOrder.getEngineerIncharge() == null || workOrder.getEngineerIncharge().getId() == null)
+            resultBinder.rejectValue("engineerIncharge", "error.engineerincharge.required");
+
+    }
 }

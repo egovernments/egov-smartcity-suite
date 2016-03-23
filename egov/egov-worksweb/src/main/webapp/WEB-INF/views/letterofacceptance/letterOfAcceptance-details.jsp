@@ -94,15 +94,15 @@
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofagency" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 0;">
 		<!-- <div class="input-group"> -->
-			<input id="contractorSearch" name="contractorSearch" class="form-control patternvalidation" autocomplete="off" data-pattern="alphanumericspecialcharacters" maxlength="50" required="required" type="text" placeholder="Type first 3 letters of Contractor Name/Code" > 
+			<input id="contractorSearch" name="contractorSearch" value="${contractorSearch}" class="form-control patternvalidation" autocomplete="off" data-pattern="alphanumericspecialcharacters" maxlength="50" required="required" type="text" placeholder="Type first 3 letters of Contractor Name/Code" > 
 			<!-- <span class="input-group-addon"> <i class="fa fa-search specific"></i></span> -->
 			<form:hidden path="contractor.id" name="contractor" id="contractor" />
 		<!-- </div>	 -->	
-		<form:errors path="contractor.id" cssClass="add-margin error-msg" />  
+		<form:errors path="contractor" cssClass="add-margin error-msg" />  
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor.code" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="contractorCode" name="contractorCode" disabled>
+		<input type="text" class="form-control" id="contractorCode" name="contractorCode" value="${contractorCode}" disabled>
 	</div>
 </div>
 

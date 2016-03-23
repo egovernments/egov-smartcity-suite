@@ -51,6 +51,11 @@
 						<div class="panel-heading">
 							<div class="panel-title"><spring:message code="title.loa.create" /></div> 
 						</div>
+						<div>
+							<spring:hasBindErrors name="workOrder">
+				        		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+				        	</spring:hasBindErrors>
+				        </div>
 						<div class="panel-body">
 							<jsp:include page="estimateDetails-view.jsp"/>
 							<jsp:include page="letterOfAcceptance-details.jsp"/>
