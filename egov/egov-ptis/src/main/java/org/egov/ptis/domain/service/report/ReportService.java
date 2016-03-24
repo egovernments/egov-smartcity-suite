@@ -758,7 +758,7 @@ public class ReportService {
             if(bcResult.getTarget_total_demand()!=0.0){
                 percentage=(bcResult.getCummulative_total_Collection()*100)/bcResult.getTarget_total_demand();
                 bcResult.setCummulative_total_CollectionPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage));
-                percentage=((bcResult.getCummulative_total_Collection()+bcResult.getCummulative_total_CollectionInterest())*100)/(bcResult.getTarget_total_demand()+bcResult.getTarget_total_demandInterest());
+                percentage=((bcResult.getCummulative_total_Collection()+bcResult.getCummulative_total_CollectionInterest())*100)/(bcResult.getTarget_total_demand());
                 bcResult.setCummulative_total_CollectionInterestPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage)); 
             } else {
                 bcResult.setCummulative_total_CollectionPercentage(BigDecimal.ZERO);
