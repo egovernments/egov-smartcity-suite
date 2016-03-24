@@ -2130,8 +2130,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
                 .append(" (select bg1.id as id,bg1.accounttype as accounttype ,c1.glcode as mincode, c2.glcode as maxcode,c3.glcode as majorcode "
-                        +"from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-                        +"c2.id=bg1.maxcode left outer join chartofaccounts  c3 on c3.id=bg1.majorcode )  bg ");
+                        + "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
+                        + "c2.id=bg1.maxcode left outer join chartofaccounts  c3 on c3.id=bg1.majorcode )  bg ");
         final String voucherstatusExclude = list.get(0).getValue();
         StringBuffer query = new StringBuffer();
         query = query
@@ -2443,7 +2443,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 BudgetDetail temp = getBudgetDetail(budgetUpload.getFund().getId(), budgetUpload.getFunction().getId(),
                         budgetUpload
                                 .getDept()
-                                .getId(), budgetUpload.getCoa().getId(), fyear);
+                                .getId(), budgetUpload.getCoa().getId(), fyear, budgetType);
                 if (temp != null) {
                     if (temp.getStatus().getCode().equalsIgnoreCase("Created")) {
                         BigDecimal amount;
@@ -2856,10 +2856,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId, final Long glCodeId,
-            final CFinancialYear fYear) {
+            final CFinancialYear fYear, String budgetType) {
         return find(
-                "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.maxCode.id = ? and bd.budget.financialYear.id = ?",
-                fundId, functionId, deptId, glCodeId, fYear.getId());
+                "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.maxCode.id = ? and bd.budget.financialYear.id = ? and bd.budget.isbere = ?",
+                fundId, functionId, deptId, glCodeId, fYear.getId(), budgetType);
     }
 
     public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId, final Long budgetGroupId,
