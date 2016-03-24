@@ -323,7 +323,8 @@ public class ConnectionDemandService {
                 if (connection.getConsumerCode() != null) {
                     final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                             .findByConsumerCodeAndConnectionStatus(connection.getConsumerCode(), ConnectionStatus.ACTIVE);
-
+                      if (waterConnectionDetails!=null)
+                      {
                     waterTaxDue = getDueInfo(waterConnectionDetails);
                     waterTaxDue.setPropertyID(propertyIdentifier);
                     consumerCodes.add(connection.getConsumerCode());
@@ -332,6 +333,7 @@ public class ConnectionDemandService {
                     currDmd = currDmd.add(waterTaxDue.getCurrentDemand());
                     currColl = currColl.add(waterTaxDue.getCurrentCollection());
                     totalDue = totalDue.add(waterTaxDue.getTotalTaxDue());
+                      }
                 }
             waterTaxDue.setArrearDemand(arrDmd);
             waterTaxDue.setArrearCollection(arrColl);
