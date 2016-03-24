@@ -65,7 +65,7 @@
 
 	}
 	jQuery(document).ready(function() {
-		var fileformats = [ 'xls', 'xlsx' ];
+		var fileformats = [ 'xls' ];
 
 		jQuery('#budgetInXls').on('change.bs.fileinput', function(e) {
 			/*validation for file upload*/
@@ -163,6 +163,10 @@
 				<div class="buttonbottom" id="buttondiv">
 					<table>
 						<tr>
+							<td><span class="mandatory1">* Please upload only xls
+									files.</span></td>
+							<td width="5%"> </td>
+							<td width="5%"> </td>
 							<td><s:submit type="submit" cssClass="buttonsubmit"
 									value="Upload Budget" name="upload" method="upload"
 									onclick="return validate();" /></td>
