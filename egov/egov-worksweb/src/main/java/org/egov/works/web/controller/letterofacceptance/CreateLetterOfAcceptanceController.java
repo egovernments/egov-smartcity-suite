@@ -39,6 +39,7 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,6 +59,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -94,7 +96,8 @@ public class CreateLetterOfAcceptanceController {
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
     public String create(@ModelAttribute("workOrder") final WorkOrder workOrder,
-            final Model model, final BindingResult resultBinder, final HttpServletRequest request) {
+            final Model model, final BindingResult resultBinder, final HttpServletRequest request,
+            @RequestParam("file") final MultipartFile[] files) throws IOException {
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
         final WorkOrder existingWorkOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(workOrder.getEstimateNumber());
 
@@ -117,7 +120,7 @@ public class CreateLetterOfAcceptanceController {
             // TODO:Fixme - workOrder.getEstimateNumber() - Replace with WIN from line estimate
             workOrder.setWorkOrderNumber(
                     letterOfAcceptanceNumberGenerator.generateLetterOfAcceptanceNumber(workOrder.getEstimateNumber()));
-            final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder);
+            final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder, files);
             return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber();
         }
     }
@@ -146,4 +149,5 @@ public class CreateLetterOfAcceptanceController {
             resultBinder.rejectValue("engineerIncharge", "error.engineerincharge.required");
 
     }
+
 }

@@ -61,6 +61,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.utils.DateUtils;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.revisionEstimate.RevisionType;
@@ -149,6 +150,8 @@ public class WorkOrder extends StateAware implements Auditable {
     private List<String> workOrderActions = new ArrayList<String>();
     private Set<WorkOrder> revisionWOs = new HashSet<WorkOrder>();
     private Set<MBHeader> mbHeaders = new HashSet<MBHeader>();
+
+    private transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @Override
     public Long getId() {
@@ -480,6 +483,14 @@ public class WorkOrder extends StateAware implements Auditable {
 
     public void setPercentageSign(final String percentageSign) {
         this.percentageSign = percentageSign;
+    }
+
+    public List<DocumentDetails> getDocumentDetails() {
+        return documentDetails;
+    }
+
+    public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
+        this.documentDetails = documentDetails;
     }
 
 }

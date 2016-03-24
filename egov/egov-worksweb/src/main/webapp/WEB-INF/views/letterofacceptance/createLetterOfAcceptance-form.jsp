@@ -59,6 +59,7 @@
 						<div class="panel-body">
 							<jsp:include page="estimateDetails-view.jsp"/>
 							<jsp:include page="letterOfAcceptance-details.jsp"/>
+							<jsp:include page="uploadDocuments.jsp"/>
 						</div>
 					</div>
 				</div>

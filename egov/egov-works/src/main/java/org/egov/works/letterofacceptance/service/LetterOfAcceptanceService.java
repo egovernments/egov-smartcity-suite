@@ -39,6 +39,8 @@
  */
 package org.egov.works.letterofacceptance.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -52,13 +54,16 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.pims.commons.Designation;
 import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -77,8 +82,12 @@ public class LetterOfAcceptanceService {
 
     @Autowired
     private AssignmentService assignmentService;
+
     @Autowired
     private DesignationService designationService;
+
+    @Autowired
+    private WorksUtils worksUtils;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -94,13 +103,21 @@ public class LetterOfAcceptanceService {
     }
 
     @Transactional
-    public WorkOrder create(final WorkOrder workOrder) {
+    public WorkOrder create(final WorkOrder workOrder, final MultipartFile[] files) throws IOException {
 
         workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                 WorksConstants.APPROVED));
+
         if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
             workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
-        return letterOfAcceptanceRepository.save(workOrder);
+        final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedworkOrder,
+                WorksConstants.WORKORDER);
+        if (!documentDetails.isEmpty()) {
+            savedworkOrder.setDocumentDetails(documentDetails);
+            worksUtils.persistDocuments(documentDetails);
+        }
+        return savedworkOrder;
     }
 
     public WorkOrder getWorkOrderByWorkOrderNumber(final String workOrderNumber) {
@@ -131,6 +148,14 @@ public class LetterOfAcceptanceService {
     public WorkOrder getWorkOrderByEstimateNumber(final String estimateNumber) {
         return letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeNotLike(estimateNumber,
                 WorksConstants.CANCELLED_STATUS);
+    }
+
+    public WorkOrder getLetterOfAcceptanceDocumentAttachments(final WorkOrder workOrder) {
+        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(workOrder.getId(),
+                WorksConstants.WORKORDER);
+        workOrder.setDocumentDetails(documentDetailsList);
+        return workOrder;
     }
 
 }
