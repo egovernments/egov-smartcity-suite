@@ -51,6 +51,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.entity.WorkCategory;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -68,7 +69,7 @@ public class WorkOrderIdentificationNumberGenerator {
             final String finYearRange[] = cFinancialYear.getFinYearRange().split("-");
             final String sequenceName = "PROJECTCODE_" + finYearRange[0] + "_" + finYearRange[1];
             final String typeOfWork;
-            if (lineEstimateDetails.getLineEstimate().getTypeOfSlum() != null)
+            if (lineEstimateDetails.getLineEstimate().getWorkCategory().toString().equals(WorkCategory.SLUM_WORK.toString()))
                 typeOfWork = "SL";
             else
                 typeOfWork = "NS";
