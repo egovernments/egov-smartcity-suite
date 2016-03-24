@@ -60,6 +60,7 @@ import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.AgencyService;
 import org.egov.adtax.service.SubCategoryService;
+import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.adtax.web.controller.agency.AgencyController;
 import org.egov.demand.model.EgDemandDetails;
@@ -147,6 +148,19 @@ public class DeactivateAdvertisementController extends GenericController {
     @RequestMapping(value = "/result/{id}", method = GET)
     public String viewHoardingByApplicationNumber(@PathVariable final Long id, final Model model) {
         AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findById(id);
+        
+        if (advertisementPermitDetail!=null && advertisementPermitDetail.getAdvertisement() != null && advertisementPermitDetail.getAdvertisement().getStatus()!=null && advertisementPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.WORKFLOW_IN_PROGRESS)) {
+            model.addAttribute("message", "msg.deactivate.alreadyInWorkFlow");
+               return "deactive-error";
+          
+       }
+       //If curernt status of permit is approved, then payment is pending for the selected record.
+       if(advertisementPermitDetail!=null && advertisementPermitDetail.getAdvertisement() != null && advertisementPermitDetail.getAdvertisement().getStatus()!=null && advertisementPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.ACTIVE)  &&
+               advertisementPermitDetail.getStatus()!=null && advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED))
+       {
+           model.addAttribute("message", "msg.deactivate.paymentPending");
+           return "deactive-error";
+       }
         Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
         demandDetails = advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails();
         BigDecimal totalAmount = BigDecimal.ZERO;
