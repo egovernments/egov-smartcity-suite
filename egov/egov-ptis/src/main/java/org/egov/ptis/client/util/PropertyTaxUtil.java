@@ -2078,6 +2078,8 @@ public class PropertyTaxUtil {
         if(courtCase){
             courtCaseTable =",pt_court_cases_tbl pcc ";
             courtCaseQry = " and pcc.i_asmtno = cast(pi.upicno AS numeric)";
+        } else{
+            courtCaseQry = " and not exists (select 1 from pt_court_cases_tbl pcc where CAST(pi.upicno AS NUMERIC) = pcc.i_asmtno )";
         }
         
         if (boundaryId != -1 && boundaryId != null)
