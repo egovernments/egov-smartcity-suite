@@ -99,9 +99,9 @@
 								<form:option value="ALL">
 									<spring:message code="lbl.default.all" />
 								</form:option>
-								<form:option value="PRIVATE">
+								<%-- <form:option value="PRIVATE">
 									PRIVATE
-								</form:option>
+								</form:option> --%>
 								<form:option value="PRIVATE_EXCLUDE_COURTCASE">
 									PRIVATE (Excluding Court Case)
 								</form:option>
