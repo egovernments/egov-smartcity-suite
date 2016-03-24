@@ -75,7 +75,7 @@
 <body>
 	<div id="container">
 		<iframe id="report" name="report"
-			src='/EGF/budget/budgetReport!ajaxGenerateDepartmentWiseHtml.action?model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.type=<s:property value="model.type"/>'></iframe>
+			src='/EGF/budget/budgetReport-ajaxGenerateDepartmentWiseHtml.action?model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.type=<s:property value="model.type"/>'></iframe>
 	</div>
 
 	<s:form name="budgetDetailReportForm" action="budgetReport"
@@ -86,14 +86,23 @@
 			value='<s:property value="model.department.id"/>' />
 		<input type="hidden" name="model.type"
 			value='<s:property value="model.type"/>' />
-		<div id="buttons">
+		<div id="buttons" class="buttonbottom">
 			<input type="button" id="btnPrint"
 				onclick="javascript:parent.report.print();" value="PRINT"
 				class="buttonsubmit" />
-			<s:submit value="SAVE AS PDF" method="generateDepartmentWisePdf"
+			<s:submit value="SAVE AS PDF"
+				onclick="submitForm('generateDepartmentWisePdf')"
 				cssClass="buttonsubmit" />
-			<s:submit value="SAVE AS EXCEL" method="generateDepartmentWiseXls"
+			<s:submit value="SAVE AS EXCEL"
+				onclick="submitForm('generateDepartmentWiseXls')"
 				cssClass="buttonsubmit" />
 		</div>
 	</s:form>
+	<script>
+		function submitForm(method) {
+			document.budgetDetailReportForm.action = "/EGF/budget/budgetReport-"
+					+ method + ".action";
+			document.budgetDetailReportForm.submit();
+		}
+	</script>
 </body>

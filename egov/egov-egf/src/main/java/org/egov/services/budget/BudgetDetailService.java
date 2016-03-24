@@ -2273,9 +2273,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         query = query
                 .append(
                 "select bd.id as bud,SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)   as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
-                        +"egf_budgetgroup bg,voucherheader vh, vouchermis vmis where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
-                        +"(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        +"bmis.voucherheaderid =vh.id and vh.status!=4 and br.billdate>=to_date('"
+                        + "egf_budgetgroup bg,voucherheader vh, vouchermis vmis where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
+                        + "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
+                        + "bmis.voucherheaderid =vh.id and vh.status!=4 and br.billdate>=to_date('"
                         + fromDate
                         + "','dd/MM/yyyy') and br.billdate <= to_date("
                         + toVoucherDate
@@ -2295,33 +2295,33 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + ",'dd/MM/yyyy') "
                         + miscQuery
                         + " and ((bdetail.glcodeid between bg.mincode and bg.maxcode ) or bdetail.glcodeid=bg.majorcode  ) group by bd.id"
-                        +" UNION "
-                        +" select bd.id as bud,SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)   as amt "
-                        +" from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregister br,egf_budgetgroup bg, eg_billregistermis bmis left outer join voucherheader vh on vh.id=bmis.voucherheaderid "
-                        +" where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
-                        +"(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        +"(bmis.voucherheaderid is NULL or vh.status=4) and  br.billdate>=to_date('"
+                        + " UNION "
+                        + " select bd.id as bud,SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)   as amt "
+                        + " from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregister br,egf_budgetgroup bg, eg_billregistermis bmis left outer join voucherheader vh on vh.id=bmis.voucherheaderid "
+                        + " where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
+                        + "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
+                        + "(bmis.voucherheaderid is NULL or vh.status=4) and  br.billdate>=to_date('"
                         + fromDate
                         + "','dd/MM/yyyy') and br.billdate <= to_date("
                         + toVoucherDate
                         + ",'dd/MM/yyyy') "
                         + miscQuery
                         + " and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
-                        +" and ((bdetail.glcodeid between bg.mincode  and bg.maxcode ) or bdetail.glcodeid=bg.majorcode ) group by bd.id"
-                        +" UNION "
-                        +"select bd.id as bud,SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end) as amt"
-                        +" from egf_budgetdetail bd,eg_billdetails bdetail, egf_budgetgroup bg, eg_billregister br,eg_billregistermis bmis  left outer join voucherheader vh on vh.id=bmis.voucherheaderid "
-                        +" where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
-                        +" (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
-                        +" and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id as idd from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        +" (bmis.voucherheaderid is NULL or vh.status=4)  and  br.billdate>= to_date('"
+                        + " and ((bdetail.glcodeid between bg.mincode  and bg.maxcode ) or bdetail.glcodeid=bg.majorcode ) group by bd.id"
+                        + " UNION "
+                        + "select bd.id as bud,SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end) as amt"
+                        + " from egf_budgetdetail bd,eg_billdetails bdetail, egf_budgetgroup bg, eg_billregister br,eg_billregistermis bmis  left outer join voucherheader vh on vh.id=bmis.voucherheaderid "
+                        + " where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
+                        + " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
+                        + " and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id as idd from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
+                        + " (bmis.voucherheaderid is NULL or vh.status=4)  and  br.billdate>= to_date('"
                         + fromDate
                         + "','dd/MM/yyyy') and br.billdate <= to_date("
                         + toVoucherDate
                         + ",'dd/MM/yyyy') "
                         + miscQuery
                         + " and ((bdetail.glcodeid between bg.mincode and bg.maxcode ) or bdetail.glcodeid=bg.majorcode  ) group by bd.id"
-                        );
+                );
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Main Query :" + query);
@@ -2455,7 +2455,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 BudgetDetail temp = getBudgetDetail(budgetUpload.getFund().getId(), budgetUpload.getFunction().getId(),
                         budgetUpload.getDept()
 
-                                .getId(), budgetUpload.getCoa().getId(), fyear,budgetType);
+                                .getId(), budgetUpload.getCoa().getId(), fyear, budgetType);
 
                 if (temp != null) {
                     if (temp.getStatus().getCode().equalsIgnoreCase("Created")) {
@@ -2895,4 +2895,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .setLong("createdStatus", createdStatus.getId()).executeUpdate();
     }
 
+    public List<BudgetDetail> sortByDepartmentName(final List<BudgetDetail> budgetDetails) {
+        Collections.sort(budgetDetails, (o1, o2) -> o1.getExecutingDepartment().getName().toUpperCase()
+                .compareTo(o2.getExecutingDepartment().getName().toUpperCase()));
+        return budgetDetails;
+    }
 }

@@ -75,7 +75,7 @@
 <body>
 	<div id="container">
 		<iframe id="report" name="report"
-			src='/EGF/budget/budgetReport!ajaxGenerateFunctionWiseHtml.action?model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.function.id=<s:property value="model.function.id"/>&model.type=<s:property value="model.type"/>&onSaveOrForward=<s:property value="onSaveOrForward"/>'></iframe>
+			src='/EGF/budget/budgetReport-ajaxGenerateFunctionWiseHtml.action?model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.function.id=<s:property value="model.function.id"/>&model.type=<s:property value="model.type"/>&onSaveOrForward=<s:property value="onSaveOrForward"/>'></iframe>
 	</div>
 
 	<s:form name="budgetDetailReportForm" action="budgetReport"
@@ -90,14 +90,21 @@
 			value='<s:property value="model.type"/>' />
 		<input type="hidden" name="onSaveOrForward"
 			value='<s:property value="onSaveOrForward"/>' />
-		<div id="buttons">
+		<div id="buttons" class="buttonbottom">
 			<input type="button" id="btnPrint"
 				onclick="javascript:parent.report.print();" value="PRINT"
 				class="button" />
 			<s:submit id="printPDF" value="SAVE AS PDF"
-				method="generateFunctionWisePdf" cssClass="buttonsubmit" />
+				onclick="submitForm('generateFunctionWisePdf')" cssClass="buttonsubmit" />
 			<s:submit id="printXLS" value="SAVE AS EXCEL"
-				method="generateFunctionWiseXls" cssClass="buttonsubmit" />
+				onclick="submitForm('generateFunctionWiseXls')" cssClass="buttonsubmit" />
 		</div>
 	</s:form>
+	<script>
+		function submitForm(method) {
+			document.budgetDetailReportForm.action = "/EGF/budget/budgetReport-"
+					+ method + ".action";
+			document.budgetDetailReportForm.submit();
+		}
+	</script>
 </body>

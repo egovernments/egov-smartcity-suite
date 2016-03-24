@@ -45,7 +45,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -77,6 +76,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
@@ -89,39 +89,38 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results(value = {
         @Result(name = "department-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM,
                 Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport.pdf" }),
-                @Result(name = "department-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                        Constants.INPUT_STREAM,
-                        Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport.xls" }),
-                        @Result(name = "department-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                                Constants.INPUT_STREAM,
-                                Constants.CONTENT_TYPE, "text/html" }),
-                                @Result(name = "functionwise-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                                        Constants.INPUT_STREAM,
-                                        Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
-                                "no-cache;filename=BudgetReport-functionwise.pdf" }),
-                                @Result(name = "functionwise-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                                        Constants.INPUT_STREAM,
-                                        Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
-                                "no-cache;filename=BudgetReport-functionwise.xls" }),
-                                @Result(name = "functionwise-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                                        Constants.INPUT_STREAM,
-                                        Constants.CONTENT_TYPE, "text/html" }),
-                                        @Result(name = "functionwise-dept-HTML", type = "stream", location = Constants.INPUT_STREAM, params = {
-                                                Constants.INPUT_NAME, Constants.INPUT_STREAM,
-                                                Constants.CONTENT_TYPE, "text/html" }),
-                                                @Result(name = "printFunctionwise", location = "budgetReport-printFunctionwise.jsp"),
-                                                @Result(name = "print", location = "budgetReport-print.jsp"),
-                                                @Result(name = "functionwise", location = "budgetReport-functionwise.jsp"),
-                                                @Result(name = "atGlance", location = "budgetReport-atGlance.jsp"),
-                                                @Result(name = "dept", location = "budgetReport-dept.jsp"),
+        @Result(name = "department-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                Constants.INPUT_STREAM,
+                Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport.xls" }),
+        @Result(name = "department-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                Constants.INPUT_STREAM,
+                Constants.CONTENT_TYPE, "text/html" }),
+        @Result(name = "functionwise-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                Constants.INPUT_STREAM,
+                Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
+                "no-cache;filename=BudgetReport-functionwise.pdf" }),
+        @Result(name = "functionwise-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                Constants.INPUT_STREAM,
+                Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
+                "no-cache;filename=BudgetReport-functionwise.xls" }),
+        @Result(name = "functionwise-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                Constants.INPUT_STREAM,
+                Constants.CONTENT_TYPE, "text/html" }),
+        @Result(name = "functionwise-dept-HTML", type = "stream", location = Constants.INPUT_STREAM, params = {
+                Constants.INPUT_NAME, Constants.INPUT_STREAM,
+                Constants.CONTENT_TYPE, "text/html" }),
+        @Result(name = "printFunctionwise", location = "budgetReport-printFunctionwise.jsp"),
+        @Result(name = "print", location = "budgetReport-print.jsp"),
+        @Result(name = "functionwise", location = "budgetReport-functionwise.jsp"),
+        @Result(name = "atGlance", location = "budgetReport-atGlance.jsp"),
+        @Result(name = "dept", location = "budgetReport-dept.jsp"),
 })
 public class BudgetReportAction extends BaseFormAction {
     private static final String DEPTWISEPATH = "/org/egov/web/actions/budget/departmentWiseBudgetReport.jasper";
@@ -129,19 +128,23 @@ public class BudgetReportAction extends BaseFormAction {
     private static final String WORKINGCOPYFORFINALAPPROVER = "/org/egov/web/actions/budget/budgetReportWorkingCopyForFinalApprover.jasper";
     private static final String WORKINGCOPYWITHALLMOUNTS = "/org/egov/web/actions/budget/budgetReportWorkingCopy.jasper";
     private static final String WORKINGCOPYWITHONLYPROPOSALS = "/org/egov/web/actions/budget/budgetReportWorkingCopyWithOnlyProposals.jasper";
-    ReportHelper reportHelper;
+    private ReportHelper reportHelper;
     private static final long serialVersionUID = 1L;
-    InputStream inputStream;
-    BudgetReport budgetReport = new BudgetReport();
+    private InputStream inputStream;
+    private BudgetReport budgetReport = new BudgetReport();
+    @Autowired
     private EisCommonService eisCommonService;
-    List budgetReportList = new ArrayList<BudgetReportView>();
+    private List budgetReportList = new ArrayList<BudgetReportView>();
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
-    int majorCodeLength = 0;
-    FinancialYearDAO financialYearDAO;
-    BudgetService budgetService;
+    private int majorCodeLength = 0;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
+    @Autowired
+    @Qualifier("budgetService")
+    private BudgetService budgetService;
     private static final String EMPTYSTRING = "";
     private static final String TOTALROW = "totalrow";
     private static final String TOTALSTRING = "TOTAL";
@@ -150,7 +153,9 @@ public class BudgetReportAction extends BaseFormAction {
     private final Map<Object, BigDecimal> reAppropriationMap = new HashMap<Object, BigDecimal>();
     private final List<BudgetReportView> reportStoreList = new ArrayList<BudgetReportView>();
     private static Logger LOGGER = Logger.getLogger(BudgetReportAction.class);
-    BudgetDetailService budgetDetailService;
+    @Autowired
+    @Qualifier("budgetDetailService")
+    private BudgetDetailService budgetDetailService;
     private boolean onSaveOrForward = false;
     protected boolean canViewApprovedAmount = true;// shows both proposed and recommended like fmus
     protected boolean finalApprover = false;// shows only the recommended value like commissioner
@@ -167,7 +172,7 @@ public class BudgetReportAction extends BaseFormAction {
     private String workFlowstateCondn = "";
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     public boolean isDepartmentBudget() {
         return departmentBudget;
     }
@@ -242,7 +247,7 @@ public class BudgetReportAction extends BaseFormAction {
         if (topBudget != null && topBudget.getId() != null)
             topBudget = budgetService.find("from Budget where id=?", topBudget.getId());
         if (departmentBudget)
-            workFlowstateCondn = " and (bd.state.value='END' or bd.state.owner.id=" + getPosition().getId() + ")";
+            workFlowstateCondn = " and (bd.status.code='Approved')";
 
         final Map<String, Object> paramMap = getParamMap();
         inputStream = reportHelper.exportHtml(inputStream, path, paramMap, getDataForFunctionwise(), "pt");
@@ -322,19 +327,19 @@ public class BudgetReportAction extends BaseFormAction {
                                     + " and bd.budget.isbere='RE'   order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
             if (budgetDetailList.isEmpty())
                 budgetDetailList = getPersistenceService()
-                .findAllBy(
-                        " from BudgetDetail bd where "
-                                + sql
-                                + " and bd.budget.isbere='BE'   order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
+                        .findAllBy(
+                                " from BudgetDetail bd where "
+                                        + sql
+                                        + " and bd.budget.isbere='BE'   order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
         }
         else {
             budgetDetailList = getPersistenceService()
                     .findAllBy(
                             " from BudgetDetail bd where "
                                     + sql
-                                    + " and bd.budget.isbere='RE' and bd.approvedAmount is not null  and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
+                                    + " and bd.budget.isbere='RE' and bd.approvedAmount is not null  and bd.budget.status.code='"
                                     + finalStatus
-                                    + "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
+                                    + "'  order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
             isBERE = "RE";
             if (budgetDetailList.isEmpty())
             {
@@ -342,9 +347,9 @@ public class BudgetReportAction extends BaseFormAction {
                         .findAllBy(
                                 " from BudgetDetail bd where "
                                         + sql
-                                        + " and bd.budget.isbere='BE' and  bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
+                                        + " and bd.budget.isbere='BE' and  bd.budget.status.code ='"
                                         + finalStatus
-                                        + "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
+                                        + "'  order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
                 isBERE = "BE";
             }
         }
@@ -370,12 +375,12 @@ public class BudgetReportAction extends BaseFormAction {
         sql = getSqlForFinYearBE(financialYearForBE.getId());
 
         budgetDetailListForBE
-        .addAll(getPersistenceService()
-                .findAllBy(
-                        " from BudgetDetail bd where "
-                                + sql
-                                + workFlowstateCondn
-                                + " and bd.budget.isbere='BE'   order by bd.executingDepartment,bd.function,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode"));
+                .addAll(getPersistenceService()
+                        .findAllBy(
+                                " from BudgetDetail bd where "
+                                        + sql
+                                        + workFlowstateCondn
+                                        + " and bd.budget.isbere='BE'   order by bd.executingDepartment,bd.function,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode"));
     }
 
     @SuppressWarnings("unchecked")
@@ -395,27 +400,27 @@ public class BudgetReportAction extends BaseFormAction {
                                     + "  order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
             if (budgetDetailList.isEmpty())
                 budgetDetailList = getPersistenceService()
-                .findAllBy(
-                        " from BudgetDetail bd where "
-                                + sql
-                                + " and bd.budget.isbere='BE'  order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
+                        .findAllBy(
+                                " from BudgetDetail bd where "
+                                        + sql
+                                        + " and bd.budget.isbere='BE'  order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
         }
         else {
             budgetDetailList = getPersistenceService()
                     .findAllBy(
                             " from BudgetDetail bd where "
                                     + sql
-                                    + " and bd.budget.isbere='RE' and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
+                                    + " and bd.budget.isbere='RE' and bd.budget.status.code='"
                                     + finalStatus
-                                    + "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
+                                    + "' order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
             if (budgetDetailList.isEmpty())
                 budgetDetailList = getPersistenceService()
-                .findAllBy(
-                        " from BudgetDetail bd where "
-                                + sql
-                                + " and bd.budget.isbere='BE'  and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
-                                + finalStatus
-                                + "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
+                        .findAllBy(
+                                " from BudgetDetail bd where "
+                                        + sql
+                                        + " and bd.budget.isbere='BE'  and bd.budget.status.code='"
+                                        + finalStatus
+                                        + "'  order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
 
         }
         return budgetDetailList;
@@ -432,20 +437,20 @@ public class BudgetReportAction extends BaseFormAction {
 
         sql = getSqlForFinYear(financialYearForRE.getId());
         budgetDetailListForRE
-        .addAll(getPersistenceService()
-                .findAllBy(
-                        " from BudgetDetail bd where "
-                                + sql
-                                + workFlowstateCondn
-                                + "  order by bd.executingDepartment,bd.function,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode"));
+                .addAll(getPersistenceService()
+                        .findAllBy(
+                                " from BudgetDetail bd where "
+                                        + sql
+                                        + workFlowstateCondn
+                                        + "  order by bd.executingDepartment,bd.function,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode"));
         sql = getSqlForFinYearBE(financialYearForBE.getId());
         budgetDetailListForBE
-        .addAll(getPersistenceService()
-                .findAllBy(
-                        " from BudgetDetail bd where "
-                                + sql
-                                + workFlowstateCondn
-                                + " and bd.budget.isbere='BE'  order by bd.executingDepartment,bd.function,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode"));
+                .addAll(getPersistenceService()
+                        .findAllBy(
+                                " from BudgetDetail bd where "
+                                        + sql
+                                        + workFlowstateCondn
+                                        + " and bd.budget.isbere='BE'  order by bd.executingDepartment,bd.function,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode"));
 
     }
 
@@ -492,7 +497,7 @@ public class BudgetReportAction extends BaseFormAction {
             }
             tempMajorCode = glcode.substring(0, majorCodeLength);
 
-            if (!detail.getExecutingDepartment().getId().equals(deptId)) // for dept heading
+            if (detail.getExecutingDepartment().getId().compareTo(deptId.longValue()) != 0) // for dept heading
             {
                 if (totalAmt.compareTo(BigDecimal.ZERO) != 0 && !isFirst)
                 {
@@ -520,12 +525,12 @@ public class BudgetReportAction extends BaseFormAction {
                 }
                 budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, "FUNCTIONWISE "
                         + BudgetReport.getValueFor(glType).toUpperCase() + " BUDGET SUMMARY", refNoMap.get(BudgetReport
-                                .getValueFor(glType)), null, null, null, "typerow"));
+                        .getValueFor(glType)), null, null, null, "typerow"));
 
                 functionId = null;
                 majorCode = "";
             }
-            if (!detail.getFunction().getId().equals(functionId))	// for function heading
+            if (detail.getFunction().getId().compareTo(functionId!=null?functionId:0l)!=0)	// for function heading
             {
                 if (totalAmt.compareTo(BigDecimal.ZERO) != 0 && !isFirst)
                 {
@@ -673,7 +678,7 @@ public class BudgetReportAction extends BaseFormAction {
                 }
                 budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, "FUNCTIONWISE "
                         + BudgetReport.getValueFor(glType).toUpperCase() + " BUDGET SUMMARY", refNoMap.get(BudgetReport
-                                .getValueFor(glType)), null, null, null, "typerow"));
+                        .getValueFor(glType)), null, null, null, "typerow"));
 
                 functionId = null;
                 majorCode = "";
@@ -792,12 +797,12 @@ public class BudgetReportAction extends BaseFormAction {
         BigDecimal reAppropriationAmt = BigDecimal.ZERO;
         for (final Object[] obj : amountList)
             if (obj[0] != null && obj[1] != null && obj[2] != null && obj[3] != null && obj[4] != null
-            && !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))==0)) {
+                    && !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString()))) == 0)) {
                 reAppropriationAmt = reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]);
                 reportStoreList.add(new BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long
                         .valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
                         obj[0] + EMPTYSTRING, (BigDecimal) obj[1], reAppropriationAmt, ((BigDecimal) obj[1])
-                        .add(reAppropriationAmt)));
+                                .add(reAppropriationAmt)));
             }
 
         amountList = getPersistenceService()
@@ -816,12 +821,12 @@ public class BudgetReportAction extends BaseFormAction {
                                 + majorCodeLength + ")", finyear);
         for (final Object[] obj : amountList)
             if (obj[0] != null && obj[1] != null && obj[2] != null && obj[3] != null && obj[4] != null
-            && !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))==0)) {
+                    && !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString()))) == 0)) {
                 reAppropriationAmt = reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]);
                 reportStoreList.add(new BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long
                         .valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
                         obj[0] + EMPTYSTRING, (BigDecimal) obj[1], reAppropriationAmt, ((BigDecimal) obj[1])
-                        .add(reAppropriationAmt)));
+                                .add(reAppropriationAmt)));
             }
     }
 
@@ -857,12 +862,12 @@ public class BudgetReportAction extends BaseFormAction {
         BigDecimal reAppropriationAmt = BigDecimal.ZERO;
         for (final Object[] obj : amountList)
             if (obj[0] != null && obj[1] != null && obj[2] != null && obj[3] != null && obj[4] != null
-            && !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))==0)) {
+                    && !(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(Double.valueOf(obj[1].toString()))) == 0)) {
                 reAppropriationAmt = reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]);
                 reportStoreList.add(new BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long
                         .valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
                         obj[0] + EMPTYSTRING, (BigDecimal) obj[1], reAppropriationAmt, ((BigDecimal) obj[1])
-                        .add(reAppropriationAmt)));
+                                .add(reAppropriationAmt)));
             }
 
         /*
@@ -907,19 +912,19 @@ public class BudgetReportAction extends BaseFormAction {
                                 + majorCodeLength + "),bd.executingDepartment.id,bd.function.id");
 
         amountListForRE
-        .addAll(getPersistenceService()
-                .findAllBy(
-                        "select substr(bd.budgetGroup.majorCode.glcode,0,"
-                                + majorCodeLength
-                                + ") ,"
-                                + floatingColumn
-                                + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where "
-                                + miscQuery
-                                + workFlowstateCondn
-                                + "  and bd.budget.isbere='RE'  group by substr(bd.budgetGroup.majorCode.glcode,0,"
-                                + majorCodeLength
-                                + "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.budgetGroup.minCode.glcode,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
-                                + majorCodeLength + ")"));
+                .addAll(getPersistenceService()
+                        .findAllBy(
+                                "select substr(bd.budgetGroup.majorCode.glcode,0,"
+                                        + majorCodeLength
+                                        + ") ,"
+                                        + floatingColumn
+                                        + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where "
+                                        + miscQuery
+                                        + workFlowstateCondn
+                                        + "  and bd.budget.isbere='RE'  group by substr(bd.budgetGroup.majorCode.glcode,0,"
+                                        + majorCodeLength
+                                        + "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.budgetGroup.minCode.glcode,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
+                                        + majorCodeLength + ")"));
         miscQuery = getSqlForFinYearBE(financialYearForBE.getId());
 
         /**
@@ -944,20 +949,20 @@ public class BudgetReportAction extends BaseFormAction {
                                 + "bd.function.id,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode,bd.id order by  substr(bd.budgetGroup.minCode.glcode,0,"
                                 + majorCodeLength + "),bd.executingDepartment.id,bd.function.id");
         amountListForBE
-        .addAll(getPersistenceService()
-                .findAllBy(
-                        "select substr(bd.budgetGroup.majorCode.glcode,0,"
-                                + majorCodeLength
-                                + ") ,"
-                                + floatingColumn
+                .addAll(getPersistenceService()
+                        .findAllBy(
+                                "select substr(bd.budgetGroup.majorCode.glcode,0,"
+                                        + majorCodeLength
+                                        + ") ,"
+                                        + floatingColumn
 
-                                + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.id from BudgetDetail bd where "
-                                + miscQuery
-                                + workFlowstateCondn
-                                + "   and bd.budget.isbere='BE'  group by substr(bd.budgetGroup.majorCode.glcode,0,"
-                                + majorCodeLength
-                                + "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
-                                + majorCodeLength + ")"));
+                                        + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.id from BudgetDetail bd where "
+                                        + miscQuery
+                                        + workFlowstateCondn
+                                        + "   and bd.budget.isbere='BE'  group by substr(bd.budgetGroup.majorCode.glcode,0,"
+                                        + majorCodeLength
+                                        + "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
+                                        + majorCodeLength + ")"));
 
         // Merge both and set to budget Report
         // u may require null check here
@@ -1022,7 +1027,7 @@ public class BudgetReportAction extends BaseFormAction {
         if (!totalAmt.equals(BigDecimal.ZERO))
             majorCodeList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING, grandAmt,
                     appropriationGrandAmt, grandAmt
-                    .add(appropriationGrandAmt), TOTALROW));
+                            .add(appropriationGrandAmt), TOTALROW));
         return majorCodeList;
     }
 
@@ -1106,9 +1111,20 @@ public class BudgetReportAction extends BaseFormAction {
         return "dept";
     }
 
+    @ValidationErrorPage(value = "dept")
     @Action(value = "/budget/budgetReport-printDepartmentWiseReport")
     public String printDepartmentWiseReport() {
-        validateFinancialYear();
+        try {
+            validateFinancialYear();
+        } catch (final ValidationException e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
+                    e.getErrors().get(0).getMessage())));
+        } catch (final Exception e)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        }
         return "print";
     }
 
@@ -1164,9 +1180,8 @@ public class BudgetReportAction extends BaseFormAction {
     protected String getBudgetType(final String finalStatus) {
         String isBeRe = "BE";
         final Budget budget = (Budget) persistenceService
-                .find(
-                        "from Budget where financialYear.id=? and parent is null and isPrimaryBudget=1 and isActiveBudget=1 and isBeRe='RE' and state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
-                                + finalStatus + "')", budgetReport.getFinancialYear().getId());
+                .find("from Budget where financialYear.id=? and parent is null and isPrimaryBudget=true and isActiveBudget=true and isBeRe='RE' and status.code='"
+                        + finalStatus + "' ", budgetReport.getFinancialYear().getId());
         if (budget != null)
             isBeRe = "RE";
         return isBeRe;
@@ -1351,7 +1366,7 @@ public class BudgetReportAction extends BaseFormAction {
             else
                 budgetReportList.add(new BudgetReportView("", "Total", "", majorCodeApprovedTotals, majorCodeApproriationTotals,
                         majorCodeApprovedTotals
-                        .add(majorCodeApproriationTotals)));
+                                .add(majorCodeApproriationTotals)));
 
         }
         addEmptyRow();
@@ -1378,21 +1393,21 @@ public class BudgetReportAction extends BaseFormAction {
     /*
      * Assumes budgetDetails are sorted by deptId,glCode
      */
-    void addRowsToReport(final List<BudgetDetail> budgetDetails, final String isBeRe) {
+    void addRowsToReport(List<BudgetDetail> budgetDetails, final String isBeRe) {
         Integer deptId = 0;
         BudgetReportView row = new BudgetReportView(null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         String glcode = null;
         String glName;
         BigDecimal sum = BigDecimal.ZERO;
         final BigDecimal appropriationSum = BigDecimal.ZERO;
-        sortByDepartmentName(budgetDetails);
+        budgetDetails = budgetDetailService.sortByDepartmentName(budgetDetails);
         // not interested in major code details
         for (final BudgetDetail budgetDetail : budgetDetails) {
             // if(budgetDetail.getBudgetGroup().getMajorCode()!=null){
             // continue;
             // }
             // details for next department have started
-            if (budgetDetail.getExecutingDepartment() != null && !budgetDetail.getExecutingDepartment().getId().equals(deptId)) {
+            if (budgetDetail.getExecutingDepartment() != null && budgetDetail.getExecutingDepartment().getId().compareTo(deptId.longValue())!=0) {
                 if (!deptId.equals(0))
                     if ("RE".equalsIgnoreCase(isBeRe) && !getConsiderReAppropriationAsSeperate())
                         budgetReportList.add(new BudgetReportView("", "Total", "", sum.add(appropriationSum), BigDecimal.ZERO,
@@ -1441,11 +1456,6 @@ public class BudgetReportAction extends BaseFormAction {
 
     }
 
-    private void sortByDepartmentName(final List<BudgetDetail> budgetDetails) {
-        Collections.sort(budgetDetails, (o1, o2) -> o1.getExecutingDepartment().getName().toUpperCase()
-                .compareTo(o2.getExecutingDepartment().getName().toUpperCase()));
-    }
-
     private String getGlName(final BudgetDetail budgetDetail) {
         final BudgetGroup budgetGroup = budgetDetail.getBudgetGroup();
         return budgetGroup.getMinCode() == null ? budgetGroup.getMajorCode().getName() : budgetGroup.getMinCode().getName();
@@ -1462,12 +1472,11 @@ public class BudgetReportAction extends BaseFormAction {
                 .getCurrentSession()
                 .createQuery(
                         " from BudgetDetail bd where bd.budget.financialYear.id=" + budgetReport.getFinancialYear().getId()
-                        + deptQuery + " and bd.budget.isbere='"
-                        + budgetType
-                        + "' and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget'"
-                        + " and value='" + finalStatus + "') "
-                        + getQueryForSelectedType(code) + "  order by bd.executingDepartment.deptName,bd.budgetGroup."
-                        + code + ".glcode").list();
+                                + deptQuery + " and bd.budget.isbere='"
+                                + budgetType
+                                + "' and bd.budget.status.code ='" + finalStatus + "' "
+                                + getQueryForSelectedType(code) + "  order by bd.executingDepartment.name,bd.budgetGroup."
+                                + code + ".glcode").list();
         budgetDetails.addAll(results);
     }
 
@@ -1526,8 +1535,8 @@ public class BudgetReportAction extends BaseFormAction {
 
             for (final BudgetDetail detail1 : budgetDetailListForBE)
                 if (detail.getExecutingDepartment().getId() == detail1.getExecutingDepartment().getId()
-                && detail.getFunction().getId() == detail1.getFunction().getId()
-                && detail.getBudgetGroup().getId() == detail1.getBudgetGroup().getId()) {
+                        && detail.getFunction().getId() == detail1.getFunction().getId()
+                        && detail.getBudgetGroup().getId() == detail1.getBudgetGroup().getId()) {
                     beDetail = detail1;
                     break;
                 }
@@ -1549,8 +1558,8 @@ public class BudgetReportAction extends BaseFormAction {
             tempMajorCode = glcode.substring(0, majorCodeLength);
 
             if (!detail.getExecutingDepartment().getId().equals(deptId)) // for
-                // dept
-                // heading
+            // dept
+            // heading
             {
                 if (reProposalTotalLocal.compareTo(BigDecimal.ZERO) != 0 && !isFirst) {
                     budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING,
@@ -1587,8 +1596,8 @@ public class BudgetReportAction extends BaseFormAction {
                 majorCode = "";
             }
             if (!detail.getFunction().getId().equals(functionId)) // for
-                // function
-                // heading
+            // function
+            // heading
             {
                 if (reProposalTotalLocal.compareTo(BigDecimal.ZERO) != 0 && !isFirst) {
                     budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING,
@@ -1610,8 +1619,8 @@ public class BudgetReportAction extends BaseFormAction {
                 majorCode = "";
             }
             if (!tempMajorCode.equals(majorCode) && detail.getBudgetGroup().getMajorCode() == null)// majorcodewise
-                // -
-                // heading
+            // -
+            // heading
             {
                 if (printed) {
                     budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING,
