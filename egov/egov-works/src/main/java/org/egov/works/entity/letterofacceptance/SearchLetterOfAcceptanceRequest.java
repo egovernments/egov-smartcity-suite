@@ -24,6 +24,9 @@ public class SearchLetterOfAcceptanceRequest {
     private WorkOrder workOrderNumber;
     private WorkOrder workOrderDate;
 
+    public SearchLetterOfAcceptanceRequest() {
+    }
+    
     public String getEstimateNumber() {
         return estimateNumber;
     }

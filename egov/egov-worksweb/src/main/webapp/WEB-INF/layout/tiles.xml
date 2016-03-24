@@ -86,6 +86,11 @@
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-success.jsp"/>
     </definition>
     
+    <definition name="search-searchloa" extends="base_layout">
+        <put-attribute name="page-title" value="title.loa.seachloa" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptance-search.jsp"/>
+    </definition>
+    
     <definition name="searchLineEstimateForLoa-form" extends="base_layout">
         <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForLoa-header.jsp"/>

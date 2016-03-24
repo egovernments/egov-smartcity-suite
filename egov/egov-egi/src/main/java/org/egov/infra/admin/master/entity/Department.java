@@ -87,7 +87,7 @@ public class Department extends AbstractAuditable {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -95,7 +95,7 @@ public class Department extends AbstractAuditable {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -103,7 +103,7 @@ public class Department extends AbstractAuditable {
         return code;
     }
 
-    public void setCode(final String code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

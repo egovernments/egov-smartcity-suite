@@ -141,7 +141,7 @@
 		<property name="authenticationManager" ref="authenticationManager" />
 		<property name="accessDecisionManager" ref="accessDecisionManager" />
 		<property name="securityMetadataSource" ref="egovFilterInvocationDefinitionSource" />
-		<property name="rejectPublicInvocations" value="true" />
+		<property name="rejectPublicInvocations" value="false" />
 	</bean>
 	
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">

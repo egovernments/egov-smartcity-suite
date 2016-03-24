@@ -16,9 +16,9 @@ import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service("depositCodeServices")
+@Service("depositCodeService")
 @Transactional
-public class DepositCodeService extends PersistenceService<DepositCode, Integer>  {
+public class DepositCodeService extends PersistenceService<DepositCode, Long>  {
 
     @Autowired
     private WorksService worksService;

@@ -58,7 +58,7 @@
 
 	</div>
 	<div class="buttonholderwk">
-		<input type="button" class="buttonfinal" value="BACK" id="button" name="button" onclick="self.close();window.open('${pageContext.request.contextPath}/masters/subledgerCode-newform.action?depCode=true','', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" />
+		<input type="button" class="buttonfinal" value="BACK" id="button" name="button" onclick="self.close();window.open('${pageContext.request.contextPath}/masters/depositCode-newform.action?depCode=true','', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" />
 	</div>
 </body>
 </html>
