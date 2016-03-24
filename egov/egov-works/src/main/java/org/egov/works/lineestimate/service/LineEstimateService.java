@@ -52,9 +52,14 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.validation.ValidationException;
 
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
@@ -67,6 +72,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -79,6 +85,7 @@ import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
 import org.egov.works.models.estimate.EstimateNumberGenerator;
+import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.elasticsearch.common.joda.time.DateTime;
@@ -110,6 +117,9 @@ public class LineEstimateService {
     private LineEstimateNumberGenerator lineEstimateNumberGenerator;
 
     @Autowired
+    private WorkOrderIdentificationNumberGenerator workOrderIdentificationNumberGenerator;
+
+    @Autowired
     private FinancialYearDAO financialYearDAO;
 
     @Autowired
@@ -138,6 +148,18 @@ public class LineEstimateService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+
+    @Autowired
+    private CommonsService commonsService;
+
+    @Autowired
+    private PersistenceService<ProjectCode, Long> projectCodeService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -266,12 +288,12 @@ public class LineEstimateService {
     }
 
     public List<LineEstimate> searchLineEstimatesForLoa(final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest) {
-        
-        String queryString = "select distinct(estimateNumber) from LineEstimateDetails where estimateNumber not in (select distinct(estimateNumber) from WorkOrder where upper(egwStatus.code) != :status)";
-        TypedQuery<String> query = (TypedQuery<String>) entityManager.createQuery(queryString);
+
+        final String queryString = "select distinct(estimateNumber) from LineEstimateDetails where estimateNumber not in (select distinct(estimateNumber) from WorkOrder where upper(egwStatus.code) != :status)";
+        final TypedQuery<String> query = (TypedQuery<String>) entityManager.createQuery(queryString);
         query.setParameter("status", LineEstimateStatus.CANCELLED.toString());
-        List<String> lineEstimateNumbers = query.getResultList();
-        
+        final List<String> lineEstimateNumbers = query.getResultList();
+
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
                 .createAlias("lineEstimateDetails", "lineEstimateDetail");
         if (lineEstimateForLoaSearchRequest != null) {
@@ -287,10 +309,8 @@ public class LineEstimateService {
             if (lineEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
                 criteria.add(Restrictions.le("adminSanctionDate", lineEstimateForLoaSearchRequest.getAdminSanctionToDate()));
             if (lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy() != null)
-                criteria.add(Restrictions.le("createdBy.id", lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
+                criteria.add(Restrictions.eq("createdBy.id", lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
             criteria.add(Restrictions.in("lineEstimateDetail.estimateNumber", lineEstimateNumbers));
-//            criteria.add(Restrictions.eq("status.code", LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
-//            criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
@@ -304,14 +324,14 @@ public class LineEstimateService {
             results.add(details.getEstimateNumber());
         return results;
     }
-    
+
     public List<String> findLineEstimateNumbersForLoa(final String name) {
-        String queryString = "select distinct(estimateNumber) from LineEstimateDetails where estimateNumber like = '%:estimateNumber' and estimateNumber not in (select distinct(estimateNumber) from WorkOrder where upper(egwStatus.code) != :status)";
-        TypedQuery<String> query = (TypedQuery<String>) entityManager.createQuery(queryString);
+        final String queryString = "select distinct(estimateNumber) from LineEstimateDetails where estimateNumber like '%:estimateNumber' and estimateNumber not in (select distinct(estimateNumber) from WorkOrder where upper(egwStatus.code) != :status)";
+        final TypedQuery<String> query = (TypedQuery<String>) entityManager.createQuery(queryString);
         query.setParameter("estimateNumber", name);
         query.setParameter("status", LineEstimateStatus.CANCELLED.toString());
-        List<String> lineEstimateNumbers = query.getResultList();
-        
+        final List<String> lineEstimateNumbers = query.getResultList();
+
         return lineEstimateNumbers;
     }
 
@@ -322,14 +342,14 @@ public class LineEstimateService {
             results.add(estimate.getAdminSanctionNumber());
         return results;
     }
-    
-    public List<String> findAdminSanctionNumbersForLoa(String name) {
-        String queryString = "select distinct(adminSanctionNumber) from LineEstimate where adminSanctionNumber like = '%:adminSanctionNumber' and lineEstimateNumber not in (select distinct(estimateNumber) from WorkOrder where upper(egwStatus.code) != :status)";
-        TypedQuery<String> query = (TypedQuery<String>) entityManager.createQuery(queryString);
+
+    public List<String> findAdminSanctionNumbersForLoa(final String name) {
+        final String queryString = "select distinct(le.adminSanctionNumber) from LineEstimate as le INNER JOIN le.lineEstimateDetails as led on le.id = led.lineEstimate.id where le.adminSanctionNumber like '%:adminSanctionNumber' and led.estimateNumber not in (select distinct(wo.estimateNumber) from WorkOrder as wo where upper(wo.egwStatus.code) != :status)";
+        final TypedQuery<String> query = (TypedQuery<String>) entityManager.createQuery(queryString);
         query.setParameter("adminSanctionNumber", name);
         query.setParameter("status", LineEstimateStatus.CANCELLED.toString());
-        List<String> adminSanctionNumbers = query.getResultList();
-        
+        final List<String> adminSanctionNumbers = query.getResultList();
+
         return adminSanctionNumbers;
     }
 
@@ -338,9 +358,25 @@ public class LineEstimateService {
         final List<LineEstimate> lineEstimates = searchLineEstimatesForLoa(lineEstimateForLoaSearchRequest);
         final List<LineEstimateForLoaSearchResult> lineEstimateForLoaSearchResults = new ArrayList<LineEstimateForLoaSearchResult>();
         for (final LineEstimate le : lineEstimates)
-            for (final LineEstimateDetails led : le.getLineEstimateDetails())
-                if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null) {
-                    if (led.getEstimateNumber().equalsIgnoreCase(lineEstimateForLoaSearchRequest.getEstimateNumber())) {
+            if (le.getStatus().getCode().equals(LineEstimateStatus.TECHNICAL_SANCTIONED.toString()))
+                for (final LineEstimateDetails led : le.getLineEstimateDetails())
+                    if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null) {
+                        if (led.getEstimateNumber().equalsIgnoreCase(lineEstimateForLoaSearchRequest.getEstimateNumber())) {
+                            final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
+                            result.setId(le.getId());
+                            result.setAdminSanctionNumber(le.getAdminSanctionNumber());
+                            result.setCreatedBy(le.getCreatedBy().getName());
+                            result.setEstimateAmount(led.getEstimateAmount());
+                            result.setEstimateNumber(led.getEstimateNumber());
+                            result.setNameOfWork(led.getNameOfWork());
+                            if (le.getAdminSanctionBy() != null)
+                                result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
+                            result.setActualEstimateAmount(led.getActualEstimateAmount());
+                            result.setCurrentOwner(worksUtils.getApproverName(le.getState().getOwnerPosition().getId()));
+                            lineEstimateForLoaSearchResults.add(result);
+                        }
+                    }
+                    else {
                         final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
                         result.setId(le.getId());
                         result.setAdminSanctionNumber(le.getAdminSanctionNumber());
@@ -348,28 +384,13 @@ public class LineEstimateService {
                         result.setEstimateAmount(led.getEstimateAmount());
                         result.setEstimateNumber(led.getEstimateNumber());
                         result.setNameOfWork(led.getNameOfWork());
+                        result.setActualEstimateAmount(led.getActualEstimateAmount());
+                        if (le.getState().getOwnerPosition() != null)
+                            result.setCurrentOwner(worksUtils.getApproverName(le.getState().getOwnerPosition().getId()));
                         if (le.getAdminSanctionBy() != null)
                             result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
-                        result.setActualEstimateAmount(led.getActualEstimateAmount());
-                        result.setCurrentOwner(worksUtils.getApproverName(le.getState().getOwnerPosition().getId()));
                         lineEstimateForLoaSearchResults.add(result);
                     }
-                }
-                else {
-                    final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
-                    result.setId(le.getId());
-                    result.setAdminSanctionNumber(le.getAdminSanctionNumber());
-                    result.setCreatedBy(le.getCreatedBy().getName());
-                    result.setEstimateAmount(led.getEstimateAmount());
-                    result.setEstimateNumber(led.getEstimateNumber());
-                    result.setNameOfWork(led.getNameOfWork());
-                    result.setActualEstimateAmount(led.getActualEstimateAmount());
-                    if (le.getState().getOwnerPosition() != null)
-                        result.setCurrentOwner(worksUtils.getApproverName(le.getState().getOwnerPosition().getId()));
-                    if (le.getAdminSanctionBy() != null)
-                        result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
-                    lineEstimateForLoaSearchResults.add(result);
-                }
         return lineEstimateForLoaSearchResults;
     }
 
@@ -415,7 +436,7 @@ public class LineEstimateService {
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     HistoryMap
-                    .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                     HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
@@ -485,9 +506,13 @@ public class LineEstimateService {
                         LineEstimateStatus.BUDGET_SANCTIONED.toString()));
             else if (lineEstimate.getStatus().getCode()
                     .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
-                    && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                    && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
+
+                for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
+                    setProjectCode(led);
+            }
             else if (lineEstimate.getStatus().getCode()
                     .equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
@@ -514,17 +539,16 @@ public class LineEstimateService {
         return query.getResultList();
     }
 
-    public List<Department> getUserDepartments(User currentUser) {
-        List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(currentUser.getId(), new Date());
-        List<Department> uniqueDepartmentList= new ArrayList<Department>();
+    public List<Department> getUserDepartments(final User currentUser) {
+        final List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(currentUser.getId(), new Date());
+        final List<Department> uniqueDepartmentList = new ArrayList<Department>();
         Department prevDepartment = new Department();
-        Iterator iterator = assignments.iterator(); 
-        while(iterator.hasNext()) {
-            Assignment assignment=(Assignment)iterator.next();
-            if(!((assignment.getDepartment().getName().equals(prevDepartment.getName())))){
-                uniqueDepartmentList.add(assignment.getDepartment()); 
-            }
-            prevDepartment=assignment.getDepartment();
+        final Iterator iterator = assignments.iterator();
+        while (iterator.hasNext()) {
+            final Assignment assignment = (Assignment) iterator.next();
+            if (!assignment.getDepartment().getName().equals(prevDepartment.getName()))
+                uniqueDepartmentList.add(assignment.getDepartment());
+            prevDepartment = assignment.getDepartment();
         }
         return uniqueDepartmentList;
     }
@@ -551,15 +575,15 @@ public class LineEstimateService {
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment))
                 lineEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             else {
                 final String stateValue = WorksConstants.WF_STATE_REJECTED;
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                .withOwner(wfInitiator.getPosition())
-                .withNextAction("")
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition())
+                        .withNextAction("")
+                        .withNatureOfTask(natureOfwork);
             }
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
@@ -569,27 +593,27 @@ public class LineEstimateService {
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, currState, null);
                 lineEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction())
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction("")
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction("")
+                        .withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction())
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
             }
         }
         if (LOG.isDebugEnabled())
@@ -606,5 +630,37 @@ public class LineEstimateService {
     public LineEstimate getLineEstimateByTechnicalSanctionNumber(final String technicalSanctionNumber) {
         return lineEstimateRepository.findByTechnicalSanctionNumberAndStatus_CodeNot(technicalSanctionNumber,
                 LineEstimateStatus.CANCELLED.toString());
+    }
+
+    public void setProjectCode(final LineEstimateDetails lineEstimateDetails) {
+        final CFinancialYear finYear = getCurrentFinancialYear(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+        final ProjectCode projectCode = new ProjectCode();
+        final String code = workOrderIdentificationNumberGenerator.generateWorkOrderIdentificationNumber(lineEstimateDetails,
+                finYear);
+        projectCode.setCode(code);
+
+        projectCode.setCodeName(lineEstimateDetails.getNameOfWork());
+        projectCode.setDescription(lineEstimateDetails.getNameOfWork());
+        projectCode.setActive(true);
+        projectCode.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ProjectCode.class.getSimpleName(),
+                WorksConstants.DEFAULT_PROJECTCODE_STATUS));
+        lineEstimateDetails.setProjectCode(projectCode);
+        projectCodeService.persist(projectCode);
+        createAccountDetailKey(projectCode);
+    }
+
+    protected void createAccountDetailKey(final ProjectCode proj) {
+        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO.getAccountdetailtypeByName("PROJECTCODE");
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setGroupid(1);
+        adk.setDetailkey(proj.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        adk.setAccountdetailtype(accountdetailtype);
+        accountdetailkeyHibernateDAO.create(adk);
+
+    }
+
+    public CFinancialYear getCurrentFinancialYear(final Date estimateDate) {
+        return commonsService.getFinYearByDate(estimateDate);
     }
 }

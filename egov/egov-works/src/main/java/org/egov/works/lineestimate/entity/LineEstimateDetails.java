@@ -63,7 +63,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGW_LINEESTIMATE_DETAILS")
 @Unique(id = "id", tableName = "EGW_LINEESTIMATE_DETAILS", columnName = { "estimatenumber" }, fields = {
-"estimateNumber" }, enableDfltMsg = true)
+        "estimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, sequenceName = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, allocationSize = 1)
 public class LineEstimateDetails extends AbstractAuditable {
 
@@ -105,9 +105,9 @@ public class LineEstimateDetails extends AbstractAuditable {
     @NotNull
     @Length(max = 50)
     private String beneficiary;
-    
+
     private BigDecimal actualEstimateAmount;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projectCode")
     private ProjectCode projectCode;
@@ -174,7 +174,7 @@ public class LineEstimateDetails extends AbstractAuditable {
         return quantity;
     }
 
-    public void setQuantity(Double quantity) {
+    public void setQuantity(final Double quantity) {
         this.quantity = quantity;
     }
 
@@ -182,7 +182,7 @@ public class LineEstimateDetails extends AbstractAuditable {
         return actualEstimateAmount;
     }
 
-    public void setActualEstimateAmount(BigDecimal actualEstimateAmount) {
+    public void setActualEstimateAmount(final BigDecimal actualEstimateAmount) {
         this.actualEstimateAmount = actualEstimateAmount;
     }
 
@@ -190,7 +190,7 @@ public class LineEstimateDetails extends AbstractAuditable {
         return projectCode;
     }
 
-    public void setProjectCode(ProjectCode projectCode) {
+    public void setProjectCode(final ProjectCode projectCode) {
         this.projectCode = projectCode;
     }
 }

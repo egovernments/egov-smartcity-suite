@@ -58,7 +58,7 @@ public class LineEstimateSearchRequest {
         return adminSanctionNumber;
     }
 
-    public void setAdminSanctionNumber(String adminSanctionNumber) {
+    public void setAdminSanctionNumber(final String adminSanctionNumber) {
         this.adminSanctionNumber = adminSanctionNumber;
     }
 
@@ -66,7 +66,7 @@ public class LineEstimateSearchRequest {
         return estimateNumber;
     }
 
-    public void setEstimateNumber(String estimateNumber) {
+    public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
     }
 
@@ -74,7 +74,7 @@ public class LineEstimateSearchRequest {
         return executingDepartment;
     }
 
-    public void setExecutingDepartment(Long executingDepartment) {
+    public void setExecutingDepartment(final Long executingDepartment) {
         this.executingDepartment = executingDepartment;
     }
 
@@ -82,7 +82,7 @@ public class LineEstimateSearchRequest {
         return fund;
     }
 
-    public void setFund(Long fund) {
+    public void setFund(final Long fund) {
         this.fund = fund;
     }
 
@@ -90,7 +90,7 @@ public class LineEstimateSearchRequest {
         return function;
     }
 
-    public void setFunction(Long function) {
+    public void setFunction(final Long function) {
         this.function = function;
     }
 
@@ -98,7 +98,7 @@ public class LineEstimateSearchRequest {
         return budgetHead;
     }
 
-    public void setBudgetHead(Long budgetHead) {
+    public void setBudgetHead(final Long budgetHead) {
         this.budgetHead = budgetHead;
     }
 
@@ -106,7 +106,7 @@ public class LineEstimateSearchRequest {
         return adminSanctionFromDate;
     }
 
-    public void setAdminSanctionFromDate(Date adminSanctionFromDate) {
+    public void setAdminSanctionFromDate(final Date adminSanctionFromDate) {
         this.adminSanctionFromDate = adminSanctionFromDate;
     }
 
@@ -114,7 +114,7 @@ public class LineEstimateSearchRequest {
         return adminSanctionToDate;
     }
 
-    public void setAdminSanctionToDate(Date adminSanctionToDate) {
+    public void setAdminSanctionToDate(final Date adminSanctionToDate) {
         this.adminSanctionToDate = adminSanctionToDate;
     }
 }

@@ -59,7 +59,7 @@ public class LineEstimateForLoaSearchResult {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -67,7 +67,7 @@ public class LineEstimateForLoaSearchResult {
         return adminSanctionNumber;
     }
 
-    public void setAdminSanctionNumber(String adminSanctionNumber) {
+    public void setAdminSanctionNumber(final String adminSanctionNumber) {
         this.adminSanctionNumber = adminSanctionNumber;
     }
 
@@ -75,7 +75,7 @@ public class LineEstimateForLoaSearchResult {
         return estimateNumber;
     }
 
-    public void setEstimateNumber(String estimateNumber) {
+    public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
     }
 
@@ -83,7 +83,7 @@ public class LineEstimateForLoaSearchResult {
         return nameOfWork;
     }
 
-    public void setNameOfWork(String nameOfWork) {
+    public void setNameOfWork(final String nameOfWork) {
         this.nameOfWork = nameOfWork;
     }
 
@@ -91,7 +91,7 @@ public class LineEstimateForLoaSearchResult {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(final String createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -99,7 +99,7 @@ public class LineEstimateForLoaSearchResult {
         return estimateAmount;
     }
 
-    public void setEstimateAmount(BigDecimal estimateAmount) {
+    public void setEstimateAmount(final BigDecimal estimateAmount) {
         this.estimateAmount = estimateAmount;
     }
 
@@ -107,7 +107,7 @@ public class LineEstimateForLoaSearchResult {
         return currentOwner;
     }
 
-    public void setCurrentOwner(String currentOwner) {
+    public void setCurrentOwner(final String currentOwner) {
         this.currentOwner = currentOwner;
     }
 
@@ -115,7 +115,7 @@ public class LineEstimateForLoaSearchResult {
         return adminSanctionBy;
     }
 
-    public void setAdminSanctionBy(String adminSanctionBy) {
+    public void setAdminSanctionBy(final String adminSanctionBy) {
         this.adminSanctionBy = adminSanctionBy;
     }
 
@@ -123,7 +123,7 @@ public class LineEstimateForLoaSearchResult {
         return actualEstimateAmount;
     }
 
-    public void setActualEstimateAmount(BigDecimal actualEstimateAmount) {
+    public void setActualEstimateAmount(final BigDecimal actualEstimateAmount) {
         this.actualEstimateAmount = actualEstimateAmount;
     }
 }

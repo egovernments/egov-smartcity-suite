@@ -63,10 +63,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class SearchLineEstimateController {
-    
+
     @Autowired
     private LineEstimateService lineEstimateService;
-    
+
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
 
@@ -81,7 +81,7 @@ public class SearchLineEstimateController {
 
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -92,13 +92,13 @@ public class SearchLineEstimateController {
         model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
         return "lineestimate-search";
     }
-    
+
     @RequestMapping(value = "/searchlineestimateforloa-form", method = RequestMethod.GET)
     public String create(@ModelAttribute final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest,
             final Model model) {
         setDropDownValues(model);
-        List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
-        List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         model.addAttribute("lineEstimateForLoaSearchRequest", lineEstimateForLoaSearchRequest);
         model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
         model.addAttribute("departments", departments);

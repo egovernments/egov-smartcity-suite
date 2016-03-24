@@ -58,7 +58,7 @@ public class LineEstimateSearchResult {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -66,7 +66,7 @@ public class LineEstimateSearchResult {
         return adminSanctionNumber;
     }
 
-    public void setAdminSanctionNumber(String adminSanctionNumber) {
+    public void setAdminSanctionNumber(final String adminSanctionNumber) {
         this.adminSanctionNumber = adminSanctionNumber;
     }
 
@@ -74,7 +74,7 @@ public class LineEstimateSearchResult {
         return estimateNumber;
     }
 
-    public void setEstimateNumber(String estimateNumber) {
+    public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
     }
 
@@ -82,7 +82,7 @@ public class LineEstimateSearchResult {
         return nameOfWork;
     }
 
-    public void setNameOfWork(String nameOfWork) {
+    public void setNameOfWork(final String nameOfWork) {
         this.nameOfWork = nameOfWork;
     }
 
@@ -90,7 +90,7 @@ public class LineEstimateSearchResult {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(final String createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -98,7 +98,7 @@ public class LineEstimateSearchResult {
         return approvedBy;
     }
 
-    public void setApprovedBy(String approvedBy) {
+    public void setApprovedBy(final String approvedBy) {
         this.approvedBy = approvedBy;
     }
 
@@ -106,7 +106,7 @@ public class LineEstimateSearchResult {
         return estimateAmount;
     }
 
-    public void setEstimateAmount(BigDecimal estimateAmount) {
+    public void setEstimateAmount(final BigDecimal estimateAmount) {
         this.estimateAmount = estimateAmount;
     }
 
@@ -114,7 +114,7 @@ public class LineEstimateSearchResult {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(final String owner) {
         this.owner = owner;
     }
 }

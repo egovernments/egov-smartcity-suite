@@ -18,7 +18,7 @@ public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate>
 {
     @Autowired
     private WorksUtils worksUtils;
-    
+
     @Override
     public JsonElement serialize(final LineEstimate lineEstimate, final Type type, final JsonSerializationContext jsc)
     {
@@ -66,9 +66,8 @@ public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate>
             else
                 jsonObject.addProperty("owner", "");
             Long totalAmount = 0L;
-            for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                 totalAmount += led.getEstimateAmount().longValue();
-            }
             jsonObject.addProperty("totalAmount", totalAmount);
             jsonObject.addProperty("id", lineEstimate.getId());
         }

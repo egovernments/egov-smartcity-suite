@@ -56,7 +56,7 @@ public class LineEstimateForLoaSearchRequest {
         return adminSanctionNumber;
     }
 
-    public void setAdminSanctionNumber(String adminSanctionNumber) {
+    public void setAdminSanctionNumber(final String adminSanctionNumber) {
         this.adminSanctionNumber = adminSanctionNumber;
     }
 
@@ -64,7 +64,7 @@ public class LineEstimateForLoaSearchRequest {
         return estimateNumber;
     }
 
-    public void setEstimateNumber(String estimateNumber) {
+    public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
     }
 
@@ -72,7 +72,7 @@ public class LineEstimateForLoaSearchRequest {
         return executingDepartment;
     }
 
-    public void setExecutingDepartment(Long executingDepartment) {
+    public void setExecutingDepartment(final Long executingDepartment) {
         this.executingDepartment = executingDepartment;
     }
 
@@ -80,7 +80,7 @@ public class LineEstimateForLoaSearchRequest {
         return adminSanctionFromDate;
     }
 
-    public void setAdminSanctionFromDate(Date adminSanctionFromDate) {
+    public void setAdminSanctionFromDate(final Date adminSanctionFromDate) {
         this.adminSanctionFromDate = adminSanctionFromDate;
     }
 
@@ -88,7 +88,7 @@ public class LineEstimateForLoaSearchRequest {
         return adminSanctionToDate;
     }
 
-    public void setAdminSanctionToDate(Date adminSanctionToDate) {
+    public void setAdminSanctionToDate(final Date adminSanctionToDate) {
         this.adminSanctionToDate = adminSanctionToDate;
     }
 
@@ -96,7 +96,7 @@ public class LineEstimateForLoaSearchRequest {
         return lineEstimateCreatedBy;
     }
 
-    public void setLineEstimateCreatedBy(Long lineEstimateCreatedBy) {
+    public void setLineEstimateCreatedBy(final Long lineEstimateCreatedBy) {
         this.lineEstimateCreatedBy = lineEstimateCreatedBy;
     }
 }

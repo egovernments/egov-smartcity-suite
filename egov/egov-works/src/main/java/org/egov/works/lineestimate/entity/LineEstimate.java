@@ -81,7 +81,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGW_LINEESTIMATE")
 @Unique(id = "id", tableName = "EGW_LINEESTIMATE", columnName = { "lineestimatenumber" }, fields = {
-        "lineEstimateNumber" }, enableDfltMsg = true)
+"lineEstimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimate.SEQ_EGW_LINEESTIMATE, sequenceName = LineEstimate.SEQ_EGW_LINEESTIMATE, allocationSize = 1)
 public class LineEstimate extends StateAware {
 

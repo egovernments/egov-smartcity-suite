@@ -575,4 +575,5 @@
       <constructor-arg index="0" value="org.egov.commons.SubScheme" />
     </bean>
     <bean id="lineEstimateNumberGenerator" class="org.egov.works.lineestimate.service.LineEstimateNumberGenerator"/>
+    <bean id="workOrderIdentificationNumberGenerator" class="org.egov.works.lineestimate.service.WorkOrderIdentificationNumberGenerator"/>
 </beans>
