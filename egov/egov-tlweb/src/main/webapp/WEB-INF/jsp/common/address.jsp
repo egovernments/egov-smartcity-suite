@@ -54,7 +54,7 @@ jQuery(document).ready(function(){
 
 function getZoneWard(){
 	jQuery.ajax({
-		url: "../domain/commonTradeLicenseAjax-blockByLocality.action",
+		url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
 		type: "GET",
 		data: {
 			locality : jQuery('#boundary').val()
@@ -62,13 +62,17 @@ function getZoneWard(){
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			jQuery('#zoneName').val(response.zoneName);
-			jQuery('#wardName').val(response.wardName);
-			jQuery('#parentBoundary').val(response.wardId);
+			jQuery('#wardName').html("");
+			jQuery('#parentBoundary').html("");
+			jQuery.each(response.results.boundaries, function (j, boundary) {
+				if (boundary.wardId) {
+					jQuery('#wardName').val(boundary.wardName);
+					jQuery('#parentBoundary').val(boundary.wardId);
+				}
+			});
 		}, 
 		error: function (response) {
 			console.log("failed");
-			jQuery('#zoneName').val('');
 			jQuery('#wardName').val('');
 			jQuery('#parentBoundary').val('');
 			bootbox.alert("No boundary details mapped for locality")
@@ -96,11 +100,7 @@ function getZoneWard(){
     </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.zone.lbl' /><span class="mandatory"></span></label>
-    <div class="col-sm-3 add-margin">
-        <s:textfield name="zone" id="zoneName" value="%{parentBoundary.parent.name}"  readOnly="true" class="form-control"/>
-    </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='license.ward.lbl' /><span class="mandatory"></span></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.ward.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textfield name="ward" id="wardName" value="%{parentBoundary.name}"  readOnly="true" class="form-control"/>
         <s:hidden name="parentBoundary" id="parentBoundary" value="%{parentBoundary.id}"/>
