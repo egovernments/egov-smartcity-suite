@@ -41,7 +41,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-body">
 		<input type="hidden" id="errorCouncilResolutionDate" value="<spring:message code='error.councilresolutiondate' />" />
 		<input type="hidden" id="lineEstimateDate" value='<fmt:formatDate value="${lineEstimate.lineEstimateDate }" pattern="dd/MM/yyyy"/>' />
@@ -50,7 +49,7 @@
 				<tr>
 					<th><spring:message code="lbl.councilresolutionnumber"/></th>
 					<th><spring:message code="lbl.councilresolutiondate"/></th>
-					<th><spring:message code="lbl.administrativesanctionnumber"/></th>					
+					<th><spring:message code="lbl.administrativesanctionnumber"/><span class="mandatory"></span></th>					
 				</tr>
 			</thead>
 			<tbody >
@@ -71,4 +70,3 @@
 			</tbody>
 		</table>
 	</div>
-</div>

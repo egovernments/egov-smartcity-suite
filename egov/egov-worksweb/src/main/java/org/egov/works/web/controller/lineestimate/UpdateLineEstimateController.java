@@ -46,6 +46,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -181,6 +182,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()))
             validateTechSanctionDetails(lineEstimate, errors);
 
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
+                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
+            validateAdminSanctionDetail(lineEstimate, errors);
+
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return loadViewData(model, request, lineEstimate);
@@ -210,7 +215,22 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             final LineEstimate existingLineEstimate = lineEstimateService.getLineEstimateByTechnicalSanctionNumber(lineEstimate
                     .getTechnicalSanctionNumber());
             if (existingLineEstimate != null)
-                errors.rejectValue("technicalSanctionNumber", "error.technumber.duplicate");
+                errors.rejectValue("technicalSanctionNumber", "error.technumber.unique");
+        }
+    }
+
+    private void validateAdminSanctionDetail(final LineEstimate lineEstimate, final BindingResult errors) {
+        if (lineEstimate.getCouncilResolutionDate() != null
+                && lineEstimate.getCouncilResolutionDate().before(lineEstimate.getLineEstimateDate()))
+            errors.rejectValue("councilResolutionDate", "error.councilresolutiondate");
+        if (StringUtils.isBlank(lineEstimate.getAdminSanctionNumber()))
+            errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
+        if (lineEstimate.getAdminSanctionNumber() != null) {
+            final LineEstimate checkLineEstimate = lineEstimateService.getLineEstimateByAdminSanctionNumber(lineEstimate
+                    .getAdminSanctionNumber());
+
+            if (checkLineEstimate != null)
+                errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.unique");
         }
     }
 

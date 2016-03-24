@@ -144,7 +144,6 @@ public class LineEstimate extends StateAware {
 
     @SafeHtml
     @Length(max = 50)
-    @Column(unique = true)
     private String adminSanctionNumber;
 
     @Temporal(TemporalType.TIMESTAMP)

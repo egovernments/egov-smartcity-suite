@@ -52,17 +52,6 @@ $(document).ready(function(){
 	return showSlumFieldsValue();
 });
 
-$('#councilResolutionDate').change(function(){
-	var lineEstimateDate = $('#lineEstimateDate').val();
-	var councilResolutionDate = $('#councilResolutionDate').val()
-
-	if(lineEstimateDate > councilResolutionDate) {
-	bootbox.alert($('#errorCouncilResolutionDate').val());
-	$('#councilResolutionDate').val("");
-	return false;
-	}
-});
-
 $(document).bind("input propertychange", function (e) {
 	if($(e.target).attr('name').match(/estimateAmount$/))
 	{
@@ -301,6 +290,7 @@ function disableSlumFields() {
 	slumfields.style.display = slum.checked ? "block" : "none";
 	document.getElementById("typeOfSlum").disabled = true;
 	document.getElementById("beneficiary").disabled = true;
+	$('#nonslum').trigger('click');
 }
 
 function showSlumFields() {
@@ -311,6 +301,8 @@ function showSlumFields() {
 	slumfields.style.display = slum.checked ? "block" : "none";
 	document.getElementById("typeOfSlum").disabled = false;
 	document.getElementById("beneficiary").disabled = false;
+	$('#slum').trigger('click');
+	
 }
 
 function replaceTypeOfSlumChar() {
@@ -404,9 +396,29 @@ function validateQuantity() {
 	});
 }
 
+$('#adminSanctionNumber').change(function(){
+	var date = this.value;
+	if(date != "") {
+		$.ajax({
+			url: "/egworks/lineestimate/ajaxvalidate-adminsanctionnumber",
+			data: {id : $('#id').val(), date : this.value},
+			type: "GET",
+			dataType: "json",
+			success: function (response) {
+				if(response != true) {
+					bootbox.alert("alert");
+					$('#adminSanctionNumber').val("");
+				}
+			}, 
+			error: function (response) {
+			}
+		});
+	}
+});
+
 function validateadminSanctionNumber() {
 	$( "input[name$='adminSanctionNumber']" ).on("keyup", function(){
-		var valid = /^[0-9\\\/.-]*$/.test(this.value),
+		var valid = /^[a-zA-Z0-9\\/-]*$/.test(this.value),
 	        val = this.value;
 	    if(!valid){
 	        console.log("Invalid input!");
@@ -417,7 +429,7 @@ function validateadminSanctionNumber() {
 
 function validatecouncilResolutionNumber() {
 	$( "input[name$='councilResolutionNumber']" ).on("keyup", function(){
-		var valid = /^[0-9\\\/.-]*$/.test(this.value),
+		var valid = /^[a-zA-Z0-9\\/-]*$/.test(this.value),
 	        val = this.value;
 	    if(!valid){
 	        console.log("Invalid input!");
@@ -427,14 +439,13 @@ function validatecouncilResolutionNumber() {
 }
 
 function showSlumFieldsValue() {
-	var slum = document.getElementById("slum").checked;
-	if (slum) {
+	var slum = $('#radioValue input:radio:checked').val()
+	if ('SLUM_WORK' == slum) {
 		showSlumFields();
 		return true;
 	} else {
 		return false;
 	}
-	
 }
 
 function validateWorkFlowApprover(name) {
@@ -446,12 +457,27 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
+		
+		var lineEstimateStatus = $('#lineEstimateStatus').val();
+		if(lineEstimateStatus == 'BUDGET_SANCTIONED') {
+			var lineEstimateDate = $('#lineEstimateDate').val();
+			var councilResolutionDate = $('#councilResolutionDate').val()
+			if (councilResolutionDate != "") {
+				if (councilResolutionDate < lineEstimateDate) {
+					bootbox.alert($('#errorCouncilResolutionDate').val());
+					$('#councilResolutionDate').val("");
+					return false;
+				}
+				return true;
+			}
+		}
 	}
 	if (button != null && button == 'Reject') {
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');
+		$('#adminSanctionNumber').removeAttr('required');
 	}
 	if (button != null && button == 'Cancel') {
 		$('#approvalDepartment').removeAttr('required');

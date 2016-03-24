@@ -105,7 +105,7 @@
 				</div>
 			</div>
 			
-			<div class="form-group">
+			<div class="form-group" id="radioValue" >
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.slum" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:radiobutton path="workCategory" id="slum" value="SLUM_WORK" onclick="showSlumFields();" required="required" />

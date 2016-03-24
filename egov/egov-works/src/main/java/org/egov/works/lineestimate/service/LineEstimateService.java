@@ -81,6 +81,7 @@ import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
+import org.egov.works.lineestimate.entity.WorkCategory;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
@@ -512,6 +513,8 @@ public class LineEstimateService {
 
                 for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                     setProjectCode(led);
+                lineEstimate.setAdminSanctionDate(new Date());
+                lineEstimate.setAdminSanctionBy(securityUtils.getCurrentUser());
             }
             else if (lineEstimate.getStatus().getCode()
                     .equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())
@@ -526,9 +529,16 @@ public class LineEstimateService {
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CANCELLED.toString()));
             else if (lineEstimate.getStatus().getCode()
-                    .equals(LineEstimateStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                    .equals(LineEstimateStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.FORWARD_ACTION)) {
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CREATED.toString()));
+
+                if (lineEstimate.getWorkCategory().toString().equals(WorkCategory.NON_SLUM_WORK.toString())) {
+                    lineEstimate.setTypeOfSlum(null);
+                    lineEstimate.setBeneficiary(null);
+                }
+            }
+
     }
 
     public List<User> getLineEstimateCreatedByUsers() {
@@ -662,5 +672,11 @@ public class LineEstimateService {
 
     public CFinancialYear getCurrentFinancialYear(final Date estimateDate) {
         return commonsService.getFinYearByDate(estimateDate);
+    }
+    
+    public LineEstimate getLineEstimateByAdminSanctionNumber(final String adminSanctionNumber) {
+        return lineEstimateRepository.findByAdminSanctionNumberAndStatus_codeNotLike(adminSanctionNumber,
+                WorksConstants.CANCELLED_STATUS);
+
     }
 }

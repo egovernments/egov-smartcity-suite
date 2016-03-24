@@ -54,4 +54,6 @@ public interface LineEstimateRepository extends JpaRepository<LineEstimate, Long
     List<LineEstimate> findByAdminSanctionNumberContainingIgnoreCase(String name);
 
     LineEstimate findByTechnicalSanctionNumberAndStatus_CodeNot(String technicalSanctionNumber, String code);
+
+    LineEstimate findByAdminSanctionNumberAndStatus_codeNotLike(String adminSanctionNumber, String status);
 }

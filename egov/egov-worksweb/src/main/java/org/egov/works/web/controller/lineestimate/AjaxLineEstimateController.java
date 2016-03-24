@@ -190,5 +190,4 @@ public class AjaxLineEstimateController {
             @RequestParam("date") final Date technicalSanctionDate) {
         return lineEstimateService.validateTechnicalSanctionDate(id, technicalSanctionDate);
     }
-
 }
