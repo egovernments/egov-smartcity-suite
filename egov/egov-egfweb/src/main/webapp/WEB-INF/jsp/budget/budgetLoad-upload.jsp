@@ -159,14 +159,11 @@
 						</td>
 					</tr>
 				</table>
-
+				<div class="text-left error-msg">&nbsp;<span class="mandatory"> Only .xls files are supported.</span></div>
 				<div class="buttonbottom" id="buttondiv">
 					<table>
 						<tr>
-							<td><span class="mandatory1">* Please upload only xls
-									files.</span></td>
-							<td width="5%"> </td>
-							<td width="5%"> </td>
+
 							<td><s:submit type="submit" cssClass="buttonsubmit"
 									value="Upload Budget" name="upload" method="upload"
 									onclick="return validate();" /></td>
