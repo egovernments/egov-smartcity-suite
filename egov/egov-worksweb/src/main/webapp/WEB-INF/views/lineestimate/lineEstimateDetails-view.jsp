@@ -50,7 +50,10 @@
 				<tr>
 					<th><spring:message code="lbl.slNo"/></th>
 					<th><spring:message code="lbl.nameofwork"/></th>
-					<th><spring:message code="lbl.estimatedamount"/></th>
+					<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+						<th><spring:message code="lbl.estimatenumber"/></th>
+					</c:if>
+					<th><spring:message code="lbl.estimatedamount"/></th>					
 					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 						<th><spring:message code="lbl.actualamount"/><span class="mandatory"></span></th>
 					</c:if>
@@ -70,6 +73,11 @@
 						<td>
 							<c:out value="${lineEstimate.lineEstimateDetails[item.index].nameOfWork}"/>
 						</td>
+						<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+							<td>
+								<c:out value="${lineEstimate.lineEstimateDetails[item.index].estimateNumber}"/>
+							</td>
+						</c:if>
 						<td class="text-right" id="estimateAmount${item.index}">
 							<c:out value="${lineEstimate.lineEstimateDetails[item.index].estimateAmount}"/>
 						</td>
@@ -109,7 +117,7 @@
 					</c:forEach>
 				</c:if>
 				<tr>
-					<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="3" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
 					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 						<td class="text-right"> <span id="actualEstimateTotal"><c:out value="${actualEstimateTotal}"/></span> </td>
