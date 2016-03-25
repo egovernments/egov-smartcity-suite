@@ -117,9 +117,9 @@ public class CreateLetterOfAcceptanceController {
             model.addAttribute("engineerIncharge", request.getParameter("engineerIncharge"));
             return "createLetterOfAcceptance-form";
         } else {
-            // TODO:Fixme - workOrder.getEstimateNumber() - Replace with WIN from line estimate
             workOrder.setWorkOrderNumber(
-                    letterOfAcceptanceNumberGenerator.generateLetterOfAcceptanceNumber(workOrder.getEstimateNumber()));
+                    letterOfAcceptanceNumberGenerator
+                            .generateLetterOfAcceptanceNumber(lineEstimateDetails.getProjectCode().getCode()));
             final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder, files);
             return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber();
         }
