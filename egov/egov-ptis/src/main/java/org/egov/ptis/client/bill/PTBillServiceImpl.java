@@ -183,7 +183,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
-            if (!(balance.equals(BigDecimal.ZERO) || balance.equals(BigDecimal.valueOf(0.0)))) {
+            if (balance.compareTo(BigDecimal.ZERO) == 1) {
 
                 reason = demandDetail.getEgDemandReason();
                 installment = reason.getEgInstallmentMaster();
