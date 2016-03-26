@@ -1,5 +1,6 @@
 package org.egov.egf.web.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -56,6 +57,7 @@ public class FundController {
 			prepareNewForm(model);
 			return FUND_NEW; 
 		}
+		fund.setCreated(new Date());
 		fundService.create(fund);
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.fund.success", null, null));

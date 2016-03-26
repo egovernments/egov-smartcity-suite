@@ -196,6 +196,10 @@
 	<put-attribute name="page-title" value="title.fund.new" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/fund/fund-new.jsp"/>
 </definition>
+<definition name="fund-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.fund.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fund/fund-edit.jsp"/>
+</definition>
 <definition name="function-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.function.new" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/function/function-new.jsp"/>
