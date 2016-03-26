@@ -49,7 +49,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -60,7 +63,12 @@ import com.exilant.exility.common.TaskFailedException;
  * This class caches employee data for a transaction and clear at the end of each transaction
  *
  */
+@Service
 public class RequiredValidator {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     final static Logger LOGGER = Logger.getLogger(RequiredValidator.class);
     static HashMap employeeMap = null;
     static int empDetailId = 0;
@@ -81,7 +89,7 @@ public class RequiredValidator {
     {
         if (empDetailId == 0)
         {
-            final List list = HibernateUtil.getCurrentSession()
+            final List list = persistenceService.getSession()
                     .createQuery("select id From Accountdetailtype where name='Employee'")
                     .list();
             if (list != null && list.size() > 0)
@@ -98,7 +106,7 @@ public class RequiredValidator {
         final String sql = "select detailKey as \"detailKey\" ,detailName as \"detailName\"," +
                 "groupID as \"groupID\",ID as \"ID\" from accountdetailkey where detailTypeId="
                 + String.valueOf(detailId) + " and detailKey = " + String.valueOf(keyToValidate);
-        final List list = HibernateUtil.getCurrentSession().createSQLQuery(sql).list();
+        final List list = persistenceService.getSession().createSQLQuery(sql).list();
         if (list != null && list.size() > 0)
             return true;
         else

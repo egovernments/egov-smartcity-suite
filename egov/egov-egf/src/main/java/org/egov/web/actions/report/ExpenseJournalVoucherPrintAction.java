@@ -30,6 +30,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -94,7 +97,11 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
     EgBillregistermis billRegistermis;
     List<EgBillPayeedetails> billPayeeDetails = new ArrayList<EgBillPayeedetails>();
     private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovCommon egovCommon;
 
     public Long getId() {
@@ -141,11 +148,11 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
     }
 
     private void populateVoucher() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
             final Long id = Long.valueOf(parameters.get("id")[0]);
-            final CVoucherHeader voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().get(CVoucherHeader.class, id);
+            final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService.getSession().get(CVoucherHeader.class, id);
             if (voucherHeader != null) {
                 voucher = voucherHeader;
                 billRegistermis = (EgBillregistermis) persistenceService.find("from EgBillregistermis where voucherHeader.id=?",
@@ -181,7 +188,7 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
     }
 
     private String getUlbName() {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

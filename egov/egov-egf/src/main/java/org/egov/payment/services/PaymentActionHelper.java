@@ -101,7 +101,7 @@ public class PaymentActionHelper {
                     Integer.valueOf(commonBean.getAccountNumberId()), commonBean
                             .getModeOfPayment(), commonBean.getAmount());
             if (commonBean.getDocumentId() != null)
-                billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
+                billVhId = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class,
                         commonBean.getDocumentId());
             createMiscBillDetail(billVhId, commonBean, voucherHeader);
             paymentheader = sendForApproval(paymentheader, workflowBean);
@@ -395,7 +395,7 @@ public class PaymentActionHelper {
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, commonBean.getAmount().toString());
             detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
-            final Bankaccount account = (Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,
+            final Bankaccount account = (Bankaccount) persistenceService.getSession().load(Bankaccount.class,
                     Long.valueOf(commonBean.getAccountNumberId()));
             detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
@@ -405,7 +405,7 @@ public class PaymentActionHelper {
             {
                 detailMap = new HashMap<String, Object>();
                 if (voucherDetail.getFunctionIdDetail() != null) {
-                    final CFunction function = (CFunction) HibernateUtil.getCurrentSession().load(CFunction.class,
+                    final CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
                             voucherDetail.getFunctionIdDetail());
                     detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
                 }

@@ -45,6 +45,9 @@
  */
 package com.exilant.eGov.src.common;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.Connection;
 import java.util.List;
 
@@ -61,13 +64,17 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly = true)
 public class DataValidator {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final Logger LOGGER = Logger.getLogger(DataValidator.class);
 
     public boolean checkDepartmentId(final String deptId, final Connection connection) {
         try {
             Query pstmt = null;
             final String strQry = "select dept_name from eg_department where id_dept= ?";
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(strQry);
+            pstmt = persistenceService.getSession().createSQLQuery(strQry);
             pstmt.setString(0, deptId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -83,7 +90,7 @@ public class DataValidator {
         final String str = "select name from function where id=?";
         Query pstmt = null;
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(str);
+            pstmt = persistenceService.getSession().createSQLQuery(str);
             pstmt.setString(0, funcId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -98,7 +105,7 @@ public class DataValidator {
     public boolean checkDepartmentName(final String deptName, final Connection connection) {
         final String str = "select dept_name from eg_department where dept_name=?";
         try {
-            final Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(str);
+            final Query pstmt = persistenceService.getSession().createSQLQuery(str);
             pstmt.setString(0, deptName);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -114,7 +121,7 @@ public class DataValidator {
         Query pstmt = null;
         final String str = "select name from function where name= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(str);
+            pstmt = persistenceService.getSession().createSQLQuery(str);
             pstmt.setString(0, funcName);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -131,7 +138,7 @@ public class DataValidator {
         Query pstmt = null;
         final String valQry = "select name from organizationStructure where id= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
+            pstmt = persistenceService.getSession().createSQLQuery(valQry);
             pstmt.setString(0, orgId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -150,7 +157,7 @@ public class DataValidator {
         final String valQry = "select name from taxes where code= ?";
         try {
             // Statement statement=connection.createStatement();
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
+            pstmt = persistenceService.getSession().createSQLQuery(valQry);
             pstmt.setString(0, taxCode);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -167,7 +174,7 @@ public class DataValidator {
         Query pstmt = null;
         final String valQry = "select id from bankAccount  where branchId= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
+            pstmt = persistenceService.getSession().createSQLQuery(valQry);
             pstmt.setString(0, branchId);
             final List<Object[]> rset = pstmt.list();
             // " where branchId="+branchId+" and accountNumber='"+accNumber+"'");
@@ -184,7 +191,7 @@ public class DataValidator {
         Query pstmt = null;
         final String valQry = "select id from bankAccount  where id= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
+            pstmt = persistenceService.getSession().createSQLQuery(valQry);
             pstmt.setString(0, id);
             final List<Object[]> rset = pstmt.list();
             // " where branchId="+branchId+" and accountNumber='"+accNumber+"'");
@@ -201,7 +208,7 @@ public class DataValidator {
         Query pstmt = null;
         final String valQry = "select name from bank where id= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
+            pstmt = persistenceService.getSession().createSQLQuery(valQry);
             pstmt.setString(0, bankId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -217,7 +224,7 @@ public class DataValidator {
         Query pstmt = null;
         final String valQry = "select name from fund where  name= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
+            pstmt = persistenceService.getSession().createSQLQuery(valQry);
             pstmt.setString(0, fundName);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -233,7 +240,7 @@ public class DataValidator {
         Query pstmt = null;
         final String valQry = "select name from fund where id= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
+            pstmt = persistenceService.getSession().createSQLQuery(valQry);
             pstmt.setString(0, fundId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -250,7 +257,7 @@ public class DataValidator {
         Query pstmt = null;
         final String fndSrc = "select name from fundsource where name=?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(fndSrc);
+            pstmt = persistenceService.getSession().createSQLQuery(fndSrc);
             pstmt.setString(0, fundSourceName);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -266,7 +273,7 @@ public class DataValidator {
         Query pstmt = null;
         final String srtQry = "select name from fundsource where id= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(srtQry);
+            pstmt = persistenceService.getSession().createSQLQuery(srtQry);
             pstmt.setString(0, fundSourceId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -282,7 +289,7 @@ public class DataValidator {
         Query pstmt = null;
         final String srtQry = "select name from supplier where id= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(srtQry);
+            pstmt = persistenceService.getSession().createSQLQuery(srtQry);
             pstmt.setString(0, supplierId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -298,7 +305,7 @@ public class DataValidator {
         Query pstmt = null;
         final String srtQry = "select name from contractor where id= ?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(srtQry);
+            pstmt = persistenceService.getSession().createSQLQuery(srtQry);
             pstmt.setString(0, contractorId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
@@ -315,7 +322,7 @@ public class DataValidator {
         Query pstmt = null;
         final String srtQry = "select name from billCollector  where id=? and type=?";
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(srtQry);
+            pstmt = persistenceService.getSession().createSQLQuery(srtQry);
             pstmt.setString(0, id);
             pstmt.setString(1, type);
             final List<Object[]> rset = pstmt.list();

@@ -44,6 +44,7 @@ package org.egov.deduction.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.model.recoveries.Recovery;
 
 /**
@@ -59,7 +60,7 @@ public class EgRemittanceGldtl implements java.io.Serializable
 
     private Integer id;
 
-    private Generalledgerdetail generalledgerdetail;
+    private CGeneralLedgerDetail generalledgerdetail;
 
     private BigDecimal gldtlamt;
 
@@ -69,16 +70,24 @@ public class EgRemittanceGldtl implements java.io.Serializable
 
     private Recovery recovery;
 
+    public CGeneralLedgerDetail getGeneralledgerdetail() {
+        return generalledgerdetail;
+    }
+
+    public void setGeneralledgerdetail(CGeneralLedgerDetail generalledgerdetail) {
+        this.generalledgerdetail = generalledgerdetail;
+    }
+
     public EgRemittanceGldtl()
     {
     }
 
-    public EgRemittanceGldtl(final Generalledgerdetail generalledgerdetail)
+    public EgRemittanceGldtl(final CGeneralLedgerDetail generalledgerdetail)
     {
         this.generalledgerdetail = generalledgerdetail;
     }
 
-    public EgRemittanceGldtl(final Generalledgerdetail generalledgerdetail,
+    public EgRemittanceGldtl(final CGeneralLedgerDetail generalledgerdetail,
             final BigDecimal gldtlamt, final Date lastmodifieddate, final BigDecimal remittedamt, final Recovery recovery)
     {
         this.generalledgerdetail = generalledgerdetail;
@@ -98,15 +107,7 @@ public class EgRemittanceGldtl implements java.io.Serializable
         this.id = id;
     }
 
-    public Generalledgerdetail getGeneralledgerdetail()
-    {
-        return generalledgerdetail;
-    }
-
-    public void setGeneralledgerdetail(final Generalledgerdetail generalledgerdetail)
-    {
-        this.generalledgerdetail = generalledgerdetail;
-    }
+  
 
     public BigDecimal getGldtlamt()
     {

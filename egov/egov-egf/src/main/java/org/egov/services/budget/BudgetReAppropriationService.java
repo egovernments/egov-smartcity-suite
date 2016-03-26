@@ -377,7 +377,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     public BudgetReAppropriationMisc performActionOnMisc(final String action, final BudgetReAppropriationMisc reApp,
             final String comment) {
         final BudgetReAppropriationMisc misc = miscWorkflowService.transition(action, reApp, comment);
-        HibernateUtil.getCurrentSession().flush();
+        getSession().flush();
         return misc;
     }
 
@@ -390,7 +390,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
      * @return
      */
     public void updatePlanningBudget(final BudgetReAppropriation reAppropriation) {
-        HibernateUtil.getCurrentSession().flush();
+        getSession().flush();
         // BigDecimal multiplicationFactor = new
         // BigDecimal(Double.parseDouble(getAppConfigFor("EGF","planning_budget_multiplication_factor")));
         final BudgetDetail budgetDetail = budgetDetailService.find("from BudgetDetail where id=?", reAppropriation
@@ -419,7 +419,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
         budgetAvailable = planningBudgetApproved.subtract(planningBudgetUsage);
         budgetDetail.setBudgetAvailable(budgetAvailable);
         budgetDetailService.update(budgetDetail);
-        HibernateUtil.getCurrentSession().flush();
+        getSession().flush();
     }
 
     protected BigDecimal zeroOrValue(final BigDecimal value) {

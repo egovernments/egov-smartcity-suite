@@ -39,6 +39,7 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -49,44 +50,61 @@ import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class FunctionHibernateDAO extends GenericHibernateDAO implements FunctionDAO {
+public class FunctionHibernateDAO implements FunctionDAO {
+    @Transactional
+    public CFunction update(final CFunction entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        //@Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
-        
-	public FunctionHibernateDAO() {
-		super(CFunction.class,null);
-	}
-	
-	public FunctionHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
+    @Transactional
+    public CFunction create(final CFunction entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
 
-	}
+    @Transactional
+    public void delete(CFunction entity) {
+        getCurrentSession().delete(entity);
+    }
+@Override
+    public CFunction findById(Number id, boolean lock) {
+        return (CFunction) getCurrentSession().load(CFunction.class, id);
+    }
 
-	@Override
-	public List getAllActiveFunctions() {
-		return getCurrentSession().createQuery("from CFunction where isactive = true and isnotleaf=false order by name").list();
+    public List<CFunction> findAll() {
+        return (List<CFunction>) getCurrentSession().createCriteria(CFunction.class).list();
+    }
 
-	}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Override
-	public CFunction getFunctionByCode(final String functionCode) {
-		final Query qry = getCurrentSession().createQuery("from CFunction where code=:code");
-		qry.setString("code", functionCode);
-		return (CFunction) qry.uniqueResult();
-	}
+    // @Override
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Override
-	public CFunction getFunctionById(final Long Id) {
-		final Query qry = getCurrentSession().createQuery("from CFunction where id=:id");
-		qry.setLong("id", Id);
-		return (CFunction) qry.uniqueResult();
-	}
+    public List getAllActiveFunctions() {
+        return getCurrentSession()
+                .createQuery("from CFunction where isactive = true and isnotleaf=false order by name").list();
+
+    }
+
+    @Override
+    public CFunction getFunctionByCode(final String functionCode) {
+        final Query qry = getCurrentSession().createQuery("from CFunction where code=:code");
+        qry.setString("code", functionCode);
+        return (CFunction) qry.uniqueResult();
+    }
+
+    @Override
+    public CFunction getFunctionById(final Long Id) {
+        final Query qry = getCurrentSession().createQuery("from CFunction where id=:id");
+        qry.setLong("id", Id);
+        return (CFunction) qry.uniqueResult();
+    }
+
 }

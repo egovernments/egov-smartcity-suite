@@ -42,6 +42,9 @@
  */
 package org.egov.web.actions.voucher;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -197,7 +200,11 @@ public class CommonAction extends BaseFormAction {
     private Integer billSubtypeId;
     private String billType;
     private String searchType;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private AppConfigValueService appConfigValuesService;
     private List<AppConfigValues> checkList;
     private String accountDetailTypeName;
@@ -1512,7 +1519,7 @@ public class CommonAction extends BaseFormAction {
                             + ") and bank.isactive=true  and bankBranch.isactive=true ")
                     .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
                     .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-            final List<Object[]> bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankBranch = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .setParameter("date", getAsOnDate())
                     .list();
             if (LOGGER.isDebugEnabled())
@@ -1559,7 +1566,7 @@ public class CommonAction extends BaseFormAction {
                             + ") and bank.isactive=true  and bankBranch.isactive=true ")
                     .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
                     .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-            final List<Object[]> bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankBranch = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .setParameter("date", getAsOnDate())
                     .list();
             if (LOGGER.isDebugEnabled())
@@ -1611,7 +1618,7 @@ public class CommonAction extends BaseFormAction {
                             + branchId + "  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
 
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-            final List<Object[]> bankAccounts = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .setDate("date", getAsOnDate())
                     .list();
             if (LOGGER.isDebugEnabled())
@@ -1672,7 +1679,7 @@ public class CommonAction extends BaseFormAction {
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
             if(type==null || type.equalsIgnoreCase("")) 
                 type = "CHEQUE";
-            final List<Object[]> bankAccounts = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .setDate("date", getAsOnDate())
                     .setString("type", type)
                     .list();
@@ -2010,7 +2017,7 @@ public class CommonAction extends BaseFormAction {
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate() + queryString.toString());
-            final List<Object[]> bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankBranch = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .setDate("date1", getAsOnDate())
                     .setDate("date2", getAsOnDate())
                     .list();
@@ -2110,7 +2117,7 @@ public class CommonAction extends BaseFormAction {
                             + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' ) order by 2 ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate());
-            final List<Object[]> bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankBranch = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .setDate("date1", getAsOnDate())
                     .setDate("date2", getAsOnDate())
                     .list();
@@ -2208,7 +2215,7 @@ public class CommonAction extends BaseFormAction {
                             + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' order by 2  ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate());
-            final List<Object[]> bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankBranch = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .setDate("date1", getAsOnDate())
                     .setDate("date2", getAsOnDate())
                     .list();
@@ -2306,7 +2313,7 @@ public class CommonAction extends BaseFormAction {
                             + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "' order by 2  ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate());
-            final List<Object[]> bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankBranch = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .setDate("date1", getAsOnDate())
                     .setDate("date2", getAsOnDate())
                     .list();
@@ -2402,7 +2409,7 @@ public class CommonAction extends BaseFormAction {
                     .append(" and ph.bankaccountnumberid=bankaccount.id and ph.type='" + FinancialConstants.MODEOFPAYMENT_CASH
                             + "' and vh.type='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
                             + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "' order by 2 ");
-            final List<Object[]> bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankBranch = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .setDate("date1", getAsOnDate())
                     .setDate("date2", getAsOnDate())
                     .list();
@@ -2529,7 +2536,7 @@ public class CommonAction extends BaseFormAction {
                 " where empinfo.functionary_id=func.id and empinfo.DESIGNATIONID=desg.DESIGNATIONID " +
                 " and empinfo.isactive=true   " +
                 " and desg.DESIGNATION_NAME like '" + designationName + "' and func.NAME like '" + functionaryName + "' ";
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(qrySQL);
+        final Query query = persistenceService.getSession().createSQLQuery(qrySQL);
         final List<BigDecimal> result = query.list();
         if (result == null || result.isEmpty())
             throw new ValidationException("", "No employee with functionary -" + functionaryName + " and designation - "
@@ -2718,7 +2725,7 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null && fundId != 0 && fundId != -1)
                 queryString = queryString.append(" and bankaccount.fundid=" + fundId);
 
-            final List<Object[]> bankAccounts = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank accont list size is " + bankAccounts.size() + "and Query is " + queryString.toString());
@@ -2820,7 +2827,7 @@ public class CommonAction extends BaseFormAction {
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
                     + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' order by 4 ");
 
-            final List<Object[]> bankAccounts = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank accont list size is " + bankAccounts.size());
@@ -2915,7 +2922,7 @@ public class CommonAction extends BaseFormAction {
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
                     + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "' order by 4 ");
 
-            final List<Object[]> bankAccounts = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank accont list size is " + bankAccounts.size());
@@ -3014,7 +3021,7 @@ public class CommonAction extends BaseFormAction {
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
                     + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "' order by 4 ");
 
-            final List<Object[]> bankAccounts = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
@@ -3105,7 +3112,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxLoadProjectCodesForSubScheme...");
         final String sql = "select pc.id as id,pc.code as code,pc.name as name from egw_projectcode pc,egf_subscheme_project ssp where  pc.id=ssp.projectcodeid and ssp.subschemeid="
                 + subSchemeId;
-        final SQLQuery pcQuery = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+        final SQLQuery pcQuery = persistenceService.getSession().createSQLQuery(sql);
         pcQuery.addScalar("id", LongType.INSTANCE)
                 .addScalar("code")
                 .addScalar("name")
@@ -3133,7 +3140,7 @@ public class CommonAction extends BaseFormAction {
         if (null == subSchemeId) {
 
         } else
-            projectCodeStringList = HibernateUtil.getCurrentSession().createSQLQuery(qry).list();
+            projectCodeStringList = persistenceService.getSession().createSQLQuery(qry).list();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme List size : " + projectCodeStringList.size());
         if (LOGGER.isDebugEnabled())
@@ -3192,9 +3199,9 @@ public class CommonAction extends BaseFormAction {
                     " egf_fundingagency fa where gd.detailtypeid=(select id from accountdetailtype where accountdetailtype.name='FundingAgency' ) "
                     +
                     " and fa.id= gd.detailkeyid and g.voucherheaderid= " + billVhId;
-            final List<Object[]> resultList1 = HibernateUtil.getCurrentSession().createSQLQuery(instrumentRelatedQry).list();
-            final List<Object[]> resultList2 = HibernateUtil.getCurrentSession().createSQLQuery(voucherDescriptionQry).list();
-            final List<Object[]> resultList3 = HibernateUtil.getCurrentSession().createSQLQuery(fundingAgencyQry).list();
+            final List<Object[]> resultList1 = persistenceService.getSession().createSQLQuery(instrumentRelatedQry).list();
+            final List<Object[]> resultList2 = persistenceService.getSession().createSQLQuery(voucherDescriptionQry).list();
+            final List<Object[]> resultList3 = persistenceService.getSession().createSQLQuery(fundingAgencyQry).list();
             String instrumentResult;
             if (resultList1.size() == 0)
                 instrumentResult = "0$0$-$0$0$0$-";
@@ -3219,7 +3226,7 @@ public class CommonAction extends BaseFormAction {
     {
         final String chequeAmtQry = "select ih.instrumentamount, ih.id from egf_instrumentheader ih, egf_instrumentvoucher" +
                 " iv where ih.id= iv.instrumentheaderid and iv.voucherheaderid=?";
-        final List<Object[]> resultList2 = HibernateUtil.getCurrentSession().createSQLQuery(chequeAmtQry).setLong(0, billVhId)
+        final List<Object[]> resultList2 = persistenceService.getSession().createSQLQuery(chequeAmtQry).setLong(0, billVhId)
                 .list();
         String chqAmtResult;
         if (resultList2.size() == 0)
@@ -3234,7 +3241,7 @@ public class CommonAction extends BaseFormAction {
             final String grantAMountQry = "select sum(g.debitAmount) as accountBalance from generalledger g" +
                     " where g.voucherheaderid=? ";
             // List<Object[]> resultList1=
-            final Query qry = HibernateUtil.getCurrentSession().createSQLQuery(grantAMountQry)
+            final Query qry = persistenceService.getSession().createSQLQuery(grantAMountQry)
                     .addScalar("accountBalance", BigDecimalType.INSTANCE);
             qry.setLong(0, billVhId);
             qry.setResultTransformer(Transformers.aliasToBean(CommonBean.class));
@@ -3270,7 +3277,7 @@ public class CommonAction extends BaseFormAction {
                 {
                     final Set<CGeneralLedgerDetail> generalLedgerDetails = gl.getGeneralLedgerDetails();
                     for (final CGeneralLedgerDetail gld : generalLedgerDetails)
-                        if (detType.getId().toString().equals(gld.getDetailTypeId().toString())) {
+                        if (detType.getId().toString().equals(gld.getDetailTypeId().getId().toString())) {
                             amount = gld.getAmount().toString();
 
                             final AccountEntity entity = (AccountEntity) persistenceService.find(
@@ -3640,7 +3647,7 @@ public class CommonAction extends BaseFormAction {
                             " AND vh.name = '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "' " +
                             "  order by 2 ");
 
-            bankBranch = HibernateUtil.getCurrentSession().createSQLQuery(bankQuery.toString()).list();
+            bankBranch = persistenceService.getSession().createSQLQuery(bankQuery.toString()).list();
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
@@ -3753,7 +3760,7 @@ public class CommonAction extends BaseFormAction {
 
             queryString = queryString.append(bankaccountFundQuery);
 
-            final List<Object[]> bankAccounts = HibernateUtil.getCurrentSession().createSQLQuery(queryString.toString()).list();
+            final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString()).list();
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank accont list size is " + bankAccounts.size() + "and Query is " + queryString.toString());

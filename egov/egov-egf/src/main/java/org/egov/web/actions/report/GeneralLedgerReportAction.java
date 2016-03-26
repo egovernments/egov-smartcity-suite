@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -89,7 +92,11 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     private static final long serialVersionUID = 4734431707050536319L;
     private static final Logger LOGGER = Logger.getLogger(GeneralLedgerReportAction.class);
     private GeneralLedgerReportBean generalLedgerReportBean = new GeneralLedgerReportBean();
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     @Qualifier("generalLedgerReport")
     private GeneralLedgerReport generalLedgerReport;
     
@@ -156,8 +163,8 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     @Action(value = "/report/generalLedgerReport-ajaxSearch")
     public String ajaxSearch() throws TaskFailedException {
 
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GeneralLedgerAction | Search | start");
         try {
@@ -176,8 +183,8 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     @Action(value = "/report/generalLedgerReport-searchDrilldown")
     public String searchDrilldown()
     {
-    	HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-    HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+    	persistenceService.getSession().setDefaultReadOnly(true);
+    persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
     if (LOGGER.isDebugEnabled())
         LOGGER.debug("GeneralLedgerAction | Search | start");
     try {

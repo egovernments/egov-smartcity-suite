@@ -39,13 +39,15 @@
  */
 package org.egov.commons.dao;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.commons.CFinancialYear ;
 import org.egov.commons.CFinancialYear;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface FinancialYearDAO extends GenericDAO {
+public interface FinancialYearDAO  {
     public String getCurrYearFiscalId();
 
     public String getCurrYearStartDate();
@@ -74,4 +76,14 @@ public interface FinancialYearDAO extends GenericDAO {
     public boolean isFinancialYearActiveForPosting(Date fromDate, Date toDate);
 
     public CFinancialYear getNextFinancialYearByDate(Date date);
+    
+    CFinancialYear   findById(Number id, boolean lock);
+
+    List<  CFinancialYear> findAll();
+
+
+      CFinancialYear    create(  CFinancialYear    entity);
+      CFinancialYear    update(  CFinancialYear    entity);
+
+    void delete(  CFinancialYear    entity);
 }

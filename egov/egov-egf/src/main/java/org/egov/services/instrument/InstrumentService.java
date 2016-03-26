@@ -777,8 +777,7 @@ public class InstrumentService {
         if (reconcilationFromDate == null || reconcilationToDate == null)
             throw new ApplicationRuntimeException(
                     "reconcilationFromDate and reconcilationToDate should not be null");
-        final Query qry = HibernateUtil
-                .getCurrentSession()
+        final Query qry = persistenceService.getSession()
                 .createQuery(
                         "select iv from InstrumentVoucher iv inner join iv.instrumentHeaderId as  ih   where ih.statusId.description=:status"
                                 + " and ih in (select iih from InstrumentOtherDetails io inner join io.instrumentHeaderId as iih where io.instrumentStatusDate>=:startDate and io.instrumentStatusDate<=:endDate )");
@@ -801,8 +800,7 @@ public class InstrumentService {
         if (dishonoredFromDate == null || dishonoredToDate == null)
             throw new ApplicationRuntimeException(
                     "dishonoredFromDate and dishonoredToDate should not be null");
-        final Query qry = HibernateUtil
-                .getCurrentSession()
+        final Query qry = persistenceService.getSession()
                 .createQuery(
                         "select iv from InstrumentVoucher iv inner join iv.instrumentHeaderId as  ih   where ih.statusId.description=:status"
                                 + " and ih in (select iih from InstrumentOtherDetails io inner join io.instrumentHeaderId as iih where io.modifiedDate>=:startDate and io.modifiedDate<=:endDate ) order by iv.instrumentHeaderId desc");

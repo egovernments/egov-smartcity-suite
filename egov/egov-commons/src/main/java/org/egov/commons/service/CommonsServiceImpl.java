@@ -78,7 +78,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.FinancialYear;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.feature.FeatureCollection;
@@ -107,7 +106,7 @@ public class CommonsServiceImpl implements CommonsService {
     public BoundaryTypeService boundaryTypeService;
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
-
+    
     public CommonsServiceImpl(final CommonsDAOFactory commonsDAOFactory, final SessionFactory sessionFactory) {
         this.commonsDAOFactory = commonsDAOFactory;
         this.sessionFactory = sessionFactory;
@@ -260,7 +259,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public Fund fundById(final Integer fundId) {
-        return commonsDAOFactory.getFundDAO().fundById(fundId);
+        return commonsDAOFactory.getFundDAO().fundById(fundId,false);
     }
 
     @Override
@@ -374,18 +373,14 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public Fund getFundById(final Integer fundId) {
-        return (Fund) commonsDAOFactory.getFundDAO().findById(fundId, false);
-    }
+        return (Fund) commonsDAOFactory.getFundDAO().fundById(fundId, false);
+    }   
 
     /*
      * @Override public List<EgUom> findAllUom() { return commonsDAOFactory.getEgUomDAO().findAllUom(); }
      */
 
-    @Override
-    public Relation getRelationById(final Integer relationId) {
-        return (Relation) commonsDAOFactory.getRelationDAO().findById(relationId, false);
-    }
-
+  
     /*
      * @Override public EgUom getUomById(final Integer uomId) { return (EgUom) commonsDAOFactory.getEgUomDAO().findById(uomId,
      * false); }
@@ -458,7 +453,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public CChartOfAccounts findGlCodeById(final String glcodeid) {
-        return (CChartOfAccounts) commonsDAOFactory.getChartOfAccountsDAO().findById(glcodeid, false);
+        return null;
     }
 
     @Override
@@ -468,7 +463,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public CFinancialYear getFinancialYearByDate(final Date date) {
-        final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
+       final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
         return finYearDAO.getFinancialYearByDate(date);
     }
 
@@ -503,7 +498,7 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     @Override
-    public Collection<FinancialYear> getFinancialYearList() {
+    public Collection<CFinancialYear> getFinancialYearList() {
         return commonsDAOFactory.getFinancialYearDAO().findAll();
     }
 
@@ -742,21 +737,12 @@ public class CommonsServiceImpl implements CommonsService {
      * qry.uniqueResult(); } return egUom; }
      */
 
-    @Override
-    public Bankaccount getBankaccountById(final Integer id) {
-        return (Bankaccount) commonsDAOFactory.getBankaccountDAO().findById(id, false);
+    
+    public Bankaccount getBankaccountById(final Long id) {
+        return null;
     }
 
-    @Override
-    public void createEgSurrenderedCheques(final EgSurrenderedCheques egSurrendrdChqs) {
-        commonsDAOFactory.getEgSurrenderedChequesDAO().create(egSurrendrdChqs);
-    }
-
-    @Override
-    public void updateEgSurrenderedCheques(final EgSurrenderedCheques egSurrendrdChqs) {
-        commonsDAOFactory.getEgSurrenderedChequesDAO().update(egSurrendrdChqs);
-    }
-
+    
     @Override
     public EgPartytype getPartytypeByCode(final String code) {
         return commonsDAOFactory.getEgPartytypeDAO().getPartytypeByCode(code);
@@ -1040,6 +1026,30 @@ public class CommonsServiceImpl implements CommonsService {
     @Override
     public Accountdetailtype getAccountDetailTypeByName(final String name) {
         return commonsDAOFactory.getaccountdetailtypeHibernateDAO().getAccountdetailtypeByName(name);
+    }
+
+    @Override
+    public Relation getRelationById(Integer relationId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Bankaccount getBankaccountById(Integer id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void createEgSurrenderedCheques(EgSurrenderedCheques egSurrenderedCheques) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void updateEgSurrenderedCheques(EgSurrenderedCheques egSurrenderedCheques) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -141,7 +144,11 @@ public class BudgetSearchAction extends BaseFormAction {
     protected String nextfinYearRange = "";
     private String previousfinYearRange = "";
     private String twopreviousfinYearRange = "";
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ protected PersistenceService persistenceService;
+ @Autowired
     private AppConfigValueService appConfigValuesService;
     private boolean shouldShowREAppropriations = true;
     List<AppConfigValues> excludeList = new ArrayList<AppConfigValues>();
@@ -297,7 +304,7 @@ public class BudgetSearchAction extends BaseFormAction {
             disableBudget = true;
         }
         if (budgetDetail.getBudget() != null) {
-            HibernateUtil.getCurrentSession().refresh(budgetDetail.getBudget());
+            persistenceService.getSession().refresh(budgetDetail.getBudget());
 
             if (budgetDetail.getBudget().getFinancialYear() == null)
                 budgetDetail.setBudget(budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId()));
@@ -375,7 +382,7 @@ public class BudgetSearchAction extends BaseFormAction {
             final Budget Budget = budgetService.findById(Long.valueOf(parameters.get("budget.id")[0]), false);
             setTopBudget(Budget);
         }
-        final BudgetDetail criteria = (BudgetDetail) HibernateUtil.getCurrentSession().createCriteria(
+        final BudgetDetail criteria = (BudgetDetail) persistenceService.getSession().createCriteria(
                 Constants.SEARCH_CRITERIA_KEY);
         criteria.setBudget(budgetDetail.getBudget());
         if (LOGGER.isDebugEnabled())

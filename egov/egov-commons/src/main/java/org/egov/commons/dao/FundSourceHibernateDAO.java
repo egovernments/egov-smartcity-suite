@@ -39,6 +39,7 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -49,36 +50,57 @@ import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class FundSourceHibernateDAO extends GenericHibernateDAO {
-	
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
-        public FundSourceHibernateDAO() {
-		super(Fundsource.class, null);
-	}
+public class FundSourceHibernateDAO {
+    @Transactional
+    public Fundsource update(final Fundsource entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-	public FundSourceHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+    @Transactional
+    public Fundsource create(final Fundsource entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
 
-	public Fundsource fundsourceById(final Integer id) {
-		return (Fundsource) getCurrentSession().get(Fundsource.class, id.intValue());
-	}
+    @Transactional
+    public void delete(Fundsource entity) {
+        getCurrentSession().delete(entity);
+    }
 
-	public List<Fundsource> findAllActiveIsLeafFundSources() {
-		return getCurrentSession().createQuery("from org.egov.commons.Fundsource where isactive = true and isnotleaf=false order by name").list();
-	}
+    public Fundsource findById(Number id, boolean lock) {
+        return (Fundsource) getCurrentSession().load(Fundsource.class, id);
+    }
 
-	public Fundsource getFundSourceByCode(final String code) {
-		final Query query = getCurrentSession().createQuery("from Fundsource f where f.code=:code");
-		query.setString("code", code);
-		return (Fundsource) query.uniqueResult();
-	}
+    public List<Fundsource> findAll() {
+        return (List<Fundsource>) getCurrentSession().createCriteria(Fundsource.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+  
+
+    public Fundsource fundsourceById(final Integer id) {
+        return (Fundsource) getCurrentSession().get(Fundsource.class, id.intValue());
+    }
+
+    public List<Fundsource> findAllActiveIsLeafFundSources() {
+        return getCurrentSession().createQuery(
+                "from org.egov.commons.Fundsource where isactive = true and isnotleaf=false order by name").list();
+    }
+
+    public Fundsource getFundSourceByCode(final String code) {
+        final Query query = getCurrentSession().createQuery("from Fundsource f where f.code=:code");
+        query.setString("code", code);
+        return (Fundsource) query.uniqueResult();
+    }
 }

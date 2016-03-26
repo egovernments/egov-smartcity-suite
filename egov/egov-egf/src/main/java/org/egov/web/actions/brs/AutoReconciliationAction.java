@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.brs;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -168,7 +171,10 @@ public class AutoReconciliationAction extends BaseFormAction {
     private BigDecimal notInBooktotalDebit;
     private BigDecimal notInBooktotalCredit;
     private BigDecimal notprocessedCredit;
-    private @Autowired EGovernCommon eGovernCommon;
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired EGovernCommon eGovernCommon;
     private BigDecimal notprocessedDebit;
     private BigDecimal notprocessedNet;
     private BigDecimal notInBookNet;
@@ -254,9 +260,11 @@ public class AutoReconciliationAction extends BaseFormAction {
     public String upload()
     {
         try {
-          persistenceService.getSession().getTransaction().setTimeout(600);
+
+            persistenceService.getSession().getTransaction().setTimeout(600);
             insertQuery = persistenceService.getSession().createSQLQuery(insertsql);
-            final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?", Long.valueOf(accountId));
+            final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?", accountId);
+
             accNo = ba.getAccountnumber();
             final POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(bankStatmentInXls));
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -401,7 +409,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     }
 
     private boolean alreadyUploaded(final String dateStr) {
-        final List list = HibernateUtil.getCurrentSession()
+        final List list = persistenceService.getSession()
                 .createSQLQuery("select id from egf_brs_bankstatements where accountid=" + accountId
                         + " and txdate=to_date('" + dateStr + "','" + dateInDotFormat + "')").list();
         if (list.size() >= 1)
@@ -992,7 +1000,7 @@ public class AutoReconciliationAction extends BaseFormAction {
                 + TABLENAME
                 + " where accountId=:accountId and txdate>=:fromDate  and txdate<=:toDate and reconciliationdate is null "
                 + " and  errorMessage =:multipleEntryErrorMessage order by  txDate ";
-        final Query statmentsfoundButNotProcessedQry = HibernateUtil.getCurrentSession()
+        final Query statmentsfoundButNotProcessedQry = persistenceService.getSession()
                 .createSQLQuery(statmentsfoundButNotProcessed)
                 .addScalar("instrumentNo")
                 .addScalar("credit")

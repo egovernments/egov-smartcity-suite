@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,6 +69,10 @@ import org.hibernate.FlushMode;
     @Result(name = "reportSearch", location = "budgetProposalStatusReport-reportSearch.jsp")
 })
 public class BudgetProposalStatusReportAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     /**
      *
@@ -109,9 +116,9 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        // HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        // persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
     }
 
@@ -129,7 +136,7 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
             functionWise();
         else
             departmentWise();
-        // HibernateUtil.getCurrentSession().setDefaultReadOnly(false);
+        // persistenceService.getSession().setDefaultReadOnly(false);
         return "reportSearch";
     }
 

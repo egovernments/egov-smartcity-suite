@@ -50,7 +50,6 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
@@ -70,7 +69,7 @@ import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.bills.BillsService;
-import org.egov.services.bills.EgBillRegisterService; 
+import org.egov.services.bills.EgBillRegisterService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
@@ -109,7 +108,6 @@ public class BaseBillAction extends BaseVoucherAction {
     protected SequenceGenerator sequenceGenerator;
     @Autowired
     protected ScriptService scriptService;
-    protected CommonsService commonsService;
     protected String detailTypeIdandName = "";
     protected BillsService billsManager;
     protected String button;
@@ -291,14 +289,7 @@ public class BaseBillAction extends BaseVoucherAction {
         this.billDetailsTableSubledger = billDetailsTableSubledger;
     }
 
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
+    
     public BillsService getBillsService() {
         return billsManager;
     }

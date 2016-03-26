@@ -39,6 +39,7 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,235 +54,261 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.utils.FinancialYear;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Administrator
- *
  */
 @Repository
-public class FinancialYearHibernateDAO extends GenericHibernateDAO implements FinancialYearDAO {
+public class FinancialYearHibernateDAO  implements FinancialYearDAO {
+    @Transactional
+    public CFinancialYear update(final CFinancialYear entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @Transactional
+    public CFinancialYear create(final CFinancialYear entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
 
-	@Override
-	public Session  getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @Transactional
+    public void delete(CFinancialYear entity) {
+        getCurrentSession().delete(entity);
+    }
 
-	private final Logger logger = Logger.getLogger(getClass().getName());
-	public FinancialYearHibernateDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
+    public CFinancialYear findById(Number id, boolean lock) {
+        return (CFinancialYear) getCurrentSession().load(CFinancialYear.class, id);
+    }
 
-	}
+    public List<CFinancialYear> findAll() {
+        return (List<CFinancialYear>) getCurrentSession().createCriteria(CFinancialYear.class).list();
+    }
 
-	public FinancialYearHibernateDAO()
-	{
-		super(CFinancialYear.class, null);
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	}
-	public String getCurrYearFiscalId()
-	{
-		Date dt=new Date();
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-		String currentDate=formatter.format(dt);
-		String result="";
-		Query query=HibernateUtil.getCurrentSession().createQuery("select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"+currentDate+"' and cfinancialyear.endingDate >= '"+currentDate+"' ");
-		ArrayList list= (ArrayList)query.list();
-		result=list.get(0).toString();
-		return result;
-	}
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
-	public String getCurrYearStartDate()
-	{
-		Date dt=new Date();
+   
 
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-		String currentDate=formatter.format(dt);
-		logger.info("Obtained session");
-		String result="";
-		Query query=HibernateUtil.getCurrentSession().createQuery("select cfinancialyear.startingDate from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"+currentDate+"' and cfinancialyear.endingDate >= '"+currentDate+"' ");
-		ArrayList list= (ArrayList)query.list();
-		if(list.size()> 0){
-			if(list.get(0) == null)
-				return 0.0+"";
-			else	
-				result=list.get(0).toString();
-		}
-		else
-			return 0.0+"";	
-		return result;
-	}
-	public String getPrevYearFiscalId()
-	{
-		Date dt=new Date();
+    public String getCurrYearFiscalId() {
+        Date dt = new Date();
 
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-		GregorianCalendar calendar= new GregorianCalendar();
-		calendar.setTime(dt);
-		int prevYear = calendar.get(Calendar.YEAR) - 1;
-		calendar.set(Calendar.YEAR,prevYear);
-		String previousDate=formatter.format(calendar.getTime());
-		logger.info("Obtained session");
-		String result="";
-		Query query=HibernateUtil.getCurrentSession().createQuery("select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"+previousDate+"' and cfinancialyear.endingDate >= '"+previousDate+"' ");
-		ArrayList list= (ArrayList)query.list();
-		if(list.size()> 0){
-			if(list.get(0) == null)
-				return 0.0+"";
-			else	
-				result=list.get(0).toString();
-		}
-		else
-			return 0.0+"";	
-		return result;
-	}
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        String currentDate = formatter.format(dt);
+        String result = "";
+        Query query = getCurrentSession().createQuery(
+                "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"
+                        + currentDate + "' and cfinancialyear.endingDate >= '" + currentDate + "' ");
+        ArrayList list = (ArrayList) query.list();
+        result = list.get(0).toString();
+        return result;
+    }
 
-	@Deprecated 
-	public String getFinancialYearId(String estDate)
-	{           
-		logger.info("Obtained session");
-		String result="";
-		Query query=HibernateUtil.getCurrentSession().createQuery("select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= to_date('"+estDate+"','dd/MM/yyyy') and cfinancialyear.endingDate >= to_date('"+estDate+"','dd/MM/yyyy') ");
-		ArrayList list= (ArrayList)query.list();
-		if(list.size()>0)
-			result=list.get(0).toString();
-		return result;
-	}
-	public CFinancialYear getFinancialYearByFinYearRange(String finYearRange)
-	{
-		Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where cfinancialyear.finYearRange=:finYearRange");
-		query.setString("finYearRange",finYearRange);
-		query.setCacheable(true);
-		return (CFinancialYear)query.uniqueResult();
-	}
-	public List<CFinancialYear> getAllActiveFinancialYearList() {
-		Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=true order by finYearRange desc");       
-		return query.list();
-	}
-	public List<CFinancialYear> getAllActivePostingFinancialYear(){
-		Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=true and isActiveForPosting=true order by startingDate desc");
-		return query.list();
-	}
-	public CFinancialYear getFinancialYearById(Long id) {
-		Query query=HibernateUtil.getCurrentSession().createQuery("from CFinancialYear cfinancialyear where id=:id");
-		query.setLong("id", id);
-		return (CFinancialYear) query.uniqueResult();
-	}
-	/*@Override
-	public CFinancialYear getFinancialYear(String estDate) {
-	    session = HibernateUtil.getCurrentSession();
-	    logger.info("Obtained session");
-	    CFinancialYear result=null;
-	    Query query=session.createQuery("from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"+estDate+"' and cfinancialyear.endingDate >= '"+estDate+"' ");
-	    ArrayList list= (ArrayList)query.list();
-	    if(list.size()>0)
-	    	result=(CFinancialYear) list.get(0);
-	    return result;
-	}*/
-	/**
-	 * 
-	 * @param fromDate
-	 * @param toDate
-	 * will will return false if any financialyear is not active for posting within given date range
-	 * 
-	 */
-	public boolean isFinancialYearActiveForPosting(Date fromDate,Date toDate)
-	{
+    public String getCurrYearStartDate() {
+        Date dt = new Date();
 
-		logger.info("Obtained session");
-		String result="";
-		Query query=HibernateUtil.getCurrentSession().createQuery("" +
-				" from CFinancialYear cfinancialyear where   cfinancialyear.isActiveForPosting=false and cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  ");
-		query.setDate("sDate", fromDate);
-		query.setDate("eDate", toDate);
-		ArrayList list= (ArrayList)query.list();
-		if(list.size()>0)
-			return false;
-		else 
-			return true;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        String currentDate = formatter.format(dt);
+        logger.info("Obtained session");
+        String result = "";
+        Query query = getCurrentSession().createQuery(
+                "select cfinancialyear.startingDate from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"
+                        + currentDate + "' and cfinancialyear.endingDate >= '" + currentDate + "' ");
+        ArrayList list = (ArrayList) query.list();
+        if (list.size() > 0) {
+            if (list.get(0) == null)
+                return 0.0 + "";
+            else
+                result = list.get(0).toString();
+        } else
+            return 0.0 + "";
+        return result;
+    }
 
-	}
-	
-	/**
-	 * gives active  FY only else
-	 * throws ApplicationRuntimeException("Financial Year is not active For Posting.") 
-	 */
+    public String getPrevYearFiscalId() {
+        Date dt = new Date();
 
-	public CFinancialYear getFinancialYearByDate(Date date) {
-		CFinancialYear cFinancialYear = null;
-		logger.info("Obtained session");
-		String result="";
-		Query query=HibernateUtil.getCurrentSession().createQuery(" from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  and cfinancialyear.isActiveForPosting=true");
-		query.setDate("sDate", date);
-		query.setDate("eDate", date);
-		ArrayList list= (ArrayList)query.list();
-		if(list.size()>0)
-			cFinancialYear=(CFinancialYear)list.get(0);
-		if(null == cFinancialYear) throw new ApplicationRuntimeException("Financial Year is not active For Posting.");
-		return cFinancialYear;
-	}
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(dt);
+        int prevYear = calendar.get(Calendar.YEAR) - 1;
+        calendar.set(Calendar.YEAR, prevYear);
+        String previousDate = formatter.format(calendar.getTime());
+        logger.info("Obtained session");
+        String result = "";
+        Query query = getCurrentSession().createQuery(
+                "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"
+                        + previousDate + "' and cfinancialyear.endingDate >= '" + previousDate + "' ");
+        ArrayList list = (ArrayList) query.list();
+        if (list.size() > 0) {
+            if (list.get(0) == null)
+                return 0.0 + "";
+            else
+                result = list.get(0).toString();
+        } else
+            return 0.0 + "";
+        return result;
+    }
 
- 
-	/**
-	 *  gives active and not active FY
-	 *  	 */
-	public CFinancialYear getFinYearByDate(Date date) {
-		CFinancialYear cFinancialYear = null;
-		logger.info("Obtained session");
-		Query query=HibernateUtil.getCurrentSession().createQuery(" from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate");
-		query.setDate("sDate", date);
-		query.setDate("eDate", date);
-		ArrayList list= (ArrayList)query.list();
-		if(list.size()>0)
-			cFinancialYear=(CFinancialYear)list.get(0);
-		if(null == cFinancialYear) throw new ApplicationRuntimeException("Financial Year Id does not exist.");
-		return cFinancialYear;
-	}
+    @Deprecated
+    public String getFinancialYearId(String estDate) {
+        logger.info("Obtained session");
+        String result = "";
+        Query query = getCurrentSession().createQuery(
+                "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= to_date('"
+                        + estDate + "','dd/MM/yyyy') and cfinancialyear.endingDate >= to_date('" + estDate
+                        + "','dd/MM/yyyy') ");
+        ArrayList list = (ArrayList) query.list();
+        if (list.size() > 0)
+            result = list.get(0).toString();
+        return result;
+    }
 
+    public CFinancialYear getFinancialYearByFinYearRange(String finYearRange) {
+        Query query = getCurrentSession().createQuery(
+                "from CFinancialYear cfinancialyear where cfinancialyear.finYearRange=:finYearRange");
+        query.setString("finYearRange", finYearRange);
+        query.setCacheable(true);
+        return (CFinancialYear) query.uniqueResult();
+    }
 
+    public List<CFinancialYear> getAllActiveFinancialYearList() {
+        Query query = getCurrentSession().createQuery(
+                "from CFinancialYear cfinancialyear where isActive=true order by finYearRange desc");
+        return query.list();
+    }
 
+    public List<CFinancialYear> getAllActivePostingFinancialYear() {
+        Query query = getCurrentSession()
+                .createQuery(
+                        "from CFinancialYear cfinancialyear where isActive=true and isActiveForPosting=true order by startingDate desc");
+        return query.list();
+    }
 
-	public CFinancialYear getTwoPreviousYearByDate( Date date)
-	{  
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);       
-		cal.add(Calendar.YEAR, -2);
-		return getFinYearByDate(cal.getTime());
-	}
-	public CFinancialYear getNextFinancialYearByDate( Date date)
-	{  
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);       
-		cal.add(Calendar.YEAR, +1);
-		return getFinYearByDate(cal.getTime());
-	}    
-	public CFinancialYear getPreviousFinancialYearByDate( Date date)
-	{  
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);       
-		cal.add(Calendar.YEAR, -1);
-		return getFinYearByDate(cal.getTime());
-	}
-	/**
-	 * checks whether two dates fall in same financial Year
-	 */
-	public boolean isSameFinancialYear(Date fromDate,Date toDate)
-	{
-		if(getFinYearByDate(fromDate).getId().longValue()==getFinYearByDate(toDate).getId().longValue())
-		{
-			return true;
-		}else
-		{
-			return false;
-		}
+    public CFinancialYear getFinancialYearById(Long id) {
+        Query query = getCurrentSession().createQuery("from CFinancialYear cfinancialyear where id=:id");
+        query.setLong("id", id);
+        return (CFinancialYear) query.uniqueResult();
+    }
 
-	}
+    /*
+     * @Override public CFinancialYear getFinancialYear(String estDate) {
+     * session = getCurrentSession(); logger.info("Obtained session");
+     * CFinancialYear result=null; Query query=session.createQuery(
+     * "from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"
+     * +estDate+"' and cfinancialyear.endingDate >= '"+estDate+"' "); ArrayList
+     * list= (ArrayList)query.list(); if(list.size()>0) result=(CFinancialYear)
+     * list.get(0); return result; }
+     */
+    /**
+     * @param fromDate
+     * @param toDate
+     *            will will return false if any financialyear is not active for
+     *            posting within given date range
+     */
+    public boolean isFinancialYearActiveForPosting(Date fromDate, Date toDate) {
+
+        logger.info("Obtained session");
+        String result = "";
+        Query query = getCurrentSession()
+                .createQuery(
+                        ""
+                                + " from CFinancialYear cfinancialyear where   cfinancialyear.isActiveForPosting=false and cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  ");
+        query.setDate("sDate", fromDate);
+        query.setDate("eDate", toDate);
+        ArrayList list = (ArrayList) query.list();
+        if (list.size() > 0)
+            return false;
+        else
+            return true;
+
+    }
+
+    /**
+     * gives active FY only else throws
+     * ApplicationRuntimeException("Financial Year is not active For Posting.")
+     */
+
+    public CFinancialYear getFinancialYearByDate(Date date) {
+        CFinancialYear cFinancialYear = null;
+        logger.info("Obtained session");
+        String result = "";
+        Query query = getCurrentSession()
+                .createQuery(
+                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  and cfinancialyear.isActiveForPosting=true");
+        query.setDate("sDate", date);
+        query.setDate("eDate", date);
+        ArrayList list = (ArrayList) query.list();
+        if (list.size() > 0)
+            cFinancialYear = (CFinancialYear) list.get(0);
+        if (null == cFinancialYear)
+            throw new ApplicationRuntimeException("Financial Year is not active For Posting.");
+        return cFinancialYear;
+    }
+
+    /**
+     * gives active and not active FY
+     */
+    public CFinancialYear getFinYearByDate(Date date) {
+        CFinancialYear cFinancialYear = null;
+        logger.info("Obtained session");
+        Query query = getCurrentSession()
+                .createQuery(
+                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate");
+        query.setDate("sDate", date);
+        query.setDate("eDate", date);
+        ArrayList list = (ArrayList) query.list();
+        if (list.size() > 0)
+            cFinancialYear = (CFinancialYear) list.get(0);
+        if (null == cFinancialYear)
+            throw new ApplicationRuntimeException("Financial Year Id does not exist.");
+        return cFinancialYear;
+    }
+
+    public CFinancialYear getTwoPreviousYearByDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.YEAR, -2);
+        return getFinYearByDate(cal.getTime());
+    }
+
+    public CFinancialYear getNextFinancialYearByDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.YEAR, +1);
+        return getFinYearByDate(cal.getTime());
+    }
+
+    public CFinancialYear getPreviousFinancialYearByDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.YEAR, -1);
+        return getFinYearByDate(cal.getTime());
+    }
+
+    /**
+     * checks whether two dates fall in same financial Year
+     */
+    public boolean isSameFinancialYear(Date fromDate, Date toDate) {
+        if (getFinYearByDate(fromDate).getId().longValue() == getFinYearByDate(toDate).getId().longValue()) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    
 }

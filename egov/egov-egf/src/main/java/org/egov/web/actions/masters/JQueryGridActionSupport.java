@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -67,6 +70,10 @@ import com.google.gson.GsonBuilder;
  * form saving
  **/
 public abstract class JQueryGridActionSupport extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ protected PersistenceService persistenceService;
+
     private static final long serialVersionUID = 1L;
     protected static final String ADD = "add";
     protected static final String EDIT = "edit";
@@ -97,11 +104,11 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
      * Internally this method will apply all filtering and ordering according to the value arrived from jqgrid.
      **/
     protected Page getPagedResult(final Class<?> clazz, final String keyFieldName, final Object keyFieldValue) {
-        final Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(clazz);
+        final Criteria criteria = persistenceService.getSession().createCriteria(clazz);
         criteria.add(Restrictions.eq(keyFieldName, keyFieldValue));
         applySearchCriteriaIfAny(criteria);
 
-        final Criteria countCriteria = HibernateUtil.getCurrentSession().createCriteria(clazz);
+        final Criteria countCriteria = persistenceService.getSession().createCriteria(clazz);
         countCriteria.add(Restrictions.eq(keyFieldName, keyFieldValue));
         countCriteria.setProjection(Projections.rowCount());
         totalRecords = ((Number) countCriteria.uniqueResult()).intValue();

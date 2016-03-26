@@ -39,57 +39,75 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.CVoucherHeader;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class VoucherHeaderHibernateDAO extends GenericHibernateDAO implements VoucherHeaderDAO {
-	
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
-        
-        public VoucherHeaderHibernateDAO() {
-		super(CVoucherHeader.class, null);
+public class VoucherHeaderHibernateDAO  implements VoucherHeaderDAO {
+    @Transactional
+    public CVoucherHeader update(final CVoucherHeader entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-	}
+    @Transactional
+    public CVoucherHeader create(final CVoucherHeader entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
 
-	public VoucherHeaderHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
+    @Transactional
+    public void delete(CVoucherHeader entity) {
+        getCurrentSession().delete(entity);
+    }
+@Override
+    public CVoucherHeader findById(Number id, boolean lock) {
+        return (CVoucherHeader) getCurrentSession().load(CVoucherHeader.class, id);
+    }
 
-	}
+    public List<CVoucherHeader> findAll() {
+        return (List<CVoucherHeader>) getCurrentSession().createCriteria(CVoucherHeader.class).list();
+    }
 
-	@Override
-	public List<CVoucherHeader> getVoucherHeadersByStatus(final Integer status) throws Exception {
-		final Query qry = getCurrentSession().createQuery("from CVoucherHeader vh where vh.status=:status");
-		qry.setInteger("status", status);
-		return qry.list();
-	}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Override
-	public List<CVoucherHeader> getVoucherHeadersByStatusAndType(final Integer status, final String type) throws Exception {
-		final Query qry = getCurrentSession().createQuery("from CVoucherHeader vh where vh.status=:status and vh.type=:type");
-		qry.setInteger("status", status);
-		qry.setString("type", type);
-		return qry.list();
-	}
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Override
-	public CVoucherHeader getVoucherHeadersByCGN(final String cgn) {
-		final Query qry = getCurrentSession().createQuery(" from CVoucherHeader where cgn =:cgn");
-		qry.setString("cgn", cgn);
-		return (CVoucherHeader) qry.uniqueResult();
-	}
+
+    @Override
+    public List<CVoucherHeader> getVoucherHeadersByStatus(final Integer status) throws Exception {
+        final Query qry = getCurrentSession().createQuery("from CVoucherHeader vh where vh.status=:status");
+        qry.setInteger("status", status);
+        return qry.list();
+    }
+
+    @Override
+    public List<CVoucherHeader> getVoucherHeadersByStatusAndType(final Integer status, final String type)
+            throws Exception {
+        final Query qry = getCurrentSession().createQuery(
+                "from CVoucherHeader vh where vh.status=:status and vh.type=:type");
+        qry.setInteger("status", status);
+        qry.setString("type", type);
+        return qry.list();
+    }
+
+    @Override
+    public CVoucherHeader getVoucherHeadersByCGN(final String cgn) {
+        final Query qry = getCurrentSession().createQuery(" from CVoucherHeader where cgn =:cgn");
+        qry.setString("cgn", cgn);
+        return (CVoucherHeader) qry.uniqueResult();
+    }
 }

@@ -77,8 +77,8 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
@@ -170,6 +170,10 @@ public class BudgetReportAction extends BaseFormAction {
     private Budget topBudget;
     private boolean departmentBudget = false;
     private String workFlowstateCondn = "";
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    
     @Autowired
     private EgovMasterDataCaching masterDataCache;
 
@@ -1468,8 +1472,7 @@ public class BudgetReportAction extends BaseFormAction {
 
     void fetchBudgetDetails(final List<BudgetDetail> budgetDetails, final String deptQuery, final String finalStatus,
             final String budgetType, final String code) {
-        final List<BudgetDetail> results = HibernateUtil
-                .getCurrentSession()
+        final List<BudgetDetail> results = persistenceService.getSession()
                 .createQuery(
                         " from BudgetDetail bd where bd.budget.financialYear.id=" + budgetReport.getFinancialYear().getId()
                                 + deptQuery + " and bd.budget.isbere='"

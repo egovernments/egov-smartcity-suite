@@ -54,6 +54,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -68,6 +70,12 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.dao.FunctionaryHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
@@ -99,8 +107,6 @@ import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.sf.jasperreports.engine.JRException;
-
 @Results({ @Result(name = FinancialDetailAction.PRINT, type = "stream", location = "budgetFolioPDF", params = {
         "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
         @Result(name = AbstractEstimateAction.NEW, location = "financialDetail-add.jsp")
@@ -127,6 +133,8 @@ public class FinancialDetailAction extends BaseFormAction {
     private Long id;
     @Autowired
     private CommonsService commonsService;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
     private String status = "TECH_SANCTIONED";
     public static final String ADD = "add";
     private BudgetGroupDAO budgetGroupDAO;
@@ -138,6 +146,8 @@ public class FinancialDetailAction extends BaseFormAction {
     private boolean skipBudget = false;
     private String isEnableSelect = "false";
     private String source = " ";
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     /*
      * added by prashanth on 2nd nov 09 for disp user and desgination in success page
@@ -190,6 +200,14 @@ public class FinancialDetailAction extends BaseFormAction {
     public Integer finYearId;
     private String finYearRangeStr;
     private String currentFinancialYearId;
+    @Autowired
+    private FundSourceHibernateDAO fundSourceDAO;
+    @Autowired
+    private FundHibernateDAO fundDao;
+    @Autowired
+    private FunctionHibernateDAO functionHibDao;
+    @Autowired
+    private FunctionaryHibernateDAO functionaryDao;
     private static final String SCHEME_MANDATORYCHECK_BUDGETHEAD = "SCHEME_MANDATORYCHECK_BUDGETHEAD";
     private String budgetHeadGlcode;
 
@@ -277,9 +295,9 @@ public class FinancialDetailAction extends BaseFormAction {
         Long finYearId = null;
         Boolean isApprYearEntry = Boolean.FALSE;
         if (abstractEstimateService.isPreviousYearApprRequired(abstractEstimate.getFinancialDetails().get(0)))
-            finYearId = Long.parseLong(commonsService.getPrevYearFiscalId());
+            finYearId = Long.parseLong(finHibernateDao.getPrevYearFiscalId());
         else
-            finYearId = Long.parseLong(commonsService.getCurrYearFiscalId());
+            finYearId = Long.parseLong(finHibernateDao.getCurrYearFiscalId());
         if (!isSkipBudgetCheck()) {
             for (final MultiYearEstimate multiYearEstimate : financialDetail.getAbstractEstimate()
                     .getMultiYearEstimates())
@@ -343,8 +361,8 @@ public class FinancialDetailAction extends BaseFormAction {
             abstractEstimate.setDepositCode(depositCodeService.findById(depositCodeId, false));
 
         if (getMaxFinancingSource(financingSourceList).getFundSource() != null
-                && commonsService.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId()) != null)
-            abstractEstimate.setFundSource(commonsService.fundsourceById(getMaxFinancingSource(financingSourceList)
+                && fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId()) != null)
+            abstractEstimate.setFundSource(fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList)
                     .getFundSource().getId()));
 
         abstractEstimate = abstractEstimateService.persistFinancialDetail(financialDetail, abstractEstimate);
@@ -378,9 +396,9 @@ public class FinancialDetailAction extends BaseFormAction {
             financialDetail.setApprYear("running");
         setupDropdownDataExcluding(Fund, FUNCTION, "functionary", "scheme", "subScheme", "budgetGroup", "coa");
 
-        addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
-        addDropdownData("functionList", commonsService.getAllFunction());
-        addDropdownData("functionaryList", commonsService.getActiveFunctionaries());
+        addDropdownData("fundList", fundDao.findAllActiveIsLeafFunds());
+        addDropdownData("functionList", functionHibDao.getAllActiveFunctions());
+        addDropdownData("functionaryList", functionaryDao.findAllActiveFunctionary());
         final List departmentList = getPersistenceService().findAllBy("from DepartmentImpl");
         addDropdownData("userDepartmentList", departmentList);
         addDropdownData("executingDepartmentList", departmentList);
@@ -389,7 +407,7 @@ public class FinancialDetailAction extends BaseFormAction {
         addDropdownData("finYearList", finYrList);
         finYearRangeStr = generateFinYrList(finYrList);
 
-        final CFinancialYear financialYear = commonsService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = finHibernateDao.getFinancialYearByDate(new Date());
         if (financialYear != null)
             currentFinancialYearId = financialYear.getId().toString();
 
@@ -419,27 +437,16 @@ public class FinancialDetailAction extends BaseFormAction {
         if (getDropdownData().get(BUDGET_GROUP_LIST) == null)
             addDropdownData(BUDGET_GROUP_LIST, new ArrayList<BudgetGroup>());
 
-        try {
-            fundSourceList = commonsService.getAllActiveIsLeafFundSources();
-        } catch (final ApplicationException e) {
-            logger.error("---fundsourceunavailable :Unable to load fund source information---" + e.getMessage());
-            addFieldError("fundsourceunavailable", "Unable to load fund source information");
-        }
+        fundSourceList = fundSourceDAO.findAllActiveIsLeafFundSources();
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
             departmentId = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
         checkMandataryFields();
         if (isSkipBudgetCheck())
-            try {
-                if (StringUtils.isNotBlank(worksService.getWorksConfigValue(KEY_DEPOSIT)))
-                    addDropdownData(COA_LIST, commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService
-                            .getWorksConfigValue(KEY_DEPOSIT))));
-                else
-                    addDropdownData(COA_LIST, Collections.EMPTY_LIST);
-            } catch (final ApplicationException v) {
-                logger.error("Unable to load Account Codes for Deposit Works" + v.getMessage());
-                addFieldError("accountcodes.notfound", "abstractEstimate.deposit.accountcodes.error");
-            }
-        else
+            if (StringUtils.isNotBlank(worksService.getWorksConfigValue(KEY_DEPOSIT)))
+                addDropdownData(COA_LIST, chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
+                        .getWorksConfigValue(KEY_DEPOSIT))));
+            else
+                addDropdownData(COA_LIST, Collections.EMPTY_LIST); else
             addDropdownData(COA_LIST, Collections.EMPTY_LIST);
 
         if (!StringUtils.isBlank(option)
@@ -462,16 +469,11 @@ public class FinancialDetailAction extends BaseFormAction {
                 logger.error("---Unable to load funds for Deposit Works folio Reports---" + v.getMessage());
                 addFieldError("Fund.notfound", "depositWorksFolioReport.loadFund.error");
             }
-            try {
-                if (StringUtils.isNotBlank(worksService.getWorksConfigValue(KEY_DEPOSIT)))
-                    addDropdownData(COA_LIST, commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService
-                            .getWorksConfigValue(KEY_DEPOSIT))));
-                else
-                    addDropdownData(COA_LIST, Collections.EMPTY_LIST);
-            } catch (final ApplicationException v) {
-                logger.error("---Unable to Load GL Codes for Deposit works---" + v.getMessage());
-                addFieldError("accountcodes.notfound", "depositWorksFolioReport.loadAccountCodes.error");
-            }
+            if (StringUtils.isNotBlank(worksService.getWorksConfigValue(KEY_DEPOSIT)))
+                addDropdownData(COA_LIST, chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
+                        .getWorksConfigValue(KEY_DEPOSIT))));
+            else
+                addDropdownData(COA_LIST, Collections.EMPTY_LIST);
         }
         budgetHeadGlcode = worksService.getWorksConfigValue(SCHEME_MANDATORYCHECK_BUDGETHEAD);
 
@@ -712,7 +714,7 @@ public class FinancialDetailAction extends BaseFormAction {
     }
 
     public Date getFinancialYearStartDate() {
-        financialYearStartDate = commonsService.getFinancialYearByFinYearRange(
+        financialYearStartDate = finHibernateDao.getFinancialYearByFinYearRange(
                 worksService.getWorksConfigValue("FINANCIAL_YEAR_RANGE")).getStartingDate();
         return financialYearStartDate;
     }
@@ -768,9 +770,9 @@ public class FinancialDetailAction extends BaseFormAction {
     }
 
     public String viewDepositFolio() {
-        final Fund fund = commonsService.fundById(fundId);
+        final Fund fund = fundDao.fundById(fundId,false);
         final DepositCode depositCode = depositCodeService.findById(depositCodeId, false);
-        final CChartOfAccounts coa = commonsService.getCChartOfAccountsById(glcodeId);
+        final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(glcodeId,false);
         financialDetail.setCoa(coa);
         financialDetail.setFund(fund);
         code = depositCode.getCode() + "-" + depositCode.getCodeName();

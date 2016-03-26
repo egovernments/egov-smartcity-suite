@@ -39,6 +39,7 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -49,48 +50,67 @@ import org.egov.commons.Functionary;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class FunctionaryHibernateDAO extends FunctionaryDAO {
-    
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
+    @Transactional
+    public Functionary update(final Functionary entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-	public FunctionaryHibernateDAO() {
-		super(Functionary.class,null);
-	}
-	
-	public FunctionaryHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+    @Transactional
+    public Functionary create(final Functionary entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
 
-	@Override
-	public List findAllActiveFunctionary() {
-		return getCurrentSession().createQuery("from Functionary f where isactive=true order by code").list();
+    @Transactional
+    public void delete(Functionary entity) {
+        getCurrentSession().delete(entity);
+    }
 
-	}
+    public Functionary findById(Number id, boolean lock) {
+        return (Functionary) getCurrentSession().load(Functionary.class, id);
+    }
 
-	@Override
-	public Functionary functionaryById(final Integer id) {
+    public List<Functionary> findAll() {
+        return (List<Functionary>) getCurrentSession().createCriteria(Functionary.class).list();
+    }
 
-		return (Functionary) getCurrentSession().get(Functionary.class, id.intValue());
-	}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public Functionary getFunctionaryByCode(final BigDecimal functionaryCode) {
-		final Query qry = getCurrentSession().createQuery("from Functionary where code=:code");
-		qry.setBigDecimal("code", functionaryCode);
-		return (Functionary) qry.uniqueResult();
-	}
+    @Override
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	public Functionary getFunctionaryByName(final String name) {
-		final Query qry = getCurrentSession().createQuery("from Functionary where name=:name");
-		qry.setString("name", name);
-		return (Functionary) qry.uniqueResult();
-	}
+  
+
+    @Override
+    public List findAllActiveFunctionary() {
+        return getCurrentSession().createQuery("from Functionary f where isactive=true order by code").list();
+
+    }
+
+    @Override
+    public Functionary functionaryById(final Integer id) {
+
+        return (Functionary) getCurrentSession().get(Functionary.class, id.intValue());
+    }
+
+    public Functionary getFunctionaryByCode(final BigDecimal functionaryCode) {
+        final Query qry = getCurrentSession().createQuery("from Functionary where code=:code");
+        qry.setBigDecimal("code", functionaryCode);
+        return (Functionary) qry.uniqueResult();
+    }
+
+    public Functionary getFunctionaryByName(final String name) {
+        final Query qry = getCurrentSession().createQuery("from Functionary where name=:name");
+        qry.setString("name", name);
+        return (Functionary) qry.uniqueResult();
+    }
 
 }

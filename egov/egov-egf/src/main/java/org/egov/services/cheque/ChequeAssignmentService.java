@@ -163,8 +163,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         final String filterConditions = getFilterParamaters(parameters, voucherHeader);
         setStatusValues();
 
-        query = HibernateUtil
-                .getCurrentSession()
+        query = getSession()
                 .createSQLQuery(
                         "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate from Paymentheader ph,voucherheader vh,vouchermis vmis, Miscbilldetail misbill "
                                 +
@@ -275,7 +274,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 " ON (pvh.id=iv.VOUCHERHEADERID)  LEFT OUTER JOIN egf_instrumentheader ih  ON (ih.ID=iv.INSTRUMENTHEADERID)  WHERE pvh.id=vh.id AND ih.ID_STATUS IN ("
                 + statusId + ")) " +
                 " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by paidto,voucherNumber ";
-        query = HibernateUtil.getCurrentSession().createSQLQuery(supplierBillPaymentQuery)
+        query = getSession().createSQLQuery(supplierBillPaymentQuery)
                 .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("detailtypeid", BigDecimalType.INSTANCE)
                 .addScalar("detailkeyid", BigDecimalType.INSTANCE).addScalar("paidTo")
@@ -342,7 +341,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 " ON (pvh.id=iv.VOUCHERHEADERID)  LEFT OUTER JOIN egf_instrumentheader ih  ON (ih.ID=iv.INSTRUMENTHEADERID)  WHERE pvh.id=vh.id AND ih.ID_STATUS IN ("
                 + statusId + "))  group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto  " +
                 " order by paidto,voucherNumber ";
-        query = HibernateUtil.getCurrentSession().createSQLQuery(bankPaymentQuery)
+        query = getSession().createSQLQuery(bankPaymentQuery)
                 .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber")
                 .addScalar("detailtypeid", BigDecimalType.INSTANCE).addScalar("detailkeyid", BigDecimalType.INSTANCE)
                 .addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", BigDecimalType.INSTANCE)
@@ -382,7 +381,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 " and gl.voucherheaderid =vh.id and gl.creditamount>0 and misbill.billvhid=billvh.id  and br.id=billmis.billid and billmis.voucherheaderid=billvh.id and br.expendituretype='"
                 + FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT + "' and iv.id is null  " +
                 " group by  misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
-        query = HibernateUtil.getCurrentSession().createSQLQuery(strQuery)
+        query = getSession().createSQLQuery(strQuery)
                 .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", BigDecimalType.INSTANCE)
@@ -525,7 +524,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     }
 
     private BigDecimal getNonSubledgerDeductions(final BigDecimal billVHId) {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery("SELECT SUM(gl.creditamount) " +
+        final Query query = getSession().createSQLQuery("SELECT SUM(gl.creditamount) " +
                 "FROM generalledger gl " +
                 "WHERE gl.creditamount>0 " +
                 "AND gl.glcodeid NOT IN (:glcodeIdList) " +
@@ -573,7 +572,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + ") )   "
                 +
                 " and exists (select 1 from egf_instrumentvoucher iv where  iv.voucherheaderid=vh.id) group by misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(strQuery)
+        final Query query = getSession().createSQLQuery(strQuery)
                 .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", BigDecimalType.INSTANCE)
@@ -638,7 +637,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ALREADY ASSIGNED: queryString" + queryString);
 
-                    final List<Object> payTo = HibernateUtil.getCurrentSession().createSQLQuery(queryString)
+                    final List<Object> payTo = getSession().createSQLQuery(queryString)
                             .setString("payTo", chqAssgn.getPaidTo()).list();
 
                     if (payTo == null || payTo.size() == 0)
@@ -674,7 +673,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 "and ih.id_status in (" + statusId + ")  ";
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("queryString" + queryString);
-                        List<Object> payTo = HibernateUtil.getCurrentSession().createSQLQuery(queryString).list();
+                        List<Object> payTo = getSession().createSQLQuery(queryString).list();
                         if (payTo == null || payTo.size() == 0)
                         {
                             // this check will avoid already assigned by single subledger take subleger logic as it should be
@@ -686,7 +685,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                     + " and ih.payTo=:payTo and ih.id_status in (" + statusId + ")  ";
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ALREADY ASSIGNED: queryString" + queryString);
-                            payTo = HibernateUtil.getCurrentSession().createSQLQuery(queryString)
+                            payTo = getSession().createSQLQuery(queryString)
                                     .setString("payTo", chqAssgn.getPaidTo()).list();
                             if (payTo != null)
                                 continue;
@@ -727,7 +726,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             + chqAssgn.getVoucherid() + " and ih.payTo =:payTo and ih.id_status in (" + statusId + ")  ";
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ALREADY ASSIGNED: queryString" + queryString);
-                    final List<Object> payTo = HibernateUtil.getCurrentSession().createSQLQuery(queryString)
+                    final List<Object> payTo = getSession().createSQLQuery(queryString)
                             .setString("payTo", chqAssgn.getPaidTo()).list();
                     if (payTo == null || payTo.size() == 0)
                     {
@@ -752,7 +751,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 + " and ih.id_status in (" + statusId + ")  ";
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ALREADY ASSIGNED: Querying for " + queryString);
-                        List<Object> payTo = HibernateUtil.getCurrentSession().createSQLQuery(queryString).list();
+                        List<Object> payTo = getSession().createSQLQuery(queryString).list();
                         if (payTo == null || payTo.size() == 0)
                         {
 
@@ -765,7 +764,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                     + " and ih.payTo=:payTo and ih.id_status in (" + statusId + ")  ";
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ALREADY ASSIGNED: queryString" + queryString);
-                            payTo = HibernateUtil.getCurrentSession().createSQLQuery(queryString)
+                            payTo = getSession().createSQLQuery(queryString)
                                     .setString("payTo", chqAssgn.getPaidTo()).list();
                             if (payTo != null)
                                 continue;
@@ -827,7 +826,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 " and exists(select 1 from egf_instrumentvoucher iv, egf_instrumentheader ih where ih.id= iv.instrumentheaderid and iv.voucherheaderid=vh.id and ih.id_status not in ("
                 + statusId + ") ) " +
                 " group by misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(strQuery)
+        final Query query = getSession().createSQLQuery(strQuery)
                 .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", BigDecimalType.INSTANCE)
@@ -884,7 +883,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             + chqAssgn.getVoucherid() + " and ih.payTo=:payTo order by id desc   ";
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("instrumentStatus- " + queryString);
-                    final List<Object[]> instrumentStatus = HibernateUtil.getCurrentSession()
+                    final List<Object[]> instrumentStatus = getSession()
                             .createSQLQuery(queryString).setString("payTo", chqAssgn.getPaidTo()).list();
                     if (instrumentStatus == null
                             || instrumentStatus.size() == 0
@@ -911,7 +910,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 + " and ih.detailkeyid=" + detailTypeKeyAmtObj[1] + " order by id desc ";
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: Inside detailTypeKeyAmtList loop- " + queryString);
-                        final List<Object[]> instrumentStatus = HibernateUtil.getCurrentSession()
+                        final List<Object[]> instrumentStatus = getSession()
                                 .createSQLQuery(queryString).list();
                         if (instrumentStatus == null
                                 || instrumentStatus.size() == 0
@@ -950,7 +949,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             + chqAssgn.getVoucherid() + " and ih.payTo=:payTo order by id desc   ";
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ASSIGNED BUT SURRENDARD: getDetailTypeKeyAmtForDebtitSideCC " + queryString);
-                    final List<Object[]> instrumentStatus = HibernateUtil.getCurrentSession()
+                    final List<Object[]> instrumentStatus = getSession()
                             .createSQLQuery(queryString).setString("payTo", chqAssgn.getPaidTo()).list();
 
                     if (instrumentStatus == null
@@ -970,7 +969,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             + chqAssgn.getVoucherid() + " and ih.payTo=:payTo order by id desc   ";
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ASSIGNED BUT SURRENDARD: detailTypeKeyAmtList size=1" + queryString);
-                    final List<Object[]> instrumentStatus = HibernateUtil.getCurrentSession()
+                    final List<Object[]> instrumentStatus = getSession()
                             .createSQLQuery(queryString).setString("payTo", chqAssgn.getPaidTo()).list();
                     if (instrumentStatus == null
                             || instrumentStatus.size() == 0
@@ -983,8 +982,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 " and ih.payTo=:payTo order by id desc   ";
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: detailTypeKeyAmtList  again checking " + queryString2);
-                        final List<Object[]> instrumentStatusWithsubledgerPaidto = HibernateUtil
-                                .getCurrentSession()
+                        final List<Object[]> instrumentStatusWithsubledgerPaidto = getSession()
                                 .createSQLQuery(queryString2)
                                 .setString(
                                         "payTo",
@@ -1016,7 +1014,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 " and ih.detailtypeid=" + obj[0] + " and ih.detailkeyid=" + obj[1] + " order by id desc ";
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: detailTypeKeyAmtList  checking " + queryString);
-                        final List<Object[]> instrumentStatus = HibernateUtil.getCurrentSession()
+                        final List<Object[]> instrumentStatus = getSession()
                                 .createSQLQuery(queryString).list();
                         if (instrumentStatus == null
                                 || instrumentStatus.size() == 0
@@ -1103,8 +1101,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             {
                 newGLDList = new ArrayList<Object[]>();
                 toIndex += step;
-                final Query generalLedgerDetailsQuery = HibernateUtil
-                        .getCurrentSession()
+                final Query generalLedgerDetailsQuery = getSession()
                         .createQuery(
                                 " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
                 generalLedgerDetailsQuery.setParameterList("IDS", billVHIds.subList(fromIndex, toIndex));
@@ -1122,8 +1119,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 newGLDList = new ArrayList<Object[]>();
                 fromIndex = toIndex;
                 toIndex = fromIndex + size;
-                final Query generalLedgerDetailsQuery = HibernateUtil
-                        .getCurrentSession()
+                final Query generalLedgerDetailsQuery = getSession()
                         .createQuery(
                                 " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
                 generalLedgerDetailsQuery.setParameterList("IDS", billVHIds.subList(fromIndex, toIndex));
@@ -1135,8 +1131,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
 
         } else
         {
-            final Query generalLedgerDetailsQuery = HibernateUtil
-                    .getCurrentSession()
+            final Query generalLedgerDetailsQuery = getSession()
                     .createQuery(
                             " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
             generalLedgerDetailsQuery.setParameterList("IDS", billVHIds);
@@ -1163,8 +1158,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             {
                 newGLDList = new ArrayList<Object[]>();
                 toIndex += step;
-                final Query generalLedgerDetailsQuery = HibernateUtil
-                        .getCurrentSession()
+                final Query generalLedgerDetailsQuery = getSession()
                         .createQuery(
                                 " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and  gl.debitAmount>0");
                 generalLedgerDetailsQuery.setParameterList("IDS", billVHIds.subList(fromIndex, toIndex));
@@ -1181,8 +1175,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 newGLDList = new ArrayList<Object[]>();
                 fromIndex = toIndex;
                 toIndex = fromIndex + size;
-                final Query generalLedgerDetailsQuery = HibernateUtil
-                        .getCurrentSession()
+                final Query generalLedgerDetailsQuery = getSession()
                         .createQuery(
                                 " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and  gl.debitAmount>0");
                 generalLedgerDetailsQuery.setParameterList("IDS", billVHIds.subList(fromIndex, toIndex));
@@ -1193,8 +1186,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
 
         } else
         {
-            final Query generalLedgerDetailsQuery = HibernateUtil
-                    .getCurrentSession()
+            final Query generalLedgerDetailsQuery = getSession()
                     .createQuery(
                             " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and  gl.debitAmount>0");
             generalLedgerDetailsQuery.setParameterList("IDS", billVHIds);
@@ -1269,7 +1261,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getSubledgerAmtForDeduction...");
         final Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = getSession().createSQLQuery(
                 "SELECT gld.detailtypeid, gld.detailkeyid, SUM(gld.amount) FROM generalledgerdetail gld, generalledger gl" +
                         " WHERE gl.voucherheaderid=" + billVHId + " AND gl.id =gld.generalledgerid AND gl.creditamount  >0" +
                         " AND gl.glcodeid NOT IN (:glcodeIdList) GROUP BY gld.detailtypeid, gld.detailkeyid");

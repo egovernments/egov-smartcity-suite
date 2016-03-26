@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -153,7 +156,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private static final String SURRENDERSEARCH = "surrendersearch";
     private static final String SURRENDERRTGSSEARCH = "surrenderRTGSsearch";
     private String paymentMode, inFavourOf;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     @Qualifier("paymentService")
     private PaymentService paymentService;
     private Integer bankaccount, selectedRows = 0, bankbranch;
@@ -527,8 +534,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     @Action(value = "/payment/chequeAssignment-getReceiptDetails")
     public String getReceiptDetails() {
         Query query = null;
-        query = HibernateUtil
-                .getCurrentSession()
+        query = persistenceService.getSession()
                 .createSQLQuery(
                         "select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ," +
                                 " redtl.remittedamt as receiptAmount,redtl.remittedamt as deductedAmount" +
@@ -779,8 +785,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Map<String, String> loadChequeSerialNo(final Integer acc) {
 
         chequeSlNoMap = new LinkedHashMap<String, String>();
-        final List<String> cheueSlList = HibernateUtil
-                .getCurrentSession()
+        final List<String> cheueSlList = persistenceService.getSession()
                 .createSQLQuery(
                         "select distinct(serialNo) from  egf_account_cheques where bankAccountId=" + acc
                                 + " order by serialNo desc ").list();

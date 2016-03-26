@@ -43,6 +43,9 @@
  */
 package com.exilant.eGov.src.reports;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -81,7 +84,11 @@ public class CashBook {
     NumberFormat numberformatter = new DecimalFormat("##############0.00");
     private final CommnFunctions commonFun = new CommnFunctions();
     private static final Logger LOGGER = Logger.getLogger(CashBook.class);
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     final SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
@@ -228,7 +235,7 @@ public class CashBook {
             // try{
 
             try {
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                pstmt = persistenceService.getSession().createSQLQuery(query);
             } catch (final Exception e) {
                 LOGGER.error("Exception in creating statement:", e);
                 throw taskExc;
@@ -736,7 +743,7 @@ public class CashBook {
                     + " is-->: " + queryYearOpBal);
 
         int j = 1;
-        pstmt = HibernateUtil.getCurrentSession()
+        pstmt = persistenceService.getSession()
                 .createSQLQuery(queryYearOpBal);
         if (!fundId.equalsIgnoreCase(""))
             pstmt.setString(j++, fundId);
@@ -777,7 +784,7 @@ public class CashBook {
                         + glCode + " is-->: " + queryTillDateOpBal);
 
             int i = 1;
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(
+            pstmt = persistenceService.getSession().createSQLQuery(
                     queryTillDateOpBal);
             pstmt.setString(i++, glCode);
             if (!fundId.equalsIgnoreCase(""))
@@ -821,7 +828,7 @@ public class CashBook {
         String minCode = "";
         try {
             final String query = "select glcode from chartofaccounts where glcode like ?|| '%' and classification = 4 order by glcode asc";
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createSQLQuery(query);
             pstmt.setString(0, minGlCode);
             final List<Object[]> rset = pstmt.list();
             for (final Object[] element : rset)
@@ -839,7 +846,7 @@ public class CashBook {
         String maxCode = "";
         try {
             final String query = "  select glcode from chartofaccounts where glcode like ?|| '%' and classification = 4 order by glcode desc";
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createSQLQuery(query);
             pstmt.setString(0, maxGlCode);
             final List<Object[]> rset = pstmt.list();
             for (final Object[] element : rset)
@@ -860,7 +867,7 @@ public class CashBook {
         if (!id.equals(""))
             try {
                 final String queryCgn = "select CGN from VOUCHERHEADER where id=?";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(
+                pstmt = persistenceService.getSession().createSQLQuery(
                         queryCgn);
                 pstmt.setString(0, id);
                 rsCgn = pstmt.list();
@@ -913,13 +920,13 @@ public class CashBook {
             final String query = "select glcode as \"glcode\" from chartofaccounts where id in (select cashinhand from codemapping where eg_boundaryid=?)";
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createSQLQuery(query);
             pstmt.setString(0, bId);
             rs = pstmt.list();
             for (final Object[] element : rs)
                 glcode[0] = element[0].toString();
             final String str = "select glcode from chartofaccounts where id in (select chequeinHand from codemapping where eg_boundaryid=?)";
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(str);
+            pstmt = persistenceService.getSession().createSQLQuery(str);
             pstmt.setString(0, bId);
             rs = pstmt.list();
             for (final Object[] element : rs)
@@ -939,7 +946,7 @@ public class CashBook {
         try {
 
             final String query = "select name as \"name\" from companydetail";
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createSQLQuery(query);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
             rs = pstmt.list();

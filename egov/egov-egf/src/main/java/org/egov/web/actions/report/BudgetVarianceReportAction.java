@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -116,7 +119,11 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
     private Vouchermis vouchermis = new Vouchermis();
-    private @Autowired AppConfigValueService appConfigValuesService;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired AppConfigValueService appConfigValuesService;
     private ReportService reportService;
     private final List<String> accountTypeList = new ArrayList<String>();
     private String accountType = "";
@@ -169,8 +176,8 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     @Override
     public void prepare() {
     	 super.prepare();
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
        
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
         if (!parameters.containsKey("skipPrepare")) {

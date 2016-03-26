@@ -42,12 +42,21 @@ package org.egov.commons.dao;
 import java.util.List;
 
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.CVoucherHeader;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface VoucherHeaderDAO extends GenericDAO {
+public interface VoucherHeaderDAO {
 	public List<CVoucherHeader> getVoucherHeadersByStatus(Integer status) throws Exception;
 
 	public List<CVoucherHeader> getVoucherHeadersByStatusAndType(Integer status, String type) throws Exception;
 
 	public CVoucherHeader getVoucherHeadersByCGN(String cgn);
+	 CVoucherHeader   findById(Number id, boolean lock);
+
+	    List<  CVoucherHeader   > findAll();
+
+	      CVoucherHeader    create(  CVoucherHeader    entity);
+	      CVoucherHeader    update(  CVoucherHeader    entity);
+
+	    void delete(  CVoucherHeader    entity);
 }

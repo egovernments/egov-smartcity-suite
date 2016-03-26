@@ -45,11 +45,12 @@ import java.util.List;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons. CChartOfAccounts ;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface ChartOfAccountsDAO extends GenericDAO {
+public interface ChartOfAccountsDAO{
     // public Collection getAccountCodeList();
     @Deprecated
     public Collection getAccountCodeListForDetails();
@@ -104,4 +105,13 @@ public interface ChartOfAccountsDAO extends GenericDAO {
     public List<CChartOfAccounts> getBySubLedgerCode(String subLedgerCode);
 
     public List<CChartOfAccounts> getForRecovery();
+     CChartOfAccounts  findById(Number  id, boolean lock);
+
+    List<  CChartOfAccounts  > findAll();
+
+ 
+      CChartOfAccounts   create(  CChartOfAccounts   entity);
+      CChartOfAccounts   update(  CChartOfAccounts   entity);
+
+    void delete(  CChartOfAccounts   entity);
 }

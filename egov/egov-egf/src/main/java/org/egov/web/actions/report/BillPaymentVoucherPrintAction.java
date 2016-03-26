@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -121,7 +124,11 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     String bankAccountNumber = "";
     ArrayList<Long> chequeNoList = new ArrayList<Long>();
     ArrayList<String> chequeNosList = new ArrayList<String>();
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovCommon egovCommon;
 
     public Map<String, Object> getParamMap() {
@@ -250,13 +257,13 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     }
 
     void populateVoucher() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
 
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
             chequeNosList = new ArrayList<String>();
             final Long id = Long.valueOf(parameters.get("id")[0]);
-            paymentHeader = (Paymentheader) HibernateUtil.getCurrentSession().get(Paymentheader.class, id);
+            paymentHeader = (Paymentheader) persistenceService.getSession().get(Paymentheader.class, id);
             if (paymentHeader != null && paymentHeader.getType().equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
             {
                 paymentMode = "rtgs";
@@ -379,7 +386,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     }
 
     String getUlbName() {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

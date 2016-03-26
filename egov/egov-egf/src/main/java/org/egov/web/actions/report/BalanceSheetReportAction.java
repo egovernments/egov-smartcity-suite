@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,7 +102,11 @@ public class BalanceSheetReportAction extends BaseFormAction {
     FinancialYearDAO financialYearDAO;
     CFinancialYear financialYear=new CFinancialYear();
     
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     public FinancialYearDAO getFinancialYearDAO() {
@@ -190,8 +197,8 @@ public class BalanceSheetReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
             addDropdownData("departmentList", masterDataCache.get("egi-department"));

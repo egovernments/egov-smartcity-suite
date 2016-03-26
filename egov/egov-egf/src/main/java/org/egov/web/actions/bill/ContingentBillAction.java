@@ -42,6 +42,9 @@
  */
 package org.egov.web.actions.bill;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -140,7 +143,11 @@ public class ContingentBillAction extends BaseBillAction {
     private String sanctionedMessge;
     private Department primaryDepartment;
 
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
 
     @Override
@@ -462,7 +469,7 @@ public class ContingentBillAction extends BaseBillAction {
         cbill.setBillstatus(FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
         // persistenceService.setType(Cbill.class);
         persistenceService.persist(cbill);
-        HibernateUtil.getCurrentSession().flush();
+        persistenceService.getSession().flush();
         addActionMessage(getText("cbill.cancellation.succesful"));
     }
 
@@ -570,14 +577,14 @@ public class ContingentBillAction extends BaseBillAction {
                 LOGGER.error("Inside updateBill" + e.getMessage(), e);
 
             }
-        HibernateUtil.getCurrentSession().flush();
+        persistenceService.getSession().flush();
         bill.setEgBilldetailes(EgBillSet);
         EgBillSet.addAll(updateBillDetails(bill));
         checkBudgetandGenerateNumber(bill);
-        HibernateUtil.getCurrentSession().refresh(bill);
+        persistenceService.getSession().refresh(bill);
         // persistenceService.setType(Cbill.class);
         persistenceService.persist(bill);
-        HibernateUtil.getCurrentSession().flush();
+        persistenceService.getSession().flush();
         return bill;
     }
 
@@ -849,7 +856,7 @@ public class ContingentBillAction extends BaseBillAction {
                 checkList.setObjectid(bill.getId());
                 checkList.setAppconfigvalue(configValue);
                 checkList.setChecklistvalue(clh.getVal());
-                HibernateUtil.getCurrentSession().saveOrUpdate(checkList);
+                persistenceService.getSession().saveOrUpdate(checkList);
             }
     }
 

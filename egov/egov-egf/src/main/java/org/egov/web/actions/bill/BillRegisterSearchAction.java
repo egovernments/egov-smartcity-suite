@@ -42,6 +42,9 @@
  */
 package org.egov.web.actions.bill;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -92,7 +95,11 @@ public class BillRegisterSearchAction extends BaseFormAction {
     private String billDateTo;
     private String expType;
     private List<Map<String, Object>> billList;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     public BillRegisterSearchAction() {
@@ -245,7 +252,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
             {
                 newGLDList = new ArrayList<Object[]>();
                 toIndex += step;
-                final Query ownerNamesQuery = HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr);
+                final Query ownerNamesQuery = persistenceService.getSession().createQuery(ownerNamesQueryStr);
                 ownerNamesQuery.setParameterList("IDS", stateIds.subList(fromIndex, toIndex));
                 newGLDList = ownerNamesQuery.list();
                 fromIndex = toIndex;
@@ -260,7 +267,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
                 newGLDList = new ArrayList<Object[]>();
                 fromIndex = toIndex;
                 toIndex = fromIndex + size;
-                final Query ownerNamesQuery = HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr);
+                final Query ownerNamesQuery = persistenceService.getSession().createQuery(ownerNamesQueryStr);
                 ownerNamesQuery.setParameterList("IDS", stateIds.subList(fromIndex, toIndex));
                 newGLDList = ownerNamesQuery.list();
                 if (newGLDList != null)
@@ -268,7 +275,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
             }
 
         } else
-            ownerNamesList = HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr)
+            ownerNamesList = persistenceService.getSession().createQuery(ownerNamesQueryStr)
             .setParameterList("IDS", stateIds)
             .list();
         return ownerNamesList;

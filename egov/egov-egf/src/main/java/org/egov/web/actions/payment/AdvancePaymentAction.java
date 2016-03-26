@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,10 +93,8 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Results({
-    @Result(name = AdvancePaymentAction.NEW, location = "advancePayment-" + AdvancePaymentAction.NEW + ".jsp"),
-    @Result(name = "view", location = "advancePayment-view.jsp")
-})
+@Results({ @Result(name = AdvancePaymentAction.NEW, location = "advancePayment-" + AdvancePaymentAction.NEW + ".jsp"),
+        @Result(name = "view", location = "advancePayment-view.jsp") })
 public class AdvancePaymentAction extends BasePaymentAction {
     /**
      *
@@ -109,7 +109,11 @@ public class AdvancePaymentAction extends BasePaymentAction {
     private PersistenceService<Miscbilldetail, Long> miscbilldetailService;
     private Map<String, String> modeOfPaymentMap = new LinkedHashMap<String, String>();
     private EgovCommon egovCommon;
-    private @Autowired CreateVoucher createVoucher;
+    @Autowired 
+    @Qualifier("persistenceService") 
+    private PersistenceService persistenceService;
+    @Autowired
+    CreateVoucher createVoucher;
     private Fund fund;
     private Long advanceRequisitionId;
     private String wfitemstate;
@@ -132,7 +136,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
 
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     @Override
     public void prepare() {
         super.prepare();
@@ -180,9 +184,9 @@ public class AdvancePaymentAction extends BasePaymentAction {
                 persistenceService
                         .findAllBy(
                                 "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true and type in (?,?) ) "
-                                        +
-                                        " and br.isactive=true and br.bank.isactive = true order by br.bank.name asc", fund,
-                                FinancialConstants.TYPEOFACCOUNT_PAYMENTS, FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
+                                        + " and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
+                                fund, FinancialConstants.TYPEOFACCOUNT_PAYMENTS,
+                                FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
     }
 
     @ValidationErrorPage(value = NEW)
@@ -197,8 +201,9 @@ public class AdvancePaymentAction extends BasePaymentAction {
             if (commonBean.getModeOfPayment().equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
                 validateRTGS();
             voucherHeader = createVoucherAndledger();
-            paymentheader = paymentService.createPaymentHeader(voucherHeader, Integer.valueOf(commonBean.getAccountNumberId()),
-                    commonBean.getModeOfPayment(), advanceRequisition.getAdvanceRequisitionAmount());
+            paymentheader = paymentService.createPaymentHeader(voucherHeader,
+                    Integer.valueOf(commonBean.getAccountNumberId()), commonBean.getModeOfPayment(),
+                    advanceRequisition.getAdvanceRequisitionAmount());
 
             createMiscBill();
             paymentheader.start().withOwner(paymentService.getPosition());
@@ -212,8 +217,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
                 if (error.getMessage().contains("DatabaseSequenceFirstTimeException")) {
                     prepare();
                     throw new ValidationException(Arrays.asList(new ValidationError("error", error.getMessage())));
-                }
-                else
+                } else
                     throw new ValidationException(e.getErrors());
             populateBankAccounts(Integer.parseInt(commonBean.getBankId().split("-")[1]), fund.getId());
         } catch (final NumberFormatException e) {
@@ -250,12 +254,14 @@ public class AdvancePaymentAction extends BasePaymentAction {
                 addActionMessage(getText("payment.voucher.final.approval"));
             else
                 addActionMessage(getText("payment.voucher.approved",
-                        new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+                        new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
+                                .getOwnerPosition()) }));
             setAction(parameters.get(ACTIONNAME)[0]);
 
         } else
             addActionMessage(getText("payment.voucher.rejected",
-                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
+                            .getOwnerPosition()) }));
         return viewInboxItem();
     }
 
@@ -275,14 +281,17 @@ public class AdvancePaymentAction extends BasePaymentAction {
     @Action(value = "/payment/advancePayment-view")
     public String view() {
         prepareForView();
-        wfitemstate = "END"; // required to hide the approver drop down when view is form source
+        wfitemstate = "END"; // required to hide the approver drop down when
+                             // view is form source
         return VIEW;
     }
 
     @SuppressWarnings("unchecked")
     private void prepareForView() {
-        voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class, voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
+        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class,
+                voucherHeader.getId());
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+                voucherHeader);
         advanceRequisition = (EgAdvanceRequisition) persistenceService.find(
                 "from EgAdvanceRequisition where egAdvanceReqMises.voucherheader = ?", voucherHeader);
         advanceRequisitionId = advanceRequisition.getId();
@@ -294,8 +303,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
         commonBean.setBankId(bankBranchId);
         commonBean.setModeOfPayment(paymentheader.getType().toUpperCase());
         final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService.find(
-                " from Miscbilldetail where payVoucherHeader=?",
-                voucherHeader);
+                " from Miscbilldetail where payVoucherHeader=?", voucherHeader);
 
         commonBean.setPaidTo(miscbillDetail.getPaidto());
         loadAjaxedDropDowns();
@@ -312,9 +320,9 @@ public class AdvancePaymentAction extends BasePaymentAction {
 
     private void populateBankAccounts(final Integer bankBranchId, final Integer fundId) {
         addDropdownData("accountNumberList", persistenceService.findAllBy(
-                "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.type in (?,?) " +
-                        "and ba.isactive=true order by ba.chartofaccounts.glcode", bankBranchId, fundId,
-                        FinancialConstants.TYPEOFACCOUNT_PAYMENTS, FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
+                "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.type in (?,?) "
+                        + "and ba.isactive=true order by ba.chartofaccounts.glcode", bankBranchId, fundId,
+                FinancialConstants.TYPEOFACCOUNT_PAYMENTS, FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
     }
 
     @SuppressWarnings("unchecked")
@@ -328,9 +336,9 @@ public class AdvancePaymentAction extends BasePaymentAction {
         if (list.get(0).equals("true"))
             try {
                 canCheckBalance = true;
-                commonBean.setAvailableBalance(egovCommon.getAccountBalance(new Date(), paymentheader.getBankaccount().getId(),
-                        paymentheader.getPaymentAmount(), paymentheader.getId(), paymentheader.getBankaccount()
-                        .getChartofaccounts().getId()));
+                commonBean.setAvailableBalance(egovCommon.getAccountBalance(new Date(), paymentheader.getBankaccount()
+                        .getId(), paymentheader.getPaymentAmount(), paymentheader.getId(), paymentheader
+                        .getBankaccount().getChartofaccounts().getId()));
                 balance = commonBean.getAvailableBalance();
                 return true;
             } catch (final Exception e) {
@@ -343,7 +351,8 @@ public class AdvancePaymentAction extends BasePaymentAction {
 
     private void createMiscBill() {
         final Miscbilldetail miscbilldetail = new Miscbilldetail();
-        // Since we are not creating any bill for advance payment, we are updating bill no, bill date and bill amount from ARF
+        // Since we are not creating any bill for advance payment, we are
+        // updating bill no, bill date and bill amount from ARF
         miscbilldetail.setBillnumber(advanceRequisition.getAdvanceRequisitionNumber());
         miscbilldetail.setBilldate(advanceRequisition.getAdvanceRequisitionDate());
         miscbilldetail.setBillamount(advanceRequisition.getAdvanceRequisitionAmount());
@@ -366,7 +375,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, advanceRequisition.getAdvanceRequisitionAmount());
             detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
-            final Bankaccount account = (Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,
+            final Bankaccount account = (Bankaccount) persistenceService.getSession().load(Bankaccount.class,
                     Integer.valueOf(commonBean.getAccountNumberId()));
             detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
@@ -375,7 +384,8 @@ public class AdvancePaymentAction extends BasePaymentAction {
 
             detailMap.put(VoucherConstant.DEBITAMOUNT, advanceRequisition.getAdvanceRequisitionAmount());
             detailMap.put(VoucherConstant.CREDITAMOUNT, ZERO);
-            for (final EgAdvanceRequisitionDetails advanceRequisitionDetails : advanceRequisition.getEgAdvanceReqDetailses())
+            for (final EgAdvanceRequisitionDetails advanceRequisitionDetails : advanceRequisition
+                    .getEgAdvanceReqDetailses())
                 detailMap.put(VoucherConstant.GLCODE, advanceRequisitionDetails.getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
             glcodeMap.put(detailMap.get(VoucherConstant.GLCODE).toString(), VoucherConstant.DEBIT);
@@ -456,7 +466,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
         paymentheader = getPayment();
         voucherHeader = paymentheader.getVoucherheader();
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-        //persistenceService.setType(CVoucherHeader.class);
+        // persistenceService.setType(CVoucherHeader.class);
         paymentheader.transition(true).end();
         persistenceService.persist(voucherHeader);
         addActionMessage(getText("payment.cancel.success"));
@@ -486,7 +496,8 @@ public class AdvancePaymentAction extends BasePaymentAction {
         } else
             paymentid = parameters.get(PAYMENTID)[0];
         if (paymentheader == null && paymentid != null)
-            paymentheader = (Paymentheader) HibernateUtil.getCurrentSession().load(Paymentheader.class, Long.valueOf(paymentid));
+            paymentheader = (Paymentheader) persistenceService.getSession().load(Paymentheader.class,
+                    Long.valueOf(paymentid));
         if (paymentheader == null)
             paymentheader = new Paymentheader();
 
@@ -541,7 +552,8 @@ public class AdvancePaymentAction extends BasePaymentAction {
         addDropdownData("designationList", (List<Designation>) map.get("designationList"));
 
         if (bDefaultDeptId && !dName.equals("")) {
-            final Department dept = (Department) persistenceService.find("from Department where deptName like '%" + dName + "' ");
+            final Department dept = (Department) persistenceService.find("from Department where deptName like '%"
+                    + dName + "' ");
             departmentId = dept.getId().intValue();
         }
         wfitemstate = map.get("wfitemstate") != null ? map.get("wfitemstate").toString() : "";
@@ -557,11 +569,14 @@ public class AdvancePaymentAction extends BasePaymentAction {
             if (voucherHeader.getVoucherDate() == null)
                 addFieldError("voucherDate", getText("arf.payment.voucherdate.required"));
             if (!DateUtils.compareDates(voucherHeader.getVoucherDate(), advanceRequisition.getAdvanceRequisitionDate()))
-                addFieldError("advanceRequisitionDate", getText("arf.payment.voucherdate.lessthan.advancerequisitiondate"));
+                addFieldError("advanceRequisitionDate",
+                        getText("arf.payment.voucherdate.lessthan.advancerequisitiondate"));
             if (!DateUtils.compareDates(new Date(), voucherHeader.getVoucherDate()))
-                addFieldError("advanceRequisitionDate", getText("arf.validate.payment.voucherdate.greaterthan.currentDate"));
+                addFieldError("advanceRequisitionDate",
+                        getText("arf.validate.payment.voucherdate.greaterthan.currentDate"));
 
-            if (org.apache.commons.lang.StringUtils.isBlank(commonBean.getBankId()) || commonBean.getBankId().equals("-1"))
+            if (org.apache.commons.lang.StringUtils.isBlank(commonBean.getBankId())
+                    || commonBean.getBankId().equals("-1"))
                 addFieldError("commonBean.bankId", getText("arf.bankbranch.required"));
 
             if (org.apache.commons.lang.StringUtils.isBlank(commonBean.getAccountNumberId())
@@ -583,11 +598,12 @@ public class AdvancePaymentAction extends BasePaymentAction {
                         entity = paymentService.getEntity(payeeDetail.getAccountDetailType().getId(),
                                 payeeDetail.getAccountdetailKeyId());
                         if (entity == null)
-                            throw new ValidationException(Arrays.asList(new ValidationError("no.entity.for.detailkey", getText(
-                                    "no.entity.for.detailkey", new String[] { entity.getCode() + "-" + entity.getName() }))));
+                            throw new ValidationException(Arrays.asList(new ValidationError("no.entity.for.detailkey",
+                                    getText("no.entity.for.detailkey",
+                                            new String[] { entity.getCode() + "-" + entity.getName() }))));
                     } catch (final ApplicationException e) {
-                        throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e
-                                .getMessage())));
+                        throw new ValidationException(Arrays.asList(new ValidationError(
+                                "Exception to get EntityType  ", e.getMessage())));
                     }
 
                     if (org.apache.commons.lang.StringUtils.isBlank(entity.getPanno())
@@ -595,17 +611,18 @@ public class AdvancePaymentAction extends BasePaymentAction {
                             || org.apache.commons.lang.StringUtils.isBlank(entity.getBankaccount())
                             || org.apache.commons.lang.StringUtils.isBlank(entity.getIfsccode())) {
                         populateBankAccounts(Integer.parseInt(commonBean.getBankId().split("-")[1]), fund.getId());
-                        LOGGER.error(getText("validate.paymentMode.rtgs.subledger.details", new String[] { entity.getCode() + "-"
-                                + entity.getName() }));
+                        LOGGER.error(getText("validate.paymentMode.rtgs.subledger.details",
+                                new String[] { entity.getCode() + "-" + entity.getName() }));
                         errors.add(new ValidationError("validate.paymentMode.rtgs.subledger.details", getText(
-                                "validate.paymentMode.rtgs.subledger.details",
-                                new String[] { entity.getCode() + "-" + entity.getName() })));
+                                "validate.paymentMode.rtgs.subledger.details", new String[] { entity.getCode() + "-"
+                                        + entity.getName() })));
                         throw new ValidationException(errors);
 
                     }
                 }
             else
-                throw new ValidationException(Arrays.asList(new ValidationError("no.subledger.cannot.create.rtgs.payment",
+                throw new ValidationException(Arrays.asList(new ValidationError(
+                        "no.subledger.cannot.create.rtgs.payment",
                         "arf.payment.no.subledger.cannot.create.rtgs.payment")));
     }
 
@@ -724,8 +741,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
         this.paymentheader = paymentheader;
     }
 
-    public void setMiscbilldetailService(
-            final PersistenceService<Miscbilldetail, Long> miscbilldetailService) {
+    public void setMiscbilldetailService(final PersistenceService<Miscbilldetail, Long> miscbilldetailService) {
         this.miscbilldetailService = miscbilldetailService;
     }
 

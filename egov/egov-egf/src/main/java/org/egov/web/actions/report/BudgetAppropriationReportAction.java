@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -97,13 +100,17 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
     private String isFundSelected = "false";
     private String isFunctionSelected = "false";
     private String isDepartmentSelected = "false";
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     @Override
     public void prepare() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
             addDropdownData("departmentList", masterDataCache.get("egi-department"));
@@ -191,7 +198,7 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
     }
 
     private Query generateQuery() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createSQLQuery(
                 getQueryString().toString()).addScalar("department").addScalar("function").addScalar(
                         "fund").addScalar("budgetHead").addScalar("budgetAppropriationNo").addScalar("appropriationDate")
                         .addScalar("actualAmount")
@@ -222,7 +229,7 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
      */
     @SuppressWarnings("unchecked")
     public String getUlbName() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

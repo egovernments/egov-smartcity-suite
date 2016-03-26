@@ -70,7 +70,6 @@ import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
-import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
@@ -90,7 +89,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -154,8 +152,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private AssignmentService assignmentService;
     @Autowired
     private VoucherHeaderDAO voucherHeaderDAO;
-    @Autowired
-    private CommonsServiceImpl commonsService;
     @Autowired
     @Qualifier("voucherHelper")
     private VoucherHelper voucherHelper;
@@ -444,9 +440,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 voucherDetail.setCreditAmountDetail(crAmount.setScale(2, BigDecimal.ROUND_HALF_UP));
                 billDetailslist.add(voucherDetail);
 
-                final List<CGeneralLedgerDetail> gledgerDetailList = voucherHibDAO.getGeneralledgerdetail(Integer
-                        .valueOf(generalLedger
-                                .getId().toString()));
+                final List<CGeneralLedgerDetail> gledgerDetailList = voucherHibDAO.getGeneralledgerdetail(generalLedger
+                                .getId());
 
                 for (final CGeneralLedgerDetail gledgerDetail : gledgerDetailList) {
                     subLedgerDetail = new VoucherDetails();
@@ -454,7 +449,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                     subLedgerDetail.setGlcode((CChartOfAccounts) coaDAO.findById(generalLedger.getGlcodeId().getId(), false));
                     subLedgerDetail.setSubledgerCode(generalLedger.getGlcodeId().getGlcode());
                     final Accountdetailtype accountdetailtype = voucherHibDAO.getAccountDetailById(gledgerDetail
-                            .getDetailTypeId());
+                            .getDetailTypeId().getId());
                     subLedgerDetail.setDetailType(accountdetailtype);
                     subLedgerDetail.setDetailTypeName(accountdetailtype.getName());
                     final EntityType entity = voucherHibDAO.getEntityInfo(gledgerDetail.getDetailKeyId(),
@@ -660,6 +655,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         final List<Transaxtion> transaxtionList = new ArrayList<Transaxtion>();
         final String accDetailFunc = "";
         String detailedFunc = "";
+        Integer voucherLineId = 1;
         final List<String> repeatedglCodes = VoucherHelper.getRepeatedGlcodes(billDetailslist);
         try {
             for (final VoucherDetails accountDetails : billDetailslist) {
@@ -676,7 +672,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 final Transaxtion transaction = new Transaxtion();
                 transaction.setGlCode(accountDetails.getGlcodeDetail());
                 transaction.setGlName(accountDetails.getAccounthead());
-                // transaction.setVoucherLineId(String.valueOf(voucherDetail.getId()));
+                transaction.setVoucherLineId(String.valueOf(voucherLineId++));
                 transaction.setVoucherHeaderId(voucherHeader.getId().toString());
                 transaction.setCrAmount(accountDetails.getCreditAmountDetail().toString());
                 transaction.setDrAmount(accountDetails.getDebitAmountDetail().toString());
@@ -771,7 +767,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
          * getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate());
          * voucherHeader
          * .setVoucherNumber(cmImpl.getTxnNumber(voucherHeader.getFundId().getId().toString(),autoVoucherType,vDate,conn)); } else
-         * { Query query=HibernateUtil.getCurrentSession().createQuery("select f.identifier from Fund f where id=:fundId");
+         * { Query query=getSession().createQuery("select f.identifier from Fund f where id=:fundId");
          * query.setInteger("fundId", voucherHeader.getFundId().getId()); String fundIdentifier = query.uniqueResult().toString();
          * //String vn2 = getFormattedManualVoucherNumber(fundIdentifier, autoVoucherType, voucherHeader.getVoucherNumber());
          * voucherHeader.setVoucherNumber(new StringBuffer().append(fundIdentifier).append(autoVoucherType).
@@ -1124,7 +1120,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 egBillregister.setBillnumber(voucherTypeBean.getBillNum());
             else {
                 final ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator", sequenceGenerator, "bill",
-                        egBillregister, "commonsService", commonsService);
+                        egBillregister, "commonsService", financialYearDAO);
                 final String billNumber = (String) scriptService.executeScript("autobillnumber", scriptContext);
                 egBillregister.setBillnumber(billNumber);
                 if (LOGGER.isDebugEnabled())
@@ -1144,7 +1140,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             voucherHeader.getVouchermis().setSourcePath(
                     "/EGF/voucher/journalVoucherModify-beforeModify.action?voucherHeader.id=" + voucherHeader.getId());
             update(voucherHeader);
-            entityManager.flush();
+            persistenceService.getSession().flush();
         } catch (final ValidationException e) {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));

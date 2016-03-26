@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.Arrays;
 import java.util.List;
 
@@ -82,7 +85,11 @@ public class PartyTypeAction extends BaseFormAction {
     private String success = "";
     protected static final Logger LOGGER = Logger.getLogger(PartyTypeAction.class);
 
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     @Override
@@ -131,8 +138,8 @@ public class PartyTypeAction extends BaseFormAction {
 
             //persistenceService.setType(EgPartytype.class);
             persistenceService.persist(partyType);
-            HibernateUtil.getCurrentSession().flush();
-            HibernateUtil.getCurrentSession().clear();
+            persistenceService.getSession().flush();
+            persistenceService.getSession().clear();
             setSuccess("yes");
         } catch (final Exception e) {
             setSuccess("no");

@@ -376,7 +376,7 @@ public class ReceiptAction extends BaseFormAction {
         } else // to load branch list and account list while returning after an
             // error
             if (getServiceName() != null && receiptMisc.getFund() != null) {
-                final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
+                final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId(),false);
                 ajaxBankRemittanceAction.setFundName(fund.getName());
                 ajaxBankRemittanceAction.bankBranchList();
                 addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
@@ -442,7 +442,7 @@ public class ReceiptAction extends BaseFormAction {
         // final ReceiptHeader receiptHeader = new ReceiptHeader();
         receiptHeader.setPartPaymentAllowed(false);
         receiptHeader.setService(service);
-        final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
+        final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId(),false);
         Functionary functionary = null;
         Scheme scheme = null;
         SubScheme subscheme = null;

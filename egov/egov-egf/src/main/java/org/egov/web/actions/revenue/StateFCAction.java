@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.revenue;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -65,6 +68,10 @@ import org.hibernate.Query;
                         "application/xls", "contentDisposition", "no-cache;filename=StateFC.xls" })
 })
 public class StateFCAction extends BaseRevenueAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     /**
      *
@@ -94,7 +101,7 @@ public class StateFCAction extends BaseRevenueAction {
     }
 
     public String getUlbName() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createSQLQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
