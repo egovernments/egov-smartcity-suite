@@ -588,7 +588,7 @@ public class ReportService {
 
     public BigDecimal formatAmt(double amt) {
         BigDecimal result = new BigDecimal(0.000);
-        result = BigDecimal.valueOf(amt / 100000).setScale(2, BigDecimal.ROUND_HALF_UP);
+        result = BigDecimal.valueOf(amt / 1000).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         return result;
     }

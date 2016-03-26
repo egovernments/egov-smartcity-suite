@@ -139,7 +139,7 @@
 	<div id="tblulbDCBcollectionheader">
 		<div class="col-md-8 table-header text-left"><spring:message code="lbl.uldDCbDaily.report.details" /> ${bcDailyCollectionReportResult.generatedDate}   </div>
 		<div class="col-md-4 text-right">Date : <%= new java.util.Date() %></div>
-		<div class="col-md-4 text-right">Amount in Lakhs</div>
+		<div class="col-md-4 text-right">Amount in Thousands</div>
 	</div>
 				<div class="col-md-12 form-group report-table-container">
 				<table class="table table-bordered datatable multiheadertbl" id="tblulbDCBcollection">
