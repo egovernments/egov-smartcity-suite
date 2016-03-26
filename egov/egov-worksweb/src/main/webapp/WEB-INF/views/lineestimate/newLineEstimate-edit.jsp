@@ -65,7 +65,7 @@
 					</c:if>
 				</div>
 			</div>
-			<div class="panel panel-primary" data-collapsed="0">
+		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
 					<spring:message  code="lbl.apphistory"/>
@@ -73,26 +73,18 @@
 			</div>
 			<jsp:include page="lineestimatehistory-view.jsp"></jsp:include>
 		</div>
-		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' }">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message  code="lbl.adminsanctiondetails"/>
-					</div>
-				</div>
+		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }" >
 			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
-			</div>
 		</c:if>
-		
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
 		</c:if>
 		<c:if test="${mode != 'readOnly' }">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 		</c:if>
-			<div class="buttonbottom" align="center">
-				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-			</div>
+		<div class="buttonbottom" align="center">
+			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+		</div>
 		</form:form>  
 	</div>
 </div>

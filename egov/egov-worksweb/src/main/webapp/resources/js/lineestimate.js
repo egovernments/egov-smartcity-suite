@@ -396,26 +396,6 @@ function validateQuantity() {
 	});
 }
 
-$('#adminSanctionNumber').change(function(){
-	var date = this.value;
-	if(date != "") {
-		$.ajax({
-			url: "/egworks/lineestimate/ajaxvalidate-adminsanctionnumber",
-			data: {id : $('#id').val(), date : this.value},
-			type: "GET",
-			dataType: "json",
-			success: function (response) {
-				if(response != true) {
-					bootbox.alert("alert");
-					$('#adminSanctionNumber').val("");
-				}
-			}, 
-			error: function (response) {
-			}
-		});
-	}
-});
-
 function validateadminSanctionNumber() {
 	$( "input[name$='adminSanctionNumber']" ).on("keyup", function(){
 		var valid = /^[a-zA-Z0-9\\/-]*$/.test(this.value),
@@ -443,9 +423,11 @@ function showSlumFieldsValue() {
 	if ('SLUM_WORK' == slum) {
 		showSlumFields();
 		return true;
-	} else {
+	} else if('NON_SLUM_WORK' == slum){
+		disableSlumFields();
+		return true;
+	} else
 		return false;
-	}
 }
 
 function validateWorkFlowApprover(name) {

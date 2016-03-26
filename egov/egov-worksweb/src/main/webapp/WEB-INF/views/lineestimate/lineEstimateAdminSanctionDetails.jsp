@@ -41,6 +41,12 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message  code="lbl.adminsanctiondetails"/>
+		</div>
+	</div>
 	<div class="panel-body">
 		<input type="hidden" id="errorCouncilResolutionDate" value="<spring:message code='error.councilresolutiondate' />" />
 		<input type="hidden" id="lineEstimateDate" value='<fmt:formatDate value="${lineEstimate.lineEstimateDate }" pattern="dd/MM/yyyy"/>' />
@@ -55,18 +61,34 @@
 			<tbody >
 				<tr>
 					<td>
+					<c:if test="${mode != 'readOnly'  }">
 						<form:input path="councilResolutionNumber" id="councilResolutionNumber" name="councilResolutionNumber" value="${councilResolutionNumber}" data-errormsg="Council Resolution Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right" onclick="validatecouncilResolutionNumber();" maxlength="32"/>
 						<form:errors path="councilResolutionNumber" cssClass="add-margin error-msg" />
+					</c:if>
+					<c:if test="${mode == 'readOnly' }">
+							<c:out value="${lineEstimate.councilResolutionNumber}"></c:out>
+					</c:if>
 					</td>
 					<td>
+					<c:if test="${mode != 'readOnly'  }">
 						<form:input path="councilResolutionDate" id="councilResolutionDate" name="councilResolutionDate" value="${councilResolutionDate}" data-errormsg="Council Resolution Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" onkeyup="testDate();" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
 						<form:errors path="councilResolutionDate" cssClass="add-margin error-msg" />	
+					</c:if>
+	 				<c:if test="${mode == 'readOnly'  }">
+						<fmt:formatDate value="${lineEstimate.councilResolutionDate}" pattern="dd/MM/yyyy" />
+					</c:if>
 					</td>
 					<td>
+					<c:if test="${mode != 'readOnly' }">
 						<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control table-input text-right" maxlength="32" required="required" onclick="validateadminSanctionNumber();"/>
-						<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />				
+						<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />			
+					</c:if>	
+					<c:if test="${mode == 'readOnly' }">
+						<c:out value="${lineEstimate.adminSanctionNumber }"></c:out>
+					</c:if>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
+</div>
