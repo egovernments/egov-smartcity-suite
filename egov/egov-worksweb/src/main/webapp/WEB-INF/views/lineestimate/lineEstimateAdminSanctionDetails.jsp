@@ -61,29 +61,29 @@
 			<tbody >
 				<tr>
 					<td>
-					<c:if test="${mode != 'readOnly'  }">
+					<c:if test="${mode != 'readOnly' && lineEstimate.status.code != 'ADMINISTRATIVE_SANCTIONED' }">
 						<form:input path="councilResolutionNumber" id="councilResolutionNumber" name="councilResolutionNumber" value="${councilResolutionNumber}" data-errormsg="Council Resolution Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right" onclick="validatecouncilResolutionNumber();" maxlength="32"/>
 						<form:errors path="councilResolutionNumber" cssClass="add-margin error-msg" />
 					</c:if>
-					<c:if test="${mode == 'readOnly' }">
+					<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
 							<c:out value="${lineEstimate.councilResolutionNumber}"></c:out>
 					</c:if>
 					</td>
 					<td>
-					<c:if test="${mode != 'readOnly'  }">
+					<c:if test="${mode != 'readOnly' && lineEstimate.status.code != 'ADMINISTRATIVE_SANCTIONED' }">
 						<form:input path="councilResolutionDate" id="councilResolutionDate" name="councilResolutionDate" value="${councilResolutionDate}" data-errormsg="Council Resolution Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" onkeyup="testDate();" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
 						<form:errors path="councilResolutionDate" cssClass="add-margin error-msg" />	
 					</c:if>
-	 				<c:if test="${mode == 'readOnly'  }">
+	 				<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED'  }">
 						<fmt:formatDate value="${lineEstimate.councilResolutionDate}" pattern="dd/MM/yyyy" />
 					</c:if>
 					</td>
 					<td>
-					<c:if test="${mode != 'readOnly' }">
+					<c:if test="${mode != 'readOnly' && lineEstimate.status.code != 'ADMINISTRATIVE_SANCTIONED' }">
 						<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control table-input text-right" maxlength="32" required="required" onclick="validateadminSanctionNumber();"/>
 						<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />			
 					</c:if>	
-					<c:if test="${mode == 'readOnly' }">
+					<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
 						<c:out value="${lineEstimate.adminSanctionNumber }"></c:out>
 					</c:if>
 					</td>

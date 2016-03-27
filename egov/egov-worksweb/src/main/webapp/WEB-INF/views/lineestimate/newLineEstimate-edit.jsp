@@ -73,7 +73,7 @@
 			</div>
 			<jsp:include page="lineestimatehistory-view.jsp"></jsp:include>
 		</div>
-		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }" >
+		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }" >
 			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
 		</c:if>
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
