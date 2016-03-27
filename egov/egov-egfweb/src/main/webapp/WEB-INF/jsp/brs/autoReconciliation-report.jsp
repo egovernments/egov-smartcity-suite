@@ -346,9 +346,9 @@
 				<table>
 					<tr>
 						<s:submit value="Export EXCEL" method="generateXLS"
-							cssClass="button" />
+							cssClass="button" onclick="javascript:document.forms[0].action='autoReconciliation-generateXLS.action'" />
 						<s:submit value="Export PDF" method="generatePDF"
-							cssClass="button" />
+							cssClass="button" onclick="javascript:document.forms[0].action='autoReconciliation-generateXLS.action'" />
 					</tr>
 				</table>
 			</div>

@@ -125,7 +125,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     private final static Logger LOGGER = Logger
             .getLogger(ContraBTBAction.class);
     private static final String MDC_CHEQUE = "cheque";
-    private static final String MDC_OTHER = "other";
+    private static final String MDC_OTHER = "RTGS/NEFT";
     private static final String REVERSE = "reverse";
     private static final long serialVersionUID = 1L;
     private static final String TRANSACTION_FAILED = "Transaction failed";
