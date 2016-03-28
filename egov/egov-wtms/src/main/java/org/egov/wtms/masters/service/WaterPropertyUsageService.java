@@ -39,12 +39,14 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.List;
 
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.egov.wtms.masters.repository.WaterPropertyUsageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +61,11 @@ public class WaterPropertyUsageService {
         this.waterPropertyUsageRepository = waterPropertyUsageRepository;
 
     }
-    
+
+    public WaterPropertyUsage findOne(final Long waterPropertyUsageId) {
+        return waterPropertyUsageRepository.findOne(waterPropertyUsageId);
+    }
+
     @Transactional
     public WaterPropertyUsage createPropertyCategory(final WaterPropertyUsage waterPropertyUsage) {
         return waterPropertyUsageRepository.save(waterPropertyUsage);
@@ -69,14 +75,29 @@ public class WaterPropertyUsageService {
     public void updatePropertyCategory(final WaterPropertyUsage waterPropertyUsage) {
         waterPropertyUsageRepository.save(waterPropertyUsage);
     }
-    
-    
-    public WaterPropertyUsage findByPropertyTypecodeAndUsageTypecode(final String propertyType,final String usageTypeCode) {
-        return waterPropertyUsageRepository.findByPropertyType_codeAndUsageType_code(propertyType,usageTypeCode);
+
+    public WaterPropertyUsage findByPropertyTypecodeAndUsageTypecode(final String propertyType,
+            final String usageTypeCode) {
+        return waterPropertyUsageRepository.findByPropertyType_codeAndUsageType_code(propertyType, usageTypeCode);
     }
-    
+
     public WaterPropertyUsage findByPropertyTypeAndUsageType(final PropertyType propertyType,
             final UsageType usagetype) {
-            return waterPropertyUsageRepository.findByPropertyTypeAndUsageType(propertyType,usagetype);
+        return waterPropertyUsageRepository.findByPropertyTypeAndUsageType(propertyType, usagetype);
     }
+
+    public List<WaterPropertyUsage> findAll() {
+        return waterPropertyUsageRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
+    }
+
+    public List<WaterPropertyUsage> findAllByPropertyTypeAndUsageType(final PropertyType propertyType,
+            final UsageType usagetype) {
+
+        return waterPropertyUsageRepository.findAllByPropertyTypeAndUsageType(propertyType, usagetype);
+    }
+
+    /*public WaterPropertyUsage load(final Long id) {
+        return waterPropertyUsageRepository.getOne(id);
+    }*/
+
 }

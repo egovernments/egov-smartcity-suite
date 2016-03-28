@@ -234,6 +234,10 @@
         <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage-master-success.jsp"/>
     </definition>
+    <definition name="usage-type-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-master-view.jsp"/>
+    </definition> 
     <definition name="pipesize-master" extends="base_layout">
         <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master.jsp"/>
