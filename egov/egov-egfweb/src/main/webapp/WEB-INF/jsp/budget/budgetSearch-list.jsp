@@ -114,7 +114,7 @@
 			</table>
 		</div>
 	</s:if>
-	<s:elseif test="%{!errorMessage || budgetDetail.budget==null}"></s:elseif>
+	<%-- <s:elseif test="%{!errorMessage || budgetDetail.budget==null}"></s:elseif> --%>
 	<s:else>
 		<div class="error">
 			<s:text name="budget.no.details.found" />

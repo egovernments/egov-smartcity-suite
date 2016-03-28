@@ -39,6 +39,9 @@
  ******************************************************************************/
 package com.exilant.eGov.src.domain;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -61,6 +64,10 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 @Transactional(readOnly = true)
 public class EgRemittanceGldtl
 {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private String id = null;
     private String gldtlId = null;
     private double gldtlAmt =0;
@@ -138,7 +145,7 @@ public class EgRemittanceGldtl
                 +
                 "VALUES (?,?,?, to_date(?,'dd-Mon-yyyy HH24:MI:SS'),?,?)";
 
-        pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+        pstmt = persistenceService.getSession().createSQLQuery(insertQuery);
         pstmt.setBigInteger(0,new BigInteger(id));
         pstmt.setBigInteger(1, new BigInteger(gldtlId));
         pstmt.setDouble(2, gldtlAmt);

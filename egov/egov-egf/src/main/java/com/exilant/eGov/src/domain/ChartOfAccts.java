@@ -44,6 +44,9 @@
 
 package com.exilant.eGov.src.domain;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -93,7 +96,11 @@ public class ChartOfAccts {
     private String budgetCheckReqd = null;
     private boolean isId = false, isField = false;
     private static final Logger LOGGER = Logger.getLogger(ChartOfAccts.class);
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private AppConfigValueService appConfigValuesService;
     
     @Autowired
@@ -264,7 +271,7 @@ public class ChartOfAccts {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(insertQuery);
 
-            HibernateUtil.getCurrentSession().createSQLQuery(insertQuery)
+            persistenceService.getSession().createSQLQuery(insertQuery)
             .setInteger(0, Integer.parseInt(id))
             .setString(1, removeSingleQuotes(glCode))
             .setString(2, removeSingleQuotes(name))
@@ -386,7 +393,7 @@ public class ChartOfAccts {
 
         try {
             int i = 1;
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
+            pstmt = persistenceService.getSession().createSQLQuery(query.toString());
 
             if (glCode != null)
                 pstmt.setString(i++, glCode);

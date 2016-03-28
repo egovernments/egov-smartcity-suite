@@ -42,6 +42,9 @@
  */
 package org.egov.web.actions.contra;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -122,7 +125,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     private final static Logger LOGGER = Logger
             .getLogger(ContraBTBAction.class);
     private static final String MDC_CHEQUE = "cheque";
-    private static final String MDC_OTHER = "other";
+    private static final String MDC_OTHER = "RTGS/NEFT";
     private static final String REVERSE = "reverse";
     private static final long serialVersionUID = 1L;
     private static final String TRANSACTION_FAILED = "Transaction failed";
@@ -137,7 +140,11 @@ public class ContraBTBAction extends BaseVoucherAction {
     private String sourceGlcode;
     private String destinationGlcode;
     private ContraJournalVoucher contraVoucher;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private InstrumentService instrumentService;
     private String mode;
     @Autowired
@@ -264,6 +271,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                     e.getErrors().get(0).getMessage())));
         } catch (final Exception e)
         {
+            LoadAjaxedDropDowns();
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
@@ -365,7 +373,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             if (instrumentVoucher2 != null)
                 instrumentService.cancelInstrument(instrumentVoucher2
                         .getInstrumentHeaderId());
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             if (contraBean.getModeOfCollection().equals(MDC_CHEQUE))
                 if (!egovCommon.isShowChequeNumber())
                     try {
@@ -390,7 +398,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                             contraVoucher));
             updateInstrument(instrumentList.get(0), oldVoucher);
             // DepositCheque(oldVoucher, contraVoucher, instrumentList.get(0));
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             final ContraJournalVoucher contraVoucher = addOrupdateContraJournalVoucher(
                     oldContraVoucher, instrumentList.get(0), oldVoucher);
             if (voucherHeader2 != null) {
@@ -442,7 +450,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             createVoucher.deleteVoucherdetailAndGL(voucherHeader);
             createVoucher.deleteVoucherdetailAndGL(voucherHeader2);
 
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             HashMap<String, Object> detailMap = null;
             List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
             final List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
@@ -463,7 +471,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             accountdetails.add(detailMap);
             final List<Transaxtion> transactions = createVoucher.createTransaction(null,
                     accountdetails, subledgerDetails, voucher);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
 
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
@@ -495,7 +503,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 
             final List<Transaxtion> transactions2 = createVoucher.createTransaction(null,
                     accountdetails, subledgerDetails, voucherHeader2);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             Transaxtion txnList2[] = new Transaxtion[transactions2.size()];
             txnList2 = transactions2.toArray(txnList2);
             if (!chartOfAccounts.postTransaxtions(txnList2, formatter.format(voucherHeader2
@@ -1064,7 +1072,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                     if (!oldInstrumentHeader.getInstrumentNumber()
                             .equalsIgnoreCase(contraBean.getChequeNumber())) {
                         instrumentService.cancelInstrument(oldInstrumentHeader);
-                        HibernateUtil.getCurrentSession().flush();
+                        persistenceService.getSession().flush();
                         validateChqNumber(contraBean.getChequeNumber(),
                                 contraVoucher2.getFromBankAccountId().getId(),
                                 oldVoucher);
@@ -1074,7 +1082,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                         updateInstrument(instrumentList.get(0), oldVoucher);
                         // DepositCheque(oldVoucher, contraVoucher,
                         // instrumentList.get(0));
-                        HibernateUtil.getCurrentSession().flush();
+                        persistenceService.getSession().flush();
                         final ContraJournalVoucher contraVoucher = addOrupdateContraJournalVoucher(
                                 contraVoucher2, instrumentList.get(0),
                                 oldVoucher);
@@ -1101,7 +1109,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                     // reset
                     // transaction number and date
                     instrumentService.cancelInstrument(oldInstrumentHeader);
-                    HibernateUtil.getCurrentSession().flush();
+                    persistenceService.getSession().flush();
                     if (!egovCommon.isShowChequeNumber())
                         try {
                             contraBean
@@ -1129,7 +1137,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                     updateInstrument(instrumentList.get(0), oldVoucher);
                     // DepositCheque(oldVoucher, contraVoucher,
                     // instrumentList.get(0));
-                    HibernateUtil.getCurrentSession().flush();
+                    persistenceService.getSession().flush();
                     final ContraJournalVoucher contraVoucher = addOrupdateContraJournalVoucher(
                             contraVoucher2, instrumentList.get(0), oldVoucher);
                     createLedgerAndPost(oldVoucher, contraVoucher);
@@ -1141,14 +1149,14 @@ public class ContraBTBAction extends BaseVoucherAction {
                 // instrment number and set transaction number and date
                 if (oldInstrumentHeader.getInstrumentNumber() != null) {
                     instrumentService.cancelInstrument(oldInstrumentHeader);
-                    HibernateUtil.getCurrentSession().flush();
+                    persistenceService.getSession().flush();
                     final List<InstrumentHeader> instrumentList = instrumentService
                             .addToInstrument(createInstruments(contraBean,
                                     contraVoucher2));
                     updateInstrument(instrumentList.get(0), oldVoucher);
                     // DepositCheque(oldVoucher, contraVoucher,
                     // instrumentList.get(0));
-                    HibernateUtil.getCurrentSession().flush();
+                    persistenceService.getSession().flush();
                     final ContraJournalVoucher contraVoucher = addOrupdateContraJournalVoucher(
                             contraVoucher2, instrumentList.get(0), oldVoucher);
                     createLedgerAndPost(oldVoucher, contraVoucher);
@@ -1385,7 +1393,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 createLedgerAndPostForInterfund(voucher, contraVoucher);
             else {
                 createVoucher.deleteVoucherdetailAndGL(voucher);
-                HibernateUtil.getCurrentSession().flush();
+                persistenceService.getSession().flush();
                 HashMap<String, Object> detailMap = null;
                 final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
                 final List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
@@ -1408,7 +1416,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 accountdetails.add(detailMap);
                 final List<Transaxtion> transactions = createVoucher.createTransaction(
                         null, accountdetails, subledgerDetails, voucher);
-                HibernateUtil.getCurrentSession().flush();
+                persistenceService.getSession().flush();
 
                 Transaxtion txnList[] = new Transaxtion[transactions.size()];
                 txnList = transactions.toArray(txnList);
@@ -1617,11 +1625,10 @@ public class ContraBTBAction extends BaseVoucherAction {
     private void prepareForViewModifyReverse() {
         voucherHeader = (CVoucherHeader) persistenceService.find(
                 "from CVoucherHeader where id=?", voucherHeader.getId());
-        if (voucherHeader.getVoucherNumber() != null) {
+        if (voucherHeader.getRefvhId() != null) {
             voucherHeaderDes = voucherHeader;
             voucherHeader = (CVoucherHeader) persistenceService.find(
-                    "from CVoucherHeader where voucherNumber=?", voucherHeader
-                            .getVoucherNumber());
+                    "from CVoucherHeader where id =?", voucherHeader.getRefvhId());
         }
 
         if (LOGGER.isDebugEnabled())
@@ -1651,9 +1658,16 @@ public class ContraBTBAction extends BaseVoucherAction {
                     "from CGeneralLedger where voucherHeaderId = ?",
                     voucherHeaderDes);
             for (final CGeneralLedger generalled : generalLedgerDesList)
-                if (!generalled.getGlcode().equals(
-                        contraVoucher.getToBankAccountId().getChartofaccounts()
-                                .getGlcode()))
+                if (!generalled.getGlcode().equalsIgnoreCase(contraVoucher.getToBankAccountId().getChartofaccounts()
+                        .getGlcode()))
+                    contraBean.setDestinationGlcode(generalled.getGlcode());
+        }else{
+            generalLedgerDesList = persistenceService.findAllBy(
+                    "from CGeneralLedger where voucherHeaderId.refvhId = ?",
+                    voucherHeader.getId());
+            for (final CGeneralLedger generalled : generalLedgerDesList)
+                if (!generalled.getGlcode().equalsIgnoreCase(contraVoucher.getToBankAccountId().getChartofaccounts()
+                        .getGlcode()))
                     contraBean.setDestinationGlcode(generalled.getGlcode());
         }
 

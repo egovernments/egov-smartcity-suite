@@ -1,0 +1,1 @@
+select nextval('seq_financialyear') from financialyear;

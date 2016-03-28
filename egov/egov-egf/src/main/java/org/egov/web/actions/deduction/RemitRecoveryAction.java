@@ -42,6 +42,9 @@
  */
 package org.egov.web.actions.deduction;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -153,7 +156,11 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public boolean showApprove = false;
     private CommonBean commonBean;
     private String modeOfPayment;
-    private @Autowired CreateVoucher createVoucher;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired CreateVoucher createVoucher;
     private Integer departmentId;
     private String wfitemstate;
     private String comments;
@@ -579,7 +586,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
         try {
             createVoucher.deleteVoucherdetailAndGL(voucherHeader);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             HashMap<String, Object> detailMap = null;
             final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
             List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
@@ -601,7 +608,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
             final List<Transaxtion> transactions = createVoucher.createTransaction(null, accountdetails, subledgerDetails,
                     voucherHeader);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
 
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
@@ -680,8 +687,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
                 rbean.setPartialAmount(remitDtl.getRemittedamt());
                 rbean.setAmount(remitDtl.getRemittedamt());
                 if (remitDtl.getEgRemittanceGldtl() != null) {
-                    rbean.setDetailTypeId(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getAccountdetailtype().getId());
-                    rbean.setDetailKeyid(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getDetailkeyid().intValue());
+                    rbean.setDetailTypeId(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getDetailTypeId().getId());
+                    rbean.setDetailKeyid(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getDetailKeyId().intValue());
                     rbean.setRemittance_gl_dtlId(remitDtl.getEgRemittanceGldtl().getId());
                     rbean.setDeductionAmount(remitDtl.getEgRemittanceGldtl().getGldtlamt());
                 } else
@@ -702,16 +709,16 @@ public class RemitRecoveryAction extends BasePaymentAction {
                 if (remitDtl.getEgRemittanceGldtl() != null) {
                     final EntityType entity = voucherHibDAO.getEntityInfo(remitDtl.getEgRemittanceGldtl()
                             .getGeneralledgerdetail()
-                            .getDetailkeyid().intValue(), remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail()
-                            .getAccountdetailtype().getId());
+                            .getDetailKeyId().intValue(), remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail()
+                            .getDetailTypeId().getId());
                     rbean.setPartyCode(entity.getCode());
                     rbean.setPartyName(entity.getName());
                     rbean.setPanNo(entity.getPanno());
-                    rbean.setVoucherDate(sdf.format(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralledger()
+                    rbean.setVoucherDate(sdf.format(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralLedgerId()
                             .getVoucherHeaderId().getVoucherDate()));
-                    rbean.setVoucherNumber(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralledger()
+                    rbean.setVoucherNumber(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralLedgerId()
                             .getVoucherHeaderId().getVoucherNumber());
-                    rbean.setVoucherName(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralledger()
+                    rbean.setVoucherName(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralLedgerId()
                             .getVoucherHeaderId().getName());
                 } else if (remitDtl.getGeneralLedger().getVoucherHeaderId() != null) {
                     rbean.setVoucherDate(sdf.format(remitDtl.getGeneralLedger().getVoucherHeaderId().getVoucherDate()));

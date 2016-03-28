@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -94,6 +97,10 @@ import org.hibernate.transform.Transformers;
 })
 @ParentPackage("egov")
 public class AutoRemittanceReportAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     /**
      *
      */
@@ -148,8 +155,8 @@ public class AutoRemittanceReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        // HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        // HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        // persistenceService.getSession().setDefaultReadOnly(true);
+        // persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
         addDropdownData("fundList",
@@ -552,7 +559,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
                 +
                 " ih.INSTRUMENTAMOUNT,remdt.ID ");
 
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = persistenceService.getSession();
         Query sqlQuery = null;
         if (level.equals("atcoc"))
             sqlQuery = session.createSQLQuery(query.toString())
@@ -621,7 +628,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
                     + "'");
 
         queryString1.append(" )) ");
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = persistenceService.getSession();
         final Query sqlQuery = session.createSQLQuery(queryString1.toString())
                 .addScalar("incomeTaxRemittedAmt").addScalar("salesTaxRemittedAmt").addScalar("mwgwfRemittedAmt")
                 .addScalar("serviceTaxRemittedAmt").addScalar("grandTotal")

@@ -39,6 +39,9 @@
  ******************************************************************************/
 package com.exilant.eGov.src.domain;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -59,6 +62,10 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  */
 public class BillRegisterBean
 {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     private static final Logger LOGGER = Logger.getLogger(BillRegisterBean.class);
     private String id = null;

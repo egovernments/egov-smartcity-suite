@@ -32,3 +32,4 @@ Insert into eg_roleaction values((select id from eg_role where name='Super User'
 
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Search and Edit Result-CFinancialYear','/cfinancialyear/ajaxsearch/edit',(select id from eg_module where name='Financial Masters Financial year'),1,'Search and Edit Result-CFinancialYear',false,'EGF',(select id from eg_module where name='EGF' and parentmodule is null));
 Insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Search and Edit Result-CFinancialYear'));
+

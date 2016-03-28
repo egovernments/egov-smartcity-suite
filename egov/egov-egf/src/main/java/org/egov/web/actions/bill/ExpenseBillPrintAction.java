@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.bill;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -107,7 +110,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final String PRINT = "print";
     String functionName;
-    private @Autowired AppConfigValueService appConfigValuesService;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired AppConfigValueService appConfigValuesService;
     @Autowired
     private EisCommonService eisCommonService;
 
@@ -208,7 +215,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     }
 
     private String getUlbName() {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

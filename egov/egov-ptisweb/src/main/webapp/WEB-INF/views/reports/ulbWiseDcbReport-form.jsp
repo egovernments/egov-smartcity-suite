@@ -99,9 +99,9 @@
 								<form:option value="ALL">
 									<spring:message code="lbl.default.all" />
 								</form:option>
-								<form:option value="PRIVATE">
+								<%-- <form:option value="PRIVATE">
 									PRIVATE
-								</form:option>
+								</form:option> --%>
 								<form:option value="PRIVATE_EXCLUDE_COURTCASE">
 									PRIVATE (Excluding Court Case)
 								</form:option>
@@ -139,7 +139,7 @@
 	<div id="tblulbDCBcollectionheader">
 		<div class="col-md-8 table-header text-left"><spring:message code="lbl.uldDCbDaily.report.details" /> ${bcDailyCollectionReportResult.generatedDate}   </div>
 		<div class="col-md-4 text-right">Date : <%= new java.util.Date() %></div>
-		<div class="col-md-4 text-right">Amount in Lakhs</div>
+		<div class="col-md-4 text-right">Amount in Thousands</div>
 	</div>
 				<div class="col-md-12 form-group report-table-container">
 				<table class="table table-bordered datatable multiheadertbl" id="tblulbDCBcollection">
@@ -173,9 +173,9 @@
 					<th> Current tax </th>
 					<th> Current interest </th>
 					<th>Total</th>
-					<th>Total Percentage</th>
 					<th>Total Interest</th>
-					<th>Total Interest Percentage</th>
+					<th>Total collection % (without interest)</th>
+					<th>Total collection % (with interest)</th>
 					<th> Arrear tax </th>
 					<th> Arrear interest </th>
 					<th> Current tax </th>

@@ -44,33 +44,49 @@
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-	 <form:form id="subcategoryform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="subCategory" commandName="subCategory">
-				<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-				</div> 
+	 	<form:form id="subcategoryform" method="get" class="form-horizontal form-groups-bordered" modelAttribute="subCategory" commandName="subCategory">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading"></div> 
 				<div class="panel-body custom-form">
 					<div class="form-group">
-						<label class="col-sm-4 control-label"><spring:message code="lbl.subcategory.name">
-						</spring:message><span class="mandatory"></span></label>
-						<div class="col-sm-4 add-margin">
-                            <form:select path="description" id="subcategorydesc" cssClass="form-control" cssErrorClass="form-control error" required="required">
-                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                <form:options items="${subCategories}" itemValue="id" itemLabel="description"/>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.category.name"></spring:message><span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="category" id="categories" cssClass="form-control" 
+							cssErrorClass="form-control error" required="required">
+								<form:option value=""><spring:message code="lbl.select"></spring:message></form:option>
+								<c:forEach items="${hoardingCategories}" var="hoardingcategory">
+									<option value="${hoardingcategory.id}">${hoardingcategory.name}</option>
+								</c:forEach>
+							</form:select>
+							<form:errors path="category" cssClass="error-msg"/>
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subcategory.name"></spring:message></label>
+						<div class="col-sm-3 add-margin">
+                            <form:select path="description" id="subcategories" cssClass="form-control" cssErrorClass="form-control error">
+                                <form:option value=""><spring:message code="lbl.select"/></form:option>
+                                <form:options items="${subCategoryList}" />
                             </form:select>
-                            	<form:errors path="description" cssClass="error-msg"/>
+                            <form:errors path="description" cssClass="error-msg"/>
                        	</div>
 					</div>
                	</div>
 	        </div>
             <div class="form-group">
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary" id="subcateditbutton"><spring:message code="lbl.edit"/></button>
-                    <button type="submit" class="btn btn-primary" id="subcateditbuttonview"><spring:message code="lbl.view"/></button>
+                    <button type="submit" class="btn btn-primary" id="subcatsubmit"><spring:message code="lbl.submit"/></button>
                     <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                     <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
                 </div>
             </div>
+            </div>
         </form:form>
+        <table class="table table-bordered datatable dt-responsive" id="adtax_searchsubcategory"></table>
     </div>
 </div>
+
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/category.js'/>"></script>

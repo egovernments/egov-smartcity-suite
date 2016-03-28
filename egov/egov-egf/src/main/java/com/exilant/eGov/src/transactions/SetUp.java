@@ -44,6 +44,9 @@
 
 package com.exilant.eGov.src.transactions;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -107,7 +110,11 @@ public class SetUp extends AbstractTask {
     private ResultSet resultsetdtl;
     private static final Logger LOGGER = Logger.getLogger(SetUp.class);
     private String effectiveDate;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private  FinancialYearHibernateDAO financialYearDAO;
     private @Autowired FinancialYear financialYear;
     private @Autowired ClosedPeriods closedPeriods;
@@ -376,8 +383,8 @@ public class SetUp extends AbstractTask {
 
                 if (counter == 50) {
                     pstBatch.executeBatch();
-                    HibernateUtil.getCurrentSession().flush();
-                    HibernateUtil.getCurrentSession().clear();
+                    persistenceService.getSession().flush();
+                    persistenceService.getSession().clear();
                     pstBatch.clearBatch();
                     counter = 0;
                 }
@@ -385,8 +392,8 @@ public class SetUp extends AbstractTask {
             }
             if (counter < 50) {
                 pstBatch.executeBatch();
-                HibernateUtil.getCurrentSession().flush();
-                HibernateUtil.getCurrentSession().clear();
+                persistenceService.getSession().flush();
+                persistenceService.getSession().clear();
                 pstBatch.clearBatch();
             }
 
@@ -477,16 +484,16 @@ public class SetUp extends AbstractTask {
 
                     if (counterSL == 50) {
                         pstBatch.executeBatch();
-                        HibernateUtil.getCurrentSession().flush();
-                        HibernateUtil.getCurrentSession().clear();
+                        persistenceService.getSession().flush();
+                        persistenceService.getSession().clear();
                         pstBatch.clearBatch();
                         counterSL = 0;
                     }
                 }
                 if (counterSL < 50) {
                     pstBatch.executeBatch();
-                    HibernateUtil.getCurrentSession().flush();
-                    HibernateUtil.getCurrentSession().clear();
+                    persistenceService.getSession().flush();
+                    persistenceService.getSession().clear();
                     pstBatch.clearBatch();
                 }
                 pstBatch.close();
@@ -630,15 +637,15 @@ public class SetUp extends AbstractTask {
 
                 if (totalCounterCB % 50 == 0) {
                     pstBatch.executeBatch();
-                    HibernateUtil.getCurrentSession().flush();
-                    HibernateUtil.getCurrentSession().clear();
+                    persistenceService.getSession().flush();
+                    persistenceService.getSession().clear();
                     pstBatch.clearBatch();
                 }
             }
             if (totalCounterCB % 50 != 0) {
                 pstBatch.executeBatch();
-                HibernateUtil.getCurrentSession().flush();
-                HibernateUtil.getCurrentSession().clear();
+                persistenceService.getSession().flush();
+                persistenceService.getSession().clear();
                 pstBatch.clearBatch();
             }
             resultset.close();
@@ -722,16 +729,16 @@ public class SetUp extends AbstractTask {
 
                 if (counterOPBOnly == 50) {
                     pstBatch.executeBatch();
-                    HibernateUtil.getCurrentSession().flush();
-                    HibernateUtil.getCurrentSession().clear();
+                    persistenceService.getSession().flush();
+                    persistenceService.getSession().clear();
                     pstBatch.clearBatch();
                     counterOPBOnly = 0;
                 }
             }
             if (counterOPBOnly < 50) {
                 pstBatch.executeBatch();
-                HibernateUtil.getCurrentSession().flush();
-                HibernateUtil.getCurrentSession().clear();
+                persistenceService.getSession().flush();
+                persistenceService.getSession().clear();
                 pstBatch.clearBatch();
             }
 

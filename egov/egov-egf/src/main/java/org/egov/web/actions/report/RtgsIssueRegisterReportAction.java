@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -88,6 +91,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 @ParentPackage("egov")
 
 public class RtgsIssueRegisterReportAction extends ReportAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(RtgsIssueRegisterReportAction.class);
@@ -113,8 +120,8 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 
     @Override
     public void prepare() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
 
         addDropdownData("bankList", persistenceService.findAllBy("from Bank where isactive=true order by upper(name)"));
@@ -138,7 +145,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
     }
 
     private String getUlbName() {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);
@@ -216,7 +223,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Getting Starting date of financial year ");
         final CFinancialYear date = financialYearDAO.getFinancialYearByDate(new Date());
-        HibernateUtil.getCurrentSession().setReadOnly(date, true);
+        persistenceService.getSession().setReadOnly(date, true);
         fromDate = date.getStartingDate();
     }
 
@@ -232,7 +239,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Seraching RTGS result for given criteria ");
 
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(getQueryString().toString())
+        final Query query = persistenceService.getSession().createSQLQuery(getQueryString().toString())
                 .addScalar("ihId")
                 .addScalar("rtgsNumber")
                 .addScalar("rtgsDate")

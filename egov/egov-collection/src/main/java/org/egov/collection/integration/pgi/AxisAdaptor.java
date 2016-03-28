@@ -56,6 +56,8 @@ import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -83,6 +85,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
     public static final BigDecimal PAISE_RUPEE_CONVERTER = new BigDecimal(100);
+    @Autowired
+    private  CityService cityService;
 
     /**
      * This method invokes APIs to frame request object for the payment service
@@ -385,7 +389,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             formData.add(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommandQuery());
             formData.add(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
             formData.add(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
-            formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, EgovThreadLocals.getCityCode()
+            final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+            formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, cityWebsite.getCode()
                     + CollectionConstants.SEPARATOR_HYPHEN + onlinePayment.getReceiptHeader().getId().toString());
             formData.add(CollectionConstants.AXIS_OPERATOR_ID, collectionApplicationProperties.axisOperator());
             formData.add(CollectionConstants.AXIS_PASSWORD, collectionApplicationProperties.axisPassword());

@@ -75,6 +75,13 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.dao.FunctionaryHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.dao.SchemeHibernateDAO;
+import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -143,6 +150,8 @@ public class ContractorBillAction extends BaseFormAction {
     private Long workOrderId;
     @Autowired
     private CommonsService commonsService;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private CommonAssetsService commonAssetsService;
     private MeasurementBookServiceImpl measurementBookService;
     private EgovCommon egovCommon;
@@ -244,6 +253,8 @@ public class ContractorBillAction extends BaseFormAction {
     private String isRebatePremLevelBill;
     private BigDecimal grossAmount = BigDecimal.ZERO;
     private BigDecimal tenderedItemsAmount = BigDecimal.ZERO;
+    @Autowired
+    private FunctionaryHibernateDAO functionaryHibDao;
     private BudgetService budgetService;
     private final String PENDING_FOR_VERIFICATION = "Pending for Verification";
     private final String PENDING_FOR_VALIDATION = "Pending for Validation";
@@ -260,6 +271,18 @@ public class ContractorBillAction extends BaseFormAction {
     private String dwCategory = "";
     private Date restorationEndDate;
     private String showValidationMsg = "";
+    @Autowired 
+    private FundHibernateDAO fundHibernateDao;
+    @Autowired
+    private FunctionHibernateDAO functionHibernateDao ;
+    @Autowired
+    private SchemeHibernateDAO schemeHibernateDAO;
+    @Autowired
+    private SubSchemeHibernateDAO subschemeHibernateDAO;
+    @Autowired
+    private FunctionaryHibernateDAO functionaryDAO;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
     private String allowForward = "";
     private Date latestMBDate;
     private String refNo;
@@ -329,7 +352,7 @@ public class ContractorBillAction extends BaseFormAction {
                         || workOrderEstimate.getEstimate().getType().getCode().equals(IMPROVEMENT_WORKS)) {
                     if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
                             && StringUtils.isNotBlank(worksService.getWorksConfigValue(KEY_CWIP)))
-                        addDropdownData(COA_LIST, commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService
+                        addDropdownData(COA_LIST, chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
                                 .getWorksConfigValue(KEY_CWIP))));
                     else if (StringUtils.isNotBlank(accountCodeFromBudgetHead)
                             && "yes".equals(accountCodeFromBudgetHead)) {
@@ -345,7 +368,7 @@ public class ContractorBillAction extends BaseFormAction {
                 } else if (workOrderEstimate.getEstimate().getType().getCode().equals(REPAIR_AND_MAINTENANCE)) {
                     if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
                             && StringUtils.isNotBlank(worksService.getWorksConfigValue(KEY_REPAIRS)))
-                        addDropdownData(COA_LIST, commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService
+                        addDropdownData(COA_LIST, chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
                                 .getWorksConfigValue(KEY_REPAIRS))));
                     else if (StringUtils.isNotBlank(accountCodeFromBudgetHead)
                             && "yes".equals(accountCodeFromBudgetHead)) {
@@ -366,7 +389,7 @@ public class ContractorBillAction extends BaseFormAction {
                         // code now
                         // addDropdownData(COA_LIST,
                         // commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue(KEY_DEPOSIT))));
-                        addDropdownData(COA_LIST, commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService
+                        addDropdownData(COA_LIST, chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
                                 .getWorksConfigValue(KEY_CWIP))));
                     else
                         addDropdownData(COA_LIST, Collections.EMPTY_LIST);
@@ -483,28 +506,23 @@ public class ContractorBillAction extends BaseFormAction {
                 && workOrderEstimate.getEstimate().getFinancialDetails().get(0) != null
                 && workOrderEstimate.getEstimate().getFinancialDetails().get(0).getCoa() != null
                 && workOrderEstimate.getEstimate().getDepositCode() != null)
-            try {
-                if (id == null
-                        || contractorBillRegister.getStatus() != null
-                                && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
-                                        || contractorBillRegister
-                                                .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
-                    final List<CChartOfAccounts> mappedBudgetHeadList = contractorBillService
-                            .getBudgetHeadForDepositCOA(workOrderEstimate.getEstimate());
-                    if (mappedBudgetHeadList.isEmpty()) {
-                        showValidationMsg = WorksConstants.YES;
-                        addDropdownData(COA_LIST, Collections.EMPTY_LIST);
-                        addFieldError("contractoBill.depositCOA.budgetHead.mapping.error",
-                                getText("contractoBill.depositCOA.budgetHead.mapping.error"));
-                    } else
-                        addDropdownData(COA_LIST, mappedBudgetHeadList);
+            if (id == null
+                    || contractorBillRegister.getStatus() != null
+                            && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
+                                    || contractorBillRegister
+                                            .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
+                final List<CChartOfAccounts> mappedBudgetHeadList = contractorBillService
+                        .getBudgetHeadForDepositCOA(workOrderEstimate.getEstimate());
+                if (mappedBudgetHeadList.isEmpty()) {
+                    showValidationMsg = WorksConstants.YES;
+                    addDropdownData(COA_LIST, Collections.EMPTY_LIST);
+                    addFieldError("contractoBill.depositCOA.budgetHead.mapping.error",
+                            getText("contractoBill.depositCOA.budgetHead.mapping.error"));
                 } else
-                    addDropdownData(COA_LIST, commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService
-                            .getWorksConfigValue(KEY_CWIP))));
-            } catch (final ApplicationException v) {
-                logger.error("Unable to load COA for WorkOrder" + v);
-                addFieldError("COA.notfound", "Unable to load COA for WorkOrder");
-            }
+                    addDropdownData(COA_LIST, mappedBudgetHeadList);
+            } else
+                addDropdownData(COA_LIST, chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
+                        .getWorksConfigValue(KEY_CWIP))));
     }
 
     private void loadTenderDetails() {
@@ -1238,12 +1256,12 @@ public class ContractorBillAction extends BaseFormAction {
         final EgBilldetails billDetails = new EgBilldetails();
         if (fdList != null && !fdList.isEmpty() && fdList.get(0).getFunction() != null
                 && fdList.get(0).getFunction().getId() != null) {
-            final CFunction fun = commonsService.getFunctionById(fdList.get(0).getFunction().getId());
+            final CFunction fun = functionHibernateDao.getFunctionById(fdList.get(0).getFunction().getId());
             billDetails.setFunctionid(BigDecimal.valueOf(fun.getId()));
         }
         CChartOfAccounts coa = null;
         if (StringUtils.isNotBlank(glcode) && Long.parseLong(glcode) > 0)
-            coa = commonsService.getCChartOfAccountsById(Long.valueOf(glcode));
+            coa = chartOfAccountsHibernateDAO.findById(Long.valueOf(glcode),false);
         if (coa != null && coa.getId() != null)
             billDetails.setGlcodeid(BigDecimal.valueOf(coa.getId()));
         if (isDebit)
@@ -1252,7 +1270,7 @@ public class ContractorBillAction extends BaseFormAction {
             billDetails.setCreditamount(amount);
         billDetails.setEgBillregister(billregister);
         if (coa != null && coa.getGlcode() != null) {
-            final List<Accountdetailtype> detailCode = commonsService.getAccountdetailtypeListByGLCode(coa.getGlcode());
+            final List<Accountdetailtype> detailCode = chartOfAccountsHibernateDAO.getAccountdetailtypeListByGLCode(coa.getGlcode());
             if (detailCode != null && !detailCode.isEmpty()) {
                 Accountdetailtype adt1 = null;
                 final Accountdetailtype adt2 = null;
@@ -1262,14 +1280,14 @@ public class ContractorBillAction extends BaseFormAction {
                 // with project code as sub-ledger for the debit COA for
                 // Deposit Works
                 /*
-                 * if(skipBudget) { adt2 = commonsService.getAccountDetailTypeIdByName (coa.getGlcode(),
+                 * if(skipBudget) { adt2 = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName (coa.getGlcode(),
                  * ACCOUNTDETAIL_TYPE_DEPOSITCODE); if(adt2!=null){ if(isTds) addTdsDetails(amount, isDebit, isTds, billDetails,
                  * adt2, Integer.valueOf(workOrderEstimate .getEstimate().getDepositCode().getId().toString())); else
                  * billDetails.getEgBillPaydetailes().add(getEgPayeeDetails (billDetails
                  * ,adt2.getId(),amount,isDebit,false,null,null,Integer .valueOf
                  * (workOrderEstimate.getEstimate().getDepositCode(). getId().toString()))); } } else
                  */ {
-                    adt3 = commonsService.getAccountDetailTypeIdByName(coa.getGlcode(), ACCOUNTDETAIL_TYPE_PROJECTCODE);
+                    adt3 = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coa.getGlcode(), ACCOUNTDETAIL_TYPE_PROJECTCODE);
                     if (adt3 != null)
                         if (isTds)
                             addTdsDetails(amount, isDebit, isTds, billDetails, adt3, Integer.valueOf(workOrderEstimate
@@ -1287,7 +1305,7 @@ public class ContractorBillAction extends BaseFormAction {
                                             Integer.valueOf(workOrderEstimate.getEstimate().getProjectCode().getId()
                                                     .toString())));
                 } else {
-                    adt1 = commonsService.getAccountDetailTypeIdByName(coa.getGlcode(), ACCOUNTDETAIL_TYPE_CONTRACTOR);
+                    adt1 = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coa.getGlcode(), ACCOUNTDETAIL_TYPE_CONTRACTOR);
                     if (adt1 != null)
                         if (isTds)
                             addTdsDetails(amount, isDebit, isTds, billDetails, adt1,
@@ -1375,23 +1393,23 @@ public class ContractorBillAction extends BaseFormAction {
         egBillRegisterMis.setPartyBillNumber(partyBillNumber);
         if (fdList != null && !fdList.isEmpty()) {
             if (fdList.get(0).getFund() != null && fdList.get(0).getFund().getId() != null)
-                egBillRegisterMis.setFund(commonsService.fundById(fdList.get(0).getFund().getId()));
+                egBillRegisterMis.setFund(fundHibernateDao.fundById(fdList.get(0).getFund().getId(),false));
             if (fdList.get(0).getFunctionary() != null && fdList.get(0).getFunctionary().getId() != null)
-                egBillRegisterMis.setFunctionaryid(commonsService.getFunctionaryById(fdList.get(0).getFunctionary()
+                egBillRegisterMis.setFunctionaryid(functionaryHibDao.functionaryById(fdList.get(0).getFunctionary()
                         .getId().intValue()));
             if (fdList.get(0).getScheme() != null && fdList.get(0).getScheme().getId() != null)
-                egBillRegisterMis.setScheme(commonsService.getSchemeById(fdList.get(0).getScheme().getId()));
+                egBillRegisterMis.setScheme(schemeHibernateDAO.getSchemeById(fdList.get(0).getScheme().getId()));
             if (fdList.get(0).getSubScheme() != null && fdList.get(0).getSubScheme().getId() != null)
-                egBillRegisterMis.setSubScheme(commonsService.getSubSchemeById(fdList.get(0).getSubScheme().getId()));
+                egBillRegisterMis.setSubScheme(subschemeHibernateDAO.getSubSchemeById(fdList.get(0).getSubScheme().getId()));
             if (!fdList.get(0).getFinancingSources().isEmpty())
                 egBillRegisterMis.setFundsource(fdList.get(0).getFinancingSources().get(0).getFundSource());
             if (fdList.get(0).getFunction() != null)
                 egBillRegisterMis.setFunction(fdList.get(0).getFunction());
         }
         egBillRegisterMis.setEgDepartment(workOrderEstimate.getEstimate().getUserDepartment());
-        final String finyearId = commonsService.getFinancialYearByDate(contractorBillRegister.getBilldate()).getId()
+        final String finyearId = finHibernateDao.getFinancialYearByDate(contractorBillRegister.getBilldate()).getId()
                 .toString();
-        egBillRegisterMis.setFinancialyear(commonsService.getFinancialYearById(Long.valueOf(finyearId)));
+        egBillRegisterMis.setFinancialyear(finHibernateDao.getFinancialYearById(Long.valueOf(finyearId)));
         egBillRegisterMis.setLastupdatedtime(new Date());
         return egBillRegisterMis;
     }
@@ -1431,7 +1449,7 @@ public class ContractorBillAction extends BaseFormAction {
                 assetNew.setStatus(status);
             }
             assetForBill.setEgbill(contractorBillRegister);
-            assetForBill.setCoa(commonsService.getCChartOfAccountsById(adb.getCoa().getId()));
+            assetForBill.setCoa(chartOfAccountsHibernateDAO.findById(adb.getCoa().getId(),false));
             assetForBill.setWorkOrderEstimate(workOrderEstimate);
             assetForBill.setAmount(adb.getAmount());
             assetForBill.setDescription(adb.getDescription());
@@ -1466,8 +1484,8 @@ public class ContractorBillAction extends BaseFormAction {
         deductionTypeForBill.setEgbill(contractorBillRegister);
         deductionTypeForBill.setWorkOrder(workOrder);
         deductionTypeForBill.setNarration(deductionBill.getNarration());
-        deductionTypeForBill.setCoa(commonsService.getCChartOfAccountsById(Long.valueOf(deductionBill.getGlcodeid()
-                .toString())));
+        deductionTypeForBill.setCoa(chartOfAccountsHibernateDAO.findById(Long.valueOf(deductionBill.getGlcodeid()
+                .toString()),false));
         deductionTypeForBill.setCreditamount(deductionBill.getCreditamount());
         deductionTypeForBill.setDeductionType(deductionBill.getDeductionType());
         contractorBillRegister.addDeductionType(deductionTypeForBill);
@@ -1502,9 +1520,9 @@ public class ContractorBillAction extends BaseFormAction {
         final char[] charTypes = getBillAccountTypesFromConfig();
         if (charTypes != null)
             for (final char charType : charTypes) {
-                final List<CChartOfAccounts> pList = commonsService.getActiveAccountsForType(charType);
+                final List<CChartOfAccounts> pList = chartOfAccountsHibernateDAO.getActiveAccountsForType(charType);
 
-                final List<CChartOfAccounts> coaContPayableList = commonsService.getAccountCodeByPurpose(Integer
+                final List<CChartOfAccounts> coaContPayableList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer
                         .valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
                 if (pList != null && coaContPayableList != null)
                     pList.removeAll(coaContPayableList);
@@ -1517,7 +1535,7 @@ public class ContractorBillAction extends BaseFormAction {
                     .getStandardDeductionsFromConfig().keySet());
 
         if (StringUtils.isNotBlank(worksService.getWorksConfigValue(RETENTION_MONEY_PURPOSE)))
-            retentionMoneyAccountList = commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService
+            retentionMoneyAccountList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
                     .getWorksConfigValue(RETENTION_MONEY_PURPOSE)));
     }
 
@@ -1543,7 +1561,7 @@ public class ContractorBillAction extends BaseFormAction {
 
     public Map<Long, String> getContratorCoaPayableMap() throws NumberFormatException, ApplicationException {
         if (StringUtils.isNotBlank(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE))) {
-            final List<CChartOfAccounts> coaPayableList = commonsService.getAccountCodeByPurpose(Integer
+            final List<CChartOfAccounts> coaPayableList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer
                     .valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
             for (final CChartOfAccounts coa : coaPayableList)
                 contratorCoaPayableMap.put(coa.getId(), coa.getGlcode() + "-" + coa.getName());

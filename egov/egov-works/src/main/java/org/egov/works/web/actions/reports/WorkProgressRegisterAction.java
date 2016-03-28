@@ -65,6 +65,11 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.dao.FunctionaryHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -136,6 +141,10 @@ public class WorkProgressRegisterAction extends SearchFormAction {
     private Long category;
     private String workOrderStatus;
     private String milestoneStatus;
+    @Autowired
+    private FundHibernateDAO fundDao;
+    @Autowired
+    private FunctionHibernateDAO functionHibDao;
     private Long expenditureType;
     private Integer fund;
     private Long function;
@@ -162,7 +171,8 @@ public class WorkProgressRegisterAction extends SearchFormAction {
     private static final String STATUS_OBJECTID = "getStatusDateByObjectId_Type_Desc";
     private static final String WO_OBJECT_TYPE = "WorkOrder";
     private static final String WORK_COMMENCED = "Work commenced";
-
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
     private List<WorkProgressRegister> workProgressList = new ArrayList<WorkProgressRegister>();
     private Integer estId;
     private String contractorName = "";
@@ -199,9 +209,9 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOACKNOWLEDGED,
                 WorksConstants.WO_STATUS_WOSITEHANDEDOVER, WorksConstants.WO_STATUS_WOCOMMENCED);
         addDropdownData("workOrderStatuses", workOrdStatusList);
-        addDropdownData("fundList", commonsService.getAllFunds());
+        addDropdownData("fundList", fundDao.findAll());
         addDropdownData("budgetGroupList", getPersistenceService().findAllBy("from BudgetGroup order by name"));
-        addDropdownData("functionList", commonsService.getAllFunction());
+        addDropdownData("functionList", functionHibDao.findAll());
         addDropdownData(
                 "preparedByList",
                 getPersistenceService()
@@ -331,7 +341,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                         ++count;
                         if (estimateApp.getBudgetUsage() != null) {
                             if (estimateApp.getBudgetUsage().getConsumedAmount() != 0) {
-                                final String finyearRange = commonsService.getFinancialYearById(
+                                final String finyearRange = finHibernateDao.getFinancialYearById(
                                         estimateApp.getBudgetUsage().getFinancialYearId().longValue())
                                         .getFinYearRange();
                                 if (apprDetails != null)
@@ -352,7 +362,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                                                     .getConsumedAmount()));
                             }
                         } else if (estimateApp.getDepositWorksUsage().getConsumedAmount().equals(BigDecimal.ZERO)) {
-                            final String finyearRange = commonsService.getFinancialYearById(
+                            final String finyearRange = finHibernateDao.getFinancialYearById(
                                     estimateApp.getDepositWorksUsage().getFinancialYear().getId().longValue())
                                     .getFinYearRange();
                             if (apprDetails != null)

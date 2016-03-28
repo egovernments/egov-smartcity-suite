@@ -242,7 +242,7 @@ public class RptSubLedgerSchedule {
             +" group by  slid order by slid";
             
             int i = 0;
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pst = persistenceService.getSession().createSQLQuery(query);
             pst.setLong(i++, Long.parseLong(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
@@ -412,7 +412,7 @@ public class RptSubLedgerSchedule {
         String accName = "";
         try {
             final String query = "select name from chartofaccounts where glCode= ?";
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pst = persistenceService.getSession().createSQLQuery(query);
             pst.setString(0, glCode);
               final List list = pst.list();
             if (list.get(0) != null)

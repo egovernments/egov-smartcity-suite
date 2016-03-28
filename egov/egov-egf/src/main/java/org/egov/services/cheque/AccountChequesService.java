@@ -80,7 +80,7 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
     public void createCheques(List<ChequeDetail> chequeDetailsList, Map<String, String> chequeIdMap,
             Map<String, AccountCheques> chequeMap, Bankaccount bankaccount, String deletedChqDeptId) {
 
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = getSession();
         AccountCheques accountCheques;
         ChequeDeptMapping chqDept;
         for (final ChequeDetail chequeDetail : chequeDetailsList)
@@ -129,7 +129,7 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
     @Transactional
     public void deleteRecords(String deletedChqDeptId, Bankaccount bankaccount) {
 
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = getSession();
 
         if (null != deletedChqDeptId && !deletedChqDeptId.equalsIgnoreCase("")) {
             final Query qry = session.createQuery("delete from ChequeDeptMapping where id in (" + deletedChqDeptId + ")");

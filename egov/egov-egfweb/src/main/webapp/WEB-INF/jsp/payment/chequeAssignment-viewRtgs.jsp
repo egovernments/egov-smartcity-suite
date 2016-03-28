@@ -75,7 +75,7 @@
 				<s:iterator var="p" value="instVoucherList" status="s">
 					<s:set var="rtgsNumber"
 						value="%{instrumentHeaderId.transactionNumber}" />
-					<%-- <s:if test="%{#rtgsNumber!=#PreRtgsNumber}">
+					 <s:if test="%{#rtgsNumber!=#PreRtgsNumber}">
 						<tr>
 							<td style="text-align: center" class="blueborderfortdnew"><strong><s:property
 										value='%{instrumentHeaderId.transactionNumber}' /></strong> <a
@@ -103,7 +103,7 @@
 						</tr>
 						<s:set var="PreRtgsNumber"
 							value="instVoucherList[0].instrumentHeaderId.transactionNumber" />
-					</s:if> --%>
+					</s:if> 
 
 					<tr>
 

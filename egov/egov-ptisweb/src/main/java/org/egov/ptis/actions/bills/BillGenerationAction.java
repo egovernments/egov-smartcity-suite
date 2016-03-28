@@ -96,9 +96,11 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.bill.BillService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
+import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -116,6 +118,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     private static final long serialVersionUID = -6600897692089941070L;
 
     private final Logger LOGGER = Logger.getLogger(getClass());
+    private static final String DEMAND_BILL = "demandBill";
     protected static final String COMMON_FORM = "commonForm";
     public static final String BILL = "bill";
     public static final String STATUS_BILLGEN = "billsGenStatus";
@@ -156,6 +159,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     @Autowired
     private PropertyDAO propertyDao;
+    
+    @Autowired
+    private ApplicationContext beanProvider;
 
     @Override
     public StateAware getModel() {
@@ -224,6 +230,13 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Bill Generation Exception : " + e);
         }
+        return BILL;
+    }
+    
+    @Action(value = "/bills/billGeneration-generateDemandBill")
+    public String generateDemandBill() {
+        DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
+        demandBillService.generateDemandBill(indexNumber);
         return BILL;
     }
 

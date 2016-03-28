@@ -69,9 +69,9 @@
 		}
 		
 		
-		
-		
-		return true;
+		document.forms[0].action='autoReconciliation-upload.action';
+        document.forms[0].submit();
+     	
 	}
 	function populatebranch(obj) {
 		var bid = document.getElementById("bankId").value;
@@ -162,9 +162,9 @@
 			<div class="buttonbottom" id="buttondiv">
 				<table>
 					<tr>
-						<td><s:submit type="submit" cssClass="buttonsubmit"
-								value="Upload" name="upload" method="upload"
-								onclick="return validate();" /></td>
+						<td><input type="button" Class="buttonsubmit"
+								value="Upload" name="upload" 
+								onclick="validate();" /></td>
 						<td><input type="button" value="Close"
 							onclick="javascript:window.close()" class="buttonsubmit" /></td>
 					</tr>

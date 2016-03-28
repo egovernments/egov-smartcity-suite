@@ -39,68 +39,95 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Bankaccount;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class BankaccountHibernateDAO extends GenericHibernateDAO {
-	
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
+public class BankaccountHibernateDAO  {
+    @Transactional
+    public Bankaccount update(final Bankaccount entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
+
+    @Transactional
+    public Bankaccount create(final Bankaccount entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(Bankaccount entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public Bankaccount findById(Number id, boolean lock) {
+        return (Bankaccount) getCurrentSession().load(Bankaccount.class, id);
+    }
+
+    public List<Bankaccount> findAll() {
+        return (List<Bankaccount>) getCurrentSession().createCriteria(Bankaccount.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     
-	public BankaccountHibernateDAO() {
-		super(Bankaccount.class,null);
-	}
-	
-	public BankaccountHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	public List<Bankaccount> getAllBankAccounts() {
-		return getCurrentSession().createQuery("from Bankaccount BA order by BA.accountnumber").list();
-	}
+    
 
-	/**
-	 * This method will return the BankAccount object based on matching bankcode,branchcode,bankaccountanumber
-	 * @return
-	 */
-	public Bankaccount getBankAccountByAccBranchBank(final String bankAccNum, final String bankBranchCode, final String bankCode) {
-		final Query qry = getCurrentSession().createQuery("from Bankaccount bankacc where bankacc.accountnumber=:accNum " + " and bankacc.bankbranch.branchcode=:branchCode and bankacc.bankbranch.bank.code=:bankCode");
-		qry.setString("accNum", bankAccNum);
-		qry.setString("branchCode", bankBranchCode);
-		qry.setString("bankCode", bankCode);
-		Bankaccount bankAccount = null;
-		if (qry.list().size() != 0) {
-			bankAccount = (Bankaccount) qry.list().get(0);
-		}
-		return bankAccount;
-	}
-	
-	/**
-         * This method will return List of BankAccounts object based on matching bankBranchId
-         * @return
-         */
-        public List<Bankaccount> getBankAccountByBankBranch(final Integer bankBranchId) {
-                final Query qry = getCurrentSession().createQuery("from Bankaccount bankacc where bankacc.bankbranch.id=:bankBranchId ");
-                qry.setInteger("bankBranchId", bankBranchId);
-                List<Bankaccount> bankAccount = null;
-                if (qry.list().size() != 0) {
-                        bankAccount =  qry.list();
-                }
-                return bankAccount;
+    public List<Bankaccount> getAllBankAccounts() {
+        return getCurrentSession().createQuery("from Bankaccount BA order by BA.accountnumber").list();
+    }
+
+    /**
+     * This method will return the BankAccount object based on matching
+     * bankcode,branchcode,bankaccountanumber
+     * 
+     * @return
+     */
+    public Bankaccount getBankAccountByAccBranchBank(final String bankAccNum, final String bankBranchCode,
+            final String bankCode) {
+        final Query qry = getCurrentSession().createQuery(
+                "from Bankaccount bankacc where bankacc.accountnumber=:accNum "
+                        + " and bankacc.bankbranch.branchcode=:branchCode and bankacc.bankbranch.bank.code=:bankCode");
+        qry.setString("accNum", bankAccNum);
+        qry.setString("branchCode", bankBranchCode);
+        qry.setString("bankCode", bankCode);
+        Bankaccount bankAccount = null;
+        if (qry.list().size() != 0) {
+            bankAccount = (Bankaccount) qry.list().get(0);
         }
+        return bankAccount;
+    }
+
+    /**
+     * This method will return List of BankAccounts object based on matching
+     * bankBranchId
+     * 
+     * @return
+     */
+    public List<Bankaccount> getBankAccountByBankBranch(final Integer bankBranchId) {
+        final Query qry = getCurrentSession().createQuery(
+                "from Bankaccount bankacc where bankacc.bankbranch.id=:bankBranchId ");
+        qry.setInteger("bankBranchId", bankBranchId);
+        List<Bankaccount> bankAccount = null;
+        if (qry.list().size() != 0) {
+            bankAccount = qry.list();
+        }
+        return bankAccount;
+    }
 
 }

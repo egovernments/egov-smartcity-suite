@@ -54,6 +54,10 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.infra.exception.ApplicationException;
@@ -83,6 +87,12 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
     private EisUtilService eisService;
     @Autowired
     private CommonsService commonsService;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    @Autowired
+    private AccountdetailtypeHibernateDAO  actdetltypeHibDAO;
+    @Autowired
+    private FinancialYearHibernateDAO finYearHibernateDAO;
     private ContractorAdvanceRequisitionNumberGenerator contractorAdvanceRequisitionNumberGenerator;
     private static final String CONTRACTOR_ADVANCE_ACCOUNTCODE_PURPOSE = "CONTRACTOR_ADVANCE_ACCOUNTCODE";
     private static final String CONTRACTOR_ADVANCE_REQUISITION = "ContractorAdvanceRequisition";
@@ -184,7 +194,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
      */
     public void setARFNumber(final ContractorAdvanceRequisition contractorAdvanceRequisition) {
         try {
-            final CFinancialYear financialYear = commonsService.getFinancialYearByDate(contractorAdvanceRequisition
+            final CFinancialYear financialYear = finYearHibernateDAO.getFinancialYearByDate(contractorAdvanceRequisition
                     .getAdvanceRequisitionDate());
             if (financialYear == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(
@@ -292,10 +302,10 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
             if (egAdvanceRequisitionDetails.getChartofaccounts() != null
                     && egAdvanceRequisitionDetails.getChartofaccounts().getGlcode() != null) {
 
-                final List<Accountdetailtype> detailCode = commonsService
+                final List<Accountdetailtype> detailCode = chartOfAccountsHibernateDAO
                         .getAccountdetailtypeListByGLCode(egAdvanceRequisitionDetails.getChartofaccounts().getGlcode());
                 if (detailCode != null && !detailCode.isEmpty()) {
-                    final Accountdetailtype adt = commonsService
+                    final Accountdetailtype adt = chartOfAccountsHibernateDAO
                             .getAccountDetailTypeIdByName(egAdvanceRequisitionDetails.getChartofaccounts().getGlcode(),
                                     ACCOUNTDETAIL_TYPE_CONTRACTOR);
                     if (adt != null)
@@ -377,13 +387,8 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         final AccountCodePurpose accountCodePurpose = (AccountCodePurpose) persistenceService.find(
                 "from AccountCodePurpose where name = ?", CONTRACTOR_ADVANCE_ACCOUNTCODE_PURPOSE);
         if (accountCodePurpose != null)
-            try {
-                coaList = commonsService
-                        .getAccountCodeByPurpose(Integer.valueOf(accountCodePurpose.getId().toString()));
-            } catch (final ApplicationException e) {
-                throw new ValidationException(Arrays.asList(new ValidationError("error",
-                        "advancerequisition.advance.accountcode.load.error")));
-            }
+            coaList = chartOfAccountsHibernateDAO
+                    .getAccountCodeByPurpose(Integer.valueOf(accountCodePurpose.getId().toString()));
         return coaList;
     }
 

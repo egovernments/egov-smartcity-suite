@@ -60,6 +60,7 @@ import org.egov.asset.service.AssetService;
 import org.egov.asset.service.CommonAssetsService;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.bills.EgBilldetailsDAO;
 import org.egov.dao.bills.EgBilldetailsHibernateDAO;
@@ -108,6 +109,8 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     private EgovCommon egovCommon;
     @Autowired
     private CommonsService commonsService;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO; 
     private static final String WORKS_NETPAYABLE_CODE = "WORKS_NETPAYABLE_CODE";
     private static final String RETENTION_MONEY_PURPOSE = "RETENTION_MONEY_PURPOSE";
     public static final String WORKORDER_NO = "WORKORDER_NO";
@@ -714,7 +717,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public BigDecimal getNetPayableAmountForGlCodeId(final Long billId) throws NumberFormatException, ApplicationException {
         BigDecimal netPayableAmount = BigDecimal.ZERO;
-        final List<CChartOfAccounts> coaPayableList = commonsService.getAccountCodeByPurpose(Integer
+        final List<CChartOfAccounts> coaPayableList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer
                 .valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
 
         for (final CChartOfAccounts coa : coaPayableList) {
@@ -1036,7 +1039,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     private void getAllRetentionMoneyGlcodeList(final List<BigDecimal> retentionGlcodeIdList) throws ApplicationException {
 
         if (StringUtils.isNotBlank(worksService.getWorksConfigValue(RETENTION_MONEY_PURPOSE))) {
-            final List<CChartOfAccounts> tempAllRetAccList = commonsService.getAccountCodeByPurpose(Integer
+            final List<CChartOfAccounts> tempAllRetAccList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer
                     .valueOf(worksService.getWorksConfigValue(RETENTION_MONEY_PURPOSE)));
             for (final CChartOfAccounts acc : tempAllRetAccList)
                 retentionGlcodeIdList.add(new BigDecimal(acc.getId()));
@@ -1052,7 +1055,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     }
 
     public void addGlCodeForNetPayable(final List<BigDecimal> glcodeIdList) throws NumberFormatException, ApplicationException {
-        final List<CChartOfAccounts> coaPayableList = commonsService.getAccountCodeByPurpose(Integer
+        final List<CChartOfAccounts> coaPayableList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer
                 .valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
         if (coaPayableList != null)
             for (final CChartOfAccounts coa : coaPayableList)
@@ -1064,7 +1067,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public BigDecimal getNetPaybleCode(final Long billId) throws Exception {
         final List<BigDecimal> glcodeIdList = new ArrayList<BigDecimal>();
         BigDecimal netpaybleCode = BigDecimal.ZERO;
-        final List<CChartOfAccounts> coaPayableList = commonsService.getAccountCodeByPurpose(Integer
+        final List<CChartOfAccounts> coaPayableList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer
                 .valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
         if (coaPayableList != null)
             for (final CChartOfAccounts coa : coaPayableList)
@@ -1116,8 +1119,8 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         accountDetailsForBill.addAll(getAssetForBill(id));
         if (accountDetailsForBill.isEmpty())
             for (final EgBilldetails egBilldetails : accountDetailsForassetandbill) {
-                final CChartOfAccounts coa = commonsService.getCChartOfAccountsById(egBilldetails.getGlcodeid()
-                        .longValue());
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid()
+                        .longValue(),false);
                 if (coa != null) {
                     coa.setId(egBilldetails.getGlcodeid().longValue());
                     final AssetForBill assetforBill = new AssetForBill();
@@ -1626,7 +1629,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         final String estimateDepositCOA = estimate.getFinancialDetails().get(0).getCoa().getGlcode();
         final String mappingGLCode = getBudgetHeadFromMappingObject(estimateDepositCOA);
         if (StringUtils.isNotBlank(mappingGLCode))
-            coaList = Arrays.asList(commonsService.getCChartOfAccountsByGlCode(mappingGLCode));
+            coaList = Arrays.asList(chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(mappingGLCode));
         return coaList;
     }
 
@@ -1638,8 +1641,8 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         if (StringUtils.isNotBlank(mappingBudgetHead))
             for (final EgBilldetails details : billDetails)
                 if (details.getDebitamount() != null && details.getDebitamount().compareTo(BigDecimal.ZERO) == 1) {
-                    final CChartOfAccounts coaObj = commonsService.getCChartOfAccountsById(Long.valueOf(details
-                            .getGlcodeid().toString()));
+                    final CChartOfAccounts coaObj = chartOfAccountsHibernateDAO.findById(details
+                            .getGlcodeid(),false);
                     if (coaObj != null && StringUtils.isNotBlank(coaObj.getGlcode()))
                         if (!mappingBudgetHead.equalsIgnoreCase(coaObj.getGlcode())) {
                             allowForward = WorksConstants.NO;

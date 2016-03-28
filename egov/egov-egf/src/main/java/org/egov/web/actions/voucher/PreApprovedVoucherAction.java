@@ -30,6 +30,9 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,7 +132,11 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     protected WorkflowBean workflowBean = new WorkflowBean();
     protected EisCommonService eisCommonService;
-    private @Autowired EgovCommon egovCommon;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired EgovCommon egovCommon;
     @Autowired
     @Qualifier("preApprovedActionHelper")
     private PreApprovedActionHelper preApprovedActionHelper;
@@ -820,13 +827,13 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
             // get subledger.
             final List<CGeneralLedgerDetail> gldetailList = getPersistenceService().findAllBy(
-                    "from CGeneralLedgerDetail where generalLedgerId=?", Integer.valueOf(gl.getId() + ""));
+                    "from CGeneralLedgerDetail where generalLedgerId.id=?", gl.getId());
             if (gldetailList != null && !gldetailList.isEmpty())
             {
                 for (final CGeneralLedgerDetail gldetail : gldetailList)
                 {
                     temp = new HashMap<String, Object>();
-                    temp = getAccountDetails(gldetail.getDetailTypeId(), gldetail.getDetailKeyId(), temp);
+                    temp = getAccountDetails(gldetail.getDetailTypeId().getId(), gldetail.getDetailKeyId(), temp);
                     temp.put(Constants.GLCODE, gl.getGlcode());
                     temp.put("amount", gldetail.getAmount());
                     tempList.add(temp);
@@ -922,17 +929,17 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
                 tempList.add(temp);
 
                 final List<CGeneralLedgerDetail> gldetailList = getPersistenceService().findAllBy(
-                        "from CGeneralLedgerDetail where generalLedgerId=?", Integer.valueOf(gl.getId() + ""));
+                        "from CGeneralLedgerDetail where generalLedgerId.id=?", gl.getId());
                 for (final CGeneralLedgerDetail gldetail : gldetailList)
                 {
                     subledger = new PreApprovedVoucher();
                     subledger.setGlcode(coa);
                     final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY,
-                            gldetail.getDetailTypeId());
+                            gldetail.getDetailTypeId().getId());
                     detailtypeIdList.add(detailtype);
                     subledger.setDetailType(detailtype);
                     payeeMap = new HashMap<String, Object>();
-                    payeeMap = getAccountDetails(gldetail.getDetailTypeId(), gldetail.getDetailKeyId(), payeeMap);
+                    payeeMap = getAccountDetails(gldetail.getDetailTypeId().getId(), gldetail.getDetailKeyId(), payeeMap);
                     subledger.setDetailKey(payeeMap.get(Constants.DETAILKEY) + "");
                     if ((payeeMap.get(Constants.DETAILKEY) + "").contains(Constants.MASTER_DATA_DELETED))
                         addActionError(Constants.VOUCHERERRORMESSAGE);
@@ -1040,7 +1047,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     public void setupDropDownForSL(final List<Long> glcodeIdList)
     {
         List<CChartOfAccounts> glcodeList = null;
-        final Query glcodeListQuery = HibernateUtil.getCurrentSession().createQuery(
+        final Query glcodeListQuery = persistenceService.getSession().createQuery(
                 " from CChartOfAccounts where id in (select glCodeId from CChartOfAccountDetail) and id in  ( :IDS )");
         glcodeListQuery.setParameterList("IDS", glcodeIdList);
         glcodeList = glcodeListQuery.list();

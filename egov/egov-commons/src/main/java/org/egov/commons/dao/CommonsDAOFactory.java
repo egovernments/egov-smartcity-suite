@@ -94,47 +94,47 @@ public class CommonsDAOFactory {
     }
 
     public AccountdetailkeyHibernateDAO getAccountdetailkeyDAO() {
-        return new AccountdetailkeyHibernateDAO(Accountdetailkey.class, getCurrentSession());
+        return new AccountdetailkeyHibernateDAO();
     }
 
     public RelationHibernateDAO getRelationDAO() {
-        return new RelationHibernateDAO(Relation.class, getCurrentSession());
+        return new RelationHibernateDAO();
     }
 
     public FinancialYearDAO getFinancialYearDAO() {
-        return new FinancialYearHibernateDAO(CFinancialYear.class, getCurrentSession());
+        return new FinancialYearHibernateDAO();
     }
 
     public BankBranchHibernateDAO getBankbranchDAO() {
-        return new BankBranchHibernateDAO(Bankbranch.class, getCurrentSession());
+        return new BankBranchHibernateDAO();
     }
 
     public BankHibernateDAO getBankDAO() {
-        return new BankHibernateDAO(Bank.class, getCurrentSession());
+        return new BankHibernateDAO();
     }
 
     public FundHibernateDAO getFundDAO() {
 
-        return new FundHibernateDAO(Fund.class, getCurrentSession());
+        return new FundHibernateDAO();
     }
 
     public FiscalPeriodDAO getFiscalPeriodDAO() {
-        return new FiscalPeriodHibernateDAO(CFiscalPeriod.class, getCurrentSession());
+        return new FiscalPeriodHibernateDAO();
     }
 
     public FunctionDAO getFunctionDAO() {
-        return new FunctionHibernateDAO(CFunction.class, getCurrentSession());
+        return new FunctionHibernateDAO();
     }
 
     public BankaccountHibernateDAO getBankaccountDAO() {
-        return new BankaccountHibernateDAO(Bankaccount.class, getCurrentSession());
+        return new BankaccountHibernateDAO();
     }
 
     /* move to org.egov.commons */
 
     public FundSourceHibernateDAO getFundsourceDAO() {
 
-        return new FundSourceHibernateDAO(Fundsource.class, getCurrentSession());
+        return new FundSourceHibernateDAO();
     }
 
     /**
@@ -160,7 +160,7 @@ public class CommonsDAOFactory {
      */
 
     public ChartOfAccountsDAO getChartOfAccountsDAO() {
-        return new ChartOfAccountsHibernateDAO(CChartOfAccounts.class, getCurrentSession());
+        return new ChartOfAccountsHibernateDAO();
     }
 
     /**
@@ -172,11 +172,11 @@ public class CommonsDAOFactory {
     }
 
     public GeneralLedgerDAO getGeneralLedgerDAO() {
-        return new GeneralLedgerHibernateDAO(CGeneralLedger.class, this, getCurrentSession());
+        return new GeneralLedgerHibernateDAO();
     }
 
     public VoucherHeaderDAO getVoucherHeaderDAO() {
-        return new VoucherHeaderHibernateDAO(CVoucherHeader.class, getCurrentSession());
+        return new VoucherHeaderHibernateDAO();
     }
 
     public EgNumbersHibernateDAO getEgNumbersHibernateDAO() {
@@ -192,7 +192,7 @@ public class CommonsDAOFactory {
     }
 
     public AccountdetailtypeHibernateDAO getaccountdetailtypeHibernateDAO() {
-        return new AccountdetailtypeHibernateDAO(Accountdetailtype.class, getCurrentSession());
+        return new AccountdetailtypeHibernateDAO();
     }
 
     public EgSurrenderedChequesHibernateDAO getEgSurrenderedChequesDAO() {
@@ -200,18 +200,18 @@ public class CommonsDAOFactory {
     }
 
     public VouchermisHibernateDAO getVouchermisDAO() {
-        return new VouchermisHibernateDAO(Vouchermis.class, getCurrentSession());
+        return new VouchermisHibernateDAO();
     }
 
     public FunctionaryHibernateDAO getFunctionaryDAO() {
-        return new FunctionaryHibernateDAO(Functionary.class, getCurrentSession());
+        return new FunctionaryHibernateDAO();
     }
 
     public SchemeHibernateDAO getSchemeDAO() {
-        return new SchemeHibernateDAO(Scheme.class, getCurrentSession());
+        return new SchemeHibernateDAO();
     }
 
     public SubSchemeHibernateDAO getSubSchemeDAO() {
-        return new SubSchemeHibernateDAO(SubScheme.class, getCurrentSession());
+        return new SubSchemeHibernateDAO();
     }
 }

@@ -192,6 +192,14 @@
 	<put-attribute name="body" value="/WEB-INF/views/approvebudget/approvebudget-search.jsp"/>
 </definition>
 
+<definition name="fund-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.fund.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fund/fund-new.jsp"/>
+</definition>
+<definition name="fund-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.fund.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fund/fund-edit.jsp"/>
+</definition>
 <definition name="function-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.function.new" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/function/function-new.jsp"/>
@@ -241,6 +249,16 @@
 <definition name="cfinancialyear-search" extends="base_layout">
 	<put-attribute name="page-title" value="title.cfinancialyear.search" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/cfinancialyear/cfinancialyear-search.jsp"/>
+</definition>
+
+<definition name="fund-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.fund.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fund/fund-result.jsp"/>
+</definition>
+
+<definition name="fund-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.fund.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fund/fund-search.jsp"/>
 </definition>
 
 

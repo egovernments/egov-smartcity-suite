@@ -42,6 +42,9 @@
  */
 package org.egov.web.actions.voucher;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -115,7 +118,11 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected UserService userMngr;
     protected EisUtilService eisService;
     protected AssignmentService assignmentService;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ protected PersistenceService persistenceService;
+ @Autowired
     private VoucherTypeForULB voucherTypeForULB;
     protected SecurityUtils securityUtils;
     protected String reversalVoucherNumber;
@@ -341,7 +348,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                     if (voucherHeader.getIsRestrictedtoOneFunctionCenter())
                         detailMap.put(VoucherConstant.FUNCTIONCODE, voucherHeader.getVouchermis().getFunction().getCode());
                     else if (null != voucherDetail.getFunctionIdDetail()) {
-                        final CFunction function = (CFunction) HibernateUtil.getCurrentSession().load(CFunction.class,
+                        final CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
                                 voucherDetail.getFunctionIdDetail());
                         detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
                     } else if (null != voucherHeader.getVouchermis().getFunction())

@@ -30,6 +30,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -92,7 +95,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 })
 @ParentPackage("egov")
 @Validation
-
 public class VoucherStatusReportAction extends BaseFormAction
 {
     private static final Logger LOGGER = Logger.getLogger(VoucherSearchAction.class);
@@ -118,7 +120,11 @@ public class VoucherStatusReportAction extends BaseFormAction
     private EgovPaginatedList pagedResults;
     private String countQry;
     private String modeOfPayment;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private FinancialYearDAO financialYearDAO;
 
     List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
@@ -238,7 +244,7 @@ public class VoucherStatusReportAction extends BaseFormAction
          * try { Thread.sleep(30000); } catch (InterruptedException e) { // TODO Auto-generated catch block e.printStackTrace(); }
          */
         //
-        // LOGGER.errorHibernateUtil.getCurrentSession().getFlushMode());
+        // LOGGER.errorpersistenceService.getSession().getFlushMode());
         return "search";
     }
 
@@ -306,7 +312,7 @@ public class VoucherStatusReportAction extends BaseFormAction
     }
 
     public Map<String, String> getVoucherNameMap(final String type) {
-        final List<Object> voucherNameList = getPersistenceService().findAllBy(
+        final List<Object> voucherNameList = persistenceService.findAllBy(
                 "select  distinct name from  CVoucherHeader where type=?", type);
         nameMap = new LinkedHashMap<String, String>();
 
@@ -353,7 +359,7 @@ public class VoucherStatusReportAction extends BaseFormAction
             sql = sql + " and upper(ph.type) ='" + getModeOfPayment() + "'";
         countQry = "select count(*) " + sql;
         sql = "select vh " + sql + " order by vh.vouchermis.departmentid.name ,vh.voucherDate, vh.voucherNumber";
-        final Query query = HibernateUtil.getCurrentSession().createQuery(sql);
+        final Query query = persistenceService.getSession().createQuery(sql);
         return query;
     }
 

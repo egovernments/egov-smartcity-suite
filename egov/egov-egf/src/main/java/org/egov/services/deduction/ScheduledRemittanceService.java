@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.services.deduction;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -116,7 +119,11 @@ public class ScheduledRemittanceService {
     // fundcode-bankaccountid
     private Map<String, Integer> receiptBankAccountMap;
     
-    private @Autowired CreateVoucher createVoucher;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired CreateVoucher createVoucher;
 
     private FinancialYearDAO financialYearDAO;
     private RecoveryService recoveryService;
@@ -320,8 +327,8 @@ public class ScheduledRemittanceService {
 
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(" Remittance Created SuccessFully for " + voucher);
-                            HibernateUtil.getCurrentSession().flush();
-                            HibernateUtil.getCurrentSession().clear();
+                            persistenceService.getSession().flush();
+                            persistenceService.getSession().clear();
 
                         } catch (final ValidationException e) {
 
@@ -433,8 +440,8 @@ public class ScheduledRemittanceService {
 
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(" Remittance Created SuccessFully for " + voucher);
-                HibernateUtil.getCurrentSession().flush();
-                HibernateUtil.getCurrentSession().clear();
+                persistenceService.getSession().flush();
+                persistenceService.getSession().clear();
             } catch (final ValidationException e) {
 
                 errorMessage.append(dept + ":" + e.getErrors() + "\n");
@@ -498,7 +505,7 @@ public class ScheduledRemittanceService {
         if (receiptFundCodes != null && !receiptFundCodes.isEmpty())
             qry.append(" and  f.code in (:fundCodes) ");
 
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(qry.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
         .addScalar("fundId", IntegerType.INSTANCE)
         .addScalar("gldtlAmount", DoubleType.INSTANCE)
@@ -544,9 +551,9 @@ public class ScheduledRemittanceService {
     private void updateScheduleLogDetail(final CVoucherHeader voucherHeader, final Long schedularLogId) {
         final RemittanceSchedulePayment rsPaymentLog = new RemittanceSchedulePayment();
         rsPaymentLog.setVoucherheaderId(voucherHeader);
-        rsPaymentLog.setSchId((RemittanceSchedulerLog) HibernateUtil.getCurrentSession().load(RemittanceSchedulerLog.class,
+        rsPaymentLog.setSchId((RemittanceSchedulerLog) persistenceService.getSession().load(RemittanceSchedulerLog.class,
                 schedularLogId));
-        HibernateUtil.getCurrentSession().save(rsPaymentLog);
+        persistenceService.getSession().save(rsPaymentLog);
 
     }
 
@@ -563,7 +570,7 @@ public class ScheduledRemittanceService {
         if (size <= 999)
         {
 
-            final SQLQuery glQuery = HibernateUtil.getCurrentSession().createSQLQuery(
+            final SQLQuery glQuery = persistenceService.getSession().createSQLQuery(
                     "update generalledger set remittancedate=:date where id in (:glIds)");
             glQuery.setDate("date", new java.sql.Date(new Date().getTime()));
             glQuery.setParameterList("glIds", glIds);
@@ -577,7 +584,7 @@ public class ScheduledRemittanceService {
             while (size % 1000 >= 1000)
             {
 
-                final SQLQuery glQuery = HibernateUtil.getCurrentSession().createSQLQuery(
+                final SQLQuery glQuery = persistenceService.getSession().createSQLQuery(
                         "update generalledger set remittancedate=:date where id in (:glIds)");
                 glQuery.setDate("date", new java.sql.Date(new Date().getTime()));
                 glQuery.setParameterList("glIds", glIds.subList(fromIndex, toIndex));
@@ -587,7 +594,7 @@ public class ScheduledRemittanceService {
                 size -= 1000;
             }
 
-            final SQLQuery glQuery = HibernateUtil.getCurrentSession().createSQLQuery(
+            final SQLQuery glQuery = persistenceService.getSession().createSQLQuery(
                     "update generalledger set remittancedate=:date where id in (:glIds)");
             glQuery.setDate("date", new java.sql.Date(new Date().getTime()));
             glQuery.setParameterList("glIds", glIds.subList(toIndex + 1, size));
@@ -726,7 +733,7 @@ public class ScheduledRemittanceService {
     private Map<Integer, Integer> getDOsForDepartment() {
 
         @SuppressWarnings("unchecked")
-        final List<Object[]> list = HibernateUtil.getCurrentSession()
+        final List<Object[]> list = persistenceService.getSession()
         .createSQLQuery("select department_id,drawingofficer_id from eg_dept_do_mapping  order by  department_id").list();
         final Map<Integer, Integer> deptMap = new LinkedHashMap<Integer, Integer>();
         for (final Object[] dept : list)
@@ -745,7 +752,7 @@ public class ScheduledRemittanceService {
 
     private Map<Integer, String> getDepartments() {
         @SuppressWarnings("unchecked")
-        final List<Object[]> list = HibernateUtil.getCurrentSession()
+        final List<Object[]> list = persistenceService.getSession()
         .createSQLQuery("select id_dept,dept_Code from eg_department  order by dept_Code").list();
         final Map<Integer, String> deptMap = new LinkedHashMap<Integer, String>();
         for (final Object[] dept : list)
@@ -771,7 +778,7 @@ public class ScheduledRemittanceService {
 
     private void updateScheduleLog(final String message, final String jobName, final String glcode, final boolean success,
             final Long schedularLogId) {
-        final RemittanceSchedulerLog record = (RemittanceSchedulerLog) HibernateUtil.getCurrentSession().load(
+        final RemittanceSchedulerLog record = (RemittanceSchedulerLog) persistenceService.getSession().load(
                 RemittanceSchedulerLog.class, schedularLogId);
         record.setGlcode(glcode);
         record.setLastRunDate(new Date());
@@ -915,7 +922,7 @@ public class ScheduledRemittanceService {
         miscbillDetail.setPayVoucherHeader(voucherHeader);
 
         miscbillDetail.setPaidto(remitted);
-        HibernateUtil.getCurrentSession().save(miscbillDetail);
+        persistenceService.getSession().save(miscbillDetail);
 
         ph.start().withOwner(nextOwner);
         paymentWorkflowService.transition("uac_ao_approve|" + user.getId(), ph, "created from schedular");
@@ -929,7 +936,7 @@ public class ScheduledRemittanceService {
      */
     private Map<Integer, String> getFunds() {
         @SuppressWarnings("unchecked")
-        final List<Object[]> list = HibernateUtil.getCurrentSession()
+        final List<Object[]> list = persistenceService.getSession()
         .createSQLQuery("select id,code from Fund where isactive=true order by code").list();
         final Map<Integer, String> fundMap = new HashMap<Integer, String>();
         for (final Object[] fund : list)
@@ -1030,7 +1037,7 @@ public class ScheduledRemittanceService {
         if (receiptFundCodes != null && !receiptFundCodes.isEmpty())
             qry.append(" and  f.code in (:fundCodes) ");
 
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(qry.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
         .addScalar("fundId", IntegerType.INSTANCE)
         .addScalar("gldtlAmount", DoubleType.INSTANCE)
@@ -1072,7 +1079,7 @@ public class ScheduledRemittanceService {
         if (startDate != null)
             qry.append(" and (ih.instrumentdate >=:startdate or ih.transactiondate>=:startdate )");
 
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(qry.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
         .addScalar("fundId", IntegerType.INSTANCE)
         .addScalar("gldtlAmount", DoubleType.INSTANCE)
@@ -1173,7 +1180,7 @@ public class ScheduledRemittanceService {
 
         if (startDate != null)
             queryStr.append(" and vh.voucherdate>= '" + sdf.format(startDate) + "' ");
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(queryStr.toString());
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
         .addScalar("fundId", IntegerType.INSTANCE)
         .addScalar("gldtlAmount", DoubleType.INSTANCE)
@@ -1252,7 +1259,7 @@ public class ScheduledRemittanceService {
         if (startDate != null)
             queryStr.append(" and (ih.instrumentdate>='" + sdf.format(startDate) + "' or ih.transactiondate>='"
                     + sdf.format(startDate) + "' ) ");
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(queryStr.toString());
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
         .addScalar("fundId", IntegerType.INSTANCE)
         .addScalar("gldtlAmount", DoubleType.INSTANCE)
@@ -1341,7 +1348,7 @@ public class ScheduledRemittanceService {
         if (receiptFundCodes != null && !receiptFundCodes.isEmpty())
             queryStr.append(" and f.code in (:fundCodes) ");
 
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(queryStr.toString());
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
         .addScalar("fundId", IntegerType.INSTANCE)
         .addScalar("gldtlAmount", DoubleType.INSTANCE)

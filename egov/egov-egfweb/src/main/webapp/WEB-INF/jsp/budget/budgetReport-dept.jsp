@@ -54,22 +54,26 @@
 	}
 </script>
 <s:actionmessage theme="simple" />
-<s:form name="budgetDetailReportForm" action="budgetReport"
+<s:form name="budgetDetailReportForm" action="budgetReport" id = "budgetDetailReportForm"
 	theme="simple">
 	<div class="formmainbox">
 		<div class="subheadnew">Budget Report - Departmentwise</div>
 		<%@include file="budgetReport-form.jsp"%>
 		<div class="buttonbottom" style="padding-bottom: 10px;">
-			<s:submit value="PRINT " method="printDepartmentWiseReport"
+			<s:submit value="PRINT " onclick="submitForm('printDepartmentWiseReport')"
 				cssClass="buttonsubmit" />
-			<s:submit value="SAVE AS PDF" method="generateDepartmentWisePdf"
+			<s:submit value="SAVE AS PDF" onclick="submitForm('generateDepartmentWisePdf')"
 				cssClass="buttonsubmit" />
-			<s:submit value="SAVE AS EXCEL" method="generateDepartmentWiseXls"
+			<s:submit value="SAVE AS EXCEL" onclick="submitForm('generateDepartmentWiseXls')"
 				cssClass="buttonsubmit" />
 		</div>
 	</div>
 </s:form>
 <script>
+function submitForm(method){
+	document.budgetDetailReportForm.action = "/EGF/budget/budgetReport-"+method+".action";
+	document.budgetDetailReportForm.submit();
+}
 	document.getElementById('function').style.display="none";
 	document.getElementById('function_label').style.visibility="hidden";
 </script>

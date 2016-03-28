@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -78,6 +81,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp")
 })
 public class DayBookReportAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     /**
      *
@@ -100,8 +107,8 @@ public class DayBookReportAction extends BaseFormAction {
 
     public void prepareNewForm() {
         super.prepare();
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         addDropdownData("fundList",
                 persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
 
@@ -133,7 +140,7 @@ public class DayBookReportAction extends BaseFormAction {
         heading = getGLHeading();
         prepareNewForm();
 
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
+        persistenceService.getSession().setFlushMode(FlushMode.AUTO);
         return "result";
     }
 
@@ -161,7 +168,7 @@ public class DayBookReportAction extends BaseFormAction {
     private void prepareResultList() {
         String voucherDate = "", voucherNumber = "", voucherType = "", narration = "", status = "";
         Query query = null;
-        query = HibernateUtil.getCurrentSession().createSQLQuery(getQuery())
+        query = persistenceService.getSession().createSQLQuery(getQuery())
                 .addScalar("voucherdate", StringType.INSTANCE)
                 .addScalar("vouchernumber", StringType.INSTANCE)
                 .addScalar("glcode", StringType.INSTANCE)

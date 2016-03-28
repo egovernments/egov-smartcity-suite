@@ -60,6 +60,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
@@ -148,7 +149,7 @@ public class AjaxEstimateAction extends BaseFormAction {
     private Long woId;
     private String woNumber = "";
     @Autowired
-    private CommonsService commonsService;
+    private FinancialYearHibernateDAO finHibernateDo;
     private List<String> estimateNoList = new LinkedList<String>();
     private BigDecimal estimateAmount;
     @Autowired
@@ -181,7 +182,7 @@ public class AjaxEstimateAction extends BaseFormAction {
      */
     public String searchEstimateNumberForYearendAppr() {
         CFinancialYear currentFinYear;
-        currentFinYear = commonsService.getFinancialYearByDate(new Date());
+        currentFinYear = finHibernateDo.getFinancialYearByDate(new Date());
         String strquery = "";
         if (!StringUtils.isEmpty(query)) {
             strquery = "select ae.estimateNumber from AbstractEstimate ae where ae.projectCode.egwStatus.code!='CLOSED' and ae.depositCode is null and ae.egwStatus.code='ADMIN_SANCTIONED' and ae.estimateNumber like  '%'||?||'%'  "
@@ -704,9 +705,6 @@ public class AjaxEstimateAction extends BaseFormAction {
         return estimateNoList;
     }
 
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
 
     public BigDecimal getEstimateAmount() {
         return estimateAmount;

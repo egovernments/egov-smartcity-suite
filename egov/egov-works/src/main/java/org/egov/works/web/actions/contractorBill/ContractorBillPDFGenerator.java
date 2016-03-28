@@ -51,6 +51,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -105,6 +106,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     private String projectCode = "";
     public static final String newLine = "\n";
     private Long workOrderId;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     private final List<MBHeader> mbHeaderList = new ArrayList<MBHeader>();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
@@ -123,9 +126,9 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     private List<DeductionTypeForBill> sortedStandardDeductionList;
     private List<EgBilldetails> customDeductionList;
     private List<AssetForBill> assetForBillList;
+    private WorksService worksService;
     @Autowired
     private CommonsService commonsService;
-    private WorksService worksService;
     private BigDecimal advanceAdjustment = new BigDecimal(0);
     private List<BigDecimal> glcodeIdList;
     private static final String WORKS_NETPAYABLE_CODE = "WORKS_NETPAYABLE_CODE";
@@ -429,7 +432,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
                 final String[] resultAry = resultAmt.split(":");
                 createcreateDeductionTypeDataTable.getDefaultCell().setColspan(7);
                 createcreateDeductionTypeDataTable.addCell(
-                        commonsService.getCChartOfAccountsById(Long.valueOf(egBilldetails.getGlcodeid().toString())).getName());
+                        chartOfAccountsHibernateDAO.findById(Long.valueOf(egBilldetails.getGlcodeid().toString()),false).getName());
                 createcreateDeductionTypeDataTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
                 createcreateDeductionTypeDataTable.getDefaultCell().setColspan(1);
                 createcreateDeductionTypeDataTable.addCell(resultTotCustomAry[0]);// Rs. amt all bill for workorder till billdate
@@ -833,7 +836,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     public void getGlCodeForNetPayable() throws NumberFormatException, ApplicationException {
-        final List<CChartOfAccounts> coaPayableList = commonsService
+        final List<CChartOfAccounts> coaPayableList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
         // if(!coaPayableList.isEmpty()){
         if (coaPayableList != null)
@@ -986,9 +989,6 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         this.employeeService = employeeService;
     }
 
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
 
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
@@ -997,5 +997,13 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     public void setContractorAdvanceService(
             final ContractorAdvanceService contractorAdvanceService) {
         this.contractorAdvanceService = contractorAdvanceService;
+    }
+
+    public CommonsService getCommonsService() {
+        return commonsService;
+    }
+
+    public void setCommonsService(CommonsService commonsService) {
+        this.commonsService = commonsService;
     }
 }

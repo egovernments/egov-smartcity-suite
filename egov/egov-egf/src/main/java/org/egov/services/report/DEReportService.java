@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.services.report;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -107,8 +107,7 @@ public class DEReportService {
     public Date getFinancialYearStartDate(final Date date) {
         CFinancialYear cFinancialYear = null;
         // if(LOGGER.isInfoEnabled()) LOGGER.info("Obtained session");
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate");
         query.setDate("sDate", date);
@@ -172,7 +171,7 @@ public class DEReportService {
                                             "' AND vh.type ='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT
                                             + "' group by  TO_date(ph.concurrenceDate)" +
                                             " order by  TO_date(ph.concurrenceDate) ");
-            query = HibernateUtil.getCurrentSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
+            query = persistenceService.getSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
                     .addScalar("concurrenceAmount").addScalar("concurrenceDate");
         } else {
             stringQry = stringQry
@@ -194,7 +193,7 @@ public class DEReportService {
                                             "' AND vh.type ='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT
                                             + "' group by  TO_date(ph.concurrenceDate)" +
                                             " order by  TO_date(ph.concurrenceDate) ");
-            query = HibernateUtil.getCurrentSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
+            query = persistenceService.getSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
                     .addScalar("concurrenceAmount").addScalar("concurrenceDate");
         }
         return query;
@@ -238,7 +237,7 @@ public class DEReportService {
                                             + FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK +
                                             "' AND vh.type ='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' group by dept.dept_name" +
                                             "  order by dept.dept_name ");
-            query = HibernateUtil.getCurrentSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
+            query = persistenceService.getSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
                     .addScalar("concurrenceAmount");
         } else {
             stringQry = stringQry
@@ -258,7 +257,7 @@ public class DEReportService {
                                             + FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK +
                                             "' AND vh.type ='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' group by dept.dept_name" +
                                             "  order by dept.dept_name ");
-            query = HibernateUtil.getCurrentSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
+            query = persistenceService.getSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
                     .addScalar("concurrenceAmount");
         }
         query.setResultTransformer(Transformers.aliasToBean(DepartmentwiseExpenditureReport.class));
@@ -303,7 +302,7 @@ public class DEReportService {
                                             "' AND vh.type ='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT
                                             + "' group by dept.dept_name,  TO_date(ph.concurrenceDate)" +
                                             " order by  TO_date(ph.concurrenceDate) ");
-            query = HibernateUtil.getCurrentSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
+            query = persistenceService.getSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
                     .addScalar("concurrenceAmount").addScalar("concurrenceDate");
             query.setResultTransformer(Transformers.aliasToBean(DepartmentwiseExpenditureReport.class));
 
@@ -324,7 +323,7 @@ public class DEReportService {
                                             "' AND vh.type ='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT
                                             + "' group by dept.dept_name, TO_date(ph.concurrenceDate)" +
                                             " order by  TO_date(ph.concurrenceDate) ");
-            query = HibernateUtil.getCurrentSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
+            query = persistenceService.getSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
                     .addScalar("concurrenceAmount").addScalar("concurrenceDate");
             query.setResultTransformer(Transformers.aliasToBean(DepartmentwiseExpenditureReport.class));
         }
@@ -407,7 +406,7 @@ public class DEReportService {
                                     " AND vh.status  =0 AND vh.name!='" + FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK +
                                     "' AND vh.type ='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' group by dept.dept_name" +
                                     " order by dept.dept_name");
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
+        final Query query = persistenceService.getSession().createSQLQuery(stringQry.toString()).addScalar("departmentName")
                 .addScalar("concurrenceAmount");
         return query;
     }

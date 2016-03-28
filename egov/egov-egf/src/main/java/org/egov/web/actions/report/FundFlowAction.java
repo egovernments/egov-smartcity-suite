@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -108,7 +111,11 @@ public class FundFlowAction extends BaseFormAction {
     Date openignBalanceCalculatedDate;
     private FundFlowService fundFlowService;
     private String mode;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     @Override
@@ -147,7 +154,7 @@ public class FundFlowAction extends BaseFormAction {
                 + sqlformat.format(asOnDate) + "' ");
         if (fund != null && fund != -1)
             alreadyExistsQryStr.append(" and ba.fundId=" + fund + " ");
-        final Query alreadyExistsQry = HibernateUtil.getCurrentSession()
+        final Query alreadyExistsQry = persistenceService.getSession()
                 .createSQLQuery(alreadyExistsQryStr.toString());
         final List existsList = alreadyExistsQry.list();
         if (existsList.size() > 0) {
@@ -426,7 +433,7 @@ public class FundFlowAction extends BaseFormAction {
                 + sqlformat.format(asOnDate) + "' ");
         if (fund != null && fund != -1)
             alreadyExistsQryStr.append("and ba.fundId=" + fund + " ");
-        final Query alreadyExistsQry = HibernateUtil.getCurrentSession()
+        final Query alreadyExistsQry = persistenceService.getSession()
                 .createSQLQuery(alreadyExistsQryStr.toString());
         final List existsList = alreadyExistsQry.list();
         if (existsList.size() > 0)
@@ -559,7 +566,7 @@ public class FundFlowAction extends BaseFormAction {
         for (final FundFlowBean fbean : finalList) {
 
             fbean.setReportDate(asOnDate);
-            // HibernateUtil.getCurrentSession().evict(fbean);
+            // persistenceService.getSession().evict(fbean);
             persistenceService.persist(fbean);
         }
         addActionMessage(getText("fundflowreport.update.succesful"));
@@ -602,7 +609,7 @@ public class FundFlowAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Opening Balance Qry "
                         + openingBalanceQryStr.toString());
-            final Query openingBalanceQry = HibernateUtil.getCurrentSession()
+            final Query openingBalanceQry = persistenceService.getSession()
                     .createSQLQuery(openingBalanceQryStr.toString()).addScalar(
                             "bankAccountId").addScalar("accountNumber")
                             .addScalar("openingBalance").setResultTransformer(
@@ -649,7 +656,7 @@ public class FundFlowAction extends BaseFormAction {
         if (fund2 != null && fund2 != -1)
             currentOpbAndRcptQryStr.append(" and ba.fundId=" + fund2 + " ");
 
-        final Query currentOpbAndRcptQry = HibernateUtil.getCurrentSession()
+        final Query currentOpbAndRcptQry = persistenceService.getSession()
                 .createSQLQuery(currentOpbAndRcptQryStr.toString()).addScalar(
                         "openingBalance").addScalar("currentReceipt")
                         .addScalar("id", LongType.INSTANCE).addScalar("accountNumber")
@@ -911,7 +918,7 @@ public class FundFlowAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     private String getUlbName() {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)

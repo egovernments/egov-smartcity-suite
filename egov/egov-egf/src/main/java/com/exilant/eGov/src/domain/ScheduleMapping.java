@@ -45,6 +45,9 @@
  */
 package com.exilant.eGov.src.domain;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -82,7 +85,11 @@ public class ScheduleMapping {
     private String repSubType = null;
     private String isRemission = null;
     private static TaskFailedException taskExc;
-   private @Autowired EGovernCommon eGovernCommon;
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired EGovernCommon eGovernCommon;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
             .getDefault());
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
@@ -115,7 +122,7 @@ public class ScheduleMapping {
                     + "values(?,?,?,?,?,?,?,?,?,?)";
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(insertQuery);
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+            pstmt = persistenceService.getSession().createSQLQuery(insertQuery);
             pstmt.setString(0, id);
             pstmt.setString(1, reportType);
             pstmt.setString(2, schedule);
@@ -178,7 +185,7 @@ public class ScheduleMapping {
         query.append(" where id=?");
         try {
             int i = 1;
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
+            pstmt = persistenceService.getSession().createSQLQuery(query.toString());
             if (reportType != null)
                 pstmt.setString(i++, reportType);
             if (schedule != null)

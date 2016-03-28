@@ -66,9 +66,17 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {
 
+ public ContractorService()
+    {
+     super(Contractor.class) ;    
+    }
+ 
+ 
     private final Logger logger = Logger.getLogger(getClass());
     @Autowired
     private WorksService worksService;

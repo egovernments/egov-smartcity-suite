@@ -54,13 +54,21 @@ package org.egov.dao.bills;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.egov.infstr.dao.GenericDAO;
 import org.egov.model.bills.EgBilldetails;
 
-public interface EgBilldetailsDAO extends GenericDAO {
+public interface EgBilldetailsDAO {
     public BigDecimal getOtherBillsAmount(Long minGlCodeId, Long maxGlCodeId, Long majGlCodeId, String finYearID,
             String functionId, String schemeId, String subSchemeId,
             String asOnDate, String billType) throws Exception;
 
     public EgBilldetails getBillDetails(Long billId, List glcodeIdList) throws Exception;
+    EgBilldetails  findById(Number  id, boolean lock);
+
+   List<  EgBilldetails  > findAll();
+
+
+     EgBilldetails   create(  EgBilldetails   entity);
+     EgBilldetails   update(  EgBilldetails   entity);
+
+   void delete(  EgBilldetails   entity);
 }

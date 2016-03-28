@@ -39,17 +39,49 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Relation;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
-public class RelationHibernateDAO extends GenericHibernateDAO {
+public class RelationHibernateDAO {
+    @Transactional
+    public Relation update(final Relation entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-	public RelationHibernateDAO() {
-		super(Relation.class, null);
-	}
+    @Transactional
+    public Relation create(final Relation entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
 
-	public RelationHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+    @Transactional
+    public void delete(Relation entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public Relation findById(Number id, boolean lock) {
+        return (Relation) getCurrentSession().load(Relation.class, id);
+    }
+
+    public List<Relation> findAll() {
+        return (List<Relation>) getCurrentSession().createCriteria(Relation.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    
 }

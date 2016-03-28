@@ -168,19 +168,31 @@ public class RestWaterConnectionCollection {
     }
 
     public ErrorDetails validatePaymentDetails(final PayWaterTaxDetails payWaterTaxDetails) {
-        ErrorDetails errorDetails = null;
+    	ErrorDetails errorDetails = null;
         WaterConnectionDetails waterConnDetailsObj = null;
         errorDetails = validateConsumerAndApplicationNumber(payWaterTaxDetails);
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
             waterConnDetailsObj = waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails
                     .getApplicaionNumber());
         else if (payWaterTaxDetails.getConsumerNo() != null)
-            waterConnDetailsObj = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                    payWaterTaxDetails.getConsumerNo(), ConnectionStatus.ACTIVE);
+        {
+            waterConnDetailsObj = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                    payWaterTaxDetails.getConsumerNo(),ConnectionStatus.ACTIVE);
+        }
         if (waterConnDetailsObj == null) {
+        	waterConnDetailsObj = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                    payWaterTaxDetails.getConsumerNo(),ConnectionStatus.INACTIVE);
+        	if (waterConnDetailsObj != null)
+        	{
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_INACTIVE_CONSUMERNO);
+                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_INACTIVE_CONSUMERNO);
+        	}
+        	else{
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CONSUMER_NO_VALID);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMER_NO_VALID);
+        	}
         }
         if (waterConnDetailsObj != null) {
             final BigDecimal totalAmountDue = waterConnectionDetailsService.getTotalAmount(waterConnDetailsObj);
@@ -285,6 +297,15 @@ public class RestWaterConnectionCollection {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_APPLICATION_NO_LEN);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_APPLICATION_NO_LEN);
+        }
+        WaterConnectionDetails waterConnDetailsObj = null;
+        if (payWaterTaxDetails.getConsumerNo() != null)
+        waterConnDetailsObj = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                payWaterTaxDetails.getConsumerNo(),ConnectionStatus.INACTIVE);
+        if (waterConnDetailsObj != null) {
+        	errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_INACTIVE_CONSUMERNO);
+            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_INACTIVE_CONSUMERNO);
         }
         return errorDetails;
     }

@@ -40,8 +40,8 @@
 /**
  *
  */
-package org.egov.services.report;
-
+package org.egov.services.report;import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -120,7 +120,7 @@ public class LoanGrantService extends PersistenceService {
             schemeUtilSql.append(" ORDER by ss.name, pc.code,vh.voucherdate ");
         }
         final String schemeUtilSqlQry = schemeUtilSql.toString();
-        final SQLQuery schemeUtilQry = HibernateUtil.getCurrentSession().createSQLQuery(schemeUtilSqlQry);
+        final SQLQuery schemeUtilQry = getSession().createSQLQuery(schemeUtilSqlQry);
         schemeUtilQry.addScalar("subScheme").addScalar("code").addScalar("voucherNumber").addScalar("voucherDate")
         .addScalar("amount", BigDecimalType.INSTANCE)
         .addScalar("id", LongType.INSTANCE).setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
@@ -290,7 +290,7 @@ public class LoanGrantService extends PersistenceService {
         if (subSchemeId != null)
             sql.append(" and lgd.agencyId= " + agencyId);
         sql.append(" ) order by  voucherNumber,detailType desc,detailKey");
-        final SQLQuery gcSql = HibernateUtil.getCurrentSession().createSQLQuery(sql.toString());
+        final SQLQuery gcSql = getSession().createSQLQuery(sql.toString());
         if (LOGGER.isInfoEnabled())
             LOGGER.info("sql:  " + sql.toString());
         gcSql.addScalar("voucherNumber").addScalar("code").addScalar("amount", BigDecimalType.INSTANCE)
@@ -433,7 +433,7 @@ public class LoanGrantService extends PersistenceService {
      */
     private BigDecimal getLoanPaidSoFar(final Integer schemeId, final Long agencyId) {
         BigDecimal amount = BigDecimal.ZERO;
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final SQLQuery query = getSession().createSQLQuery(
                 "select amount as amount from egf_loan_paid where schemeid=" +
                         schemeId + " and agencyid=" + agencyId);
         query.addScalar("amount", BigDecimalType.INSTANCE)

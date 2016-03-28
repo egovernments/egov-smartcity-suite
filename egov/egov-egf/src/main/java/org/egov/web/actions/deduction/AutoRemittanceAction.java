@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.deduction;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,7 +93,11 @@ public class AutoRemittanceAction extends BaseFormAction {
     private Map<String, String> lastRunDateMap;
     private TdsHibernateDAO tdsDAO;
 
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     @Override
@@ -112,8 +119,7 @@ public class AutoRemittanceAction extends BaseFormAction {
             addDropdownData("departmentList", masterDataCache.get("egi-department"));
             deptDOList = persistenceService.findAllBy("from DepartmentDOMapping where department is not null  ");
 
-            final List<Object[]> list = HibernateUtil
-                    .getCurrentSession()
+            final List<Object[]> list = persistenceService.getSession()
                     .
                     createSQLQuery(
                             "select glcode, to_char(max(lastrundate),'dd/mm/yyyy') from egf_remittance_scheduler where glcode is not null and sch_type='A' "

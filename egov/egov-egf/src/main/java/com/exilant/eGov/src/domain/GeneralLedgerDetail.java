@@ -44,6 +44,9 @@
 
 package com.exilant.eGov.src.domain;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
@@ -56,6 +59,10 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 @Transactional(readOnly = true)
 public class GeneralLedgerDetail {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private String id = null;
     private String glId = null;
     private String detailKeyId = null;
@@ -111,7 +118,7 @@ public class GeneralLedgerDetail {
         final String insertQuery = "INSERT INTO GeneralLedgerDetail (id, generalLedgerId, detailKeyId, detailTypeId,amount) " +
                 "VALUES ( ?, ?, ?, ?, ?)";
 
-        final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+        final Query pst = persistenceService.getSession().createSQLQuery(insertQuery);
         pst.setLong(0, Long.valueOf(id));
         pst.setLong(1, Long.valueOf(glId));
         pst.setLong(2, Long.valueOf(detailKeyId));

@@ -38,15 +38,14 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <script>
-	function validateFinYear()
-	{
-		if(document.getElementById('financialYear').value==0)
-		{
+	function validateFinYear(method) {
+		if (document.getElementById('financialYear').value == 0) {
 			bootbox.alert('Please select a financial year');
 			return false;
 		}
-		else
-			return true;
+		document.budgetDetailReportForm.action = "/EGF/budget/budgetReport-"
+				+ method + ".action";
+		document.budgetDetailReportForm.submit();
 	}
 </script>
 
@@ -61,7 +60,7 @@
 				headerValue="----Select----" value="%{model.financialYear.id}" /></td>
 		<td class="greybox"><s:text name="report.department" /></td>
 		<td class="greybox"><s:select name="department" id="department"
-				list="dropdownData.departmentList" listKey="id" listValue="deptName"
+				list="dropdownData.departmentList" listKey="id" listValue="name"
 				headerKey="0" headerValue="----Select----"
 				value="%{model.department.id}" /></td>
 	</tr>

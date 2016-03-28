@@ -70,7 +70,6 @@
 		            	<spring:message code='lbl.close' /></button>
 	            	</div>
 	            </div>
-			</form:form>
             <c:if test="${demandGenerationLog != null && not empty demandGenerationLog.details}">
                 <c:choose>
                     <c:when test="${demandGenerationLog.demandGenerationStatus == 'INCOMPLETE'}">
@@ -99,13 +98,13 @@
                             </tbody>
                         </table>
                         <div class="text-center add-margin">
-                            <button type="button" class='btn btn-primary' id="regenbtn" onclick="alert('Not done')">Retry Selected</button>
+                            <button type="button" class='btn btn-primary' id="regenbtn2" onclick="alert('Not done')">Retry Selected</button>
                         </div>
                     </c:when>
                     <c:when test="${demandGenerationLog.demandGenerationStatus == 'COMPLETED'}">
                         <div class="alert alert-success" role="alert"><spring:message code="${message}"/> Click on Regenerate to update the generated one.</div>
                         <div class="text-center add-margin">
-                            <button type="button" class='btn btn-primary' id="regenbtn" onclick="alert('Not done')">Regenerate</button>
+                            <button type="submit" class='btn btn-primary' id="regenbtn" name="regenerate">Regenerate</button>
                         </div>
                     </c:when>
                     <c:otherwise>
@@ -113,6 +112,7 @@
                     </c:otherwise>
                 </c:choose>
             </c:if>
+            </form:form>
 		</div>
 	  </div>
 	</div>

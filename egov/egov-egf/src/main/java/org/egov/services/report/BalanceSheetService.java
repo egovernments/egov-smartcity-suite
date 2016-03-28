@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.services.report;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,7 +74,11 @@ public class BalanceSheetService extends ReportService {
     private static final String L = "L";
     private static final BigDecimal NEGATIVE = new BigDecimal(-1);
     private String removeEntrysWithZeroAmount = "";
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private  FinancialYearHibernateDAO financialYearDAO;
 
     @Override
@@ -91,8 +98,7 @@ public class BalanceSheetService extends ReportService {
     public void addCurrentOpeningBalancePerFund(final Statement balanceSheet, final List<Fund> fundList,
             final String transactionQuery) {
         final BigDecimal divisor = balanceSheet.getDivisor();
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createSQLQuery(
                         "select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.majorcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
                                 + balanceSheet.getFinancialYear().getId()
@@ -130,8 +136,7 @@ public class BalanceSheetService extends ReportService {
             final BigDecimal divisor = balanceSheet.getDivisor();
            final CFinancialYear prevFinancialYr = financialYearDAO.getPreviousFinancialYearByDate(fromDate);
             final String prevFinancialYearId = prevFinancialYr.getId().toString();
-            final Query query = HibernateUtil
-                    .getCurrentSession()
+            final Query query = persistenceService.getSession()
                     .createSQLQuery(
                             "select sum(openingdebitbalance)- sum(openingcreditbalance),coa.majorcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
                                     + prevFinancialYearId + transactionQuery + " GROUP BY coa.majorcode,coa.type");
@@ -171,7 +176,7 @@ public class BalanceSheetService extends ReportService {
         if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != -1)
             qry.append(" and v.id= mis.voucherheaderid  and mis.departmentid= " + balanceSheet.getDepartment().getId());
         qry.append(" and coa.ID=g.glcodeid and coa.type in ('I','E') " + filterQuery + " group by v.fundid");
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());
+        final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
         final List<Object[]> excessieAmountList = query.list();
         
         for (final StatementEntry entry : balanceSheet.getEntries())
@@ -218,7 +223,7 @@ public class BalanceSheetService extends ReportService {
             qry.append(" and v.id= mis.voucherheaderid");
 
         qry.append(" and coa.type in ('I','E') " + filterQuery + " group by v.fundid,g.functionid");
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());
+        final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
         final List<Object[]> excessieAmountList = query.list();
         for (final Object[] obj : excessieAmountList)
             sum = sum.add(BigDecimal.valueOf((double) obj[0]));

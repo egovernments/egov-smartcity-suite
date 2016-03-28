@@ -49,7 +49,6 @@ import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.service.AccountDetailKeyService;
-import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
@@ -86,9 +85,7 @@ public class CreateEmployeeController {
     @Autowired
     private BoundaryTypeService boundaryTypeService;
 
-    @Autowired
-    private CommonsService commonsService;
-
+    
     
     @Autowired
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;

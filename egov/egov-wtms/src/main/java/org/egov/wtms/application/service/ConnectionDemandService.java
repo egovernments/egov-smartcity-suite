@@ -323,7 +323,8 @@ public class ConnectionDemandService {
                 if (connection.getConsumerCode() != null) {
                     final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                             .findByConsumerCodeAndConnectionStatus(connection.getConsumerCode(), ConnectionStatus.ACTIVE);
-
+                      if (waterConnectionDetails!=null)
+                      {
                     waterTaxDue = getDueInfo(waterConnectionDetails);
                     waterTaxDue.setPropertyID(propertyIdentifier);
                     consumerCodes.add(connection.getConsumerCode());
@@ -332,6 +333,7 @@ public class ConnectionDemandService {
                     currDmd = currDmd.add(waterTaxDue.getCurrentDemand());
                     currColl = currColl.add(waterTaxDue.getCurrentCollection());
                     totalDue = totalDue.add(waterTaxDue.getTotalTaxDue());
+                      }
                 }
             waterTaxDue.setArrearDemand(arrDmd);
             waterTaxDue.setArrearCollection(arrColl);
@@ -518,8 +520,8 @@ public class ConnectionDemandService {
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
-            && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) == 1
-            && ((demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) == -1)|| (demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) == 0))) {
+            && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO)  >= 0
+            && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) < 1) {
                 demandObj.setBaseDemand(getTotalAmountForBaseDemand(demanddetailBean, demandObj.getBaseDemand()));
                 demandObj.setAmtCollected(getTotalCollectedAmountForDemand(demanddetailBean,
                         demandObj.getAmtCollected()));

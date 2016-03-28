@@ -104,16 +104,16 @@ $(document)
 									"sTitle" : "Total", "sClass": "text-right"
 								},
 								{
-									"data" : "cummulative_total_CollectionPercentage",
-									"sTitle" : "Total Percentage", "sClass": "text-right"
+									"data" : "cummulative_total_CollectionInterest",
+									"sTitle" : "Total Interest", "sClass": "text-right"
 								},
 								{
-								"data" : "cummulative_total_CollectionInterest",
-								"sTitle" : "Total Interest", "sClass": "text-right"
+									"data" : "cummulative_total_CollectionPercentage",
+									"sTitle" : "Total collection % (without interest)", "sClass": "text-right"
 								},
 								{
 									"data" : "cummulative_total_CollectionInterestPercentage",
-									"sTitle" : "Total Interest Percentage", "sClass": "text-right"
+									"sTitle" : "Total collection % (with interest)", "sClass": "text-right"
 								},
 								{
 									"data" : "balance_arrearTax",

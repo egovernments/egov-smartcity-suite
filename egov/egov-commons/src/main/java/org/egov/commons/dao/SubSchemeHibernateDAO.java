@@ -39,45 +39,66 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.SubScheme;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class SubSchemeHibernateDAO extends GenericHibernateDAO implements SubSchemeDAO {
+public class SubSchemeHibernateDAO  implements SubSchemeDAO {
+    @Transactional
+    public SubScheme update(final SubScheme entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
-	public SubSchemeHibernateDAO() {
-		super(SubScheme.class, null);
-	}
+    @Transactional
+    public SubScheme create(final SubScheme entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
 
-	public SubSchemeHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+    @Transactional
+    public void delete(SubScheme entity) {
+        getCurrentSession().delete(entity);
+    }
 
-	@Override
-	public SubScheme getSubSchemeById(final Integer id) {
-		final Query query = HibernateUtil.getCurrentSession().createQuery("from SubScheme s where s.id=:subschemeid");
-		query.setInteger("subschemeid", id);
-		return (SubScheme) query.uniqueResult();
-	}
+    public SubScheme findById(Number id, boolean lock) {
+        return (SubScheme) getCurrentSession().load(SubScheme.class, id);
+    }
 
-	@Override
-	public SubScheme getSubSchemeByCode(final String code) {
-		final Query query = HibernateUtil.getCurrentSession().createQuery("from SubScheme s where s.code=:subschemecode");
-		query.setString("subschemecode", code);
-		return (SubScheme) query.uniqueResult();
-	}
+    public List<SubScheme> findAll() {
+        return (List<SubScheme>) getCurrentSession().createCriteria(SubScheme.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+
+    @Override
+    public SubScheme getSubSchemeById(final Integer id) {
+        final Query query = getCurrentSession().createQuery("from SubScheme s where s.id=:subschemeid");
+        query.setInteger("subschemeid", id);
+        return (SubScheme) query.uniqueResult();
+    }
+
+    @Override
+    public SubScheme getSubSchemeByCode(final String code) {
+        final Query query = getCurrentSession().createQuery("from SubScheme s where s.code=:subschemecode");
+        query.setString("subschemecode", code);
+        return (SubScheme) query.uniqueResult();
+    }
 }

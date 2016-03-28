@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -84,7 +87,11 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private static final long serialVersionUID = 3393565721493478018L;
     private static final long LONG_FOUR = 4l;
     private static final long LONG_TWO = 2l;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     @Qualifier("chartOfAccountsService")
     private PersistenceService<CChartOfAccounts, Long> chartOfAccountsService;
     @Autowired
@@ -253,7 +260,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     if (next == null || next.getDetailTypeId().getId().equals(row.getId())) {
                         iterator.remove();
                         chartOfAccountDetailService.delete(chartOfAccountDetailService.findById(next.getId(), false));
-                        HibernateUtil.getCurrentSession().flush();
+                        persistenceService.getSession().flush();
                     }
                 }
             }
@@ -266,7 +273,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     boolean hasReference(final Integer id, final String glCode) {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(
                 "select * from chartofaccounts c,generalledger gl,generalledgerdetail gd " +
                         "where c.glcode='" + glCode + "' and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID="
                         + id);
@@ -283,7 +290,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         strQuery.append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode = '"
                 + glCode + "' AND bd.glcodeid = coa.id AND br.id= bd.billid AND br.statusid=sts.id ");
         strQuery.append(" and sts.id not in (select id from egw_status where upper(moduletype) like '%BILL%' and upper(description) like '%CANCELLED%') ");
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(strQuery.toString());
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(strQuery.toString());
         final List list = query.list();
         if (list != null && list.size() > 0)
             return false;

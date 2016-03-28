@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------*/
 function loadBank(fund) {
 	// bootbox.alert(fund.options[fund.selectedIndex].value);
-	loadFromDepartment();
+	//loadFromDepartment();
 	populatefromBankId({
 		fundId : fund.options[fund.selectedIndex].value,
 		typeOfAccount : "RECEIPTS_PAYMENTS,RECEIPTS"
@@ -76,7 +76,7 @@ function loadToDepartment() {
 	}
 }
 function loadToBank(fund) {
-	loadToDepartment();
+	//loadToDepartment();
 	populatetoBankId({
 		fundId : fund.options[fund.selectedIndex].value,
 		typeOfAccount : "RECEIPTS_PAYMENTS,PAYMENTS"

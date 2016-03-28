@@ -46,6 +46,9 @@
 
 package org.egov.deduction.dao;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.deduction.model.EgRemittanceGldtl;
@@ -62,39 +65,43 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>
  * One of the responsiblities of the factory is to inject a Hibernate Session into the DAOs. You can customize the
  * getCurrentSession() method if you are not using the default strategy, which simply delegates to
- * <ttHibernateUtil.getCurrentSession()</tt>,
+ * <ttpersistenceService.getSession()</tt>,
  */
 @Transactional(readOnly = true)
 public class DeductionHibernateDAOFactory extends DeductionDAOFactory
 {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     protected Session getCurrentSession()
     {
         // returns a reference to the current Session.
-        return HibernateUtil.getCurrentSession();
+        return persistenceService.getSession();
     }
 
-    @Override
+    
     public EgRemittanceGldtlHibernateDAO getEgRemittanceGldtlDAO()
     {
-        return new EgRemittanceGldtlHibernateDAO(EgRemittanceGldtl.class, getCurrentSession());
+        return new EgRemittanceGldtlHibernateDAO();
     }
 
-    @Override
+    
     public EgRemittanceHibernateDAO getEgRemittanceDAO()
     {
-        return new EgRemittanceHibernateDAO(EgRemittance.class, getCurrentSession());
+        return new EgRemittanceHibernateDAO();
     }
 
     @Override
     public GeneralledgerdetailHibernateDAO getGeneralledgerdetailDAO()
     {
-        return new GeneralledgerdetailHibernateDAO(Generalledgerdetail.class, getCurrentSession());
+        return new GeneralledgerdetailHibernateDAO();
     }
 
-    @Override
+    
     public EgRemittanceDetailHibernateDAO getEgRemittanceDetailDAO()
     {
-        return new EgRemittanceDetailHibernateDAO(EgRemittanceDetail.class, getCurrentSession());
+        return new EgRemittanceDetailHibernateDAO();
     }
 
 }

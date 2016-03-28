@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -94,7 +97,11 @@ public class OutstandingPaymentAction extends BaseFormAction {
     private EgovCommon egovCommon;
     private BigDecimal currentReceiptsAmount = BigDecimal.ZERO;
     private BigDecimal runningBalance = BigDecimal.ZERO;
-    private @Autowired AppConfigValueService appConfigValuesService;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired AppConfigValueService appConfigValuesService;
     private Bankaccount bankAccount;
     private String voucherStatusKey = "VOUCHER_STATUS_TO_CHECK_BANK_BALANCE";
     private final String jasperpath = "/reports/templates/OutstandingPaymentReport.jasper";
@@ -211,7 +218,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
                 " where empinfo.functionary_id=func.id and empinfo.DESIGNATIONID=desg.DESIGNATIONID " +
                 " and empinfo.isactive=true   " +
                 " and desg.DESIGNATION_NAME like '" + designationName + "' and func.NAME like '" + functionaryName + "' ";
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(qrySQL);
+        final Query query = persistenceService.getSession().createSQLQuery(qrySQL);
         final List<BigDecimal> result = query.list();
         if (result == null || result.isEmpty())
             throw new ValidationException("", "No employee with functionary -" + functionaryName + " and designation - "
@@ -227,7 +234,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
     }
 
     public String getUlbName() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-03-18T16:16:56 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mutationCertificate_details" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a002afff-59b5-4b48-b40a-06d60ceff39d">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="66"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="municipalityName" class="java.lang.String"/>
@@ -34,7 +32,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="13" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Proceedings of the Municipal Commissioner, "+$P{municipalityName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Proceedings of the Commissioner, "+$P{municipalityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="106" y="78" width="55" height="15" uuid="1f8ed447-2c66-4315-bf62-2f14225f786a"/>
@@ -132,7 +130,7 @@
 				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[ 	In exercise of the powers vested with the Municipal Commissioner under Section 207 of GHMC/MCH Act, 1955 on the request made by applicant and based on the strength of documentary evidence produced, the transfer of the title is hereby effected on the building premises within the Corporation limits as follows:-]]></text>
+				<text><![CDATA[ 	In exercise of the powers vested with the Municipal Commissioner under Section 207 and 208 of Municipal Corporation Act, 1955(formally GHMC Act, 1955) on the request made by applicant and based on the strength of documentary evidence produced, the transfer of the title is hereby effected on the building premises within the Corporation limits as follows:-]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="280" width="230" height="30" uuid="a99d0860-4b50-4ae8-9673-8e253d253b61"/>
