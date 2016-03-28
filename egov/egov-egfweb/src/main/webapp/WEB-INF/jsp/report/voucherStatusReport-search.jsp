@@ -183,11 +183,11 @@
 					<tr>
 						<td><s:if test="%{#attr.currentRowObject.size!=0}">
 								<div id="exportButton" class="buttonbottom">
-									<s:submit method="generatePdf" value="Save As Pdf"
-										cssClass="buttonsubmit" id="generatePdf"
+									<input type="button" method="generatePdf" value="Save As Pdf"
+										Class="buttonsubmit" id="generatePdf"
 										onclick="return generatePdfsubmit();" />
-									<s:submit method="generateXls" value="Save As Xls"
-										cssClass="buttonsubmit" id="generateXls"
+									<input type="button" method="generateXls" value="Save As Xls"
+										Class="buttonsubmit" id="generateXls"
 										onclick="return generateXlsSubmit();" />
 								</div>
 							</s:if></td>
