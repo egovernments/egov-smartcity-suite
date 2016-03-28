@@ -250,4 +250,34 @@
         <put-attribute name="page-title" value="title.migrateddata" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dcbViewMigratedData.jsp"/>
     </definition>
+    <definition name="waterRates-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master-view.jsp"/>
+    </definition>
+<definition name="waterratesheader-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.waterratesheader.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/waterratesheader/waterratesheader-new.jsp"/>
+</definition>
+
+<definition name="waterratesheader-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.waterratesheader.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/waterratesheader/waterratesheader-view.jsp"/>
+</definition>
+
+<definition name="waterratesheader-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.waterratesheader.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/waterratesheader/waterratesheader-edit.jsp"/>
+</definition>
+
+<definition name="waterratesheader-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.waterratesheader.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/waterratesheader/waterratesheader-result.jsp"/>
+</definition>
+
+<definition name="waterratesheader-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.waterratesheader.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/waterratesheader/waterratesheader-search.jsp"/>
+</definition>
+
+
 </tiles-definitions>
