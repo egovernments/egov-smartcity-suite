@@ -47,6 +47,7 @@ import java.util.Date;
 import javax.transaction.Transactional;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
@@ -56,18 +57,25 @@ import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorkOrderIdentificationNumberGenerator {
+
+    private static final String PROJECTCODE_SEQ_PREFIX = "SEQ_PROJECTCODE";
+
     @Autowired
     private SequenceNumberGenerator sequenceNumberGenerator;
 
     @Autowired
     private DBSequenceGenerator dbSequenceGenerator;
 
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
+
     @Transactional
-    public String generateWorkOrderIdentificationNumber(final LineEstimateDetails lineEstimateDetails,
-            final CFinancialYear cFinancialYear) {
+    public String generateWorkOrderIdentificationNumber(final LineEstimateDetails lineEstimateDetails) {
         try {
-            final String finYearRange[] = cFinancialYear.getFinYearRange().split("-");
-            final String sequenceName = "PROJECTCODE_" + finYearRange[0] + "_" + finYearRange[1];
+            final CFinancialYear financialYear = financialYearHibernateDAO
+                    .getFinancialYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+            final String finYearRange[] = financialYear.getFinYearRange().split("-");
+            final String sequenceName = PROJECTCODE_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
             final String typeOfWork;
             if (lineEstimateDetails.getLineEstimate().getWorkCategory().toString().equals(WorkCategory.SLUM_WORK.toString()))
                 typeOfWork = "SL";
@@ -82,9 +90,9 @@ public class WorkOrderIdentificationNumberGenerator {
             return String.format("%s/%s/%05d/%02d/%s", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getCode(),
                     typeOfWork, sequenceNumber,
                     getMonthOfTransaction(lineEstimateDetails.getLineEstimate().getLineEstimateDate()),
-                    cFinancialYear.getFinYearRange());
+                    financialYear.getFinYearRange());
         } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating Line Estimate Number", e);
+            throw new ApplicationRuntimeException("Error occurred while generating WIN", e);
         }
     }
 

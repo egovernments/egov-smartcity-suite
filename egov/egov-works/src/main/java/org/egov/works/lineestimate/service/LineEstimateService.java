@@ -54,19 +54,15 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
@@ -121,9 +117,6 @@ public class LineEstimateService {
     private WorkOrderIdentificationNumberGenerator workOrderIdentificationNumberGenerator;
 
     @Autowired
-    private FinancialYearDAO financialYearDAO;
-
-    @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
@@ -148,16 +141,10 @@ public class LineEstimateService {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
 
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
-
-    @Autowired
-    private CommonsService commonsService;
 
     @Autowired
     private PersistenceService<ProjectCode, Long> projectCodeService;
@@ -183,15 +170,13 @@ public class LineEstimateService {
             final String workFlowAction) throws IOException {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.CREATED.toString()));
-        final CFinancialYear cFinancialYear = financialYearDAO.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
         for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails()) {
-            final String estimateNumber = estimateNumberGenerator.generateEstimateNumber(lineEstimate, cFinancialYear);
+            final String estimateNumber = estimateNumberGenerator.generateEstimateNumber(lineEstimate);
             lineEstimateDetail.setEstimateNumber(estimateNumber);
             lineEstimateDetail.setLineEstimate(lineEstimate);
         }
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
-            final String lineEstimateNumber = lineEstimateNumberGenerator.generateLineEstimateNumber(lineEstimate,
-                    cFinancialYear);
+            final String lineEstimateNumber = lineEstimateNumberGenerator.generateLineEstimateNumber(lineEstimate);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
         }
 
@@ -212,12 +197,10 @@ public class LineEstimateService {
     @Transactional
     public LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds,
             final MultipartFile[] files) throws IOException {
-        final CFinancialYear cFinancialYear = financialYearDAO.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
             if (lineEstimateDetails.getLineEstimate() == null) {
                 lineEstimateDetails.setLineEstimate(lineEstimate);
-                lineEstimateDetails.setEstimateNumber(estimateNumberGenerator
-                        .generateEstimateNumber(lineEstimate, cFinancialYear));
+                lineEstimateDetails.setEstimateNumber(estimateNumberGenerator.generateEstimateNumber(lineEstimate));
             }
         List<LineEstimateDetails> list = new ArrayList<LineEstimateDetails>(lineEstimate.getLineEstimateDetails());
         list = removeDeletedLineEstimateDetails(list, removedLineEstimateDetailsIds);
@@ -255,8 +238,7 @@ public class LineEstimateService {
                 if (line.getId() != null) {
                     if (!strList.contains(line.getId().toString()))
                         details.add(line);
-                }
-                else
+                } else
                     details.add(line);
         } else
             return list;
@@ -376,8 +358,7 @@ public class LineEstimateService {
                             result.setCurrentOwner(worksUtils.getApproverName(le.getState().getOwnerPosition().getId()));
                             lineEstimateForLoaSearchResults.add(result);
                         }
-                    }
-                    else {
+                    } else {
                         final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
                         result.setId(le.getId());
                         result.setAdminSanctionNumber(le.getAdminSanctionNumber());
@@ -515,8 +496,7 @@ public class LineEstimateService {
                     setProjectCode(led);
                 lineEstimate.setAdminSanctionDate(new Date());
                 lineEstimate.setAdminSanctionBy(securityUtils.getCurrentUser());
-            }
-            else if (lineEstimate.getStatus().getCode()
+            } else if (lineEstimate.getStatus().getCode()
                     .equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
@@ -643,10 +623,8 @@ public class LineEstimateService {
     }
 
     public void setProjectCode(final LineEstimateDetails lineEstimateDetails) {
-        final CFinancialYear finYear = getCurrentFinancialYear(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
         final ProjectCode projectCode = new ProjectCode();
-        final String code = workOrderIdentificationNumberGenerator.generateWorkOrderIdentificationNumber(lineEstimateDetails,
-                finYear);
+        final String code = workOrderIdentificationNumberGenerator.generateWorkOrderIdentificationNumber(lineEstimateDetails);
         projectCode.setCode(code);
 
         projectCode.setCodeName(lineEstimateDetails.getNameOfWork());
@@ -670,10 +648,6 @@ public class LineEstimateService {
 
     }
 
-    public CFinancialYear getCurrentFinancialYear(final Date estimateDate) {
-        return commonsService.getFinYearByDate(estimateDate);
-    }
-    
     public LineEstimate getLineEstimateByAdminSanctionNumber(final String adminSanctionNumber) {
         return lineEstimateRepository.findByAdminSanctionNumberIgnoreCaseAndStatus_codeNotLike(adminSanctionNumber,
                 WorksConstants.CANCELLED_STATUS);
