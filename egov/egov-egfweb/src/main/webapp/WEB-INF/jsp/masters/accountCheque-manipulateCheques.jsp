@@ -126,14 +126,13 @@
 
 				<tr>
 					<td class="bluebox "></td>
-					<td class="greybox " >From Cheque Number<span
+					<td class="greybox ">From Cheque Number<span
 						class="mandatory1">*</span></td>
-					<td class="greybox" ><s:textfield name="fromChqNo"
+					<td class="greybox"><s:textfield name="fromChqNo"
 							class="patternvalidation" data-pattern="number" id="fromChqNo"
 							maxlength="6" size="6" onkeyup="validateOnlyNumber(this);" /></td>
-					<td class="greybox" >To Cheque Number<span
-						class="mandatory1">*</span></td>
-					<td class="greybox" ><s:textfield name="toChqNo"
+					<td class="greybox">To Cheque Number<span class="mandatory1">*</span></td>
+					<td class="greybox"><s:textfield name="toChqNo"
 							class="patternvalidation" data-pattern="number" id="toChqNo"
 							maxlength="6" size="6" onkeyup="validateOnlyNumber(this);" /></td>
 
@@ -141,34 +140,31 @@
 
 				<tr>
 					<td class="bluebox "></td>
-					<td class="bluebox" >Received Date<span
-						class="mandatory1">*</span></td>
-					<td class="bluebox" ><s:textfield
-							name="receivedDate" id="receivedDate" maxlength="10"
+					<td class="bluebox">Received Date<span class="mandatory1">*</span></td>
+					<td class="bluebox"><s:textfield name="receivedDate"
+							id="receivedDate" maxlength="10"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
 						href="javascript:show_calendar('chequeMaster.receivedDate',null,null,'DD/MM/YYYY');"
 						style="text-decoration: none">&nbsp;<img
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
 					</td>
-					<td class="bluebox" >Department<span
-						class="mandatory1">*</span></td>
-					<td class="bluebox" ><s:select
-							name="departmentList" id="departmentList"
-							list="dropdownData.departmentList" listKey="id" listValue="name" 
-							multiple="true" required="true" style="height:auto;"/></td>
+					<td class="bluebox">Department<span class="mandatory1">*</span></td>
+					<td class="bluebox"><s:select name="departmentList"
+							id="departmentList" list="dropdownData.departmentList"
+							listKey="id" listValue="name" multiple="true" required="true"
+							style="height:auto;" /></td>
 
 				</tr>
 
 				<tr>
 					<td class="bluebox "></td>
-					<td class="greybox" >Financial Year<span
-						class="mandatory1">*</span></td>
-					<td class="greybox" ><s:select name="serialNo"
-							id="serialNo" list="dropdownData.financialYearList" listKey="id"
+					<td class="greybox">Financial Year<span class="mandatory1">*</span></td>
+					<td class="greybox"><s:select name="serialNo" id="serialNo"
+							list="dropdownData.financialYearList" listKey="id"
 							listValue="finYearRange" headerKey="-1"
-							headerValue="----Choose----"  required="true" value ="-1"/>
-					<td class="greybox" ></td>
-					<td class="greybox" ></td>
+							headerValue="----Choose----" required="true" value="-1" />
+					<td class="greybox"></td>
+					<td class="greybox"></td>
 
 				</tr>
 
@@ -226,8 +222,20 @@
 	</s:form>
 	<script type="text/javascript">
 		function submitForm() {
-			document.chequeMaster.action = '/EGF/masters/accountCheque-save.action';
-			document.chequeMaster.submit();
+			document.getElementById("lblError").innerHTML = "";
+			var fromChequeNo = document.getElementById("fromChqNo").value;
+			var toChequeNo = document.getElementById("toChqNo").value;
+			var receivedDate = document.getElementById("receivedDate").value;
+			var department = document.getElementById("departmentList").value;
+			var serialNo = document.getElementById("serialNo").value;
+
+			if (fromChequeNo != "" || toChequeNo != "" || receivedDate != ""
+					|| department != "" || serialNo != "-1")
+				document.getElementById("lblError").innerHTML = "Please click on add new cheque or unselect required fields";
+			else {
+				document.chequeMaster.action = '/EGF/masters/accountCheque-save.action';
+				document.chequeMaster.submit();
+			}
 
 		}
 	</script>
