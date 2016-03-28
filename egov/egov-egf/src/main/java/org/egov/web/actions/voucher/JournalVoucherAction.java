@@ -175,6 +175,8 @@ public class JournalVoucherAction extends BaseVoucherAction
                 populateWorkflowBean();
                 voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean);
+                if (voucherHeader.getVouchermis().getBudgetaryAppnumber() == null)
+                {
                 message = "Voucher  "
                         + voucherHeader.getVoucherNumber()
                         + " Created Sucessfully"
@@ -183,9 +185,25 @@ public class JournalVoucherAction extends BaseVoucherAction
                                 new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
                                         .getOwnerPosition()) });
                 target = "success";
-                if (voucherHeader.getVouchermis().getBudgetaryAppnumber() != null)
-                    addActionMessage(getText("budget.recheck.sucessful", new String[] { voucherHeader.getVouchermis()
-                            .getBudgetaryAppnumber() }));
+                }
+                
+                else
+                {
+                	message = "Voucher  "
+                            + voucherHeader.getVoucherNumber()
+                            + " Created Sucessfully"
+                            + "\\n"
+                            + "And "
+                            +getText("budget.recheck.sucessful", new String[] { voucherHeader.getVouchermis()
+                                    .getBudgetaryAppnumber() })
+                            + "\\n"
+                            + getText("pjv.voucher.approved",
+                                    new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
+                                            .getOwnerPosition()) });
+                	
+                    target = "success";
+                   
+                }
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("JournalVoucherAction | create  | Success | message === " + message);
 
