@@ -49,7 +49,7 @@
             <param name="sequence">seq_eg_remittance_gldtl</param>
             </generator>
         </id>
-        <many-to-one name="generalledgerdetail" class="org.egov.deduction.model.Generalledgerdetail" fetch="select">
+        <many-to-one name="generalledgerdetail" class="org.egov.commons.CGeneralLedgerDetail" fetch="select">
             <column name="GLDTLID" precision="22" scale="0" not-null="true" />
         </many-to-one> 
         <many-to-one name="recovery" class="org.egov.model.recoveries.Recovery" fetch="select">

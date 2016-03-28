@@ -747,6 +747,7 @@ public class ChartOfAccounts {
                                                 tdsentry=(Recovery)persistenceService.find("from TDS where id=?",
                                                         Long.parseLong(tParam.getTdsId()));
                                                 egRemitGldtl.setRecovery(tdsentry);
+                                                
                                            remitanceDetPersistenceService.persist(egRemitGldtl);
                                         }
                                     } catch (final Exception e)
@@ -880,9 +881,11 @@ public class ChartOfAccounts {
                                             egRemitGldtl.setGldtlamt(gLedgerDet.getAmount());
                                             Recovery tdsentry=null;
                                             if (tParam.getTdsId() != null)
-                                                tdsentry=(Recovery)persistenceService.find("from TDS where id=?",
+                                                tdsentry=(Recovery)persistenceService.find("from Recovery where id=?",
                                                         Long.parseLong(tParam.getTdsId()));
+                                            if(tdsentry!=null){
                                                 egRemitGldtl.setRecovery(tdsentry);
+                                            }
                                             remitanceDetPersistenceService.persist(egRemitGldtl);
                                         }
                                     } catch (final Exception e)
@@ -1042,7 +1045,7 @@ public class ChartOfAccounts {
                                         egRemitGldtl.setGldtlamt(gLedgerDet.getAmount());
                                         Recovery tdsentry=null;
                                         if (tParam.getTdsId() != null)
-                                             tdsentry=(Recovery)persistenceService.find("from TDS where id=?",
+                                             tdsentry=(Recovery)persistenceService.find("from Recovery where id=?",
                                                     Long.parseLong(tParam.getTdsId()));
                                             egRemitGldtl.setRecovery(tdsentry);
                                         remitanceDetPersistenceService.persist(egRemitGldtl);
