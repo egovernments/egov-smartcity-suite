@@ -28,9 +28,10 @@
               <form:input path="identifier" class="form-control text-right patternvalidation" data-pattern="number" />
               <form:errors path="identifier" cssClass="error-msg" />
             </div>
-            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.llevel" /> </label>
+            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.llevel" /><span
+              class="mandatory"></span>  </label>
             <div class="col-sm-3 add-margin">
-              <form:input path="llevel" class="form-control text-right patternvalidation" data-pattern="number" />
+              <form:input path="llevel" class="form-control text-right patternvalidation" data-pattern="number" required="required" />
               <form:errors path="llevel" cssClass="error-msg" />
             </div>
           </div>
