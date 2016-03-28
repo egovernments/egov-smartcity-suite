@@ -675,7 +675,7 @@ public class LineEstimateService {
     }
     
     public LineEstimate getLineEstimateByAdminSanctionNumber(final String adminSanctionNumber) {
-        return lineEstimateRepository.findByAdminSanctionNumberAndStatus_codeNotLike(adminSanctionNumber,
+        return lineEstimateRepository.findByAdminSanctionNumberIgnoreCaseAndStatus_codeNotLike(adminSanctionNumber,
                 WorksConstants.CANCELLED_STATUS);
 
     }

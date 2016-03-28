@@ -41,6 +41,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<input type="hidden" id="errorCouncilResolutionDate" value="<spring:message code='error.councilresolutiondate' />" />
+<input type="hidden" id="lineEstimateDate" value='<fmt:formatDate value="${lineEstimate.lineEstimateDate }" pattern="dd/MM/yyyy"/>' />
+<c:if test="${mode != 'readOnly' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }" >
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -48,45 +51,36 @@
 		</div>
 	</div>
 	<div class="panel-body">
-		<input type="hidden" id="errorCouncilResolutionDate" value="<spring:message code='error.councilresolutiondate' />" />
-		<input type="hidden" id="lineEstimateDate" value='<fmt:formatDate value="${lineEstimate.lineEstimateDate }" pattern="dd/MM/yyyy"/>' />
 		<table class="table table-bordered" id="tblestimate">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.councilresolutionnumber"/></th>
 					<th><spring:message code="lbl.councilresolutiondate"/></th>
-					<th><spring:message code="lbl.administrativesanctionnumber"/><span class="mandatory"></span></th>					
+					<th><spring:message code="lbl.administrativesanctionnumber"/><c:if test="${mode != 'readOnly' }"><span class="mandatory"></span></c:if></th>					
 				</tr>
 			</thead>
 			<tbody >
+			</c:if>
 				<tr>
-					<td>
 					<c:if test="${mode != 'readOnly' && lineEstimate.status.code != 'ADMINISTRATIVE_SANCTIONED' }">
-						<form:input path="councilResolutionNumber" id="councilResolutionNumber" name="councilResolutionNumber" value="${councilResolutionNumber}" data-errormsg="Council Resolution Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right" onclick="validatecouncilResolutionNumber();" maxlength="32"/>
-						<form:errors path="councilResolutionNumber" cssClass="add-margin error-msg" />
+						<td>
+							<form:input path="councilResolutionNumber" id="councilResolutionNumber" name="councilResolutionNumber" value="${councilResolutionNumber}" data-errormsg="Council Resolution Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right" onclick="validatecouncilResolutionNumber();" maxlength="32"/>
+							<form:errors path="councilResolutionNumber" cssClass="add-margin error-msg" />
+						</td>
+						<td>
+							<form:input path="councilResolutionDate" id="councilResolutionDate" name="councilResolutionDate" value="${councilResolutionDate}" data-errormsg="Council Resolution Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" onkeyup="testDate();" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
+							<form:errors path="councilResolutionDate" cssClass="add-margin error-msg" />
+						</td>
+						<td>
+							<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control table-input text-right" maxlength="32" required="required" onclick="validateadminSanctionNumber();"/>
+							<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
+						</td>
 					</c:if>
 					<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
-							<c:out value="${lineEstimate.councilResolutionNumber}"></c:out>
+						<td><c:out value="${lineEstimate.councilResolutionNumber}"></c:out></td>
+						<td><fmt:formatDate value="${lineEstimate.councilResolutionDate}" pattern="dd/MM/yyyy" /></td>
+						<td><c:out value="${lineEstimate.adminSanctionNumber }"></c:out></td>
 					</c:if>
-					</td>
-					<td>
-					<c:if test="${mode != 'readOnly' && lineEstimate.status.code != 'ADMINISTRATIVE_SANCTIONED' }">
-						<form:input path="councilResolutionDate" id="councilResolutionDate" name="councilResolutionDate" value="${councilResolutionDate}" data-errormsg="Council Resolution Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" onkeyup="testDate();" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
-						<form:errors path="councilResolutionDate" cssClass="add-margin error-msg" />	
-					</c:if>
-	 				<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED'  }">
-						<fmt:formatDate value="${lineEstimate.councilResolutionDate}" pattern="dd/MM/yyyy" />
-					</c:if>
-					</td>
-					<td>
-					<c:if test="${mode != 'readOnly' && lineEstimate.status.code != 'ADMINISTRATIVE_SANCTIONED' }">
-						<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control table-input text-right" maxlength="32" required="required" onclick="validateadminSanctionNumber();"/>
-						<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />			
-					</c:if>	
-					<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
-						<c:out value="${lineEstimate.adminSanctionNumber }"></c:out>
-					</c:if>
-					</td>
 				</tr>
 			</tbody>
 		</table>
