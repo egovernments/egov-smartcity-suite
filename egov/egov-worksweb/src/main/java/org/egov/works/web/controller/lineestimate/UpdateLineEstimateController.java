@@ -127,7 +127,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
             setDropDownValues(model);
 
-        model.addAttribute("message", WorksConstants.LINEESTIMATE_CREATE);
         return loadViewData(model, request, lineEstimate);
     }
 
@@ -137,7 +136,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                     throws ApplicationException {
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
 
-        model.addAttribute("message", WorksConstants.LINEESTIMATE_CREATE);
         final String responsePage = loadViewData(model, request, lineEstimate);
         model.addAttribute("mode", "readOnly");
         return responsePage;

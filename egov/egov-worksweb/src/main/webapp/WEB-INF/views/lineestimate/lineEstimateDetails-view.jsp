@@ -37,6 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
@@ -88,7 +89,7 @@
 						</c:if>
 						<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED') && mode == 'readOnly' }">
 							<td class="text-right">
-								<c:out value="${lineEstimate.lineEstimateDetails[item.index].actualEstimateAmount}"/>
+								<fmt:formatNumber maxFractionDigits="2" value="${lineEstimate.lineEstimateDetails[item.index].actualEstimateAmount}"></fmt:formatNumber>
 							</td>
 						</c:if>
 						<td class="text-right">

@@ -74,7 +74,7 @@
 							<form:errors path="technicalSanctionDate" cssClass="add-margin error-msg" />
 						</c:if>
 						<c:if test="${mode == 'readOnly' }">
-							<fmt:formatDate value="${lineEstimate.adminSanctionDate }" pattern="dd/MM/yyyy"/>
+							<fmt:formatDate value="${lineEstimate.technicalSanctionDate }" pattern="dd/MM/yyyy"/>
 						</c:if>
 					</td>
 				</tr>

@@ -62,7 +62,7 @@
 						<spring:message code="lbl.date" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.lineEstimateDate}"></c:out>
+						<fmt:formatDate value="${lineEstimate.lineEstimateDate }" pattern="dd/MM/yyyy"/>
 					</div>
 				</div>
 				<div class="row add-border">

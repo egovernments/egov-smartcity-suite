@@ -56,7 +56,7 @@
 			<c:if test="${mode != 'view' }">
 				<spring:message code="lbl.upload.document" />
 			</c:if>
-			<c:if test="${mode == 'view' }">
+			<c:if test="${mode == 'view' && mode == 'readOnly' }">
 				<spring:message code="lbl.documents" />
 			</c:if>
 		</div>
@@ -70,7 +70,7 @@
 		<spring:message code="msg.no.documents" />
 	</c:if>
 	<input type="hidden" value="${fn:length(lineEstimate.documentDetails)}" id="documentsSize">
-	<c:if test="${mode != 'view' }">
+	<c:if test="${mode != 'view' && mode != 'readOnly' }">
 		<div>
 			<table width="100%">
 				<c:if test="${lineEstimate.documentDetails != null &&  fn:length(lineEstimate.documentDetails) lt 4}">

@@ -171,8 +171,8 @@ public class AjaxLineEstimateController {
     }
 
     @RequestMapping(value = "/lineEstimateNumbersForLoa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findLineEstimateNumbersForLoa(@RequestParam final String name) {
-        return lineEstimateService.findLineEstimateNumbersForLoa(name);
+    public @ResponseBody List<String> findEstimateNumbersForLoa(@RequestParam final String name) {
+        return lineEstimateService.findEstimateNumbersForLoa(name);
     }
 
     @RequestMapping(value = "/adminSanctionNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -183,11 +183,5 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/adminSanctionNumbersForLoa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findAdminSanctionNumbersForLoa(@RequestParam final String name) {
         return lineEstimateService.findAdminSanctionNumbersForLoa(name);
-    }
-
-    @RequestMapping(value = "/ajaxvalidate-technicalsanction-date", method = RequestMethod.GET)
-    public @ResponseBody boolean validateTechnicalSanctionDate(@RequestParam("id") final Long id,
-            @RequestParam("date") final Date technicalSanctionDate) {
-        return lineEstimateService.validateTechnicalSanctionDate(id, technicalSanctionDate);
     }
 }

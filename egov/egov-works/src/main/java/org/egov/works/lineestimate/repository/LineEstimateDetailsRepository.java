@@ -43,6 +43,8 @@ import java.util.List;
 
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -51,4 +53,13 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
     List<LineEstimateDetails> findByEstimateNumberContainingIgnoreCase(String name);
 
     LineEstimateDetails findByEstimateNumber(String estimateNumber);
+
+    @Query("select distinct(led.estimateNumber) from LineEstimateDetails as led where led.estimateNumber like :estimateNumber and led.lineEstimate.status.code = :egwStatus and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where wo.estimateNumber = led.estimateNumber and upper(wo.egwStatus.code) != :status)")
+    List<String> findEstimateNumbersForLoa(@Param("estimateNumber") String estimateNumber, @Param("egwStatus") String egwStatus, @Param("status") String status);
+
+    @Query("select distinct(led.estimateNumber) from LineEstimateDetails as led where not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) != :status)")
+    List<String> findEstimateNumbersToSearchLineEstimatesForLoa(@Param("status") String status);
+    
+    @Query("select distinct(led.lineEstimate.adminSanctionNumber) from LineEstimateDetails as led  where led.lineEstimate.adminSanctionNumber like :adminSanctionNumber and led.lineEstimate.status.code = :egwStatus and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) != :status)")
+    List<String> findAdminSanctionNumbersForLoa(@Param("adminSanctionNumber") String adminSanctionNumber, @Param("egwStatus") String egwStatus, @Param("status") String status);
 }

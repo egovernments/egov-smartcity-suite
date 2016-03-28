@@ -435,9 +435,9 @@
 		<property name="type"
 			value="org.egov.works.models.estimate.AbstractEstimateAppropriation" />
 	</bean>
-	<bean id="budgetUsageService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.model.budget.BudgetUsage" />
-	</bean>
+	<bean id="budgetUsageService" class="org.egov.services.budget.BudgetUsageService">
+        <constructor-arg index="0" value="org.egov.model.budget.BudgetUsage" />
+ 	</bean>
 	<bean id="milestoneTemplateService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
@@ -561,7 +561,10 @@
 	<!-- <bean id="billsDaoFactory" class="org.egov.dao.bills.BillsHibernateDaoFactory"/> -->
 	<bean id="genericDao" class="org.egov.infstr.dao.GenericHibernateDAO"/>
 	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
-	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"/>
+	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO" scope="prototype">
+        <property name="budgetService" ref="budgetService" />
+        <property name="persistenceService" ref="persistenceService" />
+ 	</bean>
 	<bean id="contractorGradeService" class="org.egov.works.master.services.ContractorGradeService">
 		<property name="type" value="org.egov.commons.ContractorGrade"/>
 	</bean>
@@ -576,4 +579,5 @@
     </bean>
     <bean id="lineEstimateNumberGenerator" class="org.egov.works.lineestimate.service.LineEstimateNumberGenerator"/>
     <bean id="workOrderIdentificationNumberGenerator" class="org.egov.works.lineestimate.service.WorkOrderIdentificationNumberGenerator"/>
+    <bean id="budgetAppropriationNumberGenerator" class="org.egov.works.lineestimate.service.BudgetAppropriationNumberGenerator"/>
 </beans>

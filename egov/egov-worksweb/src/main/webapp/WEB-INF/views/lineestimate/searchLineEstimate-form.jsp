@@ -64,12 +64,12 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="adminSanctionFromDate" class="form-control datepicker"	id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" />
+				<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctiontodate" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="adminSanctionToDate" class="form-control datepicker"	id="v" data-inputmask="'mask': 'd/m/y'" />
+				<form:input path="adminSanctionToDate" id="adminSanctionToDate" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionToDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
