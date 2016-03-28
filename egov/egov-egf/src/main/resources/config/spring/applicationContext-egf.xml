@@ -78,7 +78,6 @@
 
 	<bean id="budgetReAppropriationService" class="org.egov.services.budget.BudgetReAppropriationService"
 		scope="prototype">
-		<constructor-arg ref="budgetDetailConfig" />
 		<constructor-arg index="0"
 			value="org.egov.model.budget.BudgetReAppropriation" />
 		<property name="sequenceGenerator" ref="sequenceGenerator" />
