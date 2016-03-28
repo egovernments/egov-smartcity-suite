@@ -42,6 +42,9 @@
  */
 package org.egov.web.actions.masters;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,6 +56,8 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -67,10 +72,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-/**
- * @author manoranjan
- *
- */
+
 @Results({
         @Result(name = "new", location = "accountCheque-new.jsp"),
         @Result(name = "manipulateCheques", location = "accountCheque-manipulateCheques.jsp")
@@ -83,12 +85,19 @@ public class AccountChequeAction extends BaseFormAction {
     private List<ChequeDeptMapping> chequeList;
     private Bankaccount bankaccount;
     private List<ChequeDetail> chequeDetailsList;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     @Qualifier("accountChequesService")
     private AccountChequesService accountChequesService;
     
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+    
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     
     private String deletedChqDeptId;
 
@@ -106,6 +115,7 @@ public class AccountChequeAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("financialYearList", financialYearDAO.getAllActiveFinancialYearList());
     }
 
     @Action(value = "/masters/accountCheque-newform")
@@ -148,6 +158,8 @@ public class AccountChequeAction extends BaseFormAction {
             chequeDetail.setToChqNo(chequeDeptMapping.getAccountCheque().getToChequeNumber());
             chequeDetail.setDeptName(chequeDeptMapping.getAllotedTo().getName());
             chequeDetail.setDeptId(chequeDeptMapping.getAllotedTo().getId().intValue());
+            CFinancialYear fy = (CFinancialYear) financialYearDAO.findById(Long.valueOf(chequeDeptMapping.getAccountCheque().getSerialNo()), false);
+            chequeDetail.setSerialNoH(fy.getFinYearRange());
             chequeDetail
                     .setReceivedDate(Constants.DDMMYYYYFORMAT2.format(chequeDeptMapping.getAccountCheque().getReceivedDate()));
             chequeDetail.setSerialNo(chequeDeptMapping.getAccountCheque().getSerialNo());
@@ -172,7 +184,7 @@ public class AccountChequeAction extends BaseFormAction {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("AccountChequeAction | save | Start");
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = persistenceService.getSession();
         final Map<String, AccountCheques> chequeMap = new HashMap<String, AccountCheques>();
         final Map<String, String> chequeIdMap = new HashMap<String, String>();
         AccountCheques accountCheques;

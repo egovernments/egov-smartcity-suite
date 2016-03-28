@@ -48,9 +48,10 @@ package org.egov.payment.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.CVoucherHeader;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.payment.Paymentheader;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -63,21 +64,43 @@ import org.springframework.transaction.annotation.Transactional;
  * @version 1.00
  */
 @Transactional(readOnly = true)
-public class PaymentheaderHibernateDAO extends GenericHibernateDAO
-{
-    /**
-     * @param persistentClass
-     * @param session
-     */
-    public PaymentheaderHibernateDAO(final Class persistentClass, final Session session)
-    {
-        super(persistentClass, session);
-        // TODO Auto-generated constructor stub
+public class PaymentheaderHibernateDAO {
+    @Transactional
+    public Paymentheader update(final Paymentheader entity) {
+        getCurrentSession().update(entity);
+        return entity;
     }
 
-    public List<Paymentheader> getPaymentheaderByVoucherHeader(final CVoucherHeader voucherHeader)
-    {
-        final Query qry = HibernateUtil.getCurrentSession().createQuery("from Paymentheader where voucherheader =:voucherHeader");
+    @Transactional
+    public Paymentheader create(final Paymentheader entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(Paymentheader entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public Paymentheader findById(Number id, boolean lock) {
+        return (Paymentheader) getCurrentSession().load(Paymentheader.class, id);
+    }
+
+    public List<Paymentheader> findAll() {
+        return (List<Paymentheader>) getCurrentSession().createCriteria(Paymentheader.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+
+    public List<Paymentheader> getPaymentheaderByVoucherHeader(final CVoucherHeader voucherHeader) {
+        final Query qry = getCurrentSession().createQuery("from Paymentheader where voucherheader =:voucherHeader");
         qry.setEntity("voucherHeader", voucherHeader);
         return qry.list();
     }

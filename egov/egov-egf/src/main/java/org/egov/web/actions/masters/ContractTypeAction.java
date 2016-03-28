@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +59,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -64,7 +67,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validation()
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = ContractTypeAction.NEW, location = "contractType-" + ContractTypeAction.NEW + ".jsp"),
     @Result(name = "search", location = "contractType-search.jsp"),
@@ -85,7 +88,11 @@ public class ContractTypeAction extends BaseFormAction {
     private String success = "";
     protected static final Logger LOGGER = Logger.getLogger(ContractTypeAction.class);
     private boolean duplicateCode = false;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     @Override
@@ -147,8 +154,8 @@ public class ContractTypeAction extends BaseFormAction {
 
             //persistenceService.setType(EgwTypeOfWork.class);
             persistenceService.persist(typeOfWork);
-            HibernateUtil.getCurrentSession().flush();
-            HibernateUtil.getCurrentSession().clear();
+            persistenceService.getSession().flush();
+            persistenceService.getSession().clear();
             setSuccess("yes");
         } catch (final Exception e) {
             setSuccess("no");

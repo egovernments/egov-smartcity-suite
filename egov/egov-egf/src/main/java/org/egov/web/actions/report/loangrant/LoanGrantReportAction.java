@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report.loangrant;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -66,11 +69,11 @@ import org.egov.services.report.LoanGrantService;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.masters.loangrant.LoanGrantBaseAction;
 import org.hibernate.SQLQuery;
-import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = "searchGC", location = "loanGrantReport-searchGC.jsp"),
     @Result(name = "searchLoan", location = "loanGrantReport-searchLoan.jsp"),
@@ -82,6 +85,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
                             "text/html", "contentDisposition", "no-cache;filename=LoanGrant.html" })
 })
 public class LoanGrantReportAction extends LoanGrantBaseAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final String GRANT_CONTRIBUTION = "GrantContribution";
     private static final String LOAN_OUT_STANDINNG = "LoanOutStandinng";
     private static final String SEARCH_LOAN = "searchLoan";
@@ -379,7 +386,7 @@ public class LoanGrantReportAction extends LoanGrantBaseAction {
     }
 
     private String getUlbName() {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

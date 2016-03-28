@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -65,7 +68,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -79,7 +82,7 @@ import net.sf.jasperreports.engine.JRException;
         @Result(name = "functionwiseIE-HTML", type = "stream", location = Constants.INPUT_STREAM, params = {
                 Constants.INPUT_NAME, Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "text/html" })
 })
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 public class FunctionwiseIEAction extends ReportAction
 {
@@ -90,7 +93,11 @@ public class FunctionwiseIEAction extends ReportAction
     private final FunctionwiseIE functionwiseIE = new FunctionwiseIE();
     private CityService cityService;
     private City cityWebsite;
-    private @Autowired AppConfigValueService appConfigValuesService;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired AppConfigValueService appConfigValuesService;
     private FinancialYearDAO financialYearDAO;
     private String heading = "";
     private Date todayDate;
@@ -119,8 +126,8 @@ public class FunctionwiseIEAction extends ReportAction
     @Override
     public void prepare()
     {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (reportSearch.getStartDate() == null || reportSearch.getStartDate().equals(""))
             reportSearch.setStartDate(sdf.format(((CFinancialYear) persistenceService

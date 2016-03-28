@@ -55,7 +55,6 @@ import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.service.AccountDetailKeyService;
-import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeType;
@@ -134,8 +133,7 @@ public class CreateEmployeeDataEntryController {
     @Autowired
     private AccountDetailKeyService accountDetailKeyService;
 
-    @Autowired
-    private CommonsService commonsService;
+   
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String createForm(final Model model) {

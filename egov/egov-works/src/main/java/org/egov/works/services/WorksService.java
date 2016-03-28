@@ -58,6 +58,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
@@ -95,6 +96,8 @@ public class WorksService {
     private AssignmentService assignmentService;
     @Autowired
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO ;
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
 
     /**
      * This method will return the value in AppConfigValue table for the given module and key.
@@ -213,7 +216,7 @@ public class WorksService {
         adk.setDetailkey(id.intValue());
         adk.setDetailname(accountdetailtype.getAttributename());
         adk.setAccountdetailtype(accountdetailtype);
-        commonsService.createAccountdetailkey(adk);
+        accountdetailkeyHibernateDAO.create(adk);
     }
 
     public void setCommonsService(final CommonsService commonsService) {

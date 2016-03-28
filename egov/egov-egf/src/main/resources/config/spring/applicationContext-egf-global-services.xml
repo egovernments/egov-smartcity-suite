@@ -66,6 +66,12 @@
 	</bean>  
 
 
+	<bean id="contraJournalVoucherService"
+		class="org.egov.services.voucher.ContraJournalVoucherService">
+		<constructor-arg index="0"
+			value="org.egov.model.contra.ContraJournalVoucher" />
+	</bean>
+
 	<bean id="contrajournalService" class="org.egov.infstr.services.PersistenceService"
 		scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -124,12 +130,8 @@
 
 
 	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.commons.CFinancialYear" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	    </bean>
+		
 
 	<bean id="egwStatusHibernateDAO" class="org.egov.commons.dao.EgwStatusHibernateDAO">
 		<constructor-arg index="0" value="org.egov.commons.EgwStatus" />
@@ -138,39 +140,21 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="functionaryDAO" class="org.egov.commons.dao.FunctionaryHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.Functionary" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	<bean id="functionaryDAO" class="org.egov.commons.dao.FunctionaryHibernateDAO"/>
 
-	<bean id="fundSourceDAO" class="org.egov.commons.dao.FundSourceHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.Fundsource" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
-	<bean id="chartOfAccountsHibernateDAO" class="org.egov.commons.dao.ChartOfAccountsHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.commons.CChartOfAccounts" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
-
-	<bean id="fiscalPeriodHibernateDAO" class="org.egov.commons.dao.FiscalPeriodHibernateDAO">
-	</bean>
-
-	<bean id="functionHibernateDAO" class="org.egov.commons.dao.FunctionHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.CFunction" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	<bean id="fundSourceDAO" class="org.egov.commons.dao.FundSourceHibernateDAO"/>
+	<bean id="chartOfAccountsHibernateDAO" class="org.egov.commons.dao.ChartOfAccountsHibernateDAO"/>
+	
+	<bean id="fiscalPeriodHibernateDAO" class="org.egov.commons.dao.FiscalPeriodHibernateDAO"/>
+	<bean id="functionHibernateDAO" class="org.egov.commons.dao.FunctionHibernateDAO"/>
 	<bean id="budgetDetailService" class="org.egov.services.budget.BudgetDetailService">
 		<constructor-arg index="0"
 			value="org.egov.model.budget.BudgetDetail">
+		</constructor-arg>
+	</bean>
+<bean id="budgetUsageService" class="org.egov.services.budget.BudgetUsageService">
+		<constructor-arg index="0"
+			value="org.egov.model.budget.BudgetUsage">
 		</constructor-arg>
 	</bean>
 	<bean id="budgetService" class="org.egov.services.budget.BudgetService"

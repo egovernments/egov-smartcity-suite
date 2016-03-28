@@ -61,6 +61,9 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.commons.EgovCommon;
@@ -125,6 +128,8 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private boolean noMBsPresent;
     private String latestBillDateStr;
     private Long billId;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
     private Date latestMBDate;
     private Long estId;
     private Long woId;
@@ -150,6 +155,8 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private BigDecimal totalPendingBalance = new BigDecimal("0.00");
     private BigDecimal totalAdvancePaid = new BigDecimal("0.00");
     private String source;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     private List<CChartOfAccounts> coaList = new LinkedList<CChartOfAccounts>();
     private List<AssetsForWorkOrder> assetList = new LinkedList<AssetsForWorkOrder>();
@@ -191,6 +198,8 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private static final String VALID = "valid";
     private static final String INVALID = "invalid";
     private ContractorAdvanceService contractorAdvanceService;
+    @Autowired
+    private AccountdetailtypeHibernateDAO actTypeHibDao;
     private String advanceRequisitionNo;
     private String owner = "";
     private String arfInWorkFlowCheck;
@@ -258,7 +267,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
         Long billDateFinYearId = 0L;
         CFinancialYear billDateFinYear;
         try {
-            billDateFinYear = commonsService.getFinancialYearByDate(billDate);
+            billDateFinYear = finHibernateDao.getFinancialYearByDate(billDate);
         } catch (final Exception e) {
             throw new ValidationException(
                     Arrays.asList(new ValidationError("yrEnd.appr.verification.for.bill.financialyear.invalid",
@@ -393,7 +402,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
                 getGlCodeId());
         final AbstractEstimate estimate = (AbstractEstimate) persistenceService.find("from AbstractEstimate where id=?",
                 getEstimateId());
-        final Accountdetailtype adt = commonsService.getAccountDetailTypeIdByName(coaObj.getGlcode(), "DEPOSITCODE");
+        final Accountdetailtype adt = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coaObj.getGlcode(), "DEPOSITCODE");
         String fundCode = null;
         if (estimate != null && estimate.getFinancialDetails().get(0) != null) {
             financialDetail = estimate.getFinancialDetails().get(0);
@@ -450,7 +459,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
             final String[] codes = typeAndCodesMap.get(deductionType);
             if (codes != null && codes.length != 0)
                 for (final String code : codes) {
-                    pList = commonsService.getListOfDetailCode(code);
+                    pList = chartOfAccountsHibernateDAO.getListOfDetailCode(code);
                     if (pList != null)
                         standardDeductionAccountList.addAll(pList);
                 }
@@ -464,75 +473,70 @@ public class AjaxContractorBillAction extends BaseFormAction {
         final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService.find(
                 "from WorkOrderEstimate where id=?",
                 workOrderEstimateId);
-        try {
-            if (workOrderEstimate != null && workOrderEstimate.getId() != null) {
-                isSkipBudgetCheck(workOrderEstimate.getId());
-                addDropdownData(WorksConstants.ASSET_LIST, workOrderEstimate.getAssetValues());
-                assetList = workOrderEstimate.getAssetValues();
-                final String accountCodeFromBudgetHead = worksService.getWorksConfigValue("BILL_DEFAULT_BUDGETHEAD_ACCOUNTCODE");
-                showValidationMsg = WorksConstants.NO;
-                if (workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.CAPITAL_WORKS)
-                        || workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.IMPROVEMENT_WORKS)) {
-                    if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
-                            && StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_CWIP))) {
-                        coaList = commonsService.getAccountCodeByPurpose(
-                                Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_CWIP)));
+        if (workOrderEstimate != null && workOrderEstimate.getId() != null) {
+            isSkipBudgetCheck(workOrderEstimate.getId());
+            addDropdownData(WorksConstants.ASSET_LIST, workOrderEstimate.getAssetValues());
+            assetList = workOrderEstimate.getAssetValues();
+            final String accountCodeFromBudgetHead = worksService.getWorksConfigValue("BILL_DEFAULT_BUDGETHEAD_ACCOUNTCODE");
+            showValidationMsg = WorksConstants.NO;
+            if (workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.CAPITAL_WORKS)
+                    || workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.IMPROVEMENT_WORKS)) {
+                if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
+                        && StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_CWIP))) {
+                    coaList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(
+                            Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_CWIP)));
+                    addDropdownData(WorksConstants.COA_LIST, coaList);
+                } else if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "yes".equals(accountCodeFromBudgetHead)) {
+                    final List<BudgetGroup> budgetGroupList = new ArrayList<BudgetGroup>();
+                    if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup() != null)
+                        budgetGroupList.add(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup());
+                    coaList = budgetService.getAccountCodeForBudgetHead(budgetGroupList);
+                    addDropdownData(WorksConstants.COA_LIST, coaList);
+                } else
+                    coaList = Collections.EMPTY_LIST;
+            } else if (workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.REPAIR_AND_MAINTENANCE)) {
+                if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
+                        && StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_REPAIRS))) {
+                    coaList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(
+                            Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_REPAIRS)));
+                    addDropdownData(WorksConstants.COA_LIST, coaList);
+                } else if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "yes".equals(accountCodeFromBudgetHead)) {
+                    final List<BudgetGroup> budgetGroupList = new ArrayList<BudgetGroup>();
+                    if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup() != null)
+                        budgetGroupList.add(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup());
+                    coaList = budgetService.getAccountCodeForBudgetHead(budgetGroupList);
+                    addDropdownData(WorksConstants.COA_LIST, coaList);
+                } else
+                    coaList = Collections.EMPTY_LIST;
+            } else if (getAppConfigValuesToSkipBudget().contains(workOrderEstimate.getEstimate().getType().getName()))
+                if (StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_DEPOSIT)) && checkBudget) {
+                    // Story# 806 - Show all the CWIP codes in the contractor bill screen where we show the deposit COA code
+                    // now
+                    // coaList =
+                    // chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_DEPOSIT)));
+                    coaList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(
+                            Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_CWIP)));
+                    addDropdownData(WorksConstants.COA_LIST, coaList);
+                }
+                // In case of deposit works the budget head is loaded based on the mapping table
+                else if (StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_DEPOSIT)) && !checkBudget
+                        &&
+                        workOrderEstimate.getEstimate().getFinancialDetails().get(0).getCoa() != null) {
+                    // Story# 806 - Show all the CWIP codes in the contractor bill screen where we show the deposit COA code
+                    // now
+                    // coaList =
+                    // Arrays.asList(chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getCoa().getGlcode()));
+                    coaList = contractorBillService.getBudgetHeadForDepositCOA(workOrderEstimate.getEstimate());
+                    if (!coaList.isEmpty())
                         addDropdownData(WorksConstants.COA_LIST, coaList);
-                    } else if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "yes".equals(accountCodeFromBudgetHead)) {
-                        final List<BudgetGroup> budgetGroupList = new ArrayList<BudgetGroup>();
-                        if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup() != null)
-                            budgetGroupList.add(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup());
-                        coaList = budgetService.getAccountCodeForBudgetHead(budgetGroupList);
-                        addDropdownData(WorksConstants.COA_LIST, coaList);
-                    } else
+                    else
                         coaList = Collections.EMPTY_LIST;
-                } else if (workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.REPAIR_AND_MAINTENANCE)) {
-                    if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
-                            && StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_REPAIRS))) {
-                        coaList = commonsService.getAccountCodeByPurpose(
-                                Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_REPAIRS)));
-                        addDropdownData(WorksConstants.COA_LIST, coaList);
-                    } else if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "yes".equals(accountCodeFromBudgetHead)) {
-                        final List<BudgetGroup> budgetGroupList = new ArrayList<BudgetGroup>();
-                        if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup() != null)
-                            budgetGroupList.add(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup());
-                        coaList = budgetService.getAccountCodeForBudgetHead(budgetGroupList);
-                        addDropdownData(WorksConstants.COA_LIST, coaList);
-                    } else
-                        coaList = Collections.EMPTY_LIST;
-                } else if (getAppConfigValuesToSkipBudget().contains(workOrderEstimate.getEstimate().getType().getName()))
-                    if (StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_DEPOSIT)) && checkBudget) {
-                        // Story# 806 - Show all the CWIP codes in the contractor bill screen where we show the deposit COA code
-                        // now
-                        // coaList =
-                        // commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_DEPOSIT)));
-                        coaList = commonsService.getAccountCodeByPurpose(
-                                Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_CWIP)));
-                        addDropdownData(WorksConstants.COA_LIST, coaList);
+                    if (coaList.isEmpty()) {
+                        showValidationMsg = WorksConstants.YES;
+                        return WorksConstants.COA_LIST;
                     }
-                    // In case of deposit works the budget head is loaded based on the mapping table
-                    else if (StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_DEPOSIT)) && !checkBudget
-                            &&
-                            workOrderEstimate.getEstimate().getFinancialDetails().get(0).getCoa() != null) {
-                        // Story# 806 - Show all the CWIP codes in the contractor bill screen where we show the deposit COA code
-                        // now
-                        // coaList =
-                        // Arrays.asList(commonsService.getCChartOfAccountsByGlCode(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getCoa().getGlcode()));
-                        coaList = contractorBillService.getBudgetHeadForDepositCOA(workOrderEstimate.getEstimate());
-                        if (!coaList.isEmpty())
-                            addDropdownData(WorksConstants.COA_LIST, coaList);
-                        else
-                            coaList = Collections.EMPTY_LIST;
-                        if (coaList.isEmpty()) {
-                            showValidationMsg = WorksConstants.YES;
-                            return WorksConstants.COA_LIST;
-                        }
-                    } else
-                        coaList = Collections.EMPTY_LIST;
-            }
-        } catch (final ApplicationException v) {
-            logger.error("Unable to COA for WorkOrder" + v.getMessage());
-            addFieldError("COA.notfound", "Unable to COA for WorkOrder-Estimate");
+                } else
+                    coaList = Collections.EMPTY_LIST;
         }
         return WorksConstants.COA_LIST;
     }
@@ -633,7 +637,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public CFinancialYear getCurrentFinancialYear(final Date billDate) {
-        return commonsService.getFinancialYearByDate(billDate);
+        return finHibernateDao.getFinancialYearByDate(billDate);
     }
 
     public String getStatutoryDeductionAmount() throws Exception {

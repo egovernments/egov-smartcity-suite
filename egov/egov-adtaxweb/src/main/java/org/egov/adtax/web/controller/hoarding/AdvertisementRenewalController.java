@@ -74,13 +74,29 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
                 return "renewal-error";
             }
         }
-            
+        if (parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getStatus()!=null && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.WORKFLOW_IN_PROGRESS)) {
+             model.addAttribute("message", "msg.renewal.alreadyInWorkFlow");
+                return "renewal-error";
+           
+        }
+        //If curernt status of permit is approved, then payment is pending for the selected record.
+        if(parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getStatus()!=null && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.ACTIVE)  &&
+                parentPermitDetail.getStatus()!=null && parentPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED))
+        {
+            model.addAttribute("message", "msg.renewal.paymentPending");
+            return "renewal-error";
+        }
+        
+        
         loadBasicData(model, parentPermitDetail, renewalPermitDetail);
         model.addAttribute("renewalPermitDetail", renewalPermitDetail);
         model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
         model.addAttribute("stateType", renewalPermitDetail.getClass().getSimpleName());
         model.addAttribute("currentState", "NEW");
-        prepareWorkflow(model, renewalPermitDetail, new WorkflowContainer());
+        WorkflowContainer workFlowContainer = new WorkflowContainer();
+        workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+        prepareWorkflow(model, renewalPermitDetail, workFlowContainer);
+ 
         model.addAttribute("agency", parentPermitDetail.getAgency());
         model.addAttribute("advertisementDocuments", parentPermitDetail.getAdvertisement().getDocuments());
         return "renewal-newform";
@@ -121,7 +137,9 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
         renewalPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.WORKFLOW_IN_PROGRESS);
         if (resultBinder.hasErrors()) {
-            prepareWorkflow(model, renewalPermitDetail, new WorkflowContainer());
+            WorkflowContainer workFlowContainer = new WorkflowContainer();
+            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            prepareWorkflow(model, renewalPermitDetail, workFlowContainer);
             model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
             model.addAttribute("stateType", renewalPermitDetail.getClass().getSimpleName());
             model.addAttribute("currentState", "NEW");

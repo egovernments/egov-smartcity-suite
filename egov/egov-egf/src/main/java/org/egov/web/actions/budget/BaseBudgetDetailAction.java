@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,12 +85,9 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 
-@Transactional(readOnly = true)
 public abstract class BaseBudgetDetailAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     protected BudgetDetail budgetDetail = new BudgetDetail();
@@ -115,7 +115,11 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     BudgetDetailHelper budgetDetailHelper;
     protected boolean addNewDetails = false;
 
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     public boolean isAddNewDetails() {
@@ -218,7 +222,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
+    
     public String create() {
         validateMandatoryFields();
         budgetDetailHelper.removeEmptyBudgetDetails(budgetDetailList);
@@ -229,7 +233,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
+    
     @ValidationErrorPage(value = "new-re")
     public String createRe() {
         showRe = true;
@@ -257,7 +261,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return "new-re";
     }
 
-    @Transactional
+    
     @ValidationErrorPage(value = "newDetail-re")
     public String createBudgetDetail() {
 
@@ -295,7 +299,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return "newDetail-re";
     }
 
-    @Transactional
+    
     @ValidationErrorPage(value = "new-re")
     public String createReAndForward() {
         showRe = true;
@@ -330,7 +334,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     /**
      * @param budget deletes the existing selected budgets from db
      */
-    @Transactional
+    
     private void deleteExisting() {
 
         if (LOGGER.isInfoEnabled())
@@ -342,10 +346,10 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         if (searchbudgetGroupid != null && searchbudgetGroupid != 0)
             addlCondtion.append("and budgetGroup.id=" + searchbudgetGroupid);
         new ArrayList<BudgetDetail>();
-        final int executeUpdate = HibernateUtil.getCurrentSession()
+        final int executeUpdate = persistenceService.getSession()
                 .createSQLQuery("delete from egf_budgetdetail where budget=" + budgetDetail.getBudget().getId() + addlCondtion)
                 .executeUpdate();
-        final int executeUpdate2 = HibernateUtil.getCurrentSession()
+        final int executeUpdate2 = persistenceService.getSession()
                 .createSQLQuery("delete from egf_budgetdetail where budget=" + referenceBudgetFor.getId() + addlCondtion)
                 .executeUpdate();
 
@@ -354,7 +358,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
          * beDetail:result) { if(compareREandBEDetails(reDetail,beDetail)) { if(LOGGER.isInfoEnabled())
          * LOGGER.info("deleting "+beDetail.getId() +"where budgetHeade is " +beDetail.getBudgetGroup().getName()
          * +" and function  is "+beDetail.getFunction().getName());
-         * HibernateUtil.getCurrentSession().createSQLQuery("delete from egf_budgetdetail where id="
+         * persistenceService.getSession().createSQLQuery("delete from egf_budgetdetail where id="
          * +beDetail.getId()).executeUpdate(); } } if(LOGGER.isInfoEnabled()) LOGGER.info("deleting "+reDetail.getId()
          * +"where budgetHeade is " +reDetail.getBudgetGroup().getName() +" and function  is "+reDetail.getFunction().getName());
          * HibernateUtil
@@ -363,7 +367,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
          */
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Deleting complete. deleted " + executeUpdate + " RE  and " + executeUpdate2 + " BE items ");
-        HibernateUtil.getCurrentSession().flush();
+        persistenceService.getSession().flush();
     }
 
     private void validateIsPrimary() {
@@ -488,7 +492,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
             index++;
 
             if (++i % 5 == 0)
-                HibernateUtil.getCurrentSession().flush();
+                persistenceService.getSession().flush();
             LOGGER.error("saved" + i + "Item");
 
         }
@@ -525,7 +529,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
             index++;
 
             if (++i % 5 == 0)
-                HibernateUtil.getCurrentSession().flush();
+                persistenceService.getSession().flush();
             LOGGER.error("saved" + i + "Item");
 
         }

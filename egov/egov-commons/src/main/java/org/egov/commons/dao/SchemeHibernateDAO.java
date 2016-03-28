@@ -39,47 +39,67 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Scheme;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class SchemeHibernateDAO extends GenericHibernateDAO implements SchemeDAO {
-    
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
+public class SchemeHibernateDAO implements SchemeDAO {
+    @Transactional
+    public Scheme update(final Scheme entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-	public SchemeHibernateDAO() {
-		super(Scheme.class, null);
-	}
+    @Transactional
+    public Scheme create(final Scheme entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
 
-	public SchemeHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+    @Transactional
+    public void delete(Scheme entity) {
+        getCurrentSession().delete(entity);
+    }
 
-	@Override
-	public Scheme getSchemeById(final Integer id) {
-		final Query query = HibernateUtil.getCurrentSession().createQuery("from Scheme s where s.id=:schemeid");
-		query.setInteger("schemeid", id);
-		return (Scheme) query.uniqueResult();
-	}
+    public Scheme findById(Number id, boolean lock) {
+        return (Scheme) getCurrentSession().load(Scheme.class, id);
+    }
 
-	@Override
-	public Scheme getSchemeByCode(final String code) {
-		final Query query = HibernateUtil.getCurrentSession().createQuery("from Scheme s where s.code=:code");
-		query.setString("code", code);
-		return (Scheme) query.uniqueResult();
-	}
+    public List<Scheme> findAll() {
+        return (List<Scheme>) getCurrentSession().createCriteria(Scheme.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+   
+
+    @Override
+    public Scheme getSchemeById(final Integer id) {
+        final Query query = getCurrentSession().createQuery("from Scheme s where s.id=:schemeid");
+        query.setInteger("schemeid", id);
+        return (Scheme) query.uniqueResult();
+    }
+
+    @Override
+    public Scheme getSchemeByCode(final String code) {
+        final Query query = getCurrentSession().createQuery("from Scheme s where s.code=:code");
+        query.setString("code", code);
+        return (Scheme) query.uniqueResult();
+    }
 
 }

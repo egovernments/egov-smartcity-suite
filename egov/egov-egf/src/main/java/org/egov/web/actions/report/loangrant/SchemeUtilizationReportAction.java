@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report.loangrant;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -67,9 +70,9 @@ import org.egov.services.report.LoanGrantService;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.masters.loangrant.LoanGrantBaseAction;
 import org.hibernate.SQLQuery;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @Results({
     @Result(name = "result", location = "schemeUtilizationReport-result.jsp"),
     @Result(name = SchemeUtilizationReportAction.NEW, location = "schemeUtilizationReport-"
@@ -82,6 +85,10 @@ import org.springframework.transaction.annotation.Transactional;
                                     "text/html", "contentDisposition", "no-cache;filename=SchemeUtilization.html" })
 })
 public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final long serialVersionUID = 5416901822456802437L;
     final static Logger LOGGER = Logger.getLogger(SchemeUtilizationReportAction.class);
     private LoanGrantService lgService;
@@ -327,7 +334,7 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
     }
 
     private String getUlbName() {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

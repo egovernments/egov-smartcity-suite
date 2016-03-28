@@ -61,6 +61,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.AssignmentService;
@@ -125,6 +126,8 @@ public class SubledgerCodeAction extends BaseFormAction {
     private Double projectValue;
     private Date completionDate;
     private Boolean isProjectClose;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
     private String lastVoucherDate;
     private final Map<String, Object> projectDetails = new HashMap<String, Object>();
     @Autowired
@@ -168,7 +171,7 @@ public class SubledgerCodeAction extends BaseFormAction {
         addDropdownData("typeOfWorkList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
         // TODO: Need to uncomment
-        // addDropdownData("functionList", commonsService.getAllFunction());
+        // addDropdownData("functionList", fun.getAllFunction());
         // TODO: Need to remove
         addDropdownData("functionList", new ArrayList<CFunction>());
         // TO load Fund and FundSource dropdown with appconfig defined values in case of SubLedgerDepositCode
@@ -237,9 +240,9 @@ public class SubledgerCodeAction extends BaseFormAction {
     protected CFinancialYear getCurrentFinancialYear() {
         final String finyearRange = worksService.getWorksConfigValue("FINANCIAL_YEAR_RANGE");
         if (StringUtils.isNotBlank(finyearRange))
-            return commonsService.getFinancialYearByFinYearRange(finyearRange);
+            return finHibernateDao.getFinancialYearByFinYearRange(finyearRange);
         else
-            return commonsService.getFinancialYearById(Long.valueOf(commonsService.getCurrYearFiscalId()));
+            return finHibernateDao.getFinancialYearById(Long.valueOf(finHibernateDao.getCurrYearFiscalId()));
     }
 
     @Override

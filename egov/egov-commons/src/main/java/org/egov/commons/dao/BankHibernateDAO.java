@@ -39,6 +39,7 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -49,40 +50,58 @@ import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class BankHibernateDAO extends GenericHibernateDAO {
+public class BankHibernateDAO   {
+    @Transactional
+    public Bank update(final Bank entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
+    @Transactional
+    public Bank create(final Bank entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(Bank entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public Bank findById(Number id, boolean lock) {
+        return (Bank) getCurrentSession().load(Bank.class, id);
+    }
+
+    public List<Bank> findAll() {
+        return (List<Bank>) getCurrentSession().createCriteria(Bank.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     
-	public BankHibernateDAO() {
-		super(Bank.class, null);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	public BankHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
 
-	public Bank getBankByCode(final String bankCode) {
-		final Query qry = getCurrentSession().createQuery("from Bank where code=:bankCode");
-		qry.setString("bankCode", bankCode);
-		return (Bank) qry.uniqueResult();
-	}
-	
-	public Bank getBankByName(final String bankCode) {
-		final Query qry = getCurrentSession().createQuery("from Bank where name=:bankName");
-		qry.setString("bankName", bankCode);
-		return (Bank) qry.uniqueResult();
-	}
-	
-	public List<Bank> getAllBanks() {
-		final Query qry = getCurrentSession().createQuery("from Bank order by code");
-		return qry.list();
-	}
+    public Bank getBankByCode(final String bankCode) {
+        final Query qry = getCurrentSession().createQuery("from Bank where code=:bankCode");
+        qry.setString("bankCode", bankCode);
+        return (Bank) qry.uniqueResult();
+    }
+
+    public Bank getBankByName(final String bankCode) {
+        final Query qry = getCurrentSession().createQuery("from Bank where name=:bankName");
+        qry.setString("bankName", bankCode);
+        return (Bank) qry.uniqueResult();
+    }
+
+    public List<Bank> getAllBanks() {
+        final Query qry = getCurrentSession().createQuery("from Bank order by code");
+        return qry.list();
+    }
 }

@@ -43,6 +43,9 @@
  */
 package com.exilant.eGov.src.reports;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -70,6 +73,7 @@ import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.ExilPrecision;
 import com.exilant.eGov.src.transactions.OpBal;
 import com.exilant.exility.common.TaskFailedException;
+
 @Service
 public class GeneralLedgerReport {
     Query pstmt = null;
@@ -85,7 +89,11 @@ public class GeneralLedgerReport {
     private static final Logger LOGGER = Logger.getLogger(GeneralLedgerReport.class);
     com.exilant.eGov.src.transactions.OpBal OpBal = new com.exilant.eGov.src.transactions.OpBal();
     DecimalFormat dft = new DecimalFormat("##############0.00");
-    private @Autowired EGovernCommon eGovernCommon;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired EGovernCommon eGovernCommon;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
@@ -99,6 +107,7 @@ public class GeneralLedgerReport {
 
     /**
      * glcode2 is not used at all
+     * 
      * @param reportBean
      * @return
      * @throws TaskFailedException
@@ -108,13 +117,12 @@ public class GeneralLedgerReport {
         final LinkedList dataList = new LinkedList();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Indise the loop..........");
-        final CashBook cashbook = new CashBook(null);
+        new CashBook(null);
 
         String isconfirmed = "";
         String glCode1 = "";
         glCode1 = reportBean.getGlCode1();
-        try
-        {
+        try {
             final String snapShotDateTime = reportBean.getSnapShotDateTime();
             if (snapShotDateTime.equalsIgnoreCase(""))
                 effTime = "";
@@ -136,8 +144,7 @@ public class GeneralLedgerReport {
         Date dt = new Date();
         final String endDate1 = reportBean.getEndDate();
         isCurDate(endDate1);
-        try
-        {
+        try {
             endDate = reportBean.getEndDate();
             dt = sdf.parse(endDate);
             formendDate = formatter1.format(dt);
@@ -145,8 +152,7 @@ public class GeneralLedgerReport {
             LOGGER.error("inside the try-startdate" + e, e);
             throw taskExc;
         }
-        try
-        {
+        try {
             startDate = reportBean.getStartDate();
             if (!startDate.equalsIgnoreCase("null")) {
                 dt = sdf.parse(startDate);
@@ -154,11 +160,9 @@ public class GeneralLedgerReport {
             }
 
             if (startDate.equalsIgnoreCase("null")) {
-            	CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
-            	if(finYearByDate!=null)
-            	{
-                		startDate =formatter1.format(finYearByDate.getStartingDate());
-            	}
+                final CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
+                if (finYearByDate != null)
+                    startDate = formatter1.format(finYearByDate.getStartingDate());
                 // SETTING START DATE IN reportBean
                 reportBean.setStartDate(startDate);
                 final Date dtOBj = sdf.parse(startDate);
@@ -175,8 +179,7 @@ public class GeneralLedgerReport {
         endDate = formendDate;
         final String startDateformat = startDate;
         String startDateformat1 = "";
-        try
-        {
+        try {
             dt = formatter1.parse(startDateformat);
             startDateformat1 = sdf.format(dt);
         } catch (final Exception e) {
@@ -184,38 +187,35 @@ public class GeneralLedgerReport {
             throw taskExc;
         }
         Date dd = new Date();
-         
+
         final String endDateformat = endDate;
-        
-			try {
-				dd = formatter1.parse(endDateformat);
-			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dd);
-	    	
-	    	final String fyId = finYearByDate.getId().toString();
-	    	
-		
-        
-        
+
+        try {
+            dd = formatter1.parse(endDateformat);
+        } catch (final ParseException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        final CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dd);
+
+        final String fyId = finYearByDate.getId().toString();
+
         if (fyId.equalsIgnoreCase("")) {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Financial Year Not Valid");
             throw taskExc;
         }
-        final CodeValidator cv = CodeValidator.getInstance();
-      /*  if (!cv.isValidCode(glCode1))
-        {
-            LOGGER.error(glCode1 + " Not Valid");
-            throw taskExc;
-        }*/
+        CodeValidator.getInstance();
+        /*
+         * if (!cv.isValidCode(glCode1)) { LOGGER.error(glCode1 + " Not Valid");
+         * throw taskExc; }
+         */
         double txnDrSum = 0, txnCrSum = 0, openingBalance = 0, closingBalance = 0;
 
-        // String query = getQuery(glCode1,fundId, fundSourceId, startDate, endDate);
+        // String query = getQuery(glCode1,fundId, fundSourceId, startDate,
+        // endDate);
 
-       // engine.setAppConfigValuesService(appConfigValuesService); 
+        // engine.setAppConfigValuesService(appConfigValuesService);
         final ReportEngineBean reBean = engine.populateReportEngineBean(reportBean);
         engineQry = engine.getVouchersListQuery(reBean);
 
@@ -226,18 +226,16 @@ public class GeneralLedgerReport {
             LOGGER.info("**************QUERY: " + query);
         try {
 
-            try
-            {
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            } catch (final Exception e)
-            {
+            try {
+                pstmt = persistenceService.getSession().createSQLQuery(query);
+            } catch (final Exception e) {
                 LOGGER.error("Exception in creating statement:" + pstmt, e);
                 throw taskExc;
             }
 
-             List list = pstmt.list();
-             resultset1=list;
-             Object[] array = list.toArray();
+            final List list = pstmt.list();
+            resultset1 = list;
+            list.toArray();
             final ArrayList data = new ArrayList();
             String accCode = "", vcNum = "", vcDate = "", narration = "", vcTypeName = "", voucherHeaderId = "";
             StringBuffer detail = new StringBuffer();
@@ -247,32 +245,39 @@ public class GeneralLedgerReport {
             double txnDebit = 0, txnCredit = 0, previousDebit = 0, previousCredit = 0;
             String code = "", currCode = "", accCodePrevious = "", cgn = "";
             /**
-             * When using ResultSet.TYPE_SCROLL_INSENSITIVE in createStatement if no records are there, rs.next() will return true
-             * but when trying to access (rs.getXXX()), it will throw an error
+             * When using ResultSet.TYPE_SCROLL_INSENSITIVE in createStatement
+             * if no records are there, rs.next() will return true but when
+             * trying to access (rs.getXXX()), it will throw an error
              **/
             int totalCount = 0, isConfirmedCount = 0;
             String vn2 = "";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("resultset1---------------------------->" + resultset1);
-            if (resultset1 == null || resultset1.size() == 0)
-            {        // Will consider the startdate of report as the end date of the opening balance.
-                // Actually it considers 1 date less than startdate or you can say
+            if (resultset1 == null || resultset1.size() == 0) { // Will consider
+                                                                // the startdate
+                                                                // of report as
+                                                                // the end date
+                                                                // of the
+                                                                // opening
+                                                                // balance.
+                // Actually it considers 1 date less than startdate or you can
+                // say
                 // opb<startdate
-            	startDate = sdf.format(formatter1.parse(startDate));
-                final OpBal opbal = getOpeningBalance(glCode1, fundId, fundSourceId, fyId, accEntityId, accEntityKey, startDate,
-                        functionId, deptId);
+                startDate = sdf.format(formatter1.parse(startDate));
+                final OpBal opbal = getOpeningBalance(glCode1, fundId, fundSourceId, fyId, accEntityId, accEntityKey,
+                        startDate, functionId, deptId);
                 final String arr[] = new String[15];
                 openingBalance = opbal.dr - opbal.cr;
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("openingBalance--------------->" + openingBalance);
 
                 final String sqlString = "select name as \"glname\" from chartofaccounts where glcode=?";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sqlString);
+                pstmt = persistenceService.getSession().createSQLQuery(sqlString);
                 pstmt.setString(0, glCode1);
                 final List res = pstmt.list();
                 String aName = "";
-                if(res!=null)
-                	aName = res.get(0).toString();
+                if (res != null)
+                    aName = res.get(0).toString();
                 arr[1] = "";
                 arr[2] = arr[3] = arr[6] = arr[7] = arr[10] = arr[11] = arr[12] = arr[13] = "";
                 arr[14] = "";
@@ -283,8 +288,7 @@ public class GeneralLedgerReport {
                     arr[4] = "" + numberToString(((Double) Math.abs(openingBalance)).toString()).toString() + "";
                     arr[5] = "";
 
-                }
-                else if (openingBalance < 0) {
+                } else if (openingBalance < 0) {
                     arr[4] = "";
                     arr[5] = "" + numberToString(((Double) Math.abs(openingBalance)).toString()).toString() + "";
                 } else {
@@ -292,12 +296,10 @@ public class GeneralLedgerReport {
                     arr[5] = "";
                 }
                 arr[0] = "Opening Balance";
-                if (vhId == 0 && !(openingBalance > 0 || openingBalance < 0))
-                {
+                if (vhId == 0 && !(openingBalance > 0 || openingBalance < 0)) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Inside if condition");
-                }
-                else
+                } else
                     data.add(arr);
 
                 final String arr2[] = new String[15];
@@ -324,20 +326,15 @@ public class GeneralLedgerReport {
                     LOGGER.info(" inside resultset");
                 try {
                     code = element[0].toString();
-                    if(element[14]==null)
-                    {
-                    isconfirmed = "";
-                    }else
-                    {
-                    	 isconfirmed = element[14].toString();
-                    }
+                    if (element[14] == null)
+                        isconfirmed = "";
+                    else
+                        isconfirmed = element[14].toString();
                     // 9 is the dummy value used in the query
                     // To display X in Y are unconfirmed
-                    if (isconfirmed != null && !isconfirmed.equalsIgnoreCase("") && !isconfirmed.equalsIgnoreCase("9"))
-                    {
+                    if (isconfirmed != null && !isconfirmed.equalsIgnoreCase("") && !isconfirmed.equalsIgnoreCase("9")) {
                         final String vn1 = element[5].toString();
-                        if (!vn1.equalsIgnoreCase(vn2))
-                        {
+                        if (!vn1.equalsIgnoreCase(vn2)) {
                             vn2 = vn1;
                             totalCount = totalCount + 1;
                             if (isconfirmed.equalsIgnoreCase("0"))
@@ -349,26 +346,25 @@ public class GeneralLedgerReport {
                     vhId = Integer.parseInt(element[2].toString());
 
                     /**
-                     * When the main GLCODES are changing.We need to get the opening balance first.
+                     * When the main GLCODES are changing.We need to get the
+                     * opening balance first.
                      */
-                    if (!code.equals(currCode))
-                    {
+                    if (!code.equals(currCode)) {
                         // glType=resultset1.getString("glType");
                         final String arr[] = new String[15];
                         startDate = sdf.format(formatter1.parse(startDate));
-                        final OpBal opbal = getOpeningBalance(code, fundId, fundSourceId, fyId, accEntityId, accEntityKey,
-                                startDate,
-                                functionId, deptId);
+                        final OpBal opbal = getOpeningBalance(code, fundId, fundSourceId, fyId, accEntityId,
+                                accEntityKey, startDate, functionId, deptId);
                         openingBalance = opbal.dr - opbal.cr;
                         String fundName = "";
                         if (element[13].toString() != null)
                             fundName = element[13].toString();
                         final String sqlString1 = "select name as \"glname\" from chartofaccounts where glcode=?";
-                        pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sqlString1);
+                        pstmt = persistenceService.getSession().createSQLQuery(sqlString1);
                         pstmt.setString(0, code);
                         final List res = pstmt.list();
                         String aName = "";
-                        if(res!=null)
+                        if (res != null)
                             aName = res.get(0).toString();
 
                         arr[1] = "";
@@ -380,23 +376,22 @@ public class GeneralLedgerReport {
                             arr[8] = fundName;
                         arr[9] = code + "-" + aName;
                         if (openingBalance > 0) {
-                            arr[4] = "" + numberToString(((Double) Math.abs(openingBalance)).toString()).toString() + "";
+                            arr[4] = "" + numberToString(((Double) Math.abs(openingBalance)).toString()).toString()
+                                    + "";
                             arr[5] = "";
-                        }
-                        else if (openingBalance < 0) {
+                        } else if (openingBalance < 0) {
                             arr[4] = "";
-                            arr[5] = "" + numberToString(((Double) Math.abs(openingBalance)).toString()).toString() + "";
+                            arr[5] = "" + numberToString(((Double) Math.abs(openingBalance)).toString()).toString()
+                                    + "";
                         } else {
                             arr[4] = "";
                             arr[5] = "";
                         }
                         arr[0] = "Opening Balance";
-                        if (vhId == 0 && !(openingBalance > 0 || openingBalance < 0))
-                        {
+                        if (vhId == 0 && !(openingBalance > 0 || openingBalance < 0)) {
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("Inside if");
-                        }
-                        else
+                        } else
                             data.add(arr);
 
                         currCode = code;
@@ -406,11 +401,9 @@ public class GeneralLedgerReport {
                     throw taskExc;
                 }
                 // Vouchers are changing
-                if (curVHID > 0 && vhId != curVHID && cout == 0 && vhId != 0)
-                {
+                if (curVHID > 0 && vhId != curVHID && cout == 0 && vhId != 0) {
 
-                    if (txnDebit > 0)
-                    {
+                    if (txnDebit > 0) {
                         previousDebit = 0;
                         previousCredit = 0;
                         final String arr9[] = new String[15];
@@ -438,9 +431,7 @@ public class GeneralLedgerReport {
                         arr9[12] = vcTypeName;
                         arr9[13] = "";
                         data.add(arr9);
-                    }
-                    else if (txnCredit > 0)
-                    {
+                    } else if (txnCredit > 0) {
                         previousDebit = 0;
                         previousCredit = 0;
                         final String arr9[] = new String[15];
@@ -479,45 +470,42 @@ public class GeneralLedgerReport {
                     detailId = element[15].toString();
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("accEntityKey---->" + accEntityKey);
-                if (!accCode.equalsIgnoreCase(accCodePrevious))
-                {
+                if (!accCode.equalsIgnoreCase(accCodePrevious)) {
                     previousDebit = 0;
                     previousCredit = 0;
                 }
 
-                if (accCode.equalsIgnoreCase(code))
-                {
-                    if (detailId != null && !detailId.equals(accEntityKey))
-                    {
+                if (accCode.equalsIgnoreCase(code)) {
+                    if (detailId != null && !detailId.equals(accEntityKey)) {
                         slDrAmount = slDrAmount.add(new BigDecimal(element[11].toString()));
                         slCrAmount = slCrAmount.add(new BigDecimal(element[12].toString()));
                     }
-                }
-                else if (!accEntityKey.equals(""))
-                {
+                } else if (!accEntityKey.equals("")) {
                     /*
-                     * if(slCrAmount.compareTo(BigDecimal.ZERO)!=0) { detail= detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
-                     * element[8].toString()); slCrAmount=new BigDecimal("0.00"); } else
-                     * if(slDrAmount.compareTo(BigDecimal.ZERO)!=0) { detail= detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
-                     * element[8].toString()); slDrAmount=new BigDecimal("0.00"); }
+                     * if(slCrAmount.compareTo(BigDecimal.ZERO)!=0) { detail=
+                     * detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
+                     * element[8].toString()); slCrAmount=new
+                     * BigDecimal("0.00"); } else
+                     * if(slDrAmount.compareTo(BigDecimal.ZERO)!=0) { detail=
+                     * detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
+                     * element[8].toString()); slDrAmount=new
+                     * BigDecimal("0.00"); }
                      */
-                    // detail= detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+ element[8].toString());
+                    // detail= detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
+                    // element[8].toString());
                     slCrAmount = new BigDecimal("0.00");
                     slDrAmount = new BigDecimal("0.00");
                 }
 
-                if (vhId != 0 && (detailId == null || detailId.equals(accEntityKey)) && !accEntityKey.equals(""))
-                {
+                if (vhId != 0 && (detailId == null || detailId.equals(accEntityKey)) && !accEntityKey.equals("")) {
                     // get the details other than patriculars
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("detailId-->" + detailId + "accCode-->" + accCode + "::code:" + code);
-                    if (accCode.equalsIgnoreCase(code))
-                    {
+                    if (accCode.equalsIgnoreCase(code)) {
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("accCode...................." + accCode);
                         double currentDebit = 0, currentCredit = 0, debit = 0, credit = 0;
-                        if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious))
-                        {
+                        if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious)) {
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("vhId:::::::::::::::::" + vhId);
                             vcDate = element[4].toString();
@@ -527,10 +515,9 @@ public class GeneralLedgerReport {
                             final String vhId1 = element[2].toString();
                             if (LOGGER.isInfoEnabled())
                                 LOGGER.info("vhId1:::" + vhId1);
-                            cgn = cashbook.getCGN(vhId1);
+                            // cgn = cashbook.getCGN(vhId1);
                             // type = resultset1.getString("type");
-                            if (detailId != null)
-                            {
+                            if (detailId != null) {
                                 currentDebit = Double.parseDouble(element[11].toString());
                                 currentCredit = Double.parseDouble(element[12].toString());
                                 debit = previousDebit + currentDebit - (previousCredit + currentCredit);
@@ -547,9 +534,7 @@ public class GeneralLedgerReport {
                                 previousCredit = previousCredit + currentCredit;
                             }
                             narration = element[9].toString();
-                        }
-                        else
-                        {
+                        } else {
                             vcDate = element[4].toString();
                             vcNum = element[5].toString();
                             voucherHeaderId = element[2].toString();
@@ -557,10 +542,9 @@ public class GeneralLedgerReport {
                             final String vhId1 = element[2].toString();
                             if (LOGGER.isInfoEnabled())
                                 LOGGER.info("vhId1:::" + vhId1);
-                            cgn = cashbook.getCGN(vhId1);
+                            // cgn = cashbook.getCGN(vhId1);
                             // type = resultset1.getString("type");
-                            if (detailId != null)
-                            {
+                            if (detailId != null) {
                                 txnDebit = Double.parseDouble(element[11].toString());
                                 previousDebit = txnDebit;
                                 txnCredit = Double.parseDouble(element[12].toString());
@@ -568,8 +552,7 @@ public class GeneralLedgerReport {
                             }
                             narration = element[9].toString();
                         }
-                    } else if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious))
-                    {
+                    } else if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious)) {
                         double currentDebit = 0, currentCredit = 0, debit = 0, credit = 0;
                         String debitAmount = "", creditAmount = "";
                         amount.delete(lenBeforeAppend, lenAfterAppend);
@@ -579,39 +562,32 @@ public class GeneralLedgerReport {
                         currentDebit = Double.parseDouble(element[11].toString());
                         currentCredit = Double.parseDouble(element[12].toString());
                         debit = previousDebit + currentDebit - (previousCredit + currentCredit);
-                        if (debit > 0)
-                        {
+                        if (debit > 0) {
                             debitAmount = "Dr." + ExilPrecision.convertToString(debit, 2) + "0";
                             amount = amount.append(" " + debitAmount);
                         }
                         credit = previousCredit + currentCredit - (previousDebit + currentDebit);
-                        if (credit > 0)
-                        {
+                        if (credit > 0) {
                             creditAmount = "Cr." + ExilPrecision.convertToString(credit, 2) + "0";
                             amount = amount.append(" " + creditAmount);
                         }
 
-                    }
-                    else
-                    {
+                    } else {
                         detail = detail.append(" " + element[6].toString() + "" + element[8].toString());
                         previousDebit = Double.parseDouble(element[11].toString());
                         previousCredit = Double.parseDouble(element[12].toString());
                     }
-                }
-                else if (vhId != 0 && accEntityKey.equals(""))
-                {
-                    // if(LOGGER.isDebugEnabled()) LOGGER.debug(" inside vhId != 0");
+                } else if (vhId != 0 && accEntityKey.equals("")) {
+                    // if(LOGGER.isDebugEnabled())
+                    // LOGGER.debug(" inside vhId != 0");
                     // get the details other than patriculars
-                    if (accCode.equalsIgnoreCase(code))
-                    {
+                    if (accCode.equalsIgnoreCase(code)) {
                         double currentDebit = 0, currentCredit = 0, debit = 0, credit = 0;
                         if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious) // &&
-                                // (StringUtils.isEmpty(reBean.getFunctionId())
-                                // ||
-                                // reBean.getFunctionId().equals(resultset1.getString("functionid")))
-                                )
-                        {
+                        // (StringUtils.isEmpty(reBean.getFunctionId())
+                        // ||
+                        // reBean.getFunctionId().equals(resultset1.getString("functionid")))
+                        ) {
                             vcDate = element[4].toString();
                             vcNum = element[5].toString();
                             voucherHeaderId = element[2].toString();
@@ -619,7 +595,7 @@ public class GeneralLedgerReport {
                             final String vhId1 = element[2].toString();
                             if (LOGGER.isInfoEnabled())
                                 LOGGER.info("vhId1:::" + vhId1);
-                            cgn = cashbook.getCGN(vhId1);
+                            // cgn = cashbook.getCGN(vhId1);
                             // type = resultset1.getString("type");
                             currentDebit = Double.parseDouble(element[11].toString());
                             currentCredit = Double.parseDouble(element[12].toString());
@@ -635,13 +611,15 @@ public class GeneralLedgerReport {
                                 txnCredit = 0;
                             narration = element[9].toString();
                             /*
-                             * previousDebit=currentDebit; previousCredit=currentCredit;
+                             * previousDebit=currentDebit;
+                             * previousCredit=currentCredit;
                              */
                             previousDebit = txnDebit;
                             previousCredit = txnCredit;
-                        }
-                        else // if (StringUtils.isEmpty(reBean.getFunctionId()) ||
-                            // reBean.getFunctionId().equals(resultset1.getString("functionid")))
+                        } else // if
+                               // (StringUtils.isEmpty(reBean.getFunctionId())
+                               // ||
+                               // reBean.getFunctionId().equals(resultset1.getString("functionid")))
                         {
                             vcDate = element[4].toString();
                             vcNum = element[5].toString();
@@ -659,16 +637,15 @@ public class GeneralLedgerReport {
                             narration = element[9].toString();
                         }
                         /*
-                         * else { detail= detail.append(" " + element[6].toString()+"&nbsp;&nbsp;&nbsp;"+ element[8].toString());
-                         * }
+                         * else { detail= detail.append(" " +
+                         * element[6].toString()+"&nbsp;&nbsp;&nbsp;"+
+                         * element[8].toString()); }
                          */
-                    }
-                    else if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious) // &&
+                    } else if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious) // &&
                     // (StringUtils.isEmpty(reBean.getFunctionId())
                     // ||
                     // reBean.getFunctionId().equals(resultset1.getString("functionid")))
-                            )
-                    {
+                    ) {
                         double currentDebit = 0, currentCredit = 0, debit = 0, credit = 0;
                         String debitAmount = "", creditAmount = "";
 
@@ -679,36 +656,29 @@ public class GeneralLedgerReport {
                         currentDebit = Double.parseDouble(element[11].toString());
                         currentCredit = Double.parseDouble(element[12].toString());
                         debit = previousDebit + currentDebit - (previousCredit + currentCredit);
-                        if (debit > 0)
-                        {
+                        if (debit > 0) {
                             debitAmount = "Dr." + ExilPrecision.convertToString(debit, 2) + "0";
                             amount = amount.append(" " + debitAmount);
                         }
                         credit = previousCredit + currentCredit - (previousDebit + currentDebit);
-                        if (credit > 0)
-                        {
+                        if (credit > 0) {
                             creditAmount = "Cr." + ExilPrecision.convertToString(credit, 2) + "0";
                             amount = amount.append(" " + creditAmount);
                         }
 
-                    }
-                    else
-                    {
+                    } else {
                         detail = detail.append(" " + element[6].toString() + "" + element[8].toString());
                         previousDebit = Double.parseDouble(element[11].toString());
                         previousCredit = Double.parseDouble(element[12].toString());
                     }
-                }
-                else if (vhId != 0 && !accEntityKey.equals(""))
+                } else if (vhId != 0 && !accEntityKey.equals(""))
                     detail = detail.append(" " + element[6].toString() + "" + element[8].toString());
 
                 accCodePrevious = accCode;
                 VhidPrevious = vhId;
-                if (element.equals(resultset1.get(resultset1.size() - 1)))
-                {
+                if (element.equals(resultset1.get(resultset1.size() - 1))) {
 
-                    if (txnDebit > 0)
-                    {
+                    if (txnDebit > 0) {
                         final String arr[] = new String[15];
                         arr[0] = vcDate;
                         arr[1] = vcNum;
@@ -732,9 +702,7 @@ public class GeneralLedgerReport {
                         arr[13] = "";
 
                         data.add(arr);
-                    }
-                    else if (txnCredit > 0)
-                    {
+                    } else if (txnCredit > 0) {
                         final String arr[] = new String[15];
                         arr[0] = "";
                         arr[1] = "";
@@ -824,8 +792,7 @@ public class GeneralLedgerReport {
             for (int i = 1; i <= data.size(); i++)
                 gridData[i] = (String[]) data.get(i - 1);
 
-            for (int i = 1; i <= data.size(); i++)
-            {
+            for (int i = 1; i <= data.size(); i++) {
                 final GeneralLedgerBean generalLedgerBean = new GeneralLedgerBean();
                 generalLedgerBean.setGlcode(gridData[i][9]);
                 generalLedgerBean.setVoucherdate(gridData[i][0]);
@@ -836,7 +803,8 @@ public class GeneralLedgerReport {
                 final char testArrayTemp[] = testTemp.toCharArray();
 
                 for (counter = 0; counter < testArrayTemp.length; counter++)
-                    if (testArrayTemp[counter] == '<' && (testArrayTemp[counter + 1] == 'b' || testArrayTemp[counter + 1] == 'B'))
+                    if (testArrayTemp[counter] == '<'
+                            && (testArrayTemp[counter + 1] == 'b' || testArrayTemp[counter + 1] == 'B'))
                         break;
                 generalLedgerBean.setDebitparticular(gridData[i][2]);
                 final String test = gridData[i][7];
@@ -874,82 +842,82 @@ public class GeneralLedgerReport {
     }
 
     @SuppressWarnings("unchecked")
-    private String getQuery(final String glCode1, final String startDate, final String endDate, final String accEntityId,
-            final String accEntityKey,
-            final String fieldId, final String functionId)
-                    throws TaskFailedException {
+    private String getQuery(final String glCode1, final String startDate, final String endDate,
+            final String accEntityId, final String accEntityKey, final String fieldId, final String functionId)
+            throws TaskFailedException {
         String addTableToQuery = "";
         String entityCondition = "";
         String functionCondition = "";
 
         if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase(""))
             entityCondition = " AND gl.id=gldet.generalledgerid  AND gldet.detailtypeid=" + accEntityId
-            + " AND cdet.detailtypeid = " + accEntityId + " AND gldet.detailkeyid=" + accEntityKey + "";
+                    + " AND cdet.detailtypeid = " + accEntityId + " AND gldet.detailkeyid=" + accEntityKey + "";
         if (addTableToQuery.trim().equals("") && null != fieldId && !fieldId.trim().equals(""))
             addTableToQuery = ", vouchermis vmis ";
         if (!StringUtils.isEmpty(functionId))
             functionCondition = " and gl.functionid=" + functionId;
         if (!accEntityKey.equals(""))
             return "SELECT  gl.glcode as \"code\",(select ca.type from chartofaccounts ca where glcode=gl.glcode) as \"glType\" ,"
-            + " vh.id AS \"vhid\",vh.voucherDate AS \"vDate\",to_char(vh.voucherDate ,'dd-Mon-yyyy') "
-            + " AS \"voucherdate\",vh.voucherNumber AS \"vouchernumber\",gl.glCode AS \"glcode\",coa.name||"
-            + " (CASE WHEN (GLDET.GENERALLEDGERID=GL.ID) THEN '-['||(CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name='Creditor') "+
-"THEN (select name from relation where id=gldet.detailkeyid ) "+
-"ELSE (CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name='Employee') "+
-"THEN (select emp_firstname from eg_employeewhere id=gldet.detailkeyid) "+
-"ELSE (select name from accountentitymaster where id=gldet.detailkeyid) END) END)||']'"
-            + " ELSE NULL END) as \"Name\",CASE WHEN gl.glcode = 'glCode1' THEN (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gldet.amount||'.00cr') ELSE (gldet.amount||'.00dr') END)"
- +"ELSE (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gl.creditamount||'.00cr') ELSE (gl.debitamount||'.00dr') END) END"
-+" as \"amount\",gl.description as \"narration\",vh .type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END"
-+ " AS \"type\","
-            + " CASE WHEN gl.glcode = 'glCode1' THEN (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gl.debitamount END) END"
-            + "as \"debitamount\",CASE WHEN gl.glcode = 'glCode1' THEN (CASE WHEN gl.creditAMOUNT = 0 THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gl.creditamount END) END"
-            + "as \"creditamount\","
-            + " f.name as \"fundName\",vh.isconfirmed as \"isconfirmed\",case when (gldet.generalledgerid=gl.id) "
-            + " then gldet.detailkeyid else null end as \"DetailKeyId\",vh.type||'-'||vh.name as \"vouchertypename\" " +
-            " FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa,"
-            + " generalledgerdetail gldet, chartofaccountdetail cdet ,"
-            + " fund f WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id "
-            + " and cdet.glcodeid=coa.id "
-            + "and gl.glcode=" + glCode1
-            + " AND f.id= vh.fundId " + entityCondition + ""
-            + " and vh.id in (" + engineQry + " )"
-            + " AND (gl .debitamount>0 OR gl .creditamount>0) "
-            + " order by vh.id asc ,gl.glCode";
-        else
-        {
+                    + " vh.id AS \"vhid\",vh.voucherDate AS \"vDate\",TO_CHAR(vh.voucherDate ,'dd-Mon-yyyy') "
+                    + " AS \"voucherdate\",vh.voucherNumber AS \"vouchernumber\",gl.glCode AS \"glcode\",coa.name||"
+                    + " (CASE WHEN (GLDET.GENERALLEDGERID=GL.ID) THEN '-['||(CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name='Creditor') "
+                    + "THEN (select name from Supplier where id=gldet.detailkeyid ) "
+                    + "ELSE (CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name='Employee') "
+                    + "THEN (select name from eg_user where id=gldet.detailkeyid) "
+                    + "ELSE (select name from accountentitymaster where id=gldet.detailkeyid) END) END)||']'"
+                    + " ELSE NULL END) as \"Name\",CASE WHEN gl.glcode = '"
+                    + glCode1
+                    + "' THEN (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gldet.amount||'.00cr') ELSE (gldet.amount||'.00dr') END)"
+                    + "ELSE (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gl.creditamount||'.00cr') ELSE (gl.debitamount||'.00dr') END) END"
+                    + " as \"amount\",gl.description as \"narration\",vh .type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END"
+                    + " AS \"type\","
+                    + " CASE WHEN gl.glcode = '"
+                    + glCode1
+                    + "' THEN (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gl.debitamount END) END"
+                    + " as \"debitamount\",CASE WHEN gl.glcode = '"
+                    + glCode1
+                    + "' THEN (CASE WHEN gl.creditAMOUNT = 0 THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gl.creditamount END) END"
+                    + " as \"creditamount\","
+                    + " f.name as \"fundName\",vh.isconfirmed as \"isconfirmed\",case when (gldet.generalledgerid=gl.id) "
+                    + " then gldet.detailkeyid else null end as \"DetailKeyId\",vh.type||'-'||vh.name as \"vouchertypename\" "
+                    + " FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa,"
+                    + " generalledgerdetail gldet, chartofaccountdetail cdet ,"
+                    + " fund f WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id "
+                    + " and cdet.glcodeid=coa.id "
+                    + " and gl.glcode='"
+                    + glCode1
+                    + "'"
+                    + " AND f.id= vh.fundId "
+                    + entityCondition
+                    + ""
+                    + " and vh.id in ("
+                    + engineQry
+                    + " )"
+                    + " AND (gl .debitamount>0 OR gl .creditamount>0) " + " order by vh.id asc ,gl.glCode";
+        else {
 
             final StringBuffer sql = new StringBuffer(
                     "SELECT  gl.glcode as \"code\",(select ca.type from chartofaccounts ca where glcode=gl.glcode) as \"glType\",vh.id AS \"vhid\", vh.voucherDate AS \"vDate\", ")
-            .
-            append(" to_char(vh.voucherDate, 'dd-Mon-yyyy') AS \"voucherdate\", ")
-            .
-            append(" vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\", ")
-            .
-            append(" coa.name AS \"name\",CASE WHEN gl.debitAmount = 0 THEN (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) ELSE (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount) then gl.debitamount||'.00dr' else  gl.debitamount||'dr' end ) END"
-            		+ " AS \"amount\", ")
-            .
-            append(" gl.description AS \"narration\", vh.type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END AS \"type\", ")
-            .
-            append(" gl.debitamount  AS \"debitamount\", gl.creditamount  AS \"creditamount\",f.name as \"fundName\",  vh.isconfirmed as \"isconfirmed\",gl.functionid as \"functionid\",vh.type||'-'||vh.name as \"vouchertypename\" ")
-            .
-            append(" FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa,  fund f " + addTableToQuery + "").
-            append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id  ").
-            append(" AND	f.id=vh.fundid ").
-            append(" AND gl.glcode ='" + glCode1 + "'").
-            append(" AND (gl.debitamount>0 OR gl.creditamount>0) ").append(functionCondition).
-            append(" and vh.id in (" + engineQry + " )").
-            append(" order by \"code\",\"vDate\" ");
+                    .append(" TO_CHAR(vh.voucherDate, 'dd-Mon-yyyy') AS voucherdate, ")
+                    .append(" vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\", ")
+                    .append(" coa.name AS \"name\",CASE WHEN gl.debitAmount = 0 THEN (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) ELSE (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount) then gl.debitamount||'.00dr' else  gl.debitamount||'dr' end ) END"
+                            + " AS \"amount\", ")
+                    .append(" gl.description AS \"narration\", vh.type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END AS \"type\", ")
+                    .append(" gl.debitamount  AS \"debitamount\", gl.creditamount  AS \"creditamount\",f.name as \"fundName\",  vh.isconfirmed as \"isconfirmed\",gl.functionid as \"functionid\",vh.type||'-'||vh.name as \"vouchertypename\" ")
+                    .append(" FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa,  fund f " + addTableToQuery
+                            + "").append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id  ")
+                    .append(" AND	f.id=vh.fundid ").append(" AND gl.glcode ='" + glCode1 + "'")
+                    .append(" AND (gl.debitamount>0 OR gl.creditamount>0) ").append(functionCondition)
+                    .append(" and vh.id in (" + engineQry + " )").append(" order by \"code\",\"vDate\" ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("____________________________________________________________" + sql.toString());
             return sql.toString();
         }
     }
 
-    private OpBal getOpeningBalance(final String glCode, final String fundId, final String fundSourceId, final String fyId,
-            final String accEntityId, final String accEntityKey, final String tillDate, final String functionId,
-            final String deptId)
-                    throws TaskFailedException {
+    private OpBal getOpeningBalance(final String glCode, final String fundId, final String fundSourceId,
+            final String fyId, final String accEntityId, final String accEntityKey, final String tillDate,
+            final String functionId, final String deptId) throws TaskFailedException {
         String fundCondition = "";
         String fundSourceCondition = "";
         String accEntityCondition = "";
@@ -963,8 +931,7 @@ public class GeneralLedgerReport {
         /** opening balance of the Year **/
         if (!fundId.equalsIgnoreCase(""))
             fundCondition = "fundId = ? AND ";
-        if (deptId != null && !deptId.equalsIgnoreCase(""))
-        {
+        if (deptId != null && !deptId.equalsIgnoreCase("")) {
             deptCondition = "DEPARTMENTID = ? AND ";
             deptFromCondition = ", vouchermis mis";
             deptWhereCondition = " mis.voucherheaderid =vh.id   and mis.DepartmentId = ? and ";
@@ -976,41 +943,40 @@ public class GeneralLedgerReport {
         if (!StringUtils.isEmpty(functionId))
             functionCondition = " functionid=? AND ";
         final String queryYearOpBal = "SELECT CASE WHEN sum(openingDebitBalance) is null THEN 0 ELSE sum(openingDebitBalance) END AS \"openingDebitBalance\", "
-                +
-                "CASE WHEN sum(openingCreditBalance) is null THEN 0 ELSE sum(openingCreditBalance) END AS \"openingCreditBalance\" "
-                +
-                "FROM transactionSummary WHERE "
+                + "CASE WHEN sum(openingCreditBalance) is null THEN 0 ELSE sum(openingCreditBalance) END AS \"openingCreditBalance\" "
+                + "FROM transactionSummary WHERE "
                 + fundCondition
                 + fundSourceCondition
                 + functionCondition
                 + accEntityCondition
-                + deptCondition + " financialYearId=? " +
-                "AND glCodeId = (SELECT id FROM chartOfAccounts WHERE glCode in(?))";
+                + deptCondition
+                + " financialYearId=? "
+                + "AND glCodeId = (SELECT id FROM chartOfAccounts WHERE glCode in(?))";
         if (LOGGER.isInfoEnabled())
             LOGGER.info("**********************: OPBAL: " + queryYearOpBal);
         try {
             int i = 0;
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryYearOpBal);
+            pstmt = persistenceService.getSession().createSQLQuery(queryYearOpBal);
             if (!fundId.equalsIgnoreCase(""))
                 pstmt.setLong(i++, Long.valueOf(fundId));
             if (!fundSourceId.equalsIgnoreCase(""))
                 pstmt.setLong(i++, Long.valueOf(fundSourceId));
             if (!StringUtils.isEmpty(functionId))
-            	  pstmt.setLong(i++, Long.valueOf(functionId));
+                pstmt.setLong(i++, Long.valueOf(functionId));
             if (!accEntityId.equalsIgnoreCase("")) {
-            	  pstmt.setLong(i++, Long.valueOf(accEntityId));
-            	  pstmt.setLong(i++, Long.valueOf(accEntityKey));
+                pstmt.setLong(i++, Long.valueOf(accEntityId));
+                pstmt.setLong(i++, Long.valueOf(accEntityKey));
             }
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-            	 pstmt.setLong(i++, Long.valueOf(deptId));
+                pstmt.setLong(i++, Long.valueOf(deptId));
             pstmt.setLong(i++, Long.valueOf(fyId));
             pstmt.setString(i++, glCode);
             resultset = null;
- List list = pstmt.list();
- resultset=list;
+            final List list = pstmt.list();
+            resultset = list;
             for (final Object[] element : resultset) {
-                opDebit = Double.parseDouble(element[0]!=null?element[0].toString():"0");
-                opCredit = Double.parseDouble(element[1]!=null?element[1].toString():"0");
+                opDebit = Double.parseDouble(element[0] != null ? element[0].toString() : "0");
+                opCredit = Double.parseDouble(element[1] != null ? element[1].toString() : "0");
             }
 
         } catch (final Exception ex) {
@@ -1028,15 +994,14 @@ public class GeneralLedgerReport {
             functionCondition = " and gl.functionid=? ";
         String queryTillDateOpBal = "";
         String defaultStatusExclude = null;
-        final List<AppConfigValues> listAppConfVal = appConfigValuesService.
-                getConfigValuesByModuleAndKey("EGF", "statusexcludeReport");
+        final List<AppConfigValues> listAppConfVal = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "statusexcludeReport");
         if (null != listAppConfVal)
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
             throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
 
-        if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase(""))
-        {
+        if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("")) {
             // addGldtlTableToQuery=", generalledgerdetail gldet ";
             accEntityCondition = " AND gl.id=gldet.generalledgerid  AND gldet.detailtypeid=? AND gldet.detailkeyid=? ";
 
@@ -1086,60 +1051,55 @@ public class GeneralLedgerReport {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("***********: OPBAL: " + queryTillDateOpBal);
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryTillDateOpBal);
+            pstmt = persistenceService.getSession().createSQLQuery(queryTillDateOpBal);
             int i = 0;
-            if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase(""))
-            {
+            if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("")) {
                 if (!fundId.equalsIgnoreCase(""))
                     pstmt.setLong(i++, Long.parseLong(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
-                	pstmt.setLong(i++, Long.parseLong(fundSourceId));
+                    pstmt.setLong(i++, Long.parseLong(fundSourceId));
                 if (!StringUtils.isEmpty(functionId))
-                	pstmt.setLong(i++, Long.parseLong(functionId));
+                    pstmt.setLong(i++, Long.parseLong(functionId));
                 if (!accEntityId.equalsIgnoreCase("")) {
-                	pstmt.setLong(i++, Long.parseLong(accEntityId));
-                	pstmt.setLong(i++, Long.parseLong(accEntityKey));
+                    pstmt.setLong(i++, Long.parseLong(accEntityId));
+                    pstmt.setLong(i++, Long.parseLong(accEntityKey));
                 }
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                	pstmt.setLong(i++, Long.parseLong(deptId));
+                    pstmt.setLong(i++, Long.parseLong(deptId));
                 pstmt.setString(i++, startDate);
                 pstmt.setString(i++, tillDate);
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                	pstmt.setLong(i++, Long.parseLong(deptId));
+                    pstmt.setLong(i++, Long.parseLong(deptId));
                 if (!fundId.equalsIgnoreCase(""))
-                	pstmt.setLong(i++, Long.parseLong(fundId));
+                    pstmt.setLong(i++, Long.parseLong(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
-                	pstmt.setLong(i++, Long.parseLong(fundSourceId));
+                    pstmt.setLong(i++, Long.parseLong(fundSourceId));
                 if (!StringUtils.isEmpty(functionId))
-                	pstmt.setLong(i++, Long.parseLong(functionId));
+                    pstmt.setLong(i++, Long.parseLong(functionId));
                 if (!accEntityId.equalsIgnoreCase("")) {
-                	pstmt.setLong(i++, Long.parseLong(accEntityId));
-                	pstmt.setLong(i++, Long.parseLong(accEntityKey));
+                    pstmt.setLong(i++, Long.parseLong(accEntityId));
+                    pstmt.setLong(i++, Long.parseLong(accEntityKey));
                 }
                 pstmt.setString(i++, startDate);
                 pstmt.setString(i++, tillDate);
                 pstmt.setString(i++, glCode);
-            }
-            else
-            {
-                
+            } else {
+
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                {
-                	pstmt.setLong(i++, Long.parseLong(deptId));
-                }
+                    pstmt.setLong(i++, Long.parseLong(deptId));
                 pstmt.setString(i++, glCode);
                 if (!fundId.equalsIgnoreCase(""))
-                	pstmt.setLong(i++, Long.parseLong(fundId));
+                    pstmt.setLong(i++, Long.parseLong(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
-                	pstmt.setLong(i++, Long.parseLong(fundSourceId));
+                    pstmt.setLong(i++, Long.parseLong(fundSourceId));
                 if (!StringUtils.isEmpty(functionId))
-                	pstmt.setLong(i++, Long.parseLong(functionId));
+                    pstmt.setLong(i++, Long.parseLong(functionId));
                 pstmt.setString(i++, startDate);
                 pstmt.setString(i++, tillDate);
             }
             resultset = null;
-            List<Object[]> list= pstmt.list();
-            resultset =list;
+            final List<Object[]> list = pstmt.list();
+            resultset = list;
             for (final Object[] element : resultset) {
                 if (element[0] != null)
                     opDebit = opDebit + Double.parseDouble(element[0].toString());
@@ -1157,26 +1117,18 @@ public class GeneralLedgerReport {
         return opBal;
     }
 
-    
-
-    private String getAccountName(final String glCode) throws TaskFailedException
-    {
+    private String getAccountName(final String glCode) throws TaskFailedException {
         String accountName = "";
         Query pst = null;
-        List<Object[]> resultset = null;
-        try
-        {
-            final String query = "select glcode as \"glcode\" ,name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+        try {
+            final String query = "select name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
+            pst = persistenceService.getSession().createSQLQuery(query);
             pst.setString(0, glCode);
-      List list = pst.list();
-      System.err.println(000);
-      Object[] objects = list.toArray();
-      System.err.println(111);
-      accountName=objects[0].toString();
-            
-        } catch (final Exception e)
-        {
+            final List list = pst.list();
+            final Object[] objects = list.toArray();
+            accountName = objects[0].toString();
+
+        } catch (final Exception e) {
             LOGGER.error("Exp in getAccountName:" + e.getMessage(), e);
             throw taskExc;
         }
@@ -1184,51 +1136,36 @@ public class GeneralLedgerReport {
         return accountName;
     }
 
-    private String getFundName(final String fundId) throws TaskFailedException
-    {
+    private String getFundName(final String fundId) throws TaskFailedException {
         String fundName = "";
         Query pst = null;
-        List<Object[]> resultset = null;
-        try
-        {
+        try {
             final String query = "select name  as \"name\" from fund where id=?";
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            if(fundId.isEmpty())
-            {
-            pst.setInteger(0, 0);
-            }
+            pst = persistenceService.getSession().createSQLQuery(query);
+            if (fundId.isEmpty())
+                pst.setInteger(0, 0);
             else
-            {
-            	pst.setInteger(0, Integer.valueOf(fundId));
-            }
-             List<Object[]> list = pst.list();
-            System.err.println(000);
-           Object[] objects = list.toArray();
-           System.err.println(111);
-           if(objects.length==0)
-           {
-        	   fundName="";
-           }
-           else
-           fundName=objects[0].toString();
-          
-        } catch (final Exception e)
-        {
+                pst.setInteger(0, Integer.valueOf(fundId));
+            final List<Object[]> list = pst.list();
+            final Object[] objects = list.toArray();
+            if (objects.length == 0)
+                fundName = "";
+            else
+                fundName = objects[0].toString();
+
+        } catch (final Exception e) {
             LOGGER.error("Exp in getFundName" + e.getMessage(), e);
             throw taskExc;
         }
         return fundName;
     }
 
-    public static StringBuffer numberToString(final String strNumberToConvert)
-    {
+    public static StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
-        if (strNumberToConvert.startsWith("-"))
-        {
+        if (strNumberToConvert.startsWith("-")) {
             strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
             signBit = "-";
-        }
-        else
+        } else
             strNumber = "" + strNumberToConvert;
         final DecimalFormat dft = new DecimalFormat("##############0.00");
         final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
@@ -1242,21 +1179,20 @@ public class GeneralLedgerReport {
         return strbNumber;
     }
 
-    public void isCurDate(final String VDate) throws TaskFailedException
-    {
+    public void isCurDate(final String VDate) throws TaskFailedException {
 
         try {
             final String today = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
             final String[] dt2 = today.split("/");
             final String[] dt1 = VDate.split("/");
 
-            final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1 : Integer.parseInt(dt2[2]) < Integer
-                    .parseInt(dt1[2]) ? -1 : Integer.parseInt(dt2[1]) > Integer.parseInt(dt1[1]) ? 1 : Integer
-                            .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
-                                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
-                                            .parseInt(dt1[0]) ? -1 : 0;
-                                    if (ret == -1)
-                                        throw taskExc;
+            final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1
+                    : Integer.parseInt(dt2[2]) < Integer.parseInt(dt1[2]) ? -1 : Integer.parseInt(dt2[1]) > Integer
+                            .parseInt(dt1[1]) ? 1 : Integer.parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1 : Integer
+                            .parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
+                            .parseInt(dt1[0]) ? -1 : 0;
+            if (ret == -1)
+                throw taskExc;
 
         } catch (final Exception ex) {
             LOGGER.error("Exception in isCurDate():" + ex, ex);
@@ -1265,6 +1201,4 @@ public class GeneralLedgerReport {
 
     }
 
-	
-    
 }

@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,7 +58,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.eGov.src.reports.DishonoredChequeBean;
 import com.exilant.eGov.src.reports.DishonoredChequeReport;
@@ -63,7 +66,7 @@ import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 @Results({
     @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "dishonoredChequeReport-"
@@ -71,6 +74,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
             @Result(name = "results", location = "dishonoredChequeReport-results.jsp")
 })
 public class DishonoredChequeReportAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     /**
      *
@@ -117,8 +124,8 @@ public class DishonoredChequeReportAction extends BaseFormAction {
     @Action(value = "/report/dishonoredChequeReport-ajaxSearch")
     public String ajaxSearch() throws TaskFailedException {
 
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("DishonoredChequeAction | Search | start");
         try {

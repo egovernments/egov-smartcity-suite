@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -70,7 +73,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -100,7 +103,11 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
     InputStream inputStream;
     ReportHelper reportHelper;
 
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     @Override
@@ -826,7 +833,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
     }
 
     public String getUlbName() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

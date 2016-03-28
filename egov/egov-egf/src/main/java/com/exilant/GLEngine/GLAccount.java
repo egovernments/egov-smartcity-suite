@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -71,6 +71,10 @@ public class GLAccount implements Serializable
     private String name;
 
     private boolean isActiveForPosting;
+    
+    private Boolean functionRequired;
+    
+    private Long classification;
 
     private ArrayList glParameters = new ArrayList();
 
@@ -170,5 +174,21 @@ public class GLAccount implements Serializable
     public boolean getIsActiveForPosting() {
         return isActiveForPosting;
     }
+
+        public Boolean getFunctionRequired() {
+                return functionRequired;
+        }
+
+        public void setFunctionRequired(Boolean functionRequired) {
+                this.functionRequired = functionRequired;
+        }
+
+        public Long getClassification() {
+                return classification;
+        }
+
+        public void setClassification(Long classification) {
+                this.classification = classification;
+        }
 
 }

@@ -116,7 +116,7 @@
     </definition>
     
     <definition name="hoarding-update" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.update" cascade="true"/>
+    	<put-attribute name="page-title" value="title.adtax.modify" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-update.jsp"/>
     </definition>
     
@@ -291,5 +291,20 @@
         <put-attribute name="page-title" value="title.adtax.renewal" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-error.jsp"/>
     </definition>
+    
+     <definition name="deactive-error" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-error.jsp"/>
+    </definition>
    
+      <definition name="report-agencywise" extends="base_layout">
+    	<put-attribute name="page-title" value="title.agencywise.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/report-agencywise.jsp"/>
+    </definition>
+    
+    <definition name="report-agencywise-view" extends="base_layout">
+    	<put-attribute name="page-title" value="title.agencywise.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/report-agencywise-view.jsp"/>
+    </definition>
+    
 </tiles-definitions>

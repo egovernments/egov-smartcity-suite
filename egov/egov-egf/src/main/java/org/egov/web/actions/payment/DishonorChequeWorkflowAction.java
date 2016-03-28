@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.payment;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -99,14 +99,14 @@ import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.exilant.eGov.src.domain.BankEntries;
 import com.exilant.exility.common.TaskFailedException;
 
-@Transactional(readOnly = true)
+
 @Results({
         @Result(name = "viewMessage", location = "dishonorChequeWorkflow-viewMessage.jsp"),
         @Result(name = "view", location = "dishonorChequeWorkflow-view.jsp")
@@ -306,7 +306,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         final String instOtherDetailUpdate = "Update InstrumentOtherDetails iod set iod.dishonorBankRefNo=:refNo, iod.modifiedBy.id=:modifiedby , iod.modifiedDate=:modifiedDate , iod.instrumentStatusDate=:InstrumentUpdatedDate where "
                 +
                 " iod.instrumentHeaderId=:instrumentHeaderId ";
-        final Query instOtherDetailUpdateQuery = HibernateUtil.getCurrentSession().createQuery(instOtherDetailUpdate.toString());
+        final Query instOtherDetailUpdateQuery = persistenceService.getSession().createQuery(instOtherDetailUpdate.toString());
         instOtherDetailUpdateQuery.setString("refNo", dishonorChequeView.getBankReferenceNumber());
         instOtherDetailUpdateQuery.setLong("modifiedby", EgovThreadLocals.getUserId().intValue());
         instOtherDetailUpdateQuery.setDate("modifiedDate", new Date());

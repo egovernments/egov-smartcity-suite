@@ -102,6 +102,7 @@
 		}
 		}
 		
+    document.forms[0].action="autoReconciliation-schedule.action"
 		
 		return true;
 	}
@@ -130,13 +131,13 @@
 			<div class="subheadnew">
 				<s:text name="autobankreconciliation" />
 			</div>
-		</div>
+	
 		<div align="center">
 			<font style='color: red;'>
 				<p class="error-block" id="lblError"></p>
 			</font>
 		</div>
-		<span class="mandatory">
+		<span class="mandatory1">
 			<div id="Errors">
 				<s:actionerror />
 				<s:fielderror />
@@ -147,19 +148,19 @@
 				<tr>
 					<td class="greybox"></td>
 					<td class="greybox"><s:text name="bank" /> <span
-						class="greybox"><span class="mandatory">*</span></span></td>
+						class="greybox"><span class="mandatory1">*</span></span></td>
 					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
 						dropdownId="branchId"
-						url="/voucher/common!ajaxLoadBankBranchesByBank.action" />
+						url="/voucher/common-ajaxLoadBankBranchesByBank.action" />
 					<td class="greybox"><s:select name="bankId" id="bankId"
 							list="dropdownData.bankList" listKey="id" listValue="name"
 							headerKey="" headerValue="----Choose----"
 							onchange="populatebranch(this);" value="%{bankId}" /></td>
 					<td class="greybox"><s:text name="bankbranch" /> <span
-						class="greybox"><span class="mandatory">*</span></span></td>
+						class="greybox"><span class="mandatory1">*</span></span></td>
 					<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
 						dropdownId="accountId"
-						url="/voucher/common!ajaxLoadBankAccountsByBranch.action" />
+						url="/voucher/common-ajaxLoadBankAccountsByBranch.action" />
 					<td class="greybox"><s:select name="branchId" id="branchId"
 							list="dropdownData.branchList" listKey="id" listValue="name"
 							headerKey="" headerValue="----Choose----"
@@ -168,13 +169,13 @@
 				<tr>
 					<td class="bluebox"></td>
 					<td class="bluebox"><s:text name="bankaccount" /> <span
-						class="bluebox"><span class="mandatory">*</span></span></td>
+						class="bluebox"><span class="mandatory1">*</span></span></td>
 					<td class="bluebox"><s:select name="accountId" id="accountId"
 							list="dropdownData.accountList" listKey="id"
 							listValue="accountnumber" headerKey=""
 							headerValue="----Choose----" /></td>
 					<td class="bluebox"><s:text name="reconciliationdate" /> <span
-						class="bluebox"><span class="mandatory">*</span></span></td>
+						class="bluebox"><span class="mandatory1">*</span></span></td>
 					<td class="bluebox"><s:textfield name="reconciliationDate"
 							id="reconciliationDate"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -188,7 +189,7 @@
 				<tr>
 					<td class="greybox"></td>
 					<td class="greybox"><s:text name="fromdate" /> <span
-						class="greybox"><span class="mandatory">*</span></span></td>
+						class="greybox"><span class="mandatory1">*</span></span></td>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							value="%{fromDate}" /> <a
@@ -198,7 +199,7 @@
 
 					</td>
 					<td class="greybox"><s:text name="todate" /> <span
-						class="greybox"><span class="mandatory">*</span></span></td>
+						class="greybox"><span class="mandatory1">*</span></span></td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							value="%{toDate}" /> <a
@@ -214,7 +215,7 @@
 			<div class="buttonbottom" id="buttondiv">
 				<table>
 					<tr>
-						<td><s:submit type="submit" cssClass="buttonsubmit"
+						<td><input  type="submit" class="buttonsubmit"
 								value="Process" name="Schedule" method="schedule"
 								onclick="return validate();" /></td>
 						<td><input type="button" value="Close"
@@ -223,6 +224,7 @@
 				</table>
 			</div>
 		</center>
+      </div>
 	</s:form>
 </body>
 </html>

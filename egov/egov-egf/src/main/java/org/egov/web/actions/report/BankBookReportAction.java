@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -87,11 +90,11 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import net.sf.jasperreports.engine.JRException;
 
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 @Results({
     @Result(name = "results", location = "bankBookReport-results.jsp"),
@@ -133,7 +136,11 @@ public class BankBookReportAction extends BaseFormAction {
     private String voucherStr = "";
     private StringBuffer header = new StringBuffer();
     private Date todayDate;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private AppConfigValueService appConfigValuesService;
     
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -180,8 +187,8 @@ public class BankBookReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("skipPrepare")) {
             addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
@@ -529,7 +536,7 @@ public class BankBookReportAction extends BaseFormAction {
                 " AND ih2.id_status = es2.id AND vh2.id in (select vh.id as vhId" + queryFrom + ")";
         mainQuery = mainQuery + getInstrumentsByVoucherIdsQuery;
 
-        final List<Object[]> objs = HibernateUtil.getCurrentSession().createSQLQuery(mainQuery).list();
+        final List<Object[]> objs = persistenceService.getSession().createSQLQuery(mainQuery).list();
 
         for (final Object[] obj : objs)
             if (voucherIdAndInstrumentMap.containsKey(getLongValue(obj[0])))
@@ -543,8 +550,7 @@ public class BankBookReportAction extends BaseFormAction {
 
     private void getInstrumentVouchersByInstrumentHeaderIds() {
 
-        final List<Object[]> objs = HibernateUtil
-                .getCurrentSession()
+        final List<Object[]> objs = persistenceService.getSession()
                 .createSQLQuery(
                         "SELECT ih.id,vh1.id as voucherHeaderId"
                                 +
@@ -654,7 +660,7 @@ public class BankBookReportAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Main query :" + query1 + queryFrom + OrderBy);
 
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(query1 + queryFrom + OrderBy)
+        final Query query = persistenceService.getSession().createSQLQuery(query1 + queryFrom + OrderBy)
                 .addScalar("voucherId",new BigDecimalType())
                 .addScalar("voucherDate")
                 .addScalar("voucherNumber")
@@ -718,7 +724,7 @@ public class BankBookReportAction extends BaseFormAction {
     }
 
    /* public String getUlbName() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

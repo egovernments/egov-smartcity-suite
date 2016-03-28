@@ -45,6 +45,9 @@
  */
 package com.exilant.eGov.src.domain;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.Connection;
 import java.util.List;
 
@@ -62,6 +65,10 @@ import com.exilant.exility.common.TaskFailedException;
  */
 @Transactional(readOnly = true)
 public class User {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final Logger LOGGER = Logger.getLogger(User.class);
     private String userName;
     private String role;
@@ -108,7 +115,7 @@ public class User {
         final String query = "select r.Role_name as role from EG_ROLES r, EG_USER u,EG_USERROLE ur where u.user_name=? and ur.id_role=r.id_role and u.id_user=ur.id_user ";
         String role = "";
         try {
-            final Query ps = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            final Query ps = persistenceService.getSession().createSQLQuery(query);
             ps.setString(0, userName);
             final List<Object[]> rs = ps.list();
             for (final Object[] element : rs)
@@ -124,7 +131,7 @@ public class User {
         final String query = "select id_user from EG_USER where user_name=? ";
         int userId = 0;
         try {
-            final Query ps = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            final Query ps = persistenceService.getSession().createSQLQuery(query);
             ps.setString(0, userName);
             final List<Object[]> rs = ps.list();
             for (final Object[] element : rs)

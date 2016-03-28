@@ -38,24 +38,13 @@
 	</bean>
 
 	<bean class="org.egov.commons.dao.FundHibernateDAO" id="fundHibernateDAO"
-		scope="prototype">
-	</bean>
+		scope="prototype"/>
 	<bean id="appConfigValuesService"
 		class="org.egov.infra.admin.master.service.AppConfigValueService">
 	</bean>
-	<bean id="schemeDAO" class="org.egov.commons.dao.SchemeHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.Scheme" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	<bean id="schemeDAO" class="org.egov.commons.dao.SchemeHibernateDAO"/>
 
-	<bean id="subSchemeDAO" class="org.egov.commons.dao.SubSchemeHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.SubScheme" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	<bean id="subSchemeDAO" class="org.egov.commons.dao.SubSchemeHibernateDAO"/>
 
 
 	<bean id="balanceSheetService" class="org.egov.services.report.BalanceSheetService"
@@ -102,18 +91,9 @@
 	</bean>
 	<bean id="reportHelper" class="org.egov.utils.ReportHelper" />
 	<bean id="egDeductionDetHibernateDao" class="org.egov.dao.recoveries.EgDeductionDetailsHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.model.recoveries.EgDeductionDetails" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
 	</bean>
 	<bean id="tdsHibernateDAO" class="org.egov.dao.recoveries.TdsHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.model.recoveries.Recovery" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
+		
 	</bean>
 
 
@@ -253,11 +233,7 @@
 	</bean>
 
 	<bean id="tdsDAO" class="org.egov.dao.recoveries.TdsHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.model.recoveries.Recovery" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
+		
 	</bean>
 
 	<bean id="schemeService" class="org.egov.services.masters.SchemeService">

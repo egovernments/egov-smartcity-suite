@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.services.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,6 +60,10 @@ import org.egov.web.actions.report.StatementEntry;
 import org.hibernate.Query;
 
 public class IncomeExpenditureScheduleService extends ScheduleService {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final String IE = "IE";
     private static final String I = "I";
     private IncomeExpenditureService incomeExpenditureService;
@@ -105,8 +112,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
             formattedToDate = incomeExpenditureService.getFormattedDate(fromDate);
         else
             formattedToDate = incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(toDate));
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createSQLQuery(
                         "select c.glcode,c.name ,sum(g.debitamount)-sum(g.creditamount),v.fundid ,c.type ,c.majorcode  from "
                                 +
@@ -337,8 +343,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         final String fundId = incomeExpenditureService.getfundList(statement.getFunds());
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting All ledger codes ..");
-        final List<Object[]> AllLedger = HibernateUtil
-                .getCurrentSession()
+        final List<Object[]> AllLedger = persistenceService.getSession()
                 .createSQLQuery(
                         "select coa.glcode,coa.name from chartofaccounts coa where coa.majorcode='" + majorCode
                         + "' and coa.classification=4 and coa.type='" + type + "'  order by coa.glcode").list();

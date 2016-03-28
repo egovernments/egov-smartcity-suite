@@ -153,6 +153,17 @@ function validateUnitToValue(obj)
 	}
 	return true;
 }
+function validatePerUnit(obj) 
+{
+	var unit=parseFloat(obj.value);
+	if(unit<=0)
+    	{
+    	alert('Per unit should be greater than zero');
+    	obj.value="";
+    return false;
+    	}
+    return true;
+}
 function addNewRowToTable(currentIndex)
 {
 	var tr = $('#schedleOfrateTable tr:last'); 

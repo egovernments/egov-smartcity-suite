@@ -58,7 +58,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("all")
@@ -145,18 +144,19 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public List<Advertisement> findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
             Installment installment, int noOfResultToFetch) {
         final Criteria advtCriteria = entityManager.unwrap(Session.class)
                 .createCriteria(Advertisement.class, "advertise").createAlias("advertise.demandId", "demand");
                // .createAlias("demand.egInstallmentMaster", "installment");
+       // advtCriteria.setFetchMode("advertise.demandId", FetchMode.SELECT);
 
-        advtCriteria.add(Restrictions.eq("status", AdvertisementStatus.ACTIVE));
-        advtCriteria.add(Restrictions.eq("type", AdvertisementStructureType.PERMANENT));
+        advtCriteria.add(Restrictions.eq("advertise.status", AdvertisementStatus.ACTIVE));
+        advtCriteria.add(Restrictions.eq("advertise.type", AdvertisementStructureType.PERMANENT));
         if (installment != null)
             advtCriteria.add(Restrictions.eq("demand.egInstallmentMaster.id", installment.getId()));
         advtCriteria.setMaxResults(noOfResultToFetch);
+        advtCriteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return advtCriteria.list();
     }
     @Override

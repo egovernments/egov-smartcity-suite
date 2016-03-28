@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_MUTATION_FEE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_FEE_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -54,14 +55,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
+import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.dao.EgBillDao;
+import org.egov.demand.dao.EgBillDetailsDao;
 import org.egov.demand.dao.EgDemandDetailsDao;
 import org.egov.demand.interfaces.BillServiceInterface;
 import org.egov.demand.interfaces.Billable;
+import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
+import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -70,17 +80,17 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 public class PTBillServiceImpl extends BillServiceInterface {
     private static final Logger LOGGER = Logger.getLogger(PTBillServiceImpl.class);
-
-    PropertyTaxCollection propertyTaxCollection;
 
     @Autowired
     PropertyTaxUtil propertyTaxUtil;
@@ -93,6 +103,27 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
     @Autowired
     private EgDemandDetailsDao egDemandDetailsDAO;
+
+    @Autowired
+    private DemandGenericDao demandGenericDAO;
+
+    @Autowired
+    private ModuleService moduleDao;
+
+    @Autowired
+    private EgBillDao egBillDAO;
+    
+    @Autowired
+    private EgBillDetailsDao egBillDetailsDAO;
+
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
+
+    @Autowired
+    private ApplicationContext context;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public String getBillXML(final Billable billObj) {
@@ -140,7 +171,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         final BasicProperty basicProperty = billable.getBasicProperty();
         final Property activeProperty = basicProperty.getProperty();
         Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
-        
+
         installmentPenaltyAndRebate = billable.getCalculatedPenalty();
         billable.setInstTaxBean(installmentPenaltyAndRebate);
 
@@ -152,7 +183,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
-            if (!(balance.equals(BigDecimal.ZERO) || balance.equals(BigDecimal.valueOf(0.0)))) {
+            if (balance.compareTo(BigDecimal.ZERO) == 1) {
 
                 reason = demandDetail.getEgDemandReason();
                 installment = reason.getEgInstallmentMaster();
@@ -177,7 +208,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
                     billDetailBean = new BillDetailBean(installment, orderMap.get(key), key,
                             installmentPenaltyAndRebate.isEmpty() ? BigDecimal.ZERO : installmentPenaltyAndRebate
                                     .get(installment).getRebate(),
-                                    PropertyTaxConstants.GLCODE_FOR_TAXREBATE, DEMANDRSN_CODE_REBATE, Integer.valueOf(0));
+                            PropertyTaxConstants.GLCODE_FOR_TAXREBATE, DEMANDRSN_CODE_REBATE, Integer.valueOf(0));
 
                     billDetails.add(createBillDet(billDetailBean));
                 }
@@ -206,7 +237,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
         final EgDemandDetails penDmdDtls = getPenaltyDmdDtls(billable, installment);
         EgDemandDetails insertPenDmdDetail = null;
 
-        final boolean thereIsPenalty = penalty != null && !(penalty.equals(BigDecimal.ZERO) || penalty.equals(BigDecimal.valueOf(0.0))) ? true : false;
+        final boolean thereIsPenalty = penalty != null
+                && !(penalty.equals(BigDecimal.ZERO) || penalty.equals(BigDecimal.valueOf(0.0))) ? true : false;
         final DateTime installmentDate = new DateTime(installment.getInstallmentYear().getTime());
 
         // Checking whether to impose penalty or not
@@ -227,11 +259,73 @@ public class PTBillServiceImpl extends BillServiceInterface {
     }
 
     private EgDemandDetails insertPenaltyDmdDetail(final Installment inst, final BigDecimal lpAmt) {
-        return propertyTaxCollection.insertPenalty(DEMANDRSN_CODE_PENALTY_FINES, lpAmt, inst);
+        return insertPenalty(DEMANDRSN_CODE_PENALTY_FINES, lpAmt, inst);
     }
 
     private EgDemandDetails getPenaltyDmdDtls(final Billable billObj, final Installment inst) {
-        return propertyTaxCollection.getDemandDetail(billObj.getCurrentDemand(), inst, DEMANDRSN_CODE_PENALTY_FINES);
+        return getDemandDetail(billObj.getCurrentDemand(), inst, DEMANDRSN_CODE_PENALTY_FINES);
+    }
+
+    /**
+     * Finds the demand-detail for the given installment and reason.
+     *
+     * @param egDemand
+     * @param instl
+     * @param code
+     * @return
+     */
+    public EgDemandDetails getDemandDetail(final EgDemand egDemand, final Installment instl, final String code) {
+        EgDemandDetails dmdDet = null;
+        final List<EgDemandDetails> dmdDetList = demandGenericDAO.getDmdDetailList(egDemand, instl,
+                module(), getDemandReasonMaster(code));
+        if (!dmdDetList.isEmpty())
+            dmdDet = dmdDetList.get(0);
+        return dmdDet;
+    }
+
+    protected EgDemandReasonMaster getDemandReasonMaster(final String code) {
+        return demandGenericDAO.getDemandReasonMasterByCode(code, module());
+    }
+
+    protected Module module() {
+        return moduleDao.getModuleByName(PTMODULENAME);
+    }
+
+    /**
+     * Method used to insert penalty in EgDemandDetail table. Penalty Amount will be calculated depending upon the cheque Amount.
+     *
+     * @see createDemandDetails() -- EgDemand Details are created
+     * @see getPenaltyAmount() --Penalty Amount is calculated
+     * @param chqBouncePenalty
+     * @return New EgDemandDetails Object
+     */
+    public EgDemandDetails insertPenalty(final String demandReason, final BigDecimal penaltyAmount, final Installment inst) {
+        EgDemandDetails demandDetail = null;
+        Module ptModule = null;
+
+        if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+            ptModule = module();
+            final EgDemandReasonMaster egDemandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(demandReason,
+                    ptModule);
+
+            if (egDemandReasonMaster == null)
+                throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
+
+            final EgDemandReason egDemandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(
+                    egDemandReasonMaster, inst, ptModule);
+
+            if (egDemandReason == null)
+                throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
+
+            demandDetail = createDemandDetails(egDemandReason, BigDecimal.ZERO, penaltyAmount);
+        }
+        return demandDetail;
+    }
+
+    public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
+            final BigDecimal dmdAmount) {
+        return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
     }
 
     /**
@@ -245,7 +339,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
      */
     EgBillDetails createBillDet(final BillDetailBean billDetailBean) {
         LOGGER.debug("Entered into createBillDet, billDetailBean=" + billDetailBean);
-        
+
         if (billDetailBean.invalidData())
             throw new ApplicationRuntimeException("Invalid bill details...");
 
@@ -273,6 +367,29 @@ public class PTBillServiceImpl extends BillServiceInterface {
         return billdetail;
     }
 
+    public EgBill updateBillWithLatest(final Long billId) {
+        LOGGER.debug("updateBillWithLatest billId " + billId);
+        final EgBill bill = egBillDAO.findById(billId, false);
+        LOGGER.debug("updateBillWithLatest old bill " + bill);
+        if (bill == null)
+            throw new ApplicationRuntimeException("No bill found with bill reference no :"
+                    + billId);
+        bill.getEgBillDetails().clear();
+        final PropertyTaxBillable propertyTaxBillable = (PropertyTaxBillable) context
+                .getBean("propertyTaxBillable");
+        propertyTaxBillable.setLevyPenalty(true);
+        propertyTaxBillable.setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(bill.getConsumerId().trim()));
+        final List<EgBillDetails> egBillDetails = getBilldetails(propertyTaxBillable);
+        for (final EgBillDetails billDetail : egBillDetails) {
+            bill.addEgBillDetails(billDetail);
+            billDetail.setEgBill(bill);
+        }
+        egBillDAO.update(bill);
+        LOGGER.debug("Bill update with bill details for property tax " + bill.getConsumerId()
+                + " as billdetails " + egBillDetails);
+        return bill;
+    }
+
     @Override
     public void cancelBill() {
     }
@@ -283,9 +400,5 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
     public void setPropertyTaxUtil(final PropertyTaxUtil propertyTaxUtil) {
         this.propertyTaxUtil = propertyTaxUtil;
-    }
-
-    public void setPropertyTaxCollection(final PropertyTaxCollection propertyTaxCollection) {
-        this.propertyTaxCollection = propertyTaxCollection;
     }
 }

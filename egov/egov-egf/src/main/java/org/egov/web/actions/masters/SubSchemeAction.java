@@ -60,13 +60,13 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = SubSchemeAction.NEW, location = "subScheme-new.jsp"),
     @Result(name = SubSchemeAction.SEARCH, location = "subScheme-search.jsp"),

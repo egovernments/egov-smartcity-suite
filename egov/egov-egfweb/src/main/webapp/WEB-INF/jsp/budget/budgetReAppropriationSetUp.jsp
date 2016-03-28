@@ -194,7 +194,7 @@ function createAmountFieldFormatter(values,prefix,suffix){
 			mandatoryFields.boundary = <s:if test="%{isFieldMandatory('boundary')}">true</s:if><s:else>false</s:else>;
 			mandatoryFields.fund = <s:if test="%{isFieldMandatory('fund')}">true</s:if><s:else>false</s:else>;
 			if(mandatoryFields[field] == true)
-				return '<span class="mandatory">*</span>';
+				return '<span class="mandatory1">*</span>';
 			else 
 				return ''; 
 		}
@@ -233,7 +233,7 @@ function createAmountFieldFormatter(values,prefix,suffix){
 		
 	var makeBudgetDetailTable = function() {
 		var budgetDetailColumns = [ 
-			{key:"budgetDetail.budgetGroup.id",label:'Budget Group <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatter(BUDGETDETAILLIST),dropdownOptions:budgetGroupOptions},
+			{key:"budgetDetail.budgetGroup.id",label:'Budget Group <span class="mandatory1">*</span>',width:120, formatter:createDropdownFormatter(BUDGETDETAILLIST),dropdownOptions:budgetGroupOptions},
 			<s:if test="%{shouldShowField('executingDepartment')}">				
 				{key:"budgetDetail.executingDepartment.id", label:'Executing Department'+mandatorySign('executingDepartment'),width:90,formatter:createDropdownFormatter(BUDGETDETAILLIST), dropdownOptions:executingDepartmentOptions},				
 			</s:if>
@@ -256,18 +256,18 @@ function createAmountFieldFormatter(values,prefix,suffix){
 				{key:"budgetDetail.boundary.id",label:'Field'+mandatorySign('boundary'),width:90,formatter:createDropdownFormatter(BUDGETDETAILLIST),  dropdownOptions:boundaryOptions} ,
 			</s:if>
 			{key:"planningPercent",label:'Planning Percentage',width:"30em", formatter:createAmountFieldFormatter(planningPercentageList,BUDGETDETAILLIST,".planningPercent")},
-			{key:"approved",label:'Sanctioned <br/>Budget(Rs)',width:120, formatter:createAmountFieldFormatter(approvedAmountList,BUDGETDETAILLIST,".approvedAmount")},
-			{key:"appropriated",label:'Added/Released(Rs)',width:120, formatter:createAmountFieldFormatter(appropriatedAmountList,BUDGETDETAILLIST,".appropriatedAmount")},
-			{key:"planningBudgetApproved",label:'Planning Budget Approved(Rs)',width:"50em", formatter:createAmountFieldFormatter(planningBudgetApprovedList,BUDGETDETAILLIST,".planningBudgetApproved")},
+			{key:"approved",label:'Sanctioned<br/>Budget(Rs)',width:120, formatter:createAmountFieldFormatter(approvedAmountList,BUDGETDETAILLIST,".approvedAmount")},
+			{key:"appropriated",label:'Added/Released<br/>(Rs)',width:120, formatter:createAmountFieldFormatter(appropriatedAmountList,BUDGETDETAILLIST,".appropriatedAmount")},
+			{key:"planningBudgetApproved",label:'Planning Budget<br/> Approved(Rs)',width:"50em", formatter:createAmountFieldFormatter(planningBudgetApprovedList,BUDGETDETAILLIST,".planningBudgetApproved")},
 			{key:"actuals",label:'Expenditure <br/>Incurred(Rs)',width:120, formatter:createAmountFieldFormatter(actualsList,BUDGETDETAILLIST,".actuals")},
-			{key:"planningBudgetUsage",label:'Planning Budget Usage(Rs)',width:"50em", formatter:createAmountFieldFormatter(planningBudgetUsageList,BUDGETDETAILLIST,".planningBudgetUsage")},
+			{key:"planningBudgetUsage",label:'Planning Budget<br/>Usage(Rs)',width:"50em", formatter:createAmountFieldFormatter(planningBudgetUsageList,BUDGETDETAILLIST,".planningBudgetUsage")},
 			{key:"available",label:'Balance Fund <br/>Available(Rs)',width:120, formatter:createAmountFieldFormatter(availableList,BUDGETDETAILLIST,".availableAmount")},
-			{key:"planningBudgetAvailable",label:'Planning Budget Available(Rs)',width:"50em", formatter:createAmountFieldFormatter(planningBudgetAvailableList,BUDGETDETAILLIST,".planningBudgetAvailable")},
+			{key:"planningBudgetAvailable",label:'Planning Budget<br/>Available(Rs)',width:"50em", formatter:createAmountFieldFormatter(planningBudgetAvailableList,BUDGETDETAILLIST,".planningBudgetAvailable")},
 			{key:"anticipatoryAmount",label:'Anticipated<br/>Expenditure(Rs)',width:120, formatter:createTextFieldFormatter(BUDGETDETAILLIST,".anticipatoryAmount")},
 			{key:"changeRequestType",label:'Change Requested',width:105,formatter:createDropdownFormatter(BUDGETDETAILLIST),  dropdownOptions:changeRequested} ,
 			{key:"amount",label:'Addition of <br/>Funds sought(Rs)',width:"50em", formatter:createTextFieldFormatterWithOnBlur('budgetDetailsTable',BUDGETDETAILLIST,".deltaAmount")},
 			{key:"total_available",label:'Budget Provision avail<br/> after Additional Appropriation(Rs)',width:"50em", formatter:createAmountFieldFormatter(actualsList,BUDGETDETAILLIST,".remainingAmount")},
-			{key:"newPlanningBudgetAvailable",label:'New Planning Budget Available(Rs)',width:"50em", formatter:createAmountFieldFormatter(planningBudgetAvailableList,BUDGETDETAILLIST,".newPlanningBudgetAvailable")},
+			{key:"newPlanningBudgetAvailable",label:'New Planning Budget<br/> Available(Rs)',width:"50em", formatter:createAmountFieldFormatter(planningBudgetAvailableList,BUDGETDETAILLIST,".newPlanningBudgetAvailable")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
 		];

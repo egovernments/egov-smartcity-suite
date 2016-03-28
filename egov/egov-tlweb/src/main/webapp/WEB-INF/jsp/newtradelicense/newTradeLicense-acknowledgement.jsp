@@ -89,12 +89,12 @@
 							<div class="col-sm-3 col-xs-6 add-margin view-content">
 								<s:property value="tradeName.name" />
 							</div>
-							<div class="col-sm-3 col-xs-6 add-margin">
+							<%-- <div class="col-sm-3 col-xs-6 add-margin">
 								<s:text name="license.zone" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content">
 								<s:property value="parentBoundary.parent.name" />
-							</div>
+							</div> --%>
 						</div>
 						<div class="row add-border">
 							<div class="col-sm-3 col-xs-6 add-margin">

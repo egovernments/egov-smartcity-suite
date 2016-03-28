@@ -45,7 +45,7 @@ import java.util.List;
 import org.egov.commons.CGeneralLedger;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface GeneralLedgerDAO extends GenericDAO {
+public interface GeneralLedgerDAO{
 	String getActualsPrev(String accCode, String functionId, String budgetingType) throws Exception;
 
 	String getActualsDecCurr(String accCode, String functionId, String budgetingType) throws Exception;

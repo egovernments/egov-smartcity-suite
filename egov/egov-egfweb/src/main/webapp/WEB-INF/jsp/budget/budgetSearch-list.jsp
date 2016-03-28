@@ -55,6 +55,13 @@
 <body>
 	<script>
 			var budgetDetailsTable = null;
+
+			function validateAndSubmit()
+			{
+				document.forms[0].action='/EGF/budget/budgetSearch-groupedBudgets.action';
+				document.forms[0].submit();
+				}
+			
 		</script>
 	<jsp:include page="budgetHeader.jsp" />
 	<s:form action="budgetSearch" theme="simple">
@@ -64,9 +71,9 @@
 			</div>
 			<%@ include file='budgetSearch-form.jsp'%>
 			<div class="buttonbottom" style="padding-bottom: 10px;">
-				<s:submit method="groupedBudgets" value="Search"
-					cssClass="buttonsubmit" />
-				<s:reset value="Cancel" cssClass="button" />
+				<input type="button" value="Search" class="buttonsubmit"
+					  onclick="return validateAndSubmit()" />
+				<s:reset value="Reset" cssClass="button" /> 
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
@@ -94,12 +101,12 @@
 				</tr>
 				<s:iterator value="budgetList" status="stat">
 					<tr>
-						<td class="blueborderfortd"><a
-							href='<s:url action="budgetSearch" method="groupedBudgetDetailList">
+						<td class="blueborderfortd">
+						<a
+							href='<s:url action="budgetSearch-groupedBudgetDetailList">
 							<s:param name="budget.id" value="%{id}" />
 							<s:param name="skipPrepare" value="true"/>
-							</s:url>'><s:property
-									value="name" /></a> &nbsp;</td>
+							</s:url>'><s:property value="name" /></a>  &nbsp;</td>
 						<td class="blueborderfortd"><s:property value="parent.name" />&nbsp;</td>
 						<td class="blueborderfortd"><s:property value="description" />&nbsp;</td>
 					</tr>
@@ -107,7 +114,7 @@
 			</table>
 		</div>
 	</s:if>
-	<s:elseif test="%{!errorMessage || budgetDetail.budget==null}"></s:elseif>
+	<%-- <s:elseif test="%{!errorMessage || budgetDetail.budget==null}"></s:elseif> --%>
 	<s:else>
 		<div class="error">
 			<s:text name="budget.no.details.found" />

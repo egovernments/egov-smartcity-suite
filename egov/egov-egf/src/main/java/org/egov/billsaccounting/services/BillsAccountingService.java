@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.billsaccounting.services;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.Date;
 import java.util.List;
 
@@ -69,7 +72,11 @@ public class BillsAccountingService {
 
     private static final String MISSINGMSG = "is not defined in AppConfig values cannot proceed creating voucher";
 
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
@@ -213,7 +220,7 @@ public class BillsAccountingService {
     {
         try
         {
-            final Session session = HibernateUtil.getCurrentSession();
+            final Session session = persistenceService.getSession();
             final Query query = session
                     .createQuery("select br.egBillregistermis.voucherHeader from EgBillregister br where br.billnumber=:billNumber");
             query.setString("billNumber", billNumber);

@@ -45,6 +45,7 @@ import java.util.List;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -75,6 +76,8 @@ public class CopyEstimateAction extends BaseFormAction {
     @Autowired
     private CommonsService commonsService;
     private String messageKey;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDo;
     private WorksService worksService;
 
     @Override
@@ -202,7 +205,7 @@ public class CopyEstimateAction extends BaseFormAction {
     }
 
     public Date getFinancialYearStartDate() {
-        financialYearStartDate = commonsService.getFinancialYearByFinYearRange(
+        financialYearStartDate = finHibernateDo.getFinancialYearByFinYearRange(
                 worksService.getWorksConfigValue("FINANCIAL_YEAR_RANGE")).getStartingDate();
         return financialYearStartDate;
     }

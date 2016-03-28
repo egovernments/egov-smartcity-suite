@@ -41,6 +41,7 @@ package org.egov.adtax.repository;
 import java.util.List;
 
 import org.egov.adtax.entity.Agency;
+import org.egov.adtax.entity.enums.AgencyStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -51,4 +52,7 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
     Agency findByCode(String code);
 
     List<Agency> findByNameContainingIgnoreCase(String name);
+    
+    List<Agency> findByNameContainingIgnoreCaseAndStatus(String name, AgencyStatus status);
+    
 }

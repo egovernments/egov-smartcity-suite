@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -79,10 +82,10 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = BankAdviceReportAction.NEW, location = "bankAdviceReport-" + BankAdviceReportAction.NEW + ".jsp"),
     @Result(name = "downloadText", location = "bankAdviceReport-downloadText.jsp"),
@@ -92,6 +95,10 @@ import org.springframework.transaction.annotation.Transactional;
                     "contentDisposition", "attachment; filename=${textFileName}" })
 })
 public class BankAdviceReportAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     /**
      *
@@ -136,8 +143,8 @@ public class BankAdviceReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         //persistenceService.setType(Bank.class);
         addDropdownData(
@@ -227,11 +234,11 @@ public class BankAdviceReportAction extends BaseFormAction {
                 " AND gl.voucherheaderid =m.billvhid AND gl.id=gld.generalledgerid AND gl.debitamount!=0 " +
                 " group by gld.detailtypeid ,gld.detailkeyid  ";
 
-        final Query WithNetPayableSubledgerQuery = HibernateUtil.getCurrentSession().createSQLQuery(query);
+        final Query WithNetPayableSubledgerQuery = persistenceService.getSession().createSQLQuery(query);
         WithNetPayableSubledgerQuery.setParameter(0, instrumentHeader.getId());
 
         // Get without subledger one
-        final Query getDebitsideSubledgerQuery = HibernateUtil.getCurrentSession().createSQLQuery(withNoSubledgerQry);
+        final Query getDebitsideSubledgerQuery = persistenceService.getSession().createSQLQuery(withNoSubledgerQry);
         getDebitsideSubledgerQuery.setParameter(0, instrumentHeader.getId());
         getDebitsideSubledgerQuery.setParameter(1, instrumentHeader.getId());
 

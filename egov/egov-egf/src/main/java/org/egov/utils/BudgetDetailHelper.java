@@ -55,12 +55,16 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.web.actions.budget.BudgetAmountView;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.util.ValueStack;
 
 public class BudgetDetailHelper {
-    BudgetDetailsDAO budgetDetailsDAO;
-    FinancialYearDAO financialYearDAO;
+    
+    @Autowired
+    private BudgetDetailsDAO budgetDetailsDAO;
+    @Autowired    
+    private FinancialYearDAO financialYearDAO;
 
     public void setBudgetDetailsDAO(final BudgetDetailsDAO budgetDetailsDAO) {
         this.budgetDetailsDAO = budgetDetailsDAO;

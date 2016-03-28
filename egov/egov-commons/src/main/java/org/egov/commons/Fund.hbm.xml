@@ -12,7 +12,7 @@
             </generator>
         </id>
         <property name="lastmodified" column="LASTMODIFIED"/>	
-        <many-to-one name="fund" class="org.egov.commons.Fund" fetch="select">
+        <many-to-one name="parentId" class="org.egov.commons.Fund" fetch="select">
             <column name="PARENTID" precision="22" scale="0" />
         </many-to-one>
         

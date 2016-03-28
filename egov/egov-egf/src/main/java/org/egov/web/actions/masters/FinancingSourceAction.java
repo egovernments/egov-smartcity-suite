@@ -64,14 +64,14 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.financingsource.FinancingSourceService;
-import org.springframework.transaction.annotation.Transactional;
+
 
 /**
  * @author manoranjan
  *
  */
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = "result", location = "financingSource-result.jsp"),
     @Result(name = "new", location = "financingSource-new.jsp"),

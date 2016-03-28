@@ -48,37 +48,61 @@ package org.egov.dao.bills;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBilldetails;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author Administrator
- *
- * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
+ * @author Administrator TODO To change the template for this generated type
+ *         comment go to Window - Preferences - Java - Code Style - Code
+ *         Templates
  */
 @Transactional(readOnly = true)
-public class EgBilldetailsHibernateDAO extends GenericHibernateDAO implements
-EgBilldetailsDAO
-{
-    private final Logger logger = Logger.getLogger(getClass().getName());
-
-    public EgBilldetailsHibernateDAO(final Class persistentClass, final Session session)
-    {
-        super(persistentClass, session);
-
+public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
+    @Transactional
+    public EgBilldetails update(final EgBilldetails entity) {
+        getCurrentSession().update(entity);
+        return entity;
     }
 
+    @Transactional
+    public EgBilldetails create(final EgBilldetails entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(EgBilldetails entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public EgBilldetails findById(Number id, boolean lock) {
+        return (EgBilldetails) getCurrentSession().load(EgBilldetails.class, id);
+    }
+
+    public List<EgBilldetails> findAll() {
+        return (List<EgBilldetails>) getCurrentSession().createCriteria(EgBilldetails.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    private final Logger logger = Logger.getLogger(getClass().getName());
+
     @Override
-    public BigDecimal getOtherBillsAmount(final Long minGlCodeId, final Long maxGlCodeId,
-            final Long majGlCodeId, final String finYearID, final String functionId,
-            final String schemeId, final String subSchemeId, final String asOnDate, final String billType)
-                    throws Exception {
+    public BigDecimal getOtherBillsAmount(final Long minGlCodeId, final Long maxGlCodeId, final Long majGlCodeId,
+            final String finYearID, final String functionId, final String schemeId, final String subSchemeId,
+            final String asOnDate, final String billType) throws Exception {
         if (logger.isDebugEnabled())
             logger.debug("------- Inside getOtherBillsAmount() -----------");
         Query qry = null;
@@ -115,24 +139,21 @@ EgBilldetailsDAO
             qryStr.append(funcStr);
             qryStr.append(schStr);
             qryStr.append(glcodeStr);
-            qry = HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
+            qry = getCurrentSession().createQuery(qryStr.toString());
             if (!(functionId == "" || functionId == null))
                 qry.setString("functionId", functionId);
             if (!(schemeId == "" || schemeId == null) && (subSchemeId == "" || subSchemeId == null))
                 qry.setString("schemeId", schemeId);
-            if (!(schemeId == "" || schemeId == null) && !(subSchemeId == "" || subSchemeId == null))
-            {
+            if (!(schemeId == "" || schemeId == null) && !(subSchemeId == "" || subSchemeId == null)) {
                 qry.setString("schemeId", schemeId);
                 qry.setString("subSchemeId", subSchemeId);
             }
             if (!(asOnDate == "" || asOnDate == null))
                 qry.setString("asOnDate", asOnDate);
-            if (minGlCodeId != 0 && maxGlCodeId != 0)
-            {
+            if (minGlCodeId != 0 && maxGlCodeId != 0) {
                 qry.setLong("minGlCodeId", minGlCodeId);
                 qry.setLong("maxGlCodeId", maxGlCodeId);
-            }
-            else if (maxGlCodeId != 0)
+            } else if (maxGlCodeId != 0)
                 qry.setLong("maxGlCodeId", maxGlCodeId);
             else if (majGlCodeId != 0)
                 qry.setLong("majGlCodeId", majGlCodeId);
@@ -146,8 +167,7 @@ EgBilldetailsDAO
                 return new BigDecimal(qry.uniqueResult().toString());
             else
                 return result;
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             logger.error(e.getCause() + " Error in getOtherBillsAmount");
             throw new ApplicationException(e.getMessage());
         }
@@ -158,17 +178,15 @@ EgBilldetailsDAO
         Query qry = null;
         final StringBuffer qryStr = new StringBuffer();
         EgBilldetails billdetails = null;
-        try
-        {
+        try {
             qryStr.append("from EgBilldetails bd where bd.creditamount>0 AND bd.glcodeid IN (:glcodeIds) AND billid=:billId ");
-            qry = HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
+            qry = getCurrentSession().createQuery(qryStr.toString());
             qry.setParameterList("glcodeIds", glcodeIdList);
             qry.setLong("billId", billId);
             if (logger.isInfoEnabled())
                 logger.info("qry---------> " + qry);
             billdetails = (EgBilldetails) qry.uniqueResult();
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             logger.error(e.getCause() + " Error in getBillDetails");
             throw new ApplicationException(e.getMessage());
         }

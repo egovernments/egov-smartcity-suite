@@ -50,10 +50,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.recoveries.EgDeductionDetails;
 import org.egov.model.recoveries.Recovery;
 import org.hibernate.Query;
@@ -61,55 +62,78 @@ import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author Iliyaraja s
- *
- * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
+ * @author Iliyaraja s TODO To change the template for this generated type
+ *         comment go to Window - Preferences - Java - Code Style - Code
+ *         Templates
  */
 @Transactional(readOnly = true)
-public class EgDeductionDetailsHibernateDAO extends GenericHibernateDAO
-{
-    private Session session;
-
-    public EgDeductionDetailsHibernateDAO(final Class persistentClass, final Session session)
-    {
-        super(persistentClass, session);
+public class EgDeductionDetailsHibernateDAO  {
+    @Transactional
+    public EgDeductionDetails update(final EgDeductionDetails entity) {
+        getCurrentSession().update(entity);
+        return entity;
     }
 
-    public List findByTds(final Recovery tds)
-    {
-        session = HibernateUtil.getCurrentSession();
+    @Transactional
+    public EgDeductionDetails create(final EgDeductionDetails entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(EgDeductionDetails entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    
+    public EgDeductionDetails findById(Number id, boolean lock) {
+        return (EgDeductionDetails) getCurrentSession().load(EgDeductionDetails.class, id);
+    }
+
+    public List<EgDeductionDetails> findAll() {
+        return (List<EgDeductionDetails>) getCurrentSession().createCriteria(EgDeductionDetails.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    private Session session;
+
+
+    public List findByTds(final Recovery tds) {
+        session = getCurrentSession();
         final Query qry = session.createQuery("from EgDeductionDetails ded where ded.recovery=:tds order by ded.id");
         qry.setEntity("tds", tds);
         return qry.list();
     }
 
-    public List<EgDeductionDetails> getEgDeductionDetailsFilterBy(final Recovery tds, final BigDecimal amount, final String date,
-            final EgwTypeOfWork egwTypeOfWork, final EgwTypeOfWork egwSubTypeOfWork)
-            {
-        session = HibernateUtil.getCurrentSession();
+    public List<EgDeductionDetails> getEgDeductionDetailsFilterBy(final Recovery tds, final BigDecimal amount,
+            final String date, final EgwTypeOfWork egwTypeOfWork, final EgwTypeOfWork egwSubTypeOfWork) {
+        session = getCurrentSession();
         Query qry;
         final StringBuffer qryStr = new StringBuffer();
         List<EgDeductionDetails> egDeductionDetailsList = null;
         qryStr.append("from EgDeductionDetails ed where ed.recovery=:tds ");
         qry = session.createQuery(qryStr.toString());
 
-        if (amount != null)
-        {
+        if (amount != null) {
             qryStr.append(" and ((ed.lowlimit<=:amount and ed.highlimit>=:amount and ed.highlimit is not null) or (ed.lowlimit<=:amount and ed.highlimit is null)) ");
             qry = session.createQuery(qryStr.toString());
         }
-        if (date != null && !date.equals(""))
-        {
+        if (date != null && !date.equals("")) {
             qryStr.append(" and ((ed.datefrom<=:date and ed.dateto>=:date and ed.dateto is not null) or(ed.datefrom<=:date and ed.dateto is null))");
             qry = session.createQuery(qryStr.toString());
         }
-        if (egwTypeOfWork != null)
-        {
+        if (egwTypeOfWork != null) {
             qryStr.append(" and ed.workDocType =:egwTypeOfWork");
             qry = session.createQuery(qryStr.toString());
         }
-        if (egwSubTypeOfWork != null)
-        {
+        if (egwSubTypeOfWork != null) {
             qryStr.append("  and ed.workDocSubType =:egwSubTypeOfWork");
             qry = session.createQuery(qryStr.toString());
         }
@@ -128,12 +152,12 @@ public class EgDeductionDetailsHibernateDAO extends GenericHibernateDAO
 
         egDeductionDetailsList = qry.list();
         return egDeductionDetailsList;
-            }
+    }
 
     public EgDeductionDetails findEgDeductionDetailsForDeduAmt(final Recovery recovery, final EgPartytype egPartyType,
             final EgPartytype egPartySubType, final EgwTypeOfWork docType, final Date date) {
         EgDeductionDetails egDeductionDetails = null;
-        session = HibernateUtil.getCurrentSession();
+        session = getCurrentSession();
         Query qry;
         final StringBuffer qryStr = new StringBuffer();
         qryStr.append("from EgDeductionDetails ed where ed.recovery=:recovery ");

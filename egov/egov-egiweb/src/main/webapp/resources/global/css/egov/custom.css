@@ -1679,10 +1679,6 @@ label.error {
 }
 .table tbody tr:hover {
   background: #f7f7f7;
-  cursor: pointer;
-}
-.table tbody.no-pointer tr:hover {
-  cursor: default;
 }
 @media (max-width: 768px) {
   table.dataTable {
@@ -1713,6 +1709,13 @@ table.dataTable tbody {
   table.dataTable tbody tr td {
     display: block;
   }
+}
+table.dataTable tbody tr:hover {
+  background: #f7f7f7;
+  cursor: pointer;
+}
+table.dataTable tbody.no-pointer tr:hover {
+  cursor: default;
 }
 table.dataTable thead th {
   background-image: none !important;

@@ -4,6 +4,7 @@
 
     Copyright (C) <2015>  eGovernments Foundation
 
+
     The updated version of eGov suite of products as by eGovernments Foundation 
     is available at http://www.egovernments.org
 
@@ -58,69 +59,102 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements ChartOfAccountsDAO {
+public class ChartOfAccountsHibernateDAO   implements ChartOfAccountsDAO {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
+    @Transactional
+    public CChartOfAccounts update(final CChartOfAccounts entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
+
+    @Transactional
+    public CChartOfAccounts create(final CChartOfAccounts entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(CChartOfAccounts entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public CChartOfAccounts findById(Number id, boolean lock) {
+        return (CChartOfAccounts) getCurrentSession().load(CChartOfAccounts.class, id);
+    }
+@Override
+    public List<CChartOfAccounts> findAll() {
+        return (List<CChartOfAccounts>) getCurrentSession().createCriteria(CChartOfAccounts.class).list();
+    }
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Override
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     private final static Logger LOG = Logger.getLogger(ChartOfAccountsHibernateDAO.class);
 
-    public ChartOfAccountsHibernateDAO(final Class persistentClass, final Session session) {
-        super(persistentClass, session);
-    }
+   
 
-    public ChartOfAccountsHibernateDAO() {
-        super(CChartOfAccounts.class, null);
-    }
 
     @Deprecated
     public Collection getAccountCodeListForDetails() {
 
-        return HibernateUtil.getCurrentSession().createQuery("select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true order by acc.glcode").list();
+        return getCurrentSession()
+                .createQuery(
+                        "select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true order by acc.glcode")
+                .list();
 
     }
 
     /**
-     * This API will give the list of detailed active for posting chartofaccounts list
+     * This API will give the list of detailed active for posting
+     * chartofaccounts list
+     * 
      * @return
      * @throws ApplicationException
      */
     public List<CChartOfAccounts> getDetailedAccountCodeList() {
 
-        return HibernateUtil.getCurrentSession().createQuery("select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true order by acc.glcode").setCacheable(true).list();
+        return getCurrentSession()
+                .createQuery(
+                        "select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true order by acc.glcode")
+                .setCacheable(true).list();
 
     }
 
     @Deprecated
     public CChartOfAccounts findCodeByPurposeId(final int purposeId) {
-        final Query qry = HibernateUtil.getCurrentSession().createQuery(
+        final Query qry = getCurrentSession().createQuery(
                 "select acc from CChartOfAccounts acc where acc.purposeId=:purposeId ");
         qry.setLong("purposeId", purposeId);
         return (CChartOfAccounts) qry.uniqueResult();
     }
 
     public CChartOfAccounts getCChartOfAccountsByGlCode(final String glCode) {
-        final Query qry = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts coa where coa.glcode =:glCode");
+        final Query qry = getCurrentSession().createQuery("from CChartOfAccounts coa where coa.glcode =:glCode");
         qry.setString("glCode", glCode);
         return (CChartOfAccounts) qry.uniqueResult();
     }
 
     @Deprecated
     public List getChartOfAccountsForTds() {
-        final Query qry = HibernateUtil.getCurrentSession().createQuery(
+        final Query qry = getCurrentSession().createQuery(
                 "from CChartOfAccounts coa where purposeId = 10 order by glcode");
         return qry.list();
     }
@@ -133,8 +167,7 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
         PreparedStatement st = connection.prepareStatement(qryDetailType);
         st.setString(1, glCode);
         rs = st.executeQuery();
-        if (rs.next())
-        {
+        if (rs.next()) {
             detailTypeId = rs.getInt(1);
         }
         rs.close();
@@ -144,35 +177,41 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
 
     @Deprecated
     public int getDetailTypeIdByName(final String glCode, final Connection connection, final String name) {
-        final SQLQuery query = HibernateUtil
-                .getCurrentSession()
+        final SQLQuery query = persistenceService.getSession()
                 .createSQLQuery(
                         "SELECT a.ID FROM accountdetailtype a,chartofaccountdetail coad  WHERE coad.DETAILTYPEID =a.ID  AND coad.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode=:glCode) AND a.NAME=:name");
         query.setString("glCode", glCode);
         query.setString("name", name);
         List accountDtlTypeList = query.list();
-        return (accountDtlTypeList != null) && (accountDtlTypeList.size() != 0) ? Integer.valueOf(accountDtlTypeList.get(0)
-                .toString()) : 0;
+        return (accountDtlTypeList != null) && (accountDtlTypeList.size() != 0) ? Integer.valueOf(accountDtlTypeList
+                .get(0).toString()) : 0;
     }
 
     /**
-     * This API will return the accountdetailtype for an account code when the accountcode and the respective accountdetailtype
-     * name is passed.
-     * @param glcode - This the chartofaccount code (mandatory)
-     * @param name - This is the accountdetailtype name that is associated with the account code (mandatory)
-     * @return - Returns the accountdetailtype object if the account code is having the passed accountdetailtype name, else NULL
+     * This API will return the accountdetailtype for an account code when the
+     * accountcode and the respective accountdetailtype name is passed.
+     * 
+     * @param glcode
+     *            - This the chartofaccount code (mandatory)
+     * @param name
+     *            - This is the accountdetailtype name that is associated with
+     *            the account code (mandatory)
+     * @return - Returns the accountdetailtype object if the account code is
+     *         having the passed accountdetailtype name, else NULL
      */
     public Accountdetailtype getAccountDetailTypeIdByName(final String glCode, final String name) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(glCode)) {
             throw new ApplicationRuntimeException("Account Code or Account Detail Type Name is empty");
         }
-        Query query = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts where glcode=:glCode");
+        Query query = getCurrentSession().createQuery("from CChartOfAccounts where glcode=:glCode");
         query.setString("glCode", glCode);
         if (query.list().isEmpty()) {
             throw new ApplicationRuntimeException("GL Code not found in Chart of Accounts");
         }
-        query = HibernateUtil.getCurrentSession().createQuery("from Accountdetailtype where id in (select cd.detailTypeId from " +
-                "CChartOfAccountDetail  as cd,CChartOfAccounts as c where cd.glCodeId=c.id and c.glcode=:glCode) and name=:name");
+        query = getCurrentSession()
+                .createQuery(
+                        "from Accountdetailtype where id in (select cd.detailTypeId from "
+                                + "CChartOfAccountDetail  as cd,CChartOfAccounts as c where cd.glCodeId=c.id and c.glcode=:glCode) and name=:name");
         query.setString("glCode", glCode);
         query.setString("name", name);
         return (Accountdetailtype) query.uniqueResult();
@@ -183,37 +222,45 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
         final StringBuilder qryStr = new StringBuilder("select coa.glcode from CChartOfAccounts coa where ");
         if (StringUtils.isNotBlank(minGlcode) && StringUtils.isNotBlank(maxGlcode)) {
             qryStr.append(" coa.glcode between :minGlcode and :maxGlcode ");
-            qry = HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
+            qry = getCurrentSession().createQuery(qryStr.toString());
             qry.setString("minGlcode", minGlcode + "%");
             qry.setString("maxGlcode", maxGlcode + "%");
         } else if (StringUtils.isNotBlank(maxGlcode)) {
             qryStr.append(" coa.glcode like :maxGlcode ");
-            qry = HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
+            qry = getCurrentSession().createQuery(qryStr.toString());
             qry.setString("maxGlcode", maxGlcode + "%");
         } else if (StringUtils.isNotBlank(majGlcode)) {
             qryStr.append(" coa.glcode =:majGlcode ");
-            qry = HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
+            qry = getCurrentSession().createQuery(qryStr.toString());
             qry.setString("majGlcode", majGlcode);
         }
         return qry == null ? null : qry.list();
     }
 
     /**
-     * This API will return the list of detailed chartofaccounts objects that are active for posting for the Type.
-     * @param -Accounting type-(Asset (A), Liability (L), Income (I), Expense (E))
+     * This API will return the list of detailed chartofaccounts objects that
+     * are active for posting for the Type.
+     * 
+     * @param -Accounting type-(Asset (A), Liability (L), Income (I), Expense
+     *        (E))
      * @return list of chartofaccount objects
      */
     public List<CChartOfAccounts> getActiveAccountsForType(final char type) {
-        final Query query = HibernateUtil.getCurrentSession().createQuery("select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true and type=:type order by acc.name");
+        final Query query = getCurrentSession()
+                .createQuery(
+                        "select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting=true and type=:type order by acc.name");
 
         query.setCharacter("type", type);
         return query.list();
     }
 
     /**
-     * to get the list of chartofaccounts based on the purposeId. First query will get the detail codes for the purpose is mapped
-     * to major code level. second query will get the detail codes for the purpose is mapped to minor code level. last one will
-     * get the detail codes are mapped to the detail code level.
+     * to get the list of chartofaccounts based on the purposeId. First query
+     * will get the detail codes for the purpose is mapped to major code level.
+     * second query will get the detail codes for the purpose is mapped to minor
+     * code level. last one will get the detail codes are mapped to the detail
+     * code level.
+     * 
      * @param purposeId
      * @return list of COA object(s)
      */
@@ -223,31 +270,29 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
             if ((purposeId == null) || (purposeId.intValue() == 0)) {
                 throw new ApplicationException("Purpose Id is null or zero");
             }
-            Query query = HibernateUtil.getCurrentSession().createQuery(
+            Query query = getCurrentSession().createQuery(
                     " from EgfAccountcodePurpose purpose where purpose.id=" + purposeId + "");
             if (query.list().size() == 0) {
                 throw new ApplicationException("Purpose ID provided is not defined in the system");
             }
-            query = HibernateUtil
-                    .getCurrentSession()
+            query = persistenceService.getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
-            query = HibernateUtil
-                    .getCurrentSession()
+            query = persistenceService.getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
-            query = HibernateUtil
-                    .getCurrentSession()
+            query = persistenceService.getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
-            query = HibernateUtil.getCurrentSession().createQuery(
-                    " FROM CChartOfAccounts WHERE purposeid=:purposeId AND classification=4 AND isActiveForPosting=true ");
+            query = getCurrentSession()
+                    .createQuery(
+                            " FROM CChartOfAccounts WHERE purposeid=:purposeId AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
         } catch (final Exception e) {
@@ -258,12 +303,17 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
     }
 
     /**
-     * This API will return the list of non control detailed chartofaccount codes that are active for posting.
+     * This API will return the list of non control detailed chartofaccount
+     * codes that are active for posting.
+     * 
      * @return list of chartofaccount objects.
      */
     public List<CChartOfAccounts> getNonControlCodeList() {
         try {
-            return HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts acc where acc.classification=4 and acc.isActiveForPosting=true and acc.id not in (select cd.glCodeId from CChartOfAccountDetail cd) ").list();
+            return getCurrentSession()
+                    .createQuery(
+                            " from CChartOfAccounts acc where acc.classification=4 and acc.isActiveForPosting=true and acc.id not in (select cd.glCodeId from CChartOfAccountDetail cd) ")
+                    .list();
 
         } catch (final Exception e) {
             LOG.error(e);
@@ -272,8 +322,10 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
     }
 
     /**
-     * @description- This method returns a list of detail type object based on the glcode.
-     * @param glCode - glcode supplied by the client.
+     * @description- This method returns a list of detail type object based on
+     *               the glcode.
+     * @param glCode
+     *            - glcode supplied by the client.
      * @return List<Accountdetailtype> -list of Accountdetailtype object(s).
      * @throws ApplicationException
      */
@@ -289,12 +341,10 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
             throw new ApplicationRuntimeException("GL Code not found in Chart of Accounts");
         }
         try {
-            Query query = HibernateUtil
-                    .getCurrentSession()
+            Query query = persistenceService.getSession()
                     .createQuery(
                             "from Accountdetailtype where id in (select cd.detailTypeId "
-                                    +
-                                    "from CChartOfAccountDetail  as cd,CChartOfAccounts as c where cd.glCodeId=c.id and c.glcode=:glCode)");
+                                    + "from CChartOfAccountDetail  as cd,CChartOfAccounts as c where cd.glCodeId=c.id and c.glcode=:glCode)");
             query.setString("glCode", glCode);
             query.setCacheable(true);
             return query.list().isEmpty() ? null : query.list(); // NOPMD
@@ -307,8 +357,10 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
     /**
      * @author manoranjan
      * @description -Get list of COA for a list of types.
-     * @param type - list of types,e.g income, Assets etc.
-     * @return listChartOfAcc - list of chartofaccounts based on the given list of types
+     * @param type
+     *            - list of types,e.g income, Assets etc.
+     * @return listChartOfAcc - list of chartofaccounts based on the given list
+     *         of types
      * @throws ValidationException
      */
     public List<CChartOfAccounts> getActiveAccountsForTypes(final char[] type) throws ValidationException {
@@ -321,8 +373,8 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
         for (final char typ : type) {
             types[count++] = typ;
         }
-        final Query query = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts where classification=4 " +
-        		"and isActiveForPosting=true and type in (:type)");
+        final Query query = getCurrentSession().createQuery(
+                "from CChartOfAccounts where classification=4 " + "and isActiveForPosting=true and type in (:type)");
 
         query.setParameterList("type", types);
         query.setCacheable(true);
@@ -331,9 +383,12 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
 
     /**
      * @author manoranjan
-     * @description - Get list of Chartofaccount objects for a list of purpose ids
-     * @param purposeId - list of purpose ids.
-     * @return listChartOfAcc - list of chartofaccount objects for the given list of purpose id
+     * @description - Get list of Chartofaccount objects for a list of purpose
+     *              ids
+     * @param purposeId
+     *            - list of purpose ids.
+     * @return listChartOfAcc - list of chartofaccount objects for the given
+     *         list of purpose id
      * @throws ValidationException
      */
     public List<CChartOfAccounts> getAccountCodeByListOfPurposeId(final Integer[] purposeId) throws ValidationException {
@@ -342,30 +397,28 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
                     "The supplied purposeId  can not be null or empty")));
         }
         final List<CChartOfAccounts> listChartOfAcc = new ArrayList<CChartOfAccounts>();
-        Query query = HibernateUtil.getCurrentSession().createQuery(
-                " FROM CChartOfAccounts WHERE purposeid in(:purposeId)AND classification=4 AND isActiveForPosting=true ");
+        Query query = getCurrentSession()
+                .createQuery(
+                        " FROM CChartOfAccounts WHERE purposeid in(:purposeId)AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
 
-        query = HibernateUtil
-                .getCurrentSession()
+        query = persistenceService.getSession()
                 .createQuery(
                         " from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId) ) AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
 
-        query = HibernateUtil
-                .getCurrentSession()
+        query = persistenceService.getSession()
                 .createQuery(
                         " from CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId))) AND classification=4 AND isActiveForPosting=true");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
 
-        query = HibernateUtil
-                .getCurrentSession()
+        query = persistenceService.getSession()
                 .createQuery(
                         " from CChartOfAccounts where   parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId)))) AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
@@ -377,15 +430,17 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
 
     /**
      * @author manoranjan
-     * @description - This api will return the list of detailed chartofaccounts objects that are active for posting.
-     * @param glcode - The input is the chartofaccounts code.
+     * @description - This api will return the list of detailed chartofaccounts
+     *              objects that are active for posting.
+     * @param glcode
+     *            - The input is the chartofaccounts code.
      */
     public List<CChartOfAccounts> getListOfDetailCode(final String glCode) throws ValidationException {
         if (StringUtils.isBlank(glCode)) {
             throw new ValidationException(Arrays.asList(new ValidationError("glcode null",
                     "the glcode value supplied can not be null or blank")));
         }
-        Query query = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts where glcode=:glCode");
+        Query query = getCurrentSession().createQuery("from CChartOfAccounts where glcode=:glCode");
         query.setString("glCode", glCode);
         query.setCacheable(true);
         if (query.list().isEmpty()) {
@@ -393,19 +448,26 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
                     "The GL Code value supplied does not exist in the System")));
         }
         final List<CChartOfAccounts> listChartOfAcc = new ArrayList<CChartOfAccounts>();
-        query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE glcode=:glCode  AND classification=4 AND isActiveForPosting=true ");
+        query = getCurrentSession().createQuery(
+                " FROM CChartOfAccounts WHERE glcode=:glCode  AND classification=4 AND isActiveForPosting=true ");
         query.setString("glCode", glCode);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
-        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE glcode=:glCode) AND classification=4 AND isActiveForPosting=true ");
+        query = getCurrentSession()
+                .createQuery(
+                        " from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE glcode=:glCode) AND classification=4 AND isActiveForPosting=true ");
         query.setString("glCode", glCode);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
-        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where parentId IN (select id from CChartOfAccounts where parentId IN ( select id  FROM CChartOfAccounts WHERE glcode=:glCode)) AND classification=4 AND isActiveForPosting=true ");
+        query = getCurrentSession()
+                .createQuery(
+                        " from CChartOfAccounts where parentId IN (select id from CChartOfAccounts where parentId IN ( select id  FROM CChartOfAccounts WHERE glcode=:glCode)) AND classification=4 AND isActiveForPosting=true ");
         query.setString("glCode", glCode);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
-        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN ( select id  FROM CChartOfAccounts WHERE glcode=:glCode)))AND classification=4 AND isActiveForPosting=true ");
+        query = getCurrentSession()
+                .createQuery(
+                        " from CChartOfAccounts where parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN ( select id  FROM CChartOfAccounts WHERE glcode=:glCode)))AND classification=4 AND isActiveForPosting=true ");
 
         query.setString("glCode", glCode);
         query.setCacheable(true);
@@ -414,57 +476,52 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
     }
 
     public List<CChartOfAccounts> getBankChartofAccountCodeList() {
-        return HibernateUtil.getCurrentSession().createQuery("select chartofaccounts from Bankaccount").setCacheable(true).list();
+        return getCurrentSession().createQuery("select chartofaccounts from Bankaccount").setCacheable(true).list();
     }
 
     @Override
     public List<CChartOfAccounts> findByType(Character type) {
 
-        final Query query = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts where  " +
-                "type =:type and classification=1");
+        final Query query = getCurrentSession().createQuery(
+                "from CChartOfAccounts where  " + "type =:type and classification=1");
         query.setCharacter("type", type);
         // query.setCacheable(true);
         return query.list();
     }
 
     @Override
-    public List<CChartOfAccounts> findByMajorCodeAndClassification(
-            String majorCode, Long classification) {
-        final Query query = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts where  " +
-                "majorcode =:majorcode and classification=2");
+    public List<CChartOfAccounts> findByMajorCodeAndClassification(String majorCode, Long classification) {
+        final Query query = getCurrentSession().createQuery(
+                "from CChartOfAccounts where  " + "majorcode =:majorcode and classification=2");
         query.setString("majorcode", majorCode);
         // query.setCacheable(true);
         return query.list();
     }
 
     @Override
-    public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassificationAndMajorCode(
-            String string, Long classification, String majorCode) {
+    public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassificationAndMajorCode(String string,
+            Long classification, String majorCode) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassification(
-            String string, Long classification) {
+    public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassification(String string, Long classification) {
         // TODO Auto-generated method stub
         return null;
     }
 
     public List<CChartOfAccounts> getBySubLedgerCode(String subLedgerCode) {
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createQuery(
                         "from CChartOfAccounts where id in (select glCodeId.id from CChartOfAccountDetail where lower(detailTypeId.name) =:subLedgerCode  ) and type = 'L' and classification=4 and isActiveForPosting = true and id not in (select chartofaccounts.id from Recovery)");
-         query.setString("subLedgerCode", subLedgerCode.toLowerCase());
+        query.setString("subLedgerCode", subLedgerCode.toLowerCase());
         return query.list();
     }
-    
+
     public List<CChartOfAccounts> getForRecovery() {
-        final Query query = HibernateUtil
-                .getCurrentSession()
-                .createQuery(
-                        "from CChartOfAccounts where id in  (select chartofaccounts.id from Recovery)");
+        final Query query = persistenceService.getSession().createQuery(
+                "from CChartOfAccounts where id in  (select chartofaccounts.id from Recovery)");
         return query.list();
     }
 }

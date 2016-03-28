@@ -148,9 +148,10 @@ public class GeneralDialyCollectionReportController {
         return BILL_COLLECTOR_COLL_REPORT_FORM;
     }
     @RequestMapping(value = "/ulbWiseDcbReport-form", method = RequestMethod.GET)
-    public String searchUlbWiseDcbForm(final Model model) {
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    public String searchUlbWiseDcbForm(final Model model, @RequestParam final String type) { 
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); 
         Calendar calendar = Calendar.getInstance();
+        model.addAttribute("typeValue", type);
         calendar.add(Calendar.DATE, -1);
         if (bcDailyCollectionReportResult != null)
             bcDailyCollectionReportResult.setGeneratedDate(dateFormat.format(calendar.getTime()));

@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -133,6 +136,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
         @Result(name = "before_salary_search", location = "chequeAssignment-before_salary_search.jsp"),
         @Result(name = "searchRtgsResult", location = "chequeAssignment-searchRtgsResult.jsp"),
         @Result(name = "surrendersearch", location = "chequeAssignment-surrendersearch.jsp"),
+        @Result(name = "searchremittance", location = "chequeAssignment-searchremittance.jsp"),
         @Result(name = "searchpayment", location = "chequeAssignment-searchpayment.jsp"),
         @Result(name = "surrendercheques", location = "chequeAssignment-surrendercheques.jsp"),
         @Result(name = "rtgsSearch", location = "chequeAssignment-rtgsSearch.jsp"),
@@ -152,7 +156,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private static final String SURRENDERSEARCH = "surrendersearch";
     private static final String SURRENDERRTGSSEARCH = "surrenderRTGSsearch";
     private String paymentMode, inFavourOf;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     @Qualifier("paymentService")
     private PaymentService paymentService;
     private Integer bankaccount, selectedRows = 0, bankbranch;
@@ -526,8 +534,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     @Action(value = "/payment/chequeAssignment-getReceiptDetails")
     public String getReceiptDetails() {
         Query query = null;
-        query = HibernateUtil
-                .getCurrentSession()
+        query = persistenceService.getSession()
                 .createSQLQuery(
                         "select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ," +
                                 " redtl.remittedamt as receiptAmount,redtl.remittedamt as deductedAmount" +
@@ -778,8 +785,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Map<String, String> loadChequeSerialNo(final Integer acc) {
 
         chequeSlNoMap = new LinkedHashMap<String, String>();
-        final List<String> cheueSlList = HibernateUtil
-                .getCurrentSession()
+        final List<String> cheueSlList = persistenceService.getSession()
                 .createSQLQuery(
                         "select distinct(serialNo) from  egf_account_cheques where bankAccountId=" + acc
                                 + " order by serialNo desc ").list();
@@ -911,6 +917,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     }
 
     @ValidationErrorPage(value = "before_remittance_search")
+    @Action(value = "/payment/chequeAssignment-searchChequesOfRemittance")
     public String searchChequesOfRemittance() throws ApplicationException, ParseException
     {
         if (LOGGER.isDebugEnabled())

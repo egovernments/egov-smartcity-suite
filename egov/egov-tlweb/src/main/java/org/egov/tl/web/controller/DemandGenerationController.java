@@ -40,8 +40,6 @@ package org.egov.tl.web.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.service.DemandGenerationService;
@@ -71,12 +69,23 @@ public class DemandGenerationController {
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String demandGeneration(@Valid @ModelAttribute final DemandGenerationLog demandGenerationLog,
+    public String demandGeneration(@ModelAttribute DemandGenerationLog demandGenerationLog,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
-        if (resultBinder.hasErrors())
-            return "demand-generate";
-        demandGenerationService.bulkDemandGeneration(demandGenerationLog);
-        redirectAttributes.addFlashAttribute("message", "msg.demand.generation.success");
+        demandGenerationLog = demandGenerationService.bulkDemandGeneration(demandGenerationLog);
+        redirectAttributes.addFlashAttribute("demandGenerationLog", demandGenerationLog);
+        redirectAttributes.addFlashAttribute("message",
+                "msg.demand.generation." + demandGenerationLog.getDemandGenerationStatus());
         return "redirect:/demand-generation/create";
     }
+
+    @RequestMapping(value = "/regenerate", method = RequestMethod.POST)
+    public String demandRegeneration(@ModelAttribute DemandGenerationLog demandGenerationLog, final BindingResult resultBinder,
+            final RedirectAttributes redirectAttributes) {
+        demandGenerationLog = demandGenerationService.demandRegeneration(demandGenerationLog);
+        redirectAttributes.addFlashAttribute("demandGenerationLog", demandGenerationLog);
+        redirectAttributes.addFlashAttribute("message",
+                "msg.demand.generation." + demandGenerationLog.getDemandGenerationStatus());
+        return "redirect:/demand-generation/create";
+    }
+
 }

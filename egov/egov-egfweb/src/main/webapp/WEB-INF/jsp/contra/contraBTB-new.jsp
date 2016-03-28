@@ -42,11 +42,9 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+	src="/EGF/resources/javascript/voucherHelper.js"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/javascript/contraBTBHelper.js"></script>
-<script type="text/javascript"
-	src="/EGF/resources/javascript/calender.js"></script>
+	src="/EGF/resources/javascript/contraBTBHelper.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/calendar.js"></script>
 <script language="javascript"
@@ -70,43 +68,45 @@
 				<div id="listid" style="display: block">
 					<br />
 				</div>
-			</div>
-			<div align="center">
-				<font style='color: red;'>
-					<p class="error-block" id="lblError"></p>
-				</font>
-			</div>
-			<span class="mandatory">
-				<div id="Errors">
-					<s:actionerror />
-					<s:fielderror />
-				</div> <s:actionmessage />
-			</span>
-			<table border="0" width="100%" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="10%" class="bluebox"></td>
-					<s:if test="%{shouldShowHeaderField('vouchernumber')}">
 
-						<td class="bluebox" width="22%"><s:text name="voucher.number" /><span
-							class="mandatory">*</span></td>
-						<td class="bluebox" width="22%"><s:textfield
-								name="voucherNumber" id="voucherNumber" /></td>
-					</s:if>
-					<s:hidden name="id" />
-					<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
-						class="mandatory">*</span></td>
-					<td class="bluebox" width="34%"><input type="text"
-						name="voucherDate" id="voucherDate" maxlength="10"
-						onkeyup="DateFormat(this,this.value,event,false,'3')"
-						value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
-						href="javascript:show_calendar('cbtbform.voucherDate',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img tabIndex="-1"
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
-				</tr>
-				<%@include file="contraBTB-form.jsp"%>
-			</table>
-			<div class="subheadsmallnew" /></div>
-			<div class="mandatory" align="left">* Mandatory Fields</div>
+				<div align="center">
+					<font style='color: red;'>
+						<p class="error-block" id="lblError"></p>
+					</font>
+				</div>
+				<span class="mandatory1">
+					<div id="Errors">
+						<s:actionerror />
+						<s:fielderror />
+					</div> <s:actionmessage />
+				</span>
+				<table border="0" width="100%" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="bluebox"></td>
+						<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+
+							<td class="bluebox" width="22%"><s:text
+									name="voucher.number" /><span class="mandatory1">*</span></td>
+							<td class="bluebox" width="22%"><s:textfield
+									name="voucherNumber" id="voucherNumber" /></td>
+						</s:if>
+						<s:hidden name="id" />
+
+						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
+							class="mandatory1">*</span></td>
+						<td class="bluebox" width="34%"><input type="text"
+							name="voucherDate" id="voucherDate" maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
+							href="javascript:show_calendar('cbtbform.voucherDate',null,null,'DD/MM/YYYY');"
+							style="text-decoration: none">&nbsp;<img tabIndex="-1"
+								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+						<td class="bluebox"></td>
+						<td class="bluebox"></td>
+					</tr>
+					<%@include file="contraBTB-form.jsp"%>
+				</table>
+				<div class="mandatory1" align="left">* Mandatory Fields</div>
 			</div>
 			<%@include file="../voucher/SaveButtons.jsp"%>
 			<input type="hidden" id=name name="name" value="BankToBank" />
@@ -116,14 +116,14 @@
 			<s:hidden id="startDateForBalanceCheckStr"
 				name="startDateForBalanceCheckStr"
 				value="%{startDateForBalanceCheckStr}" />
+			</div>
 		</s:push>
-		<s:token />
 	</s:form>
 	<SCRIPT type="text/javascript">
 function	onLoadTask_new()
 {
-	loadFromDepartment();
-	loadToDepartment();
+	//loadFromDepartment();
+	//loadToDepartment();
 	var 	button='<s:property value="button"/>';
 	var 	srcFund='<s:property value="contraBean.fromFundId"/>'
 	var 	desFund='<s:property value="contraBean.toFundId"/>'
@@ -149,12 +149,12 @@ function	onLoadTask_new()
 	else if(button=="Save_View")
 	{
 			var vhId='<s:property value="vhId"/>';
-			document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher!loadvoucherview.action?vhid="+vhId;
+			document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+vhId;
 			document.forms[0].submit();
 	}
 	else if(button=="Save_New")
 	{      	document.forms[0].button.value='';
-	        document.forms[0].action = "contraBTB!newform.action";
+	        document.forms[0].action = "contraBTB-newform.action";
 	 		document.forms[0].submit();
 	}
 	}
@@ -203,7 +203,6 @@ function	onLoadTask_new()
 			if(document.getElementById('vouchermis.departmentid'))
 			{
 				var d = document.getElementById('vouchermis.departmentid');
-				d.options[d.selectedIndex].text='----Choose----';
 				d.options[d.selectedIndex].text.value=d;
 			}
 			</s:if>

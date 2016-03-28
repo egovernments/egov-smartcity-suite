@@ -45,7 +45,12 @@
  */
 package com.exilant.eGov.src.common;
 
-//import java.sql.*;
+
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import java.sql.*;
 
 import java.sql.Connection;
 import java.util.List;
@@ -66,6 +71,10 @@ import com.exilant.exility.common.TaskFailedException;
  */
 @Transactional(readOnly = true)
 public class LoadSubLedgerSalaryData extends AbstractTask {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private final static Logger LOGGER = Logger.getLogger(LoadSubLedgerSalaryData.class);
     private static TaskFailedException taskExc;
 
@@ -90,7 +99,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                     " where  sph.salarybillid=sbd.id and sph.voucherheaderid=vh.id and vh.cgn= ?";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+            pst = persistenceService.getSession().createSQLQuery(sql);
             pst.setString(0, cgn);
             rset = pst.list();
             for (final Object[] element : rset) {
@@ -113,7 +122,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                     " sph.voucherheaderid=vh.id  and f.id=vh.fundid and fs.id=vh.fundSourceid and vh.cgn= ?";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+            pst = persistenceService.getSession().createSQLQuery(sql);
             pst.setString(0, cgn);
             rset = pst.list();
             for (final Object[] element : rset) {
@@ -129,7 +138,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                     " a.cashinhand=b.id and a.chequeinhand=c.id and b.id!=c.id and a.id= ?";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+            pst = persistenceService.getSession().createSQLQuery(sql);
             pst.setString(0, dc.getValue("subLedgerPaymentHeader_paidBy"));
             rset = pst.list();
             for (final Object[] element : rset) {
@@ -144,7 +153,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                     " a.id=b.bankid and b.id=c.branchid and c.id= ?";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+            pst = persistenceService.getSession().createSQLQuery(sql);
             pst.setString(0, dc.getValue("accId"));
             rset = pst.list();
             for (final Object[] element : rset)
@@ -156,7 +165,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                     " sph.salarybillid=s.id and sph.voucherheaderid in(select id from voucherheader where cgn= ?)";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+            pst = persistenceService.getSession().createSQLQuery(sql);
             pst.setString(0, cgn);
             rset = pst.list();
             for (final Object[] element : rset)
@@ -177,7 +186,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                         " sph.salarybillid=s.id and sph.voucherheaderid in(select id from voucherheader where cgn= ?) ";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(sql);
-                pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+                pst = persistenceService.getSession().createSQLQuery(sql);
                 pst.setString(0, cgn);
                 rset = pst.list();
 
@@ -220,7 +229,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                     " and (chequeid is  null or chequeid =0 )and vh.cgn= ?";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+            pst = persistenceService.getSession().createSQLQuery(sql);
             pst.setString(0, cgn);
             pst.setString(1, cgn);
             rset = pst.list();

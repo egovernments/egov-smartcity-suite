@@ -44,6 +44,9 @@
 
 package com.exilant.eGov.src.domain;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -65,6 +68,10 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 @Transactional(readOnly = true)
 public class GeneralLedger {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private String id = null;
     private String voucherLineId = "0";
     private String effectiveDate = "1-Jan-1900";
@@ -124,7 +131,7 @@ public class GeneralLedger {
 
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(insertQuery);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+            pst = persistenceService.getSession().createSQLQuery(insertQuery);
             pst.setBigInteger(0, BigInteger.valueOf(Long.valueOf(id)));
             pst.setBigInteger(1,voucherLineId == null ?BigInteger.ZERO:BigInteger.valueOf(Long.valueOf(voucherLineId)));
             pst.setTimestamp(2, dt);
@@ -193,7 +200,7 @@ public class GeneralLedger {
         query.append(" where id=?");
         try {
             int i = 1;
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
+            pstmt = persistenceService.getSession().createSQLQuery(query.toString());
             if (voucherLineId != null)
                 pstmt.setString(i++, voucherLineId);
             if (effectiveDate != null)
@@ -251,7 +258,7 @@ public class GeneralLedger {
                     + " AND VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (CreditAmount)--> " + selQuery);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
+            pst = persistenceService.getSession().createSQLQuery(selQuery);
             pst.setInteger(0, FUND);
             pst.setInteger(1, ACCOUNTDETAILTYPE);
             pst.setInteger(2, ACCOUNTDETAILKEY);
@@ -269,7 +276,7 @@ public class GeneralLedger {
                     + " VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (DebitAmount)--> " + selQuery);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
+            pst = persistenceService.getSession().createSQLQuery(selQuery);
             pst.setInteger(0, FUND);
             pst.setInteger(1, ACCOUNTDETAILTYPE);
             pst.setInteger(2, ACCOUNTDETAILKEY);
@@ -346,7 +353,7 @@ public class GeneralLedger {
                     + " AND VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (CreditAmount)--> " + selQuery);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
+            pst = persistenceService.getSession().createSQLQuery(selQuery);
             pst.setInteger(0, FUND);
             pst.setInteger(1, ACCOUNTDETAILTYPE);
             pst.setInteger(2, ACCOUNTDETAILKEY);
@@ -364,7 +371,7 @@ public class GeneralLedger {
                     + "VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (DebitAmount)--> " + selQuery);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
+            pst = persistenceService.getSession().createSQLQuery(selQuery);
             pst.setInteger(0, FUND);
             pst.setInteger(1, ACCOUNTDETAILTYPE);
             pst.setInteger(2, ACCOUNTDETAILKEY);

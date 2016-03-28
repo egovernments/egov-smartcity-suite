@@ -83,16 +83,17 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public String getBillPayee() {
+        AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
         if (advertisement != null)
         { 
-            if (collectionType != null && advertisement.getActiveAdvertisementPermit() != null
+            if (collectionType != null && advPermit != null
                     && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType)) {
-                return advertisement.getActiveAdvertisementPermit().getOwnerDetail();
+                
+                return (advPermit.getAgency() != null && advPermit.getAgency().getName()!=null? advPermit.getAgency().getName():(advPermit.getOwnerDetail()!=null ? advPermit.getOwnerDetail(): " ") );
             } else
             {
-                return advertisement.getActiveAdvertisementPermit() != null
-                        && advertisement.getActiveAdvertisementPermit().getAgency() != null ? advertisement
-                        .getActiveAdvertisementPermit().getAgency().getName() : " ";
+                return advPermit != null
+                        && advPermit.getAgency() != null && advPermit.getAgency().getName()!=null ? advPermit.getAgency().getName() : " ";
             }
         }
         return null;
@@ -100,13 +101,13 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public String getBillAddress() {
-        AdvertisementPermitDetail advPermit=null;
+        AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
         if (advertisement != null){
             if (collectionType != null && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType))
-                return " ";
+                return (advPermit!=null && advPermit.getAgency() != null && advPermit.getAgency().getAddress()!=null) ? advPermit.getAgency().getAddress() : ( advPermit != null && advPermit.getOwnerDetail()!=null?advPermit.getOwnerDetail():" ");
             else
             {
-                 advPermit=  advertisement.getActiveAdvertisementPermit();
+            //     advPermit=  advertisement.getActiveAdvertisementPermit();
                 return advPermit!=null && advPermit.getAgency() != null && advPermit.getAgency().getAddress()!=null ? advPermit.getAgency().getAddress() : " ";
             }
         }

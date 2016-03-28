@@ -41,11 +41,13 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css" />
 <title>Cheque Assignment Search</title>
 </head>
 <body>
-	<s:form action="chequeAssignment" theme="simple">
+	<s:form action="chequeAssignment" theme="simple"
+		name="chequeAssignment" id="chequeAssignment">
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Cheque Assignment Search" />
 		</jsp:include>
@@ -102,7 +104,7 @@
 					<td class="greybox"></td>
 					<egov:ajaxdropdown id="bank_branch" fields="['Text','Value']"
 						dropdownId="bank_branch"
-						url="voucher/common!ajaxLoadBanksWithApprovedRemittances.action" />
+						url="voucher/common-ajaxLoadBanksWithApprovedRemittances.action" />
 					<td class="greybox"><s:text name="chq.assignment.bank" /><span
 						class="mandatory"></span></td>
 					<td class="greybox"><s:select name="bank_branch"
@@ -111,7 +113,7 @@
 							value="%{bank_branch}" /></td>
 					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
 						dropdownId="bankaccount"
-						url="voucher/common!ajaxLoadBankAccountsWithApprovedRemittances.action" />
+						url="voucher/common-ajaxLoadBankAccountsWithApprovedRemittances.action" />
 					<td class="greybox"><s:text name="chq.assignment.bankaccount" /><span
 						class="mandatory"></span></td>
 					<td class="greybox" colspan="2"><s:select name="bankaccount"
@@ -130,7 +132,7 @@
 			</table>
 			<div class="buttonbottom">
 				<s:submit method="searchChequesOfRemittance" value="Search"
-					id="searchBtn" cssClass="buttonsubmit" />
+					id="searchBtn" cssClass="buttonsubmit" onclick="submitForm()" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
@@ -138,39 +140,47 @@
 		<s:hidden name="bankbranch" id="bankbranch" />
 	</s:form>
 	<script>
-				var date='<s:date name="currentDate" format="dd/MM/yyyy"/>';
-				function loadBank(obj)
-				{
-				if(document.getElementById("recoveryId").value=="")
-				{
+		function submitForm() {
+
+			document.chequeAssignment.action = "/EGF/payment/chequeAssignment-searchChequesOfRemittance.action";
+			document.chequeAssignment.submit();
+		}
+		var date = '<s:date name="currentDate" format="dd/MM/yyyy"/>';
+		function loadBank(obj) {
+			if (document.getElementById("recoveryId").value == "") {
 				bootbox.alert("Please Select Recovery");
-				obj.value="-1";
+				obj.value = "-1";
 				return false;
-				}
-				var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
-				var revocery=document.getElementById("recoveryId").value;
-						if(obj.options[obj.selectedIndex].value!=-1)
-						populatebank_branch({fundId:obj.options[obj.selectedIndex].value+'&asOnDate='+date+'&recoveryId='+revocery});
-				}
-				function loadBankAccount(obj)
-				{
-					var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
-					var fund = document.getElementById('fundId');
-					if(obj.options[obj.selectedIndex].value!=-1)
-					{
-					var x=	obj.options[obj.selectedIndex].value.split("-");
-					document.getElementById("bankbranch").value=x[1];
-					var revocery=document.getElementById("recoveryId").value;
-					populatebankaccount({branchId:x[1]+'&asOnDate='+date,fundId:fund.options[fund.selectedIndex].value+'&recoveryId='+revocery});
-					}
-					
-				}
-			</script>
+			}
+			var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
+			var revocery = document.getElementById("recoveryId").value;
+			if (obj.options[obj.selectedIndex].value != -1)
+				populatebank_branch({
+					fundId : obj.options[obj.selectedIndex].value
+							+ '&asOnDate=' + date + '&recoveryId=' + revocery
+				});
+		}
+		function loadBankAccount(obj) {
+			var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
+			var fund = document.getElementById('fundId');
+			if (obj.options[obj.selectedIndex].value != -1) {
+				var x = obj.options[obj.selectedIndex].value.split("-");
+				document.getElementById("bankbranch").value = x[1];
+				var revocery = document.getElementById("recoveryId").value;
+				populatebankaccount({
+					branchId : x[1] + '&asOnDate=' + date,
+					fundId : fund.options[fund.selectedIndex].value
+							+ '&recoveryId=' + revocery
+				});
+			}
+
+		}
+	</script>
 	<s:if test="%{!validateUser('chequeassignment')}">
 		<script>
-					document.getElementById('searchBtn').disabled=true;
-					document.getElementById('errorSpan').innerHTML='<s:text name="chq.assignment.invalid.user"/>'
-				</script>
+			document.getElementById('searchBtn').disabled = true;
+			document.getElementById('errorSpan').innerHTML = '<s:text name="chq.assignment.invalid.user"/>'
+		</script>
 	</s:if>
 </body>
 </html>

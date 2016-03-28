@@ -41,7 +41,6 @@
  *
  */
 package org.egov.utils;
-
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -57,9 +56,9 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
-import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
@@ -68,7 +67,6 @@ import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
@@ -97,8 +95,9 @@ public class VoucherHelper {
     private EGovernCommon eGovernCommon;
     @Autowired
     private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
+    
     @Autowired
-    private CommonsServiceImpl commonsService;
+    private FinancialYearHibernateDAO financialYearDAO;
 
     @Autowired
     private DBSequenceGenerator dbSequenceGenerator;
@@ -260,7 +259,7 @@ public class VoucherHelper {
     {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" In EGovernCommon :getEg_Voucher method ");
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createSQLQuery(
                 "select name from fiscalperiod where id=" + Integer.parseInt(fiscalPeriodIdStr) + "");
         final List<String> fc = query.list();
         // Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and fiscalPeriodIdStr 7
@@ -289,7 +288,7 @@ public class VoucherHelper {
         final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO.getFiscalPeriodByDate(voucherDate);
         if(fiscalPeriod==null)
             throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
-        final Fund vFund = fundDAO.fundById(fundId);
+        final Fund vFund = fundDAO.fundById(fundId,false);
         final String fundIdentifier = vFund.getIdentifier().toString();
         final String sequenceName = sequenceNameFor(fundIdentifier + "/" + voucherType, fiscalPeriod.getName());
         final String transNumber = "";
@@ -318,7 +317,7 @@ public class VoucherHelper {
                     voucherType,
                      "transNumber",
                      transNumber, "vNumGenMode", vNumGenMode, "date", voucherDate, "month", month, "commonsService",
-                     commonsService, "dbSequenceGenerator", dbSequenceGenerator, "sequenceNumberGenerator",
+                     financialYearDAO, "dbSequenceGenerator", dbSequenceGenerator, "sequenceNumberGenerator",
                      sequenceNumberGenerator, "voucherNumber", voucherNumber, "sequenceName", sequenceName);
              fVoucherNumber = (String) scriptService.executeScript(scriptName, scriptContext);
 

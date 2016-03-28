@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.revenue;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -66,7 +69,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.ReportHelper;
 import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -75,8 +78,12 @@ import org.springframework.transaction.annotation.Transactional;
                         "application/xls", "contentDisposition", "no-cache;filename=FixedDepositReport.xls" })
 })
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+
 public class FixedDepositAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final long serialVersionUID = -145348568312338226L;
     protected List<FixedDeposit> fixedDepositList;
     private List<Bankbranch> bankBranchList;
@@ -265,7 +272,7 @@ public class FixedDepositAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     public String getUlbName() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createSQLQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)

@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -65,7 +68,7 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.exility.common.TaskFailedException;
@@ -88,7 +91,11 @@ public class JournalBookReportAction extends BaseFormAction {
     private GeneralLedgerBean journalBookReport = new GeneralLedgerBean();
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private List<GeneralLedgerBean> journalBookDisplayList = new ArrayList<GeneralLedgerBean>();
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     String heading = "";
 
@@ -146,7 +153,7 @@ public class JournalBookReportAction extends BaseFormAction {
     private void prepareResultList() {
         String voucherDate = "", voucherNumber = "", voucherName = "", narration = "";
         Query query = null;
-        query = HibernateUtil.getCurrentSession().createSQLQuery(getQuery())
+        query = persistenceService.getSession().createSQLQuery(getQuery())
                 .addScalar("voucherdate", StringType.INSTANCE)
                 .addScalar("vouchernumber", StringType.INSTANCE)
                 .addScalar("code", StringType.INSTANCE)

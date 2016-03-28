@@ -50,7 +50,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.commons.CFinancialYear;
+import org.egov.commons.Installment;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -65,8 +65,8 @@ public class AdvertisementBatchDemandGenerate extends AbstractAuditable {
 
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "financialyear", nullable = false)
-    private CFinancialYear financialYear;
+    @JoinColumn(name = "installment", nullable = false)
+    private Installment installment;
 
     @NotNull
     private Boolean active;
@@ -84,12 +84,13 @@ public class AdvertisementBatchDemandGenerate extends AbstractAuditable {
         this.id = id;
     }
 
-    public CFinancialYear getFinancialYear() {
-        return financialYear;
+    
+    public Installment getInstallment() {
+        return installment;
     }
 
-    public void setFinancialYear(CFinancialYear financialYear) {
-        this.financialYear = financialYear;
+    public void setInstallment(Installment installment) {
+        this.installment = installment;
     }
 
     public Boolean getActive() {

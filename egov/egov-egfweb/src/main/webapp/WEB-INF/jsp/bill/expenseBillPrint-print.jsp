@@ -72,13 +72,21 @@
 }
 </style>
 <script>
-function exportXls(){
-	window.open('/EGF/bill/expenseBillPrint-exportXls.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
-}
+	function exportXls() {
+		window
+				.open(
+						'/EGF/bill/expenseBillPrint-exportXls.action?id=<s:property value="id"/>',
+						'',
+						'resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	}
 
-function exportPdf(){
-	window.open('/EGF/bill/expenseBillPrint-exportPdf.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
-}
+	function exportPdf() {
+		window
+				.open(
+						'/EGF/bill/expenseBillPrint-exportPdf.action?id=<s:property value="id"/>',
+						'',
+						'resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	}
 </script>
 
 <body>
@@ -89,7 +97,7 @@ function exportPdf(){
 	<s:form name="expenseBillPrint" action="expenseBillPrint"
 		theme="simple">
 		<input type="hidden" name="id" value='<s:property value="id"/>' />
-		<div id="buttons">
+		<div id="buttons" class="buttonbottom">
 			<input type="button" id="btnPrint"
 				onclick="javascript:parent.report.print();" value="Print"
 				class="button" />

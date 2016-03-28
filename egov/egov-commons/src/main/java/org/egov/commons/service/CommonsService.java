@@ -461,7 +461,7 @@ public interface CommonsService {
     /**
      * Returns All FinancialYear List
      */
-    public Collection<FinancialYear> getFinancialYearList() throws Exception;
+    public Collection<CFinancialYear> getFinancialYearList() throws Exception;
 
     /**
      * This API will return the transaction no for any type of txn. Input

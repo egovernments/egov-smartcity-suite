@@ -39,59 +39,88 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
-public class FiscalPeriodHibernateDAO extends GenericHibernateDAO implements FiscalPeriodDAO {
-	
-	private final Logger logger = Logger.getLogger(getClass().getName());
-	public FiscalPeriodHibernateDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
+public class FiscalPeriodHibernateDAO   implements FiscalPeriodDAO {
+    @Transactional
+    public CFiscalPeriod update(final CFiscalPeriod entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-	}
-	
-	public FiscalPeriodHibernateDAO(){
-		super(CFiscalPeriod.class,null);
-	}
-	
-	public String getFiscalPeriodIds(String financialYearId)
-	{
-	    logger.info("Obtained session");
-        StringBuffer result=new StringBuffer();
-        Query query=HibernateUtil.getCurrentSession().createQuery("select cfiscalperiod.id from CFiscalPeriod cfiscalperiod where cfiscalperiod.financialYearId = '"+financialYearId+"'  ");
-        ArrayList list= (ArrayList)query.list();
-    	if(list.size()> 0){
-        	if(list.get(0) == null)
-        		return 0.0+"";
-        	else	{
-        		for(int i = 0; i < list.size(); i++){
-        			result.append(list.get(i).toString());
-        			if( list.size()- i !=  1)
-        				result.append(",");
-        		}
-        	}
+    @Transactional
+    public CFiscalPeriod create(final CFiscalPeriod entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(CFiscalPeriod entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public CFiscalPeriod findById(Number id, boolean lock) {
+        return (CFiscalPeriod) getCurrentSession().load(CFiscalPeriod.class, id);
+    }
+
+    public List<CFiscalPeriod> findAll() {
+        return (List<CFiscalPeriod>) getCurrentSession().createCriteria(CFiscalPeriod.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    private final Logger logger = Logger.getLogger(getClass().getName());
+
+    public String getFiscalPeriodIds(String financialYearId) {
+        logger.info("Obtained session");
+        StringBuffer result = new StringBuffer();
+        Query query = getCurrentSession().createQuery(
+                "select cfiscalperiod.id from CFiscalPeriod cfiscalperiod where cfiscalperiod.financialYearId = '"
+                        + financialYearId + "'  ");
+        ArrayList list = (ArrayList) query.list();
+        if (list.size() > 0) {
+            if (list.get(0) == null)
+                return 0.0 + "";
+            else {
+                for (int i = 0; i < list.size(); i++) {
+                    result.append(list.get(i).toString());
+                    if (list.size() - i != 1)
+                        result.append(",");
+                }
             }
-        else
-            return 0.0+"";	
+        } else
+            return 0.0 + "";
         return result.toString();
-	}
-	/**
+    }
+
+    /**
 	 * 
 	 */
-	public CFiscalPeriod getFiscalPeriodByDate(Date voucherDate)
-	{
-		Query query=HibernateUtil.getCurrentSession().createQuery("from CFiscalPeriod fp where  :voucherDate between fp.startingDate and fp.endingDate");
-        query.setDate("voucherDate",voucherDate);
+    public CFiscalPeriod getFiscalPeriodByDate(Date voucherDate) {
+        Query query = getCurrentSession().createQuery(
+                "from CFiscalPeriod fp where  :voucherDate between fp.startingDate and fp.endingDate");
+        query.setDate("voucherDate", voucherDate);
         query.setCacheable(true);
-        return (CFiscalPeriod)query.uniqueResult();
-	}
+        return (CFiscalPeriod) query.uniqueResult();
+    }
 
 }

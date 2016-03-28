@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.services.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +62,10 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 
 public class IncomeExpenditureService extends ReportService {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final String I = "I";
     private static final String E = "E";
     private static final String IE = "IE";
@@ -463,7 +470,7 @@ public class IncomeExpenditureService extends ReportService {
         queryStr.append(" order by 1");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query is " + queryStr.toString());
-        final SQLQuery budgteQuery = HibernateUtil.getCurrentSession().createSQLQuery(queryStr.toString());
+        final SQLQuery budgteQuery = persistenceService.getSession().createSQLQuery(queryStr.toString());
         budgteQuery.addScalar("glCode").addScalar("amount")
         .setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
         budgteQuery.setLong("finYearId", incomeExpenditureStatement.getFinancialYear().getId())
@@ -495,7 +502,7 @@ public class IncomeExpenditureService extends ReportService {
         queryStr.append(" order by 1 asc");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query is " + queryStr.toString());
-        final SQLQuery budgteReappQuery = HibernateUtil.getCurrentSession().createSQLQuery(queryStr.toString());
+        final SQLQuery budgteReappQuery = persistenceService.getSession().createSQLQuery(queryStr.toString());
         budgteReappQuery.addScalar("glCode").addScalar("amount")
         .setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
         budgteReappQuery.setLong("finYearId", incomeExpenditureStatement.getFinancialYear().getId())

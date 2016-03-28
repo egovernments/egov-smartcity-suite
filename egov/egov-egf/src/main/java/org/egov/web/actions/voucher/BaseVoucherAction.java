@@ -42,6 +42,9 @@
  */
 package org.egov.web.actions.voucher;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -115,7 +118,11 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected UserService userMngr;
     protected EisUtilService eisService;
     protected AssignmentService assignmentService;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ protected PersistenceService persistenceService;
+ @Autowired
     private VoucherTypeForULB voucherTypeForULB;
     protected SecurityUtils securityUtils;
     protected String reversalVoucherNumber;
@@ -128,10 +135,10 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
     private @Autowired CreateVoucher createVoucher;
     Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
-    
+
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     public BaseVoucherAction()
     {
         voucherHeader.setVouchermis(new Vouchermis());
@@ -231,7 +238,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     public boolean isBankBalanceMandatory()
     {
         final AppConfigValues appConfigValues = (AppConfigValues) persistenceService
-                .find("from AppConfigValues where key in (select id from AppConfig where key_name='bank_balance_mandatory' and module='EGF' )");
+                .find("from AppConfigValues where key in (select id from AppConfig where key_name='bank_balance_mandatory' and module.name='EGF' )");
         if (appConfigValues == null)
             throw new ValidationException("", "bank_balance_mandatory parameter is not defined");
         return appConfigValues.getValue().equals("Y") ? true : false;
@@ -341,7 +348,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                     if (voucherHeader.getIsRestrictedtoOneFunctionCenter())
                         detailMap.put(VoucherConstant.FUNCTIONCODE, voucherHeader.getVouchermis().getFunction().getCode());
                     else if (null != voucherDetail.getFunctionIdDetail()) {
-                        final CFunction function = (CFunction) HibernateUtil.getCurrentSession().load(CFunction.class,
+                        final CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
                                 voucherDetail.getFunctionIdDetail());
                         detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
                     } else if (null != voucherHeader.getVouchermis().getFunction())
@@ -406,7 +413,6 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         return voucherHeader;
 
     }
-
 
     protected boolean validateData(final List<VoucherDetails> billDetailslist, final List<VoucherDetails> subLedgerList) {
         BigDecimal totalDrAmt = BigDecimal.ZERO;
@@ -748,7 +754,8 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected void removeEmptyRowsAccoutDetail(final List list) {
         for (final Iterator<VoucherDetails> detail = list.iterator(); detail.hasNext();) {
             final VoucherDetails next = detail.next();
-            if (next != null && next.getGlcodeDetail().trim().isEmpty() && next.getFunctionDetail().trim().isEmpty()
+            if (next != null && (next.getGlcodeDetail() == null || next.getGlcodeDetail().trim().isEmpty())
+                    && (next.getFunctionDetail() == null || next.getFunctionDetail().trim().isEmpty())
                     &&
                     next.getDebitAmountDetail().equals(BigDecimal.ZERO) && next.getCreditAmountDetail().equals(BigDecimal.ZERO))
                 detail.remove();

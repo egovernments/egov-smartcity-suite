@@ -221,8 +221,8 @@ function makeAmountFieldFormatter(prefix,suffix){
 
 	var makeBudgetReAppropriationTable = function() {
 		var budgetReAppropriationColumns = [ 
-			{key:"budgetDetail.budget.id",label:'Budget <span class="mandatory">*</span>',width:90, formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),dropdownOptions:budgetOptions},
-			{key:"budgetDetail.budgetGroup.id",label:'Budget Group <span class="mandatory">*</span>',width:90, formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),dropdownOptions:budgetGroupOptions},
+			{key:"budgetDetail.budget.id",label:'Budget <span class="mandatory1">*</span>',width:90, formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),dropdownOptions:budgetOptions},
+			{key:"budgetDetail.budgetGroup.id",label:'Budget Group <span class="mandatory1">*</span>',width:120, formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),dropdownOptions:budgetGroupOptions},
 			<s:if test="%{shouldShowField('executingDepartment')}">				
 				{key:"budgetDetail.executingDepartment.id", label:'Executing Department'+mandatorySign('executingDepartment'),width:90,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST), dropdownOptions:executingDepartmentOptions},				
 			</s:if>

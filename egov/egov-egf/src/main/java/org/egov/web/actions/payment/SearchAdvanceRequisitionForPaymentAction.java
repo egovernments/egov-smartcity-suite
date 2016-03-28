@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,13 +61,17 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.FlushMode;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @Results({
     @Result(name = "search", location = "searchAdvanceRequisitionForPayment-search.jsp")
 })
 public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(SearchAdvanceRequisitionForPaymentAction.class);
     public static final String ARF_STATUS_APPROVED = "APPROVED";
@@ -148,8 +155,8 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction {
     }
 
     public String searchList() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         boolean isError = false;
         if (fromDate != null && toDate == null) {
             addFieldError("toDate", getText("search.toDate.null"));

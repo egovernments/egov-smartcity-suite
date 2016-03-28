@@ -39,13 +39,16 @@
 package org.egov.tl.service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.repository.CFinancialYearRepository;
 import org.egov.demand.dao.DemandGenericHibDao;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
@@ -56,11 +59,8 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
 import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.enums.ProcessStatus;
-import org.egov.tl.repository.DemandGenerationLogDetailRepository;
-import org.egov.tl.repository.DemandGenerationLogRepository;
 import org.egov.tl.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,13 +96,10 @@ public class DemandGenerationService {
     private FeeMatrixService feeMatrixService;
 
     @Autowired
-    private DemandGenerationLogRepository demandGenerationLogRepository;
-
-    @Autowired
-    private DemandGenerationLogDetailRepository demandGenerationLogDetailRepository;
-
-    @Autowired
     private ApplicationProperties applicationProperties;
+
+    @Autowired
+    public DemandGenerationLogService demandGenerationLogService;
 
     public List<CFinancialYear> financialYearList() {
         return cFinancialYearRepository.getAllFinancialYears();
@@ -110,6 +107,10 @@ public class DemandGenerationService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
     public DemandGenerationLog bulkDemandGeneration(DemandGenerationLog demandGenerationLog) {
+        final DemandGenerationLog existingDemandGenLog = demandGenerationLogService
+                .findByInstallmentYear(demandGenerationLog.getInstallmentYear());
+        if (existingDemandGenLog != null)
+            return existingDemandGenLog;
         final CFinancialYear financialYear = cFinancialYearRepository
                 .findByFinYearRange(demandGenerationLog.getInstallmentYear());
         final Module module = moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME);
@@ -118,73 +119,35 @@ public class DemandGenerationService {
         final List<TradeLicense> licenses = tradeLicenseService
                 .getAllLicensesByNatureOfBusiness(Constants.PERMANENT_NATUREOFBUSINESS);
         ProcessStatus demandGenerationStatus = ProcessStatus.COMPLETED;
-        demandGenerationLog = createDemandGenerationLog(demandGenerationLog);
+        demandGenerationLog = demandGenerationLogService.createDemandGenerationLog(demandGenerationLog);
         int batchUpdateCount = 0;
         final int batchSize = applicationProperties.getBatchUpdateSize();
         for (final TradeLicense license : licenses) {
-            final DemandGenerationLogDetail demandGenerationLogDetail = createDemandGenerationLogDetail(
-                    demandGenerationLog, license);
+            final DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService
+                    .createDemandGenerationLogDetail(demandGenerationLog, license);
             try {
                 if (!license.getCurrentDemand().getEgInstallmentMaster().equals(currentInstallment)) {
                     if (!license.getIsActive()) {
-                        updateDemandGenerationLogDetail(demandGenerationLogDetail, ProcessStatus.INCOMPLETE,
+                        demandGenerationLogService.updateDemandGenerationLogDetail(demandGenerationLogDetail,
+                                ProcessStatus.INCOMPLETE,
                                 "License Not Active");
                         continue;
                     }
-                    final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
-                    for (final FeeMatrixDetail fm : feeList) {
-                        if (fm.getFeeMatrix().getFeeType().getName().contains("Late"))
-                            continue;
-                        final EgDemandReasonMaster reasonMaster = demandGenericDao
-                                .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), module);
-                        final EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster,
-                                currentInstallment,
-                                module);
-                        license.getLicenseDemand().getEgDemandDetails()
-                                .add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
-                        license.getLicenseDemand().setEgInstallmentMaster(currentInstallment);
-                    }
-                    tradeLicenseService.recalculateBaseDemand(license.getLicenseDemand());
-                    tradeLicenseService.licensePersitenceService().persist(license);
+                    calculateAndPersistFeeForDemand(module, currentInstallment, license);
                     batchUpdateFlush(++batchUpdateCount, batchSize);
-                    updateDemandGenerationLogDetail(demandGenerationLogDetail, ProcessStatus.COMPLETED, "Successful");
-                } else {
-                    updateDemandGenerationLogDetail(demandGenerationLogDetail, ProcessStatus.COMPLETED, "Demand exist");
-                }
+                    demandGenerationLogService.updateDemandGenerationLogDetail(demandGenerationLogDetail, ProcessStatus.COMPLETED,
+                            "Successful");
+                } else
+                    demandGenerationLogService.updateDemandGenerationLogDetail(demandGenerationLogDetail, ProcessStatus.COMPLETED,
+                            "Demand exist");
             } catch (final RuntimeException e) {
                 demandGenerationStatus = ProcessStatus.INCOMPLETE;
                 updateDemandGenerationLogDetailOnException(demandGenerationLogDetail, e);
             }
         }
-        demandGenerationLog.setExecutionStatus(ProcessStatus.COMPLETED);
-        demandGenerationLog.setDemandGenerationStatus(demandGenerationStatus);
-        return demandGenerationLogRepository.save(demandGenerationLog);
-    }
+        return demandGenerationLogService.updateDemandGenerationLog(demandGenerationLog, ProcessStatus.COMPLETED,
+                demandGenerationStatus);
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public DemandGenerationLog createDemandGenerationLog(final DemandGenerationLog demandGenerationLog) {
-        demandGenerationLog.setExecutionStatus(ProcessStatus.INPROGRESS);
-        demandGenerationLog.setDemandGenerationStatus(ProcessStatus.INCOMPLETE);
-        return demandGenerationLogRepository.save(demandGenerationLog);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public DemandGenerationLogDetail createDemandGenerationLogDetail(final DemandGenerationLog demandGenerationLog,
-            final License license) {
-        final DemandGenerationLogDetail demandGenerationLogDetail = new DemandGenerationLogDetail();
-        demandGenerationLogDetail.setLicense(license);
-        demandGenerationLogDetail.setDemandGenerationLog(demandGenerationLog);
-        demandGenerationLogDetail.setStatus(ProcessStatus.INPROGRESS);
-        demandGenerationLog.getDetails().add(demandGenerationLogDetail);
-        return demandGenerationLogDetailRepository.save(demandGenerationLogDetail);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateDemandGenerationLogDetail(final DemandGenerationLogDetail demandGenerationLogDetail,
-            final ProcessStatus status, final String details) {
-        demandGenerationLogDetail.setStatus(status);
-        demandGenerationLogDetail.setDetail(details);
-        demandGenerationLogDetailRepository.save(demandGenerationLogDetail);
     }
 
     private void updateDemandGenerationLogDetailOnException(final DemandGenerationLogDetail demandGenerationLogDetail,
@@ -195,13 +158,98 @@ public class DemandGenerationService {
             error = ((ValidationException) e).getErrors().get(0).getMessage();
         else
             error = "Error : " + e;
-        updateDemandGenerationLogDetail(demandGenerationLogDetail, ProcessStatus.INCOMPLETE, error);
+        demandGenerationLogService.updateDemandGenerationLogDetail(demandGenerationLogDetail, ProcessStatus.INCOMPLETE, error);
     }
-    
+
     private void batchUpdateFlush(final int batchUpdateCount, final int batchSize) {
         if (batchUpdateCount % batchSize == 0) {
             tradeLicenseService.licensePersitenceService().getSession().flush();
             tradeLicenseService.licensePersitenceService().getSession().clear();
         }
+    }
+
+    public EgDemandDetails getDemandDetailByDemandReason(final EgDemand currentDemand, final String demandReasonCode) {
+        EgDemandDetails demandDetail = null;
+        if (currentDemand == null) {
+        } else
+            for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
+                if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(demandReasonCode))
+                    demandDetail = dmdDet;
+
+        return demandDetail;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
+    public DemandGenerationLog demandRegeneration(final DemandGenerationLog demandGenerationLog) {
+        final CFinancialYear financialYear = cFinancialYearRepository
+                .findByFinYearRange(demandGenerationLog.getInstallmentYear());
+        final Module module = moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME);
+        final Installment currentInstallment = installmentDao.getInsatllmentByModuleForGivenDate(module,
+                financialYear.getStartingDate());
+        ProcessStatus demandGenerationStatus = ProcessStatus.COMPLETED;
+        final DemandGenerationLog existingDemandGenLog = demandGenerationLogService
+                .findByInstallmentYear(demandGenerationLog.getInstallmentYear());
+        if (existingDemandGenLog != null)
+            demandGenerationLogService.createDemandGenerationLog(existingDemandGenLog);
+        int batchUpdateCount = 0;
+        final int batchSize = applicationProperties.getBatchUpdateSize();
+        for (final DemandGenerationLogDetail demandGenerationLogDetail : existingDemandGenLog.getDetails()) {
+            final TradeLicense license = (TradeLicense) demandGenerationLogDetail.getLicense();
+            try {
+                if (!license.getCurrentDemand().getEgInstallmentMaster().equals(currentInstallment)) {
+                    if (!demandGenerationLogDetail.getLicense().getIsActive()) {
+                        demandGenerationLogService.updateDemandGenerationLogDetail(demandGenerationLogDetail,
+                                ProcessStatus.INCOMPLETE, "License Not Active");
+                        continue;
+                    }
+                    calculateAndPersistFeeForDemand(module, currentInstallment, license);
+                    batchUpdateFlush(++batchUpdateCount, batchSize);
+                    demandGenerationLogService.updateDemandGenerationLogDetail(demandGenerationLogDetail, ProcessStatus.COMPLETED,
+                            "Successful");
+                } else
+                    demandGenerationLogService.updateDemandGenerationLogDetail(demandGenerationLogDetail, ProcessStatus.COMPLETED,
+                            "Demand exist");
+            } catch (final RuntimeException e) {
+                demandGenerationStatus = ProcessStatus.INCOMPLETE;
+                updateDemandGenerationLogDetailOnException(demandGenerationLogDetail, e);
+            }
+        }
+        return demandGenerationLogService.updateDemandGenerationLog(existingDemandGenLog, ProcessStatus.COMPLETED,
+                demandGenerationStatus);
+
+    }
+
+    private void calculateAndPersistFeeForDemand(final Module module, final Installment currentInstallment,
+            final TradeLicense license) {
+        final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
+        for (final FeeMatrixDetail fm : feeList) {
+            if (fm.getFeeMatrix().getFeeType().getName().contains("Late"))
+                continue;
+            final EgDemandReasonMaster reasonMaster = demandGenericDao
+                    .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), module);
+            final EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster,
+                    currentInstallment,
+                    module);
+            final EgDemandDetails licenseDemandDetail = getReasonWiseDemandDetails(license.getCurrentDemand()).get(reason);
+            if (licenseDemandDetail == null)
+                license.getLicenseDemand().getEgDemandDetails()
+                        .add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
+            else
+                licenseDemandDetail.setAmount(fm.getAmount());
+            license.getLicenseDemand().setEgInstallmentMaster(currentInstallment);
+        }
+        tradeLicenseService.recalculateBaseDemand(license.getLicenseDemand());
+        tradeLicenseService.licensePersitenceService().persist(license);
+    }
+
+    public Map<EgDemandReason, EgDemandDetails> getReasonWiseDemandDetails(final EgDemand currentDemand) {
+        final Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = new HashMap<EgDemandReason, EgDemandDetails>();
+        if (currentDemand == null) {
+        } else
+            for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
+                if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.LICENSE_FEE_TYPE))
+                    reasonWiseDemandDetails.put(dmdDet.getEgDemandReason(), dmdDet);
+
+        return reasonWiseDemandDetails;
     }
 }

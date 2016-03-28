@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,9 +77,9 @@ import org.egov.web.actions.voucher.CommonAction;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+
+
 @Results({
     @Result(name = LoanGrantAction.NEW, location = "loanGrant-" + LoanGrantAction.NEW + ".jsp"),
     @Result(name = "search", location = "loanGrant-search.jsp"),
@@ -86,6 +89,10 @@ import org.springframework.transaction.annotation.Transactional;
     @Result(name = "view", location = "loanGrant-view.jsp")
 })
 public class LoanGrantAction extends LoanGrantBaseAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     /**
      *
      */
@@ -153,7 +160,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         projectCodeList = new ArrayList<LoanGrantBean>();
         final String strQuery = "select pc.id as id , pc.code as code, pc.name as name from egw_projectcode pc," +
                 " egf_subscheme_project sp where pc.id= sp.projectcodeid and sp.subschemeid=" + subSchemeId;
-        query = HibernateUtil.getCurrentSession().createSQLQuery(strQuery)
+        query = persistenceService.getSession().createSQLQuery(strQuery)
                 .addScalar("id", LongType.INSTANCE).addScalar("code").addScalar("name")
                 .setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
         projectCodeList = query.list();
@@ -389,7 +396,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
                     lgRecptDetail.setCreatedDate(currDate);
                     lgRecptDetail.setModifiedDate(currDate);
                 }
-            query = HibernateUtil.getCurrentSession().createSQLQuery(
+            query = persistenceService.getSession().createSQLQuery(
                     "delete from egf_subscheme_project where subschemeid= " + getSubSchemeId());
             query.executeUpdate();
             SubSchemeProject subSchemeProject;

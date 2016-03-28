@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -65,13 +68,12 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.pims.commons.Position;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
-@Transactional(readOnly = true)
 @Results({
     @Result(name = BudgetAction.NEW, location = "budget-" + BudgetAction.NEW + ".jsp"),
     @Result(name = "referenceBudgets", location = "budget-referenceBudgets.jsp"),
@@ -81,6 +83,10 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
     @Result(name = BudgetAction.EDIT, location = "budget-" + BudgetAction.EDIT + ".jsp")
 })
 public class BudgetAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final long serialVersionUID = 1L;
     private Budget budget = new Budget();
     private PersistenceService<Budget, Long> budgetService;
@@ -137,7 +143,7 @@ public class BudgetAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
+    
     @Action(value = "/budget/budget-create")
     public String create() {
         addMaterializedPath(budget);
@@ -220,7 +226,7 @@ public class BudgetAction extends BaseFormAction {
         return String.valueOf(val);
     }
 
-    @Transactional
+    
     @Action(value = "/budget/budget-save")
     public String save()
     {
@@ -233,7 +239,7 @@ public class BudgetAction extends BaseFormAction {
                 .getState().getId());
         }
         // This fix is for Phoenix Migration.budget.setState(state);
-        HibernateUtil.getCurrentSession().flush();
+        persistenceService.getSession().flush();
         budgetService.persist(budget);
         addActionMessage(getMessage("budget.update"));
         target = "SUCCESS";
@@ -251,7 +257,7 @@ public class BudgetAction extends BaseFormAction {
         return SEARCH;
     }
 
-    @Transactional
+    
     @SkipValidation
     @Action(value = "/budget/budget-edit")
     public String edit() {

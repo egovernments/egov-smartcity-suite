@@ -470,7 +470,7 @@ public class CollectionObjectFactory {
 		function.setCode(name + getRandomNumber());
 		function.setIsActive(true);
 		function.setIsNotLeaf(false);
-		function.setLevel(1);
+		///function.setLevel(1);
 		function.setType(name);
 		session.saveOrUpdate(function);
 		return function;
@@ -482,7 +482,7 @@ public class CollectionObjectFactory {
 		function.setCode(code);
 		function.setIsActive(true);
 		function.setIsNotLeaf(false);
-		function.setLevel(1);
+		//function.setLevel(1);
 		function.setType(name);
 		session.saveOrUpdate(function);
 		return function;

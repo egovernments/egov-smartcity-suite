@@ -89,6 +89,7 @@ function callAjaxForDefaultersReport() {
 	var fromDemand=jQuery('#fromDemand').val();
 	var toDemand=jQuery('#toDemand').val();
 	var limit=jQuery('#limit').val();
+	var ownerShipType=jQuery('#ownerShipType').val();
 	var today = new Date();
 	var formattedDate = today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear();
 	
@@ -102,7 +103,8 @@ function callAjaxForDefaultersReport() {
 						wardId : wardId,
 						fromDemand : fromDemand,
 						toDemand : toDemand,
-						limit : limit
+						limit : limit,
+						ownerShipType : ownerShipType
 					}
 				},
 				"sPaginationType" : "bootstrap",

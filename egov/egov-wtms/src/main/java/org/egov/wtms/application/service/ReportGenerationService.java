@@ -170,7 +170,7 @@ public class ReportGenerationService {
                 break;
             }
             List<Assignment> asignList = null;
-            final Position approverPos = waterTaxUtils.getCityLevelCommissionerPosition("Commissioner");
+            final Position approverPos = waterTaxUtils.getCityLevelCommissionerPosition("Commissioner",waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (approverPos != null) {
                 assignment = assignmentService
                         .getPrimaryAssignmentForPositionAndDate(

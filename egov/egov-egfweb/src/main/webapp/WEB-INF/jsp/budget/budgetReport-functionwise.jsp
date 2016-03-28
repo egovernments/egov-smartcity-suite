@@ -44,7 +44,7 @@
 <title>Budget Report - Functionwise</title>
 </head>
 <body>
-	<s:form action="budgetReport" theme="simple">
+	<s:form action="budgetReport" theme="simple" name="budgetDetailReportForm">
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Budget Report - Functionwise" />
 		</jsp:include>
@@ -53,8 +53,8 @@
 			<%@include file="budgetReport-form.jsp"%>
 			<s:hidden name="onSaveOrForward" />
 			<div class="buttonbottom" style="padding-bottom: 10px;">
-				<s:submit value="Submit" method="getFunctionwiseReport"
-					cssClass="buttonsubmit" onclick="return validateFinYear()" />
+				<s:submit value="Submit" cssClass="buttonsubmit"
+					onclick="return validateFinYear('getFunctionwiseReport');" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>

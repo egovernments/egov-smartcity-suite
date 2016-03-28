@@ -39,30 +39,51 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Accountdetailkey;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class AccountdetailkeyHibernateDAO extends GenericHibernateDAO {
-    
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
+public class AccountdetailkeyHibernateDAO  {
+    @Transactional
+    public Accountdetailkey update(final Accountdetailkey entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-	public AccountdetailkeyHibernateDAO() {
-		super(Accountdetailkey.class,null);
-	}
-	
-	public AccountdetailkeyHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+    @Transactional
+    public Accountdetailkey create(final Accountdetailkey entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(Accountdetailkey entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public Accountdetailkey findById(Number id, boolean lock) {
+        return (Accountdetailkey) getCurrentSession().load(Accountdetailkey.class, id);
+    }
+
+    public List<Accountdetailkey> findAll() {
+        return (List<Accountdetailkey>) getCurrentSession().createCriteria(Accountdetailkey.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+   
 }

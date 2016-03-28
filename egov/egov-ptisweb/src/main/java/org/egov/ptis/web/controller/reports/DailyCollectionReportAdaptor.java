@@ -57,7 +57,7 @@ public class DailyCollectionReportAdaptor implements JsonSerializer<DailyCollect
     @Override
     public JsonElement serialize(DailyCollectionReportResult dailyCollectionReportResult, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
-        final SimpleDateFormat receiptDateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        final SimpleDateFormat receiptDateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         jsonObject.addProperty("receiptNo", dailyCollectionReportResult.getReceiptNumber());
         jsonObject.addProperty("receiptDate", receiptDateFormatter.format(dailyCollectionReportResult.getReceiptDate()));
         jsonObject.addProperty("assessmentNumber", dailyCollectionReportResult.getAssessmentNumber());

@@ -40,8 +40,8 @@
 /**
  *
  */
-package org.egov.masters.services;
-
+package org.egov.masters.services;import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,7 +108,7 @@ public class AccountEntityService extends PersistenceService<AccountEntity, Inte
                 ids.add(id.intValue());
 
         List<EntityType> entities = new ArrayList<EntityType>();
-        final Query entitysQuery = HibernateUtil.getCurrentSession().createQuery(" from AccountEntity where id in ( :IDS )");
+        final Query entitysQuery = getSession().createQuery(" from AccountEntity where id in ( :IDS )");
         entitysQuery.setParameterList("IDS", ids);
         entities = entitysQuery.list();
         return entities;

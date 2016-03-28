@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.revenue;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -57,7 +60,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -65,8 +68,12 @@ import org.springframework.transaction.annotation.Transactional;
                 @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                         "application/xls", "contentDisposition", "no-cache;filename=StampDuty.xls" })
 })
-@Transactional(readOnly = true)
+
 public class StampDutyAction extends BaseRevenueAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     /**
      *
      */
@@ -87,7 +94,7 @@ public class StampDutyAction extends BaseRevenueAction {
     }
 
     public String getUlbName() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createSQLQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)

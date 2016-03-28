@@ -97,20 +97,24 @@
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>
-				<tr>
+				<%-- <tr>
 					<th colspan="4"></th>
 					<th colspan="2"><spring:message code="lbl.reamount" /></th>
 					<th colspan="2"><spring:message code="lbl.beamount" /></th>
-				</tr>
+				</tr> --%>
 				<tr>
 					<th><spring:message code="lbl.fund" /></th>
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.function" /></th>
 					<th><spring:message code="lbl.glcode" /></th>
-					<th><spring:message code="lbl.budgetedAmount" /></th>
-					<th><spring:message code="lbl.planningAmount" /></th>
-					<th><spring:message code="lbl.budgetedAmount" /></th>
-					<th><spring:message code="lbl.planningAmount" /></th>
+					<th><div id="REBudgetName1"></div> <spring:message
+							code="lbl.budgetedAmount" /></th>
+					<th><div id="REBudgetName2"></div> <spring:message
+							code="lbl.planningAmount" /></th>
+					<th><div id="BEBudgetName1"></div> <spring:message
+							code="lbl.budgetedAmount" /></th>
+					<th><div id="BEBudgetName2"></div> <spring:message
+							code="lbl.planningAmount" /></th>
 				</tr>
 			</thead>
 		</table>

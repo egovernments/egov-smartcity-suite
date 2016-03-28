@@ -45,50 +45,68 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Fund;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class FundHibernateDAO extends GenericHibernateDAO {
+public class FundHibernateDAO {
+    @Transactional
+    public Fund update(final Fund entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
+
+    @Transactional
+    public Fund create(final Fund entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(Fund entity) {
+        getCurrentSession().delete(entity);
+    }
+
+
+    public List<Fund> findAll() {
+        return (List<Fund>) getCurrentSession().createCriteria(Fund.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	public FundHibernateDAO() {
-		super(Fund.class, null);
-	}
-	
-	public FundHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+   
+    public List findAllActiveFunds() {
+        return getCurrentSession().createQuery("from Fund where isactive = true order by name").list();
 
-	public List findAllActiveFunds() {
-		return getCurrentSession().createQuery("from Fund where isactive = true order by name").list();
+    }
 
-	}
 
-	public Fund fundById(final Integer id) {
-		return (Fund) getCurrentSession().get(Fund.class, id.intValue());
-	}
+    /**
+     * This method returns all the <code>Fund</code> records which are active
+     * and is a leaf.
+     * 
+     * @return a <code>List</code> of <code>Fund</code> objects.
+     */
+    public List findAllActiveIsLeafFunds() {
+        return getCurrentSession().createQuery("from Fund where isactive = true and isnotleaf=false order by name")
+                .list();
+    }
 
-	/**
-	 * This method returns all the <code>Fund</code> records which are active and is a leaf.
-	 * @return a <code>List</code> of <code>Fund</code> objects.
-	 */
-	public List findAllActiveIsLeafFunds() {
-		return getCurrentSession().createQuery("from Fund where isactive = true and isnotleaf=false order by name").list();
-	}
+    public Fund fundByCode(final String fundCode) {
+        final Query qry = getCurrentSession().createQuery("FROM Fund f WHERE f.code =:fundCode");
+        qry.setString("fundCode", fundCode);
+        return (Fund) qry.uniqueResult();
+    }
 
-	public Fund fundByCode(final String fundCode) {
-		final Query qry = getCurrentSession().createQuery("FROM Fund f WHERE f.code =:fundCode");
-		qry.setString("fundCode", fundCode);
-		return (Fund) qry.uniqueResult();
-	}
+    public Fund fundById(Integer id, boolean b) {
+        return (Fund) getCurrentSession().get(Fund.class, id);
+    }
 }

@@ -48,9 +48,11 @@ package org.egov.deduction.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.deduction.model.Generalledgerdetail;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,34 +64,61 @@ import org.springframework.transaction.annotation.Transactional;
  * @version 1.00
  */
 @Transactional(readOnly = true)
-public class GeneralledgerdetailHibernateDAO extends GenericHibernateDAO
-{
-    public GeneralledgerdetailHibernateDAO(final Class persistentClass, final Session session)
-    {
-        super(persistentClass, session);
+public class GeneralledgerdetailHibernateDAO {
+    @Transactional
+    public Generalledgerdetail update(final Generalledgerdetail entity) {
+        getCurrentSession().update(entity);
+        return entity;
     }
 
-    public List<Generalledgerdetail> getGeneralledgerdetailByFilterBy(final Integer voucherHeaderId, final Integer purposeId)
-    {
-        final Query qry = HibernateUtil.getCurrentSession().createQuery(
-                " from Generalledgerdetail gld where gld.generalledger.voucherHeaderId =:voucherHeaderId  " +
-                "and gld.generalledger.glcodeId in(select id from CChartOfAccounts where purposeId =:purposeId) ");
+    @Transactional
+    public Generalledgerdetail create(final Generalledgerdetail entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(Generalledgerdetail entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public Generalledgerdetail findById(Number id, boolean lock) {
+        return (Generalledgerdetail) getCurrentSession().load(Generalledgerdetail.class, id);
+    }
+
+    public List<Generalledgerdetail> findAll() {
+        return (List<Generalledgerdetail>) getCurrentSession().createCriteria(Generalledgerdetail.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+
+    public List<Generalledgerdetail> getGeneralledgerdetailByFilterBy(final Integer voucherHeaderId,
+            final Integer purposeId) {
+        final Query qry = getCurrentSession()
+                .createQuery(
+                        " from Generalledgerdetail gld where gld.generalledger.voucherHeaderId =:voucherHeaderId  "
+                                + "and gld.generalledger.glcodeId in(select id from CChartOfAccounts where purposeId =:purposeId) ");
         qry.setInteger("voucherHeaderId", voucherHeaderId);
         qry.setInteger("purposeId", purposeId);
         return qry.list();
     }
 
-    public List<Generalledgerdetail> getGeneralledgerdetailByGlCodeId(final Integer glcodeId)
-    {
-        final Query qry = HibernateUtil.getCurrentSession().createQuery(
+    public List<Generalledgerdetail> getGeneralledgerdetailByGlCodeId(final Integer glcodeId) {
+        final Query qry = getCurrentSession().createQuery(
                 " from Generalledgerdetail gld where gld.generalledger.glcodeId =:glcodeId");
         qry.setInteger("glcodeId", glcodeId);
         return qry.list();
     }
 
-    public List<Generalledgerdetail> getGeneralledgerdetailByVhId(final Integer vhId)
-    {
-        final Query qry = HibernateUtil.getCurrentSession().createQuery(
+    public List<Generalledgerdetail> getGeneralledgerdetailByVhId(final Integer vhId) {
+        final Query qry = getCurrentSession().createQuery(
                 " from Generalledgerdetail gld where gld.generalledger.voucherHeaderId =:vhId");
         qry.setInteger("vhId", vhId);
         return qry.list();

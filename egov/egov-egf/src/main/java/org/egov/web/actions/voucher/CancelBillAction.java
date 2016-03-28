@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,11 +66,11 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.eGov.src.domain.BillRegisterBean;
 
-@Transactional(readOnly = true)
+
 @Results({
     @Result(name = "search", location = "cancelBill-search.jsp")
 })
@@ -84,7 +87,11 @@ public class CancelBillAction extends BaseFormAction {
     private boolean afterSearch = false;
     Integer loggedInUser = EgovThreadLocals.getUserId().intValue();
     public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     @Override
@@ -366,7 +373,7 @@ public class CancelBillAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Status Query - " + statusQuery.toString());
         final EgwStatus status = (EgwStatus) persistenceService.find(statusQuery.toString());
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = persistenceService.getSession();
 
         if (idListLength != 0)
         {

@@ -97,7 +97,7 @@
 									<b><s:property value="tradeName.name" />&nbsp;</b>
 								</td>
 							</tr>
-							<tr>
+							<%-- <tr>
 								<td width="40%">
 									<s:text name="license.zone" />
 									:
@@ -105,7 +105,7 @@
 								<td width="40%">
 									<b><s:property value="boundary.parent.name" />&nbsp;</b>
 								</td>
-							</tr>
+							</tr> --%>
 							<tr>
 								<td>
 									<s:text name="license.division" />

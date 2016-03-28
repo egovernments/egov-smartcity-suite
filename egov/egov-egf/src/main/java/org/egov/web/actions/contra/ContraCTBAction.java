@@ -30,6 +30,9 @@
  ******************************************************************************/
 package org.egov.web.actions.contra;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -70,12 +73,12 @@ import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.hibernate.search.annotations.CharFilterDef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 
-@Transactional(readOnly = true)
+
 @Results({
         @Result(name = ContraCTBAction.NEW, location = "contraCTB-" + ContraCTBAction.NEW + ".jsp")
 })
@@ -91,7 +94,11 @@ public class ContraCTBAction extends BaseVoucherAction
     private String message;
     private boolean close;
     private InstrumentService instrumentService;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     @Qualifier("instrumentHeaderService")
     private InstrumentHeaderService instrumentHeaderService;
     @Autowired
@@ -197,7 +204,7 @@ public class ContraCTBAction extends BaseVoucherAction
                     // contraService.postIntoBankreconciliation(voucherHeader,contraBean);
                     final List<InstrumentHeader> instrumentList = instrumentService
                             .addToInstrument(createInstruments(contraBean));
-                    HibernateUtil.getCurrentSession().flush();
+                    persistenceService.getSession().flush();
                     final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                             Integer.valueOf(contraBean.getAccountNumberId()));
                     final Map valuesMap = contraService.prepareForUpdateInstrumentDeposit(bankAccount.getChartofaccounts()
@@ -210,7 +217,7 @@ public class ContraCTBAction extends BaseVoucherAction
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("going to post into transactions");
                 final List<Transaxtion> transactions = contraService.postInTransaction(voucherHeader, contraBean);
-                HibernateUtil.getCurrentSession().flush();
+                persistenceService.getSession().flush();
                 Transaxtion txnList[] = new Transaxtion[transactions.size()];
                 txnList = transactions.toArray(txnList);
                 final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");

@@ -87,6 +87,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 public class EGovernCommon extends AbstractTask {
 	 
 	private final SimpleDateFormat dtFormat = new SimpleDateFormat("dd-MMM-yyyy");
+	
 	private static final Logger LOGGER = Logger.getLogger(EGovernCommon.class);
 	private static TaskFailedException taskExc;
 	private static final String EXILRPERROR = "exilRPError";
@@ -99,6 +100,7 @@ public class EGovernCommon extends AbstractTask {
 	private DBSequenceGenerator dbSequenceGenerator;
 	@Autowired
 	private SequenceNumberGenerator sequenceNumberGenerator;
+	
 
 	@Override
 	public void execute(final String taskName,
@@ -281,7 +283,7 @@ public class EGovernCommon extends AbstractTask {
 		BigInteger fiscalPeriod = null;
 		final String sql = "select id from fiscalperiod  where '" + vDate + "' between startingdate and endingdate";
 		try {
-			final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+			final Query pst = persistenceService.getSession().createSQLQuery(sql);
 			final List<BigInteger> rset = pst.list();
 			fiscalPeriod = rset != null ? rset.get(0) : BigInteger.ZERO;
 		} catch (final Exception e) {
@@ -309,7 +311,7 @@ public class EGovernCommon extends AbstractTask {
         try {
             final String query1 = "SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\" FROM financialYear WHERE startingDate <= '"
                     + vcDate + "' AND endingDate >= '" + vcDate + "'";
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(query1);
+            pst = persistenceService.getSession().createSQLQuery(query1);
             rs = pst.list();
             for (final Object[] element : rs) {
                 element[0].toString();
@@ -318,7 +320,7 @@ public class EGovernCommon extends AbstractTask {
             final String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = '" + vcNum + "' AND voucherDate>='"
                     + vcDate
                     + "' AND voucherDate<='" + fyEndDate + "' and status!=4";
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(query2);
+            pst = persistenceService.getSession().createSQLQuery(query2);
             rs = pst.list();
             for (final Object[] element : rs)
                 datacol.addMessage(EXILRPERROR, "duplicate voucher number");
@@ -347,7 +349,7 @@ public class EGovernCommon extends AbstractTask {
        try {
            final String query1 = "SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\" FROM financialYear WHERE startingDate <= '"
                    + vcDate + "' AND endingDate >= '" + vcDate + "'";
-           pst = HibernateUtil.getCurrentSession().createSQLQuery(query1);
+           pst = persistenceService.getSession().createSQLQuery(query1);
            rs = pst.list();
            if (rs != null && rs.size() > 0)
                for (final Object[] element : rs) {
@@ -357,7 +359,7 @@ public class EGovernCommon extends AbstractTask {
            final String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = '" + vcNum + "' AND voucherDate>='"
                    + fyStartDate
                    + "' AND voucherDate<='" + fyEndDate + "' and status!=4";
-           pst = HibernateUtil.getCurrentSession().createSQLQuery(query2);
+           pst = persistenceService.getSession().createSQLQuery(query2);
            rs = pst.list();
            if (rs != null && rs.size() > 0) {
                if (LOGGER.isDebugEnabled())
@@ -395,7 +397,7 @@ public class EGovernCommon extends AbstractTask {
                    "AND endingDate >= ?)  AND glCodeId =(select glcodeid from bankaccount where id=?)";
            if (LOGGER.isDebugEnabled())
                LOGGER.debug("getAccountBalance(EGovernCommon.java): " + str);
-           pst = HibernateUtil.getCurrentSession().createSQLQuery(str);
+           pst = persistenceService.getSession().createSQLQuery(str);
            pst.setString(0, vcDate);
            pst.setString(1, vcDate);
            pst.setString(2, bankAccountId);
@@ -419,7 +421,7 @@ public class EGovernCommon extends AbstractTask {
 
            if (LOGGER.isDebugEnabled())
                LOGGER.debug("Curr Yr Bal: " + str1);
-           pst = HibernateUtil.getCurrentSession().createSQLQuery(str1);
+           pst = persistenceService.getSession().createSQLQuery(str1);
            pst.setString(0, bankAccountId);
            pst.setString(1, vcDate);
            pst.setString(2, vcDate);
@@ -464,46 +466,57 @@ public class EGovernCommon extends AbstractTask {
         List<Object[]> resultset = null;
         List<Object[]> resultset1 = null;
         try {
-            final String str = "SELECT case when sum(openingDebitBalance) = null then 0 else sum(openingDebitBalance) end - case when sum(openingCreditBalance) = null then 0 else sum(openingCreditBalance) end AS \"openingBalance\" "
+            final String str = "SELECT case when sum(openingDebitBalance) is null then 0 else sum(openingDebitBalance) end - case when sum(openingCreditBalance) is null then 0 else sum(openingCreditBalance) end AS \"openingBalance\" "
                     +
-                    "FROM transactionSummary WHERE financialYearId=( SELECT id FROM financialYear WHERE startingDate <=?" +
-                    "AND endingDate >=?)  AND glCodeId =(select glcodeid from bankaccount where id=?)";
+                    " FROM transactionSummary WHERE financialYearId=( SELECT id FROM financialYear WHERE startingDate <=? " +
+                    " AND endingDate >=? )  AND glCodeId =(select glcodeid from bankaccount where id=? )";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getAccountBalance(EGovernCommon.java): " + str);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(str);
-            pst.setString(0, recDate);
-            pst.setString(1, recDate);
-            pst.setString(2, bankAccountId);
-            resultset = pst.list();
-            for (final Object[] element : resultset)
-                opeAvailable = new BigDecimal(element[0].toString());
-            if (resultset == null || resultset.size() == 0)
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Else resultset in getAccountBalance...");
+            pst = persistenceService.getSession().createSQLQuery(str);
+            SimpleDateFormat dtSlashFormat = new SimpleDateFormat("dd/MMM/yyyy");
+            Date reconDate=dtSlashFormat.parse(recDate);
+            java.sql.Date sDate=new java.sql.Date(reconDate.getTime());
+            pst.setDate(0, sDate);
+            pst.setDate(1, sDate);
+            pst.setInteger(2, Integer.valueOf(bankAccountId));
+            List list = pst.list();  
+            if (list == null || list.size() == 0)
+                if (LOGGER.isDebugEnabled()) LOGGER.debug("Else resultset in getAccountBalance...");
 
+            if(list!=null || list.size() > 0)
+            {
+            	opeAvailable=new BigDecimal(list.get(0).toString());
+            }
+            
+           /* for (final Object[] element : resultset)
+            {
+            	if(element[0]!=null)
+                opeAvailable = new BigDecimal(element[0].toString());
+            }*/
+           
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("opening balance  " + opeAvailable);
 
-            final String str1 = "SELECT (case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end ) + "
+            final String str1 = "SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  is null then 0 else sum(gl.creditAmount) end ) + "
                     + opeAvailable
                     +
                     " as \"totalAmount\" FROM   generalLedger gl, voucherHeader vh WHERE vh.id = gl.voucherHeaderId and gl.glCodeid = (select glcodeid from bankaccount where id=?) AND  "
                     +
-                    " vh.voucherDate >=( SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') FROM financialYear WHERE startingDate <= ? AND endingDate >= ?) AND vh.voucherDate <= ? and vh.status!=4";
+                    " vh.voucherDate >=( SELECT startingDate FROM financialYear WHERE startingDate <= ? AND endingDate >= ?) AND vh.voucherDate <= ? and vh.status!=4";
 
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Curr Yr Bal: " + str1);
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(str1);
-            pst.setString(0, bankAccountId);
-            pst.setString(1, recDate);
-            pst.setString(2, recDate);
-            pst.setString(3, recDate);
-            resultset1 = pst.list();
-            for (final Object[] element : resultset1) {
-                totalAvailable = new BigDecimal(element[0].toString());
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("total balance  " + totalAvailable);
-            }
+                LOGGER.debug("Curr Yr Bal: " + str1);  
+            pst = persistenceService.getSession().createSQLQuery(str1);
+            pst.setInteger(0, Integer.valueOf(bankAccountId));
+            pst.setDate(1, reconDate);
+            pst.setDate(2, reconDate);
+            pst.setDate(3, reconDate);
+           List list2 = pst.list();
+            if(list2!=null)
+               totalAvailable = new BigDecimal(list2.get(0).toString());
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("total balance  " + totalAvailable);       
+            
             if (resultset1 == null || resultset1.size() == 0)
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Else resultset in getAccountBalance...");
@@ -515,7 +528,7 @@ public class EGovernCommon extends AbstractTask {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw taskExc;
-        }
+        }    
     }
 
 	/**
@@ -568,7 +581,7 @@ public class EGovernCommon extends AbstractTask {
 			final String sql = " select distinct id from egw_status where upper(moduletype)= ? and upper(description)= ? ";
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("statement" + sql);
-			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+			pstmt = persistenceService.getSession().createSQLQuery(sql);
 			pstmt.setString(0, moduleType.toUpperCase());
 			pstmt.setString(1, description.toUpperCase());
 			rs = pstmt.list();

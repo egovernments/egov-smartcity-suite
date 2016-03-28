@@ -56,6 +56,8 @@ import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -83,6 +85,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
     public static final BigDecimal PAISE_RUPEE_CONVERTER = new BigDecimal(100);
+    @Autowired
+    private  CityService cityService;
 
     /**
      * This method invokes APIs to frame request object for the payment service
@@ -101,12 +105,13 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         fields.put(CollectionConstants.AXIS_VERSION, collectionApplicationProperties.axisVersion().toString());
         fields.put(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommand());
         fields.put(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
-        fields.put(CollectionConstants.AXIS_MERCHANT_TXN_REF, receiptHeader.getId().toString());
+        fields.put(CollectionConstants.AXIS_MERCHANT_TXN_REF, EgovThreadLocals.getCityCode()
+                + CollectionConstants.SEPARATOR_HYPHEN + receiptHeader.getId().toString());
         fields.put(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
         fields.put(CollectionConstants.AXIS_LOCALE, collectionApplicationProperties.axisLocale());
         fields.put(CollectionConstants.AXIS_TICKET_NO, receiptHeader.getConsumerCode());
-        fields.put(CollectionConstants.AXIS_ORDER_INFO,
-                EgovThreadLocals.getCityCode() + "-" + EgovThreadLocals.getCityName());
+        fields.put(CollectionConstants.AXIS_ORDER_INFO, EgovThreadLocals.getCityCode()
+                + CollectionConstants.SEPARATOR_HYPHEN + EgovThreadLocals.getCityName());
         final StringBuilder returnUrl = new StringBuilder();
         returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
         .append(paymentServiceDetails.getId());
@@ -115,7 +120,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         final float rupees = Float.parseFloat(amount.toString());
         final Integer rupee = (int) rupees;
         final Float exponent = rupees - (float) rupee;
-        final Integer paise = (int) (rupee * PAISE_RUPEE_CONVERTER.intValue() + exponent * PAISE_RUPEE_CONVERTER.intValue());
+        final Integer paise = (int) (rupee * PAISE_RUPEE_CONVERTER.intValue() + exponent
+                * PAISE_RUPEE_CONVERTER.intValue());
         fields.put(CollectionConstants.AXIS_AMOUNT, paise.toString());
         final String axisSecureSecret = collectionApplicationProperties.axisSecureSecret();
         if (axisSecureSecret != null) {
@@ -205,17 +211,24 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         // AXIS Payment Gateway returns Response Code 0(Zero) for successful
         // transactions, so converted it to 0300
         // as that is being followed as a standard in other payment gateways.
-        final String receiptId = fields.get("vpc_MerchTxnRef");
-        final Query qry = entityManager.createQuery("from ReceiptHeader rh where rh.id =?");
+        final String[] merchantRef = fields.get(CollectionConstants.AXIS_MERCHANT_TXN_REF).split(
+                CollectionConstants.SEPARATOR_HYPHEN);
+        final String receiptId = merchantRef[1];
+        final String ulbCode = merchantRef[0];
+        final ReceiptHeader receiptHeader;
+        final Query qry = entityManager.createNamedQuery(CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE);
         qry.setParameter(1, Long.valueOf(receiptId));
-        final ReceiptHeader receiptHeader = (ReceiptHeader) qry.getSingleResult();
+        qry.setParameter(2, ulbCode);
+        receiptHeader = (ReceiptHeader) qry.getSingleResult();
         axisResponse.setAuthStatus(fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE).equals("0") ? "0300" : fields
                 .get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
         axisResponse.setErrorDescription(fields.get(CollectionConstants.AXIS_RESP_MESSAGE));
         axisResponse.setAdditionalInfo6(receiptHeader.getConsumerCode());
         axisResponse.setReceiptId(receiptId);
-        axisResponse.setTxnAmount(new BigDecimal(fields.get(CollectionConstants.AXIS_AMOUNT)).divide(PAISE_RUPEE_CONVERTER));
+        axisResponse.setTxnAmount(new BigDecimal(fields.get(CollectionConstants.AXIS_AMOUNT))
+        .divide(PAISE_RUPEE_CONVERTER));
         axisResponse.setTxnReferenceNo(fields.get(CollectionConstants.AXIS_TXN_NO));
+        axisResponse.setAdditionalInfo2(fields.get(CollectionConstants.AXIS_ORDER_INFO));
 
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
         Date transactionDate = null;
@@ -376,10 +389,13 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             formData.add(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommandQuery());
             formData.add(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
             formData.add(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
-            formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, onlinePayment.getReceiptHeader().getId().toString());
+            final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+            formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, cityWebsite.getCode()
+                    + CollectionConstants.SEPARATOR_HYPHEN + onlinePayment.getReceiptHeader().getId().toString());
             formData.add(CollectionConstants.AXIS_OPERATOR_ID, collectionApplicationProperties.axisOperator());
             formData.add(CollectionConstants.AXIS_PASSWORD, collectionApplicationProperties.axisPassword());
-            LOGGER.info("formData: " + formData);
+            formData.add(CollectionConstants.AXIS_ORDER_INFO, EgovThreadLocals.getCityCode()
+                    + CollectionConstants.SEPARATOR_HYPHEN + EgovThreadLocals.getCityName());
             final String responseAxis = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(String.class,
                     formData);
             final Map<String, String> responseAxisMap = new LinkedHashMap<String, String>();
@@ -395,17 +411,20 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             }
             axisResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
                     .replace("/", ""));
+            axisResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
             LOGGER.info("ResponseAXIS: " + responseAxis.toString());
             if (null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
                     && !"".equals(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE))) {
-                axisResponse.setAuthStatus(null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
-                        && responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE).equals("0") ? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS
-                                : responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
+                axisResponse
+                .setAuthStatus(null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
+                && responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE).equals("0") ? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS
+                        : responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
                 axisResponse.setErrorDescription(responseAxisMap.get(CollectionConstants.AXIS_RESP_MESSAGE));
-                axisResponse.setReceiptId(responseAxisMap.get(CollectionConstants.AXIS_MERCHANT_TXN_REF));
+
                 if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(axisResponse.getAuthStatus())) {
                     axisResponse.setTxnReferenceNo(responseAxisMap.get(CollectionConstants.AXIS_TXN_NO));
                     axisResponse.setTxnAmount(new BigDecimal(responseAxisMap.get(CollectionConstants.AXIS_AMOUNT)));
+                    axisResponse.setAdditionalInfo2(responseAxisMap.get(CollectionConstants.AXIS_ORDER_INFO));
                     final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
                     Date transactionDate = null;
                     try {
@@ -413,11 +432,14 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                         axisResponse.setTxnDate(transactionDate);
                     } catch (final ParseException e) {
                         LOGGER.error(
-                                "Error occured in parsing the transaction date [" + responseAxisMap.get(CollectionConstants.AXIS_BATCH_NO)
-                                + "]", e);
+                                "Error occured in parsing the transaction date ["
+                                        + responseAxisMap.get(CollectionConstants.AXIS_BATCH_NO) + "]", e);
                         throw new ApplicationException(".transactiondate.parse.error", e);
                     }
                 }
+            } else if (responseAxis.contains(CollectionConstants.AXIS_CHECK_DR_EXISTS)) {
+                axisResponse.setErrorDescription(CollectionConstants.AXIS_FAILED_ABORTED_MESSAGE);
+                axisResponse.setAuthStatus(CollectionConstants.AXIS_ABORTED_AUTH_STATUS);
             }
             LOGGER.debug("receiptid=" + axisResponse.getReceiptId() + "consumercode="
                     + axisResponse.getAdditionalInfo6());

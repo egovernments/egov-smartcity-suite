@@ -1,4 +1,4 @@
-# eGov Opensource [![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Master)](http://ci.egovernments.org/job/eGov-Github-Master/) [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# [eGov Opensource][GHPAGE] [![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Master)](http://ci.egovernments.org/job/eGov-Github-Master/) [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 eGovernments Foundation transforms urban governance with the use of scalable and replicable technology solutions that enable efficient and effective municipal operations, better decision making, and contact-less urban service delivery.
 
@@ -17,6 +17,7 @@ The eGov suit is released under version 3.0 of the [GPL][].
 
 ## User Guide
 This section contains steps that are involved in build and deploy the application.
+FAQ related to various deployment and development issues are discussed [here][FAQ]
 
 #### Prerequisites
 
@@ -270,3 +271,5 @@ Browser:-
 [PostgreSQL]: http://www.postgresql.org/download/
 [Maven]: http://maven.apache.org/download.cgi
 [GPL]: http://www.gnu.org/licenses/
+[FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
+[GHPAGE]:http://egovernments.github.io/eGov/

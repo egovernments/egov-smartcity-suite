@@ -59,13 +59,13 @@
 
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
-<div class="formmainbox">
+
 	<div class="formheading"></div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td width="10%" class="bluebox">&nbsp;</td>
 			<td class="bluebox"><s:text name="budget.financialYear" /><span
-				class="mandatory">*</span>
+				class="mandatory1">*</span>
 			<td width="22%" class="bluebox"><s:select
 					list="dropdownData.financialYearList" listKey="id"
 					listValue="finYearRange" name="financialYear"
@@ -75,7 +75,7 @@
 			<td width="10%" class="greybox">&nbsp;</td>
 			<egov:ajaxdropdown id="budget" fields="['Text','Value']"
 				dropdownId="budgetDetail_budget"
-				url="budget/budgetSearch!ajaxLoadBudget.action" />
+				url="budget/budgetSearch-ajaxLoadBudget.action" />
 			<td class="greybox"><s:text name="budgetdetail.budget" />
 			<td width="22%" class="greybox"><s:select
 					list="dropdownData.budgetList" listKey="id" listValue="name"
@@ -131,7 +131,7 @@
 				test="%{shouldShowHeaderField('subScheme') || shouldShowGridField('subScheme')}">
 				<egov:ajaxdropdown id="subScheme" fields="['Text','Value']"
 					dropdownId="budgetDetail_subScheme"
-					url="budget/budgetDetail!ajaxLoadSubSchemes.action"
+					url="budget/budgetDetail-ajaxLoadSubSchemes.action"
 					afterSuccess="onHeaderSubSchemePopulation" />
 				<td class="greybox"><s:text name="budgetdetail.subScheme" /></td>
 				<td class="greybox"><s:select list="dropdownData.subSchemeList"
@@ -166,7 +166,7 @@
 			</s:else>
 		</tr>
 	</table>
-</div>
+
 <script>
 <s:if test="%{(shouldShowHeaderField('scheme') and shouldShowHeaderField('subScheme')) or (shouldShowGridField('scheme') and shouldShowGridField('subScheme'))}">
 populateSubSchemes(document.getElementById('budgetDetail_scheme'))
@@ -181,4 +181,5 @@ function preselectSubScheme(){
 	}
 }
 </s:if>
+
 </script>

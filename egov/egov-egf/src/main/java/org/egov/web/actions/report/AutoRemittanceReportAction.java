@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,21 +84,23 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
-import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=AutoRemittanceReport.pdf" }),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=AutoRemittanceReport.xls" }),
-                        @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=AutoRemittanceCOCLevel.pdf" }),
-                                @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
-                                        "contentType", "application/xls", "contentDisposition", "no-cache;filename=AutoRemittanceReportCOCLevel.xls" })
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=AutoRemittanceReport.xls" }),
+        @Result(name = "summary-PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/pdf", "contentDisposition", "no-cache;filename=AutoRemittanceCOCLevel.pdf" }),
+        @Result(name = "summary-XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
+                "contentType", "application/xls", "contentDisposition", "no-cache;filename=AutoRemittanceReportCOCLevel.xls" })
 })
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 public class AutoRemittanceReportAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     /**
      *
      */
@@ -150,11 +155,12 @@ public class AutoRemittanceReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        // HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        // HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        // persistenceService.getSession().setDefaultReadOnly(true);
+        // persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
+        addDropdownData("fundList",
+                persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("recoveryList",
                 persistenceService.findAllBy(" from Recovery where isactive=true order by chartofaccounts.glcode"));
         addDropdownData("bankList", Collections.EMPTY_LIST);
@@ -275,8 +281,8 @@ public class AutoRemittanceReportAction extends BaseFormAction {
             final StringBuffer finyearQuery = new StringBuffer();
             final Date currentDate = new Date();
             finyearQuery.append("from CFinancialYear where  startingDate <= '")
-            .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("' AND endingDate >='")
-            .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
+                    .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("' AND endingDate >='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
             final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString());
             if (null == paymentVoucherFromDate)
                 paymentVoucherFromDate = financialyear.getStartingDate();
@@ -309,8 +315,8 @@ public class AutoRemittanceReportAction extends BaseFormAction {
             final StringBuffer finyearQuery = new StringBuffer();
             final Date currentDate = new Date();
             finyearQuery.append("from CFinancialYear where  startingDate <= '")
-            .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("' AND endingDate >='")
-            .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
+                    .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("' AND endingDate >='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
             final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString());
             if (null == paymentVoucherFromDate)
                 paymentVoucherFromDate = financialyear.getStartingDate();
@@ -423,7 +429,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         final StringBuffer finyearQuery = new StringBuffer();
 
         finyearQuery.append("from CFinancialYear where  startingDate <= '").append(Constants.DDMMYYYYFORMAT1.format(currentDate))
-        .append("' AND endingDate >='").append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
+                .append("' AND endingDate >='").append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
         final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString());
 
         if (level.equals("atcoc"))
@@ -527,10 +533,10 @@ public class AutoRemittanceReportAction extends BaseFormAction {
             query.append("AND bank.id = " + bank.getId());
         if (null != supplierCode && !supplierCode.isEmpty())
             query.append(" AND ( gld.DETAILKEYID = " + new Integer(supplierCode)
-            + " AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='Creditor'))");
+                    + " AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='Creditor'))");
         if (null != contractorCode && !contractorCode.isEmpty())
             query.append(" AND ( gld.DETAILKEYID = " + new Integer(contractorCode)
-            + " AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='contractor'))");
+                    + " AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='contractor'))");
         if (null != bankbranch && null != bankbranch.getId() && bankbranch.getId() != -1)
             query.append("AND bnkacc.BRANCHID = " + bankbranch.getId());
         if (null != bankaccount && null != bankaccount.getId() && bankaccount.getId() != -1)
@@ -553,34 +559,39 @@ public class AutoRemittanceReportAction extends BaseFormAction {
                 +
                 " ih.INSTRUMENTAMOUNT,remdt.ID ");
 
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = persistenceService.getSession();
         Query sqlQuery = null;
         if (level.equals("atcoc"))
             sqlQuery = session.createSQLQuery(query.toString())
-            .addScalar("remittanceCOA").addScalar("department").addScalar("drawingOfficer")
-            .addScalar("bankbranchAccount")
-            .addScalar("remittancePaymentNo").addScalar("rtgsNoDate")
-            .addScalar("rtgsAmount").addScalar("remittanceDTId").addScalar("paymentVoucherId")
-            .setResultTransformer(Transformers.aliasToBean(AutoRemittanceBeanReport.class));
+                    .addScalar("remittanceCOA").addScalar("department").addScalar("drawingOfficer")
+                    .addScalar("bankbranchAccount")
+                    .addScalar("remittancePaymentNo").addScalar("rtgsNoDate")
+                    .addScalar("rtgsAmount").addScalar("remittanceDTId").addScalar("paymentVoucherId")
+                    .setResultTransformer(Transformers.aliasToBean(AutoRemittanceBeanReport.class));
         else
             sqlQuery = session.createSQLQuery(query.toString())
-            .addScalar("remittanceCOA").addScalar("fundName").addScalar("bankbranchAccount")
-            .addScalar("remittancePaymentNo").addScalar("rtgsNoDate")
-            .addScalar("rtgsAmount").addScalar("remittanceDTId").addScalar("paymentVoucherId")
-            .setResultTransformer(Transformers.aliasToBean(AutoRemittanceBeanReport.class));
+                    .addScalar("remittanceCOA").addScalar("fundName").addScalar("bankbranchAccount")
+                    .addScalar("remittancePaymentNo").addScalar("rtgsNoDate")
+                    .addScalar("rtgsAmount").addScalar("remittanceDTId").addScalar("paymentVoucherId")
+                    .setResultTransformer(Transformers.aliasToBean(AutoRemittanceBeanReport.class));
         autoRemittance = remitRecoveryService.populateAutoRemittanceDetailbySQL(sqlQuery);
 
     }
 
     public void populateCOCLevelSummaryData()
     {
-        final StringBuffer queryString1 = new StringBuffer("SELECT (SUM(case when  glcode = " + FinancialConstants.INCOMETAX_CAPITAL +
-                "then  rmtAmt  else (case when GLCODE = " + FinancialConstants.INCOMETAX_REVENUE + "  then RMTAMT else NULL end)  end)) AS  incomeTaxRemittedAmt," +
+        final StringBuffer queryString1 = new StringBuffer("SELECT (SUM(case when  glcode = "
+                + FinancialConstants.INCOMETAX_CAPITAL +
+                "then  rmtAmt  else (case when GLCODE = " + FinancialConstants.INCOMETAX_REVENUE
+                + "  then RMTAMT else NULL end)  end)) AS  incomeTaxRemittedAmt," +
                 " (SUM(case when glcode =  " + FinancialConstants.SALESTAX_CAPITAL + "  then rmtAmt else " +
-                "  (case when GLCODE = " + FinancialConstants.SALESTAX_REVENUE + "  then RMTAMT else NULL end) )) AS  salesTaxRemittedAmt," +
+                "  (case when GLCODE = " + FinancialConstants.SALESTAX_REVENUE
+                + "  then RMTAMT else NULL end) )) AS  salesTaxRemittedAmt," +
                 " (SUM(case when  glcode = " + FinancialConstants.MWGWF_MAINTENANCE + " THEN rmtAmt else " +
-                "  (case when GLCODE =  " + FinancialConstants.MWGWF_CAPITAL + "  then RMTAMT else  NULL end)end)) AS  mwgwfRemittedAmt," +
-                " (SUM(case when GLCODE = " + FinancialConstants.SERVICETAX_REVENUE + " then RMTAMT else NULL end  ))AS serviceTaxRemittedAmt," +
+                "  (case when GLCODE =  " + FinancialConstants.MWGWF_CAPITAL
+                + "  then RMTAMT else  NULL end)end)) AS  mwgwfRemittedAmt," +
+                " (SUM(case when GLCODE = " + FinancialConstants.SERVICETAX_REVENUE
+                + " then RMTAMT else NULL end  ))AS serviceTaxRemittedAmt," +
                 " SUM(rmtamt) AS grandTotal FROM( SELECT * FROM (" +
                 " SELECT remdt.REMITTEDAMT AS rmtAmt,tds.TYPE  AS glcode" +
                 " FROM tds tds, eg_remittance rem, eg_remittance_detail remdt,eg_remittance_gldtl remgltl, voucherheader vh " +
@@ -602,7 +613,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         final StringBuffer finyearQuery = new StringBuffer();
 
         finyearQuery.append("from CFinancialYear where  startingDate <= '").append(Constants.DDMMYYYYFORMAT1.format(currentDate))
-        .append("' AND endingDate >='").append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
+                .append("' AND endingDate >='").append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
         final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString());
 
         if (null != paymentVoucherFromDate)
@@ -617,7 +628,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
                     + "'");
 
         queryString1.append(" )) ");
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = persistenceService.getSession();
         final Query sqlQuery = session.createSQLQuery(queryString1.toString())
                 .addScalar("incomeTaxRemittedAmt").addScalar("salesTaxRemittedAmt").addScalar("mwgwfRemittedAmt")
                 .addScalar("serviceTaxRemittedAmt").addScalar("grandTotal")
@@ -627,12 +638,16 @@ public class AutoRemittanceReportAction extends BaseFormAction {
 
         final StringBuffer queryString2 = new StringBuffer(" SELECT departmentCode," +
                 " (SUM(case when  glcode = " + FinancialConstants.INCOMETAX_CAPITAL + " then rmtAmt else " +
-                "   (case when GLCODE =" + FinancialConstants.INCOMETAX_REVENUE + " then RMTAMT else NULL end) end)) AS  incomeTaxRemittedAmt," +
+                "   (case when GLCODE =" + FinancialConstants.INCOMETAX_REVENUE
+                + " then RMTAMT else NULL end) end)) AS  incomeTaxRemittedAmt," +
                 " (SUM(case when  glcode = " + FinancialConstants.SALESTAX_CAPITAL + " then rmtAmt else " +
-                "  (case when GLCODE=" + FinancialConstants.SALESTAX_REVENUE + "  then RMTAMT else  NULL end) end)) AS  salesTaxRemittedAmt," +
+                "  (case when GLCODE=" + FinancialConstants.SALESTAX_REVENUE
+                + "  then RMTAMT else  NULL end) end)) AS  salesTaxRemittedAmt," +
                 " (SUM(case when  glcode= " + FinancialConstants.MWGWF_MAINTENANCE + " then rmtAmt else " +
-                " (case when GLCODE = " + FinancialConstants.MWGWF_CAPITAL + " then RMTAMT else NULL end )end)) AS  mwgwfRemittedAmt," +
-                " (SUM(case when GLCODE=" + FinancialConstants.SERVICETAX_REVENUE + " then RMTAMT else NULL end  ))AS serviceTaxRemittedAmt, " +
+                " (case when GLCODE = " + FinancialConstants.MWGWF_CAPITAL
+                + " then RMTAMT else NULL end )end)) AS  mwgwfRemittedAmt," +
+                " (SUM(case when GLCODE=" + FinancialConstants.SERVICETAX_REVENUE
+                + " then RMTAMT else NULL end  ))AS serviceTaxRemittedAmt, " +
                 " SUM(rmtamt) AS departmentTotal FROM(" +
                 "  SELECT * FROM (" +
                 " SELECT dept.DEPT_code  departmentcode, remdt.REMITTEDAMT AS rmtAmt, tds.TYPE  AS glcode" +

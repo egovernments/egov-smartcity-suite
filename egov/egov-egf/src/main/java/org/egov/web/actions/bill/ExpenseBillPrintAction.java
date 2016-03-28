@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.bill;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -91,13 +94,13 @@ import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results(value = {
-		
+
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.pdf" }),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.xls" }),
-                        @Result(name = "HTML", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "text/html" })
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.xls" }),
+        @Result(name = "HTML", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "text/html" })
 })
 @org.apache.struts2.convention.annotation.ParentPackage("egov")
 public class ExpenseBillPrintAction extends BaseFormAction {
@@ -107,13 +110,15 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final String PRINT = "print";
     String functionName;
-    private @Autowired AppConfigValueService appConfigValuesService;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired AppConfigValueService appConfigValuesService;
     @Autowired
-    private EisCommonService eisCommonService; 
+    private EisCommonService eisCommonService;
 
-   
-
-	private BudgetDetailsHibernateDAO budgetDetailsDAO;
+    private BudgetDetailsHibernateDAO budgetDetailsDAO;
     @Autowired
     private FinancialYearDAO financialYearDAO;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -210,7 +215,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     }
 
     private String getUlbName() {
-        final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail");
+        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);
@@ -254,7 +259,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
             if (billRegistermis.getPartyBillDate() != null)
                 paramMap.put("partyBillDate", sdf.format(billRegistermis.getPartyBillDate()));
             paramMap.put("netAmount", cbill.getPassedamount());
-            final BigDecimal amt = cbill.getPassedamount().setScale(2);
+            final BigDecimal amt = cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
             String amountInWords = NumberToWord.convertToWord(amt.toString());
             amountInWords = "(" + amountInWords + " )";
             amountInWords = "Bill is in order. Sanction is accorded for Rs." + amt + "/-" + amountInWords;
@@ -283,7 +288,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
      */
     private Map<String, Object> getBudgetDetails(final CChartOfAccounts coa, final EgBilldetails billDetail,
             final String functionName) {
-    	final Map<String, Object> budgetApprDetailsMap = new HashMap<String, Object>();
+        final Map<String, Object> budgetApprDetailsMap = new HashMap<String, Object>();
         budgetDataMap.put(Constants.FUNCTIONID, Long.valueOf(billDetail.getFunctionid().toString()));
         if (cbill.getEgBillregistermis().getVoucherHeader() != null)
             budgetDataMap.put(Constants.ASONDATE, cbill.getEgBillregistermis().getVoucherHeader().getVoucherDate());// this date
@@ -292,13 +297,13 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         // roles
         else
             budgetDataMap.put(Constants.ASONDATE, cbill.getBilldate());
-        
-        Date billDate=cbill.getBilldate();
+
+        Date billDate = cbill.getBilldate();
         final CFinancialYear financialYearById = financialYearDAO.getFinYearByDate(billDate);
-        
-            budgetApprDetailsMap.put("financialYear", "BE-" + financialYearById.getFinYearRange() + " & Addl Funds(Rs)");
-            budgetDataMap.put("fromdate", financialYearById.getStartingDate());
-       
+
+        budgetApprDetailsMap.put("financialYear", "BE-" + financialYearById.getFinYearRange() + " & Addl Funds(Rs)");
+        budgetDataMap.put("fromdate", financialYearById.getStartingDate());
+
         budgetDataMap.put("glcode", coa.getGlcode());
         budgetDataMap.put("glcodeid", coa.getId());
         final List<BudgetGroup> budgetHeadByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
@@ -376,12 +381,12 @@ public class ExpenseBillPrintAction extends BaseFormAction {
      */
     private void getRequiredDataForBudget(final EgBillregister cbill) {
         final String financialYearId = null;// commonsService.getFinancialYearId(cbill.getBilldate().getTime());
-        Date billDate=cbill.getBilldate();
+        Date billDate = cbill.getBilldate();
         final CFinancialYear financialYearById = financialYearDAO.getFinYearByDate(billDate);
-        
-        	budgetDataMap.put("financialyearid", financialYearById.getId());
-        
-            budgetDataMap.put(Constants.DEPTID, cbill.getEgBillregistermis().getEgDepartment().getId());
+
+        budgetDataMap.put("financialyearid", financialYearById.getId());
+
+        budgetDataMap.put(Constants.DEPTID, cbill.getEgBillregistermis().getEgDepartment().getId());
         if (cbill.getEgBillregistermis().getFunctionaryid() != null)
             budgetDataMap.put(Constants.FUNCTIONARYID, cbill.getEgBillregistermis().getFunctionaryid().getId());
         if (cbill.getEgBillregistermis().getScheme() != null)
@@ -426,10 +431,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
             paramMap.put("workFlow_" + i, history.get(i));
             paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
         }
-        /*if(cbill.getState()!=null && cbill.getState().getValue().equalsIgnoreCase("Closed")){
-        	paramMap.put("workFlow_approver" ,eisCommonService.getUserForPosition(cbill.getState().getOwnerPosition().getId(), cbill.getCreatedDate()));
-            paramMap.put("workFlowDate_approval_date" , cbill.getState().getLastModifiedDate() );
-        }*/
+        /*
+         * if(cbill.getState()!=null && cbill.getState().getValue().equalsIgnoreCase("Closed")){ paramMap.put("workFlow_approver"
+         * ,eisCommonService.getUserForPosition(cbill.getState().getOwnerPosition().getId(), cbill.getCreatedDate()));
+         * paramMap.put("workFlowDate_approval_date" , cbill.getState().getLastModifiedDate() ); }
+         */
     }
 
     private void prepareForPrint() {
@@ -475,32 +481,33 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final Set<EgBillPayeedetails> egBillPaydetailes = detail.getEgBillPaydetailes();
                 for (final EgBillPayeedetails payeedetail : egBillPaydetailes)
                 {
-                	try{
-                	  EntityType entity = null;
-                    final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                            "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
-                    vd.setDetailTypeName(detailType.getName());
-                    
-                    final Class<?> service = Class.forName(detailType.getFullQualifiedName());
-                    // getting the entity type service.
-                    final String detailTypeName = service.getSimpleName();
-                    String dataType = "";
-                    final java.lang.reflect.Method method = service.getMethod("getId");
-                    dataType = method.getReturnType().getSimpleName();
-                    if (dataType.equals("Long"))
-                        entity = (EntityType) persistenceService.find(
-                                "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId().longValue());
-                    else
-                        entity = (EntityType) persistenceService.find(
-                                "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
-                    vd.setDetailKey(entity.getCode());
-                    vd.setDetailName(entity.getName());
-                	} catch (final Exception e) {
+                    try {
+                        EntityType entity = null;
+                        final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
+                                "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
+                        vd.setDetailTypeName(detailType.getName());
+
+                        final Class<?> service = Class.forName(detailType.getFullQualifiedName());
+                        // getting the entity type service.
+                        final String detailTypeName = service.getSimpleName();
+                        String dataType = "";
+                        final java.lang.reflect.Method method = service.getMethod("getId");
+                        dataType = method.getReturnType().getSimpleName();
+                        if (dataType.equals("Long"))
+                            entity = (EntityType) persistenceService.find(
+                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId()
+                                            .longValue());
+                        else
+                            entity = (EntityType) persistenceService.find(
+                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
+                        vd.setDetailKey(entity.getCode());
+                        vd.setDetailName(entity.getName());
+                    } catch (final Exception e) {
                         final List<ValidationError> errors = new ArrayList<ValidationError>();
                         errors.add(new ValidationError("exp", e.getMessage()));
                         throw new ValidationException(errors);
                     }
-                   
+
                 }
 
                 final BillReport billReport = new BillReport(persistenceService, vd, cbill, budgetApprDetails);
@@ -536,37 +543,34 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final Set<EgBillPayeedetails> egBillPaydetailes = detail.getEgBillPaydetailes();
                 for (final EgBillPayeedetails payeedetail : egBillPaydetailes)
                 {
-                    
-                    try{
-                    	EntityType entity = null;
-                      final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                              "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
-                      vd.setDetailTypeName(detailType.getName());
-                      
-                      final Class<?> service = Class.forName(detailType.getFullQualifiedName());
-                      // getting the entity type service.
-                      final String detailTypeName = service.getSimpleName();
-                      String dataType = "";
-                      final java.lang.reflect.Method method = service.getMethod("getId");
-                      dataType = method.getReturnType().getSimpleName();
-                      if (dataType.equals("Long"))
-                          entity = (EntityType) persistenceService.find(
-                                  "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId().longValue());
-                      else
-                          entity = (EntityType) persistenceService.find(
-                                  "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
-                      vd.setDetailKey(entity.getCode());
-                      vd.setDetailName(entity.getName());
-                  	} catch (final Exception e) {
-                          final List<ValidationError> errors = new ArrayList<ValidationError>();
-                          errors.add(new ValidationError("exp", e.getMessage()));
-                          throw new ValidationException(errors);
-                      }
+
+                    try {
+                        EntityType entity = null;
+                        final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
+                                "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
+                        vd.setDetailTypeName(detailType.getName());
+
+                        final Class<?> service = Class.forName(detailType.getFullQualifiedName());
+                        // getting the entity type service.
+                        final String detailTypeName = service.getSimpleName();
+                        String dataType = "";
+                        final java.lang.reflect.Method method = service.getMethod("getId");
+                        dataType = method.getReturnType().getSimpleName();
+                        if (dataType.equals("Long"))
+                            entity = (EntityType) persistenceService.find(
+                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId()
+                                            .longValue());
+                        else
+                            entity = (EntityType) persistenceService.find(
+                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
+                        vd.setDetailKey(entity.getCode());
+                        vd.setDetailName(entity.getName());
+                    } catch (final Exception e) {
+                        final List<ValidationError> errors = new ArrayList<ValidationError>();
+                        errors.add(new ValidationError("exp", e.getMessage()));
+                        throw new ValidationException(errors);
+                    }
                 }
-                
-                
-                
-                
 
                 final BillReport billReport = new BillReport(persistenceService, vd, cbill, budgetApprDetails);
                 billReportList.add(billReport);
@@ -584,28 +588,28 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     }
 
     public AppConfigValueService getAppConfigValuesService() {
-		return appConfigValuesService;
-	}
+        return appConfigValuesService;
+    }
 
-	public void setAppConfigValuesService(
-			AppConfigValueService appConfigValuesService) {
-		this.appConfigValuesService = appConfigValuesService;
-	}
+    public void setAppConfigValuesService(
+            AppConfigValueService appConfigValuesService) {
+        this.appConfigValuesService = appConfigValuesService;
+    }
 
-	public EisCommonService getEisCommonService() {
-		return eisCommonService;
-	}
+    public EisCommonService getEisCommonService() {
+        return eisCommonService;
+    }
 
-	public void setEisCommonService(EisCommonService eisCommonService) {
-		this.eisCommonService = eisCommonService;
-	}
+    public void setEisCommonService(EisCommonService eisCommonService) {
+        this.eisCommonService = eisCommonService;
+    }
 
-	public FinancialYearDAO getFinancialYearDAO() {
-		return financialYearDAO;
-	}
+    public FinancialYearDAO getFinancialYearDAO() {
+        return financialYearDAO;
+    }
 
-	public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
-		this.financialYearDAO = financialYearDAO;
-	}
-	
+    public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+        this.financialYearDAO = financialYearDAO;
+    }
+
 }

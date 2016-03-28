@@ -39,6 +39,9 @@
  ******************************************************************************/
 package com.exilant.exility.updateservice;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -48,6 +51,10 @@ import org.hibernate.Query;
 
 public class PrimaryKeyGenerator
 {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final Logger LOGGER = Logger.getLogger(PrimaryKeyGenerator.class);
     private static PrimaryKeyGenerator singletonInstance;
 
@@ -73,7 +80,8 @@ public class PrimaryKeyGenerator
         final String sql = "select nextval('seq_" + tableName + "')";
         try
         {
-            final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+            final Query pst = null;
+                    //persistenceService.getSession().createSQLQuery(sql);
             final List<BigInteger> rs = pst.list();
             key = rs != null ? rs.get(0).longValue() : 0l;
             if (rs == null || rs.size() == 0)

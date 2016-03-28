@@ -507,7 +507,7 @@ public class CreateVoucher {
                 detailMap = new HashMap<String, Object>();
                 if (null != egBilldetails.getFunctionid()) {
                     /*
-                     * CFunction function = (CFunction) HibernateUtil.getCurrentSession().load(CFunction.class,
+                     * CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
                      * (egBilldetails.getFunctionid()).longValue()); detailMap.put(VoucherConstant.FUNCTIONCODE,
                      * function.getCode());
                      */
@@ -516,8 +516,7 @@ public class CreateVoucher {
                         : egBilldetails.getDebitamount());
                 detailMap.put(VoucherConstant.CREDITAMOUNT, egBilldetails.getCreditamount() == null ? BigDecimal.ZERO
                         : egBilldetails.getCreditamount());
-                final String glcode = HibernateUtil
-                        .getCurrentSession()
+                final String glcode = persistenceService.getSession()
                         .createQuery(
                                 "select glcode from CChartOfAccounts where id = " + egBilldetails.getGlcodeid().longValue())
                         .list().get(0).toString();
@@ -1143,7 +1142,7 @@ public class CreateVoucher {
 
             // insertIntoRecordStatus(vh);
             final List<Transaxtion> transactions = createTransaction(headerdetails, accountcodedetails, subledgerdetails, vh);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             // engine = ChartOfAccounts.getInstance();
             // setChartOfAccounts();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
@@ -1555,7 +1554,7 @@ public class CreateVoucher {
              * SimpleDateFormat(DD_MM_YYYY); String vDate = df.format(voucherDate);
              * cVoucherHeader.setVoucherNumber(cmImpl.getTxnNumber(fundId.toString(),voucherNumberPrefix,vDate,con)); }else {
              * voucherNumber = headerdetails.get(VoucherConstant.VOUCHERNUMBER).toString();
-             * query=HibernateUtil.getCurrentSession().createQuery("select f.identifier from Fund f where id=:fundId");
+             * query=persistenceService.getSession().createQuery("select f.identifier from Fund f where id=:fundId");
              * query.setInteger("fundId", fundId); String fundIdentifier = query.uniqueResult().toString();
              * cVoucherHeader.setVoucherNumber(new StringBuffer().append(fundIdentifier).append(voucherNumberPrefix).
              * append(voucherNumber).toString()); }
@@ -1587,7 +1586,7 @@ public class CreateVoucher {
             if (null != headerdetails.get(VoucherConstant.ORIGIONALVOUCHER)) {
 
                 final Long origionalVId = Long.parseLong(headerdetails.get(VoucherConstant.ORIGIONALVOUCHER).toString());
-                query = HibernateUtil.getCurrentSession().createQuery("from CVoucherHeader where id=:id");
+                query = persistenceService.getSession().createQuery("from CVoucherHeader where id=:id");
                 query.setLong("id", origionalVId);
                 if (query.list().size() == 0)
                     throw new ApplicationRuntimeException("Not a valid origional voucherheader id");
@@ -1595,7 +1594,7 @@ public class CreateVoucher {
                     cVoucherHeader.setOriginalvcId(origionalVId);
             }
 
-            cVoucherHeader.setRefcgNo((String) headerdetails.get(VoucherConstant.REFVOUCHER));
+            cVoucherHeader.setRefvhId((Long) headerdetails.get(VoucherConstant.REFVOUCHER));
             cVoucherHeader.setEffectiveDate(new Date());
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Printing Voucher Details------------------------------------------------------------------------------");
@@ -1844,7 +1843,7 @@ public class CreateVoucher {
                     throw new ApplicationRuntimeException("not a valid glcode");
             } else
                 throw new ApplicationRuntimeException("glcode is missing");
-            final Query querytds = HibernateUtil.getCurrentSession().createQuery("select t.id from Recovery t where " +
+            final Query querytds = persistenceService.getSession().createQuery("select t.id from Recovery t where " +
                     "t.chartofaccounts.glcode=:glcode");
             querytds.setString("glcode", glcode);
             querytds.setCacheable(true);
@@ -1859,7 +1858,7 @@ public class CreateVoucher {
             }
             // validate the glcode is a subledger code or not.
 
-            final Query query = HibernateUtil.getCurrentSession().createQuery(
+            final Query query = persistenceService.getSession().createQuery(
                     "from CChartOfAccountDetail cd,CChartOfAccounts c where " +
                             "cd.glCodeId = c.id and c.glcode=:glcode");
 
@@ -1872,7 +1871,7 @@ public class CreateVoucher {
 
             if (null != subdetailDetailMap.get(VoucherConstant.DETAILTYPEID)) {
                 detailtypeid = subdetailDetailMap.get(VoucherConstant.DETAILTYPEID).toString();
-                final Session session = HibernateUtil.getCurrentSession();
+                final Session session = persistenceService.getSession();
                 final Query qry = session.createQuery("from CChartOfAccountDetail cd,CChartOfAccounts c where " +
                         "cd.glCodeId = c.id and c.glcode=:glcode and cd.detailTypeId.id=:detailTypeId");
                 qry.setString(VoucherConstant.GLCODE, glcode);
@@ -1887,7 +1886,7 @@ public class CreateVoucher {
 
             if (null != subdetailDetailMap.get(VoucherConstant.DETAILKEYID)) {
                 detailKeyId = subdetailDetailMap.get(VoucherConstant.DETAILKEYID).toString();
-                final Session session = HibernateUtil.getCurrentSession();
+                final Session session = persistenceService.getSession();
                 final Query qry = session
                         .createQuery("from Accountdetailkey adk where adk.accountdetailtype.id=:detailtypeid and adk.detailkey=:detailkey");
                 qry.setInteger(VoucherConstant.DETAILTYPEID, Integer.valueOf(detailtypeid));
@@ -2313,7 +2312,7 @@ public class CreateVoucher {
                     subledgerdetails.add(subledgerMap);
                 }
             final List<Transaxtion> transactions = createTransaction(null, accountdetails, subledgerdetails, vh);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
@@ -2341,7 +2340,7 @@ public class CreateVoucher {
             final String delQrr = "delete from generalledgerdetail where generalledgerid=?";
             final String delgl = " delete from generalledger where voucherheaderid=?";
             final String delvh = " delete from voucherdetail where voucherheaderid=?";
-            pstmt1 = HibernateUtil.getCurrentSession().createSQLQuery(glQry);
+            pstmt1 = persistenceService.getSession().createSQLQuery(glQry);
             pstmt1.setFloat(0, vh.getId());
 
             final List<Object[]> rs = pstmt1.list();
@@ -2349,27 +2348,27 @@ public class CreateVoucher {
             boolean delete = false;
             while (rs != null && rs.size() > 0)
             {
-                pstmt2 = HibernateUtil.getCurrentSession().createSQLQuery(glidQry);
+                pstmt2 = persistenceService.getSession().createSQLQuery(glidQry);
                 pstmt2.setLong(0, Long.parseLong(rs.get(1).toString()));
                 rs1 = pstmt2.list();
                 while (rs1 != null && rs1.size() > 0)
                 {
                     delete = true;
-                    pstmt3 = HibernateUtil.getCurrentSession().createSQLQuery(delQry);
+                    pstmt3 = persistenceService.getSession().createSQLQuery(delQry);
                     pstmt3.setLong(0, Long.parseLong(rs1.get(1).toString()));
                     pstmt3.executeUpdate();
                 }
                 if (delete) {
-                    pstmt4 = HibernateUtil.getCurrentSession().createSQLQuery(delQrr);
+                    pstmt4 = persistenceService.getSession().createSQLQuery(delQrr);
                     pstmt4.setLong(0, Long.parseLong(rs1.get(1).toString()));
                     pstmt4.executeUpdate();
                 }
             }
-            pstmt1 = HibernateUtil.getCurrentSession().createSQLQuery(delgl);
+            pstmt1 = persistenceService.getSession().createSQLQuery(delgl);
             pstmt1.setLong(0, vh.getId());
             pstmt1.executeUpdate();
 
-            pstmt1 = HibernateUtil.getCurrentSession().createSQLQuery(delvh);
+            pstmt1 = persistenceService.getSession().createSQLQuery(delvh);
             pstmt1.setLong(0, vh.getId());
             pstmt1.executeUpdate();
 
@@ -2442,7 +2441,7 @@ public class CreateVoucher {
         // -- Reversal Voucher date check ----END --//
 
         CVoucherHeader reversalVoucher = createReversalVoucher(paramList);
-        HibernateUtil.getCurrentSession().flush();
+        persistenceService.getSession().flush();
         reversalVoucher = reverseVoucherAndLedger(reversalVoucher);
         return reversalVoucher;
     }
@@ -2475,12 +2474,12 @@ public class CreateVoucher {
                     detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
                 }
                 final List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService.findAllBy(
-                        "from CGeneralLedgerDetail where generalLedgerId=?", ledger.getId().intValue());
+                        "from CGeneralLedgerDetail where generalLedgerId.id=?", ledger.getId());
                 for (final CGeneralLedgerDetail ledgerDetail : ledgerDetailSet)
                 {
                     subledgerMap = new HashMap<String, Object>();
                     subledgerMap.put(VoucherConstant.GLCODE, ledger.getGlcode());
-                    subledgerMap.put(VoucherConstant.DETAILTYPEID, ledgerDetail.getDetailTypeId());
+                    subledgerMap.put(VoucherConstant.DETAILTYPEID, ledgerDetail.getDetailTypeId().getId());
                     subledgerMap.put(VoucherConstant.DETAILKEYID, ledgerDetail.getDetailKeyId());
                     if (ledger.getDebitAmount().equals(BigDecimal.ZERO))
                         subledgerMap.put(VoucherConstant.CREDITAMOUNT, ledgerDetail.getAmount());
@@ -2492,7 +2491,7 @@ public class CreateVoucher {
                 accountdetails.add(detailMap);
             }
             final List<Transaxtion> transactions = createTransaction(null, accountdetails, subledgerdetails, reversalVoucher);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             // SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
@@ -2554,7 +2553,7 @@ public class CreateVoucher {
              * reversalVoucher.getVoucherNumber(); if(voucherNumber==null) {
              * reversalVoucher.setVoucherNumber((cmImpl.getTxnNumber(
              * originalVoucher.getFundId().getId().toString(),autoVoucherType,vDate,null))); } else { Query
-             * query=HibernateUtil.getCurrentSession().createQuery("select f.identifier from Fund f where id=:fundId");
+             * query=persistenceService.getSession().createQuery("select f.identifier from Fund f where id=:fundId");
              * query.setInteger("fundId", originalVoucher.getFundId().getId()); String fundIdentifier =
              * query.uniqueResult().toString(); reversalVoucher.setVoucherNumber(new
              * StringBuffer().append(fundIdentifier).append(autoVoucherType). append(voucherNumber).toString()); } }

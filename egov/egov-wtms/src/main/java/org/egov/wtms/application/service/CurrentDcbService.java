@@ -39,17 +39,32 @@
  */
 package org.egov.wtms.application.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @Transactional(readOnly = true)
 public class CurrentDcbService {
+	
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	public Session getCurrentSession() {
+	    return entityManager.unwrap(Session.class);
+	}
 
     public DCBDisplayInfo getDcbDispInfo() {
         final DCBDisplayInfo dcbDispInfo = new DCBDisplayInfo();
@@ -59,6 +74,17 @@ public class CurrentDcbService {
         dcbDispInfo.setReasonCategoryCodes(reasonCategoryCodes);
         dcbDispInfo.setReasonMasterCodes(reasonMasterCodes);
         return dcbDispInfo;
+
+    }
+    
+    public SQLQuery getMigratedReceipttDetails(final String consumerNumber) throws ParseException {
+    	final StringBuilder queryStr = new StringBuilder();
+        queryStr.append(
+                "select i_bookno as \"bookNumber\", i_ctrrcptno as \"receiptNumber\",dt_ctrrcptdt as \"receiptDate\",dt_paidfrmprddt as \"fromDate\",dt_paidtoprddt as \"toDate\","
+                + "d_crr+d_arr as \"receiptAmount\" from wt_wtchrgrcpt_tbl where i_csmrno ="+consumerNumber);
+        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class));
+        return finalQuery;
 
     }
 

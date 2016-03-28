@@ -78,7 +78,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.FinancialYear;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.feature.FeatureCollection;
@@ -107,7 +106,7 @@ public class CommonsServiceImpl implements CommonsService {
     public BoundaryTypeService boundaryTypeService;
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
-
+    
     public CommonsServiceImpl(final CommonsDAOFactory commonsDAOFactory, final SessionFactory sessionFactory) {
         this.commonsDAOFactory = commonsDAOFactory;
         this.sessionFactory = sessionFactory;
@@ -260,7 +259,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public Fund fundById(final Integer fundId) {
-        return commonsDAOFactory.getFundDAO().fundById(fundId);
+        return commonsDAOFactory.getFundDAO().fundById(fundId,false);
     }
 
     @Override
@@ -374,27 +373,21 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public Fund getFundById(final Integer fundId) {
-        return (Fund) commonsDAOFactory.getFundDAO().findById(fundId, false);
-    }
+        return (Fund) commonsDAOFactory.getFundDAO().fundById(fundId, false);
+    }   
 
     /*
-     * @Override public List<EgUom> findAllUom() { return
-     * commonsDAOFactory.getEgUomDAO().findAllUom(); }
+     * @Override public List<EgUom> findAllUom() { return commonsDAOFactory.getEgUomDAO().findAllUom(); }
      */
 
-    @Override
-    public Relation getRelationById(final Integer relationId) {
-        return (Relation) commonsDAOFactory.getRelationDAO().findById(relationId, false);
-    }
-
+  
     /*
-     * @Override public EgUom getUomById(final Integer uomId) { return (EgUom)
-     * commonsDAOFactory.getEgUomDAO().findById(uomId, false); }
+     * @Override public EgUom getUomById(final Integer uomId) { return (EgUom) commonsDAOFactory.getEgUomDAO().findById(uomId,
+     * false); }
      */
 
     /**
-     * @param moduleType
-     *            Module type
+     * @param moduleType Module type
      * @return EgwStatus object for given module type and status code
      */
     @Override
@@ -460,7 +453,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public CChartOfAccounts findGlCodeById(final String glcodeid) {
-        return (CChartOfAccounts) commonsDAOFactory.getChartOfAccountsDAO().findById(glcodeid, false);
+        return null;
     }
 
     @Override
@@ -470,7 +463,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public CFinancialYear getFinancialYearByDate(final Date date) {
-        final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
+       final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
         return finYearDAO.getFinancialYearByDate(date);
     }
 
@@ -505,14 +498,13 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     @Override
-    public Collection<FinancialYear> getFinancialYearList() {
+    public Collection<CFinancialYear> getFinancialYearList() {
         return commonsDAOFactory.getFinancialYearDAO().findAll();
     }
 
     /**
-     * This API will return the transaction no for any type of txn. Input
-     * :Type,transaction date and connection Output :Transaction number in the
-     * format txnType+number+/+month+/+year
+     * This API will return the transaction no for any type of txn. Input :Type,transaction date and connection Output
+     * :Transaction number in the format txnType+number+/+month+/+year
      */
     @Override
     public String getTxnNumber(final String txnType, final String vDate, final Connection con)
@@ -552,8 +544,7 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /**
-     * This method returns the active and is active for posting Account records
-     * having classification as '4' , for a given type.
+     * This method returns the active and is active for posting Account records having classification as '4' , for a given type.
      *
      * @param type
      * @return
@@ -741,27 +732,17 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /*
-     * @Override public EgUom getUomByUom(final String uom) { EgUom egUom =
-     * null; if (uom != null) { final Query qry = getSession().createQuery(
-     * "from EgUom uom where uom.uom=:uom"); qry.setString("uom", uom); egUom =
-     * (EgUom) qry.uniqueResult(); } return egUom; }
+     * @Override public EgUom getUomByUom(final String uom) { EgUom egUom = null; if (uom != null) { final Query qry =
+     * getSession().createQuery( "from EgUom uom where uom.uom=:uom"); qry.setString("uom", uom); egUom = (EgUom)
+     * qry.uniqueResult(); } return egUom; }
      */
 
-    @Override
-    public Bankaccount getBankaccountById(final Integer id) {
-        return (Bankaccount) commonsDAOFactory.getBankaccountDAO().findById(id, false);
+    
+    public Bankaccount getBankaccountById(final Long id) {
+        return null;
     }
 
-    @Override
-    public void createEgSurrenderedCheques(final EgSurrenderedCheques egSurrendrdChqs) {
-        commonsDAOFactory.getEgSurrenderedChequesDAO().create(egSurrendrdChqs);
-    }
-
-    @Override
-    public void updateEgSurrenderedCheques(final EgSurrenderedCheques egSurrendrdChqs) {
-        commonsDAOFactory.getEgSurrenderedChequesDAO().update(egSurrendrdChqs);
-    }
-
+    
     @Override
     public EgPartytype getPartytypeByCode(final String code) {
         return commonsDAOFactory.getEgPartytypeDAO().getPartytypeByCode(code);
@@ -832,12 +813,9 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /**
-     * @param moduleType
-     *            Module type
-     * @param codeList
-     *            List of status codes
-     * @return List of all EgwStatus objects filtered by given module type and
-     *         list of status codes
+     * @param moduleType Module type
+     * @param codeList List of status codes
+     * @return List of all EgwStatus objects filtered by given module type and list of status codes
      */
     @Override
     public List<EgwStatus> getStatusListByModuleAndCodeList(final String moduleType, final List codeList) {
@@ -968,16 +946,12 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /*
-     * @Override public List<EgUom> getAllUomsWithinCategoryByUom(final Integer
-     * uomId) throws ValidationException { return
+     * @Override public List<EgUom> getAllUomsWithinCategoryByUom(final Integer uomId) throws ValidationException { return
      * commonsDAOFactory.getEgUomDAO().getAllUomsWithinCategoryByUom(uomId); }
-     * @Override public BigDecimal getConversionFactorByUom(final Integer uomId)
-     * throws ValidationException { return
+     * @Override public BigDecimal getConversionFactorByUom(final Integer uomId) throws ValidationException { return
      * commonsDAOFactory.getEgUomDAO().getConversionFactorByUom(uomId); }
-     * @Override public BigDecimal getConversionFactorByFromUomToUom(final
-     * Integer fromuomId, final Integer touomId) throws ValidationException {
-     * return commonsDAOFactory.getEgUomDAO().getConversionFactorByFromUomToUom(
-     * fromuomId , touomId); }
+     * @Override public BigDecimal getConversionFactorByFromUomToUom(final Integer fromuomId, final Integer touomId) throws
+     * ValidationException { return commonsDAOFactory.getEgUomDAO().getConversionFactorByFromUomToUom( fromuomId , touomId); }
      */
     @Override
     public List<EgPartytype> getSubPartyTypes(final String code) {
@@ -1020,6 +994,14 @@ public class CommonsServiceImpl implements CommonsService {
                                         boundaryNum);
                                 if (boundary != null && true)
                                     boundaryId = boundary.getId();
+                                else {
+                                    final BoundaryType cityBoundaryType = boundaryTypeService
+                                            .getBoundaryTypeByNameAndHierarchyTypeName("City", "ADMINISTRATION");
+                                    final Boundary cityBoundary = boundaryService
+                                            .getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0);
+                                    boundaryId = cityBoundary.getId();
+                                }
+
                             }
                             break;
                         }
@@ -1044,6 +1026,30 @@ public class CommonsServiceImpl implements CommonsService {
     @Override
     public Accountdetailtype getAccountDetailTypeByName(final String name) {
         return commonsDAOFactory.getaccountdetailtypeHibernateDAO().getAccountdetailtypeByName(name);
+    }
+
+    @Override
+    public Relation getRelationById(Integer relationId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Bankaccount getBankaccountById(Integer id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void createEgSurrenderedCheques(EgSurrenderedCheques egSurrenderedCheques) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void updateEgSurrenderedCheques(EgSurrenderedCheques egSurrenderedCheques) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

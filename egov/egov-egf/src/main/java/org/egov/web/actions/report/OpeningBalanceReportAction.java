@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,7 +62,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.exilant.eGov.src.reports.OpeningBalance;
 import com.exilant.eGov.src.reports.OpeningBalanceInputBean;
@@ -67,7 +70,7 @@ import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@Transactional(readOnly = true)
+
 @ParentPackage("egov")
 @Results({
     @Result(name = "result", location = "openingBalanceReport-result.jsp"),
@@ -75,6 +78,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
             + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp")
 })
 public class OpeningBalanceReportAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     /**
      *
@@ -98,8 +105,8 @@ public class OpeningBalanceReportAction extends BaseFormAction {
 
     public void prepareNewForm() {
         super.prepare();
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("financialYearList", persistenceService.findAllBy("from CFinancialYear order by finYearRange desc "));
@@ -135,7 +142,7 @@ public class OpeningBalanceReportAction extends BaseFormAction {
             LOGGER.debug("OpeningBalanceReportAction | list | End");
         heading = getGLHeading();
         prepareNewForm();
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
+        persistenceService.getSession().setFlushMode(FlushMode.AUTO);
         return "result";
     }
 

@@ -33,6 +33,9 @@
  */
 package org.egov.web.actions.voucher;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -102,7 +105,11 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private String wfitemstate;
     private VoucherHelper voucherHelper;
     // private boolean isRejectedVoucher=false;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private ChartOfAccounts chartOfAccounts;
     private ChartOfAccounts engine;
     private static final String ACTIONNAME = "actionName";
@@ -130,8 +137,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     @SuppressWarnings("unchecked")
     @Override
     public void prepare() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("approvaldepartmentList", Collections.EMPTY_LIST);
         addDropdownData("designationList", Collections.EMPTY_LIST);
@@ -179,7 +186,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         getBillInfo();
         loadSchemeSubscheme();
         loadFundSource();
-        loadApproverUser("default");
+      //  loadApproverUser("default");
         if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view")) {
             return "view";
         }
@@ -359,7 +366,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                 moduleType = FinancialConstants.CONTRACTORBILL;
             }
 
-            final Query billQry = HibernateUtil.getCurrentSession().createSQLQuery(cancelQuery.toString());
+            final Query billQry = persistenceService.getSession().createSQLQuery(cancelQuery.toString());
             billQry.setString("module", moduleType);
             billQry.setString("description", description);
             billQry.setString("billstatus", billstatus);

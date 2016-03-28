@@ -218,11 +218,22 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                         (String) request.getSession().getAttribute("citylogo"));
                 final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+                
+                final String cityGrade = (request.getSession().getAttribute("cityGrade") != null ? request.getSession()
+                        .getAttribute("cityGrade").toString() : null);
+                Boolean isCorporation;
+                if (cityGrade != null && cityGrade != ""
+                        && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+                    isCorporation = true;
+                } else
+                    isCorporation = false;
+                
+                
                 final PropertyMutation propertyMutation = (PropertyMutation) persistenceService.find(
                         "From PropertyMutation where id = ? ", Long.valueOf(id[0]));
                 final BasicProperty basicProperty = propertyMutation.getBasicProperty();
                 transferOwnerService.generateTransferNotice(basicProperty, propertyMutation, cityName, cityLogo,
-                        WFLOW_ACTION_STEP_SIGN);
+                        WFLOW_ACTION_STEP_SIGN,isCorporation);
                 final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
                         NOTICE_TYPE_MUTATION_CERTIFICATE, propertyMutation.getApplicationNo());
                 fileStoreId.append(notice.getFileStore().getFileStoreId());
@@ -603,7 +614,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
         property.transition().end();
         basicProperty.setUnderWorkflow(false);
-        LOGGER.debug("Exit method endWorkFlow, Workflow ended");
+        LOGGER.debug("Exit method endWorkFlow, Workflow ended");   
     }
 
     public void setReportService(final ReportService reportService) {

@@ -174,10 +174,10 @@
 			<div >
 			
 						<label for="field-1" class="col-sm-1 control-label"> <spring:message
-								code="lbl.unit.rate" /><span class="mandatory"></span>
+								code="lbl.per.unit" /><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"	maxlength="5" path="unitrate"  id="unitrate"  required="required"/>
+							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"	maxlength="5" path="unitrate"  id="unitrate" onblur="return validatePerUnit(this);" required="required"/>
 						</div> 
 			</div>
 			
@@ -277,7 +277,7 @@
 						<button type="button" id="btn-add" class="btn btn-primary btn-add"><spring:message code="lbl.add.row"/></button>
 						<button type="submit" class="btn btn-primary schedleOfrateBtn" 
 						onclick="return checkUniqueDesignationSelected();" id="schedleOfrateBtn">
-							<spring:message code="lbl.update"/>
+							Save
 						</button>
 						<a href="javascript:void(0);" onclick="self.close()" class="btn btn-default">
 							<spring:message code="lbl.close"/></a>

@@ -47,7 +47,7 @@ public class Fund implements java.io.Serializable {
 
     private Integer id;
 
-    private Fund fund;
+    private Fund parentId;
 
     private EgfAccountcodePurpose egfAccountcodePurpose;
 
@@ -94,7 +94,7 @@ public class Fund implements java.io.Serializable {
             Boolean isnotleaf, Character identifier, Set voucherheaders,
             Set funds) {
         this.id = id;
-        this.fund = fund;
+        this.parentId = fund;
         this.egfAccountcodePurpose = egfAccountcodePurpose;
         this.code = code;
         this.name = name;
@@ -118,12 +118,12 @@ public class Fund implements java.io.Serializable {
         this.id = id;
     }
 
-    public Fund getFund() {
-        return this.fund;
+    public Fund getParentId() {
+        return this.parentId;
     }
 
-    public void setFund(Fund fund) {
-        this.fund = fund;
+    public void setParentId(Fund fund) {
+        this.parentId = fund;
     }
 
     public EgfAccountcodePurpose getEgfAccountcodePurpose() {

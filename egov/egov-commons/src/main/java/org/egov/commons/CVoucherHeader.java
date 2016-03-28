@@ -79,7 +79,7 @@ public class CVoucherHeader extends StateAware {
     private Integer status;
     private Long originalvcId;
     private Integer isConfirmed;
-    private String refcgNo;
+    private Long refvhId;
     private String cgvn;
     private Integer moduleId;
     @Transient
@@ -261,19 +261,13 @@ public class CVoucherHeader extends StateAware {
         this.isConfirmed = isConfirmed;
     }
 
-    /**
-     * @return Returns the refcgNo.
-     */
 
-    public String getRefcgNo() {
-        return refcgNo;
+    public Long getRefvhId() {
+        return refvhId;
     }
 
-    /**
-     * @param refcgNo The refcgNo to set.
-     */
-    public void setRefcgNo(final String refcgNo) {
-        this.refcgNo = refcgNo;
+    public void setRefvhId(Long refvhId) {
+        this.refvhId = refvhId;
     }
 
     /**
@@ -329,7 +323,7 @@ public class CVoucherHeader extends StateAware {
         status = null;
         originalvcId = null;
         isConfirmed = null;
-        refcgNo = null;
+        refvhId = null;
         cgvn = null;
         moduleId = null;
         vouchermis = null;

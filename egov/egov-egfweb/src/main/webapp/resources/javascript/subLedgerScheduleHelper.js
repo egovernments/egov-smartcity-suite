@@ -81,7 +81,7 @@
     	doLoadingMask();
       	document.getElementById("resultDiv").style.display="none";
           var formObj = jQuery(document.getElementById("subLedgerScheduleForm"));
-          var formURL = '/EGF/report/subLedgerScheduleReport!ajaxSearch.action';
+          var formURL = '/EGF/report/subLedgerScheduleReport-ajaxSearch.action';
           var formData = new FormData(document.getElementById("subLedgerScheduleForm"));
           jQuery.ajax({
               url: formURL,
@@ -112,7 +112,7 @@
 	var oAutoCompEntityForJV;
 	function autocompleteAccountCodes(obj)
 	{
-	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common!ajaxLoadSLreportCodes.action", [ "~^"]);
+	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common-ajaxLoadSLreportCodes.action", [ "~^"]);
 		   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 		   oACDS.scriptQueryParam = "startsWith";
 		   oAutoCompEntityForJV = new YAHOO.widget.AutoComplete(obj.name,'codescontainer',oACDS);
@@ -124,7 +124,7 @@
 		   oAutoCompEntityForJV.minQueryLength = 3;
 		   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 		   oAutoCompEntityForJV.useShadow = true;
-		   oAutoCompEntityForJV.forceSelection = true;
+		  // oAutoCompEntityForJV.forceSelection = true;
 		   oAutoCompEntityForJV.maxResultsDisplayed = 20;
 		   oAutoCompEntityForJV.useIFrame = true;
 		   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
@@ -152,7 +152,7 @@
 	}
 	
 	function viewVoucher(vid){
-		var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+vid;
+		var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+vid;
 		window.open(url,'','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700,status=yes');
 	}
 	
@@ -162,6 +162,6 @@
 		var dept_id=document.getElementById("deptId").value;
 		var startDate=document.getElementById("startDate").value;
 		var endDate=document.getElementById("endDate").value; 	
-		var url = "../report/subLedgerReport!search.action?glCode1="+glcode+"&glCode2="+glcode+"&fund_id="+fund_id+"&departmentId="+dept_id+"&startDate="+startDate+"&endDate="+endDate+"&accEntityId="+accEntId+"&entityName="+name+"&accEntityKey="+accEntkey+"&drillDownFromSchedule=true";
+		var url = "../report/subLedgerReport-search.action?glCode1="+glcode+"&glCode2="+glcode+"&fund_id="+fund_id+"&departmentId="+dept_id+"&startDate="+startDate+"&endDate="+endDate+"&accEntityId="+accEntId+"&entityName="+name+"&accEntityKey="+accEntkey+"&drillDownFromSchedule=true";
 		window.open(url,'','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700,status=yes');
 	}

@@ -39,8 +39,21 @@
  ******************************************************************************/
 package org.egov.dao.budget;
 
-import org.egov.infstr.dao.GenericDAO;
+import java.util.List;
 
-public interface BudgetUsageDAO extends GenericDAO {
+import org.egov.infstr.dao.GenericDAO;
+import org.egov.model.budget.BudgetDetail;
+import org.egov.model.budget.BudgetUsage;
+
+public interface BudgetUsageDAO {
+    BudgetUsage  findById(Number  id, boolean lock);
+
+    List<  BudgetUsage  > findAll();
+
+
+    BudgetUsage   create(  BudgetUsage   entity);
+    BudgetUsage   update(  BudgetUsage   entity);
+
+    void delete(  BudgetUsage   entity);
 
 }

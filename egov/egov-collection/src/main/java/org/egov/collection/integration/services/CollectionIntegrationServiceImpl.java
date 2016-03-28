@@ -70,7 +70,7 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -92,8 +92,7 @@ CollectionIntegrationService {
     private static final Logger LOGGER = Logger.getLogger(CollectionIntegrationServiceImpl.class);
 
     @Autowired
-    private CommonsServiceImpl commonsServiceImpl;
-
+    private FundHibernateDAO fundHibernateDAO;
     private PersistenceService persistenceService;
 
     private CollectionsUtil collectionsUtil;
@@ -249,7 +248,7 @@ CollectionIntegrationService {
     @Override
     public BillReceiptInfo createReceipt(final BillInfo bill, final List<PaymentInfo> paymentInfoList) {
         LOGGER.info("Logs for CreateReceipt : Receipt Creation Started....");
-        final Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
+        final Fund fund = fundHibernateDAO.fundByCode(bill.getFundCode());
         if (fund == null)
             throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
 
@@ -349,21 +348,7 @@ CollectionIntegrationService {
         receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                 chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList.get(0).getInstrumentType().toString()));
 
-        receiptHeaderService.persist(receiptHeader);
-        receiptHeaderService.getSession().flush();
-        LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
-
-        /*
-         * try { receiptHeaderService.createVoucherForReceipt(receiptHeader, Boolean.FALSE);
-         * LOGGER.debug("Updated financial systems and created voucher."); } catch (ApplicationRuntimeException ex) {
-         * errors.add(new ValidationError(
-         * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state." ,
-         * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state." ));
-         * LOGGER.error("Update to financial systems failed"); }
-         */
-
-        receiptHeaderService.updateBillingSystemWithReceiptInfo(receiptHeader);
-        LOGGER.info("Billing system updated with receipt info");
+        receiptHeaderService.persistFieldReceipt(receiptHeader);
 
         // Create Vouchers
         /*
@@ -407,7 +392,7 @@ CollectionIntegrationService {
     @Override
     public BillReceiptInfo createMiscellaneousReceipt(final BillInfo bill, final List<PaymentInfo> paymentInfoList) {
         LOGGER.info("Logs For Miscellaneous Receipt : Receipt Creation Started....");
-        final Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
+        final Fund fund = fundHibernateDAO.fundByCode(bill.getFundCode());
         if (fund == null)
             throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
 

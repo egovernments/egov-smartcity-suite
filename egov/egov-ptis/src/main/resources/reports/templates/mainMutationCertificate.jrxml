@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-02-02T13:24:55 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainMutationCertificate" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" whenResourceMissingType="Empty" uuid="9cf367da-f255-4a18-8dcb-ffe982b88e97">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
 	<parameter name="userId" class="java.lang.Long"/>
+	<parameter name="isCorporation" class="java.lang.Boolean"/>
 	<field name="municipalityName" class="java.lang.String"/>
 	<field name="approvedDate" class="java.lang.String"/>
 	<field name="assessmentNo" class="java.lang.String"/>
@@ -69,7 +71,7 @@
 					<subreportParameterExpression><![CDATA[$F{ownerAddress}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(null, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("mutationCertificate_details.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{isCorporation}==true?ReportUtil.getTemplateAsStream("mutationCertificate_corporationDetails.jasper"):ReportUtil.getTemplateAsStream("mutationCertificate_details.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</title>
@@ -121,7 +123,7 @@
 					<subreportParameterExpression><![CDATA[$F{ownerAddress}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(null, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("mutationCertificate_details.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{isCorporation}==true?ReportUtil.getTemplateAsStream("mutationCertificate_corporationDetails.jasper"):ReportUtil.getTemplateAsStream("mutationCertificate_details.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</summary>
