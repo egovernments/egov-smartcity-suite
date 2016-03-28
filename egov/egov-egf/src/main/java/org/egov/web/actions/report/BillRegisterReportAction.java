@@ -162,8 +162,8 @@ public class BillRegisterReportAction extends SearchFormAction {
         
 
         getRemiitPaymentVoucherQry.append("select  distinct rm from EgRemittance rm join rm.egRemittanceDetail rdtl  " +
-                "where rdtl.egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherNumber =?" +
-                "and rdtl.egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.status!=?" +
+                "where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =?" +
+                "and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=?" +
                 " and rm.voucherheader.status!=?")
                 .append(" order by rm.voucherheader.id");
 
