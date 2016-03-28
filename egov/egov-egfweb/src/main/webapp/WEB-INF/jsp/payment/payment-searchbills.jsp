@@ -90,10 +90,10 @@ function checkMiscAttributes(obj)
 		var mis = '';
 		if(document.getElementsByName(fundName) && document.getElementsByName(fundName).item(0) != null )
 			mis = ( document.getElementsByName(fundName).item(0)).value;
-		if(document.getElementsByName(functionName) && document.getElementsByName(functionName).item(0) != null )
+		/* if(document.getElementsByName(functionName) && document.getElementsByName(functionName).item(0) != null )
 			mis = ( document.getElementsByName(functionName).item(0)).value;
 		if(document.getElementsByName(deptName) && document.getElementsByName(deptName).item(0) != null )
-			mis = mis+'#'+( document.getElementsByName(deptName).item(0)).value;
+			mis = mis+'#'+( document.getElementsByName(deptName).item(0)).value; */
 		if(document.getElementsByName(functionaryName) && document.getElementsByName(functionaryName).item(0) != null)
 			mis = mis+'#'+( document.getElementsByName(functionaryName).item(0)).value;	
 		if(document.getElementsByName(fundsourceName) && document.getElementsByName(fundsourceName).item(0) != null)
@@ -172,9 +172,15 @@ function search()
 {
 	if(document.getElementById('vouchermis.departmentid'))
 		document.getElementById('vouchermis.departmentid').disabled=false;
-	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
-	document.forms[0].submit();
-	return true;
+	var fund = document.getElementById('fundId').value;
+	if(fund == "-1"){
+		bootbox.alert("Please select fund");   
+		return false;  
+	}else{
+		document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
+		document.forms[0].submit();
+	}
+	
 }
 function selectAllContractors(element){
 	var length = 0;
@@ -478,7 +484,8 @@ function checkContingentForSameMisAttribs(obj,len)
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Bill Payment Search" />
 		</jsp:include>
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="subheadnew">Bill Payment</div>
 		<div id="budgetSearchGrid" style="display: block; width: 100%;">
@@ -541,7 +548,7 @@ function checkContingentForSameMisAttribs(obj,len)
 															<td class="bluebox"></td>
 															<td class="bluebox"></td>
 														</tr>
-														<jsp:include page="../voucher/vouchertrans-filter.jsp" />
+														<jsp:include page="../payment/paymenttrans-filter.jsp" />
 														<tr>
 															<td align="center" colspan="5">
 																<div class="buttonbottom">
@@ -581,8 +588,7 @@ function checkContingentForSameMisAttribs(obj,len)
 																			<th class="bluebgheadtdnew">Select<input
 																				type="checkbox" name="conSelectAll"
 																				id="conSelectAll"
-																				onclick="selectAllContractors(this)" />
-																			</checkbox></th>
+																				onclick="selectAllContractors(this)" /> </checkbox></th>
 
 																			<jsp:include page="billdetails-header.jsp" />
 																			<s:iterator var="p" value="contractorList" status="s">
@@ -591,8 +597,7 @@ function checkContingentForSameMisAttribs(obj,len)
 
 																			<td class="blueborderfortdnew"><s:hidden
 																					name="contractorList[%{#s.index}].csBillId"
-																					id="csBillId%{#s.index}" value="%{csBillId}" />
-																				<s:checkbox
+																					id="csBillId%{#s.index}" value="%{csBillId}" /> <s:checkbox
 																					name="contractorList[%{#s.index}].isSelected"
 																					id="isSelected%{#s.index}"
 																					onclick="checkMiscAttributes(this)"></s:checkbox></td>
@@ -601,46 +606,44 @@ function checkContingentForSameMisAttribs(obj,len)
 																			</td>
 																			<td align="left" class="blueborderfortdnew"><s:hidden
 																					name="contractorList[%{#s.index}].expType"
-																					id="expType%{#s.index}" value="%{expType}" />
-																				<s:hidden
+																					id="expType%{#s.index}" value="%{expType}" /> <s:hidden
 																					name="contractorList[%{#s.index}].billNumber"
 																					id="billNumber%{#s.index}" value="%{billNumber}" />
 																				<s:property value="%{billNumber}" /></td>
 																			<td class="blueborderfortdnew"><s:hidden
 																					name="contractorList[%{#s.index}].billDate"
-																					id="billDate%{#s.index}" value="%{billDate}" />
-																				<s:date name="%{billDate}" format="dd/MM/yyyy" /></td>
+																					id="billDate%{#s.index}" value="%{billDate}" /> <s:date
+																					name="%{billDate}" format="dd/MM/yyyy" /></td>
 
 																			<td align="left" class="blueborderfortdnew"><s:hidden
 																					name="contractorList[%{#s.index}].billVoucherNumber"
 																					id="billVoucherNumber%{#s.index}"
-																					value="%{billVoucherNumber}" />
-																				<s:property value="%{billVoucherNumber}" /></td>
+																					value="%{billVoucherNumber}" /> <s:property
+																					value="%{billVoucherNumber}" /></td>
 																			<td style="text-align: left"
 																				class="blueborderfortdnew"><s:hidden
 																					name="contractorList[%{#s.index}].billVoucherDate"
 																					id="billVoucherDate%{#s.index}"
-																					value="%{billVoucherDate}" />
-																				<s:date name="%{billVoucherDate}"
-																					format="dd/MM/yyyy" /></td>
+																					value="%{billVoucherDate}" /> <s:date
+																					name="%{billVoucherDate}" format="dd/MM/yyyy" /></td>
 
 																			<td align="left" class="blueborderfortdnew"><s:hidden
 																					name="contractorList[%{#s.index}].payTo"
-																					id="payTo%{#s.index}" value="%{payTo}" />
-																				<s:property value="%{payTo}" /></td>
+																					id="payTo%{#s.index}" value="%{payTo}" /> <s:property
+																					value="%{payTo}" /></td>
 																			<td style="text-align: right"
 																				class="blueborderfortdnew"><s:hidden
 																					name="contractorList[%{#s.index}].netAmt"
-																					id="netAmt%{#s.index}" value="%{netAmt}" />
-																				<s:text name="payment.format.number">
+																					id="netAmt%{#s.index}" value="%{netAmt}" /> <s:text
+																					name="payment.format.number">
 																					<s:param value="%{netAmt}" />
 																				</s:text></td>
 																			<td style="text-align: right"
 																				class="blueborderfortdnew"><s:hidden
 																					name="contractorList[%{#s.index}].earlierPaymentAmt"
 																					id="earlierPaymentAmt%{#s.index}"
-																					value="%{earlierPaymentAmt}" />
-																				<s:text name="payment.format.number">
+																					value="%{earlierPaymentAmt}" /> <s:text
+																					name="payment.format.number">
 																					<s:param value="%{earlierPaymentAmt}" />
 																				</s:text></td>
 																			<td style="text-align: right"
@@ -657,39 +660,39 @@ function checkContingentForSameMisAttribs(obj,len)
 																				<td class="blueborderfortdnew"
 																					id="fund<s:property value="#s.index"/>"><s:hidden
 																						name="contractorList[%{#s.index}].fundName"
-																						id="fundName%{#s.index}" value="%{fundName}" />
-																					<s:property value="%{fundName}" /></td>
+																						id="fundName%{#s.index}" value="%{fundName}" /> <s:property
+																						value="%{fundName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('department')}">
 																				<td class="blueborderfortdnew"
 																					id="dept<s:property value="#s.index"/>"><s:hidden
 																						name="contractorList[%{#s.index}].deptName"
-																						id="deptName%{#s.index}" value="%{deptName}" />
-																					<s:property value="%{deptName}" /></td>
+																						id="deptName%{#s.index}" value="%{deptName}" /> <s:property
+																						value="%{deptName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('function')}">
 																				<td class="blueborderfortdnew"
 																					id="function<s:property value="#s.index"/>"><s:hidden
 																						name="contractorList[%{#s.index}].functionName"
 																						id="functionName%{#s.index}"
-																						value="%{functionName}" />
-																					<s:property value="%{functionName}" /></td>
+																						value="%{functionName}" /> <s:property
+																						value="%{functionName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('functionary')}">
 																				<td class="blueborderfortdnew"
 																					id="functionary<s:property value="#s.index"/>"><s:hidden
 																						name="contractorList[%{#s.index}].functionaryName"
 																						id="functionaryName%{#s.index}"
-																						value="%{functionaryName}" />
-																					<s:property value="%{functionaryName}" /></td>
+																						value="%{functionaryName}" /> <s:property
+																						value="%{functionaryName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('fundsource')}">
 																				<td class="blueborderfortdnew"
 																					id="fundsource<s:property value="#s.index"/>"><s:hidden
 																						name="contractorList[%{#s.index}].fundsourceName"
 																						id="fundsourceName%{#s.index}"
-																						value="%{fundsourceName}" />
-																					<s:property value="%{fundsourceName}" /></td>
+																						value="%{fundsourceName}" /> <s:property
+																						value="%{fundsourceName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('scheme')}">
 																				<td class="blueborderfortdnew"
@@ -703,8 +706,8 @@ function checkContingentForSameMisAttribs(obj,len)
 																					id="subscheme<s:property value="#s.index"/>"><s:hidden
 																						name="contractorList[%{#s.index}].subschemeName"
 																						id="subschemeName%{#s.index}"
-																						value="%{subschemeName}" />
-																					<s:property value="%{subschemeName}" /></td>
+																						value="%{subschemeName}" /> <s:property
+																						value="%{subschemeName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('field')}">
 																				<td class="blueborderfortdnew"
@@ -745,7 +748,7 @@ function checkContingentForSameMisAttribs(obj,len)
 																		<tr>
 																			<th class="bluebgheadtdnew">Select<input
 																				type="checkbox" onclick="selectAllSuppliers(this)" />
-																			</checkbox></th>
+																				</checkbox></th>
 
 																			<jsp:include page="billdetails-header.jsp" />
 																			<s:iterator var="p" value="supplierList" status="s">
@@ -753,8 +756,7 @@ function checkContingentForSameMisAttribs(obj,len)
 																		<tr>
 																			<td class="blueborderfortdnew"><s:hidden
 																					name="supplierList[%{#s.index}].csBillId"
-																					id="csBillId%{#s.index}" value="%{csBillId}" />
-																				<s:checkbox
+																					id="csBillId%{#s.index}" value="%{csBillId}" /> <s:checkbox
 																					name="supplierList[%{#s.index}].isSelected"
 																					id="isSelected%{#s.index}"
 																					onclick="checkMiscAttributes(this)"></s:checkbox></td>
@@ -763,46 +765,44 @@ function checkContingentForSameMisAttribs(obj,len)
 																			</td>
 																			<td align="left" class="blueborderfortdnew"><s:hidden
 																					name="supplierList[%{#s.index}].expType"
-																					id="expType%{#s.index}" value="%{expType}" />
-																				<s:hidden
+																					id="expType%{#s.index}" value="%{expType}" /> <s:hidden
 																					name="supplierList[%{#s.index}].billNumber"
 																					id="billNumber%{#s.index}" value="%{billNumber}" />
 																				<s:property value="%{billNumber}" /></td>
 																			<td class="blueborderfortdnew"><s:hidden
 																					name="supplierList[%{#s.index}].billDate"
-																					id="billDate%{#s.index}" value="%{billDate}" />
-																				<s:date name="%{billDate}" format="dd/MM/yyyy" /></td>
+																					id="billDate%{#s.index}" value="%{billDate}" /> <s:date
+																					name="%{billDate}" format="dd/MM/yyyy" /></td>
 
 																			<td align="left" class="blueborderfortdnew"><s:hidden
 																					name="supplierList[%{#s.index}].billVoucherNumber"
 																					id="billVoucherNumber%{#s.index}"
-																					value="%{billVoucherNumber}" />
-																				<s:property value="%{billVoucherNumber}" /></td>
+																					value="%{billVoucherNumber}" /> <s:property
+																					value="%{billVoucherNumber}" /></td>
 																			<td style="text-align: left"
 																				class="blueborderfortdnew"><s:hidden
 																					name="supplierList[%{#s.index}].billVoucherDate"
 																					id="billVoucherDate%{#s.index}"
-																					value="%{billVoucherDate}" />
-																				<s:date name="%{billVoucherDate}"
-																					format="dd/MM/yyyy" /></td>
+																					value="%{billVoucherDate}" /> <s:date
+																					name="%{billVoucherDate}" format="dd/MM/yyyy" /></td>
 
 																			<td align="left" class="blueborderfortdnew"><s:hidden
 																					name="supplierList[%{#s.index}].payTo"
-																					id="payTo%{#s.index}" value="%{payTo}" />
-																				<s:property value="%{payTo}" /></td>
+																					id="payTo%{#s.index}" value="%{payTo}" /> <s:property
+																					value="%{payTo}" /></td>
 																			<td style="text-align: right"
 																				class="blueborderfortdnew"><s:hidden
 																					name="supplierList[%{#s.index}].netAmt"
-																					id="netAmt%{#s.index}" value="%{netAmt}" />
-																				<s:text name="payment.format.number">
+																					id="netAmt%{#s.index}" value="%{netAmt}" /> <s:text
+																					name="payment.format.number">
 																					<s:param value="%{netAmt}" />
 																				</s:text></td>
 																			<td style="text-align: right"
 																				class="blueborderfortdnew"><s:hidden
 																					name="supplierList[%{#s.index}].earlierPaymentAmt"
 																					id="earlierPaymentAmt%{#s.index}"
-																					value="%{earlierPaymentAmt}" />
-																				<s:text name="payment.format.number">
+																					value="%{earlierPaymentAmt}" /> <s:text
+																					name="payment.format.number">
 																					<s:param value="%{earlierPaymentAmt}" />
 																				</s:text></td>
 																			<td style="text-align: right"
@@ -819,39 +819,39 @@ function checkContingentForSameMisAttribs(obj,len)
 																				<td class="blueborderfortdnew"
 																					id="fund<s:property value="#s.index"/>"><s:hidden
 																						name="supplierList[%{#s.index}].fundName"
-																						id="fundName%{#s.index}" value="%{fundName}" />
-																					<s:property value="%{fundName}" /></td>
+																						id="fundName%{#s.index}" value="%{fundName}" /> <s:property
+																						value="%{fundName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('department')}">
 																				<td class="blueborderfortdnew"
 																					id="dept<s:property value="#s.index"/>"><s:hidden
 																						name="supplierList[%{#s.index}].deptName"
-																						id="deptName%{#s.index}" value="%{deptName}" />
-																					<s:property value="%{deptName}" /></td>
+																						id="deptName%{#s.index}" value="%{deptName}" /> <s:property
+																						value="%{deptName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('function')}">
 																				<td class="blueborderfortdnew"
 																					id="function<s:property value="#s.index"/>"><s:hidden
 																						name="supplierList[%{#s.index}].functionName"
 																						id="functionName%{#s.index}"
-																						value="%{functionName}" />
-																					<s:property value="%{functionName}" /></td>
+																						value="%{functionName}" /> <s:property
+																						value="%{functionName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('functionary')}">
 																				<td class="blueborderfortdnew"
 																					id="functionary<s:property value="#s.index"/>"><s:hidden
 																						name="supplierList[%{#s.index}].functionaryName"
 																						id="functionaryName%{#s.index}"
-																						value="%{functionaryName}" />
-																					<s:property value="%{functionaryName}" /></td>
+																						value="%{functionaryName}" /> <s:property
+																						value="%{functionaryName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('fundsource')}">
 																				<td class="blueborderfortdnew"
 																					id="fundsource<s:property value="#s.index"/>"><s:hidden
 																						name="supplierList[%{#s.index}].fundsourceName"
 																						id="fundsourceName%{#s.index}"
-																						value="%{fundsourceName}" />
-																					<s:property value="%{fundsourceName}" /></td>
+																						value="%{fundsourceName}" /> <s:property
+																						value="%{fundsourceName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('scheme')}">
 																				<td class="blueborderfortdnew"
@@ -865,8 +865,8 @@ function checkContingentForSameMisAttribs(obj,len)
 																					id="subscheme<s:property value="#s.index"/>"><s:hidden
 																						name="supplierList[%{#s.index}].subschemeName"
 																						id="subschemeName%{#s.index}"
-																						value="%{subschemeName}" />
-																					<s:property value="%{subschemeName}" /></td>
+																						value="%{subschemeName}" /> <s:property
+																						value="%{subschemeName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('field')}">
 																				<td class="blueborderfortdnew"
@@ -906,8 +906,7 @@ function checkContingentForSameMisAttribs(obj,len)
 																		<tr>
 																			<th class="bluebgheadtdnew">Select<input
 																				type="checkbox" id="expSelectAll"
-																				onclick="selectAllContingent(this)" />
-																			</checkbox></th>
+																				onclick="selectAllContingent(this)" /> </checkbox></th>
 																			<jsp:include page="billdetails-header.jsp" />
 																			<s:iterator var="p" value="contingentList" status="s">
 																		</tr>
@@ -915,8 +914,7 @@ function checkContingentForSameMisAttribs(obj,len)
 
 																			<td class="blueborderfortdnew"><s:hidden
 																					name="contingentList[%{#s.index}].csBillId"
-																					id="csBillId%{#s.index}" value="%{csBillId}" />
-																				<s:checkbox
+																					id="csBillId%{#s.index}" value="%{csBillId}" /> <s:checkbox
 																					name="contingentList[%{#s.index}].isSelected"
 																					id="isSelected%{#s.index}"
 																					onclick="checkMiscAttributes(this)"></s:checkbox></td>
@@ -926,46 +924,44 @@ function checkContingentForSameMisAttribs(obj,len)
 																			<!-- <td align="left"  class="blueborderfortdnew"/><s:hidden  name="contingentList[%{#s.index}].csBillId" id="csBillId%{#s.index}" value="%{csBillId}"/><s:property value="#s.index" /> </td> -->
 																			<td align="left" class="blueborderfortdnew"><s:hidden
 																					name="contingentList[%{#s.index}].expType"
-																					id="expType%{#s.index}" value="%{expType}" />
-																				<s:hidden
+																					id="expType%{#s.index}" value="%{expType}" /> <s:hidden
 																					name="contingentList[%{#s.index}].billNumber"
 																					id="billNumber%{#s.index}" value="%{billNumber}" />
 																				<s:property value="%{billNumber}" /></td>
 																			<td class="blueborderfortdnew"><s:hidden
 																					name="contingentList[%{#s.index}].billDate"
-																					id="billDate%{#s.index}" value="%{billDate}" />
-																				<s:date name="%{billDate}" format="dd/MM/yyyy" /></td>
+																					id="billDate%{#s.index}" value="%{billDate}" /> <s:date
+																					name="%{billDate}" format="dd/MM/yyyy" /></td>
 
 																			<td align="left" class="blueborderfortdnew"><s:hidden
 																					name="contingentList[%{#s.index}].billVoucherNumber"
 																					id="billVoucherNumber%{#s.index}"
-																					value="%{billVoucherNumber}" />
-																				<s:property value="%{billVoucherNumber}" /></td>
+																					value="%{billVoucherNumber}" /> <s:property
+																					value="%{billVoucherNumber}" /></td>
 																			<td style="text-align: left"
 																				class="blueborderfortdnew"><s:hidden
 																					name="contingentList[%{#s.index}].billVoucherDate"
 																					id="billVoucherDate%{#s.index}"
-																					value="%{billVoucherDate}" />
-																				<s:date name="%{billVoucherDate}"
-																					format="dd/MM/yyyy" /></td>
+																					value="%{billVoucherDate}" /> <s:date
+																					name="%{billVoucherDate}" format="dd/MM/yyyy" /></td>
 
 																			<td align="left" class="blueborderfortdnew"><s:hidden
 																					name="contingentList[%{#s.index}].payTo"
-																					id="payTo%{#s.index}" value="%{payTo}" />
-																				<s:property value="%{payTo}" /></td>
+																					id="payTo%{#s.index}" value="%{payTo}" /> <s:property
+																					value="%{payTo}" /></td>
 																			<td style="text-align: right"
 																				class="blueborderfortdnew"><s:hidden
 																					name="contingentList[%{#s.index}].netAmt"
-																					id="netAmt%{#s.index}" value="%{netAmt}" />
-																				<s:text name="payment.format.number">
+																					id="netAmt%{#s.index}" value="%{netAmt}" /> <s:text
+																					name="payment.format.number">
 																					<s:param value="%{netAmt}" />
 																				</s:text></td>
 																			<td style="text-align: right"
 																				class="blueborderfortdnew"><s:hidden
 																					name="contingentList[%{#s.index}].earlierPaymentAmt"
 																					id="earlierPaymentAmt%{#s.index}"
-																					value="%{earlierPaymentAmt}" />
-																				<s:text name="payment.format.number">
+																					value="%{earlierPaymentAmt}" /> <s:text
+																					name="payment.format.number">
 																					<s:param value="%{earlierPaymentAmt}" />
 																				</s:text></td>
 																			<td style="text-align: right"
@@ -982,39 +978,39 @@ function checkContingentForSameMisAttribs(obj,len)
 																				<td class="blueborderfortdnew"
 																					id="fund<s:property value="#s.index"/>"><s:hidden
 																						name="contingentList[%{#s.index}].fundName"
-																						id="fundName%{#s.index}" value="%{fundName}" />
-																					<s:property value="%{fundName}" /></td>
+																						id="fundName%{#s.index}" value="%{fundName}" /> <s:property
+																						value="%{fundName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('department')}">
 																				<td class="blueborderfortdnew"
 																					id="dept<s:property value="#s.index"/>"><s:hidden
 																						name="contingentList[%{#s.index}].deptName"
-																						id="deptName%{#s.index}" value="%{deptName}" />
-																					<s:property value="%{deptName}" /></td>
+																						id="deptName%{#s.index}" value="%{deptName}" /> <s:property
+																						value="%{deptName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('functionary')}">
 																				<td class="blueborderfortdnew"
 																					id="functionary<s:property value="#s.index"/>"><s:hidden
 																						name="contingentList[%{#s.index}].functionaryName"
 																						id="functionaryName%{#s.index}"
-																						value="%{functionaryName}" />
-																					<s:property value="%{functionaryName}" /></td>
+																						value="%{functionaryName}" /> <s:property
+																						value="%{functionaryName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('function')}">
 																				<td class="blueborderfortdnew"
 																					id="function<s:property value="#s.index"/>"><s:hidden
 																						name="contingentList[%{#s.index}].functionName"
 																						id="functionName%{#s.index}"
-																						value="%{functionName}" />
-																					<s:property value="%{functionName}" /></td>
+																						value="%{functionName}" /> <s:property
+																						value="%{functionName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('fundsource')}">
 																				<td class="blueborderfortdnew"
 																					id="fundsource<s:property value="#s.index"/>"><s:hidden
 																						name="contingentList[%{#s.index}].fundsourceName"
 																						id="fundsourceName%{#s.index}"
-																						value="%{fundsourceName}" />
-																					<s:property value="%{fundsourceName}" /></td>
+																						value="%{fundsourceName}" /> <s:property
+																						value="%{fundsourceName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('scheme')}">
 																				<td class="blueborderfortdnew"
@@ -1028,8 +1024,8 @@ function checkContingentForSameMisAttribs(obj,len)
 																					id="subscheme<s:property value="#s.index"/>"><s:hidden
 																						name="contingentList[%{#s.index}].subschemeName"
 																						id="subschemeName%{#s.index}"
-																						value="%{subschemeName}" />
-																					<s:property value="%{subschemeName}" /></td>
+																						value="%{subschemeName}" /> <s:property
+																						value="%{subschemeName}" /></td>
 																			</s:if>
 																			<s:if test="%{shouldShowHeaderField('field')}">
 																				<td class="blueborderfortdnew"
@@ -1088,8 +1084,8 @@ function checkContingentForSameMisAttribs(obj,len)
 						for="paymentModertgs">RTGS</label></td>
 				</tr>
 				<tr>
-					<td class="buttonbottomnew" align="center"><br>
-					<input type="button" class="buttonsubmit" value="Generate Payment"
+					<td class="buttonbottomnew" align="center"><br> <input
+						type="button" class="buttonsubmit" value="Generate Payment"
 						id="generatePayment" onclick="return check();" /></td>
 				</tr>
 			</table>

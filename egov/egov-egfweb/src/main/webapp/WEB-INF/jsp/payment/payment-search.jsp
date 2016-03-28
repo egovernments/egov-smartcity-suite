@@ -109,7 +109,7 @@
 					<td class="bluebox"></td>
 
 				</tr>
-				<jsp:include page="../voucher/vouchertrans-filter.jsp" />
+				<jsp:include page="../payment/paymenttrans-filter.jsp" />
 			</table>
 
 		</div>
@@ -148,8 +148,13 @@
 			function loadBank(obj){}
 			function search()
 			{
-				document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
-	    		document.forms[0].submit();
+				var fund = document.getElementById('fundId').value;
+				if(fund == "-1"){
+					bootbox.alert("Please select fund");     
+				}else{
+					document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
+	    			document.forms[0].submit();
+				}
 				return true;
 			}
 			<s:if test="%{disableExpenditureType == true && enablePensionType == false}">
