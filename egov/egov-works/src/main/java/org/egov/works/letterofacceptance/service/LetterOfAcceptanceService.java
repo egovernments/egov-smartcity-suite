@@ -158,4 +158,9 @@ public class LetterOfAcceptanceService {
         return workOrder;
     }
 
+    public WorkOrder getApprovedWorkOrder(final String workOrderNumber) {
+        return letterOfAcceptanceRepository.findByWorkOrderNumberAndEgwStatus_codeEquals(workOrderNumber,
+                WorksConstants.APPROVED);
+    }
+
 }

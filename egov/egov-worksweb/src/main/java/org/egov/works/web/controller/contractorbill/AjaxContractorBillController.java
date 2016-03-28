@@ -37,20 +37,13 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.letterofacceptance.repository;
+package org.egov.works.web.controller.contractorbill;
 
-import org.egov.works.models.workorder.WorkOrder;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@Repository
-public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, Long> {
+@Controller
+@RequestMapping(value = "/contractorbill")
+public class AjaxContractorBillController {
 
-    WorkOrder findById(final Long id);
-
-    WorkOrder findByWorkOrderNumberAndEgwStatus_codeNotLike(final String workOrderNumber, final String statusCode);
-
-    WorkOrder findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);
-
-    WorkOrder findByWorkOrderNumberAndEgwStatus_codeEquals(final String workOrderNumber, final String statusCode);
 }

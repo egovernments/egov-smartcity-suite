@@ -45,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.egov.model.bills.EgBillregister;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 
 public class ContractorBillRegister extends EgBillregister {
 
@@ -69,6 +70,8 @@ public class ContractorBillRegister extends EgBillregister {
     private Date approvedDate;
 
     private List<StatutoryDeductionsForBill> statutoryDeductionsList = new LinkedList<StatutoryDeductionsForBill>();
+
+    private transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @Override
     public String getStateDetails() {
@@ -197,5 +200,13 @@ public class ContractorBillRegister extends EgBillregister {
 
     public void setApprovedDate(final Date approvedDate) {
         this.approvedDate = approvedDate;
+    }
+
+    public List<DocumentDetails> getDocumentDetails() {
+        return documentDetails;
+    }
+
+    public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
+        this.documentDetails = documentDetails;
     }
 }

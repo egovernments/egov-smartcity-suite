@@ -100,4 +100,9 @@
 		<put-attribute name="page-title" value="title.new.lineestimate"	cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/lineestimate/lineestimate-success.jsp" />
 	</definition>
+	
+	<definition name="contractorBill-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.contractorbill.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractorbill/contractorBill-form.jsp"/>
+    </definition>
 </tiles-definitions>
