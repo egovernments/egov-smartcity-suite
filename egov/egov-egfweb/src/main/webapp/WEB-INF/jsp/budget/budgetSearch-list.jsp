@@ -77,6 +77,9 @@
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
+			<h5 style="color:red">
+			<s:actionerror/>
+			<s:actionmessage/></h5>
 	</s:form>
 
 	<s:if test="%{!budgetList.isEmpty()}">
@@ -114,11 +117,6 @@
 			</table>
 		</div>
 	</s:if>
-	<%-- <s:elseif test="%{!errorMessage || budgetDetail.budget==null}"></s:elseif> --%>
-	<s:else>
-		<div class="error">
-			<s:text name="budget.no.details.found" />
-		</div>
-	</s:else>
+	
 </body>
 </html>

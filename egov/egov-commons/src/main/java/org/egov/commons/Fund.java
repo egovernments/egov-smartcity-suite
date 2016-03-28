@@ -104,10 +104,11 @@ public class Fund extends AbstractPersistable<Integer> {
         
         private Date lastModifiedDate;
 
+        @Override
         public Integer getId() {
                 return id;
         }
-
+        @Override
         public void setId(Integer id) {
                 this.id = id;
         }
