@@ -105,6 +105,7 @@
 					<s:fielderror />
 				</div> <s:actionmessage />
 			</span>
+										
 			<center>
 				<table border="0" width="100%" cellspacing="0" cellpadding="0">
 					<tr width="50%">
@@ -130,7 +131,7 @@
 										</td>
 										<td class="greybox"></td>
 								</tr>
-
+								
 							</table>
 						</td>
 						<td width="25%">
@@ -154,12 +155,19 @@
 											onclick="urlLoad('<s:property value="%{fileStoreId}" />');"
 											id="outputFileId" /> <s:label value="%{fileName}" /> </a></td>
 									</tr>
+									
 								</s:iterator>
 							</table>
 						</td>
 					</tr>
+					<tr>
+
+						<td class="greybox" colspan="2"><a
+							href="/EGF/resources/app/formats/Budget_Data_template.xls">Download
+								Template</a></td>
+					</tr>
 				</table>
-				<div class="text-left error-msg">&nbsp;<span class="mandatory"> Only .xls files are supported.</span></div>
+				<div  class="text-left error-msg" style="color: #C00000">&nbsp;* Only .xls files are supported.</span></div>
 				<div class="buttonbottom" id="buttondiv">
 					<table>
 						<tr>
