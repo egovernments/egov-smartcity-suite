@@ -38,4 +38,4 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:redirect url="/login/secure"></c:redirect>
+<c:redirect context="/egi" url="/login/secure"></c:redirect>
