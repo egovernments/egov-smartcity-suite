@@ -151,8 +151,8 @@
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<c:forEach var="emp" items="${engineerInchargeList}">
-		        <form:option value="${emp.id}"><c:out value="${emp.employee.name} - ${emp.designation.name}"/></form:option>
+			<c:forEach var="assignment" items="${engineerInchargeList}">
+		        <form:option value="${assignment.employee.id}"><c:out value="${assignment.employee.name} - ${assignment.designation.name}"/></form:option>
 		    </c:forEach>   
 		</form:select>
 		<form:errors path="engineerIncharge" cssClass="add-margin error-msg" />
