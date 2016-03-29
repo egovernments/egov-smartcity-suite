@@ -66,7 +66,7 @@
    		 <![CDATA[ from  Paymentheader ph where ph.voucherheader.id in (:param_0)]]>
    	 </query>
    	 <query name="getGlDetailForPayableCode">
-   		 <![CDATA[ select gld.detailTypeId,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId and billmis.voucherHeader = gl.voucherHeaderId and billmis.egBillregister.id=? and gl.glcodeId in (:param_1)]]>
+   		 <![CDATA[ select gld.detailTypeId.id,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId.id and billmis.voucherHeader = gl.voucherHeaderId and billmis.egBillregister.id=? and gl.glcodeId in (:param_1)]]>
    	 </query>
    	 <query name="getAcctDetailForBill">
    		 <![CDATA[ select billpd.accountDetailTypeId, billpd.accountDetailKeyId from EgBillPayeedetails billpd where billpd.egBilldetailsId = ?]]>
@@ -78,9 +78,9 @@
    		 <![CDATA[ select billpd.accountDetailTypeId, billpd.accountDetailKeyId from EgBillPayeedetails billpd,EgBilldetails bd where bd.id = billpd.egBilldetailsId and bd.debitamount>0 and bd.egBillregister.id = ? ]]>
    	 </query>
    	 <query name="getPayeeDetailsForPayableCodeForVoucher">
-   		 <![CDATA[ select gld.detailTypeId,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId and gl.creditAmount>0 and gl.voucherHeaderId.id=? and gl.glcodeId in (:param_1)]]>
+   		 <![CDATA[ select gld.detailTypeId.id,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.creditAmount>0 and gl.voucherHeaderId.id=? and gl.glcodeId in (:param_1)]]>
    	 </query>
    	 <query name="getPayeeDetailsForDebitCodeForVoucher">
-   		 <![CDATA[ select gld.detailTypeId,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId and gl.debitAmount>0 and gl.voucherHeaderId.id=? ]]>
+   		 <![CDATA[ select gld.detailTypeId.id,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.debitAmount>0 and gl.voucherHeaderId.id=? ]]>
    	 </query>
  </hibernate-mapping>

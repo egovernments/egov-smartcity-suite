@@ -1103,7 +1103,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 toIndex += step;
                 final Query generalLedgerDetailsQuery = getSession()
                         .createQuery(
-                                " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
+                                " select gld.detailTypeId.id,gld.detailKeyId.id,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId.id and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
                 generalLedgerDetailsQuery.setParameterList("IDS", billVHIds.subList(fromIndex, toIndex));
                 generalLedgerDetailsQuery.setParameterList("glcodeIdList", cBillGlcodeIdsList);
                 newGLDList = generalLedgerDetailsQuery.list();
@@ -1121,7 +1121,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 toIndex = fromIndex + size;
                 final Query generalLedgerDetailsQuery = getSession()
                         .createQuery(
-                                " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
+                                " select gld.detailTypeId.id,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId.id and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
                 generalLedgerDetailsQuery.setParameterList("IDS", billVHIds.subList(fromIndex, toIndex));
                 generalLedgerDetailsQuery.setParameterList("glcodeIdList", cBillGlcodeIdsList);
                 newGLDList = generalLedgerDetailsQuery.list();
@@ -1133,7 +1133,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         {
             final Query generalLedgerDetailsQuery = getSession()
                     .createQuery(
-                            " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
+                            " select gld.detailTypeId.id,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId.id and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
             generalLedgerDetailsQuery.setParameterList("IDS", billVHIds);
             generalLedgerDetailsQuery.setParameterList("glcodeIdList", cBillGlcodeIdsList);
             generalLedgerDetailList = generalLedgerDetailsQuery.list();
@@ -1160,7 +1160,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 toIndex += step;
                 final Query generalLedgerDetailsQuery = getSession()
                         .createQuery(
-                                " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and  gl.debitAmount>0");
+                                " select gld.detailTypeId.id,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId.id and  gl.debitAmount>0");
                 generalLedgerDetailsQuery.setParameterList("IDS", billVHIds.subList(fromIndex, toIndex));
                 newGLDList = generalLedgerDetailsQuery.list();
                 fromIndex = toIndex;
@@ -1177,7 +1177,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 toIndex = fromIndex + size;
                 final Query generalLedgerDetailsQuery = getSession()
                         .createQuery(
-                                " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and  gl.debitAmount>0");
+                                " select gld.detailTypeId.id,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId.id and  gl.debitAmount>0");
                 generalLedgerDetailsQuery.setParameterList("IDS", billVHIds.subList(fromIndex, toIndex));
                 newGLDList = generalLedgerDetailsQuery.list();
                 if (newGLDList != null)
@@ -1188,7 +1188,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         {
             final Query generalLedgerDetailsQuery = getSession()
                     .createQuery(
-                            " select gld.detailTypeId,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId and  gl.debitAmount>0");
+                            " select gld.detailTypeId.id,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId.id and  gl.debitAmount>0");
             generalLedgerDetailsQuery.setParameterList("IDS", billVHIds);
             generalLedgerDetailList = generalLedgerDetailsQuery.list();
         }

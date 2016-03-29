@@ -85,11 +85,11 @@ public class RemitRecoveryService {
             final Integer detailKeyId) throws ValidationException {
         final List<RemittanceBean> listRemitBean = new ArrayList<RemittanceBean>();
         final StringBuffer query = new StringBuffer(200);
-        query.append("select vh.name,vh.voucherNumber ,vh.voucherDate,egr.gldtlamt,gld.detailTypeId,gld.detailKeyId,egr.id ");
+        query.append("select vh.name,vh.voucherNumber ,vh.voucherDate,egr.gldtlamt,gld.detailTypeId.id,gld.detailKeyId,egr.id ");
         query.append(
                 " from CVoucherHeader vh ,Vouchermis mis , CGeneralLedger gl ,CGeneralLedgerDetail gld , EgRemittanceGldtl egr , Recovery rec  where ")
                 .
-                append("  rec.chartofaccounts.id = gl.glcodeId.id and gld.id = egr.generalledgerdetail.id and  gl.id = gld.generalLedgerId and vh.id = gl.voucherHeaderId.id ")
+                append("  rec.chartofaccounts.id = gl.glcodeId.id and gld.id = egr.generalledgerdetail.id and  gl.id = gld.generalLedgerId.id and vh.id = gl.voucherHeaderId.id ")
                 .
                 append(" and mis.voucherheaderid.id = vh.id  and vh.status=0  and vh.fundId.id=?  and  egr.gldtlamt - "
                         +

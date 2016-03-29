@@ -52,7 +52,6 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.validator.constraints.Length;
- 
 
 @Entity
 @Table(name = "fund")
@@ -60,149 +59,139 @@ import org.hibernate.validator.constraints.Length;
 @Unique(id = "id", tableName = "Fund", fields = { "code" }, columnName = { "code" }, enableDfltMsg = true)
 public class Fund extends AbstractPersistable<Integer> {
 
-        private static final long serialVersionUID = 1L;
-        public static final String SEQ = "SEQ_Fund";
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ = "SEQ_Fund";
 
-        @Id
-        @GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
-        private Integer id;
+    @Id
+    @GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
+    private Integer id;
 
-        @Field
-        @Length(max = 50, min = 2)
-        @Required
-        private String name;
+    @Field
+    @Length(max = 50, min = 2)
+    @Required
+    private String name;
 
-        
-        @Length(max = 50, min = 2)
-        @Required
-        private String code;
-        
+    @Length(max = 50, min = 2)
+    @Required
+    private String code;
 
-        private Character identifier;
-        @Required
-        private BigDecimal llevel = BigDecimal.ONE;
-        
+    private Character identifier;
+    @Required
+    private BigDecimal llevel = BigDecimal.ONE;
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name="parentid")
-        private Fund parentId;
-        
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parentid")
+    private Fund parentId;
 
-        private Boolean isnotleaf;
-        
+    private Boolean isnotleaf;
 
-        private Boolean isactive;
+    private Boolean isactive;
 
-        @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createdby")
-        private User createdby;
-        private Date createdDate;
-        
-        @ManyToOne(fetch = FetchType.LAZY)
+    private User createdby;
+    private Date createdDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lastModifiedBy")
-        private User lastModifiedBy;
-        
-        private Date lastModifiedDate;
+    private User lastModifiedBy;
 
-        @Override
-        public Integer getId() {
-                return id;
-        }
-        @Override
-        public void setId(Integer id) {
-                this.id = id;
-        }
+    private Date lastModifiedDate;
 
-        public String getName() {
-                return name;
-        }
+    public Integer getId() {
+        return id;
+    }
 
-        public void setName(String name) {
-                this.name = name;
-        }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-        public String getCode() {
-                return code;
-        }
+    public String getName() {
+        return name;
+    }
 
-        public void setCode(String code) {
-                this.code = code;
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        public Character getIdentifier() {
-                return identifier;
-        }
+    public String getCode() {
+        return code;
+    }
 
-        public void setIdentifier(Character identifier) {
-                this.identifier = identifier;
-        }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-        public BigDecimal getLlevel() {
-                return llevel;
-        }
+    public Character getIdentifier() {
+        return identifier;
+    }
 
-        public void setLlevel(BigDecimal llevel) {
-                this.llevel = llevel;
-        }
+    public void setIdentifier(Character identifier) {
+        this.identifier = identifier;
+    }
 
-        public Fund getParentId() {
-                return parentId;
-        }
+    public BigDecimal getLlevel() {
+        return llevel;
+    }
 
-        public void setParentId(Fund parentId) {
-                this.parentId = parentId;
-        }
+    public void setLlevel(BigDecimal llevel) {
+        this.llevel = llevel;
+    }
 
-        public Boolean getIsnotleaf() {
-                return isnotleaf;
-        }
+    public Fund getParentId() {
+        return parentId;
+    }
 
-        public void setIsnotleaf(Boolean isnotleaf) {
-                this.isnotleaf = isnotleaf;
-        }
+    public void setParentId(Fund parentId) {
+        this.parentId = parentId;
+    }
 
-        public Boolean getIsactive() {
-                return isactive;
-        }
+    public Boolean getIsnotleaf() {
+        return isnotleaf;
+    }
 
-        public void setIsactive(Boolean isactive) {
-                this.isactive = isactive;
-        }
+    public void setIsnotleaf(Boolean isnotleaf) {
+        this.isnotleaf = isnotleaf;
+    }
 
-        public User getCreatedby() {
-                return createdby;
-        }
+    public Boolean getIsactive() {
+        return isactive;
+    }
 
-        public void setCreatedby(User createdby) {
-                this.createdby = createdby;
-        }
+    public void setIsactive(Boolean isactive) {
+        this.isactive = isactive;
+    }
 
-        public Date getCreatedDate() {
-                return createdDate;
-        }
+    public User getCreatedby() {
+        return createdby;
+    }
 
-        public void setCreatedDate(Date createdDate) {
-                this.createdDate = createdDate;
-        }
+    public void setCreatedby(User createdby) {
+        this.createdby = createdby;
+    }
 
-        public User getLastModifiedBy() {
-                return lastModifiedBy;
-        }
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-        public void setLastModifiedBy(User lastModifiedBy) {
-                this.lastModifiedBy = lastModifiedBy;
-        }
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
 
-        public Date getLastModifiedDate() {
-                return lastModifiedDate;
-        }
+    public User getLastModifiedBy() {
+        return lastModifiedBy;
+    }
 
-        public void setLastModifiedDate(Date lastModifiedDate) {
-                this.lastModifiedDate = lastModifiedDate;
-        }
+    public void setLastModifiedBy(User lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
 
-        
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
 
-         
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
 }

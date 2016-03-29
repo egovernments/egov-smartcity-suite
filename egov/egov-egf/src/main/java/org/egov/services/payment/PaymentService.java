@@ -1115,7 +1115,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                     final long id = ((BigInteger) obj[0]).longValue();
                     if (billIds.contains(id))
                         paymentAmtMap.put(((BigInteger) obj[0]).longValue(), obj[1] == null ? BigDecimal.ZERO
-                                : BigDecimal.valueOf((Double) obj[1]));
+                                : (BigDecimal) obj[1]);
                 }
         }
         if (LOGGER.isDebugEnabled())
@@ -1439,7 +1439,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 if (!bean.getIsSelected())
                     continue;
                 final Object[] obj = (Object[]) persistenceService
-                        .find("select gld.detailTypeId,gld.detailKeyId,billmis.egBillregister.expendituretype from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId and billmis.voucherHeader = gl.voucherHeaderId and billmis.voucherHeader.id=?",
+                        .find("select gld.detailTypeId.id,gld.detailKeyId,billmis.egBillregister.expendituretype from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId.id and billmis.voucherHeader = gl.voucherHeaderId and billmis.voucherHeader.id=?",
                                 bean.getCsBillId());
                 if (obj == null)
                 {

@@ -1337,7 +1337,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         for (final InstrumentVoucher instrumentVoucher : instrumentHeader.getInstrumentVouchers())
         {
             final Object[] obj = (Object[]) persistenceService
-                    .find(" select gld.detailTypeId,gld.detailKeyId,gld.amount from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId and gl.voucherHeaderId=?",
+                    .find(" select gld.detailTypeId.id,gld.detailKeyId,gld.amount from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.voucherHeaderId=?",
                             instrumentVoucher.getVoucherHeaderId());
             if (obj != null)
             {
