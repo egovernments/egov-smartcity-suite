@@ -40,6 +40,7 @@
 package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +51,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -61,6 +63,7 @@ import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.Beneficiary;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.TypeOfSlum;
 import org.egov.works.lineestimate.entity.WorkCategory;
@@ -117,6 +120,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     
     @Autowired
     private ResourceBundleMessageSource messageSource;
+    
+    @Autowired
+    private BudgetDetailsDAO budgetDetailsDAO;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -188,6 +194,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
             validateAdminSanctionDetail(lineEstimate, errors);
+        
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
+                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
+        validateBudgetAmount(lineEstimate, errors);
 
         if (errors.hasErrors()) {
             setDropDownValues(model);
@@ -208,6 +218,29 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             final String pathVars = worksUtils.getPathVars(newLineEstimate, approvalPosition);
 
             return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
+        }
+    }
+
+    private void validateBudgetAmount(LineEstimate lineEstimate, BindingResult errors) {
+        final List<Long> budgetheadid = new ArrayList<Long>();
+        budgetheadid.add(lineEstimate.getBudgetHead().getId());
+        
+        final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
+                lineEstimateService.getCurrentFinancialYear(lineEstimate.getLineEstimateDate()).getId(), Integer.parseInt(lineEstimate
+                        .getExecutingDepartment().getId().toString()), lineEstimate.getFunction().getId(), null,
+                        lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
+                        lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
+                                null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
+                        .getId().toString()));
+        
+        BigDecimal totalEstimateAmount = BigDecimal.ZERO;
+        
+        for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
+        }
+        
+        if(budgetAvailable.compareTo(totalEstimateAmount) == -1) {
+            errors.reject("error.budgetappropriation.amount");
         }
     }
 

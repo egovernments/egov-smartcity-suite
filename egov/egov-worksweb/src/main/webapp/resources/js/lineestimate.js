@@ -40,6 +40,7 @@
 $deletedAmt = 0;
 $locationId = 0;
 $subTypeOfWorkId = 0;
+$detailsRowCount = $('#detailsSize').val();
 $(document).ready(function(){
 	getLineEstimateDate();
 	$locationId = $('#locationValue').val();
@@ -136,7 +137,12 @@ function addLineEstimate() {
 	if (rowcount < 30) {
 		if (document.getElementById('estimateRow') != null) {
 			// get Next Row Index to Generate
-			var nextIdx = $("#tblestimate tbody tr").length;
+			var nextIdx = 0;
+			if($detailsRowCount == 0)
+				nextIdx = $("#tblestimate tbody tr").length;
+			else
+				nextIdx = $detailsRowCount++;
+			
             var estimateNo = (new Date()).valueOf();
 			// validate status variable for exiting function
 			var isValid = 1;// for default have success value 0
@@ -223,12 +229,13 @@ function getRow(obj) {
 function deleteLineEstimate(obj) {
     var rIndex = getRow(obj).rowIndex;
     
+    var id = $(getRow(obj)).children('td:first').children('input:first').val();
     //To get all the deleted rows id
     var aIndex = rIndex - 1;
     if(!$("#removedLineEstimateDetailsIds").val()==""){
 		$("#removedLineEstimateDetailsIds").val($("#removedLineEstimateDetailsIds").val()+",");
 	}
-    $("#removedLineEstimateDetailsIds").val($("#removedLineEstimateDetailsIds").val()+$('[name="lineEstimateDetails[' + aIndex + '].id"]').val());
+    $("#removedLineEstimateDetailsIds").val($("#removedLineEstimateDetailsIds").val()+id);
 
 	var tbl=document.getElementById('tblestimate');	
 	var rowcount=$("#tblestimate tbody tr").length;
@@ -242,7 +249,7 @@ function deleteLineEstimate(obj) {
 		var idx=0;
 		
 		//regenerate index existing inputs in table row
-		$("#tblestimate tbody tr").each(function() {
+		/*$("#tblestimate tbody tr").each(function() {
 			$(this).find("input, span, errors, textarea").each(function() {
 				if ($(this).is('span')) {
 					if($(this).hasClass('spansno'))
@@ -261,7 +268,7 @@ function deleteLineEstimate(obj) {
 				}
 		    });
 			idx++;
-		});
+		});*/
 		calculateEstimatedAmountTotal();
 		return true;
 	}	

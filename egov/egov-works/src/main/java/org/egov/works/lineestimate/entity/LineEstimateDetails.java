@@ -40,7 +40,10 @@
 package org.egov.works.lineestimate.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,6 +52,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -96,7 +100,7 @@ public class LineEstimateDetails extends AbstractAuditable {
 
     @NotNull
     @Length(max = 50)
-    private Double quantity;
+    private double quantity;
 
     @NotNull
     @Length(max = 50)
@@ -111,6 +115,9 @@ public class LineEstimateDetails extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projectCode")
     private ProjectCode projectCode;
+    
+    @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateAppropriation.class)
+    private List<LineEstimateAppropriation> lineEstimateAppropriations = new ArrayList<LineEstimateAppropriation>(0);
 
     @Override
     public Long getId() {
@@ -170,11 +177,11 @@ public class LineEstimateDetails extends AbstractAuditable {
         this.beneficiary = beneficiary;
     }
 
-    public Double getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final Double quantity) {
+    public void setQuantity(final double quantity) {
         this.quantity = quantity;
     }
 
@@ -192,5 +199,13 @@ public class LineEstimateDetails extends AbstractAuditable {
 
     public void setProjectCode(final ProjectCode projectCode) {
         this.projectCode = projectCode;
+    }
+
+    public List<LineEstimateAppropriation> getLineEstimateAppropriations() {
+        return lineEstimateAppropriations;
+    }
+
+    public void setLineEstimateAppropriations(List<LineEstimateAppropriation> lineEstimateAppropriations) {
+        this.lineEstimateAppropriations = lineEstimateAppropriations;
     }
 }

@@ -60,6 +60,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CFunction;
@@ -153,8 +154,7 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "adminSanctionBy")
     private User adminSanctionBy;
 
-    @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.REFRESH }, orphanRemoval = true, targetEntity = LineEstimateDetails.class)
+    @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateDetails.class)
     private final List<LineEstimateDetails> lineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
 
     private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);

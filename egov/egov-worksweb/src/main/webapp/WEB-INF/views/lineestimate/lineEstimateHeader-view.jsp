@@ -50,6 +50,11 @@
 			<div class="panel-heading">
 				<div class="panel-title"><spring:message code="header.lineestimate" /></div>
 			</div>
+			<div class="add-margin error-msg">
+				<spring:hasBindErrors name="lineEstimate">
+		       		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+		       	</spring:hasBindErrors>
+			</div>
 			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">

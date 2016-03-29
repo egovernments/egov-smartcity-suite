@@ -44,6 +44,7 @@
 	<div class="panel-heading">
 		<div class="panel-title"><spring:message code="lbl.workdetails" /></div>
 	</div>
+	<input type="hidden" value="${lineEstimate.lineEstimateDetails.size() }" id="detailsSize" />
 	<div class="panel-body">
 		<table class="table table-bordered" id="tblestimate">
 			<thead>

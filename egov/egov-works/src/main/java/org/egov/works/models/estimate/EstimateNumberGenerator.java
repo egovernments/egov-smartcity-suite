@@ -43,7 +43,6 @@ import java.io.Serializable;
 import java.sql.SQLException;
 
 import javax.script.ScriptContext;
-import javax.transaction.Transactional;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
@@ -75,13 +74,13 @@ public class EstimateNumberGenerator {
 
     }
 
-    @Transactional
     public String generateEstimateNumber(final LineEstimate lineEstimate) {
         try {
 
             final CFinancialYear financialYear = financialYearHibernateDAO
                     .getFinancialYearByDate(lineEstimate.getLineEstimateDate());
-            final String finYearRange[] = financialYear.getFinYearRange().split("-");
+            final String financialYearRange = financialYear.getFinYearRange();
+            final String finYearRange[] = financialYearRange.split("-");
             final String sequenceName = ESTIMATE_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
             Serializable sequenceNumber;
             try {
@@ -89,7 +88,7 @@ public class EstimateNumberGenerator {
             } catch (final SQLGrammarException e) {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
-            return String.format("%s/%s/%05d", lineEstimate.getExecutingDepartment().getCode(), financialYear.getFinYearRange(),
+            return String.format("%s/%s/%05d", lineEstimate.getExecutingDepartment().getCode(), financialYearRange,
                     sequenceNumber);
         } catch (final SQLException e) {
             throw new ApplicationRuntimeException("Error occurred while generating Estimate Number", e);

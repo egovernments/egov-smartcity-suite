@@ -217,27 +217,34 @@ public class LineEstimateService {
     public LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds,
             final MultipartFile[] files) throws IOException {
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
-            if (lineEstimateDetails.getLineEstimate() == null) {
+            if (lineEstimateDetails != null && lineEstimateDetails.getId() == null) {
                 lineEstimateDetails.setLineEstimate(lineEstimate);
-                lineEstimateDetails.setEstimateNumber(estimateNumberGenerator.generateEstimateNumber(lineEstimate));
-            }
+                // TODO : fix the session related issue
+                lineEstimateDetails.setEstimateNumber("ABCD");
+                final String estimateNumber = estimateNumberGenerator.generateEstimateNumber(lineEstimate);
+                lineEstimateDetails.setEstimateNumber(estimateNumber);
+
+            } 
+        System.out.println(".......... ..");
         List<LineEstimateDetails> list = new ArrayList<LineEstimateDetails>(lineEstimate.getLineEstimateDetails());
         list = removeDeletedLineEstimateDetails(list, removedLineEstimateDetailsIds);
-        for (final LineEstimateDetails details : list)
-            details.setId(null);
-        lineEstimate.getLineEstimateDetails().clear();
+//        for (final LineEstimateDetails details : list)
+//            details.setId(null);
+//        lineEstimate.getLineEstimateDetails().clear();
         // TODO: use save instead of saveAndFlush
-        final LineEstimate persistedLineEstimate = lineEstimateRepository.saveAndFlush(lineEstimate);
+       
+        lineEstimate.setLineEstimateDetails(list);
+        final LineEstimate persistedLineEstimate = lineEstimateRepository.save(lineEstimate);
 
-        persistedLineEstimate.setLineEstimateDetails(list);
+//        persistedLineEstimate.setLineEstimateDetails(list);
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, persistedLineEstimate,
                 WorksConstants.MODULE_NAME_LINEESTIMATE);
         if (!documentDetails.isEmpty()) {
-            lineEstimate.setDocumentDetails(documentDetails);
+            persistedLineEstimate.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
         }
         // TODO: use save instead of saveAndFlush
-        return lineEstimateRepository.saveAndFlush(persistedLineEstimate);
+        return lineEstimateRepository.save(persistedLineEstimate);
     }
 
     public LineEstimate getLineEstimateByLineEstimateNumber(final String lineEstimateNumber) {
@@ -487,7 +494,6 @@ public class LineEstimateService {
         return updatedLineEstimate;
     }
 
-    @Transactional
     public void lineEstimateStatusChange(final LineEstimate lineEstimate, final String workFlowAction,
             final String mode) throws ValidationException {
         if (null != lineEstimate && null != lineEstimate.getStatus()
@@ -553,10 +559,11 @@ public class LineEstimateService {
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
-                
-                for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-                    releaseBudgetOnReject(led);
-                }
+                if (lineEstimate.getStatus().getCode()
+                        .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()))
+                    for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+                        releaseBudgetOnReject(led);
+                    }
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.REJECTED.toString()));
             }
