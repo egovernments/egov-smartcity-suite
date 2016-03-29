@@ -443,7 +443,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                                .get(0);
+                .get(0);
     }
 
     /**
@@ -714,24 +714,24 @@ public class CollectionsUtil {
         if (contraJournalVoucherObj.getVoucherHeaderId() == null) {
             if (department.getCode().equals('R'))
                 designations = persistenceService
-                .findAllBy(
-                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
-                        departmentId, "REVENUE INSPECTOR");
+                        .findAllBy(
+                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
+                                departmentId, "REVENUE INSPECTOR");
             else
                 designations = persistenceService
-                .findAllBy(
-                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                        departmentId);
+                        .findAllBy(
+                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                                departmentId);
         } else if (department.getCode().equals("CAF"))
             designations = persistenceService
-            .findAllBy(
-                    "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
-                    "CAF", "SENIOR GRADE CLERK");
+                    .findAllBy(
+                            "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
+                            "CAF", "SENIOR GRADE CLERK");
         else
             designations = persistenceService
-            .findAllBy(
-                    "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                    departmentId);
+                    .findAllBy(
+                            "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                            departmentId);
         return designations;
     }
 
@@ -832,7 +832,7 @@ public class CollectionsUtil {
         final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(
                 receiptHeader.getReceiptdate(), receiptHeader.getReceiptnumber(), billingService.getName(),
                 instrumentType, receiptHeader.getTotalAmount(), receiptHeader.getSource(), receiptHeader.getStatus()
-                .getDescription());
+                        .getDescription());
 
         collectionIndexBuilder.consumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode()
                 : "");
@@ -908,9 +908,13 @@ public class CollectionsUtil {
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA).equals(CollectionConstants.YES))
             useReceiptDateAsContraVoucherDate = true;
+
         try {
-            rcptDate = dateFomatter.parse(receiptDate);
-            final Date finDate = financialYearDAO.getFinancialYearByDate(rcptDate).getStartingDate();
+            Date finDate = null;
+            if (!receiptDate.isEmpty()) {
+                rcptDate = dateFomatter.parse(receiptDate);
+                finDate = financialYearDAO.getFinancialYearByDate(rcptDate).getStartingDate();
+            }
             if (finDate != null && finDate.equals(financialYearDAO.getCurrYearStartDate())) {
                 if (useReceiptDateAsContraVoucherDate)
                     voucherDate = rcptDate;
