@@ -3334,13 +3334,13 @@ public class CommonAction extends BaseFormAction {
         {
 
             coaList = (List<CChartOfAccounts>) persistenceService
-                    .findAllBy("from CChartOfAccounts  where parentId is null order by id asc");
+                    .findAllBy("from CChartOfAccounts  where parentId is null order by glcode asc");
 
             // query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM  chartOfAccounts where parentId is null order by id asc";
         }
         else
         {
-            coaList = (List<CChartOfAccounts>) persistenceService.findAllBy("from CChartOfAccounts where parentId=? ",
+            coaList = (List<CChartOfAccounts>) persistenceService.findAllBy("from CChartOfAccounts where parentId=? order by glcode ",
                     Long.valueOf(glCode));
             // query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM  chartOfAccounts where parentId ="+glCode+" order by id asc";
         }
