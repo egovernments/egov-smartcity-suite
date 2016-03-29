@@ -43,7 +43,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,7 +86,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * systems) to interact with the collections module.
  */
 public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long> implements
-CollectionIntegrationService {
+        CollectionIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionIntegrationServiceImpl.class);
 
@@ -101,10 +100,6 @@ CollectionIntegrationService {
 
     @Autowired
     private EgwStatusHibernateDAO statusDAO;
-
-    /*
-     * @Autowired private ServiceCategoryService serviceCategoryService;
-     */
 
     List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
@@ -332,12 +327,6 @@ CollectionIntegrationService {
              * paytInfoATM)); otherInstrumenttotal = paytInfoATM.getInstrumentAmount(); }
              */
         }
-        final Set<InstrumentHeader> instHeaderSet = new HashSet(
-                receiptHeaderService.createInstrument(instrumentHeaderList));
-        LOGGER.info("   Instrument List created ");
-
-        receiptHeader.setReceiptInstrument(instHeaderSet);
-
         BigDecimal debitAmount = BigDecimal.ZERO;
 
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
@@ -348,18 +337,7 @@ CollectionIntegrationService {
         receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                 chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList.get(0).getInstrumentType().toString()));
 
-        receiptHeaderService.persistFieldReceipt(receiptHeader);
-
-        // Create Vouchers
-        /*
-         * List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
-         * LOGGER.info("Receipt Voucher created with vouchernumber:     " + receiptHeader.getVoucherNum()); for (ReceiptVoucher
-         * receiptVoucher : receiptHeader.getReceiptVoucher()) { voucherHeaderList.add(receiptVoucher.getVoucherheader()); }
-         */
-        /*
-         * if (voucherHeaderList != null && !instrumentHeaderList.isEmpty()) {
-         * receiptHeaderService.updateInstrument(voucherHeaderList, instrumentHeaderList); }
-         */
+        receiptHeaderService.persistFieldReceipt(receiptHeader, instrumentHeaderList);
         LOGGER.info("Logs for CreateReceipt : Receipt Creation Finished....");
         return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO);
     }

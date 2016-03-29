@@ -39,20 +39,14 @@
  */
 package org.egov.collection.integration.services;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.FinancialIntegrationService;
@@ -88,75 +82,16 @@ public class DishonorChequeService implements FinancialIntegrationService {
         instrumentHeader.setStatusId(getDishonoredStatus());
         financialsUtil.updateInstrumentHeader(instrumentHeader);
         // update receipts - set status to INSTR_BOUNCED and recon flag to false
-        updateReceiptHeaderStatus(receiptHeader, receiptInstrumentBounceStatus, false);
+        receiptHeaderService.updateDishonoredInstrumentStatus(receiptHeader, instrumentHeader, receiptInstrumentBounceStatus,
+                false);
         LOGGER.debug("Updated receipt status to " + receiptInstrumentBounceStatus.getCode()
                 + " set reconcilation to false");
 
-        // update the billing system.
-        if (updateDetailsToBillingSystem(receiptHeader))
-            LOGGER.debug("Billing system have been updated successfully");
-        else {
-            final String errorMsg = "Billing system have not been updated successfully for receipt number: "
-                    + receiptHeader.getReceiptnumber() + receiptHeader.getConsumerCode() != null ? "and consumer code : "
-                            + receiptHeader.getConsumerCode()
-                            : "";
-                            LOGGER.debug(errorMsg);
-                            throw new ApplicationRuntimeException(errorMsg);
-        }
-
-    }
-
-    /**
-     * This method updates the status and reconciliation flag for the given receipt
-     *
-     * @param receiptHeader <code>ReceiptHeader</code> objects whose status and reconciliation flag have to be modified
-     * @param status a <code>EgwStatus</code> instance representing the state to which the receipt has to be updated with
-     * @param isReconciled a <code>Boolean</code> flag indicating the value for the reconciliation status
-     */
-    private void updateReceiptHeaderStatus(final ReceiptHeader receiptHeader, final EgwStatus status,
-            final boolean isReconciled) {
-        if (status != null)
-            receiptHeader.setStatus(status);
-        receiptHeader.setIsReconciled(isReconciled);
-        receiptHeaderService.update(receiptHeader);
     }
 
     private EgwStatus getDishonoredStatus() {
         return collectionsUtil.getStatusForModuleAndCode(FinancialConstants.STATUS_MODULE_INSTRUMENT,
                 FinancialConstants.INSTRUMENT_DISHONORED_STATUS);
-    }
-
-    /**
-     * <p>
-     * This method populates the receipt details into the bill objects to send to the billing system. A map is created with key as
-     * the service code, and value as Set of <code>BillReceiptInfo</code> for the receipt to be updated to that billing system.
-     * <p>
-     * Only if the billing system is updated successfully, the reconciliation status of those receipts are set to true
-     *
-     * @return a <code>Boolean</code> flag indicating true only if the updates to all the billing system have taken place
-     * successfully
-     */
-    private Boolean updateDetailsToBillingSystem(final ReceiptHeader receiptHeader) {
-
-        Boolean flag = true;
-        final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO);
-        final Set<BillReceiptInfo> billReceiptInfo = new HashSet<BillReceiptInfo>();
-        billReceiptInfo.add(billReceipt);
-        final String serviceCode = receiptHeader.getService().getCode();
-        try {
-            receiptHeaderService.updateBillingSystem(serviceCode, billReceiptInfo);
-            updateReceiptHeaderStatus(receiptHeader, null, true);
-            LOGGER.debug("Updated reconcilation status of receipts to true for the  billing system " + serviceCode
-                    + " and receipt number " + receiptHeader.getReceiptnumber());
-        } catch (final Exception e) {
-            // mark the flag as false and continue with updating rest of the
-            // billing systems
-            LOGGER.error("Exception in update to billing system " + serviceCode + " successful." + e.getMessage());
-            flag = false;
-        }
-
-        // returns true only if batch update to all systems was successful
-        return flag;
     }
 
     public void setPersistenceService(final PersistenceService persistenceService) {
@@ -176,8 +111,9 @@ public class DishonorChequeService implements FinancialIntegrationService {
     }
 
     @Override
-    public void updateSourceInstrumentVoucher(final String event, final Long instrumentHeaderId) {
+    public void updateSourceInstrumentVoucher(String event, Long instrumentHeaderId) {
         // TODO Auto-generated method stub
 
     }
+
 }
