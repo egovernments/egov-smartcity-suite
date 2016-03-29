@@ -46,7 +46,7 @@
 <form:form method="post" action="" class="form-horizontal form-groups-bordered" id="usagetype-view" 
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<input type="hidden" name="waterPropertyUsageList" id="waterPropertyUsageList" value="${waterPropertyUsageList}">
-	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${waterPropertyUsage.usageType.name}" />
+	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${usagetypeid.name}" />
 
 	<div class="panel panel-primary" data-collapsed="0">
 		<!-- <div class="panel-heading"></div> -->

@@ -111,6 +111,10 @@ public class UsageTypeService {
         return usageTypeRepository.findByActiveTrueOrderByIdAsc();
     }
 
+    public UsageType findByNameIgnoreCaseAndActive(final String name, final Boolean status) {
+        return usageTypeRepository.findByNameIgnoreCaseAndActive(name, status);
+    }
+
     public List<UsageType> getAllUsageTypesByPropertyType(final Long propertyType) {
         return usageTypeRepository.getAllUsageTypesByPropertyType(propertyType);
     }

@@ -48,6 +48,9 @@
 	cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading"></div>
+		<c:if test="${not empty message}">
+                    <div class="alert alert-success" role="alert">${message}</div>
+                </c:if>
 		<div class="panel-body custom-form">
 			<div class="form-group">
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.propertytype" /><span class="mandatory"></span></label>
@@ -71,8 +74,7 @@
 					<form:errors path="usageType.active" />
 				</div>
 				</div>	
-				<input type="hidden" name="waterPropertyUsage"
-						value="${waterPropertyUsage.id}" />
+				<input type="hidden" name="waterPropertyUsage" value="${waterPropertyUsage.id}" />
 				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>	
 
 			<div class="form-group text-center">

@@ -68,8 +68,6 @@ public class UsageTypeMasterController {
 
     private final PropertyTypeService propertyTypeService;
 
-    private final WaterPropertyUsageRepository waterPropertyUsageRepository;
-
     private final WaterPropertyUsageService waterPropertyUsageService;
 
     private final UsageTypeService usageTypeService;
@@ -81,8 +79,7 @@ public class UsageTypeMasterController {
         this.propertyTypeService = propertyTypeService;
         this.waterPropertyUsageService = waterPropertyUsageService;
         this.usageTypeService = usageTypeService;
-        this.waterPropertyUsageRepository = waterPropertyUsageRepository;
-}
+    }
 
     @RequestMapping(value = "/usageTypeMaster", method = GET)
     public String viewForm(@ModelAttribute WaterPropertyUsage waterPropertyUsage, final Model model) {
@@ -119,14 +116,12 @@ public class UsageTypeMasterController {
                 usagetype.setCode(usagetype.getName().toUpperCase());
                 usageTypeService.createUsageType(usagetype);
                 waterPropertyUsageService.createPropertyCategory(waterPropertyUsage);
-                waterPropertyUsageRepository.save(waterPropertyUsage);
                 redirectAttrs.addFlashAttribute("waterPropertyUsage", waterPropertyUsage);
             } else {
                 final WaterPropertyUsage waterpropertyusage = new WaterPropertyUsage();
                 waterpropertyusage.setPropertyType(waterPropertyUsage.getPropertyType());
                 waterpropertyusage.setUsageType(usageTypeObj);
                 waterPropertyUsageService.createPropertyCategory(waterpropertyusage);
-                waterPropertyUsageRepository.save(waterPropertyUsage);
                 redirectAttrs.addFlashAttribute("waterPropertyUsage", waterpropertyusage);
             }
         }
@@ -156,22 +151,32 @@ public class UsageTypeMasterController {
 
     @RequestMapping(value = "/usageTypeMaster/{waterPropertyUsageId}", method = RequestMethod.POST)
     public String editUsageTypeMasterData(@Valid @ModelAttribute final WaterPropertyUsage waterPropertyUsage,
-            @PathVariable final long waterPropertyUsageId, final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
+            @PathVariable final long waterPropertyUsageId, final RedirectAttributes redirectAttrs, final Model model,
+            final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "usage-type-master";
         final boolean status = waterPropertyUsage.getUsageType().isActive();
-        WaterPropertyUsage waterpropertyUsage = new WaterPropertyUsage();
-        waterpropertyUsage = waterPropertyUsageService.findOne(waterPropertyUsageId);
-            if (waterpropertyUsage != null) {
-                waterPropertyUsage.getUsageType().setActive(status);
-                waterpropertyUsage.setPropertyType(waterPropertyUsage.getPropertyType());  
-                waterpropertyUsage.setUsageType(waterPropertyUsage.getUsageType()); 
-                waterPropertyUsageRepository.save(waterPropertyUsage);
-            }
-                
+        WaterPropertyUsage waterpropertyUsageValidateObj = null;
+        final UsageType usageTypeObj = usageTypeService.findByNameIgnoreCaseAndActive(
+                waterPropertyUsage.getUsageType().getName().toUpperCase().trim(), status);
+        if (usageTypeObj != null)
+            waterpropertyUsageValidateObj = waterPropertyUsageService
+                    .findByPropertyTypeAndUsageType(waterPropertyUsage.getPropertyType(), usageTypeObj);
+
+        if (waterpropertyUsageValidateObj != null) {
+            redirectAttrs.addFlashAttribute("waterPropertyUsage", waterPropertyUsage);
+            model.addAttribute("message", "Entered Usage Type for the Chosen Property Type is already Exists");
+            return "usage-type-master";
+        } else if (waterPropertyUsage != null) {
+
+            waterPropertyUsage.getUsageType().setActive(status);
+            waterPropertyUsageService.createPropertyCategory(waterPropertyUsage);
+            redirectAttrs.addFlashAttribute("WaterPropertyUsage", waterPropertyUsage);
+        }
+
         final List<WaterPropertyUsage> waterPropertyUsageList = waterPropertyUsageService.findAll();
         model.addAttribute("waterPropertyUsageList", waterPropertyUsageList);
         return "usage-type-master-list";
-      
+
     }
 }

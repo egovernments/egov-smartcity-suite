@@ -55,5 +55,4 @@ public interface WaterPropertyUsageRepository extends JpaRepository<WaterPropert
     WaterPropertyUsage findByPropertyTypeAndUsageType(PropertyType propertyType, UsageType usagetype);
 
     WaterPropertyUsage findByPropertyType_codeAndUsageType_code(String propertyType, String usageTypeCode);
-
 }

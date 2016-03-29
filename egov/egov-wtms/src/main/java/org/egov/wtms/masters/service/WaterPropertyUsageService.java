@@ -92,12 +92,7 @@ public class WaterPropertyUsageService {
 
     public List<WaterPropertyUsage> findAllByPropertyTypeAndUsageType(final PropertyType propertyType,
             final UsageType usagetype) {
-
         return waterPropertyUsageRepository.findAllByPropertyTypeAndUsageType(propertyType, usagetype);
     }
 
-    /*public WaterPropertyUsage load(final Long id) {
-        return waterPropertyUsageRepository.getOne(id);
-    }*/
-
-}
+ }
