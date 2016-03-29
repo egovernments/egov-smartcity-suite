@@ -51,15 +51,64 @@ $(document).ready(function(){
 
 	return showSlumFieldsValue();
 	
-	$('.btn-primary').click(function(){
-		
-	});
 });
 
 $(document).bind("input propertychange", function (e) {
 	if($(e.target).attr('name').match(/estimateAmount$/))
 	{
 		calculateEstimatedAmountTotal();
+	}
+});
+
+$('.btn-primary').click(function(){
+	var button = $(this).attr('id');
+	if (button != null && button == 'Approve') {
+		var flag = true;
+		$('#approvalComent').removeAttr('required');
+		
+		var lineEstimateStatus = $('#lineEstimateStatus').val();
+		if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED') {
+			var adminSanctionDate = $('#adminSanctionDate').val();
+			var technicalSanctionDate = $('#technicalSanctionDate').val();
+			var technicalSanctionNumber = $('#technicalSanctionNumber').val();
+			
+			if(adminSanctionDate > technicalSanctionDate && technicalSanctionDate != '') {
+				bootbox.alert($('#errorTechDate').val());
+				$('#technicalSanctionDate').val("");
+				return false;
+			}
+
+			var message = $('#errorActualAmount').val();
+
+			if(technicalSanctionDate != '' && technicalSanctionNumber != '') {
+				$("input[name$='actualEstimateAmount']")
+				.each(
+						function() {
+							var index = getRow(this).rowIndex - 1;
+							var estimateAmount = $(
+									'#estimateAmount' + index).html();
+							var actualAmount = $(
+									'#actualEstimateAmount' + index).val();
+							if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
+								var estimateNumber = $(
+										'#estimateNumber' + index).val();
+								message += estimateNumber + ", ";
+								flag = false;
+							}
+						});
+				message += $('#errorActualAmountContinued').val();
+				if (!flag) {
+					bootbox.alert(message);
+					return false;
+				}
+			}
+		}
+		
+		if(!flag)
+			return false;
+	}
+	else {
+		validateWorkFlowApprover(button);
 	}
 });
 
@@ -478,51 +527,6 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
-	}
-	if (button != null && button == 'Approve') {
-		var flag = true;
-		$('#approvalComent').removeAttr('required');
-		
-		var lineEstimateStatus = $('#lineEstimateStatus').val();
-		if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED') {
-			var adminSanctionDate = $('#adminSanctionDate').val();
-			var technicalSanctionDate = $('#technicalSanctionDate').val();
-			var technicalSanctionNumber = $('#technicalSanctionNumber').val();
-			
-			if(adminSanctionDate > technicalSanctionDate && technicalSanctionDate != '') {
-				bootbox.alert($('#errorTechDate').val());
-				$('#technicalSanctionDate').val("");
-				return false;
-			}
-
-			var message = $('#errorActualAmount').val();
-
-			if(technicalSanctionDate != '' && technicalSanctionNumber != '') {
-				$("input[name$='actualEstimateAmount']")
-				.each(
-						function() {
-							var index = getRow(this).rowIndex - 1;
-							var estimateAmount = $(
-									'#estimateAmount' + index).html();
-							var actualAmount = $(
-									'#actualEstimateAmount' + index).val();
-							if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
-								var estimateNumber = $(
-										'#estimateNumber' + index).val();
-								message += estimateNumber + ", ";
-								flag = false;
-							}
-						});
-				message += $('#errorActualAmountContinued').val();
-				if (!flag) {
-					bootbox.alert(message);
-					return false;
-				}
-			}
-		}
-		
-		if(!flag)
-			return false;
 	}
 
 	document.forms[0].submit;

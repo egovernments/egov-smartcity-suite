@@ -56,7 +56,11 @@
 					</c:if>
 					<th><spring:message code="lbl.estimatedamount"/></th>					
 					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
-						<th><spring:message code="lbl.actualamount"/><span class="mandatory"></span></th>
+						<th><spring:message code="lbl.actualamount"/>
+							<c:if test="${mode != 'readOnly' }">
+								<span class="mandatory"></span>
+							</c:if>
+						</th>
 					</c:if>
 					<th><spring:message code="lbl.quantity"/></th>
 					<th><spring:message code="lbl.uom"/></th>

@@ -301,7 +301,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("nextDesign", nextDesign);
 
         final String message = getMessageByStatus(lineEstimate, approverName, nextDesign);
-        ;
 
         model.addAttribute("message", message);
 

@@ -38,7 +38,17 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery('#btnsearch').click(function(e) {
-	callAjaxSearch();
+	var adminSanctionToDate = $('#adminSanctionToDate').val();
+	var adminSanctionFromDate = $('#adminSanctionFromDate').val();
+	var flag = true; 
+	if(adminSanctionToDate != '' && adminSanctionFromDate != '') {
+		if(adminSanctionFromDate > adminSanctionToDate) {
+			flag = false;
+			bootbox.alert('Admin Sanction To Date should be greater than Admin Sanction From Date');
+		}
+	}
+	if(flag)
+		callAjaxSearch();
 });
 
 jQuery('#btncreateloa').click(function(e) {

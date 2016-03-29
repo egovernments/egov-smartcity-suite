@@ -55,7 +55,9 @@ import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.WorkCategory;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class WorkOrderIdentificationNumberGenerator {
 
     private static final String PROJECTCODE_SEQ_PREFIX = "SEQ_PROJECTCODE";

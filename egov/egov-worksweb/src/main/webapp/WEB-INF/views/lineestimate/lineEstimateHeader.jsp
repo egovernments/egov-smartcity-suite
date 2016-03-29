@@ -46,6 +46,9 @@
 			<spring:message code="header.lineestimate" />
 		</div>
 	</div>
+	<div class="add-margin error-msg">
+		${errorMessage }
+	</div>
 	<div class="panel-body custom-form">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.date" /><span class="mandatory"></span></label>

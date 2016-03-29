@@ -57,7 +57,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.entity.Assignment;
@@ -468,9 +467,17 @@ public class LineEstimateService {
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
             updatedLineEstimate = update(lineEstimate, removedLineEstimateDetailsIds, files);
-            lineEstimateStatusChange(updatedLineEstimate, workFlowAction, mode);
+            try {
+                lineEstimateStatusChange(updatedLineEstimate, workFlowAction, mode);
+            } catch (ValidationException e) {
+                throw new ValidationException(e.getErrors());
+            }
         } else {
-            lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
+            try {
+                lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
+            } catch (ValidationException e) {
+                throw new ValidationException(e.getErrors());
+            }
             updatedLineEstimate = lineEstimateRepository.save(lineEstimate);
         }
 
@@ -482,7 +489,7 @@ public class LineEstimateService {
 
     @Transactional
     public void lineEstimateStatusChange(final LineEstimate lineEstimate, final String workFlowAction,
-            final String mode) {
+            final String mode) throws ValidationException {
         if (null != lineEstimate && null != lineEstimate.getStatus()
                 && null != lineEstimate.getStatus().getCode())
             if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString())
@@ -515,14 +522,16 @@ public class LineEstimateService {
                             final boolean flag = checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(lineEstimate.getLineEstimateDate()).getId(), led.getEstimateAmount().doubleValue(), budgetheadid);
                             
                             if(!flag) {
-                                throw new ValidationException();
+                                throw new ValidationException("", "error.budgetappropriation.amount");
                             }
                         }
+                    } else {
+                        throw new ValidationException("", "error.budgetappropriation.amount");
                     }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 } catch (ValidationException e) {
-                    throw new ValidationException("", "", "");
+                    throw new ValidationException("", "error.budgetappropriation.amount");
                 }
                 
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
@@ -697,9 +706,8 @@ public class LineEstimateService {
     public boolean checkConsumeEncumbranceBudget(final LineEstimateDetails lineEstimateDetails, final Long finyrId,
             final double budgApprAmnt, final List<Long> budgetheadid) {
         final boolean flag = true;
-        final CFinancialYear finYear = getCurrentFinancialYear(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
         final BudgetUsage budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
-                budgetAppropriationNumberGenerator.generateBudgetAppropriationNumber(lineEstimateDetails, finYear),
+                budgetAppropriationNumberGenerator.generateBudgetAppropriationNumber(lineEstimateDetails),
                 finyrId,
                 Integer.valueOf(11),
                 lineEstimateDetails.getEstimateNumber(),
@@ -730,8 +738,9 @@ public class LineEstimateService {
         final boolean flag = false;
 
         budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
-                lineEstimateAppropriation.getBudgetUsage() == null ? null : lineEstimateAppropriation.getBudgetUsage().
-                        getAppropriationnumber().replaceAll("BAS", "BAS/C"),
+                lineEstimateAppropriation.getBudgetUsage() == null ? null : budgetAppropriationNumberGenerator.
+                        generateCancelledBudgetAppropriationNumber(lineEstimateAppropriation.getBudgetUsage().
+                        getAppropriationnumber()),
                         lineEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
                 Integer.valueOf(11),
                 lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber(),

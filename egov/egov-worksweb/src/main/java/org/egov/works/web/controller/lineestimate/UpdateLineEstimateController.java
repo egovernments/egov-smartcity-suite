@@ -56,6 +56,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.Beneficiary;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -69,6 +70,7 @@ import org.egov.works.master.services.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -112,6 +114,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     protected AssignmentService assignmentService;
+    
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -190,9 +195,14 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         }
         else {
             if (null != workFlowAction)
-                newLineEstimate = lineEstimateService.updateLineEstimateDetails(lineEstimate, approvalPosition,
-                        approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction,
-                        mode, null, removedLineEstimateDetailsIds, files);
+                try {
+                    newLineEstimate = lineEstimateService.updateLineEstimateDetails(lineEstimate, approvalPosition,
+                            approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction,
+                            mode, null, removedLineEstimateDetailsIds, files);
+                } catch (ValidationException e) {
+                    model.addAttribute("message", messageSource.getMessage("error.budgetappropriation.amount", null, null));
+                    return "lineestimate-success";
+                }
             redirectAttributes.addFlashAttribute("lineEstimate", newLineEstimate);
 
             final String pathVars = worksUtils.getPathVars(newLineEstimate, approvalPosition);

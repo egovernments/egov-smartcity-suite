@@ -44,7 +44,7 @@ jQuery('#btnsearch').click(function(e) {
 	if(adminSanctionToDate != '' && adminSanctionFromDate != '') {
 		if(adminSanctionFromDate > adminSanctionToDate) {
 			flag = false;
-			bootbox.alert('Please select Admin Sanction To Date after Admin Sanction From Date');
+			bootbox.alert('Admin Sanction To Date should be greater than Admin Sanction From Date');
 		}
 	}
 	if(flag)
@@ -65,6 +65,8 @@ function getFormData($form){
 function renderAction(id, value) {
 	if(value == 1)
 		window.open("/egworks/lineestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	if(value == 2)
+	window.open("/egworks/lineestimate/lineEstimatePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
  
 function callAjaxSearch() {

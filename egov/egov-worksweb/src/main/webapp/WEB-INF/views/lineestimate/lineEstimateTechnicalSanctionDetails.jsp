@@ -53,8 +53,16 @@
 		<table class="table table-bordered" id="tblestimate">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.technicalsanctionnumber"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.technicalsanctiondate"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.technicalsanctionnumber"/>
+						<c:if test="${mode != 'readOnly' }">
+							<span class="mandatory"></span>
+						</c:if>
+					</th>
+					<th><spring:message code="lbl.technicalsanctiondate"/>
+						<c:if test="${mode != 'readOnly' }">
+							<span class="mandatory"></span>
+						</c:if>
+					</th>
 				</tr>
 			</thead>
 			<tbody>

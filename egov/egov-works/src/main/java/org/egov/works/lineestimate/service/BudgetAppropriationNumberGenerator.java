@@ -47,6 +47,7 @@ import java.util.Date;
 import javax.transaction.Transactional;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
@@ -54,20 +55,24 @@ import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.WorkCategory;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class BudgetAppropriationNumberGenerator {
     @Autowired
     private SequenceNumberGenerator sequenceNumberGenerator;
 
     @Autowired
     private DBSequenceGenerator dbSequenceGenerator;
+    
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Transactional
-    public String generateBudgetAppropriationNumber(final LineEstimateDetails lineEstimateDetails,
-            final CFinancialYear cFinancialYear) {
+    public String generateBudgetAppropriationNumber(final LineEstimateDetails lineEstimateDetails) {
         try {
-            final String finYearRange[] = cFinancialYear.getFinYearRange().split("-");
-            final String sequenceName = "BUDGETAPPROPRIATIONNUMBER_" + finYearRange[0] + "_" + finYearRange[1];
+            final CFinancialYear cFinancialYear = financialYearHibernateDAO.getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+            final String sequenceName = "SEQ_LINEESTIMATEAPPROPRIATION_NUMBER";
             Serializable sequenceNumber;
             try {
                 sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
@@ -77,7 +82,12 @@ public class BudgetAppropriationNumberGenerator {
             return String.format("BAS/%05d/%s", sequenceNumber,
                     cFinancialYear.getFinYearRange());
         } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating Line Estimate Number", e);
+            throw new ApplicationRuntimeException("Error occurred while generating Budget Appropriation Number", e);
         }
+    }
+    
+    @Transactional
+    public String generateCancelledBudgetAppropriationNumber(String appropriationNumber) {
+        return appropriationNumber.replaceAll("BAS", "BAS/C");
     }
 }

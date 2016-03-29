@@ -54,7 +54,9 @@ import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class LineEstimateNumberGenerator {
 
     private static final String LINEESTIMATE_NUMBER_SEQ_PREFIX = "SEQ_LINEESTIMATE_NUMBER";
