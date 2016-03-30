@@ -38,5 +38,39 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
+	replaceBillTypeChar();
+		
+	function replaceBillTypeChar() {
+		$('#billtype option').each(function() {
+		   var $this = $(this);
+		   $this.text($this.text().replace(/_/g, ' '));
+		});
+	}
+	
+	$("form").submit(function() {
+		if($('form').valid())	{
+			$('.loader-class').modal('show', {backdrop: 'static'});
+		}
+		else 
+			$('.loader-class').modal('hide');
+	});
+	
+	$('.btn-primary').click(function(){
+		var button = $(this).attr('name');
+		if (button != null && button == 'submit') {
+			if($('form').valid()) { 
+				var workOrderDate = $('#workOrderDate').val();
+				var partyBillDate = $('#partyBillDate').val();
+				
+				if(partyBillDate != '' && workOrderDate > partyBillDate) {
+					bootbox.alert($('#errorPartyBillDate').val());
+					$('#partyBillDate').val("");
+					return false;
+				}
+				else
+				 document.forms[0].submit();	
+			}
+		}
+	});
 	
 });

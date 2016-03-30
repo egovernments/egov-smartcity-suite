@@ -43,6 +43,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -80,7 +81,7 @@ public class CreateContractorBillController {
     }
 
     private void setDropDownValues(final Model model) {
-
+        model.addAttribute("billTypes", BillTypes.values());
     }
 
 }

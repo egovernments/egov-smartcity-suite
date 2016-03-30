@@ -46,7 +46,7 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" />
+		<form:input id="billdate" path="billdate" class="form-control" data-date-end-date="0d" required="required" readonly="true" />
 		<form:errors path="billdate" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billtype" /><span class="mandatory"></span></label>
@@ -55,6 +55,7 @@
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
+			<form:options items="${billTypes}" />
 		</form:select>
 		<form:errors path="billtype" cssClass="add-margin error-msg" />
 	</div>
@@ -81,6 +82,7 @@
 	<div class="col-sm-3 add-margin">
 		<form:input id="partyBillDate" path="egBillregistermis.partyBillDate" class="form-control datepicker" data-date-end-date="0d" />
 		<form:errors path="egBillregistermis.partyBillDate" cssClass="add-margin error-msg" />
+		<input type="hidden" id="errorPartyBillDate" value="<spring:message code='error.validate.partybilldate.lessthan.loadate' />" />
 	</div>
 </div>
 

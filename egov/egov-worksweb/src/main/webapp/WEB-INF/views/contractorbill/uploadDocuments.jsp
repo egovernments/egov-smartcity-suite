@@ -63,7 +63,7 @@
 	</div>
 	<c:if test="${contractorBillRegister.documentDetails != null &&  !contractorBillRegister.documentDetails.isEmpty()}">
 		<c:forEach items="${contractorBillRegister.documentDetails }" var="documentDetials">
-			<a href="/egi/downloadfile?fileStoreId=${contractorBillRegister.fileStore.fileStoreId}&moduleName=WMS">${contractorBillRegister.fileStore.fileName }</a><br />
+			<a href="/egi/downloadfile?fileStoreId=${fileStore.fileStoreId}&moduleName=WMS">${fileStore.fileName }</a><br />
 		</c:forEach>
 	</c:if>
 	<c:if test="${mode == 'view' && contractorBillRegister.documentDetails.isEmpty()}">
@@ -87,7 +87,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td align="center">
+						<td align="left">
 							<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
 						</td>
 					</tr>
