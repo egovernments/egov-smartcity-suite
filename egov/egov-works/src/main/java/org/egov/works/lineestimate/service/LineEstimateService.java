@@ -225,7 +225,6 @@ public class LineEstimateService {
                 lineEstimateDetails.setEstimateNumber(estimateNumber);
 
             } 
-        System.out.println(".......... ..");
         List<LineEstimateDetails> list = new ArrayList<LineEstimateDetails>(lineEstimate.getLineEstimateDetails());
         list = removeDeletedLineEstimateDetails(list, removedLineEstimateDetailsIds);
 //        for (final LineEstimateDetails details : list)
@@ -301,7 +300,8 @@ public class LineEstimateService {
         final List<String> lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersToSearchLineEstimatesForLoa(WorksConstants.CANCELLED_STATUS);
 
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
-                .createAlias("lineEstimateDetails", "lineEstimateDetail");
+                .createAlias("lineEstimateDetails", "lineEstimateDetail")
+                .createAlias("status", "status");
         if (lineEstimateForLoaSearchRequest != null) {
             if (lineEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
                 criteria.add(Restrictions.ilike("adminSanctionNumber", lineEstimateForLoaSearchRequest.getAdminSanctionNumber()));
@@ -317,6 +317,7 @@ public class LineEstimateService {
             if (lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy() != null)
                 criteria.add(Restrictions.eq("createdBy.id", lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
             criteria.add(Restrictions.in("lineEstimateDetail.estimateNumber", lineEstimateNumbers));
+            criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
@@ -356,23 +357,9 @@ public class LineEstimateService {
         final List<LineEstimate> lineEstimates = searchLineEstimatesForLoa(lineEstimateForLoaSearchRequest);
         final List<LineEstimateForLoaSearchResult> lineEstimateForLoaSearchResults = new ArrayList<LineEstimateForLoaSearchResult>();
         for (final LineEstimate le : lineEstimates)
-            if (le.getStatus().getCode().equals(LineEstimateStatus.TECHNICAL_SANCTIONED.toString()))
-                for (final LineEstimateDetails led : le.getLineEstimateDetails())
-                    if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null) {
-                        if (led.getEstimateNumber().equalsIgnoreCase(lineEstimateForLoaSearchRequest.getEstimateNumber())) {
-                            final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
-                            result.setId(le.getId());
-                            result.setAdminSanctionNumber(le.getAdminSanctionNumber());
-                            result.setCreatedBy(le.getCreatedBy().getName());
-                            result.setEstimateAmount(led.getEstimateAmount());
-                            result.setEstimateNumber(led.getEstimateNumber());
-                            result.setNameOfWork(led.getNameOfWork());
-                            if (le.getAdminSanctionBy() != null)
-                                result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
-                            result.setActualEstimateAmount(led.getActualEstimateAmount());
-                            lineEstimateForLoaSearchResults.add(result);
-                        }
-                    } else {
+            for (final LineEstimateDetails led : le.getLineEstimateDetails())
+                if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null) {
+                    if (led.getEstimateNumber().equalsIgnoreCase(lineEstimateForLoaSearchRequest.getEstimateNumber())) {
                         final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
                         result.setId(le.getId());
                         result.setAdminSanctionNumber(le.getAdminSanctionNumber());
@@ -380,11 +367,24 @@ public class LineEstimateService {
                         result.setEstimateAmount(led.getEstimateAmount());
                         result.setEstimateNumber(led.getEstimateNumber());
                         result.setNameOfWork(led.getNameOfWork());
-                        result.setActualEstimateAmount(led.getActualEstimateAmount());
                         if (le.getAdminSanctionBy() != null)
                             result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
+                        result.setActualEstimateAmount(led.getActualEstimateAmount());
                         lineEstimateForLoaSearchResults.add(result);
                     }
+                } else {
+                    final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
+                    result.setId(le.getId());
+                    result.setAdminSanctionNumber(le.getAdminSanctionNumber());
+                    result.setCreatedBy(le.getCreatedBy().getName());
+                    result.setEstimateAmount(led.getEstimateAmount());
+                    result.setEstimateNumber(led.getEstimateNumber());
+                    result.setNameOfWork(led.getNameOfWork());
+                    result.setActualEstimateAmount(led.getActualEstimateAmount());
+                    if (le.getAdminSanctionBy() != null)
+                        result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
+                    lineEstimateForLoaSearchResults.add(result);
+                }
         return lineEstimateForLoaSearchResults;
     }
 
@@ -481,6 +481,7 @@ public class LineEstimateService {
             }
         } else {
             try {
+                doBudgetoryAppropriation(lineEstimate, workFlowAction);
                 lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
             } catch (ValidationException e) {
                 throw new ValidationException(e.getErrors());
@@ -494,6 +495,29 @@ public class LineEstimateService {
         return updatedLineEstimate;
     }
 
+    private void doBudgetoryAppropriation(LineEstimate lineEstimate, String workFlowAction) {
+        if (lineEstimate.getStatus().getCode()
+                .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
+            final List<Long> budgetheadid = new ArrayList<Long>();
+            budgetheadid.add(lineEstimate.getBudgetHead().getId());
+            
+            for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+                final boolean flag = checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(new Date()).getId(), led.getEstimateAmount().doubleValue(), budgetheadid);
+                
+                if(!flag) {
+                    throw new ValidationException("", "error.budgetappropriation.amount");
+                }
+            }
+        } else if (workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
+            if (lineEstimate.getStatus().getCode()
+                    .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()))
+                for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+                    releaseBudgetOnReject(led);
+                }
+        }
+        
+    }
+
     public void lineEstimateStatusChange(final LineEstimate lineEstimate, final String workFlowAction,
             final String mode) throws ValidationException {
         if (null != lineEstimate && null != lineEstimate.getStatus()
@@ -504,41 +528,6 @@ public class LineEstimateService {
                         LineEstimateStatus.CHECKED.toString()));
             else if (lineEstimate.getStatus().getCode()
                     .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
-                
-                final List<Long> budgetheadid = new ArrayList<Long>();
-                budgetheadid.add(lineEstimate.getBudgetHead().getId());
-                
-                try {
-                    final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
-                            getCurrentFinancialYear(lineEstimate.getLineEstimateDate()).getId(), Integer.parseInt(lineEstimate
-                                    .getExecutingDepartment().getId().toString()), lineEstimate.getFunction().getId(), null,
-                                    lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
-                                    lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
-                                            null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
-                                    .getId().toString()));
-                    
-                    BigDecimal totalEstimateAmount = BigDecimal.ZERO;
-                    
-                    for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-                        totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
-                    }
-                    
-                    if(budgetAvailable.compareTo(totalEstimateAmount) == 1) {
-                        for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-                            final boolean flag = checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(lineEstimate.getLineEstimateDate()).getId(), led.getEstimateAmount().doubleValue(), budgetheadid);
-                            
-                            if(!flag) {
-                                throw new ValidationException("", "error.budgetappropriation.amount");
-                            }
-                        }
-                    } else {
-                        throw new ValidationException("", "error.budgetappropriation.amount");
-                    }
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                } catch (ValidationException e) {
-                    throw new ValidationException("", "error.budgetappropriation.amount");
-                }
                 
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.BUDGET_SANCTIONED.toString()));
@@ -559,11 +548,6 @@ public class LineEstimateService {
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
-                if (lineEstimate.getStatus().getCode()
-                        .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()))
-                    for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-                        releaseBudgetOnReject(led);
-                    }
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.REJECTED.toString()));
             }

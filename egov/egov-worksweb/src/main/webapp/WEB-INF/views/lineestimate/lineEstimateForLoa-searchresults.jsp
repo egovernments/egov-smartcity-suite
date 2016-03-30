@@ -45,7 +45,7 @@
 		<spring:message code="title.lineestimate.search" /></div>
 	<div id="errorMessage" style="display: none;"><spring:message code="error.lineestimate.loa.search" /></div>
 	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl"
+		<table class="table table-bordered table-responsive table-hover multiheadertbl"
 			id="resultTable">
 			<thead>
 				<tr>
@@ -60,6 +60,8 @@
 					<th><spring:message code="lbl.actualamount" /></th>
 				</tr>
 			</thead>
+			<tbody class="no-pointer">
+			</tbody>
 		</table>
 	</div>
 	<div class="row">

@@ -42,6 +42,7 @@ $locationId = 0;
 $subTypeOfWorkId = 0;
 $detailsRowCount = $('#detailsSize').val();
 $(document).ready(function(){
+	
 	getLineEstimateDate();
 	$locationId = $('#locationValue').val();
 	$('#wardInput').trigger('blur');
@@ -143,6 +144,8 @@ function addLineEstimate() {
 			else
 				nextIdx = $detailsRowCount++;
 			
+			
+			
             var estimateNo = (new Date()).valueOf();
 			// validate status variable for exiting function
 			var isValid = 1;// for default have success value 0
@@ -164,18 +167,13 @@ function addLineEstimate() {
 			}
 			
 			// Generate all textboxes Id and name with new index
-			$("#estimateRow").clone().find("input, span, errors, textarea").each(
+			$("#estimateRow").clone().find("input, errors, textarea").each(
 					function() {
 
 						if ($(this).data('server')) {
 							$(this).removeAttr('data-server');
 						}
 						
-						if ($(this).is('span')) {
-							if($(this).hasClass('spansno'))
-							$(this).html((nextIdx+1));
-						}
-						else{
 							$(this).attr(
 									{
 										/*'id' : function(_, id) {
@@ -183,8 +181,7 @@ function addLineEstimate() {
 													+ nextIdx + ']');
 										},*/
 										'name' : function(_, name) {
-											return name.replace('[0]', '['
-													+ nextIdx + ']');
+											return name.replace(/\d+/, nextIdx);
 										},
 										'data-idx' : function(_,dataIdx)
 										{
@@ -205,9 +202,11 @@ function addLineEstimate() {
 							$(this).attr('readonly', false);
 							$(this).removeAttr('disabled');
 							$(this).prop('checked', false);
-						}
 
 					}).end().appendTo("#tblestimate tbody");
+			
+			generateSno();
+			
 		}
 	} else {
 		  alert('limit reached!');
@@ -225,6 +224,16 @@ function getRow(obj) {
 	}
 	return null;
 }
+
+function generateSno()
+{
+	var idx=1;
+	$(".spansno").each(function(){
+		$(this).text(idx);
+		idx++;
+	});
+}
+
 
 function deleteLineEstimate(obj) {
     var rIndex = getRow(obj).rowIndex;
@@ -246,29 +255,31 @@ function deleteLineEstimate(obj) {
 	} else {
 		tbl.deleteRow(rIndex);
 		//starting index for table fields
-		var idx=0;
+		var idx=parseInt($detailsRowCount);
+		
+		generateSno();
 		
 		//regenerate index existing inputs in table row
-		/*$("#tblestimate tbody tr").each(function() {
-			$(this).find("input, span, errors, textarea").each(function() {
-				if ($(this).is('span')) {
-					if($(this).hasClass('spansno'))
-					$(this).html((idx+1));
-				}
-				else{
-				   $(this).attr({
-				      'name': function(_, name) {
-				    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
-				      },
-					  'data-idx' : function(_,dataIdx)
-					  {
-						  return idx;
-					  }
-				   });
-				}
-		    });
-			idx++;
-		});*/
+		$("#tblestimate tbody tr").each(function() {
+		
+			hiddenElem=$(this).find("input:hidden");
+			
+			if(!$(hiddenElem).val())
+			{
+				$(this).find("input, errors, textarea").each(function() {
+					   $(this).attr({
+					      'name': function(_, name) {
+					    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+						  'data-idx' : function(_,dataIdx)
+						  {
+							  return idx;
+						  }
+					   });
+			    });
+				idx++;
+			}
+		});
 		calculateEstimatedAmountTotal();
 		return true;
 	}	

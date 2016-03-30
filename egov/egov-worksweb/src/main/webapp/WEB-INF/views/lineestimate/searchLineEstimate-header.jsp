@@ -42,8 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="page-container" id="page-container">
-	<div class="main-content">
 		<form:form name="lineEstimateSearchForm" role="form" action="" modelAttribute="lineEstimateSearchRequest" id="lineEstimatesearchform" class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="col-md-12">
@@ -60,8 +58,6 @@
 				</div>
 			</div>
 		</form:form>  
-	</div>
-</div>
 <jsp:include page="lineEstimate-searchresults.jsp"/>
 <script>
 	$('#btnsearch').click(function(e) {
@@ -71,5 +67,6 @@
 		}
 	});
 </script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi' />" ></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/js/lineestimate/searchlineestimatehelper.js?rnd=${app_release_no}'/>"></script>

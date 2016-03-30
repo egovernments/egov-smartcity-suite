@@ -88,6 +88,8 @@ public class BudgetAppropriationNumberGenerator {
     
     @Transactional
     public String generateCancelledBudgetAppropriationNumber(String appropriationNumber) {
-        return appropriationNumber.replaceAll("BAS", "BAS/C");
+        String original = appropriationNumber.split("/")[0];
+        String modified = original + "/C";
+        return appropriationNumber.replace(original, modified);
     }
 }

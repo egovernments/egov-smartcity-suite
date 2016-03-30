@@ -197,7 +197,12 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
-        validateBudgetAmount(lineEstimate, errors);
+            try {
+                validateBudgetAmount(lineEstimate, errors);
+            } catch (Exception e1) {
+                model.addAttribute("message", messageSource.getMessage("error.nobudget.defined", null, null));
+                return "lineestimate-success";
+            }
 
         if (errors.hasErrors()) {
             setDropDownValues(model);
@@ -225,22 +230,28 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
         
-        final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
-                lineEstimateService.getCurrentFinancialYear(lineEstimate.getLineEstimateDate()).getId(), Integer.parseInt(lineEstimate
-                        .getExecutingDepartment().getId().toString()), lineEstimate.getFunction().getId(), null,
-                        lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
-                        lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
-                                null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
-                        .getId().toString()));
-        
-        BigDecimal totalEstimateAmount = BigDecimal.ZERO;
-        
-        for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
-        }
-        
-        if(budgetAvailable.compareTo(totalEstimateAmount) == -1) {
-            errors.reject("error.budgetappropriation.amount");
+        try {
+            final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
+                    lineEstimateService.getCurrentFinancialYear(lineEstimate.getLineEstimateDate()).getId(), Integer.parseInt(lineEstimate
+                            .getExecutingDepartment().getId().toString()), lineEstimate.getFunction().getId(), null,
+                            lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
+                            lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
+                                    null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
+                            .getId().toString()));
+            
+            BigDecimal totalEstimateAmount = BigDecimal.ZERO;
+            
+            for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+                totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
+            }
+            
+            if(budgetAvailable.compareTo(totalEstimateAmount) == -1) {
+                errors.reject("error.budgetappropriation.amount");
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (ValidationException e) {
+            throw new ValidationException("", e.getMessage());
         }
     }
 
