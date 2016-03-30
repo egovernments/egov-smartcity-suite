@@ -162,8 +162,8 @@ public class BillRegisterReportAction extends SearchFormAction {
         
 
         getRemiitPaymentVoucherQry.append("select  distinct rm from EgRemittance rm join rm.egRemittanceDetail rdtl  " +
-                "where rdtl.egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherNumber =?" +
-                "and rdtl.egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.status!=?" +
+                "where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =?" +
+                "and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=?" +
                 " and rm.voucherheader.status!=?")
                 .append(" order by rm.voucherheader.id");
 
@@ -292,10 +292,10 @@ public class BillRegisterReportAction extends SearchFormAction {
                 billRegReport.setBillNumber(object[0].toString());
                 billRegReport.setVoucherNumber(object[1] != null ? object[1].toString() : "");
                 billRegReport.setPartyName(object[2] != null ? object[2].toString() : "");
-                billRegReport.setGrossAmount(null != object[3] ? new BigDecimal(object[3].toString()).setScale(2)
-                        : BigDecimal.ZERO.setScale(2));
-                billRegReport.setNetAmount(null != object[4] ? new BigDecimal(object[4].toString()).setScale(2) : BigDecimal.ZERO
-                        .setScale(2));
+                billRegReport.setGrossAmount(null != object[3] ? new BigDecimal(object[3].toString()).setScale(2,BigDecimal.ROUND_HALF_EVEN)
+                        : BigDecimal.ZERO.setScale(2,BigDecimal.ROUND_HALF_EVEN));
+                billRegReport.setNetAmount(null != object[4] ? new BigDecimal(object[4].toString()).setScale(2,BigDecimal.ROUND_HALF_EVEN) : BigDecimal.ZERO
+                        .setScale(2,BigDecimal.ROUND_HALF_EVEN));
                 billRegReport.setDeductionAmount(billRegReport.getGrossAmount().subtract(billRegReport.getNetAmount()));
                 billRegReport.setStatus(null != object[5] ? object[5].toString().toUpperCase() : "");
                 billRegReport.setBillDate(DDMMYYYYFORMATS.format((Date) object[6]));
@@ -318,7 +318,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                                 if (!StringUtils.isEmpty(payMentVoucherNumber.toString())) {
                                     payMentVoucherNumber.append("|").append(
                                             miscbilldetail.getPayVoucherHeader().getVoucherNumber());
-                                    paidAmount = paidAmount.add(miscbilldetail.getPaidamount()).setScale(2);
+                                    paidAmount = paidAmount.add(miscbilldetail.getPaidamount()).setScale(2,BigDecimal.ROUND_HALF_EVEN);
                                     final Paymentheader paymentMode = (Paymentheader) persistenceService.find(
                                             "from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());
                                     if (!paymentMode.getType().equals(FinancialConstants.MODEOFPAYMENT_RTGS)) {
@@ -395,7 +395,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                                                                     : "");
                                     }
                                 } else {
-                                    paidAmount = miscbilldetail.getPaidamount().setScale(2);
+                                    paidAmount = miscbilldetail.getPaidamount().setScale(2,BigDecimal.ROUND_HALF_EVEN);
                                     payMentVoucherNumber.append(miscbilldetail.getPayVoucherHeader().getVoucherNumber());
                                     final Paymentheader paymentMode = (Paymentheader) persistenceService.find(
                                             "from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());

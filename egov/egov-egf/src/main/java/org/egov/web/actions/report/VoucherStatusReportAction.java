@@ -499,8 +499,10 @@ public class VoucherStatusReportAction extends BaseFormAction
             else
                 return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
         }
-        else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT))
-        {
+        
+        //no need to find owner of receipt
+       /* else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT))
+        { 
             final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.find(
                     "from ReceiptVoucher rv where rv.voucherHeader=?", voucherHeader);
             if (receiptVoucher == null || receiptVoucher.getState() == null)
@@ -517,7 +519,7 @@ public class VoucherStatusReportAction extends BaseFormAction
                 return dash;
             else
                 return getUserNameForPosition(receiptVoucher.getState().getOwnerPosition().getId().intValue());
-        }
+        }*/
         else
             return dash;
     }

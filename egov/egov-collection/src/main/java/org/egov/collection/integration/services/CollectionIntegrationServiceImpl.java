@@ -102,10 +102,6 @@ CollectionIntegrationService {
     @Autowired
     private EgwStatusHibernateDAO statusDAO;
 
-    /*
-     * @Autowired private ServiceCategoryService serviceCategoryService;
-     */
-
     List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
@@ -290,7 +286,7 @@ CollectionIntegrationService {
         BigDecimal otherInstrumenttotal = BigDecimal.ZERO;
 
         // populate instrument details
-        final List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>(0);
+        final Set<InstrumentHeader> instrumentHeaderSet = new HashSet<InstrumentHeader>(0);
 
         for (final PaymentInfo paytInfo : paymentInfoList) {
             final String instrType = paytInfo.getInstrumentType().toString();
@@ -298,7 +294,7 @@ CollectionIntegrationService {
             if (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrType)) {
                 final PaymentInfoCash paytInfoCash = (PaymentInfoCash) paytInfo;
 
-                instrumentHeaderList.add(collectionCommon.validateAndConstructCashInstrument(paytInfoCash));
+                instrumentHeaderSet.add(collectionCommon.validateAndConstructCashInstrument(paytInfoCash));
                 otherInstrumenttotal = paytInfo.getInstrumentAmount();
             }
 
@@ -311,7 +307,7 @@ CollectionIntegrationService {
             if (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrType)) {
                 final PaymentInfoBank paytInfoBank = (PaymentInfoBank) paytInfo;
 
-                instrumentHeaderList.add(collectionCommon.validateAndConstructBankInstrument(paytInfoBank));
+                instrumentHeaderSet.add(collectionCommon.validateAndConstructBankInstrument(paytInfoBank));
 
                 otherInstrumenttotal = paytInfoBank.getInstrumentAmount();
             }
@@ -321,7 +317,7 @@ CollectionIntegrationService {
 
                 final PaymentInfoChequeDD paytInfoChequeDD = (PaymentInfoChequeDD) paytInfo;
 
-                instrumentHeaderList.add(collectionCommon.validateAndConstructChequeDDInstrument(paytInfoChequeDD));
+                instrumentHeaderSet.add(collectionCommon.validateAndConstructChequeDDInstrument(paytInfoChequeDD));
 
                 chequeDDInstrumenttotal = chequeDDInstrumenttotal.add(paytInfoChequeDD.getInstrumentAmount());
             }
@@ -332,12 +328,6 @@ CollectionIntegrationService {
              * paytInfoATM)); otherInstrumenttotal = paytInfoATM.getInstrumentAmount(); }
              */
         }
-        final Set<InstrumentHeader> instHeaderSet = new HashSet(
-                receiptHeaderService.createInstrument(instrumentHeaderList));
-        LOGGER.info("   Instrument List created ");
-
-        receiptHeader.setReceiptInstrument(instHeaderSet);
-
         BigDecimal debitAmount = BigDecimal.ZERO;
 
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
@@ -348,18 +338,7 @@ CollectionIntegrationService {
         receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                 chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList.get(0).getInstrumentType().toString()));
 
-        receiptHeaderService.persistFieldReceipt(receiptHeader);
-
-        // Create Vouchers
-        /*
-         * List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
-         * LOGGER.info("Receipt Voucher created with vouchernumber:     " + receiptHeader.getVoucherNum()); for (ReceiptVoucher
-         * receiptVoucher : receiptHeader.getReceiptVoucher()) { voucherHeaderList.add(receiptVoucher.getVoucherheader()); }
-         */
-        /*
-         * if (voucherHeaderList != null && !instrumentHeaderList.isEmpty()) {
-         * receiptHeaderService.updateInstrument(voucherHeaderList, instrumentHeaderList); }
-         */
+        receiptHeaderService.persistFieldReceipt(receiptHeader, instrumentHeaderSet);
         LOGGER.info("Logs for CreateReceipt : Receipt Creation Finished....");
         return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO);
     }

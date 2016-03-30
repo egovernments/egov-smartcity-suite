@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.egov.commons.CFunction;
 import org.egov.commons.service.FunctionService;
 import org.egov.egf.web.adaptor.FunctionJsonAdaptor;
+import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -35,6 +36,9 @@ public class FunctionController {
 	private FunctionService functionService;
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private EgovMasterDataCaching egovMasterDataCaching;
+	
 	
 
 	private void prepareNewForm(Model model) {
@@ -64,6 +68,8 @@ public class FunctionController {
 		functionService.create(function);
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.function.success", null, null));
+		egovMasterDataCaching.removeFromCache("egi-activeFunctions");
+		egovMasterDataCaching.removeFromCache("egi-function");
 		return "redirect:/function/result/" + function.getId();
 	}
 
@@ -86,6 +92,8 @@ public class FunctionController {
 		functionService.update(function);
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.function.success", null, null));
+		egovMasterDataCaching.removeFromCache("egi-activeFunctions");
+		egovMasterDataCaching.removeFromCache("egi-function");
 		return "redirect:/function/result/" + function.getId();
 	}
 

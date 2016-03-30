@@ -57,7 +57,7 @@ public class FundController {
 			prepareNewForm(model);
 			return FUND_NEW; 
 		}
-		fund.setCreated(new Date());
+		fund.setCreatedDate(new Date());
 		fundService.create(fund);
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.fund.success", null, null));

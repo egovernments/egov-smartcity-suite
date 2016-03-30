@@ -243,9 +243,8 @@ public class AdvertisementPermitDetailService {
                 if (searchType != null && searchType.equalsIgnoreCase("agency") ) {
                    if(result.getAgency() != null){
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
-                    final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
+                final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
+                        .checkPedingAmountByDemand(result);
                     // TODO: DO CODE CHANGE
                     final HoardingSearch hoardingSearchObj = agencyWiseHoardingList.get(result.getAgency().getName());
                     if (hoardingSearchObj == null) {
@@ -273,8 +272,7 @@ public class AdvertisementPermitDetailService {
                 } else {
 
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
+                            .checkPedingAmountByDemand(result);
                     hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
                     hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
@@ -415,8 +413,7 @@ public class AdvertisementPermitDetailService {
                 if (searchType != null && searchType.equalsIgnoreCase("agency") && result.getAgency() != null) {
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
+                            .checkPedingAmountByDemand(result);
                     // TODO: DO CODE CHANGE
                     final HoardingSearch hoardingSearchObj = agencyWiseHoardingList.get(result.getAgency().getName());
                     if (hoardingSearchObj == null) {
@@ -443,8 +440,7 @@ public class AdvertisementPermitDetailService {
                 } else {
 
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
+                            .checkPedingAmountByDemand(result);
                     hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
                     hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
@@ -483,8 +479,7 @@ public class AdvertisementPermitDetailService {
                 BigDecimal totalPending = BigDecimal.ZERO;
                 BigDecimal totalPenalty = BigDecimal.ZERO;
                 final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                        .checkPendingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                .getPenaltyCalculationDate());
+                        .checkPendingAmountByDemand(result);
                 totalDemandAmount = totalDemandAmount.add(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTAL_DEMAND));
                 totalCollectedAmount = totalCollectedAmount
                         .add(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTALCOLLECTION));

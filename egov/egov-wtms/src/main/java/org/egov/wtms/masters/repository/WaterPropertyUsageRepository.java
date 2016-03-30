@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.masters.repository;
 
+import java.util.List;
+
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterPropertyUsage;
@@ -48,8 +50,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WaterPropertyUsageRepository extends JpaRepository<WaterPropertyUsage, Long> {
 
+    List<WaterPropertyUsage> findAllByPropertyTypeAndUsageType(PropertyType propertyType, UsageType usagetype);
+
     WaterPropertyUsage findByPropertyTypeAndUsageType(PropertyType propertyType, UsageType usagetype);
 
     WaterPropertyUsage findByPropertyType_codeAndUsageType_code(String propertyType, String usageTypeCode);
-
 }

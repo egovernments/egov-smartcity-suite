@@ -264,6 +264,7 @@ public class BudgetSearchAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         if (!parameters.containsKey("skipPrepare")) {
+        	System.out.println(parameters);
             headerFields = budgetDetailConfig.getHeaderFields();
             gridFields = budgetDetailConfig.getGridFields();
             // setupDropdownDataExcluding(Constants.SUB_SCHEME);
@@ -345,6 +346,8 @@ public class BudgetSearchAction extends BaseFormAction {
         else
             budgetList.addAll(budgetDetailService.findBudgetTree(budget, budgetDetail));
         getSession().put(Constants.SEARCH_CRITERIA_KEY, budgetDetail);
+        if (budgetList.isEmpty())
+        	addActionError(getText("budget.no.details.found"));
         return Constants.LIST;
     }
 

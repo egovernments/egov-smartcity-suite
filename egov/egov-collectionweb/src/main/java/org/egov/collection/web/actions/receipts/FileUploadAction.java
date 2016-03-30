@@ -917,7 +917,7 @@ public class FileUploadAction extends BaseFormAction {
         // .getPositionOfUser(receiptHeader.getCreatedBy()),
         // "Manually Created Challan Receipt Approved - Workflow ends");
 
-        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
+        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
 
         // If vouchers are created during work flow step, add them to the list
         final Set<ReceiptVoucher> receiptVouchers = receiptHeader.getReceiptVoucher();
@@ -930,8 +930,7 @@ public class FileUploadAction extends BaseFormAction {
             }
 
         if (voucherHeaderList != null && receiptInstrList != null)
-            receiptHeaderService.updateInstrument(voucherHeaderList,
-                    receiptInstrList);
+            receiptHeaderService.updateInstrument(receiptHeader);
 
     }
 
@@ -1299,8 +1298,8 @@ public class FileUploadAction extends BaseFormAction {
                 "from org.egov.collection.entity.ReceiptHeader where status.code=?",
                 CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
 
-        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
-        Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>();
+        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
+        Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>(0);
 
         for (final ReceiptHeader receiptHeader : approvedReceipts) {
             voucherHeaderList.clear();
@@ -1318,8 +1317,7 @@ public class FileUploadAction extends BaseFormAction {
                     final List<InstrumentHeader> receiptInstrList = new ArrayList<InstrumentHeader>();
                     receiptInstrList.addAll(receiptHeader.getReceiptInstrument());
                     if (voucherHeaderList != null && !receiptInstrList.isEmpty())
-                        receiptHeaderService.updateInstrument(voucherHeaderList,
-                                receiptInstrList);
+                        receiptHeaderService.updateInstrument(receiptHeader);
 
                 } catch (final Exception e) {
                     errorReceiptList.add(receiptHeader.getId());

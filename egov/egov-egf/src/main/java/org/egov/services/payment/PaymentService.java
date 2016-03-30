@@ -1439,7 +1439,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 if (!bean.getIsSelected())
                     continue;
                 final Object[] obj = (Object[]) persistenceService
-                        .find("select gld.detailTypeId,gld.detailKeyId,billmis.egBillregister.expendituretype from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId and billmis.voucherHeader = gl.voucherHeaderId and billmis.voucherHeader.id=?",
+                        .find("select gld.detailTypeId.id,gld.detailKeyId,billmis.egBillregister.expendituretype from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId.id and billmis.voucherHeader = gl.voucherHeaderId and billmis.voucherHeader.id=?",
                                 bean.getCsBillId());
                 if (obj == null)
                 {

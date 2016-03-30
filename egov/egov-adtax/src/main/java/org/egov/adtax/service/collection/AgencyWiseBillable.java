@@ -182,12 +182,12 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getFundCode() {
-        return AdvertisementTaxConstants.DEFAULT_FUND_CODE;
+        return AdvertisementTaxConstants.DEFAULT_FUND_CODE; 
     }
 
     @Override
     public String getFundSourceCode() {
-        return AdvertisementTaxConstants.DEFAULT_FUNCTIONARY_CODE;
+        return AdvertisementTaxConstants.DEFAULT_FUND_SRC_CODE;
     }
 
     @Override

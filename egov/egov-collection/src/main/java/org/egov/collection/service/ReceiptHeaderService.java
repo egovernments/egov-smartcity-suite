@@ -49,7 +49,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -67,6 +66,7 @@ import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
@@ -250,7 +250,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     || instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_ONLINE))
                 if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                         CollectionConstants.APPCONFIG_VALUE_RECEIPTVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                        CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
+                                CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
                     headerdetails.put(VoucherConstant.VOUCHERNAME,
                             CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERNAME);
                     headerdetails.put(VoucherConstant.VOUCHERTYPE,
@@ -299,7 +299,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         for (final ReceiptDetail receiptDetail : receiptDetailSet)
             if (receiptDetail.getCramount().compareTo(BigDecimal.ZERO) != 0
-                    || receiptDetail.getDramount().compareTo(BigDecimal.ZERO) != 0) {
+            || receiptDetail.getDramount().compareTo(BigDecimal.ZERO) != 0) {
 
                 final HashMap<String, Object> accountcodedetailsHashMap = new HashMap<String, Object>(0);
                 accountcodedetailsHashMap.put(VoucherConstant.GLCODE, receiptDetail.getAccounthead().getGlcode());
@@ -338,7 +338,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * Creates voucher for given receipt header and maps it with the same.
+     * Creates voucher for given receipt header and maps it with the same. Also updates the instrument voucher mapping in
+     * financials.
      *
      * @param receiptHeader Receipt header for which voucher is to be created
      * @return The created voucher header
@@ -379,19 +380,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             }
         }
 
+        updateInstrument(receiptHeader);
         LOGGER.debug("Created voucher for receipt : " + receiptHeader.getReceiptnumber());
 
         return voucherheader;
-    }
-
-    /**
-     * Creates vouchers for given set of receipt headers
-     *
-     * @param receiptHeaders receipt headers for which vouchers are to be created
-     */
-
-    public void createVouchers(final ReceiptHeader receiptHeader) throws ApplicationRuntimeException {
-        createVoucherForReceipt(receiptHeader);
     }
 
     /**
@@ -412,20 +404,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
         if (receiptHeader.getState() == null && !createVoucherForBillingService)
             receiptHeader
-                    .transition()
-                    .start()
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition()
+            .start()
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
                     .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
         else if (createVoucherForBillingService) {
-            createVouchers(receiptHeader);
+            createVoucherForReceipt(receiptHeader);
             receiptHeader
-                    .transition()
-                    .start()
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition()
+            .start()
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipt voucher created")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -433,9 +425,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (receiptHeader.getReceiptMisc().getDepositedInBank() != null)
             receiptHeader
-                    .transition(true)
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition(true)
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipts Submitted for Approval")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -630,10 +622,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         .get(CollectionConstants.BANKREMITTANCE_RECEIPTDATE))
                         && arrayObjectInitialIndexTemp[2].equals(objHashMapTemp
                                 .get(CollectionConstants.BANKREMITTANCE_SERVICENAME))
-                        && arrayObjectInitialIndexTemp[6].equals(objHashMapTemp
-                                .get(CollectionConstants.BANKREMITTANCE_FUNDCODE))
-                        && arrayObjectInitialIndexTemp[7].equals(objHashMapTemp
-                                .get(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE))) {
+                                && arrayObjectInitialIndexTemp[6].equals(objHashMapTemp
+                                        .get(CollectionConstants.BANKREMITTANCE_FUNDCODE))
+                                        && arrayObjectInitialIndexTemp[7].equals(objHashMapTemp
+                                                .get(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE))) {
                     check = m;
                     break;
                 } else
@@ -689,6 +681,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         final String voucherWorkflowMsg = "Voucher Workflow Started";
 
+        final String createVoucher = collectionsUtil.getAppConfigValue(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE);
+
         if (!cashInHand.list().isEmpty())
             cashInHandGLCode = cashInHand.list().get(0).toString();
         if (!chequeInHand.list().isEmpty())
@@ -710,7 +706,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
 
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -730,15 +726,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 }
 
             if (serviceName != null && serviceName.length() > 0) {
-                final String serviceGLCodeQueryString = "select coa.glcode from BANKACCOUNT ba,CHARTOFACCOUNTS coa where "
-                        + "ba.GLCODEID=coa.ID and ba.ID=" + accountNumberId;
-                persistenceService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_NAME, serviceName);
-                Bankaccount depositedBankAccount = null;
+                final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find(
+                        "from Bankaccount where id=?", Long.valueOf(accountNumberId.longValue()));
                 final ServiceDetails serviceDetails = (ServiceDetails) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_SERVICE_BY_NAME, serviceName);
-                final Query serviceGLCodeQuery = getSession().createSQLQuery(serviceGLCodeQueryString);
 
-                final String serviceGlCode = serviceGLCodeQuery.list().get(0).toString();
+                final String serviceGlCode = depositedBankAccount.getChartofaccounts().getGlcode();
                 final List<HashMap<String, Object>> subledgerList = new ArrayList<HashMap<String, Object>>();
 
                 // If Cash Amount is present
@@ -764,51 +757,48 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     final List<InstrumentHeader> instrumentHeaderListCash = persistenceService.findAllBy(
                             cashQueryBuilder.toString(), arguments);
 
-                    final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
+                    if (CollectionConstants.YES.equalsIgnoreCase(createVoucher) && serviceDetails.getVoucherCreation()) {
+                        final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
 
-                    headerdetails.put(VoucherConstant.VOUCHERNAME,
-                            CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
-                    headerdetails.put(VoucherConstant.VOUCHERTYPE,
-                            CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
-                    headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
-                    headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
-                    headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                    headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
-                    headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
-                            : serviceDetails.getFundSource().getCode());
-                    headerdetails.put(VoucherConstant.FUNCTIONARYCODE, serviceDetails.getFunctionary() == null ? null
-                            : serviceDetails.getFunctionary().getCode());
-                    headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
-                    headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
+                        headerdetails.put(VoucherConstant.VOUCHERNAME,
+                                CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
+                        headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                                CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
+                        headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                        headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
+                        headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
+                                : serviceDetails.getFundSource().getCode());
+                        headerdetails.put(VoucherConstant.FUNCTIONARYCODE, serviceDetails.getFunctionary() == null ? null
+                                : serviceDetails.getFunctionary().getCode());
+                        headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
+                        headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
 
-                    final List<HashMap<String, Object>> accountCodeCashList = new ArrayList<HashMap<String, Object>>(0);
-                    final HashMap<String, Object> accountcodedetailsCreditCashHashMap = new HashMap<String, Object>(0);
+                        final List<HashMap<String, Object>> accountCodeCashList = new ArrayList<HashMap<String, Object>>(0);
+                        final HashMap<String, Object> accountcodedetailsCreditCashHashMap = new HashMap<String, Object>(0);
 
-                    accountcodedetailsCreditCashHashMap.put(VoucherConstant.GLCODE, cashInHandGLCode);
-                    accountcodedetailsCreditCashHashMap.put(VoucherConstant.FUNCTIONCODE, null);
-                    accountcodedetailsCreditCashHashMap.put(VoucherConstant.CREDITAMOUNT, totalCashAmount[i]);
-                    accountcodedetailsCreditCashHashMap.put(VoucherConstant.DEBITAMOUNT, 0);
+                        accountcodedetailsCreditCashHashMap.put(VoucherConstant.GLCODE, cashInHandGLCode);
+                        accountcodedetailsCreditCashHashMap.put(VoucherConstant.FUNCTIONCODE, null);
+                        accountcodedetailsCreditCashHashMap.put(VoucherConstant.CREDITAMOUNT, totalCashAmount[i]);
+                        accountcodedetailsCreditCashHashMap.put(VoucherConstant.DEBITAMOUNT, 0);
 
-                    accountCodeCashList.add(accountcodedetailsCreditCashHashMap);
-                    // TODO: Add debit account details
-                    {
+                        accountCodeCashList.add(accountcodedetailsCreditCashHashMap);
+
                         final HashMap<String, Object> accountcodedetailsDebitHashMap = new HashMap<String, Object>(0);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.GLCODE, serviceGlCode);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.FUNCTIONCODE, null);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.CREDITAMOUNT, 0);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalCashAmount[i]);
                         accountCodeCashList.add(accountcodedetailsDebitHashMap);
-                    }
 
-                    final CVoucherHeader voucherHeaderCash = financialsUtil.createRemittanceVoucher(headerdetails,
-                            accountCodeCashList, subledgerList);
+                        final CVoucherHeader voucherHeaderCash = financialsUtil.createRemittanceVoucher(headerdetails,
+                                accountCodeCashList, subledgerList);
 
-                    newContraVoucherList.add(voucherHeaderCash);
-                    depositedBankAccount = (Bankaccount) persistenceService.find(
-                            "from Bankaccount where chartofaccounts.glcode=?", serviceGlCode);
-                    if (voucherHeaderCash != null && voucherHeaderCash.getId() != null)
+                        newContraVoucherList.add(voucherHeaderCash);
                         createVoucherForCashRemittance(instrumentDepositeMap, voucherWorkflowMsg, voucherDate,
                                 depositedBankAccount, serviceGlCode, instrumentHeaderListCash, voucherHeaderCash);
+                    }
                     else {
                         final EgwStatus statusDeposited = collectionsUtil.getStatusForModuleAndCode(
                                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
@@ -834,7 +824,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     chequeQueryBuilder.append(instrumentStatusCondition);
                     chequeQueryBuilder.append("and instruments.instrumentType.type in ( ?, ?)");
                     chequeQueryBuilder
-                            .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
+                    .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     chequeQueryBuilder.append(receiptFundCondition);
                     chequeQueryBuilder.append(receiptDepartmentCondition);
 
@@ -852,63 +842,60 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
                     final List<InstrumentHeader> instrumentHeaderListCheque = persistenceService.findAllBy(
                             chequeQueryBuilder.toString(), arguments);
-                    final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
-                    final List<HashMap<String, Object>> accountCodeChequeList = new ArrayList<HashMap<String, Object>>(
-                            0);
-                    final HashMap<String, Object> accountcodedetailsCreditChequeHashMap = new HashMap<String, Object>(0);
+                    if (CollectionConstants.YES.equalsIgnoreCase(createVoucher) && serviceDetails.getVoucherCreation()) {
+                        final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
+                        final List<HashMap<String, Object>> accountCodeChequeList = new ArrayList<HashMap<String, Object>>(
+                                0);
+                        final HashMap<String, Object> accountcodedetailsCreditChequeHashMap = new HashMap<String, Object>(0);
 
-                    if (voucherTypeForChequeDDCard) {
-                        headerdetails.put(VoucherConstant.VOUCHERNAME,
-                                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERNAME);
-                        headerdetails.put(VoucherConstant.VOUCHERTYPE,
-                                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE);
+                        if (voucherTypeForChequeDDCard) {
+                            headerdetails.put(VoucherConstant.VOUCHERNAME,
+                                    CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERNAME);
+                            headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                                    CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE);
 
-                    } else {
+                        } else {
+                            headerdetails.put(VoucherConstant.VOUCHERNAME,
+                                    CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
+                            headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                                    CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
+                        }
                         headerdetails.put(VoucherConstant.VOUCHERNAME,
                                 CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
-                    }
-                    headerdetails.put(VoucherConstant.VOUCHERNAME,
-                            CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
-                    headerdetails.put(VoucherConstant.VOUCHERTYPE,
-                            CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
-                    headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
-                    headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
-                    headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                    headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
-                    headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
-                            : serviceDetails.getFundSource().getCode());
-                    headerdetails.put(VoucherConstant.FUNCTIONARYCODE, serviceDetails.getFunctionary() == null ? null
-                            : serviceDetails.getFunctionary().getCode());
-                    headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
+                        headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                        headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
+                        headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
+                                : serviceDetails.getFundSource().getCode());
+                        headerdetails.put(VoucherConstant.FUNCTIONARYCODE, serviceDetails.getFunctionary() == null ? null
+                                : serviceDetails.getFunctionary().getCode());
+                        headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
 
-                    accountcodedetailsCreditChequeHashMap.put(VoucherConstant.GLCODE, chequeInHandGlcode);
-                    accountcodedetailsCreditChequeHashMap.put(VoucherConstant.FUNCTIONCODE, null);
-                    accountcodedetailsCreditChequeHashMap.put(VoucherConstant.CREDITAMOUNT, totalChequeAmount[i]);
-                    accountcodedetailsCreditChequeHashMap.put(VoucherConstant.DEBITAMOUNT, 0);
+                        accountcodedetailsCreditChequeHashMap.put(VoucherConstant.GLCODE, chequeInHandGlcode);
+                        accountcodedetailsCreditChequeHashMap.put(VoucherConstant.FUNCTIONCODE, null);
+                        accountcodedetailsCreditChequeHashMap.put(VoucherConstant.CREDITAMOUNT, totalChequeAmount[i]);
+                        accountcodedetailsCreditChequeHashMap.put(VoucherConstant.DEBITAMOUNT, 0);
 
-                    accountCodeChequeList.add(accountcodedetailsCreditChequeHashMap);
-                    // TODO: Add debit account details
-                    {
+                        accountCodeChequeList.add(accountcodedetailsCreditChequeHashMap);
+
                         final HashMap<String, Object> accountcodedetailsDebitHashMap = new HashMap<String, Object>(0);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.GLCODE, serviceGlCode);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.FUNCTIONCODE, null);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.CREDITAMOUNT, 0);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalChequeAmount[i]);
                         accountCodeChequeList.add(accountcodedetailsDebitHashMap);
-                    }
-                    final CVoucherHeader voucherHeaderCheque = financialsUtil.createRemittanceVoucher(headerdetails,
-                            accountCodeChequeList, subledgerList);
 
-                    newContraVoucherList.add(voucherHeaderCheque);
-                    depositedBankAccount = (Bankaccount) persistenceService.find(
-                            "from Bankaccount where chartofaccounts.glcode=?", serviceGlCode);
-                    if (voucherHeaderCheque != null && voucherHeaderCheque.getId() != null)
+                        final CVoucherHeader voucherHeaderCheque = financialsUtil.createRemittanceVoucher(headerdetails,
+                                accountCodeChequeList, subledgerList);
+
+                        newContraVoucherList.add(voucherHeaderCheque);
                         createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
                                 voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
                                 instrumentHeaderListCheque, voucherHeaderCheque);
-                    else {
+                    } else {
                         final EgwStatus statusDeposited = collectionsUtil.getStatusForModuleAndCode(
                                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
                                 CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
@@ -946,81 +933,73 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     final List<InstrumentHeader> instrumentHeaderListOnline = persistenceService.findAllBy(
                             onlineQueryBuilder.toString(), arguments);
 
-                    final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
+                    if (CollectionConstants.YES.equalsIgnoreCase(createVoucher) && serviceDetails.getVoucherCreation()) {
+                        final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
 
-                    if (voucherTypeForChequeDDCard) {
-                        headerdetails.put(VoucherConstant.VOUCHERNAME,
-                                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERNAME);
-                        headerdetails.put(VoucherConstant.VOUCHERTYPE,
-                                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE);
-                    } else {
+                        if (voucherTypeForChequeDDCard) {
+                            headerdetails.put(VoucherConstant.VOUCHERNAME,
+                                    CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERNAME);
+                            headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                                    CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE);
+                        } else {
 
+                            headerdetails.put(VoucherConstant.VOUCHERNAME,
+                                    CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
+                            headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                                    CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
+                        }
                         headerdetails.put(VoucherConstant.VOUCHERNAME,
                                 CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
-                    }
-                    headerdetails.put(VoucherConstant.VOUCHERNAME,
-                            CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
-                    headerdetails.put(VoucherConstant.VOUCHERTYPE,
-                            CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
-                    headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
-                    headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
-                    headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                    headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
-                    headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
-                            : serviceDetails.getFundSource().getCode());
-                    headerdetails.put(VoucherConstant.FUNCTIONARYCODE, serviceDetails.getFunctionary() == null ? null
-                            : serviceDetails.getFunctionary().getCode());
-                    headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
+                        headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                        headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
+                        headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
+                                : serviceDetails.getFundSource().getCode());
+                        headerdetails.put(VoucherConstant.FUNCTIONARYCODE, serviceDetails.getFunctionary() == null ? null
+                                : serviceDetails.getFunctionary().getCode());
+                        headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
 
-                    final List<HashMap<String, Object>> accountCodeOnlineList = new ArrayList<HashMap<String, Object>>();
-                    final HashMap<String, Object> accountcodedetailsCreditOnlineHashMap = new HashMap<String, Object>();
+                        final List<HashMap<String, Object>> accountCodeOnlineList = new ArrayList<HashMap<String, Object>>();
+                        final HashMap<String, Object> accountcodedetailsCreditOnlineHashMap = new HashMap<String, Object>();
 
-                    accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.GLCODE, cardPaymentGlCode);
-                    accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.FUNCTIONCODE, null);
-                    accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.CREDITAMOUNT, totalCardAmount[i]);
-                    accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.DEBITAMOUNT, 0);
+                        accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.GLCODE, cardPaymentGlCode);
+                        accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.FUNCTIONCODE, null);
+                        accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.CREDITAMOUNT, totalCardAmount[i]);
+                        accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.DEBITAMOUNT, 0);
 
-                    accountCodeOnlineList.add(accountcodedetailsCreditOnlineHashMap);
-                    // TODO: Add debit account details
-                    {
+                        accountCodeOnlineList.add(accountcodedetailsCreditOnlineHashMap);
                         final HashMap<String, Object> accountcodedetailsDebitHashMap = new HashMap<String, Object>();
                         accountcodedetailsDebitHashMap.put(VoucherConstant.GLCODE, serviceGlCode);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.FUNCTIONCODE, null);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.CREDITAMOUNT, 0);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalCardAmount[i]);
                         accountCodeOnlineList.add(accountcodedetailsDebitHashMap);
-                    }
-                    final String createVoucher = collectionsUtil.getAppConfigValue(
-                            CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                            CollectionConstants.APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE);
-                    if (CollectionConstants.YES.equalsIgnoreCase(createVoucher)) {
+
                         final CVoucherHeader voucherHeaderCard = financialsUtil.createRemittanceVoucher(headerdetails,
                                 accountCodeOnlineList, subledgerList);
 
                         newContraVoucherList.add(voucherHeaderCard);
-                        depositedBankAccount = (Bankaccount) persistenceService.find(
-                                "from Bankaccount where chartofaccounts.glcode=?", serviceGlCode);
-                        if (voucherHeaderCard != null && voucherHeaderCard.getId() != null)
-                            createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
-                                    voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
-                                    instrumentHeaderListOnline, voucherHeaderCard);
-                        else {
-                            final EgwStatus statusDeposited = collectionsUtil.getStatusForModuleAndCode(
-                                    CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
-                                    CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
-                            financialsUtil.updateInstrumentHeader(instrumentHeaderListOnline, statusDeposited,
-                                    depositedBankAccount);
-                        }
-
-                        for (final InstrumentHeader instHead : instrumentHeaderListOnline) {
-                            final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
-                                    CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
-                                    instHead.getId(), serviceDetails.getCode());
-                            bankRemittanceList.addAll(receiptHeaders);
-                        }
+                        createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
+                                voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
+                                instrumentHeaderListOnline, voucherHeaderCard);
+                    } else {
+                        final EgwStatus statusDeposited = collectionsUtil.getStatusForModuleAndCode(
+                                CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
+                                CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
+                        financialsUtil.updateInstrumentHeader(instrumentHeaderListOnline, statusDeposited,
+                                depositedBankAccount);
                     }
+
+                    for (final InstrumentHeader instHead : instrumentHeaderListOnline) {
+                        final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                                CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
+                                instHead.getId(), serviceDetails.getCode());
+                        bankRemittanceList.addAll(receiptHeaders);
+                    }
+
                 }
                 // If online amount is present
                 if (totalOnlineAmount[i].trim() != null && totalOnlineAmount[i].trim().length() > 0
@@ -1045,64 +1024,60 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     final List<InstrumentHeader> instrumentHeaderListOnline = persistenceService.findAllBy(
                             onlineQueryBuilder.toString(), arguments);
 
-                    final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
+                    if (CollectionConstants.YES.equalsIgnoreCase(createVoucher) && serviceDetails.getVoucherCreation()) {
+                        final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
 
-                    if (voucherTypeForChequeDDCard) {
-                        headerdetails.put(VoucherConstant.VOUCHERNAME,
-                                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERNAME);
-                        headerdetails.put(VoucherConstant.VOUCHERTYPE,
-                                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE);
-                    } else {
+                        if (voucherTypeForChequeDDCard) {
+                            headerdetails.put(VoucherConstant.VOUCHERNAME,
+                                    CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERNAME);
+                            headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                                    CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE);
+                        } else {
 
+                            headerdetails.put(VoucherConstant.VOUCHERNAME,
+                                    CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
+                            headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                                    CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
+                        }
                         headerdetails.put(VoucherConstant.VOUCHERNAME,
                                 CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
-                    }
-                    headerdetails.put(VoucherConstant.VOUCHERNAME,
-                            CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
-                    headerdetails.put(VoucherConstant.VOUCHERTYPE,
-                            CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
-                    headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
-                    headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
-                    headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                    headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
-                    headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
-                            : serviceDetails.getFundSource().getCode());
-                    headerdetails.put(VoucherConstant.FUNCTIONARYCODE, serviceDetails.getFunctionary() == null ? null
-                            : serviceDetails.getFunctionary().getCode());
-                    headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
+                        headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                        headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
+                        headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
+                                : serviceDetails.getFundSource().getCode());
+                        headerdetails.put(VoucherConstant.FUNCTIONARYCODE, serviceDetails.getFunctionary() == null ? null
+                                : serviceDetails.getFunctionary().getCode());
+                        headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
 
-                    final List<HashMap<String, Object>> accountCodeOnlineList = new ArrayList<HashMap<String, Object>>(
-                            0);
-                    final HashMap<String, Object> accountcodedetailsCreditOnlineHashMap = new HashMap<String, Object>(0);
+                        final List<HashMap<String, Object>> accountCodeOnlineList = new ArrayList<HashMap<String, Object>>(
+                                0);
+                        final HashMap<String, Object> accountcodedetailsCreditOnlineHashMap = new HashMap<String, Object>(0);
 
-                    accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.GLCODE, onlinePaymentGlCode);
-                    accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.FUNCTIONCODE, null);
-                    accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.CREDITAMOUNT, totalOnlineAmount[i]);
-                    accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.DEBITAMOUNT, 0);
+                        accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.GLCODE, onlinePaymentGlCode);
+                        accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.FUNCTIONCODE, null);
+                        accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.CREDITAMOUNT, totalOnlineAmount[i]);
+                        accountcodedetailsCreditOnlineHashMap.put(VoucherConstant.DEBITAMOUNT, 0);
 
-                    accountCodeOnlineList.add(accountcodedetailsCreditOnlineHashMap);
-                    // TODO: Add debit account details
-                    {
+                        accountCodeOnlineList.add(accountcodedetailsCreditOnlineHashMap);
                         final HashMap<String, Object> accountcodedetailsDebitHashMap = new HashMap<String, Object>(0);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.GLCODE, serviceGlCode);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.FUNCTIONCODE, null);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.CREDITAMOUNT, 0);
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalOnlineAmount[i]);
                         accountCodeOnlineList.add(accountcodedetailsDebitHashMap);
-                    }
 
-                    final CVoucherHeader voucherHeaderCard = financialsUtil.createRemittanceVoucher(headerdetails,
-                            accountCodeOnlineList, subledgerList);
-                    newContraVoucherList.add(voucherHeaderCard);
+                        final CVoucherHeader voucherHeaderCard = financialsUtil.createRemittanceVoucher(headerdetails,
+                                accountCodeOnlineList, subledgerList);
+                        newContraVoucherList.add(voucherHeaderCard);
 
-                    depositedBankAccount = (Bankaccount) persistenceService.find(
-                            "from Bankaccount where chartofaccounts.glcode=?", serviceGlCode);
-                    if (voucherHeaderCard != null && voucherHeaderCard.getId() != null)
                         createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
                                 voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
                                 instrumentHeaderListOnline, voucherHeaderCard);
+                    }
                     else {
                         final EgwStatus statusDeposited = collectionsUtil.getStatusForModuleAndCode(
                                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
@@ -1151,20 +1126,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                             .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
                                     voucherHeaderCheque.getId(), instrumentHeader.getId());
                     contraJournalVoucher
-                            .transition(true)
-                            .start()
-                            .withSenderName(
-                                    contraJournalVoucher.getCreatedBy().getUsername() + "::"
-                                            + contraJournalVoucher.getCreatedBy().getName())
-                            .withComments(CollectionConstants.WF_STATE_NEW)
-                            .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                    .transition(true)
+                    .start()
+                    .withSenderName(
+                            contraJournalVoucher.getCreatedBy().getUsername() + "::"
+                                    + contraJournalVoucher.getCreatedBy().getName())
+                                    .withComments(CollectionConstants.WF_STATE_NEW)
+                                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                     contraJournalVoucher
-                            .transition(true)
-                            .withSenderName(
-                                    contraJournalVoucher.getCreatedBy().getUsername() + "::"
-                                            + contraJournalVoucher.getCreatedBy().getName())
-                            .withComments(voucherWorkflowMsg)
-                            .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                    .transition(true)
+                    .withSenderName(
+                            contraJournalVoucher.getCreatedBy().getUsername() + "::"
+                                    + contraJournalVoucher.getCreatedBy().getName())
+                                    .withComments(voucherWorkflowMsg)
+                                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                 }
             }
 
@@ -1183,21 +1158,21 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
                                 voucherHeaderCash.getId(), instrumentHeader.getId());
                 contraJournalVoucher
-                        .transition(true)
-                        .start()
-                        .withSenderName(
-                                contraJournalVoucher.getCreatedBy().getUsername() + "::"
-                                        + contraJournalVoucher.getCreatedBy().getName())
-                        .withComments("Voucher Created")
-                        .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                .transition(true)
+                .start()
+                .withSenderName(
+                        contraJournalVoucher.getCreatedBy().getUsername() + "::"
+                                + contraJournalVoucher.getCreatedBy().getName())
+                                .withComments("Voucher Created")
+                                .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                 contraJournalVoucher
-                        .transition(true)
-                        .transition()
-                        .withSenderName(
-                                contraJournalVoucher.getCreatedBy().getUsername() + "::"
-                                        + contraJournalVoucher.getCreatedBy().getName())
-                        .withComments(voucherWorkflowMsg)
-                        .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                .transition(true)
+                .transition()
+                .withSenderName(
+                        contraJournalVoucher.getCreatedBy().getUsername() + "::"
+                                + contraJournalVoucher.getCreatedBy().getName())
+                                .withComments(voucherWorkflowMsg)
+                                .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
             }
     }
 
@@ -1285,13 +1260,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (position != null)
             receiptHeaderToBeCancelled
-                    .transition(true)
-                    .end()
-                    .withSenderName(
-                            receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
-                                    + receiptHeaderToBeCancelled.getCreatedBy().getName())
-                    .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
-                    .withOwner(position).withDateInfo(new Date());
+            .transition(true)
+            .end()
+            .withSenderName(
+                    receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
+                            + receiptHeaderToBeCancelled.getCreatedBy().getName())
+                            .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
+                            .withOwner(position).withDateInfo(new Date());
     }
 
     /**
@@ -1303,8 +1278,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     @Transactional
     public ReceiptHeader persist(final ReceiptHeader receiptHeader) throws ApplicationRuntimeException {
         if (receiptHeader.getReceipttype() != CollectionConstants.RECEIPT_TYPE_CHALLAN
-                && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())
-                && receiptHeader.getReceiptnumber() == null)
+                && (!CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())
+                        || !CollectionConstants.RECEIPT_STATUS_CODE_FAILED.equals(receiptHeader.getStatus().getCode()))
+                        && receiptHeader.getReceiptnumber() == null)
             setReceiptNumber(receiptHeader);
 
         if (receiptHeader.getChallan() != null) {
@@ -1322,7 +1298,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     && !receiptHeader.getState().getValue().equals(CollectionConstants.WF_STATE_END))
                 endReceiptWorkFlowOnCancellation(receiptHeader);
             if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
-                updateBillingSystemWithReceiptInfo(receiptHeader);
+                updateBillingSystemWithReceiptInfo(receiptHeader, null);
         }
         // For bill based collection, push data to index only upon successful update to billing system
         if (!receiptHeader.getService().getServiceType()
@@ -1369,33 +1345,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * This method persists the given set of <code>ReceiptPayeeDetails</code> instances
-     *
-     * @param entity a set of <code>ReceiptPayeeDetails</code> instances to be persisted
-     * @return the list of persisted <code>ReceiptPayeeDetails</code> instances
-     */
-
-    public List<ReceiptHeader> persist(final Set<ReceiptHeader> entity) {
-        final List<ReceiptHeader> saved = new ArrayList<ReceiptHeader>(0);
-        final Iterator<ReceiptHeader> iterator = entity.iterator();
-        while (iterator.hasNext()) {
-            final ReceiptHeader rpd = iterator.next();
-            saved.add(this.persist(rpd));
-        }
-        return saved;
-    }
-
-    /**
      * This method persists the given set of <code>ReceiptPayeeDetails</code> instances with receipt number as Pending
      *
      * @param entity a set of <code>ReceiptPayeeDetails</code> instances to be persisted
      * @return the list of persisted <code>ReceiptPayeeDetails</code> instances
      */
-
-    public List<ReceiptHeader> persistPendingReceipts(final ReceiptHeader receiptHeader) {
-        final List<ReceiptHeader> saved = new ArrayList<ReceiptHeader>();
-        saved.add(super.persist(receiptHeader));
-        return saved;
+    @Transactional
+    public ReceiptHeader persistReceiptsObject(final ReceiptHeader receiptHeader) {
+        return super.persist(receiptHeader);
     }
 
     public void setReceiptNumber(final ReceiptHeader entity) {
@@ -1419,10 +1376,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     /**
      * This method looks up the bean to communicate with the billing system and updates the billing system.
      */
+
     @Transactional
-    public Boolean updateBillingSystem(final String serviceCode, final Set<BillReceiptInfo> billReceipts)
-            throws ApplicationRuntimeException {
-        final BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
+    public Boolean updateBillingSystem(final String serviceCode, final Set<BillReceiptInfo> billReceipts,
+            BillingIntegrationService billingService) throws
+            ApplicationRuntimeException {
+        if (billingService == null)
+            billingService = getBillingServiceBean(serviceCode);
         if (billingService == null)
             return false;
         else
@@ -1430,8 +1390,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 billingService.updateReceiptDetails(billReceipts);
                 return true;
             } catch (final Exception e) {
-                final String errMsg = "Exception while updating billing system [" + serviceCode
-                        + "] with receipt details!";
+                final String errMsg = "Exception while updating billing system [" + serviceCode +
+                        "] with receipt details!";
                 LOGGER.error(errMsg, e);
                 throw new ApplicationRuntimeException(errMsg, e);
             }
@@ -1498,18 +1458,17 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @return void
      */
 
-    public void updateInstrument(final List<CVoucherHeader> voucherHeaderList,
-            final List<InstrumentHeader> instrumentHeaderList) {
+    public void updateInstrument(final ReceiptHeader receiptHeader) {
         final List<Map<String, Object>> instrumentVoucherList = new ArrayList<Map<String, Object>>(0);
-        if (voucherHeaderList != null && instrumentHeaderList != null) {
-            for (final CVoucherHeader voucherHeader : voucherHeaderList)
-                for (final InstrumentHeader instrumentHeader : instrumentHeaderList) {
-                    final Map<String, Object> iVoucherMap = new HashMap<String, Object>(0);
-                    iVoucherMap.put(CollectionConstants.FINANCIAL_INSTRUMENTSERVICE_INSTRUMENTHEADEROBJECT,
-                            instrumentHeader);
-                    iVoucherMap.put(CollectionConstants.FINANCIAL_INSTRUMENTSERVICE_VOUCHERHEADEROBJECT, voucherHeader);
-                    instrumentVoucherList.add(iVoucherMap);
-                }
+        final CVoucherHeader voucherHeader = receiptHeader.getReceiptVoucher().iterator().next().getVoucherheader();
+        if (voucherHeader != null && receiptHeader.getReceiptInstrument() != null) {
+            for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
+                final Map<String, Object> iVoucherMap = new HashMap<String, Object>(0);
+                iVoucherMap.put(CollectionConstants.FINANCIAL_INSTRUMENTSERVICE_INSTRUMENTHEADEROBJECT,
+                        instrumentHeader);
+                iVoucherMap.put(CollectionConstants.FINANCIAL_INSTRUMENTSERVICE_VOUCHERHEADEROBJECT, voucherHeader);
+                instrumentVoucherList.add(iVoucherMap);
+            }
             financialsUtil.updateInstrumentVoucher(instrumentVoucherList);
         }
     }
@@ -1621,23 +1580,23 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     @Transactional
     public void perform(final ReceiptHeader receiptHeader, final String wfState, final String newStatusCode,
             final String nextAction, final Position ownerPosition, final String remarks)
-            throws ApplicationRuntimeException {
+                    throws ApplicationRuntimeException {
         receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(newStatusCode));
 
         if (receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED))
             // Receipt approved. end workflow for this receipt.
             receiptHeader
-                    .transition()
-                    .end()
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition()
+            .end()
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipt Approved - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
                     .withOwner(ownerPosition).withDateInfo(new Date());
         else
             receiptHeader
-                    .transition()
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition()
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments(remarks).withStateValue(wfState).withOwner(ownerPosition).withDateInfo(new Date())
                     .withNextAction(nextAction);
         getSession().flush();
@@ -1704,42 +1663,15 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void populateAndPersistReceipts(final ReceiptHeader receiptHeader,
             final List<InstrumentHeader> receiptInstrList) {
         try {
-            // Persist the receipt payee details which will internally persist
-            // all
-            // the receipt headers
             persist(receiptHeader);
-
             LOGGER.info("Persisted receipts");
-
-            // Start work flow for all newly created receipts This might
-            // internally
-            // create vouchers also based on configuration
+            // Start work flow for newly created receipt.This might internally create voucher also, based on configuration.
             startWorkflow(receiptHeader);
             LOGGER.info("Workflow started for newly created receipts");
-
-            final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
-            Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>(0);
-            // If vouchers are created during work flow step, add them to
-            // the list
-            receiptVouchers = receiptHeader.getReceiptVoucher();
-            for (final ReceiptVoucher receiptVoucher : receiptVouchers)
-                try {
-                    voucherHeaderList.add(receiptVoucher.getVoucherheader());
-                } catch (final Exception exp) {
-                    final String errorMsg = "Error in getting voucher header for id ["
-                            + receiptVoucher.getVoucherheader() + "]";
-                    LOGGER.error(errorMsg, exp);
-                    throw new ApplicationRuntimeException(errorMsg, exp);
-
-                }
-
-            if (voucherHeaderList != null && receiptInstrList != null)
-                updateInstrument(voucherHeaderList, receiptInstrList);
-
             if (receiptHeader.getService().getServiceType()
                     .equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
 
-                updateBillingSystemWithReceiptInfo(receiptHeader);
+                updateBillingSystemWithReceiptInfo(receiptHeader, null);
                 LOGGER.info("Updated billing system ");
             }
 
@@ -1780,8 +1712,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @param receiptHeader
      */
     @Transactional
-    public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader)
-            throws ApplicationRuntimeException {
+    public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader,
+            final BillingIntegrationService billingService)
+                    throws ApplicationRuntimeException {
 
         String serviceCode = null;
         /**
@@ -1796,7 +1729,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (serviceCode == null)
             serviceCode = receiptHeader.getService().getCode();
 
-        if (updateBillingSystem(serviceCode, billReceipts)) {
+        if (updateBillingSystem(serviceCode, billReceipts, billingService)) {
             receiptHeader.setIsReconciled(true);
             // the receipts should be persisted again
             super.persist(receiptHeader);
@@ -1814,12 +1747,113 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         collectionIndexService.pushCollectionIndex(collectionIndex);
     }
 
+    /**
+     * @param receipts - list of receipts which have to be processed as successful payments. For payments created as a response
+     * from bill desk, size of the array will be 1.
+     */
+    public ReceiptHeader createOnlineSuccessPayment(final ReceiptHeader receiptHeader, final Date transactionDate,
+            final String transactionId, final BigDecimal transactionAmt, final String authStatusCode,
+            final String remarks, final BillingIntegrationService billingService) {
+        final EgwStatus receiptStatus = collectionsUtil
+                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
+        receiptHeader.setStatus(receiptStatus);
+
+        receiptHeader.setReceiptInstrument(createOnlineInstrument(transactionDate, transactionId, transactionAmt));
+        receiptHeader.setIsReconciled(Boolean.FALSE);
+        receiptHeader.getOnlinePayment().setAuthorisationStatusCode(authStatusCode);
+        receiptHeader.getOnlinePayment().setTransactionNumber(transactionId);
+        receiptHeader.getOnlinePayment().setTransactionAmount(transactionAmt);
+        receiptHeader.getOnlinePayment().setTransactionDate(transactionDate);
+        receiptHeader.getOnlinePayment().setRemarks(remarks);
+
+        // set online payment status as SUCCESS
+        receiptHeader.getOnlinePayment().setStatus(
+                collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                        CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
+        persist(receiptHeader);
+        getSession().flush();
+        LOGGER.debug("Persisted receipt after receiving success message from the payment gateway");
+
+        return updateFinancialAndBillingSystem(receiptHeader, billingService);
+    }
+
     @Transactional
-    public void persistFieldReceipt(final ReceiptHeader receiptHeader) {
-        this.persist(receiptHeader);
+    public ReceiptHeader updateFinancialAndBillingSystem(final ReceiptHeader receiptHeader,
+            final BillingIntegrationService billingService) {
+        try {
+            final Boolean createVoucherForBillingService = collectionsUtil.checkVoucherCreation(receiptHeader);
+            if (createVoucherForBillingService) {
+                createVoucherForReceipt(receiptHeader);
+                LOGGER.debug("Updated financial systems and created voucher.");
+            }
+
+        } catch (final ApplicationRuntimeException ex) {
+            throw new ApplicationRuntimeException("Failed to create voucher in Financials");
+        }
+        updateBillingSystemWithReceiptInfo(receiptHeader, billingService);
+        return receiptHeader;
+    }
+
+    @Transactional
+    public void persistFieldReceipt(final ReceiptHeader receiptHeader, final Set<InstrumentHeader> instrumentHeaderSet) {
+        receiptHeader.setReceiptInstrument(instrumentHeaderSet);
+        persist(receiptHeader);
+        getSession().flush();
         LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
-        updateBillingSystemWithReceiptInfo(receiptHeader);
-        this.getSession().flush();
+        updateFinancialAndBillingSystem(receiptHeader, null);
         LOGGER.info("Billing system updated with receipt info");
     }
+
+    @Transactional
+    public void updateDishonoredInstrumentStatus(final ReceiptHeader receiptHeader, final InstrumentHeader instrumentHeader,
+            final EgwStatus receiptStatus, final boolean isReconciled) {
+        financialsUtil.updateInstrumentHeader(instrumentHeader);
+        // update receipts - set status to INSTR_BOUNCED and recon flag to false
+        updateReceiptHeaderStatus(receiptHeader, receiptStatus, false);
+        LOGGER.debug("Updated receipt status to " + receiptStatus.getCode()
+                + " set reconcilation to false");
+
+        updateBillingSystemWithReceiptInfo(receiptHeader, null);
+    }
+
+    /**
+     * This method updates the status and reconciliation flag for the given receipt
+     *
+     * @param receiptHeader <code>ReceiptHeader</code> objects whose status and reconciliation flag have to be modified
+     * @param status a <code>EgwStatus</code> instance representing the state to which the receipt has to be updated with
+     * @param isReconciled a <code>Boolean</code> flag indicating the value for the reconciliation status
+     */
+    @Transactional
+    public void updateReceiptHeaderStatus(final ReceiptHeader receiptHeader, final EgwStatus status,
+            final boolean isReconciled) {
+        if (status != null)
+            receiptHeader.setStatus(status);
+        receiptHeader.setIsReconciled(isReconciled);
+        update(receiptHeader);
+    }
+
+    @Transactional
+    public ReceiptHeader reconcileOnlineSuccessPayment(final ReceiptHeader onlinePaymentReceiptHeader,
+            final PaymentResponse paymentResponse,
+            final BillingIntegrationService billingService, final List<ReceiptDetail> reconstructedList,
+            final ReceiptDetail debitAccountDetail) {
+
+        if (reconstructedList != null) {
+            onlinePaymentReceiptHeader.getReceiptDetails().clear();
+            persistReceiptsObject(onlinePaymentReceiptHeader);
+            LOGGER.debug("Reconstructed receiptDetailList : " + reconstructedList.toString());
+            for (final ReceiptDetail receiptDetail : reconstructedList) {
+                receiptDetail.setReceiptHeader(onlinePaymentReceiptHeader);
+                onlinePaymentReceiptHeader.addReceiptDetail(receiptDetail);
+            }
+            onlinePaymentReceiptHeader.addReceiptDetail(debitAccountDetail);
+
+        }
+
+        return createOnlineSuccessPayment(onlinePaymentReceiptHeader, paymentResponse.getTxnDate(),
+                paymentResponse.getTxnReferenceNo(), paymentResponse.getTxnAmount(), paymentResponse.getAuthStatus(), null,
+                billingService);
+
+    }
+
 }

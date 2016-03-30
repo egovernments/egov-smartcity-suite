@@ -180,7 +180,7 @@
 										</div>
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
-											autocomplete="off" required="required" /> <span
+											autocomplete="new-password" required="required" /> <span
 											class="mandatory set-mandatory"></span>
 									</div>
 								</div>

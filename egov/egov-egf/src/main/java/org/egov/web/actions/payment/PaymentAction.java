@@ -68,9 +68,11 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.service.FunctionService;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
@@ -133,8 +135,14 @@ public class PaymentAction extends BasePaymentAction {
     private @Autowired PaymentService paymentService;
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;
+    @Autowired
     @Qualifier("voucherService")
-    private @Autowired VoucherService voucherService;
+    private VoucherService voucherService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionService functionService;
+
     private Integer bankaccount, bankbranch;
     private Integer departmentId;
     private Integer defaultDept;
@@ -396,6 +404,7 @@ public class PaymentAction extends BasePaymentAction {
         }
     }
 
+    @SkipValidation
     @ValidationErrorPage(value = "search")
     @Action(value = "/payment/payment-search")
     public String search() throws Exception {
@@ -753,6 +762,7 @@ public class PaymentAction extends BasePaymentAction {
      * @throws ValidationException this api is called from searchbills method is changed to save to enable csrf fix actaul method
      * name was generate payment. I doesnot save data but forwards to screen where for selected bill we can make payment
      */
+    @SkipValidation
     @ValidationErrorPage("searchbills")
     @Action(value = "/payment/payment-save")
     public String save() throws ValidationException {
@@ -863,12 +873,20 @@ public class PaymentAction extends BasePaymentAction {
                         schemeStr = bean.getSchemeName() == null ? "" : bean.getSchemeName();
                         subSchemeStr = bean.getSubschemeName() == null ? "" : bean.getSubschemeName();
                         region = bean.getRegion() == null ? "" : bean.getRegion();
-                        attributes = fundNameStr + "-" + functionNameStr + "-" + deptNameStr + "-" + fundSourceNameStr + "-"
+                        /*
+                         * attributes = fundNameStr + "-" + functionNameStr + "-" + deptNameStr + "-" + fundSourceNameStr + "-" +
+                         * schemeStr + "-" + subSchemeStr;
+                         */
+                        attributes = fundNameStr + "-" + fundSourceNameStr + "-"
                                 + schemeStr + "-" + subSchemeStr;
                     }
+                    /*
+                     * tempAttributes = (bean.getFundName() == null ? "" : bean.getFundName()) + "-" + (bean.getFunctionName() ==
+                     * null ? "" : bean.getFunctionName()) + "-" + (bean.getDeptName() == null ? "" : bean.getDeptName()) + "-" +
+                     * (bean.getFundsourceName() == null ? "" : bean.getFundsourceName()) + "-" + (bean.getSchemeName() == null ?
+                     * "" : bean.getSchemeName()) + "-" + (bean.getSubschemeName() == null ? "" : bean.getSubschemeName());
+                     */
                     tempAttributes = (bean.getFundName() == null ? "" : bean.getFundName()) + "-"
-                            + (bean.getFunctionName() == null ? "" : bean.getFunctionName()) + "-"
-                            + (bean.getDeptName() == null ? "" : bean.getDeptName()) + "-"
                             + (bean.getFundsourceName() == null ? "" : bean.getFundsourceName()) + "-"
                             + (bean.getSchemeName() == null ? "" : bean.getSchemeName()) + "-"
                             + (bean.getSubschemeName() == null ? "" : bean.getSubschemeName());
@@ -903,6 +921,12 @@ public class PaymentAction extends BasePaymentAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Starting createPayment...");
             populateWorkflowBean();
+            if (parameters.get("department") != null)
+                billregister.getEgBillregistermis().setEgDepartment(
+                        departmentService.getDepartmentById(Long.valueOf(parameters.get("department")[0].toString())));
+            if (parameters.get("function") != null)
+                billregister.getEgBillregistermis().setFunction(
+                        functionService.findOne(Long.valueOf(parameters.get("function")[0].toString())));
             paymentheader = paymentService.createPayment(parameters, billList, billregister, workflowBean);
             miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
             // sendForApproval();// this should not be called here as it is public method which is called from jsp submit

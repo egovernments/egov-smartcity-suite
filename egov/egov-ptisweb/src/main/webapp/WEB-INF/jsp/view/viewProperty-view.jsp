@@ -173,7 +173,7 @@
 				</s:if>
 				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && !property.getIsExemptedFromTax()}">
 					<input type="button" name="generateBill" id="generateBill" value="Generate Demand Bill" class="buttonsubmit"
-						onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
+						onclick="window.location='../bills/billGeneration-generateDemandBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 				</s:if>
 				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && isNagarPanchayat 
 					&& !basicProperty.underWorkflow && basicProperty.source=='M' && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS.equals(propertyDetail.propertyTypeMaster.code)}">

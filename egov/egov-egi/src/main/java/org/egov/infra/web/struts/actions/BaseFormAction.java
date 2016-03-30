@@ -115,7 +115,6 @@ public abstract class BaseFormAction extends ActionSupport
             if (StringUtils.isNotBlank(id) && Long.valueOf(id) > 0)
                 try {
                     final PropertyDescriptor propDiscriptor = new PropertyDescriptor("id", class1);
-
                     if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
                         relation = getPersistenceService().load(Long.valueOf(id), class1);
                     else
