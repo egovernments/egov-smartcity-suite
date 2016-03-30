@@ -56,7 +56,7 @@
 				<tr>
 					<th><spring:message code="lbl.councilresolutionnumber"/></th>
 					<th><spring:message code="lbl.councilresolutiondate"/></th>
-					<th><spring:message code="lbl.administrativesanctionnumber"/><c:if test="${mode != 'readOnly' }"><span class="mandatory"></span></c:if></th>					
+					<th><spring:message code="lbl.administrativesanctionnumber"/><c:if test="${mode != 'readOnly' && lineEstimate.status.code == 'BUDGET_SANCTIONED' }"><span class="mandatory"></span></c:if></th>					
 				</tr>
 			</thead>
 			<tbody >
@@ -72,7 +72,7 @@
 							<form:errors path="councilResolutionDate" cssClass="add-margin error-msg" />
 						</td>
 						<td>
-							<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control table-input text-right" maxlength="32" required="required" onclick="validateadminSanctionNumber();"/>
+							<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control table-input text-left" maxlength="32" required="required" onclick="validateadminSanctionNumber();"/>
 							<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
 						</td>
 					</c:if>

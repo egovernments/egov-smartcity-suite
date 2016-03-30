@@ -41,8 +41,6 @@ package org.egov.works.lineestimate.service;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
 
 import javax.transaction.Transactional;
 
@@ -52,7 +50,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.entity.WorkCategory;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
