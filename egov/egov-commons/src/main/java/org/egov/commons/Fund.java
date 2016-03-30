@@ -59,8 +59,9 @@ import org.hibernate.validator.constraints.Length;
 @Unique(id = "id", tableName = "Fund", fields = { "code" }, columnName = { "code" }, enableDfltMsg = true)
 public class Fund extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = 1L;
-    public static final String SEQ = "SEQ_Fund";
+	private static final long serialVersionUID =7977534010758407945L;
+
+	public static final String SEQ = "SEQ_Fund";
 
     @Id
     @GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
