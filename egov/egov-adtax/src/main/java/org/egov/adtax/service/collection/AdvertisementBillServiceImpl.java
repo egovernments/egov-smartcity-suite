@@ -71,6 +71,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class AdvertisementBillServiceImpl extends BillServiceInterface {
+    
+  
+    
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -186,7 +189,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
             final BigDecimal creditAmount, final String glCodeForDemandDetail, final String description) {
 
         final EgBillDetails billdetail = new EgBillDetails();
-        billdetail.setFunctionCode(null); // TODO ADD FUNCTIONCODE
+        billdetail.setFunctionCode(AdvertisementTaxConstants.ADVERTISEMENT_FUCNTION_CODE); 
         billdetail.setOrderNo(orderNo);
         billdetail.setCreateDate(new Date());
         billdetail.setModifiedDate(new Date());
