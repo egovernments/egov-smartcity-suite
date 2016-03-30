@@ -52,6 +52,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.service.AdvertisementDemandService;
+import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.demand.interfaces.BillServiceInterface;
@@ -78,6 +79,9 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
 
+    @Autowired
+    private AdvertisementPenaltyCalculator advertisementPenaltyCalculator;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -89,10 +93,6 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
         final AdvertisementBillable advBillable = (AdvertisementBillable) billObj;
         final EgDemand dmd = advBillable.getCurrentDemand();
         final List<EgDemandDetails> details = new ArrayList<EgDemandDetails>(dmd.getEgDemandDetails());
-    //    EgDemandDetails penaltyExistingDemandDetail = null;
-
-        final AppConfigValues penaltyCalculationRequired = appConfigValuesService.getConfigValuesByModuleAndKey(
-                AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.PENALTYCALCULATIONREQUIRED).get(0);
 
         if (!details.isEmpty())
             Collections.sort(details, (c1, c2) -> c1.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
@@ -108,36 +108,30 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                 if (creaditAmt.compareTo(BigDecimal.ZERO) > 0
                         && !AdvertisementTaxConstants.DEMANDREASON_PENALTY.equalsIgnoreCase(demandDetail
                                 .getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())) {
-                  /*  if (AdvertisementTaxConstants.DEMANDREASON_PENALTY.equalsIgnoreCase(demandDetail
-                            .getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
-                        penaltyExistingDemandDetail = demandDetail;
-                    else {*/
-
-                        final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, creaditAmt,
+       
+                    final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, creaditAmt,
                                 demandDetail.getEgDemandReason().getGlcodeId().getGlcode(), getReceiptDetailDescription(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
                                         +" "+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,demandDetail.getEgDemandReason().getEgInstallmentMaster()));
                          orderNo++;
                         billDetailList.add(billdetail);
-                    //}
+                 
                 }
             }
-        if (penaltyCalculationRequired != null && "YES".equalsIgnoreCase(penaltyCalculationRequired.getValue())) {
-            // Penalty to be collected. Based on fiancial year wise.
-            final Map<String, BigDecimal> penaltyReasons = advertisementDemandService.checkPenaltyAmountByDemand(dmd,
-                    billObj.getLastDate());
-
-            if (penaltyReasons != null && penaltyReasons.size() > 0) {
+  
+        Map<Installment, BigDecimal> penaltyReasons = advertisementPenaltyCalculator.getPenaltyByInstallment(advBillable.getAdvertisement().getActiveAdvertisementPermit());
+     
+        if (penaltyReasons != null && penaltyReasons.size() > 0) {
 
                 BigDecimal penaltyAmount = BigDecimal.ZERO;
 
-                for (Map.Entry<String, BigDecimal> penaltyReason : penaltyReasons.entrySet()) {
+                for (Map.Entry<Installment, BigDecimal> penaltyReason : penaltyReasons.entrySet()) {
                     penaltyAmount = penaltyReason.getValue();
 
                     if (penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
 
                         EgDemandReason pendingTaxReason = advertisementDemandService
                                 .getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_PENALTY,
-                                        advertisementDemandService.getInstallmentByDescription(penaltyReason.getKey()));
+                                        penaltyReason.getKey());
 
                         final List<EgDemandDetails> penaltyDmtDtails = advertisementDemandService
                                 .getDemandDetailByPassingDemandDemandReason(dmd, pendingTaxReason);
@@ -178,7 +172,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                 }
             }
            
-        }
+        //}
 
         // TODO: IF LIST SIZE IS ZERO THEN RETURN NULL OR THROW EXCEPTION.
         return billDetailList;
