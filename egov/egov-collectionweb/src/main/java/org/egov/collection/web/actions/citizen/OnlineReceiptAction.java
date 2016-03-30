@@ -589,20 +589,10 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             receiptHeader.setOnlinePayment(onlinePayment);
         }
-        // }
-        // }// end of looping through receipt headers
-
-        /**
-         * Persist the receipt payee details which will internally persist all the receipt headers
-         */
-
         receiptHeaderService.persistPendingReceipts(receiptHeader);
 
-        receiptHeaderService.persist(receiptHeader);
-        receiptHeaderService.getSession().flush();
-
         /**
-         * Construct Request Object For Bill Desk Payment Gateway
+         * Construct Request Object For The Payment Gateway
          */
 
         setPaymentRequest(collectionCommon.createPaymentRequest(paymentService, receiptHeader));

@@ -1350,10 +1350,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @return the list of persisted <code>ReceiptPayeeDetails</code> instances
      */
 
-    public List<ReceiptHeader> persistPendingReceipts(final ReceiptHeader receiptHeader) {
-        final List<ReceiptHeader> saved = new ArrayList<ReceiptHeader>();
-        saved.add(super.persist(receiptHeader));
-        return saved;
+    public ReceiptHeader persistPendingReceipts(final ReceiptHeader receiptHeader) {
+        return super.persist(receiptHeader);
     }
 
     public void setReceiptNumber(final ReceiptHeader entity) {
@@ -1798,6 +1796,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         receiptHeader.setReceiptInstrument(instHeaderSet);
 
         persist(receiptHeader);
+        getSession().flush();
         LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
         updateFinancialAndBillingSystem(receiptHeader);
         LOGGER.info("Billing system updated with receipt info");
