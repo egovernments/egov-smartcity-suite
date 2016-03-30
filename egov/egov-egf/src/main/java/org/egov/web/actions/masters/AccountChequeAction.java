@@ -162,7 +162,7 @@ public class AccountChequeAction extends BaseFormAction {
             chequeDetail.setSerialNoH(fy.getFinYearRange());
             chequeDetail
                     .setReceivedDate(Constants.DDMMYYYYFORMAT2.format(chequeDeptMapping.getAccountCheque().getReceivedDate()));
-            chequeDetail.setSerialNo(chequeDeptMapping.getAccountCheque().getSerialNo());
+            chequeDetail.setSerialNo(chequeDeptMapping.getAccountCheque().getSerialNo().toString());
             if (null != chequeDeptMapping.getAccountCheque().getIsExhausted()
                     && chequeDeptMapping.getAccountCheque().getIsExhausted())
                 chequeDetail.setIsExhusted("Yes");

@@ -73,8 +73,8 @@
         <property name="nextChqNo" type="string">
             <column name="NEXTCHQNO" length="50" />
         </property>
-        <property name="serialNo" type="string">
-            <column name="serialNo" length="16" />
+        <property name="serialNo" type="long">
+            <column name="serialNo"  />
         </property>
          <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>

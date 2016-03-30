@@ -785,13 +785,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Map<String, String> loadChequeSerialNo(final Integer acc) {
 
         chequeSlNoMap = new LinkedHashMap<String, String>();
-        final List<String> cheueSlList = persistenceService.getSession()
+        final List<Object[]> cheueSlList = persistenceService.getSession()
                 .createSQLQuery(
-                        "select distinct(serialNo) from  egf_account_cheques where bankAccountId=" + acc
+                        "select distinct(serialNo) ,fs.financialyear from  egf_account_cheques ac,financialyear fs where ac.serialno = fs.id and  bankAccountId=" + acc
                                 + " order by serialNo desc ").list();
         if (cheueSlList != null)
-            for (final String s : cheueSlList)
-                chequeSlNoMap.put(s, s);
+            for (final Object[] s : cheueSlList)
+                chequeSlNoMap.put(s[0], s[1]);
         return chequeSlNoMap;
     }
 

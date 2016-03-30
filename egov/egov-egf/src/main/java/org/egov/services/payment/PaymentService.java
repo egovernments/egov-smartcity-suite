@@ -1115,7 +1115,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                     final long id = ((BigInteger) obj[0]).longValue();
                     if (billIds.contains(id))
                         paymentAmtMap.put(((BigInteger) obj[0]).longValue(), obj[1] == null ? BigDecimal.ZERO
-                                : (BigDecimal) obj[1]);
+                                : BigDecimal.valueOf((Double) obj[1]));
                 }
         }
         if (LOGGER.isDebugEnabled())
