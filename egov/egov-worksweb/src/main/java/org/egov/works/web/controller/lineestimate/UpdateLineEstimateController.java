@@ -58,6 +58,8 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.Beneficiary;
@@ -117,10 +119,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     protected AssignmentService assignmentService;
-    
+
     @Autowired
     private ResourceBundleMessageSource messageSource;
-    
+
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
 
@@ -156,7 +158,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     public String update(@Valid @ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam final String removedLineEstimateDetailsIds, @RequestParam("file") final MultipartFile[] files)
-            throws ApplicationException, IOException {
+                    throws ApplicationException, IOException {
 
         String mode = "";
         String workFlowAction = "";
@@ -194,27 +196,21 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
             validateAdminSanctionDetail(lineEstimate, errors);
-        
+
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
-            try {
-                validateBudgetAmount(lineEstimate, errors);
-            } catch (Exception e1) {
-                model.addAttribute("message", messageSource.getMessage("error.nobudget.defined", null, null));
-                return "lineestimate-success";
-            }
+            validateBudgetAmount(lineEstimate, errors);
 
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return loadViewData(model, request, lineEstimate);
-        }
-        else {
+        } else {
             if (null != workFlowAction)
                 try {
                     newLineEstimate = lineEstimateService.updateLineEstimateDetails(lineEstimate, approvalPosition,
                             approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction,
                             mode, null, removedLineEstimateDetailsIds, files);
-                } catch (ValidationException e) {
+                } catch (final ValidationException e) {
                     model.addAttribute("message", messageSource.getMessage("error.budgetappropriation.amount", null, null));
                     return "lineestimate-success";
                 }
@@ -226,32 +222,37 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         }
     }
 
-    private void validateBudgetAmount(LineEstimate lineEstimate, BindingResult errors) {
+    private void validateBudgetAmount(final LineEstimate lineEstimate, final BindingResult errors) {
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
-        
+
         try {
             final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
-                    lineEstimateService.getCurrentFinancialYear(lineEstimate.getLineEstimateDate()).getId(), Integer.parseInt(lineEstimate
-                            .getExecutingDepartment().getId().toString()), lineEstimate.getFunction().getId(), null,
-                            lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
-                            lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
-                                    null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
+                    lineEstimateService.getCurrentFinancialYear(lineEstimate.getLineEstimateDate()).getId(),
+                    Integer.parseInt(lineEstimate
+                            .getExecutingDepartment().getId().toString()),
+                    lineEstimate.getFunction().getId(), null,
+                    lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
+                    lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
+                    null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
                             .getId().toString()));
-            
+
             BigDecimal totalEstimateAmount = BigDecimal.ZERO;
-            
-            for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+
+            for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                 totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
-            }
-            
-            if(budgetAvailable.compareTo(totalEstimateAmount) == -1) {
+
+            if (budgetAvailable.compareTo(totalEstimateAmount) == -1)
                 errors.reject("error.budgetappropriation.amount");
-            }
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        } catch (ValidationException e) {
-            throw new ValidationException("", e.getMessage());
+        } catch (final ValidationException e) {
+            // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
+            // budgetDetailsDAO.getPlanningBudgetAvailable API call
+            // TODO: needs to replace with errors.reject
+            for (final ValidationError error : e.getErrors())
+                throw new ApplicationRuntimeException(error.getKey());
+            /*
+             * for (final ValidationError error : e.getErrors()) errors.reject(error.getMessage());
+             */
         }
     }
 
