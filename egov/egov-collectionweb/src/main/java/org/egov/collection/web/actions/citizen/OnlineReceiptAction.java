@@ -39,7 +39,6 @@
  */
 package org.egov.collection.web.actions.citizen;
 
-import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -49,7 +48,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -64,7 +62,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
@@ -72,8 +69,6 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillInfoImpl;
-import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.service.ReceiptHeaderService;
@@ -99,10 +94,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
-        @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
-        @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
-        @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
-        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
+    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
+    @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+    @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
+    @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
@@ -321,7 +316,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             onlinePaymentReceiptHeader = receiptHeaderService.createOnlineSuccessPayment(onlinePaymentReceiptHeader,
                     paymentResponse.getTxnDate(), paymentResponse.getTxnReferenceNo(), paymentResponse.getTxnAmount(),
-                    paymentResponse.getAuthStatus(), null);
+                    paymentResponse.getAuthStatus(), null, null);
             receiptResponse = "SUCCESS|" + onlinePaymentReceiptHeader.getReceiptnumber();
         }
     }
@@ -361,7 +356,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS)) {
                 receiptHeaderService.createOnlineSuccessPayment(receipts[i], transDate, getTransactionId()[i],
                         receipts[i].getTotalAmount(), null,
-                        getRemarks()[i]);
+                        getRemarks()[i], null);
                 LOGGER.debug("Manually reconciled a success online payment");
             }
 
@@ -465,10 +460,9 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
                 setRefNumber(receiptHeader.getReferencenumber());
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
-                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails()) {
+                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
                     rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
                             BigDecimal.ROUND_UP);
-                }
                 setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
 
                 if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
@@ -488,12 +482,11 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
         // Fetching Last three online transaction for the Consumer Code
-        if (null != consumerCode && !("".equals(consumerCode)))
+        if (null != consumerCode && !"".equals(consumerCode))
             lastThreeOnlinePayments = collectionsUtil.getOnlineTransactionHistory(consumerCode);
-        for (OnlinePayment onlinePay : lastThreeOnlinePayments) {
+        for (final OnlinePayment onlinePay : lastThreeOnlinePayments)
             if (onlinePay.getStatus().getCode().equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING))
                 onlinePayPending = Boolean.TRUE;
-        }
     }
 
     private String decodeBillXML() {
@@ -589,7 +582,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             receiptHeader.setOnlinePayment(onlinePayment);
         }
-        receiptHeaderService.persistPendingReceipts(receiptHeader);
+        receiptHeaderService.persistReceiptsObject(receiptHeader);
 
         /**
          * Construct Request Object For The Payment Gateway
@@ -974,7 +967,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return refNumber;
     }
 
-    public void setRefNumber(String refNumber) {
+    public void setRefNumber(final String refNumber) {
         this.refNumber = refNumber;
     }
 
@@ -982,7 +975,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return lastThreeOnlinePayments;
     }
 
-    public void setLastThreeOnlinePayments(List<OnlinePayment> lastThreeOnlinePayments) {
+    public void setLastThreeOnlinePayments(final List<OnlinePayment> lastThreeOnlinePayments) {
         this.lastThreeOnlinePayments = lastThreeOnlinePayments;
     }
 
@@ -990,7 +983,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return onlinePayPending;
     }
 
-    public void setOnlinePayPending(Boolean onlinePayPending) {
+    public void setOnlinePayPending(final Boolean onlinePayPending) {
         this.onlinePayPending = onlinePayPending;
     }
 }

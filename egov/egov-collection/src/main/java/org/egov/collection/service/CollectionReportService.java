@@ -164,7 +164,7 @@ public class CollectionReportService {
                 .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID")
                 .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID")
                 .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER")
-                //.append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID")
+                // .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID")
                 .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
                 .append(" EGCL_COLLECTIONHEADER.RECEIPTTYPE='B' AND EGW_STATUS.DESCRIPTION != 'Cancelled' ");
         final StringBuilder queryStrGroup = new StringBuilder(100);
@@ -179,7 +179,7 @@ public class CollectionReportService {
                     + fromDateFormatter.format(fromDate) + "', 'YYYY-MM-DD HH24:MI:SS') and " + " to_timestamp('"
                     + toDateFormatter.format(toDate) + "', 'YYYY-MM-DD HH24:MI:SS') ");
         }
-      
+
         if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
             queryStr.append(" AND EGCL_COLLECTIONHEADER.SOURCE=:source");
             onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.SOURCE=:source");
@@ -219,7 +219,7 @@ public class CollectionReportService {
             queryStr.setLength(0);
             queryStr.append(defaultQueryStr);
         }
-        StringBuilder aggregateQueryStr = new StringBuilder(500);
+        final StringBuilder aggregateQueryStr = new StringBuilder(500);
         aggregateQueryStr.append(onlineQueryStr);
         aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'cash'");
         aggregateQueryStr.append(queryStrGroup);
@@ -231,57 +231,59 @@ public class CollectionReportService {
         aggregateQueryStr.append(onlineQueryStr);
         aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'online'");
         aggregateQueryStr.append(queryStrGroup);
-        
+
         final StringBuilder finalQueryStr = new StringBuilder(500);
         finalQueryStr
         .append("SELECT sum(CASH_COUNT) AS CASH_COUNT,sum(CHEQUEDD_COUNT) AS CHEQUEDD_COUNT,sum(ONLINE_COUNT) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,sum(CASH_AMOUNT) AS CASH_AMOUNT, sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT, sum(ONLINE_AMOUNT) AS ONLINE_AMOUNT ,USERID FROM (");
         finalQueryStr
         .append(queryStr)
         .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
-        
+
         final StringBuilder finalAggregateQryStr = new StringBuilder(500);
         finalAggregateQryStr
         .append("SELECT sum(CASH_COUNT) AS CASH_COUNT,sum(CHEQUEDD_COUNT) AS CHEQUEDD_COUNT,sum(ONLINE_COUNT) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,sum(CASH_AMOUNT) AS CASH_AMOUNT, sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT, sum(ONLINE_AMOUNT) AS ONLINE_AMOUNT ,USERID FROM (");
         finalAggregateQryStr
         .append(aggregateQueryStr)
         .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
-        
+
         final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(finalQueryStr.toString());
-        
+
         final SQLQuery aggrQuery = entityManager.unwrap(Session.class).createSQLQuery(finalAggregateQryStr.toString());
-        
-        if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)){
+
+        if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
             query.setString("source", source);
-        aggrQuery.setString("source", source);
+            aggrQuery.setString("source", source);
         }
         if (serviceId != null && serviceId != -1) {
             query.setLong("serviceId", serviceId);
-        aggrQuery.setLong("serviceId", serviceId);
+            aggrQuery.setLong("serviceId", serviceId);
         }
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
             query.setString("paymentMode", paymentMode);
             aggrQuery.setString("paymentMode", paymentMode);
         }
-        List<CollectionSummaryReport>  reportResults = populateQueryResults(query.list());
-        List<CollectionSummaryReport>  aggrReportResults = populateQueryResults(aggrQuery.list());
+        final List<CollectionSummaryReport> reportResults = populateQueryResults(query.list());
+        final List<CollectionSummaryReport> aggrReportResults = populateQueryResults(aggrQuery.list());
         final CollectionSummaryReportResult collResult = new CollectionSummaryReportResult();
         collResult.setCollectionSummaryReportList(reportResults);
         collResult.setAggrCollectionSummaryReportList(aggrReportResults);
         return collResult;
     }
 
-    public  List<CollectionSummaryReport> populateQueryResults(final List<Object[]> queryResults) {
+    public List<CollectionSummaryReport> populateQueryResults(final List<Object[]> queryResults) {
         final List<CollectionSummaryReport> reportResults = new LinkedList<CollectionSummaryReport>();
         for (int i = 0; i < queryResults.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResults.get(i);
             final CollectionSummaryReport collSummaryReportResult = new CollectionSummaryReport();
             BigDecimal cashCnt = BigDecimal.ZERO, chequeddCnt = BigDecimal.ZERO, onlineCnt = BigDecimal.ZERO;
-            cashCnt = (BigDecimal) arrayObjectInitialIndex[0]==null?BigDecimal.ZERO:(BigDecimal) arrayObjectInitialIndex[0];
-            chequeddCnt = (BigDecimal) arrayObjectInitialIndex[1]==null?BigDecimal.ZERO:(BigDecimal) arrayObjectInitialIndex[1];
-            onlineCnt = (BigDecimal) arrayObjectInitialIndex[2]==null?BigDecimal.ZERO:(BigDecimal) arrayObjectInitialIndex[2];
-            collSummaryReportResult.setCashCount( cashCnt == BigDecimal.ZERO ? "" :cashCnt.toString());
-            collSummaryReportResult.setChequeddCount(chequeddCnt== BigDecimal.ZERO ? "" :chequeddCnt.toString());
-            collSummaryReportResult.setOnlineCount(onlineCnt == BigDecimal.ZERO ? "" :onlineCnt.toString());
+            cashCnt = (BigDecimal) arrayObjectInitialIndex[0] == null ? BigDecimal.ZERO : (BigDecimal) arrayObjectInitialIndex[0];
+            chequeddCnt = (BigDecimal) arrayObjectInitialIndex[1] == null ? BigDecimal.ZERO
+                    : (BigDecimal) arrayObjectInitialIndex[1];
+            onlineCnt = (BigDecimal) arrayObjectInitialIndex[2] == null ? BigDecimal.ZERO
+                    : (BigDecimal) arrayObjectInitialIndex[2];
+            collSummaryReportResult.setCashCount(cashCnt == BigDecimal.ZERO ? "" : cashCnt.toString());
+            collSummaryReportResult.setChequeddCount(chequeddCnt == BigDecimal.ZERO ? "" : chequeddCnt.toString());
+            collSummaryReportResult.setOnlineCount(onlineCnt == BigDecimal.ZERO ? "" : onlineCnt.toString());
             collSummaryReportResult.setSource((String) arrayObjectInitialIndex[3]);
             collSummaryReportResult.setCounterName((String) arrayObjectInitialIndex[4]);
             collSummaryReportResult.setEmployeeName((String) arrayObjectInitialIndex[5]);

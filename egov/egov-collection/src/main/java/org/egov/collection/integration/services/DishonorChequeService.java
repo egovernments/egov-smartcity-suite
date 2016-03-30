@@ -111,7 +111,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
     }
 
     @Override
-    public void updateSourceInstrumentVoucher(String event, Long instrumentHeaderId) {
+    public void updateSourceInstrumentVoucher(final String event, final Long instrumentHeaderId) {
         // TODO Auto-generated method stub
 
     }
