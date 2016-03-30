@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.ptis.service.DemandBill;
 
+import org.egov.infra.reporting.engine.ReportOutput;
+
 /**
  * 
  * @author subhash
@@ -46,7 +48,7 @@ package org.egov.ptis.service.DemandBill;
  */
 public interface DemandBillService {
 
-    public void generateDemandBill(String assessmentNo);
+    public ReportOutput generateDemandBill(String assessmentNo);
     
     public void printDemandBill(String assessmentNo);
 }

@@ -236,7 +236,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     @Action(value = "/bills/billGeneration-generateDemandBill")
     public String generateDemandBill() {
         DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
-        demandBillService.generateDemandBill(indexNumber);
+        ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber);
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
+        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
         return BILL;
     }
 
