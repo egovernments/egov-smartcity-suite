@@ -39,15 +39,27 @@
  */
 package org.egov.works.letterofacceptance.repository;
 
+import java.util.List;
+
+import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, Long> {
 
     WorkOrder findById(final Long id);
+    
+    List<WorkOrder> findByWorkOrderNumberContainingIgnoreCase(final String workOrderNumber);
 
+    List<WorkOrder> findByEstimateNumberContainingIgnoreCase(final String name);
+
+    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where wo.contractor.name like :name")
+    List<String> findDistinctContractorByContractor_codeAndNameContainingIgnoreCase(@Param("name") final String name);
+    
     WorkOrder findByWorkOrderNumberAndEgwStatus_codeNotLike(final String workOrderNumber, final String statusCode);
 
     WorkOrder findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);

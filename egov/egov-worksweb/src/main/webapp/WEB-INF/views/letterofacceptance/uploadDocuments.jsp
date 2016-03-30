@@ -62,8 +62,8 @@
 		</div>
 	</div>
 	<c:if test="${workOrder.documentDetails != null &&  !workOrder.documentDetails.isEmpty()}">
-		<c:forEach items="${workOrder.documentDetails }" var="documentDetials">
-			<a href="/egi/downloadfile?fileStoreId=${workOrder.fileStore.fileStoreId}&moduleName=WMS">${documentDetials.fileStore.fileName }</a><br />
+		<c:forEach items="${workOrder.documentDetails}" var="documentDetials">
+			<a href="/egi/downloadfile?fileStoreId=${documentDetials.fileStore.fileStoreId}&moduleName=WMS">${documentDetials.fileStore.fileName }</a><br />
 		</c:forEach>
 	</c:if>
 	<c:if test="${mode == 'view' && workOrder.documentDetails.isEmpty()}">

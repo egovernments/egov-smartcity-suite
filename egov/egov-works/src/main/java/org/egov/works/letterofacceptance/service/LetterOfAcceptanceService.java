@@ -53,13 +53,20 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.pims.commons.Designation;
+import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +96,9 @@ public class LetterOfAcceptanceService {
     @Autowired
     private WorksUtils worksUtils;
 
+    @Autowired
+    private LineEstimateDetailsRepository lineEstimateDetailsRepository;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -100,6 +110,15 @@ public class LetterOfAcceptanceService {
 
     public WorkOrder getWorkOrderById(final Long id) {
         return letterOfAcceptanceRepository.findById(id);
+    }
+
+    public List<String> getWorkOrderByName(final String name) {
+        final List<WorkOrder> workOrder = letterOfAcceptanceRepository
+                .findByWorkOrderNumberContainingIgnoreCase(name);
+        final List<String> results = new ArrayList<String>();
+        for (final WorkOrder details : workOrder)
+            results.add(details.getWorkOrderNumber());
+        return results;
     }
 
     @Transactional
@@ -161,6 +180,48 @@ public class LetterOfAcceptanceService {
     public WorkOrder getApprovedWorkOrder(final String workOrderNumber) {
         return letterOfAcceptanceRepository.findByWorkOrderNumberAndEgwStatus_codeEquals(workOrderNumber,
                 WorksConstants.APPROVED);
+    }
+
+    public List<WorkOrder> searchLetterOfAcceptance(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        // TODO Need TO handle in single query
+        final List<String> estimateNumbers = lineEstimateDetailsRepository
+                .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
+                .createAlias("wo.contractor", "woc")
+                .createAlias("egwStatus", "status");
+        if (searchRequestLetterOfAcceptance != null) {
+            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
+                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()));
+            if (searchRequestLetterOfAcceptance.getFromDate() != null)
+                criteria.add(Restrictions.ge("workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
+            if (searchRequestLetterOfAcceptance.getToDate() != null)
+                criteria.add(Restrictions.le("workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
+            if (searchRequestLetterOfAcceptance.getName() != null)
+                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()));
+            if (searchRequestLetterOfAcceptance.getTenderFileNumber() != null)
+                criteria.add(Restrictions.eq("fileNumber", searchRequestLetterOfAcceptance.getTenderFileNumber()));
+            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
+                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()));
+            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
+                criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
+                criteria.add(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+
+    public List<String> findLoaEstimateNumbers(final String name) {
+        final List<WorkOrder> workorders = letterOfAcceptanceRepository.findByEstimateNumberContainingIgnoreCase(name);
+        final List<String> results = new ArrayList<String>();
+        for (final WorkOrder details : workorders)
+            results.add(details.getEstimateNumber());
+        return results;
+    }
+
+    public List<String> findContractorsByCodeOrName(final String name) {
+        final List<String> results = letterOfAcceptanceRepository.findDistinctContractorByContractor_codeAndNameContainingIgnoreCase("%" + name + "%");
+        return results;
     }
 
 }
