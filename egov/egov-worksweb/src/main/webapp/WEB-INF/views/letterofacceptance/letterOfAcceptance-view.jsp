@@ -44,7 +44,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <div class="page-container" id="page-container">
 	<div class="main-content">
-		<form:form name="loaViewForm" action="" role="form"	modelAttribute="workOrder" id="workOrder" class="form-horizontal form-groups-bordered" method="GET">
+		<form:form name="loaViewForm" action="" role="form"
+			modelAttribute="workOrder" id="workOrder"
+			class="form-horizontal form-groups-bordered" method="GET">
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0"
@@ -57,7 +59,7 @@
 						<div class="panel-body">
 							<div class="row add-border">
 								<div class="col-xs-3 add-margin">
-									<spring:message code="lbl.workidentificationnumber" />
+									<spring:message code="lbl.loanumber" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
 									<c:out default="N/A" value="${workOrder.workOrderNumber}"></c:out>
@@ -77,6 +79,21 @@
 								<div class="col-xs-3 add-margin view-content">
 									<c:out default="N/A"
 										value="${lineEstimateDetails.estimateNumber}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.workidentificationnumber" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out default="N/A"
+										value="${lineEstimateDetails.projectCode.code}"></c:out>
+								</div>
+							</div>
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.nameofwork" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out default="N/A" value="${lineEstimateDetails.nameOfWork}"></c:out>
 								</div>
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.department" />
@@ -105,33 +122,56 @@
 							</div>
 							<div class="row add-border">
 								<div class="col-xs-3 add-margin">
-									<spring:message code="lbl.nameofwork" />
+									<spring:message code="lbl.estimateamount" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									<c:out default="N/A" value="${lineEstimateDetails.nameOfWork}"></c:out>
+									<c:choose>
+										<c:when test="${lineEstimateDetails.estimateAmount == '0.0'}">
+											<c:out default="N/A" value="N/A" />
+										</c:when>
+										<c:otherwise>
+											<fmt:formatNumber minFractionDigits="2"
+												value="${lineEstimateDetails.estimateAmount}" />
+										</c:otherwise>
+									</c:choose>
 								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.tender.finalized.percentage" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:choose>
+										<c:when test="${workOrder.tenderFinalizedPercentage == '0.0'}">
+											<c:out default="N/A" value="N/A" />
+										</c:when>
+										<c:otherwise>
+											<fmt:formatNumber minFractionDigits="2"
+												value="${workOrder.tenderFinalizedPercentage}" />
+										</c:otherwise>
+									</c:choose>
+								</div>
+							</div>
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.agreement.amount" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<fmt:formatNumber minFractionDigits="2"
+										value="${workOrder.workOrderAmount}" />
+									</p>
+								</div>
+							</div>
+							<div class="row add-border">
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.nameofagency" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
 									<c:out default="N/A" value="${workOrder.contractor.name}" />
 								</div>
-							</div>
-
-							<div class="row add-border">
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.contractor.code" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
 									<c:out default="N/A" value="${workOrder.contractor.code}" />
-								</div>
-								<div class="col-xs-3 add-margin">
-									<spring:message code="lbl.agreement.amount" />
-								</div>
-								<div class="col-xs-3 add-margin view-content">
-									<fmt:formatNumber type="number"
-										value="${workOrder.workOrderAmount}" />
-									</p>
 								</div>
 							</div>
 							<div class="row add-border">
@@ -139,7 +179,15 @@
 									<spring:message code="lbl.additional.security.deposit" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									<c:out default="N/A" value="${workOrder.securityDeposit}" />
+									<c:choose>
+										<c:when test="${workOrder.securityDeposit == '0.0'}">
+											<c:out default="N/A" value="N/A" />
+										</c:when>
+										<c:otherwise>
+											<fmt:formatNumber minFractionDigits="2"
+												value="${workOrder.securityDeposit}" />
+										</c:otherwise>
+									</c:choose>
 								</div>
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.bank.guarantee" />
@@ -153,7 +201,15 @@
 									<spring:message code="lbl.emd.amount" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									<c:out default="N/A" value="${workOrder.emdAmountDeposited}"></c:out>
+									<c:choose>
+										<c:when test="${workOrder.emdAmountDeposited == '0.0'}">
+											<c:out default="N/A" value="N/A" />
+										</c:when>
+										<c:otherwise>
+											<fmt:formatNumber minFractionDigits="2"
+												value="${workOrder.emdAmountDeposited}" />
+										</c:otherwise>
+									</c:choose>
 								</div>
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.contract.period" />
@@ -167,14 +223,8 @@
 									<spring:message code="lbl.dlp" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									<c:out default="N/A" value="${workOrder.defectLiabilityPeriod}" />
-								</div>
-								<div class="col-xs-3 add-margin">
-									<spring:message code="lbl.tender.finalized.percentage" />
-								</div>
-								<div class="col-xs-3 add-margin view-content">
-									<c:out default="N/A"
-										value="${workOrder.tenderFinalizedPercentage}"></c:out>
+									<fmt:formatNumber minFractionDigits="2"
+										value="${workOrder.defectLiabilityPeriod}" />
 								</div>
 							</div>
 							<div class="row add-border">
@@ -200,5 +250,11 @@
 				<jsp:include page="uploadDocuments.jsp" />
 			</c:if>
 		</form:form>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12 text-center">
+		<a href='javascript:void(0)' class='btn btn-default'
+			onclick='self.close()'><spring:message code='lbl.close' /></a>
 	</div>
 </div>

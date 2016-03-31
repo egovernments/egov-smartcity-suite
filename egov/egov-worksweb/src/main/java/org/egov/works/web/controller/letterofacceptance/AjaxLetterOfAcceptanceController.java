@@ -104,11 +104,11 @@ public class AjaxLetterOfAcceptanceController {
 
     @RequestMapping(value = "/ajaxloanumber", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaNumbers(@RequestParam final String name) {
-        return letterOfAcceptanceService.getWorkOrderByName(name);
+        return letterOfAcceptanceService.getWorkOrderByNumber(name);
     }
     
     @RequestMapping(value = "/ajaxsearchcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaContractor(@RequestParam final String name) {
-        return letterOfAcceptanceService.findContractorsByCodeOrName(name);
+        return letterOfAcceptanceService.findDistinctContractorsInWorkOrderByCodeOrName(name);
     }
 }

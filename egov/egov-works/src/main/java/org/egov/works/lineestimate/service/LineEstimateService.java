@@ -40,7 +40,6 @@
 package org.egov.works.lineestimate.service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -115,7 +114,7 @@ public class LineEstimateService {
     private final LineEstimateRepository lineEstimateRepository;
 
     private final LineEstimateDetailsRepository lineEstimateDetailsRepository;
-    
+
     private final LineEstimateAppropriationRepository lineEstimateAppropriationRepository;
 
     @Autowired
@@ -123,7 +122,7 @@ public class LineEstimateService {
 
     @Autowired
     private WorkOrderIdentificationNumberGenerator workOrderIdentificationNumberGenerator;
-    
+
     @Autowired
     private BudgetAppropriationNumberGenerator budgetAppropriationNumberGenerator;
 
@@ -162,10 +161,10 @@ public class LineEstimateService {
 
     @Autowired
     private PersistenceService<ProjectCode, Long> projectCodeService;
-    
+
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -224,18 +223,18 @@ public class LineEstimateService {
                 final String estimateNumber = estimateNumberGenerator.generateEstimateNumber(lineEstimate);
                 lineEstimateDetails.setEstimateNumber(estimateNumber);
 
-            } 
+            }
         List<LineEstimateDetails> list = new ArrayList<LineEstimateDetails>(lineEstimate.getLineEstimateDetails());
         list = removeDeletedLineEstimateDetails(list, removedLineEstimateDetailsIds);
-//        for (final LineEstimateDetails details : list)
-//            details.setId(null);
-//        lineEstimate.getLineEstimateDetails().clear();
+        // for (final LineEstimateDetails details : list)
+        // details.setId(null);
+        // lineEstimate.getLineEstimateDetails().clear();
         // TODO: use save instead of saveAndFlush
-       
+
         lineEstimate.setLineEstimateDetails(list);
         final LineEstimate persistedLineEstimate = lineEstimateRepository.save(lineEstimate);
 
-//        persistedLineEstimate.setLineEstimateDetails(list);
+        // persistedLineEstimate.setLineEstimateDetails(list);
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, persistedLineEstimate,
                 WorksConstants.MODULE_NAME_LINEESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -297,7 +296,8 @@ public class LineEstimateService {
 
     public List<LineEstimate> searchLineEstimatesForLoa(final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest) {
 
-        final List<String> lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersToSearchLineEstimatesForLoa(WorksConstants.CANCELLED_STATUS);
+        final List<String> lineEstimateNumbers = lineEstimateDetailsRepository
+                .findEstimateNumbersToSearchLineEstimatesForLoa(WorksConstants.CANCELLED_STATUS);
 
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
                 .createAlias("lineEstimateDetails", "lineEstimateDetail")
@@ -333,7 +333,8 @@ public class LineEstimateService {
     }
 
     public List<String> findEstimateNumbersForLoa(final String name) {
-        final List<String> lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersForLoa("%" + name + "%", LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
+        final List<String> lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersForLoa("%" + name + "%",
+                LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
 
         return lineEstimateNumbers;
     }
@@ -347,7 +348,8 @@ public class LineEstimateService {
     }
 
     public List<String> findAdminSanctionNumbersForLoa(final String name) {
-        final List<String> adminSanctionNumbers = lineEstimateDetailsRepository.findAdminSanctionNumbersForLoa("%" + name + "%", LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
+        final List<String> adminSanctionNumbers = lineEstimateDetailsRepository.findAdminSanctionNumbersForLoa("%" + name + "%",
+                LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
 
         return adminSanctionNumbers;
     }
@@ -430,7 +432,7 @@ public class LineEstimateService {
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     HistoryMap
-                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                    .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                     HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
@@ -475,15 +477,25 @@ public class LineEstimateService {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
             updatedLineEstimate = update(lineEstimate, removedLineEstimateDetailsIds, files);
             try {
+                if (workFlowAction.equals(WorksConstants.FORWARD_ACTION) &&
+                        lineEstimate.getWorkCategory().toString().equals(WorkCategory.NON_SLUM_WORK.toString()))
+                    ;
+                resetWorkCategoryDetailsOnModify(lineEstimate);
                 lineEstimateStatusChange(updatedLineEstimate, workFlowAction, mode);
-            } catch (ValidationException e) {
+            } catch (final ValidationException e) {
                 throw new ValidationException(e.getErrors());
             }
         } else {
             try {
+                if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
+                        && workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                    resetAdminSanctionDetails(lineEstimate);
+                else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) &&
+                        !workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                    setAdminSanctionByAndDate(lineEstimate);
                 doBudgetoryAppropriation(lineEstimate, workFlowAction);
                 lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
-            } catch (ValidationException e) {
+            } catch (final ValidationException e) {
                 throw new ValidationException(e.getErrors());
             }
             updatedLineEstimate = lineEstimateRepository.save(lineEstimate);
@@ -495,27 +507,41 @@ public class LineEstimateService {
         return updatedLineEstimate;
     }
 
-    private void doBudgetoryAppropriation(LineEstimate lineEstimate, String workFlowAction) {
+    private void resetWorkCategoryDetailsOnModify(final LineEstimate lineEstimate) {
+        lineEstimate.setTypeOfSlum(null);
+        lineEstimate.setBeneficiary(null);
+    }
+
+    private void resetAdminSanctionDetails(final LineEstimate lineEstimate) {
+        lineEstimate.setAdminSanctionNumber(null);
+        lineEstimate.setCouncilResolutionNumber(null);
+        lineEstimate.setCouncilResolutionDate(null);
+    }
+
+    private void setAdminSanctionByAndDate(final LineEstimate lineEstimate) {
+        lineEstimate.setAdminSanctionDate(new Date());
+        lineEstimate.setAdminSanctionBy(securityUtils.getCurrentUser());
+    }
+
+    private void doBudgetoryAppropriation(final LineEstimate lineEstimate, final String workFlowAction) {
         if (lineEstimate.getStatus().getCode()
                 .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
             final List<Long> budgetheadid = new ArrayList<Long>();
             budgetheadid.add(lineEstimate.getBudgetHead().getId());
-            
-            for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-                final boolean flag = checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(new Date()).getId(), led.getEstimateAmount().doubleValue(), budgetheadid);
-                
-                if(!flag) {
+
+            for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+                final boolean flag = checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(new Date()).getId(), led
+                        .getEstimateAmount().doubleValue(), budgetheadid);
+
+                if (!flag)
                     throw new ValidationException("", "error.budgetappropriation.amount");
-                }
             }
-        } else if (workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
+        } else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
             if (lineEstimate.getStatus().getCode()
                     .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()))
-                for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+                for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                     releaseBudgetOnReject(led);
-                }
-        }
-        
+
     }
 
     public void lineEstimateStatusChange(final LineEstimate lineEstimate, final String workFlowAction,
@@ -527,11 +553,9 @@ public class LineEstimateService {
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CHECKED.toString()));
             else if (lineEstimate.getStatus().getCode()
-                    .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
-                
+                    .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.BUDGET_SANCTIONED.toString()));
-            }
             else if (lineEstimate.getStatus().getCode()
                     .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
@@ -540,32 +564,22 @@ public class LineEstimateService {
 
                 for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                     setProjectCode(led);
-                lineEstimate.setAdminSanctionDate(new Date());
-                lineEstimate.setAdminSanctionBy(securityUtils.getCurrentUser());
             } else if (lineEstimate.getStatus().getCode()
                     .equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
-            else if (workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
+            else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.REJECTED.toString()));
-            }
-                
             else if (lineEstimate.getStatus().getCode()
                     .equals(LineEstimateStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CANCELLED.toString()));
             else if (lineEstimate.getStatus().getCode()
-                    .equals(LineEstimateStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.FORWARD_ACTION)) {
+                    .equals(LineEstimateStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CREATED.toString()));
-
-                if (lineEstimate.getWorkCategory().toString().equals(WorkCategory.NON_SLUM_WORK.toString())) {
-                    lineEstimate.setTypeOfSlum(null);
-                    lineEstimate.setBeneficiary(null);
-                }
-            }
 
     }
 
@@ -609,15 +623,15 @@ public class LineEstimateService {
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment))
                 lineEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             else {
                 final String stateValue = WorksConstants.WF_STATE_REJECTED;
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition())
-                        .withNextAction("")
-                        .withNatureOfTask(natureOfwork);
+                .withComments(approvalComent)
+                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                .withOwner(wfInitiator.getPosition())
+                .withNextAction("")
+                .withNatureOfTask(natureOfwork);
             }
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
@@ -627,27 +641,27 @@ public class LineEstimateService {
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, currState, null);
                 lineEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(natureOfwork);
+                .withComments(approvalComent)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction())
+                .withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction("")
-                        .withNatureOfTask(natureOfwork);
+                .withComments(approvalComent)
+                .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction("")
+                .withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(natureOfwork);
+                .withComments(approvalComent)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction())
+                .withNatureOfTask(natureOfwork);
             }
         }
         if (LOG.isDebugEnabled())
@@ -688,7 +702,7 @@ public class LineEstimateService {
     public CFinancialYear getCurrentFinancialYear(final Date estimateDate) {
         return financialYearHibernateDAO.getFinYearByDate(estimateDate);
     }
-    
+
     public LineEstimate getLineEstimateByAdminSanctionNumber(final String adminSanctionNumber) {
         return lineEstimateRepository.findByAdminSanctionNumberIgnoreCaseAndStatus_codeNotLike(adminSanctionNumber,
                 WorksConstants.CANCELLED_STATUS);
@@ -703,13 +717,18 @@ public class LineEstimateService {
                 Integer.valueOf(11),
                 lineEstimateDetails.getEstimateNumber(),
                 Integer.parseInt(lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId().toString()),
-                lineEstimateDetails.getLineEstimate().getFunction() == null ? null : lineEstimateDetails.getLineEstimate().getFunction().getId(),
-                null,
-                lineEstimateDetails.getLineEstimate().getScheme() == null ? null : lineEstimateDetails.getLineEstimate().getScheme().getId(),
-                lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null : lineEstimateDetails.getLineEstimate().getSubScheme().getId(),
-                lineEstimateDetails.getLineEstimate().getWard() == null ? null : Integer.parseInt(lineEstimateDetails.getLineEstimate().getWard().getId().toString()),
-                budgetheadid,
-                lineEstimateDetails.getLineEstimate().getFund() == null ? null : lineEstimateDetails.getLineEstimate().getFund().getId(), budgApprAmnt);
+                lineEstimateDetails.getLineEstimate().getFunction() == null ? null : lineEstimateDetails.getLineEstimate()
+                        .getFunction().getId(),
+                        null,
+                        lineEstimateDetails.getLineEstimate().getScheme() == null ? null : lineEstimateDetails.getLineEstimate()
+                        .getScheme().getId(),
+                                lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null : lineEstimateDetails.getLineEstimate()
+                        .getSubScheme().getId(),
+                                        lineEstimateDetails.getLineEstimate().getWard() == null ? null : Integer.parseInt(lineEstimateDetails
+                        .getLineEstimate().getWard().getId().toString()),
+                                                budgetheadid,
+                                                lineEstimateDetails.getLineEstimate().getFund() == null ? null : lineEstimateDetails.getLineEstimate().getFund()
+                        .getId(), budgApprAmnt);
 
         if (budgetUsage != null)
             persistBudgetAppropriationDetails(lineEstimateDetails, budgetUsage);
@@ -731,43 +750,54 @@ public class LineEstimateService {
         budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
                 lineEstimateAppropriation.getBudgetUsage() == null ? null : budgetAppropriationNumberGenerator.
                         generateCancelledBudgetAppropriationNumber(lineEstimateAppropriation.getBudgetUsage().
-                        getAppropriationnumber()),
-                        lineEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
-                Integer.valueOf(11),
-                lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber(),
-                Integer.parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getExecutingDepartment().getId().toString()),
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction() == null ? null : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction().getId(),
-                null,
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme() == null ? null : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme().getId(),
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme() == null ? null : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme().getId(),
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard() == null ? null : Integer.parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard().getId().toString()),
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getBudgetHead() == null ? null : budgetheadid,
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund() == null ? null : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund().getId(),
-                lineEstimateAppropriation.getBudgetUsage().getConsumedAmount());
+                                getAppropriationnumber()),
+                lineEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
+                                Integer.valueOf(11),
+                                lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber(),
+                                Integer.parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getExecutingDepartment()
+                        .getId().toString()),
+                                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction() == null ? null
+                        : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction().getId(),
+                                        null,
+                                        lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme() == null ? null
+                        : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme().getId(),
+                                                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme() == null ? null
+                        : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme().getId(),
+                                                        lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard() == null ? null : Integer
+                        .parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard().getId()
+                                .toString()),
+                                                                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getBudgetHead() == null ? null
+                        : budgetheadid,
+                                                                        lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund() == null ? null
+                        : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund().getId(),
+                                                                                lineEstimateAppropriation.getBudgetUsage().getConsumedAmount());
 
         if (lineEstimateAppropriation.getLineEstimateDetails() != null)
             persistBudgetReleaseDetails(lineEstimateDetails, budgetUsage);
         return flag;
     }
-    
+
     private void persistBudgetAppropriationDetails(final LineEstimateDetails lineEstimateDetails,
             final BudgetUsage budgetUsage) {
         LineEstimateAppropriation lineEstimateAppropriation = null;
-        lineEstimateAppropriation = lineEstimateAppropriationRepository.findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+        lineEstimateAppropriation = lineEstimateAppropriationRepository
+                .findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
 
-        if (lineEstimateAppropriation != null) {
+        if (lineEstimateAppropriation != null)
             lineEstimateAppropriation.setBudgetUsage(budgetUsage);
-        } else {
+        else {
             lineEstimateAppropriation = new LineEstimateAppropriation();
-            lineEstimateAppropriation.setLineEstimateDetails(lineEstimateDetails);;
+            lineEstimateAppropriation.setLineEstimateDetails(lineEstimateDetails);
+            ;
             lineEstimateAppropriation.setBudgetUsage(budgetUsage);
         }
         lineEstimateAppropriationRepository.save(lineEstimateAppropriation);
     }
-    
+
     private void persistBudgetReleaseDetails(final LineEstimateDetails lineEstimateDetails, final BudgetUsage budgetUsage) {
         LineEstimateAppropriation lineEstimateAppropriation = null;
-        lineEstimateAppropriation = lineEstimateAppropriationRepository.findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+        lineEstimateAppropriation = lineEstimateAppropriationRepository
+                .findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
         lineEstimateAppropriation.setBudgetUsage(budgetUsage);
         lineEstimateAppropriationRepository.save(lineEstimateAppropriation);
     }

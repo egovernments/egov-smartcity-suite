@@ -57,7 +57,7 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
 
     List<WorkOrder> findByEstimateNumberContainingIgnoreCase(final String name);
 
-    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where wo.contractor.name like :name")
+    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where wo.contractor.name like :name or wo.contractor.code like :name")
     List<String> findDistinctContractorByContractor_codeAndNameContainingIgnoreCase(@Param("name") final String name);
     
     WorkOrder findByWorkOrderNumberAndEgwStatus_codeNotLike(final String workOrderNumber, final String statusCode);

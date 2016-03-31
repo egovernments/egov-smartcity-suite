@@ -112,7 +112,7 @@ public class LetterOfAcceptanceService {
         return letterOfAcceptanceRepository.findById(id);
     }
 
-    public List<String> getWorkOrderByName(final String name) {
+    public List<String> getWorkOrderByNumber(final String name) {
         final List<WorkOrder> workOrder = letterOfAcceptanceRepository
                 .findByWorkOrderNumberContainingIgnoreCase(name);
         final List<String> results = new ArrayList<String>();
@@ -219,7 +219,7 @@ public class LetterOfAcceptanceService {
         return results;
     }
 
-    public List<String> findContractorsByCodeOrName(final String name) {
+    public List<String> findDistinctContractorsInWorkOrderByCodeOrName(final String name) {
         final List<String> results = letterOfAcceptanceRepository.findDistinctContractorByContractor_codeAndNameContainingIgnoreCase("%" + name + "%");
         return results;
     }

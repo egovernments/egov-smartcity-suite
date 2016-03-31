@@ -49,33 +49,32 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="workOrderNumber" id="workOrderNumber" class="form-control" placeholder="Type first 3 letters of Work Identification Number"/>
+				<form:input path="workOrderNumber" id="workOrderNumber" class="form-control" placeholder="Type first 3 letters of LOA Number"/>
 				<form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
 			</div>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.filenumber" /></label>
+			<div class="col-sm-3 add-margin">
+				<form:input path="tenderFileNumber" id="tenderFileNumber" class="form-control"/>
+				<form:errors path="tenderFileNumber" cssClass="add-margin error-msg" />
+			</div>
+		</div>
+		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="fromDate" class="form-control datepicker"	id="fromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="fromDate" cssClass="add-margin error-msg" />
 			</div>
-		</div>
-		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.todate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="toDate" class="form-control datepicker"	id="toDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="toDate" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:input path="name" id="contractorSearch" class="form-control" placeholder="Type first 3 letters of Contractor Name"/>
-				<form:errors path="name" cssClass="add-margin error-msg" />
-			</div>
-			
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.tenderfilenumber" /></label>
+		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="tenderFileNumber" id="tenderFileNumber" class="form-control"/>
-				<form:errors path="tenderFileNumber" cssClass="add-margin error-msg" />
+				<form:input path="name" id="contractorSearch" class="form-control" placeholder="Type first 3 letters of Contractor Name Or Code"/>
+				<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
 			<div class="col-sm-3 add-margin">

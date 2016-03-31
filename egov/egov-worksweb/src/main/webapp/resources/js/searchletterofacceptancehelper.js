@@ -38,6 +38,16 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery('#btnsearch').click(function(e) {
+	var fromDate = $('#fromDate').val();
+	var toDate = $('#toDate').val();
+	var flag = true; 
+	if(toDate != '' && fromDate != '') {
+		if(fromDate > toDate) {
+			flag = false;
+			bootbox.alert('To Date should be greater than From Date');
+		}
+	}
+	if(flag)
 	callAjaxSearch();
 });
 
@@ -84,6 +94,7 @@ function callAjaxSearch() {
 								'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
 										+ data.id + '\')">'
 										+ data.estimateNumber + '</a>');
+					$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					$('td:eq(8)', row)
 							.html(
 									'<select id="actionDropdown" class="form-control" onchange="renderAction('
@@ -100,7 +111,13 @@ function callAjaxSearch() {
 					"sClass" : "text-left"
 				}, {
 					"data" : "workOrderDate",
-					"sClass" : "text-left"
+					render: function (data, type, full) {
+						if(full!=null &&  full.workOrderDate != undefined) {
+							var regDateSplit = full.workOrderDate.split("T")[0].split("-");		
+							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+						}
+						else return "";
+			    	}
 				}, {
 					"data" : "estimateNumber",
 					"sClass" : "text-left"
@@ -112,7 +129,7 @@ function callAjaxSearch() {
 					"sClass" : "text-left"
 				}, {
 					"data" : "workOrderAmount",
-					"sClass" : "text-left"
+					"sClass" : "text-right"
 				}, {
 					"data" : "status",
 					"sClass" : "text-left"
@@ -124,12 +141,10 @@ function callAjaxSearch() {
 }
 
 function openLetterOfAcceptance(id) {
-	window.open("/egworks/letterofacceptance/view/" + id, "",
-			"height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+	window.open("/egworks/lineestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 $(document).ready(function() {
-	debugger;
 	var estimateNumber = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -173,8 +188,7 @@ $(document)
 									filter : function(data) {
 										return $.map(data, function(ct) {
 											return {
-												name : ct.name,
-												code : ct.code
+												name : ct,
 											};
 										});
 									}
@@ -197,7 +211,6 @@ $(document)
 				});
 
 $(document).ready(function() {
-	debugger;
 	var workOrderNumber = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
