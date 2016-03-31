@@ -43,7 +43,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,7 +86,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * systems) to interact with the collections module.
  */
 public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long> implements
-CollectionIntegrationService {
+        CollectionIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionIntegrationServiceImpl.class);
 
@@ -286,7 +285,7 @@ CollectionIntegrationService {
         BigDecimal otherInstrumenttotal = BigDecimal.ZERO;
 
         // populate instrument details
-        final Set<InstrumentHeader> instrumentHeaderSet = new HashSet<InstrumentHeader>(0);
+        final List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>(0);
 
         for (final PaymentInfo paytInfo : paymentInfoList) {
             final String instrType = paytInfo.getInstrumentType().toString();
@@ -294,7 +293,7 @@ CollectionIntegrationService {
             if (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrType)) {
                 final PaymentInfoCash paytInfoCash = (PaymentInfoCash) paytInfo;
 
-                instrumentHeaderSet.add(collectionCommon.validateAndConstructCashInstrument(paytInfoCash));
+                instrumentHeaderList.add(collectionCommon.validateAndConstructCashInstrument(paytInfoCash));
                 otherInstrumenttotal = paytInfo.getInstrumentAmount();
             }
 
@@ -307,7 +306,7 @@ CollectionIntegrationService {
             if (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrType)) {
                 final PaymentInfoBank paytInfoBank = (PaymentInfoBank) paytInfo;
 
-                instrumentHeaderSet.add(collectionCommon.validateAndConstructBankInstrument(paytInfoBank));
+                instrumentHeaderList.add(collectionCommon.validateAndConstructBankInstrument(paytInfoBank));
 
                 otherInstrumenttotal = paytInfoBank.getInstrumentAmount();
             }
@@ -317,7 +316,7 @@ CollectionIntegrationService {
 
                 final PaymentInfoChequeDD paytInfoChequeDD = (PaymentInfoChequeDD) paytInfo;
 
-                instrumentHeaderSet.add(collectionCommon.validateAndConstructChequeDDInstrument(paytInfoChequeDD));
+                instrumentHeaderList.add(collectionCommon.validateAndConstructChequeDDInstrument(paytInfoChequeDD));
 
                 chequeDDInstrumenttotal = chequeDDInstrumenttotal.add(paytInfoChequeDD.getInstrumentAmount());
             }
@@ -338,7 +337,7 @@ CollectionIntegrationService {
         receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                 chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList.get(0).getInstrumentType().toString()));
 
-        receiptHeaderService.persistFieldReceipt(receiptHeader, instrumentHeaderSet);
+        receiptHeaderService.persistFieldReceipt(receiptHeader, instrumentHeaderList);
         LOGGER.info("Logs for CreateReceipt : Receipt Creation Finished....");
         return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO);
     }

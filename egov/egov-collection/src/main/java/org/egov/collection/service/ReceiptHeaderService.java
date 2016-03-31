@@ -1795,8 +1795,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     @Transactional
-    public void persistFieldReceipt(final ReceiptHeader receiptHeader, final Set<InstrumentHeader> instrumentHeaderSet) {
-        receiptHeader.setReceiptInstrument(instrumentHeaderSet);
+    public void persistFieldReceipt(final ReceiptHeader receiptHeader, final List<InstrumentHeader> instrumentHeaderList) {
+        final Set<InstrumentHeader> instHeaderSet = new HashSet(createInstrument(instrumentHeaderList));
+        receiptHeader.setReceiptInstrument(instHeaderSet);
         persist(receiptHeader);
         getSession().flush();
         LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
