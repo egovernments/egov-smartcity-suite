@@ -18,11 +18,14 @@ import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.RatesClassService;
-import org.egov.adtax.service.SubCategoryService;
+//import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.service.UnitOfMeasureService;
+import org.egov.commons.CFinancialYear;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,12 +33,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.egov.commons.CFinancialYear;
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.google.gson.GsonBuilder;
 
 @Controller
@@ -48,9 +49,6 @@ public class ScheduleOfRateController {
 
     @Autowired
     private HoardingCategoryService hoardingCategoryService;
-
-    @Autowired
-    private SubCategoryService subCategoryService;
 
     @Autowired
     private ApplicationProperties applicationproperties;
@@ -218,11 +216,12 @@ public class ScheduleOfRateController {
     @RequestMapping(value = "/search-for-scheduleofrate", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchScheduleOfRate(final HttpServletRequest request,
             final HttpServletResponse response) {
-        final Long category = Long.valueOf(request.getParameter("category"));
-        final Long subCategory = Long.valueOf(request.getParameter("subCategory"));
-        final Long unitOfMeasure = Long.valueOf(request.getParameter("uom"));
-        final Long classtype = Long.valueOf(request.getParameter("rateClass"));
-        final Long finyear = Long.valueOf(request.getParameter("finyear"));
+        
+        final String category = request.getParameter("category");
+        final String subCategory = request.getParameter("subCategory");
+        final String unitOfMeasure = request.getParameter("uom");
+        final String classtype = request.getParameter("rateClass");
+        final String finyear = request.getParameter("finyear");
         return "{ \"data\":" + new GsonBuilder().setDateFormat(applicationproperties.defaultDatePattern()).create()
                 .toJson(advertisementRateService.getScheduleOfRateSearchResult(category,subCategory,unitOfMeasure,classtype,finyear)) + "}";
 

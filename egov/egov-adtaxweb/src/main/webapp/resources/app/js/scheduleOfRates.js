@@ -88,12 +88,6 @@ jQuery(document).ready(function ($) {
 				    	addNewRowToTable(currentIndex);
 			});
 
-	
-/*	$('#unitrate').keypress(function(e) {
-		var k = e.charCode;
-		return(k == 0 || (k >= 48 && k <= 57));
-	});*/
-	
 	$('#schedleOfrateBtn').click(function() {  
 			$('#scheduleOfRateformResult').attr('method', 'post');
 	 	$('#scheduleOfRateformResult').attr('action', '/adtax/rates/create');
@@ -112,6 +106,9 @@ jQuery(document).ready(function ($) {
 		
 	var datadcbtbl = $('#search-scheduleofrate-table');
 	$('#searchScheduleOfRate').click(function(e){
+	if(!validateInput())
+		return false;
+			
 		datadcbtbl.dataTable({
 			"ajax": {url:"/adtax/rates/search-for-scheduleofrate",
 				type:"POST",
@@ -129,9 +126,15 @@ jQuery(document).ready(function ($) {
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
-		      { "data" : "unitFrom", "title":"Unit From"},
-			  { "data" : "unitTo", "title": "Unit To"},
-			  { "data" : "amount", "title": "Unit Of Measure"}
+			  { "data" : "financialyear", "title":"Financial Year"},
+			  { "data" : "unitfactor", "title":"Unit Rate"},
+			  { "data" : "category", "title":"Category"},
+			  { "data" : "subCategory", "title":"Sub Category"},
+			  { "data" : "unitofmeasure", "title":"Unit Of Measure"},
+			  { "data" : "classtype", "title":"Rate Class"},
+		      { "data" : "unitfrom", "title":"Unit From"},
+			  { "data" : "unitto", "title": "Unit To"},
+			  { "data" : "amount", "title": "Amount"}
 			  
 			  ]
 		});
@@ -199,4 +202,21 @@ function addNewRowToTable(currentIndex)
 				$('#advertisementRatesDetailsUnitFrom'+(currentIndex - 1)).val($('#advertisementRatesDetailsUnitTo'+(currentIndex - 2)).val());
 				
 	    	}
+}
+
+function validateInput()
+{
+	var catVal= document.getElementById("category").value;
+	var subCatVal=document.getElementById("subCategory").value;
+	var uomVal=document.getElementById("unitofmeasure").value;
+	var rateClassVal=document.getElementById("rateClass").value;
+	var financialYearVal=document.getElementById("financialyear").value;
+	
+	if(catVal=="" && subCatVal=="" && uomVal=="" && rateClassVal=="" && financialYearVal=="")
+		{
+		bootbox.alert("Please Select atleast one field", function(result){
+		});
+		return false;
+		}
+	return true;
 }
