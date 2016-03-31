@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -207,9 +208,11 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         } else {
             if (null != workFlowAction)
                 try {
+                    final CFinancialYear financialYear = lineEstimateService
+                            .getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
                     newLineEstimate = lineEstimateService.updateLineEstimateDetails(lineEstimate, approvalPosition,
                             approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction,
-                            mode, null, removedLineEstimateDetailsIds, files);
+                            mode, null, removedLineEstimateDetailsIds, files, financialYear);
                 } catch (final ValidationException e) {
                     model.addAttribute("message", messageSource.getMessage("error.budgetappropriation.amount", null, null));
                     return "lineestimate-success";
