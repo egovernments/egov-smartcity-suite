@@ -2139,7 +2139,7 @@ function showHideMandataryMark(obj){
 									<egov:ajaxdropdown id="accountNumberMasterDropdown" fields="['Text','Value']" dropdownId='accountNumberMaster'
 				         				url='receipts/ajaxBankRemittance-accountList.action' selectedValue="%{bankaccount.id}"/>
 				       			</td>
-				       			<td class="bluebox"><s:text name="billreceipt.payment.bankaccountname"/></td>
+				       			<td class="bluebox"><s:text name="billreceipt.payment.bankaccountname"/><span class="mandatory"></td>
 				       			<td class="bluebox"><s:select headerValue="--Select--"  headerKey="0"
 		                			list="dropdownData.accountNumberList" listKey="id" id="accountNumberMaster" listValue="accountnumber"
 		                			label="accountNumberMaster" name="bankAccountId" value="%{bankAccountId}"/>
