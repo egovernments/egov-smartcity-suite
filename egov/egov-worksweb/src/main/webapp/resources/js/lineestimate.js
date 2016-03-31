@@ -156,7 +156,7 @@ function addLineEstimate() {
 						if (($(this).data('optional') === 0)
 								&& (!$(this).val())) {
 							$(this).focus();
-							alert($(this).data('errormsg'));
+							bootbox.alert($(this).data('errormsg'));
 							isValid = 0;// set validation failure
 							return false;
 						}
@@ -209,7 +209,7 @@ function addLineEstimate() {
 			
 		}
 	} else {
-		  alert('limit reached!');
+		  bootbox.alert('limit reached!');
 	}
 }
 
@@ -250,7 +250,7 @@ function deleteLineEstimate(obj) {
 	var rowcount=$("#tblestimate tbody tr").length;
 
     if(rowcount<=1) {
-		alert("This row can not be deleted");
+		bootbox.alert("This row can not be deleted");
 		return false;
 	} else {
 		tbl.deleteRow(rIndex);
@@ -361,7 +361,7 @@ function disableSlumFields() {
 	slumfields.style.display = slum.checked ? "block" : "none";
 	document.getElementById("typeOfSlum").disabled = true;
 	document.getElementById("beneficiary").disabled = true;
-	$('#nonslum').trigger('click');
+	$('#nonslum').attr('checked', 'checked');
 }
 
 function showSlumFields() {
@@ -372,7 +372,7 @@ function showSlumFields() {
 	slumfields.style.display = slum.checked ? "block" : "none";
 	document.getElementById("typeOfSlum").disabled = false;
 	document.getElementById("beneficiary").disabled = false;
-	$('#slum').trigger('click');
+	$('#slum').attr('checked', 'checked');
 	
 }
 
@@ -538,7 +538,7 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');
 		
-		return confirm($('#confirm').val());
+		bootbox.confirm($('#confirm').val(), function(result) {return result});
 	}
 	if (button != null && button == 'Forward') {
 		$('#approvalDepartment').attr('required', 'required');
