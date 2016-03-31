@@ -3034,6 +3034,11 @@ public class CommonAction extends BaseFormAction {
                     bankaccount.setAccounttype(account[1].toString());
                     final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
                     chartofaccounts.setGlcode(account[3].toString());
+                    final Bankbranch branch = new Bankbranch();
+                    final Bank bank = new Bank();
+                    bank.setName(account[1].toString());
+                    branch.setBank(bank);
+                    bankaccount.setBankbranch(branch);
                     bankaccount.setChartofaccounts(chartofaccounts);
                     bankaccount.setId(Long.valueOf(account[2].toString()));
                     addedBanks.add(accountNumberAndType);
@@ -3049,7 +3054,7 @@ public class CommonAction extends BaseFormAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccountsWithApprovedRemittances.");
-        return "bankAccNum-bankName";
+        return "bankAccNum";
     }
 
     public void setAsOnDate(final Date asOnDate) {
