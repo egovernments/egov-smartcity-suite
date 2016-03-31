@@ -72,7 +72,7 @@ public class TransactionSummaryController {
     private void prepareNewForm(Model model) {
         model.addAttribute("accountdetailtypes", accountdetailtypeService.findAll());
         model.addAttribute("cFinancialYears", financialYearDAO.getAllActivePostingFinancialYear());
-        model.addAttribute("funds", fundHibernateDAO.findAll());
+        model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
         model.addAttribute("cChartOfAccountss",
                 chartOfAccountsDAO.findAll());
         model.addAttribute("departments", departmentService.getAllDepartments());

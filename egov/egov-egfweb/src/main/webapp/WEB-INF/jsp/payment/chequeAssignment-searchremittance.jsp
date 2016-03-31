@@ -202,8 +202,8 @@
 						<s:if test="%{reassignSurrenderChq && paymentMode!='cheque'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory"></span>
-								<s:textfield id="chequeNumber0" name="chequeNo"
-									value="%{chequeNo}"
+								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+									size="6" value="%{chequeNo}"
 									onchange="validateReassignSurrenderChequeNumber(this)" /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.date" /> <span
@@ -223,8 +223,9 @@
 							test="%{!isChequeNoGenerationAuto() && paymentMode!='cheque'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory"></span>
-								<s:textfield id="chequeNumber0" name="chequeNo"
-									value="%{chequeNo}" onchange="validateChequeNumber(this)" /></td>
+								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+									size="6" value="%{chequeNo}"
+									onchange="validateChequeNumber(this)" /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.date" /><span
 								class="mandatory"></span> <s:date name="chequeDt"
@@ -287,6 +288,8 @@
 					document.chequeAssignment.submit();
 					return true;
 					}
+				else
+					return false;
 				</s:if> 
 				<s:else>
 				document.chequeAssignment.action= "/EGF/payment/chequeAssignment-create.action";
@@ -305,19 +308,23 @@
 				var chequeNo=document.getElementById('chequeNumber0').value;
 				
 				if(chequeNo==null || chequeNo==''){
-					bootbox.alert("Please enter a valid cheque Number");
-						return false;   
-				}
+						bootbox.alert('Please enter a valid cheque Number', function() {
+							document.getElementById('chequeNumber0').value = "";  
+							return false;
+						});
+				}else{
 				for(var index=0;index<chequeSize;index++){
 					var paymentDate= document.getElementsByName("chequeAssignmentList["+index+"].tempPaymentDate")[0].value; 
 					if(document.getElementById('isSelected'+index).checked){
 						chkCount++;
 					
 					if( compareDate(paymentDate,chequeDate) == -1){               
-						bootbox.alert('Cheque Date cannot be less than than payment Date');
-						document.getElementById('chequeDt').value='';
-						document.getElementById('chequeDt').focus();
-						return false;
+						bootbox.alert('Cheque Date cannot be less than than payment Date', function() {
+							document.getElementById('chequeDt').value='';
+							document.getElementById('chequeDt').focus();
+							return false;
+						});
+					
 					}
 					if(chkCount==noOfSelectedRows){
 						break;
@@ -325,6 +332,8 @@
 					}
 				}
 				return true;
+				}
+				
 			}
 			function validateChequeNumber(obj)
 			{

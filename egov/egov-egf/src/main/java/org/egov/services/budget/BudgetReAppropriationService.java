@@ -589,7 +589,9 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             final BudgetReAppropriationView appropriation, final Position position, final BudgetReAppropriationMisc misc) {
         final BudgetReAppropriation reAppropriation = new BudgetReAppropriation();
         detail.setPlanningPercent(appropriation.getPlanningPercent());
-        detail.setBudgetAvailable(appropriation.getPlanningBudgetApproved());
+        detail.setBudgetAvailable(appropriation.getDeltaAmount().multiply(detail.getPlanningPercent())
+                .divide(new BigDecimal(String
+                        .valueOf(100))));
         reAppropriation.setBudgetDetail(detail);
         reAppropriation.setReAppropriationMisc(misc);
         reAppropriation.setAnticipatoryAmount(appropriation.getAnticipatoryAmount());
