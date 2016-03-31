@@ -44,7 +44,7 @@ import java.util.Date;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface FiscalPeriodDAO extends GenericDAO {
+public interface FiscalPeriodDAO  {
 	public String getFiscalPeriodIds(String financialYearId);
 	public CFiscalPeriod getFiscalPeriodByDate(Date voucherDate);
 }

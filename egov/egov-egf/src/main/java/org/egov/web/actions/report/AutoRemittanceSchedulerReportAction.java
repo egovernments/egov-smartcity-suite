@@ -39,6 +39,10 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +61,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
@@ -73,6 +78,10 @@ import org.hibernate.Query;
             + AutoRemittanceSchedulerReportAction.NEW + ".jsp")
 })
 public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     private static final long serialVersionUID = 1L;
     private static final String[] REMITTANCE_SCHEDULER_SCHEDULAR_TYPE = { "Auto", "Manual", "Both" };
@@ -86,6 +95,8 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
     private Date runDateTo;
     private Boolean nextRunDate;
     private static final int PAGE_SIZE = 30;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private List<Object> paramList;
     StringBuilder dynQuery = new StringBuilder(800);
     private static Logger LOGGER = Logger.getLogger(AutoRemittanceSchedulerReportAction.class);
@@ -169,7 +180,7 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
             final String glcode = (String) row[4];
             String recCoa = "";
             if (StringUtils.isNotEmpty(glcode)) {
-                final CChartOfAccounts ca = null;// new CommonsServiceImpl().getCChartOfAccountsByGlCode(glcode);
+                final CChartOfAccounts ca = null;// chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glcode);
                 recCoa = ca.getGlcode() + "-" + ca.getName();
             }
             reportBean.setRecoveryCoa(recCoa);
@@ -201,7 +212,7 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
     private void getRecoveryCOA()
     {
         final String queryString = "select c.glcode, c.glcode || '-' || c.name from Recovery r join r.chartofaccounts c where r.isactive=true and r.remittanceMode='A'  order by c.glcode ";
-        final Query query = HibernateUtil.getCurrentSession().createQuery(queryString);
+        final Query query = persistenceService.getSession().createQuery(queryString);
         final List chartList = query.list();
         final Iterator itr = chartList.iterator();
         while (itr.hasNext())

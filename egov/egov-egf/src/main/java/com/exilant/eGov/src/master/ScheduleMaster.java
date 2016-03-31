@@ -51,6 +51,9 @@ package com.exilant.eGov.src.master;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -76,7 +79,11 @@ public class ScheduleMaster extends AbstractTask {
     private static final String SCHNUMBER = "schNumber";
     private static final String REPTYPE = "repType";
     private static final String REPSUBTYPE = "repSubType";
-private @Autowired ScheduleMapping scheduleMapping;
+
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired ScheduleMapping scheduleMapping;
     /*
      * Abstract method of AbstractTask Class
      */
@@ -101,7 +108,7 @@ private @Autowired ScheduleMapping scheduleMapping;
         final String schNo = dc.getValue(SCHNUMBER);
         try {
             final String query = "select id from schedulemapping where schedule = ?";
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createSQLQuery(query);
             pstmt.setString(0, schNo);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
@@ -259,7 +266,7 @@ private @Autowired ScheduleMapping scheduleMapping;
                     final String query = "update chartofaccounts set Receiptscheduleid = ?,Receiptoperation = ? where Receiptscheduleid= ?";
                     // query=query+" Receiptscheduleid=null,Receiptoperation=null where Receiptscheduleid="+schMapId;
                     // query = sbuffer.toString();
-                    pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                    pstmt = persistenceService.getSession().createSQLQuery(query);
                     pstmt.setString(0, null);
                     pstmt.setString(1, null);
                     pstmt.setInteger(2, schMapId);
@@ -270,7 +277,7 @@ private @Autowired ScheduleMapping scheduleMapping;
                 else if ("POP".equalsIgnoreCase(dc.getValue(REPSUBTYPE)) || "PNOP".equalsIgnoreCase(dc.getValue(REPSUBTYPE))) {
                     final String query = "update chartofaccounts set Paymentscheduleid = ?,Paymentoperation = ? where Paymentscheduleid = ?";
                     // query=query+" Paymentscheduleid=null,Paymentoperation=null where Paymentscheduleid="+schMapId;
-                    pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                    pstmt = persistenceService.getSession().createSQLQuery(query);
                     pstmt.setString(0, null);
                     pstmt.setString(1, null);
                     pstmt.setInteger(2, schMapId);
@@ -281,7 +288,7 @@ private @Autowired ScheduleMapping scheduleMapping;
             }
             else {
                 final String query = "update chartofaccounts set  ScheduleId= ?,Operation= ? where ScheduleId= ?";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                pstmt = persistenceService.getSession().createSQLQuery(query);
                 pstmt.setString(0, null);
                 pstmt.setString(1, null);
                 pstmt.setInteger(2, schMapId);

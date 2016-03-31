@@ -274,8 +274,8 @@ public class JournalVoucherActionHelper {
             headerdetails.put(VoucherConstant.FUNCTIONCODE, voucherHeader.getVouchermis().getFunction().getCode());
         return headerdetails;
     }
-
-    private CVoucherHeader createVoucherAndledger(final List<VoucherDetails> billDetailslist,
+    @Transactional
+    public CVoucherHeader createVoucherAndledger(final List<VoucherDetails> billDetailslist,
             final List<VoucherDetails> subLedgerlist, CVoucherHeader voucherHeader) {
         try {
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails(voucherHeader);
@@ -293,7 +293,7 @@ public class JournalVoucherActionHelper {
                     if (voucherHeader.getIsRestrictedtoOneFunctionCenter())
                         detailMap.put(VoucherConstant.FUNCTIONCODE, voucherHeader.getVouchermis().getFunction().getCode());
                     else if (null != voucherDetail.getFunctionIdDetail()) {
-                        final CFunction function = (CFunction) HibernateUtil.getCurrentSession().load(CFunction.class,
+                        final CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
                                 voucherDetail.getFunctionIdDetail());
                         detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
                     } else if (null != voucherHeader.getVouchermis().getFunction())

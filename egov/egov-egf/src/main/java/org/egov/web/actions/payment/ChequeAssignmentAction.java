@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -153,7 +156,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private static final String SURRENDERSEARCH = "surrendersearch";
     private static final String SURRENDERRTGSSEARCH = "surrenderRTGSsearch";
     private String paymentMode, inFavourOf;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     @Qualifier("paymentService")
     private PaymentService paymentService;
     private Integer bankaccount, selectedRows = 0, bankbranch;
@@ -527,8 +534,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     @Action(value = "/payment/chequeAssignment-getReceiptDetails")
     public String getReceiptDetails() {
         Query query = null;
-        query = HibernateUtil
-                .getCurrentSession()
+        query = persistenceService.getSession()
                 .createSQLQuery(
                         "select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ," +
                                 " redtl.remittedamt as receiptAmount,redtl.remittedamt as deductedAmount" +
@@ -779,14 +785,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Map<String, String> loadChequeSerialNo(final Integer acc) {
 
         chequeSlNoMap = new LinkedHashMap<String, String>();
-        final List<String> cheueSlList = HibernateUtil
-                .getCurrentSession()
+        final List<Object[]> cheueSlList = persistenceService.getSession()
                 .createSQLQuery(
-                        "select distinct(serialNo) from  egf_account_cheques where bankAccountId=" + acc
+                        "select distinct(serialNo) ,fs.financialyear from  egf_account_cheques ac,financialyear fs where ac.serialno = fs.id and  bankAccountId=" + acc
                                 + " order by serialNo desc ").list();
         if (cheueSlList != null)
-            for (final String s : cheueSlList)
-                chequeSlNoMap.put(s, s);
+            for (final Object[] s : cheueSlList)
+                chequeSlNoMap.put(s[0], s[1]);
         return chequeSlNoMap;
     }
 
@@ -1332,7 +1337,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         for (final InstrumentVoucher instrumentVoucher : instrumentHeader.getInstrumentVouchers())
         {
             final Object[] obj = (Object[]) persistenceService
-                    .find(" select gld.detailTypeId,gld.detailKeyId,gld.amount from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId and gl.voucherHeaderId=?",
+                    .find(" select gld.detailTypeId.id,gld.detailKeyId,gld.amount from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.voucherHeaderId=?",
                             instrumentVoucher.getVoucherHeaderId());
             if (obj != null)
             {

@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,6 +92,10 @@ import org.hibernate.Session;
     @Result(name = CancelVoucherAction.SEARCH, location = "cancelVoucher-search.jsp")
 })
 public class CancelVoucherAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     private static final long serialVersionUID = -8065315728701853083L;
     private static final Logger LOGGER = Logger.getLogger(CancelVoucherAction.class);
@@ -158,7 +165,7 @@ public class CancelVoucherAction extends BaseFormAction {
     }
 
     private boolean isSuperUser() {
-        final Query queryFnd = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query queryFnd = persistenceService.getSession().createSQLQuery(
                 " SELECT usrr.USERID FROM EG_USERROLE usrr,  EG_ROLE r WHERE " +
                         " usrr.ROLEID=r.ID and " +
                         " usrr.userid     =" + loggedInUser + " AND  lower(r.NAME)='" + FinancialConstants.SUPERUSER + "'");
@@ -261,8 +268,7 @@ public class CancelVoucherAction extends BaseFormAction {
             voucherList.addAll(persistenceService.findAllBy(noChequePaymentQry));
 
             // Query for cancelling BPVs for which cheque is assigned and cancelled
-            final Query query1 = HibernateUtil
-                    .getCurrentSession()
+            final Query query1 = persistenceService.getSession()
                     .createSQLQuery(
                             "SELECT distinct vh.id FROM egw_status status"
                                     + misTab
@@ -322,7 +328,7 @@ public class CancelVoucherAction extends BaseFormAction {
                 + ",vh.lastModifiedBy.id=:modifiedby , vh.lastModifiedDate=:modifiedDate where vh.refvhId=:vhId";
         final String cancelVhByRefCGNQuery = "Update CVoucherHeader vh set vh.status=" + FinancialConstants.CANCELLEDVOUCHERSTATUS
                 + ",vh.lastModifiedBy.id=:modifiedby , vh.lastModifiedDate=:modifiedDate where vh.voucherNumber=:vhNum";
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = persistenceService.getSession();
         for (int i = 0; i < selectedVhs.length; i++) {
             voucherObj = (CVoucherHeader) persistenceService.find("from CVoucherHeader vh where vh.id=?", selectedVhs[i]);
             validateBeforeCancel(voucherObj);
@@ -445,7 +451,7 @@ public class CancelVoucherAction extends BaseFormAction {
                     moduleType = FinancialConstants.PENSIONBILL;
                 }
 
-            final Query billQry = HibernateUtil.getCurrentSession().createSQLQuery(cancelQuery.toString());
+            final Query billQry = persistenceService.getSession().createSQLQuery(cancelQuery.toString());
             billQry.setString("module", moduleType);
             billQry.setString("description", description);
             billQry.setString("billstatus", billstatus);

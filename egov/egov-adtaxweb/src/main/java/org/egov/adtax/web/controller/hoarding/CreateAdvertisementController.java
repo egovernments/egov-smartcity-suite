@@ -84,8 +84,11 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     @RequestMapping(value = "create", method = GET)
     public String createHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final Model model) {
-        prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
+         WorkflowContainer workFlowContainer= new WorkflowContainer();
+         workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+        prepareWorkflow(model, advertisementPermitDetail,workFlowContainer);
         model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+       
         model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
         model.addAttribute("currentState", "NEW");
         return "hoarding-create";
@@ -96,6 +99,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             final BindingResult resultBinder,
             final RedirectAttributes redirAttrib, final HttpServletRequest request, final Model model,
             @RequestParam String workFlowAction) {
+       
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateApplicationDate(advertisementPermitDetail, resultBinder);
         validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
@@ -104,7 +108,9 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
         advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.WORKFLOW_IN_PROGRESS);
         if (resultBinder.hasErrors()) {
-            prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
+            WorkflowContainer workFlowContainer= new WorkflowContainer();
+            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
             model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
             model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
             return "hoarding-create";

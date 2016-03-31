@@ -43,6 +43,9 @@
  */
 package com.exilant.eGov.src.reports;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -86,7 +89,11 @@ public class GeneralLedgerReport {
     private static final Logger LOGGER = Logger.getLogger(GeneralLedgerReport.class);
     com.exilant.eGov.src.transactions.OpBal OpBal = new com.exilant.eGov.src.transactions.OpBal();
     DecimalFormat dft = new DecimalFormat("##############0.00");
-    private @Autowired EGovernCommon eGovernCommon;
+    
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired EGovernCommon eGovernCommon;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
@@ -220,7 +227,7 @@ public class GeneralLedgerReport {
         try {
 
             try {
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                pstmt = persistenceService.getSession().createSQLQuery(query);
             } catch (final Exception e) {
                 LOGGER.error("Exception in creating statement:" + pstmt, e);
                 throw taskExc;
@@ -265,7 +272,7 @@ public class GeneralLedgerReport {
                     LOGGER.info("openingBalance--------------->" + openingBalance);
 
                 final String sqlString = "select name as \"glname\" from chartofaccounts where glcode=?";
-                pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sqlString);
+                pstmt = persistenceService.getSession().createSQLQuery(sqlString);
                 pstmt.setString(0, glCode1);
                 final List res = pstmt.list();
                 String aName = "";
@@ -353,7 +360,7 @@ public class GeneralLedgerReport {
                         if (element[13].toString() != null)
                             fundName = element[13].toString();
                         final String sqlString1 = "select name as \"glname\" from chartofaccounts where glcode=?";
-                        pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sqlString1);
+                        pstmt = persistenceService.getSession().createSQLQuery(sqlString1);
                         pstmt.setString(0, code);
                         final List res = pstmt.list();
                         String aName = "";
@@ -949,7 +956,7 @@ public class GeneralLedgerReport {
             LOGGER.info("**********************: OPBAL: " + queryYearOpBal);
         try {
             int i = 0;
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryYearOpBal);
+            pstmt = persistenceService.getSession().createSQLQuery(queryYearOpBal);
             if (!fundId.equalsIgnoreCase(""))
                 pstmt.setLong(i++, Long.valueOf(fundId));
             if (!fundSourceId.equalsIgnoreCase(""))
@@ -1044,7 +1051,7 @@ public class GeneralLedgerReport {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("***********: OPBAL: " + queryTillDateOpBal);
         try {
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryTillDateOpBal);
+            pstmt = persistenceService.getSession().createSQLQuery(queryTillDateOpBal);
             int i = 0;
             if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("")) {
                 if (!fundId.equalsIgnoreCase(""))
@@ -1115,7 +1122,7 @@ public class GeneralLedgerReport {
         Query pst = null;
         try {
             final String query = "select name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pst = persistenceService.getSession().createSQLQuery(query);
             pst.setString(0, glCode);
             final List list = pst.list();
             final Object[] objects = list.toArray();
@@ -1134,7 +1141,7 @@ public class GeneralLedgerReport {
         Query pst = null;
         try {
             final String query = "select name  as \"name\" from fund where id=?";
-            pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pst = persistenceService.getSession().createSQLQuery(query);
             if (fundId.isEmpty())
                 pst.setInteger(0, 0);
             else

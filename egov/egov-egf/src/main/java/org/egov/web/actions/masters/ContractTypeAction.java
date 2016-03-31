@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.Date;
 import java.util.List;
 
@@ -85,7 +88,11 @@ public class ContractTypeAction extends BaseFormAction {
     private String success = "";
     protected static final Logger LOGGER = Logger.getLogger(ContractTypeAction.class);
     private boolean duplicateCode = false;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovMasterDataCaching masterDataCache;
     
     @Override
@@ -147,8 +154,8 @@ public class ContractTypeAction extends BaseFormAction {
 
             //persistenceService.setType(EgwTypeOfWork.class);
             persistenceService.persist(typeOfWork);
-            HibernateUtil.getCurrentSession().flush();
-            HibernateUtil.getCurrentSession().clear();
+            persistenceService.getSession().flush();
+            persistenceService.getSession().clear();
             setSuccess("yes");
         } catch (final Exception e) {
             setSuccess("no");

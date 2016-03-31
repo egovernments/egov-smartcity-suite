@@ -1,13 +1,21 @@
 package org.egov.commons.service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.Metamodel;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.repository.AccountdetailtypeRepository;
+import org.egov.masters.model.AccountEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -50,20 +58,35 @@ public class AccountdetailtypeService  {
 	}
 	
 	
-	public List<Accountdetailtype> search(Accountdetailtype accountdetailtype){
-		if(accountdetailtype.getName()!=null && accountdetailtype.getDescription()!=null)
+	public List<Accountdetailtype> search(Accountdetailtype accountdetailtype,String mode){
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Accountdetailtype> createQuery = cb.createQuery(Accountdetailtype.class);
+		Root<Accountdetailtype> accountdetailtypes = createQuery.from(Accountdetailtype.class);
+		createQuery.select(accountdetailtypes);
+		Metamodel m = entityManager.getMetamodel();
+		javax.persistence.metamodel.EntityType<Accountdetailtype> Accountdetailtype_ = m.entity(Accountdetailtype.class);
+    
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		if(accountdetailtype.getName()!=null)
 		{
-			return accountdetailtypeRepository.findByNameContainingIgnoreCaseAndDescriptionContainingIgnoreCase(accountdetailtype.getName(),accountdetailtype.getDescription());
-		}else if(accountdetailtype.getName()!=null)
-		{
-			return accountdetailtypeRepository.findByNameContainingIgnoreCase(accountdetailtype.getName());
-		}else if(accountdetailtype.getDescription()!=null)
-		{
-			return accountdetailtypeRepository.findByDescriptionContainingIgnoreCase(accountdetailtype.getDescription());
+		String name="%"+accountdetailtype.getName().toLowerCase()+"%";
+		predicates.add(cb.isNotNull(accountdetailtypes.get("name")));
+		predicates.add(cb.like(cb.lower(accountdetailtypes.get(Accountdetailtype_.getDeclaredSingularAttribute("name", String.class))),name));
 		}
-		else
+		if(accountdetailtype.getDescription()!=null)
 		{
-		return accountdetailtypeRepository.findAll();
+		String code="%"+accountdetailtype.getDescription().toLowerCase()+"%";
+		predicates.add(cb.isNotNull(accountdetailtypes.get("description")));
+		predicates.add(cb.like(cb.lower(accountdetailtypes.get(Accountdetailtype_.getDeclaredSingularAttribute("description", String.class))),code));
 		}
+		if(mode.equalsIgnoreCase("edit"))
+		{
+			predicates.add(cb.equal(accountdetailtypes.get("fullQualifiedName"), "org.egov.masters.model.AccountEntity"));
+		}
+		createQuery.where(predicates.toArray(new Predicate[]{}));
+		TypedQuery<Accountdetailtype> query=entityManager.createQuery(createQuery);
+
+		List<Accountdetailtype> resultList = query.getResultList();
+		return resultList;	
 	}
 }

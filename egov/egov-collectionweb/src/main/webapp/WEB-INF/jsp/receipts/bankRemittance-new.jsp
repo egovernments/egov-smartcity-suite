@@ -376,7 +376,7 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<td width="4%" class="bluebox2">&nbsp;</td>
 						<td width="15%" class="bluebox2"><s:text
-								name="bankremittance.bank" /><span class="mandatory">*</span>:</td>
+								name="bankremittance.bank" /><span class="mandatory"></span>:</td>
 						<td width="36%" class="bluebox2"><s:select
 								headerValue="--Select--" headerKey="0"
 								list="dropdownData.bankBranchList" listKey="id"
@@ -389,7 +389,7 @@
 								url='receipts/ajaxBankRemittance-accountList.action'
 								selectedValue="%{bankaccount.id}" /></td>
 						<td width="15%" class="bluebox2"><s:text
-								name="bankremittance.accountnumber" /><span class="mandatory">*</span>:</td>
+								name="bankremittance.accountnumber" /><span class="mandatory"></span>:</td>
 						<td width="30%" class="bluebox2"><s:select
 								headerValue="--Select--" headerKey="0"
 								list="dropdownData.accountNumberList" listKey="id"

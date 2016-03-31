@@ -44,6 +44,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgfAccountcodePurpose;
 import org.egov.commons.Fund;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
@@ -51,7 +52,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
@@ -74,6 +75,8 @@ public class FundAction extends BaseFormAction {
     public static final String ACC_CODE_PURPOSE = "Bank Codes";
     protected static final Logger LOGGER = Logger.getLogger(FundAction.class);
     private String success = "";
+    @Autowired
+    private UserService userService;
 
     @Override
     @SkipValidation
@@ -97,10 +100,10 @@ public class FundAction extends BaseFormAction {
     private boolean getParentIsNotLeaf(final Fund fund) {
         boolean isNotLeaf = false;
 
-        if (fund.getFund() != null && fund.getFund().getId() != null) {
+        if (fund.getParentId() != null && fund.getParentId().getId() != null) {
 
             final List<Fund> fundList = new ArrayList<Fund>(persistenceService.findAllBy("from Fund where fund.id=?",
-                    fund.getFund().getId()));
+                    fund.getParentId().getId()));
             if (fundList.size() != 0)
                 isNotLeaf = true;
         }
@@ -125,16 +128,16 @@ public class FundAction extends BaseFormAction {
             fund.setIsnotleaf(false);
             fund.setLlevel(parentLevel);
 
-            if (fund.getFund() != null && fund.getFund().getId() != null) {
-                parentFund = (Fund) persistenceService.find("from Fund where id=?", fund.getFund().getId());
+            if (fund.getParentId() != null && fund.getParentId().getId() != null) {
+                parentFund = (Fund) persistenceService.find("from Fund where id=?", fund.getParentId().getId());
                 parentFund.setIsnotleaf(true);
                 parentLevel = parentFund.getLlevel().add(BigDecimal.ONE);
             }
             fund.setLlevel(parentLevel);
             final EgfAccountcodePurpose accCodePurpose = (EgfAccountcodePurpose) persistenceService.
                     find("From EgfAccountcodePurpose where name = '" + ACC_CODE_PURPOSE + "'");
-            fund.setEgfAccountcodePurpose(accCodePurpose);
-            fund.setFund(parentFund);
+          //  fund.setEgfAccountcodePurpose(accCodePurpose);//need to check
+            fund.setParentId(parentFund);
 
             //persistenceService.setType(Fund.class);
             persistenceService.persist(fund);
@@ -162,17 +165,17 @@ public class FundAction extends BaseFormAction {
         try {
             EgovMasterDataCaching.removeFromCache("egi-fund");
             final Fund fundOld = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
-            if (fund.getFund() != null && fund.getFund().getId() != null) {
+            if (fund.getParentId() != null && fund.getParentId().getId() != null) {
                 parentFund = (Fund) persistenceService.find("from Fund where id=?",
-                        fund.getFund().getId());
+                        fund.getParentId().getId());
                 parentLevel = parentFund.getLlevel().add(BigDecimal.ONE);
             }
 
             // check if the old and the new parent fund are not the same.
-            if (fund.getFund() != null && fund.getFund().getId() != null && fundOld.getFund() != null
-                    && fundOld.getFund().getId() != null)
-                if (!fundOld.getFund().getId().equals(fund.getFund().getId())) {
-                    final Fund oldParentFund = (Fund) persistenceService.find("from Fund where id=?", fundOld.getFund().getId());
+            if (fund.getParentId() != null && fund.getParentId().getId() != null && fundOld.getParentId() != null
+                    && fundOld.getParentId().getId() != null)
+                if (!fundOld.getParentId().getId().equals(fund.getParentId().getId())) {
+                    final Fund oldParentFund = (Fund) persistenceService.find("from Fund where id=?", fundOld.getParentId().getId());
                     // setting the existing(old) parent fund isNotLeaf value
                     oldParentFund.setIsnotleaf(getParentIsNotLeaf(fundOld));
                     //persistenceService.setType(Fund.class);
@@ -185,13 +188,13 @@ public class FundAction extends BaseFormAction {
             fundOld.setIdentifier(fund.getIdentifier());
             fundOld.setIsactive(fund.getIsactive());
             fundOld.setLlevel(parentLevel);
-            fundOld.setLastmodified(new Date());
-            fundOld.setModifiedby(getLoggedInUser());
+            fundOld.setLastModifiedDate(new Date());
+            //fundOld.setLastModifiedBy( getLoggedInUser());
 
-            if (fund.getFund() != null && fund.getFund().getId() != null)
+            if (fund.getParentId() != null && fund.getParentId().getId() != null)
                 parentFund.setIsnotleaf(true);
 
-            fundOld.setFund(parentFund);
+            fundOld.setParentId(parentFund);
             setFund(fundOld);
             //persistenceService.setType(Fund.class);
             persistenceService.persist(fund);

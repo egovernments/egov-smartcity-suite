@@ -72,7 +72,7 @@ public class TransactionSummaryController {
     private void prepareNewForm(Model model) {
         model.addAttribute("accountdetailtypes", accountdetailtypeService.findAll());
         model.addAttribute("cFinancialYears", financialYearDAO.getAllActivePostingFinancialYear());
-        model.addAttribute("funds", fundHibernateDAO.findAll());
+        model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
         model.addAttribute("cChartOfAccountss",
                 chartOfAccountsDAO.findAll());
         model.addAttribute("departments", departmentService.getAllDepartments());
@@ -118,7 +118,7 @@ public class TransactionSummaryController {
 
                     transactionSummary.setFunctionid((CFunction) persistenceService.find("from CFunction where id=?",
                             transactionSummaryDto.getFunctionid().getId()));
-                    transactionSummary.setFund((Fund) fundHibernateDAO.findById(transactionSummaryDto.getFund().getId(), false));
+                    transactionSummary.setFund((Fund) fundHibernateDAO.fundById(transactionSummaryDto.getFund().getId(), false));
 
                     transactionSummary.setAccountdetailkey(ts.getAccountdetailkey());
                     if (ts.getAccountdetailtype() != null && ts.getAccountdetailtype().getId() != null)

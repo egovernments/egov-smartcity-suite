@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.convention.annotation.Result;
 import java.io.ByteArrayInputStream;
@@ -81,6 +84,10 @@ import org.hibernate.type.LongType;
     @Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" })
 })
 public class BudgetDetailAction extends BaseBudgetDetailAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final long serialVersionUID = 1L;
 
     private static final String ACTIONNAME = "actionName";
@@ -117,7 +124,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
                 final Budget b = budgetService.findById(budgetDetail.getBudget().getId(), false);
                 b.setDocumentNumber(budgetDocumentNumber);
                 budgetService.persist(b);
-                HibernateUtil.getCurrentSession().flush();
+                persistenceService.getSession().flush();
             }
             final BudgetDetail persist = budgetDetailService.createBudgetDetail(detail, getPosition(), getPersistenceService());
             populateSavedbudgetDetailListFor(persist.getBudget());
@@ -207,14 +214,14 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
         {
             String sqlStr = "select distinct (f.name)  as name,f.id as id   from function f,egf_budgetdetail bd where  f.id=bd.function and bd.budget="
                     + budgetDetail.getBudget().getId() + "  order  by f.name";
-            SQLQuery sqlQuery = HibernateUtil.getCurrentSession().createSQLQuery(sqlStr);
+            SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
             sqlQuery.addScalar("name")
             .addScalar("id", LongType.INSTANCE)
             .setResultTransformer(Transformers.aliasToBean(CFunction.class));
             functionList = sqlQuery.list();
             sqlStr = "select  distinct (bg.name) as name ,bg.id  as id from egf_budgetgroup bg,egf_budgetdetail  bd where  bg.id=bd.budgetgroup and bd.budget="
                     + budgetDetail.getBudget().getId() + "  order  by bg.name";
-            sqlQuery = HibernateUtil.getCurrentSession().createSQLQuery(sqlStr);
+            sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
             sqlQuery.addScalar("name")
             .addScalar("id", LongType.INSTANCE)
             .setResultTransformer(Transformers.aliasToBean(BudgetGroup.class));
@@ -235,7 +242,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
         final Long id = (Long) request.get("id");
         final String sqlStr = "select distinct (f.name)  as name,f.id as id   from function f,egf_budgetdetail bd where  f.id=bd.function and bd.budget="
                 + id + "  order  by f.name";
-        final SQLQuery sqlQuery = HibernateUtil.getCurrentSession().createSQLQuery(sqlStr);
+        final SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
         sqlQuery.addScalar("name")
         .addScalar("id", LongType.INSTANCE)
         .setResultTransformer(Transformers.aliasToBean(CFunction.class));
@@ -248,7 +255,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
         final Long id = (Long) request.get("id");
         final String sqlStr = "select  distinct (bg.name) as name ,bg.id  as id from egf_budgetgroup bg,egf_budgetdetail  bd where  bg.id=bd.budgetgroup and bd.budget="
                 + id + "  order  by bg.name";
-        final SQLQuery sqlQuery = HibernateUtil.getCurrentSession().createSQLQuery(sqlStr);
+        final SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
         sqlQuery.addScalar("name")
         .addScalar("id", LongType.INSTANCE)
         .setResultTransformer(Transformers.aliasToBean(BudgetGroup.class));
@@ -328,7 +335,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
                 final Budget b = budgetService.findById(budgetDetail.getBudget().getId(), false);
                 b.setDocumentNumber(budgetDocumentNumber);
                 budgetService.persist(b);
-                HibernateUtil.getCurrentSession().flush();
+                persistenceService.getSession().flush();
             }
             detail.getBudget().setFinancialYear(finYear);
             final BudgetDetail reCurrentYear = budgetDetailService.createBudgetDetail(detail, getPosition(),

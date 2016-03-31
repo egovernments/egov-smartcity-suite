@@ -52,13 +52,13 @@ public class AccountCheques extends BaseModel {
     private Date receivedDate;
     private Boolean isExhausted;
     private String nextChqNo;
-    private String serialNo;
+    private Long serialNo;
 
-    public String getSerialNo() {
+    public Long getSerialNo() {
         return serialNo;
     }
 
-    public void setSerialNo(final String serialNo) {
+    public void setSerialNo(final Long serialNo) {
         this.serialNo = serialNo;
     }
 

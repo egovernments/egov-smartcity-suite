@@ -148,9 +148,12 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator!=null ?wfInitiator.getPosition():null)
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-        } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+        } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)||
+                AdvertisementTaxConstants.WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction) ||
+                AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction)
+                ) {
             
-            //TODO: In case of rejection of renewal record, do not change status of advertisement . We need to change previous record as active.
+            // In case of rejection of renewal record, do not change status of advertisement . We need to change previous record as active.
             if (EgovThreadLocals.getUserId().equals(wfInitiator!=null && wfInitiator.getEmployee()!=null ?wfInitiator.getEmployee().getId():0 )) {
                 advertisementPermitDetail.setStatus(egwStatusHibernateDAO
                         .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
@@ -165,6 +168,28 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                 else
                 {
                     advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE); //for renewal
+                    
+                    /*
+                     * Activate previous agreement. Update demand as per previous agreement.
+                     */
+                    if (AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction) &&
+                            additionalRule != null && advertisementPermitDetail.getPreviousapplicationid() != null
+                            && additionalRule.equalsIgnoreCase(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE)) {
+
+                        advertisementPermitDetail.getPreviousapplicationid().setIsActive(true);
+                        advertisementPermitDetail.getPreviousapplicationid().setStatus(
+                                egwStatusHibernateDAO.getStatusByModuleAndCode(
+                                        AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
+                                        AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
+
+                        advertisementPermitDetail.setIsActive(false);
+                        // UPDATE DEMAND BASED ON LATEST RENEWAL DATA.
+                        advertisementPermitDetail.getAdvertisement().setDemandId(
+                                advertisementDemandService.updateDemandOnRenewal(advertisementPermitDetail
+                                        .getPreviousapplicationid(), advertisementPermitDetail.getAdvertisement()
+                                        .getDemandId()));
+                    }
+                    
                 }
             } else {
                 wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,

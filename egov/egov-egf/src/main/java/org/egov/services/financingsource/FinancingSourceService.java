@@ -40,8 +40,8 @@
 /**
  *
  */
-package org.egov.services.financingsource;
-
+package org.egov.services.financingsource;import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -76,7 +76,7 @@ public class FinancingSourceService extends PersistenceService<Fundsource, Integ
             LOGGER.debug("FinancingSourceService | getFinancialSourceBasedOnSubScheme | Start ");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Received sub scheme id = " + subSchemeId);
-        final Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(Fundsource.class);
+        final Criteria criteria = getSession().createCriteria(Fundsource.class);
         criteria.add(Restrictions.eq("isactive", true));
         if (!subSchemeId.equals(-1)) {
             final Criterion subschmeNull = Restrictions.isNull("subSchemeId");
@@ -95,7 +95,7 @@ public class FinancingSourceService extends PersistenceService<Fundsource, Integ
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("FinancingSourceService | getListOfSharedFinancialSource | Start ");
-        final Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(Fundsource.class);
+        final Criteria criteria = getSession().createCriteria(Fundsource.class);
         criteria.add(Restrictions.eq("isactive", true));
         criteria.add(Restrictions.isNull("subSchemeId"));
         criteria.addOrder(Order.asc("name"));

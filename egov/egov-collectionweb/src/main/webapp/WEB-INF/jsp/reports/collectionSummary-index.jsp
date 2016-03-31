@@ -134,19 +134,28 @@ function validate()
 		</tr>
 		<tr>
 			<td class="bluebox">&nbsp;</td>
-			<td class="bluebox"><s:text
-				name="collectionReport.criteria.dept" /></td>
-			<td class="bluebox"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.dept.all')}"
-				name="deptId" id="dept" cssClass="selectwk"
-				list="dropdownData.departmentList" listKey="id" listValue="name"
-				value="%{deptId}" /></td>
 			<td class="bluebox">
 				<s:text name="collectionReport.criteria.payment.mode"/></td>
 	        <td class="bluebox"><s:select headerKey="ALL"
 				headerValue="%{getText('collectionReport.payment.mode.all')}" 
 				name="paymentMode" id="paymentMode" cssClass="selectwk" 
 				list="paymentModes" value="%{paymentMode}" /> </td>
+				<td class="bluebox"><s:text
+							name="collectionReport.criteria.source" /></td>
+				<td class="bluebox"><s:select headerKey="ALL"
+						headerValue="%{getText('collectionReport.sources.all')}"
+						name="source" id="source" cssClass="selectwk" list="sources"
+						value="%{source}" /></td>
+		</tr>
+		<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="collectionReport.criteria.service" /></td>
+					<td class="bluebox"><s:select headerKey="-1"
+							headerValue="%{getText('collectionReport.service.all')}"
+							name="serviceId" id="service" cssClass="selectwk"
+							list="dropdownData.servicetypeList" listKey="id" listValue="name"
+							value="%{serviceId}" /></td>
 		</tr>
 	</table>
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>

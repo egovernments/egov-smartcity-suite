@@ -50,7 +50,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.service.CommonsService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
@@ -98,8 +97,7 @@ public class JournalVoucherAction extends BaseVoucherAction
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     private static final String VHID = "vhid";
     protected EisCommonService eisCommonService;
-    private CommonsService commonsService;
-
+    
     @Autowired
     private ScriptService scriptService;
 
@@ -177,6 +175,8 @@ public class JournalVoucherAction extends BaseVoucherAction
                 populateWorkflowBean();
                 voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean);
+                if (voucherHeader.getVouchermis().getBudgetaryAppnumber() == null)
+                {
                 message = "Voucher  "
                         + voucherHeader.getVoucherNumber()
                         + " Created Sucessfully"
@@ -185,9 +185,25 @@ public class JournalVoucherAction extends BaseVoucherAction
                                 new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
                                         .getOwnerPosition()) });
                 target = "success";
-                if (voucherHeader.getVouchermis().getBudgetaryAppnumber() != null)
-                    addActionMessage(getText("budget.recheck.sucessful", new String[] { voucherHeader.getVouchermis()
-                            .getBudgetaryAppnumber() }));
+                }
+                
+                else
+                {
+                	message = "Voucher  "
+                            + voucherHeader.getVoucherNumber()
+                            + " Created Sucessfully"
+                            + "\\n"
+                            + "And "
+                            +getText("budget.recheck.sucessful", new String[] { voucherHeader.getVouchermis()
+                                    .getBudgetaryAppnumber() })
+                            + "\\n"
+                            + getText("pjv.voucher.approved",
+                                    new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
+                                            .getOwnerPosition()) });
+                	
+                    target = "success";
+                   
+                }
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("JournalVoucherAction | create  | Success | message === " + message);
 
@@ -356,13 +372,6 @@ public class JournalVoucherAction extends BaseVoucherAction
         this.showMode = showMode;
     }
 
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
 
     public WorkflowBean getWorkflowBean() {
         return workflowBean;

@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.report;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -126,8 +126,8 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
             addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
@@ -155,8 +155,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
             LOGGER.debug("Querying to date range " + getFormattedDate(fromDate) + "to date "
                     + getFormattedDate(getNextDate(toDate)));
         //persistenceService.setType(InstrumentHeader.class);
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createSQLQuery(
                         "select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,"
                                 +

@@ -48,11 +48,12 @@ package org.egov.deduction.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.deduction.model.EgRemittance;
 import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.deduction.model.EgRemittanceGldtl;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,25 +65,49 @@ import org.springframework.transaction.annotation.Transactional;
  * @version 1.00
  */
 @Transactional(readOnly = true)
-public class EgRemittanceDetailHibernateDAO extends GenericHibernateDAO
-{
-    public EgRemittanceDetailHibernateDAO(final Class persistentClass, final Session session)
-    {
-        super(persistentClass, session);
-
+public class EgRemittanceDetailHibernateDAO {
+    @Transactional
+    public EgRemittanceDetail update(final EgRemittanceDetail entity) {
+        getCurrentSession().update(entity);
+        return entity;
     }
 
-    public List<EgRemittanceDetail> getEgRemittanceDetailByEgRmt(final EgRemittance egRmt)
-    {
-        final Query qry = HibernateUtil.getCurrentSession().createQuery(
-                "from EgRemittanceDetail erd where erd.egRemittance =:egRmt");
+    @Transactional
+    public EgRemittanceDetail create(final EgRemittanceDetail entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(EgRemittanceDetail entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public EgRemittanceDetail findById(Number id, boolean lock) {
+        return (EgRemittanceDetail) getCurrentSession().load(EgRemittanceDetail.class, id);
+    }
+
+    public List<EgRemittanceDetail> findAll() {
+        return (List<EgRemittanceDetail>) getCurrentSession().createCriteria(EgRemittanceDetail.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+   
+
+    public List<EgRemittanceDetail> getEgRemittanceDetailByEgRmt(final EgRemittance egRmt) {
+        final Query qry = getCurrentSession().createQuery("from EgRemittanceDetail erd where erd.egRemittance =:egRmt");
         qry.setEntity("egRmt", egRmt);
         return qry.list();
     }
 
-    public EgRemittanceDetail getEgRemittanceDetailFilterBy(final EgRemittance egRmt, final EgRemittanceGldtl egRmtGldtl)
-    {
-        final Query qry = HibernateUtil.getCurrentSession().createQuery(
+    public EgRemittanceDetail getEgRemittanceDetailFilterBy(final EgRemittance egRmt, final EgRemittanceGldtl egRmtGldtl) {
+        final Query qry = getCurrentSession().createQuery(
                 "from EgRemittanceDetail erd where erd.egRemittance =:egRmt and erd.egRemittanceGldtl =:egRmtGldtl");
         qry.setEntity("egRmt", egRmt);
         qry.setEntity("egRmtGldtl", egRmtGldtl);

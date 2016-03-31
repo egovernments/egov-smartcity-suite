@@ -43,9 +43,10 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+
     <%--  <form role="form" class="form-horizontal form-groups-bordered"> --%>
     <form:form method ="post" action="" class="form-horizontal form-groups-bordered" 
-    modelAttribute="waterRatesHeader" id="donationDetailsform"
+    modelAttribute="waterRatesHeader" id="waterRatesform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -103,15 +104,26 @@
 												varStatus="counter">
 											<div class="form-group"><label class="col-sm-3 control-label text-right">Monthly Rate
 			<span class="mandatory"></span></label> 	<div class="col-sm-3 add-margin">
+			
+			
 		<input type="text" class="form-control patternvalidation" data-pattern="number" maxlength="6"
 		name="waterRatesDetails[${counter.index}].monthlyRate" 
-		id="waterRatesDetails[${counter.index}].monthlyRate" required="required"  id="donationAmount"/>
+		id="monthlyrate"  required="required"  id="donationAmount" value =<c:out value="${var1.monthlyRate}" />>
+		</input>
+		
+    
+		
 												</div><label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.effective.fromdate" /><span class="mandatory"></span></label><div class="col-sm-3 add-margin"> <input type="text"
 														name="waterRatesDetails[${counter.index}].fromDate"
 														id="formDate"
 														class="form-control datepicker" 
-								data-inputmask="'mask': 'd/m/y'" required="required" ></div></div>
+								data-inputmask="'mask': 'd/m/y'" required="required" value ="<fmt:formatDate pattern="dd-MM-yyyy" 
+            value="${var1.fromDate}" />">
+            
+								</input> </div></div>
+								
+								
 												
 <%-- <div class="form-group">
 
@@ -133,9 +145,29 @@
 						</div>
 </div> --%>
 </c:forEach>
-<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
+<%-- <div class="form-group" id="statusdiv">
+								<label class="col-sm-3 control-label text-right">Status<span class="mandatory"></span></label>
+				<input type="checkbox" >&nbsp;<c:out value="${waterRatesHeader.active}" /> 				
+		
+												
+								</div> --%>
+<div class="form-group" id="statusdiv">
+			<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.active" /></label>
+				<div class="col-sm-3 add-margin" >
+					<form:checkbox 
+						 id="activeid"
+						path="active" value ="active" />
+					<form:errors path="active" />
+				</div>
+				</div>								
+								<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
+								<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
 <div class="form-group text-center" >
 						<form:button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></form:button>
+						<form:button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew"/></form:button>
+						<form:button type="button" class="btn btn-primary" id="listid"><spring:message code="lbl.list"/></form:button>
+						<form:button type="button" class="btn btn-primary" id="resetid" ><spring:message code="lbl.reset"/></form:button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
 					

@@ -88,7 +88,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
@@ -131,14 +130,17 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     private static final String PAYMENTID = "paymentid";
-    private @Autowired AppConfigValueService appConfigValuesService;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     @Qualifier("persistenceService")
-    private @Autowired PersistenceService persistenceService;
+    @Autowired
+    private  PersistenceService persistenceService;
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;
-    private @Autowired CreateVoucher createVoucher;
+    @Autowired
+    private CreateVoucher createVoucher;
     public List<CChartOfAccounts> purchaseBillGlcodeList = new ArrayList<CChartOfAccounts>();
     public List<CChartOfAccounts> worksBillGlcodeList = new ArrayList<CChartOfAccounts>();
     public List<CChartOfAccounts> salaryBillGlcodeList = new ArrayList<CChartOfAccounts>();
@@ -146,7 +148,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public List<CChartOfAccounts> contingentBillGlcodeList = new ArrayList<CChartOfAccounts>();
     public List<BigDecimal> cBillGlcodeIdList = null;
     protected List<Miscbilldetail> miscBillList = null;
-    private @Autowired  EGovernCommon eGovernCommon ;
+    @Autowired
+    private  EGovernCommon eGovernCommon ;
     private static final String EMPTY_STRING = "";
     private static final String DELIMETER = "~";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving Data";
@@ -167,9 +170,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public Integer selectedRows = 0;
     private final Date currentDate = new Date();
     List<InstrumentVoucher> instVoucherList;
-    private @Autowired EisCommonService eisCommonService;
+    @Autowired
+    private  EisCommonService eisCommonService;
     private BillsAccountingService billsAccountingService;
-    private @Autowired EgovCommon egovCommon;
+    @Autowired
+    private EgovCommon egovCommon;
     private FundFlowService fundFlowService;
     private ChequeAssignmentService chequeAssignmentService;
     private VoucherService voucherService;
@@ -537,10 +542,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 while (it.hasNext()) {
                     ledgerDetail = (CGeneralLedgerDetail) it.next();
                     if ("Salary".equalsIgnoreCase(tempBillList.get(i + conBillIdlength).getExpType()))
-                        tmp = gl.getId() + DELIMETER + gl.getGlcodeId().getGlcode() + DELIMETER + ledgerDetail.getDetailTypeId()
+                        tmp = gl.getId() + DELIMETER + gl.getGlcodeId().getGlcode() + DELIMETER + ledgerDetail.getDetailTypeId().getId()
                                 + DELIMETER + ledgerDetail.getDetailKeyId();
                     else
-                        tmp = gl.getGlcodeId().getGlcode() + DELIMETER + ledgerDetail.getDetailTypeId() + DELIMETER
+                        tmp = gl.getGlcodeId().getGlcode() + DELIMETER + ledgerDetail.getDetailTypeId().getId() + DELIMETER
                                 + ledgerDetail.getDetailKeyId();
 
                     // if(billList.get(i+conBillIdlength).getPaymentAmt().compareTo(val))
@@ -737,7 +742,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
 
         final List<Transaxtion> transactions = createVoucher.createTransaction(null, accountcodedetails, subledgerdetails,
                 existingVH);
-        HibernateUtil.getCurrentSession().flush();
+        getSession().flush();
         Transaxtion txnList[] = new Transaxtion[transactions.size()];
         txnList = transactions.toArray(txnList);
         if (!chartOfAccounts.postTransaxtions(txnList, sdf.format(existingVH.getVoucherDate())))
@@ -932,7 +937,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             LOGGER.debug("Starting deleteMiscBill...");
         try
         {
-            final Query st = HibernateUtil.getCurrentSession().createSQLQuery(
+            final Query st = getSession().createSQLQuery(
                     "delete from miscbilldetail where PAYVHID=" + payVHId);
             st.executeUpdate();
         } catch (final Exception e)
@@ -1053,7 +1058,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                     final BigInteger id = ((BigInteger) obj[0]);
                     if (billIds.contains(id.longValue()))
                         deductionAmtMap.put(id.longValue(),
-                                obj[1] == null ? BigDecimal.ZERO : BigDecimal.valueOf((Double) obj[1]));
+                                obj[1] == null ? BigDecimal.ZERO : (BigDecimal) obj[1]);
                 }
         }
         if (LOGGER.isDebugEnabled())
@@ -1075,7 +1080,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 + expendituretype
                 + "' and gl.voucherHeaderId=billmis.voucherHeaderid and gl.glcodeId not in(:glCodeList) and " +
                 "gl.creditAmount>0 and (misc.billvhid is null or (bill.passedamount > misc.paidamount)) group by bill.id";
-        dedList = HibernateUtil.getCurrentSession().createSQLQuery(mainquery)
+        dedList = getSession().createSQLQuery(mainquery)
                 .setParameterList("glCodeList", glcodeList).list();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed getDeductionList.");
@@ -1093,7 +1098,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 "billvhid) misc on misc.billvhid=vh.id where billmis.voucherheaderid is not null and billmis.billid=bill.id and "
                 +
                 "vh.status=0 and bill.expendituretype='" + expendituretype + "' and (bill.passedamount > misc.paidamount)";
-        dedList = HibernateUtil.getCurrentSession().createSQLQuery(mainquery).list();
+        dedList = getSession().createSQLQuery(mainquery).list();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed getEarlierPaymentAmtList.");
         return dedList;
@@ -1115,7 +1120,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                     final long id = ((BigInteger) obj[0]).longValue();
                     if (billIds.contains(id))
                         paymentAmtMap.put(((BigInteger) obj[0]).longValue(), obj[1] == null ? BigDecimal.ZERO
-                                : BigDecimal.valueOf((Double) obj[1]));
+                                : (BigDecimal) obj[1]);
                 }
         }
         if (LOGGER.isDebugEnabled())
@@ -1412,7 +1417,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             for (final PaymentBean bean : billList)
                 if (bean.getIsSelected())
                 {
-                    final SQLQuery createSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                    final SQLQuery createSQLQuery = getSession().createSQLQuery(query);
                     createSQLQuery.setString(0, bean.getBillVoucherNumber());
                     if (createSQLQuery.list().size() > 0 && bean.getBillDate().compareTo(restrictedDate) > 0)
                     {
@@ -1439,7 +1444,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 if (!bean.getIsSelected())
                     continue;
                 final Object[] obj = (Object[]) persistenceService
-                        .find("select gld.detailTypeId,gld.detailKeyId,billmis.egBillregister.expendituretype from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId and billmis.voucherHeader = gl.voucherHeaderId and billmis.voucherHeader.id=?",
+                        .find("select gld.detailTypeId.id,gld.detailKeyId,billmis.egBillregister.expendituretype from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId.id and billmis.voucherHeader = gl.voucherHeaderId and billmis.voucherHeader.id=?",
                                 bean.getCsBillId());
                 if (obj == null)
                 {
@@ -1516,8 +1521,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getMiscBillList...");
         List<PaymentBean> paymentBeanList = null;
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = getSession()
                 .createSQLQuery(
                         "select mb.billvhId as billId,mb.billnumber as billNumber,mb.billdate as billDate,mb.paidto as payTo,mb.amount as netAmt,  "
                                 +
@@ -1616,8 +1620,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (voucherHeader.getName() == null
                 || !voucherHeader.getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE))
         {                       // / Only for bill payment screen
-            query = HibernateUtil
-                    .getCurrentSession()
+            query = getSession()
                     .createSQLQuery(
                             " select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ,"
                                     +
@@ -1662,8 +1665,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             // below one handles assign-->surrendar-->assign-->surrendar-->.......
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("checking  cheque assigned and surrendard");
-            query = HibernateUtil
-                    .getCurrentSession()
+            query = getSession()
                     .createSQLQuery(
                             "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,"
                                     +
@@ -1808,8 +1810,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (voucherHeader.getName() == null
                 || !voucherHeader.getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE))
         {                       // / Only for bill payment screen
-            query = HibernateUtil
-                    .getCurrentSession()
+            query = getSession()
                     .createSQLQuery(
                             " SELECT vh.id AS voucherid , vh.voucherNumber AS voucherNumber , dept.name   AS departmentName, "
                                     +
@@ -1863,8 +1864,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             // below one handles assign-->surrendar-->assign-->surrendar-->.......
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("checking  cheque assigned and surrendard");
-            query = HibernateUtil
-                    .getCurrentSession()
+            query = getSession()
                     .createSQLQuery(
                             " SELECT vh.id AS voucherid , vh.voucherNumber AS voucherNumber , dept.name   AS departmentName, "
                                     +
@@ -1983,8 +1983,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (voucherHeader.getName() == null
                 || !voucherHeader.getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE))
         {                       // / Only for bill payment screen
-            query = HibernateUtil
-                    .getCurrentSession()
+            query = getSession()
                     .createSQLQuery(
                             " SELECT vh.id   AS voucherid , vh.voucherNumber        AS voucherNumber ,dept.name          AS departmentName,"
                                     +
@@ -2134,8 +2133,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             if (voucherHeader.getName() != null
                     && voucherHeader.getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY))
             {
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate,  misbill.paidto as paidTo from Paymentheader ph,voucherheader vh  LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID  ,vouchermis vmis, Miscbilldetail misbill "
                                         +
@@ -2161,8 +2159,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 // below one handles assign-->surrendar-->assign-->surrendar-->.......
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("checking  cheque assigned and surrendard");
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate,  misbill.paidto as paidTo from Paymentheader ph,voucherheader vh  LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID  ,vouchermis vmis, Miscbilldetail misbill "
                                         +
@@ -2219,8 +2216,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             else if (voucherHeader.getName() != null
                     && voucherHeader.getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_PENSION))
             {
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate,  misbill.paidto as paidTo from Paymentheader ph,voucherheader vh  LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID  ,vouchermis vmis, Miscbilldetail misbill "
                                         +
@@ -2246,8 +2242,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 // below one handles assign-->surrendar-->assign-->surrendar-->.......
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("checking  cheque assigned and surrendard");
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate,  misbill.paidto as paidTo from Paymentheader ph,voucherheader vh  LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID  ,vouchermis vmis, Miscbilldetail misbill "
                                         +
@@ -2304,8 +2299,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             else if (voucherHeader.getName() == null
                     || !voucherHeader.getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE))
             {// / do not include salary payments and remittances
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate from Paymentheader ph,voucherheader vh   LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID,vouchermis vmis, Miscbilldetail misbill "
                                         +
@@ -2336,8 +2330,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 // below one handles assign-->surrendar-->assign-->surrendar-->.......
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("checking  cheque assigned and surrendard");
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate from Paymentheader ph,voucherheader vh   LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID,vouchermis vmis, Miscbilldetail misbill "
                                         +
@@ -2372,8 +2365,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             }
             else
             {
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate,misbill.paidto as paidTo from Paymentheader ph,voucherheader vh  LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID,vouchermis vmis, Miscbilldetail misbill,Eg_remittance  rem "
                                         +
@@ -2401,8 +2393,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 // below one handles assign-->surrendar-->assign-->surrendar-->.......
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("checking  cheque assigned and surrendard");
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate,misbill.paidto as paidTo from Paymentheader ph,voucherheader vh  LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID,vouchermis vmis, Miscbilldetail misbill,Eg_remittance  rem "
                                         +
@@ -2443,8 +2434,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getSubledgerAmtForDeduction...");
         final Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = getSession()
                 .createSQLQuery(
                         " select gld.detailtypeid,gld.detailkeyid,sum(gld.amount) from generalledgerdetail gld,generalledger gl, voucherheader vh, miscbilldetail misbill "
                                 +
@@ -2844,8 +2834,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 "from InstrumentVoucher where instrumentHeaderId=?", instrumentHeader);
         for (final InstrumentVoucher iv : findAllBy)
             persistenceService.delete(iv);
-        HibernateUtil.getCurrentSession().refresh(instrumentHeader);
-        HibernateUtil.getCurrentSession().flush();
+        getSession().refresh(instrumentHeader);
+        getSession().flush();
         // instrumentHeader= instrumentService.instrumentHeaderService.persist(instrumentHeader);
         final Map<String, Object> instrumentVoucherMap = new HashMap<String, Object>();
         instrumentVoucherMap.put(VoucherConstant.VOUCHER_HEADER, voucherHeader);
@@ -2967,7 +2957,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         Paymentheader paymentheader = new Paymentheader();
         paymentheader.setType(type);
         paymentheader.setVoucherheader(voucherHeader);
-        final Bankaccount bankaccount = (Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,
+        final Bankaccount bankaccount = (Bankaccount) getSession().load(Bankaccount.class,
                 bankaccountId.longValue());
         paymentheader.setBankaccount(bankaccount);
         paymentheader.setPaymentAmount(amount);
@@ -3072,8 +3062,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             // / Only for bill payment screen
             if (nonSubledger)
             {
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 " select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ,"
                                         +
@@ -3120,8 +3109,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 // below one handles assign-->surrendar-->assign-->surrendar-->.......
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("checking  cheque assigned and surrendard");
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,"
                                         +
@@ -3188,8 +3176,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
 
             } else
             {
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 " select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ,"
                                         +
@@ -3235,8 +3222,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 // below one handles assign-->surrendar-->assign-->surrendar-->.......
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("checking  cheque assigned and surrendard");
-                query = HibernateUtil
-                        .getCurrentSession()
+                query = getSession()
                         .createSQLQuery(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,"
                                         +
@@ -3326,13 +3312,13 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 " (select remittancegldtlid from eg_remittance_detail where remittanceid in" +
                 " (select id from eg_remittance where paymentvhid=" + paymentVoucherId + "))))";
 
-        count = HibernateUtil.getCurrentSession().createSQLQuery(sql).executeUpdate();
+        count = getSession().createSQLQuery(sql).executeUpdate();
         if (count == 0) {
             // This is for non control codes
             final String sql1 = " update generalledger set remittancedate = null where id in " +
                     " (select generalledgerid from eg_remittance_detail where remittanceid in " +
                     " (select id from eg_remittance where paymentvhid =" + paymentVoucherId + "))";
-            count = HibernateUtil.getCurrentSession().createSQLQuery(sql1).executeUpdate();
+            count = getSession().createSQLQuery(sql1).executeUpdate();
         }
         return count;
     }

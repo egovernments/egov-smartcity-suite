@@ -43,7 +43,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,6 +55,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -69,7 +69,6 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,6 +94,9 @@ public class AdvertisementDemandService {
     
     @Autowired
     AdvertisementPenaltyRatesService advertisementPenaltyRatesService;
+
+    @Autowired
+    private AdvertisementPenaltyCalculator advertisementPenaltyCalculator;
     
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -328,28 +330,20 @@ public class AdvertisementDemandService {
      * @param penaltyCalculationDate 
      * @return Penalty Amount and PendingAmount
      */
-    public Map<String, BigDecimal> checkPedingAmountByDemand(final EgDemand demand, Date penaltyCalculationDate) {
+    public Map<String, BigDecimal> checkPedingAmountByDemand(AdvertisementPermitDetail advPermitDetail) {
 
         final Map<String, BigDecimal> demandFeeType = new LinkedHashMap<String, BigDecimal>();
 
         BigDecimal penaltyAmt = BigDecimal.ZERO;
         BigDecimal pendingAmount = BigDecimal.ZERO;
-        if (demand != null) {
-            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
-                // Mean if installment is different than current, then calculate
-                // penalty
-                if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0
-                // && currentInstallment.getId() !=
-                // demandDtl.getEgDemandReason().getEgInstallmentMaster().getId())
-                ) {
-                    final BigDecimal amount = demandDtl.getAmount().subtract(demandDtl.getAmtCollected());
+        if (advPermitDetail!=null && advPermitDetail.getAdvertisement()!=null && advPermitDetail.getAdvertisement().getDemandId() != null) {
+            for (final EgDemandDetails demandDtl :  advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
 
-                    pendingAmount = pendingAmount.add(amount);
-                    // PENALTY is not the part of existing demand
-                    penaltyAmt = calculatePenalty(penaltyAmt, demandDtl, amount, penaltyCalculationDate);
-
-                }
+                if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
+                   pendingAmount = pendingAmount.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
+                 }
             }
+            penaltyAmt= advertisementPenaltyCalculator.calculatePenaltyByAdvertisementPermit(advPermitDetail);
         }
         demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmt);
         demandFeeType.put(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT, pendingAmount);
@@ -367,105 +361,6 @@ public class AdvertisementDemandService {
 
     }
    
-  /**
-   * Calculate Penalty 
-   * @param penaltyAmt
-   * @param demandDtl
-   * @param amount
-   * @param penaltyCalculationDate
-   * @return
-   */
-    private BigDecimal calculatePenalty(BigDecimal penaltyAmt, final EgDemandDetails demandDtl,
-            final BigDecimal amount, Date penaltyCalculationDate) {
-        double percentage = 0;
-        int days = 0;
-
-        if (demandDtl != null && (amount).compareTo(BigDecimal.ZERO) > 0) {
-            // Eg: Next year installment
-            if (demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate().after(new Date())) {
-                days = Days.daysBetween(
-                        new DateTime(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()),
-                        new DateTime(new Date())).getDays();
-
-            } else if (demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate().before(new Date())) {
-                // Penalty calculation date or application date in current year.
-                // Decided based on penalty calculation date
-                if (penaltyCalculationDate != null
-                        && demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                                .before(penaltyCalculationDate)
-                        && demandDtl.getEgDemandReason().getEgInstallmentMaster().getToDate()
-                                .after(penaltyCalculationDate)) {
-                    days = Days.daysBetween(new DateTime(penaltyCalculationDate), new DateTime(new Date())).getDays();
-
-                } else {
-                    days = Days.daysBetween(
-                            new DateTime(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()),
-                            new DateTime(new Date())).getDays();
-
-                }
-
-            }
-
-            percentage = advertisementPenaltyRatesService.findPenaltyRatesByNumberOfDays(Long.valueOf(days));
-            /*
-             * if (penaltyCalculationDate != null) noofmonths =
-             * (noOfMonths(penaltyCalculationDate, new Date())); else noofmonths
-             * =
-             * (noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster
-             * ().getFromDate(), new Date()));
-             */
-            if (percentage > 0) {
-                penaltyAmt = penaltyAmt.add(amount.multiply(BigDecimal.valueOf(percentage))
-                        .divide(BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP))
-                        .setScale(0, BigDecimal.ROUND_HALF_UP));
-            }
-        }
-        return penaltyAmt;
-    }
-    
-    public BigDecimal calculatePenalty(final EgDemandDetails demandDtl, final BigDecimal amount, Date penaltyCalculationDate) {
-        BigDecimal penaltyAmt=BigDecimal.ZERO;
-        penaltyAmt= calculatePenalty(penaltyAmt,demandDtl,amount,penaltyCalculationDate);
-        return penaltyAmt;
-  }
-    /**
-     * 
-     * @param demand
-     * @param penaltyCalculationDate
-     * @return
-     */
-    public Map<String, BigDecimal> checkPenaltyAmountByDemand(final EgDemand demand, Date penaltyCalculationDate) {
-        Map<String, BigDecimal> penaltyReasons = new HashMap<String, BigDecimal>();
-        BigDecimal penaltyAmt = BigDecimal.ZERO;
-        // final Installment currentInstallment = getCurrentInstallment();
-        if (demand != null) {
-            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
-                penaltyAmt = BigDecimal.ZERO;
-                // Mean if installment is different than current, then calculate
-                // penalty
-                if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0
-                // && currentInstallment.getId() !=
-                // demandDtl.getEgDemandReason().getEgInstallmentMaster().getId())
-                ) {
-                    final BigDecimal amount = demandDtl.getAmount().subtract(demandDtl.getAmtCollected());
-                    penaltyAmt = calculatePenalty(penaltyAmt, demandDtl, amount, penaltyCalculationDate);
-
-                    if (penaltyReasons.get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription()) == null)
-                        penaltyReasons.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(),
-                                penaltyAmt);
-                    else
-                        penaltyReasons.put(
-                                demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(),
-                                penaltyReasons.get(
-                                        demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription()).add(
-                                        penaltyAmt));
-
-                }
-            }
-        }
-        return penaltyReasons;
-
-    }
     /**
      * 
      * @param advertisementPermitDetail
@@ -961,19 +856,19 @@ public int generateDemandForNextInstallment(final List<Advertisement> advertisem
         return demand;
     }
     
-    public Map<String, BigDecimal> checkPendingAmountByDemand(final EgDemand demand, Date penaltyCalculationDate) {
+    public Map<String, BigDecimal> checkPendingAmountByDemand(AdvertisementPermitDetail advPermitDetail) {
         final Map<String, BigDecimal> demandFeeType = new LinkedHashMap<String, BigDecimal>();
         BigDecimal totalDemand = BigDecimal.ZERO;
         BigDecimal totalCollection = BigDecimal.ZERO;
         BigDecimal totalPending = BigDecimal.ZERO;
         BigDecimal penaltyAmount = BigDecimal.ZERO;
-        if (demand != null) {
-            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
+        if (advPermitDetail!=null && advPermitDetail.getAdvertisement()!=null && advPermitDetail.getAdvertisement().getDemandId() != null) {
+            for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
                 totalDemand = totalDemand.add(demandDtl.getAmount());
                 totalCollection = totalCollection.add(demandDtl.getAmtCollected());
                 totalPending= totalPending.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
-                penaltyAmount = calculatePenalty(penaltyAmount, demandDtl, demandDtl.getAmount().subtract(demandDtl.getAmtCollected()), penaltyCalculationDate);
-            }
+              }
+            penaltyAmount= advertisementPenaltyCalculator.calculatePenaltyByAdvertisementPermit(advPermitDetail);
         }
         totalDemand = totalDemand.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         totalCollection = totalCollection.setScale(2, BigDecimal.ROUND_HALF_EVEN);

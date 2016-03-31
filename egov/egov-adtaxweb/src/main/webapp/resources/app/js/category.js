@@ -39,7 +39,6 @@
 #-------------------------------------------------------------------------------*/
 jQuery(document).ready(function($) {
 	
-	
 	$("#searcheditbutton").click(function() {
 		var action = '/adtax/category/updateCategory/' + $('#categorydesc').val();
 		$('#categoryForm').attr('method', 'get');
@@ -64,6 +63,79 @@ jQuery(document).ready(function($) {
 		$('#subcategoryform').attr('action', action);
 	});
 	
+	var prevdatatable;
+	$('#subcatsubmit').click(function(e){
+		if($('#subcategoryform').valid())
+		{
+			oTable= $('#adtax_searchsubcategory');
+			if(prevdatatable)
+			{
+				prevdatatable.fnClearTable();
+				$('#adtax_searchsubcategory thead tr').remove();
+			}
+				prevdatatable = oTable.dataTable({
+					"sPaginationType": "bootstrap",
+					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-1 col-xs-2 text-right'p>>",
+					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+					"autoWidth": false,
+					"bDestroy": true,
+					"ajax": "/adtax/subcategory/searchSubCategory?"+$("#subcategoryform").serialize(),
+					"columns" : [
+					              { "data" : "category", "title":"Category"},
+								  { "data" : "description", "title": "SubCategory"},
+								  { "data" : "code", "title": "Code"},
+								  { 
+								  "data" : function(row, type, set, meta) {
+										return {
+											id : row.id,
+										};
+									},
+								  "render" : function(data, type, row, meta)  
+								  {
+										return '<span class="add-padding"><i class="fa fa-edit history-size" onclick="subCategoryEdit('+data.id+');" class="tooltip-secondary" data-toggle="tooltip" title="Edit"></i></span><span class="add-padding"><i class="fa fa-eye history-size" class="tooltip-secondary" onclick="subCategoryView('+data.id+');" data-toggle="tooltip" title="View"></i></span>';
+									   },
+									  
+								  },
+					]
+			});
+			e.stopPropagation();
+			
+		}
+		e.preventDefault();
+	});
+	
+	$('#categories').change(function(){
+		$.ajax({
+			url: "/adtax/hoarding/subcategories-by-category",    
+			type: "GET",
+			data: {
+				categoryId : $('#categories').val()   
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$('#subcategories').empty();
+				$('#subcategories').append($("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+					$('#subcategories').append($('<option>').text(value.description).attr('value', value.id));
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	});
 	
 });
+
+function subCategoryEdit(id)
+{
+	window.open("/adtax/subcategory/update/"+id,'_blank', "width=800, height=700, scrollbars=yes")
+}
+
+function subCategoryView(id)
+{
+	window.open("/adtax/subcategory/success/"+id, '_blank', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+}
 

@@ -87,7 +87,9 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
-import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.admin.master.entity.Department;
@@ -130,8 +132,10 @@ public class FileUploadAction extends BaseFormAction {
     private CollectionsUtil collectionsUtil;
 
     private FinancialsUtil financialsUtil;
-
-    private CommonsServiceImpl commonsServiceImpl;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    @Autowired
+    private FinancialYearHibernateDAO financialYearDAO;
 
     private ReceiptHeaderService receiptHeaderService;
 
@@ -180,9 +184,6 @@ public class FileUploadAction extends BaseFormAction {
         this.challanService = challanService;
     }
 
-    public void setCommonsManager(final CommonsServiceImpl commonsServiceImpl) {
-        this.commonsServiceImpl = commonsServiceImpl;
-    }
 
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -771,7 +772,7 @@ public class FileUploadAction extends BaseFormAction {
         BigDecimal totalAmt = BigDecimal.ZERO;
 
         for (final ReceiptDetailInfo rDetails : billCreditDetailslist) {
-            final CChartOfAccounts account = commonsServiceImpl.getCChartOfAccountsByGlCode(
+            final CChartOfAccounts account = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(
                     rDetails.getGlcodeDetail());
             final CFunction function = (CFunction) persistenceService.find("from CFunction  where code=? ", functionName);
             ReceiptDetail receiptDetail = new ReceiptDetail(
@@ -784,7 +785,7 @@ public class FileUploadAction extends BaseFormAction {
                     receiptDetail.getCramount()).subtract(
                     receiptDetail.getDramount());
 
-            final CFinancialYear financialYear = commonsServiceImpl.getFinancialYearById(rDetails.getFinancialYearId());
+            final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(rDetails.getFinancialYearId());
             receiptDetail.setFinancialYear(financialYear);
 
             if (rDetails.getCreditAmountDetail() == null)
@@ -916,7 +917,7 @@ public class FileUploadAction extends BaseFormAction {
         // .getPositionOfUser(receiptHeader.getCreatedBy()),
         // "Manually Created Challan Receipt Approved - Workflow ends");
 
-        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
+        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
 
         // If vouchers are created during work flow step, add them to the list
         final Set<ReceiptVoucher> receiptVouchers = receiptHeader.getReceiptVoucher();
@@ -929,8 +930,7 @@ public class FileUploadAction extends BaseFormAction {
             }
 
         if (voucherHeaderList != null && receiptInstrList != null)
-            receiptHeaderService.updateInstrument(voucherHeaderList,
-                    receiptInstrList);
+            receiptHeaderService.updateInstrument(receiptHeader);
 
     }
 
@@ -1298,8 +1298,8 @@ public class FileUploadAction extends BaseFormAction {
                 "from org.egov.collection.entity.ReceiptHeader where status.code=?",
                 CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
 
-        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
-        Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>();
+        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
+        Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>(0);
 
         for (final ReceiptHeader receiptHeader : approvedReceipts) {
             voucherHeaderList.clear();
@@ -1317,8 +1317,7 @@ public class FileUploadAction extends BaseFormAction {
                     final List<InstrumentHeader> receiptInstrList = new ArrayList<InstrumentHeader>();
                     receiptInstrList.addAll(receiptHeader.getReceiptInstrument());
                     if (voucherHeaderList != null && !receiptInstrList.isEmpty())
-                        receiptHeaderService.updateInstrument(voucherHeaderList,
-                                receiptInstrList);
+                        receiptHeaderService.updateInstrument(receiptHeader);
 
                 } catch (final Exception e) {
                     errorReceiptList.add(receiptHeader.getId());

@@ -40,8 +40,8 @@
 /**
  *
  */
-package org.egov.services.deduction;
-
+package org.egov.services.deduction;import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -85,11 +85,11 @@ public class RemitRecoveryService {
             final Integer detailKeyId) throws ValidationException {
         final List<RemittanceBean> listRemitBean = new ArrayList<RemittanceBean>();
         final StringBuffer query = new StringBuffer(200);
-        query.append("select vh.name,vh.voucherNumber ,vh.voucherDate,egr.gldtlamt,gld.detailTypeId,gld.detailKeyId,egr.id ");
+        query.append("select vh.name,vh.voucherNumber ,vh.voucherDate,egr.gldtlamt,gld.detailTypeId.id,gld.detailKeyId,egr.id ");
         query.append(
                 " from CVoucherHeader vh ,Vouchermis mis , CGeneralLedger gl ,CGeneralLedgerDetail gld , EgRemittanceGldtl egr , Recovery rec  where ")
                 .
-                append("  rec.chartofaccounts.id = gl.glcodeId.id and gld.id = egr.generalledgerdetail.id and  gl.id = gld.generalLedgerId and vh.id = gl.voucherHeaderId.id ")
+                append("  rec.chartofaccounts.id = gl.glcodeId.id and gld.id = egr.generalledgerdetail.id and  gl.id = gld.generalLedgerId.id and vh.id = gl.voucherHeaderId.id ")
                 .
                 append(" and mis.voucherheaderid.id = vh.id  and vh.status=0  and vh.fundId.id=?  and  egr.gldtlamt - "
                         +
@@ -282,7 +282,7 @@ public class RemitRecoveryService {
     private void populateDetailsBySQL(final CVoucherHeader voucherHeader, final List<RemittanceBean> listRemitBean,
             final StringBuffer query) {
         RemittanceBean remitBean;
-        final SQLQuery searchSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
+        final SQLQuery searchSQLQuery = persistenceService.getSession().createSQLQuery(query.toString());
         final List<Object[]> list = searchSQLQuery.list();
         for (final Object[] element : list) {
             remitBean = new RemittanceBean();
@@ -398,7 +398,7 @@ public class RemitRecoveryService {
                             + inquery.toString()
                             +
                             " GROUP BY  vh.vouchernumber, miscbilldtl.billnumber , remgldtl.remittedamt, remdtl.ID,  gldtl.detailtypeid , gldtl.detailkeyid,vh.id,gld.voucherheaderid,billmis.BILLID");
-                    final Query sqlVoucherQuery = HibernateUtil.getCurrentSession().createSQLQuery(voucherQueryTwo.toString())
+                    final Query sqlVoucherQuery = persistenceService.getSession().createSQLQuery(voucherQueryTwo.toString())
                             .addScalar("remittedAmount").addScalar("billAmount").addScalar("voucherNumber")
                             .addScalar("billNumber").addScalar("remittanceDTId")
                             .addScalar("detailKeyTypeId").addScalar("detailKeyId").addScalar("voucherId").addScalar("billId")
@@ -422,7 +422,7 @@ public class RemitRecoveryService {
                     " GROUP BY  vh.vouchernumber, miscbilldtl.billnumber , remgldtl.remittedamt,    gldtl.detailtypeid , gldtl.detailkeyid,"
                     +
                     " remdtl.ID,vh.id,gld.voucherheaderid,billmis.BILLID");
-            final Query sqlVoucherQuery = HibernateUtil.getCurrentSession().createSQLQuery(voucherQueryTwo.toString())
+            final Query sqlVoucherQuery = persistenceService.getSession().createSQLQuery(voucherQueryTwo.toString())
                     .addScalar("remittedAmount").addScalar("billAmount").addScalar("voucherNumber")
                     .addScalar("billNumber").addScalar("remittanceDTId")
                     .addScalar("detailKeyTypeId").addScalar("detailKeyId").addScalar("voucherId").addScalar("billId")

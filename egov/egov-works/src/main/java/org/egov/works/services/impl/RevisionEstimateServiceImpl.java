@@ -48,6 +48,7 @@ import java.util.List;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.commons.EgovCommon;
@@ -76,11 +77,10 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
     private WorksService worksService;
     private EgovCommon egovCommon;
     private DepositWorksUsageService depositWorksUsageService;
-    @Autowired
-    private CommonsService commonsService;
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
     private BudgetDetailsDAO budgetDetailsDAO;
-
+@Autowired
+private FinancialYearHibernateDAO finHibernateDao;
     private static final String MODULE_NAME = "Works";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
 
@@ -162,7 +162,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
 
     private boolean consumeBudgetForNormalWorks(final RevisionAbstractEstimate revisionEstimate) {
         boolean flag = false;
-        final Long finYearId = commonsService.getFinancialYearByDate(new Date()).getId();
+        final Long finYearId = finHibernateDao.getFinancialYearByDate(new Date()).getId();
         final List<Long> budgetHeadId = new ArrayList<Long>();
         final FinancialDetail financialDetail = revisionEstimate.getParent().getFinancialDetails().get(0);
         budgetHeadId.add(financialDetail.getBudgetGroup().getId());
@@ -193,7 +193,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
             final AbstractEstimate parentEstimate, final BudgetUsage budgetUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
         final Integer finYearId = budgetUsage.getFinancialYearId();
-        final Date endingDate = commonsService.getFinancialYearById(finYearId.longValue()).getEndingDate();
+        final Date endingDate = finHibernateDao.getFinancialYearById(finYearId.longValue()).getEndingDate();
         estimateAppropriation = estimateAppropriationService.findByNamedQuery("getBudgetUsageForEstimateByFinYear",
                 revisionEstimate.getId(), finYearId.intValue());
 
@@ -235,7 +235,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
 
         if (balance.doubleValue() >= depApprAmnt) {
             DepositWorksUsage depositWorksUsage = new DepositWorksUsage();
-            final CFinancialYear budgetApprDate_finYear = commonsService.getFinancialYearByDate(appDate);
+            final CFinancialYear budgetApprDate_finYear = finHibernateDao.getFinancialYearByDate(appDate);
             depositWorksUsage.setTotalDepositAmount(creditBalance);
             depositWorksUsage.setConsumedAmount(new BigDecimal(depApprAmnt));
             depositWorksUsage.setReleasedAmount(BigDecimal.ZERO);
@@ -258,7 +258,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
     private void persistDepositCodeAppDetails(final DepositWorksUsage depositWorksUsage,
             final FinancialDetail financialDetail) {
         AbstractEstimateAppropriation estimateAppropriation = null;
-        final int finYearId = commonsService.getFinancialYearByDate(new Date()).getId().intValue();
+        final int finYearId = finHibernateDao.getFinancialYearByDate(new Date()).getId().intValue();
         final BigDecimal creditBalance = depositWorksUsage.getTotalDepositAmount();
         final AbstractEstimate abstractEstimate = depositWorksUsage.getAbstractEstimate();
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(financialDetail,
@@ -324,7 +324,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         estimateAppropriation = estimateAppropriationService.findByNamedQuery("getLatestBudgetUsageForEstimate",
                 revisionEstimate.getId());
         final Integer finYearId = estimateAppropriation.getBudgetUsage().getFinancialYearId();
-        final Date endingDate = commonsService.getFinancialYearById(finYearId.longValue()).getEndingDate();
+        final Date endingDate = finHibernateDao.getFinancialYearById(finYearId.longValue()).getEndingDate();
         estimateAppropriation.setBalanceAvailable(abstractEstimateService
                 .getBudgetAvailable(parentEstimate, endingDate));
         estimateAppropriation.setBudgetUsage(budgetUsage);
@@ -381,9 +381,6 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         this.depositWorksUsageService = depositWorksUsageService;
     }
 
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
 
     public void setEstimateAppropriationService(
             final PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService) {

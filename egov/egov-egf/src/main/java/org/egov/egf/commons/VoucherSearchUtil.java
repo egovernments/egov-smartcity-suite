@@ -324,9 +324,9 @@ public class VoucherSearchUtil {
                 + ") "
                 + sql
                 + " order by vh.voucherNumber ,vh.voucherDate,vh.name ";
-        final Query query1 = HibernateUtil.getCurrentSession().createQuery(sqlQuery);
+        final Query query1 = persistenceService.getSession().createQuery(sqlQuery);
         queryList.add(query1);
-        final Query query2 = HibernateUtil.getCurrentSession().createQuery(
+        final Query query2 = persistenceService.getSession().createQuery(
                 "select count(*) from CVoucherHeader vh where vh.status not in ("
                         + statusExclude
                         + ") "

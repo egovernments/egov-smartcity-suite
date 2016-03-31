@@ -43,7 +43,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,7 +69,7 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -87,13 +86,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  * systems) to interact with the collections module.
  */
 public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long> implements
-CollectionIntegrationService {
+        CollectionIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionIntegrationServiceImpl.class);
 
     @Autowired
-    private CommonsServiceImpl commonsServiceImpl;
-
+    private FundHibernateDAO fundHibernateDAO;
     private PersistenceService persistenceService;
 
     private CollectionsUtil collectionsUtil;
@@ -102,10 +100,6 @@ CollectionIntegrationService {
 
     @Autowired
     private EgwStatusHibernateDAO statusDAO;
-
-    /*
-     * @Autowired private ServiceCategoryService serviceCategoryService;
-     */
 
     List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
@@ -249,7 +243,7 @@ CollectionIntegrationService {
     @Override
     public BillReceiptInfo createReceipt(final BillInfo bill, final List<PaymentInfo> paymentInfoList) {
         LOGGER.info("Logs for CreateReceipt : Receipt Creation Started....");
-        final Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
+        final Fund fund = fundHibernateDAO.fundByCode(bill.getFundCode());
         if (fund == null)
             throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
 
@@ -333,12 +327,6 @@ CollectionIntegrationService {
              * paytInfoATM)); otherInstrumenttotal = paytInfoATM.getInstrumentAmount(); }
              */
         }
-        final Set<InstrumentHeader> instHeaderSet = new HashSet(
-                receiptHeaderService.createInstrument(instrumentHeaderList));
-        LOGGER.info("   Instrument List created ");
-
-        receiptHeader.setReceiptInstrument(instHeaderSet);
-
         BigDecimal debitAmount = BigDecimal.ZERO;
 
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
@@ -349,18 +337,7 @@ CollectionIntegrationService {
         receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                 chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList.get(0).getInstrumentType().toString()));
 
-        receiptHeaderService.persistFieldReceipt(receiptHeader);
-
-        // Create Vouchers
-        /*
-         * List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
-         * LOGGER.info("Receipt Voucher created with vouchernumber:     " + receiptHeader.getVoucherNum()); for (ReceiptVoucher
-         * receiptVoucher : receiptHeader.getReceiptVoucher()) { voucherHeaderList.add(receiptVoucher.getVoucherheader()); }
-         */
-        /*
-         * if (voucherHeaderList != null && !instrumentHeaderList.isEmpty()) {
-         * receiptHeaderService.updateInstrument(voucherHeaderList, instrumentHeaderList); }
-         */
+        receiptHeaderService.persistFieldReceipt(receiptHeader, instrumentHeaderList);
         LOGGER.info("Logs for CreateReceipt : Receipt Creation Finished....");
         return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO);
     }
@@ -393,7 +370,7 @@ CollectionIntegrationService {
     @Override
     public BillReceiptInfo createMiscellaneousReceipt(final BillInfo bill, final List<PaymentInfo> paymentInfoList) {
         LOGGER.info("Logs For Miscellaneous Receipt : Receipt Creation Started....");
-        final Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
+        final Fund fund = fundHibernateDAO.fundByCode(bill.getFundCode());
         if (fund == null)
             throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
 

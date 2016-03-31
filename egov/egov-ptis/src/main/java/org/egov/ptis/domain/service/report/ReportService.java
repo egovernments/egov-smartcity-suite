@@ -588,7 +588,7 @@ public class ReportService {
 
     public BigDecimal formatAmt(double amt) {
         BigDecimal result = new BigDecimal(0.000);
-        result = BigDecimal.valueOf(amt / 100000).setScale(2, BigDecimal.ROUND_HALF_UP);
+        result = BigDecimal.valueOf(amt / 1000).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         return result;
     }
@@ -758,7 +758,7 @@ public class ReportService {
             if(bcResult.getTarget_total_demand()!=0.0){
                 percentage=(bcResult.getCummulative_total_Collection()*100)/bcResult.getTarget_total_demand();
                 bcResult.setCummulative_total_CollectionPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage));
-                percentage=((bcResult.getCummulative_total_Collection()+bcResult.getCummulative_total_CollectionInterest())*100)/(bcResult.getTarget_total_demand()+bcResult.getTarget_total_demandInterest());
+                percentage=((bcResult.getCummulative_total_Collection()+bcResult.getCummulative_total_CollectionInterest())*100)/(bcResult.getTarget_total_demand());
                 bcResult.setCummulative_total_CollectionInterestPercentage(BigDecimal.valueOf(percentage.isNaN()?0.0:percentage)); 
             } else {
                 bcResult.setCummulative_total_CollectionPercentage(BigDecimal.ZERO);
@@ -798,8 +798,8 @@ public class ReportService {
             bcResult.setTarget_total_demandInterest(formatAmt(bcResult.getTarget_total_demandInterest()).doubleValue());
             bcResult.setCummulative_total_CollectionInterest(formatAmt(bcResult.getCummulative_total_CollectionInterest())
                     .doubleValue());
-            bcResult.setCummulative_total_CollectionPercentage(bcResult.getCummulative_total_CollectionPercentage().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            bcResult.setCummulative_total_CollectionInterestPercentage(bcResult.getCummulative_total_CollectionInterestPercentage().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+            bcResult.setCummulative_total_CollectionPercentage(bcResult.getCummulative_total_CollectionPercentage().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            bcResult.setCummulative_total_CollectionInterestPercentage(bcResult.getCummulative_total_CollectionInterestPercentage().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         } 
 
     }

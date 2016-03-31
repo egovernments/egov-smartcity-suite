@@ -42,6 +42,10 @@
  */
 package org.egov.web.actions.payment;
 
+
+
+import org.egov.infstr.services.PersistenceService;
+
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -136,7 +140,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private static final String FAILED = "Transaction failed";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     private static final long serialVersionUID = 1L;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private CreateVoucher createVoucher;
     private PaymentService paymentService;
     @Autowired
@@ -261,7 +269,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
                 if (showMode != null && showMode.equalsIgnoreCase("nonbillPayment"))
                     if (voucherHeader.getId() != null)
-                        billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
+                        billVhId = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class,
                                 voucherHeader.getId());
                 voucherHeader.setId(null);
                 populateWorkflowBean();
@@ -306,7 +314,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @SkipValidation
     public String nonBillPayment()
     {
-        voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class, voucherHeader.getId());
+        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class, voucherHeader.getId());
         final String vName = voucherHeader.getName();
         String appconfigKey = "";
         if (vName.equalsIgnoreCase(FinancialConstants.JOURNALVOUCHER_NAME_CONTRACTORJOURNAL))
@@ -333,9 +341,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         if (netPay.getFunctionId() != null)
         {
             vd.setFunctionIdDetail(Long.valueOf(netPay.getFunctionId()));
-            final String function = (String) HibernateUtil.getCurrentSession().load(CFunction.class,
-                    Long.valueOf(netPay.getFunctionId())).getName();
-            vd.setFunctionDetail(function);
+            CFunction function =(CFunction) persistenceService.getSession().load(CFunction.class,Long.valueOf(netPay.getFunctionId()));
+            vd.setFunctionDetail(function.getId().toString());
         }
         commonBean.setAmount(BigDecimal.valueOf(netPay.getCreditAmount()));
         billDetailslist.add(vd);
@@ -351,7 +358,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             vdetails.setGlcode(netPay.getGlcodeId());
             vdetails.setSubledgerCode(netPay.getGlcode());
             vdetails.setAccounthead(netPay.getGlcodeId().getName());
-            final Accountdetailtype detailType = (Accountdetailtype) HibernateUtil.getCurrentSession().load(
+            final Accountdetailtype detailType = (Accountdetailtype) persistenceService.getSession().load(
                     Accountdetailtype.class,
                     gldetail.getDetailTypeId());
             vdetails.setDetailTypeName(detailType.getName());
@@ -422,7 +429,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                         throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e
                                 .getMessage())));
                     }
-                    voucherDetail.setDetailType((Accountdetailtype) HibernateUtil.getCurrentSession().load(
+                    voucherDetail.setDetailType((Accountdetailtype) persistenceService.getSession().load(
                             Accountdetailtype.class, voucherDetail.getDetailType()
                                     .getId()));
 
@@ -509,7 +516,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         instrumentQuery.append(
                 "select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?")
                 .append(" order by ih.id");
-        voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class, voucherHeader.getId());
+        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class, voucherHeader.getId());
         paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
         commonBean.setAmount(paymentheader.getPaymentAmount());
         commonBean.setAccountNumberId(paymentheader.getBankaccount().getId().toString());
@@ -586,7 +593,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                         Integer.valueOf(commonBean.getAccountNumberId()), commonBean
                                 .getModeOfPayment(), commonBean.getAmount());
                 if (commonBean.getDocumentId() != null)
-                    billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
+                    billVhId = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class,
                             commonBean.getDocumentId());
                 updateMiscBillDetail(billVhId);
                 sendForApproval();
@@ -646,7 +653,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private void reCreateLedger() {
         try {
             createVoucher.deleteVoucherdetailAndGL(voucherHeader);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             HashMap<String, Object> detailMap = null;
 
             // HashMap<String, Object> headerMap = null;
@@ -662,7 +669,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
              */
             detailMap.put(VoucherConstant.CREDITAMOUNT, commonBean.getAmount().toString());
             detailMap.put(VoucherConstant.DEBITAMOUNT, "0");
-            final Bankaccount account = (Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,
+            final Bankaccount account = (Bankaccount) persistenceService.getSession().load(Bankaccount.class,
                     Integer.valueOf(commonBean.getAccountNumberId()));
             detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
             // Addind this line since function code is made mandatory for all transaction
@@ -674,7 +681,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             for (final VoucherDetails voucherDetail : billDetailslist) {
                 detailMap = new HashMap<String, Object>();
                 if (voucherDetail.getFunctionIdDetail() != null) {
-                    final CFunction function = (CFunction) HibernateUtil.getCurrentSession().load(CFunction.class,
+                    final CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
                             voucherDetail.getFunctionIdDetail());
                     detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
                 }
@@ -715,7 +722,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             // createVoucher.validateFunction(accountdetails,subledgerDetails);
             final List<Transaxtion> transactions = createVoucher.createTransaction(null, accountdetails, subledgerDetails,
                     voucherHeader);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
 
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
@@ -808,7 +815,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
      * new ValidationException(Arrays.asList(new ValidationError("No.entity.for.detailkey", "There is no entity defined for" +
      * voucherDetail.getDetailCode(), new String[] { voucherDetail.getDetailCode() }))); } catch (final ApplicationException e) {
      * throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e .getMessage()))); }
-     * voucherDetail.setDetailType((Accountdetailtype) HibernateUtil.getCurrentSession().load( Accountdetailtype.class,
+     * voucherDetail.setDetailType((Accountdetailtype) persistenceService.getSession().load( Accountdetailtype.class,
      * voucherDetail.getDetailType() .getId())); if (voucherDetail.getDetailType().getName().equalsIgnoreCase("creditor")) { rel =
      * (Relation) entity; type = rel.getRelationtype().getName(); } if (type.equalsIgnoreCase("Supplier") ||
      * type.equalsIgnoreCase("Contractor")) { isValFailed = true; throw new ValidationException( Arrays.asList(new
@@ -913,7 +920,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @SkipValidation
     public String cancelPayment()
     {
-        voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class, voucherHeader.getId());
+        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class, voucherHeader.getId());
         paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
         // persistenceService.setType(CVoucherHeader.class);

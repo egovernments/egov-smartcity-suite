@@ -1,25 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-	accountability and the service delivery of the government organizations. 
-	Copyright (C) <2015> eGovernments Foundation The updated version of eGov 
-	suite of products as by eGovernments Foundation is available at http://www.egovernments.org 
-	This program is free software: you can redistribute it and/or modify it under 
-	the terms of the GNU General Public License as published by the Free Software 
-	Foundation, either version 3 of the License, or any later version. This program 
-	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-	PURPOSE. See the GNU General Public License for more details. You should 
-	have received a copy of the GNU General Public License along with this program. 
-	If not, see http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html 
-	. In addition to the terms of the GPL license to be adhered to in using this 
-	program, the following additional terms are to be complied with: 1) All versions 
-	of this program, verbatim or modified must carry this Legal Notice. 2) Any 
-	misrepresentation of the origin of the material is prohibited. It is required 
-	that all modified versions of this material be marked in reasonable ways 
-	as different from the original version. 3) This license does not grant any 
-	rights to any user of the program with regards to rights under trademark 
-	law for use of the trade names or trademarks of eGovernments Foundation. 
-	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org. -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
@@ -38,24 +56,13 @@
 	</bean>
 
 	<bean class="org.egov.commons.dao.FundHibernateDAO" id="fundHibernateDAO"
-		scope="prototype">
-	</bean>
+		scope="prototype"/>
 	<bean id="appConfigValuesService"
 		class="org.egov.infra.admin.master.service.AppConfigValueService">
 	</bean>
-	<bean id="schemeDAO" class="org.egov.commons.dao.SchemeHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.Scheme" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	<bean id="schemeDAO" class="org.egov.commons.dao.SchemeHibernateDAO"/>
 
-	<bean id="subSchemeDAO" class="org.egov.commons.dao.SubSchemeHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.SubScheme" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	<bean id="subSchemeDAO" class="org.egov.commons.dao.SubSchemeHibernateDAO"/>
 
 
 	<bean id="balanceSheetService" class="org.egov.services.report.BalanceSheetService"
@@ -89,7 +96,8 @@
 
 	<bean id="budgetReAppropriationService" class="org.egov.services.budget.BudgetReAppropriationService"
 		scope="prototype">
-		<constructor-arg index="0" value="org.egov.model.budget.BudgetReAppropriation" />
+		<constructor-arg index="0"
+			value="org.egov.model.budget.BudgetReAppropriation" />
 		<property name="sequenceGenerator" ref="sequenceGenerator" />
 		<property name="budgetDetailService" ref="budgetDetailService" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
@@ -100,18 +108,9 @@
 	</bean>
 	<bean id="reportHelper" class="org.egov.utils.ReportHelper" />
 	<bean id="egDeductionDetHibernateDao" class="org.egov.dao.recoveries.EgDeductionDetailsHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.model.recoveries.EgDeductionDetails" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
 	</bean>
 	<bean id="tdsHibernateDAO" class="org.egov.dao.recoveries.TdsHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.model.recoveries.Recovery" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
+		
 	</bean>
 
 
@@ -160,10 +159,12 @@
 	</bean>
 
 
-	<!-- <bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService"> 
-		<constructor-arg index="0" value="org.egov.model.recoveries.Recovery" /> 
-		<property name="egDeductionDetHibernateDao" ref="egDeductionDetHibernateDao" 
-		/> <property name="tdsHibernateDAO" ref="tdsHibernateDAO" /> </bean> -->
+	<!-- <bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService">
+		<constructor-arg index="0"
+			value="org.egov.model.recoveries.Recovery" />
+		<property name="egDeductionDetHibernateDao" ref="egDeductionDetHibernateDao" />
+		<property name="tdsHibernateDAO" ref="tdsHibernateDAO" />
+	</bean> -->
 
 
 	<bean id="sharedFundSourceService" class="org.egov.commons.service.SharedFundSourceService">
@@ -249,11 +250,7 @@
 	</bean>
 
 	<bean id="tdsDAO" class="org.egov.dao.recoveries.TdsHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.model.recoveries.Recovery" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
+		
 	</bean>
 
 	<bean id="schemeService" class="org.egov.services.masters.SchemeService">

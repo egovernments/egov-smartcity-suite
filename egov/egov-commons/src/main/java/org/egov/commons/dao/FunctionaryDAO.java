@@ -39,34 +39,57 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons. Functionary ;
 import org.egov.commons.Functionary;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class FunctionaryDAO extends GenericHibernateDAO {
+public class FunctionaryDAO  {
     
         @PersistenceContext
         private EntityManager entityManager;
         
-        @Override
+        
         public Session  getCurrentSession() {
                 return entityManager.unwrap(Session.class);
         }
+        
+        
+        
+        @Transactional
+        public  Functionary  update(final  Functionary  entity) {
+            getCurrentSession().update(entity);
+            return entity;
+        }
 
-	public FunctionaryDAO() {
-		super(Functionary.class, null);
-	}
+        @Transactional
+        public  Functionary  create(final  Functionary  entity) {
+            getCurrentSession().persist(entity);
+            return entity;
+        }
 
-	public FunctionaryDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+        @Transactional
+        public void delete( Functionary  entity) {
+            getCurrentSession().delete(entity);
+        }
+
+        public  Functionary  findById(Number id, boolean lock) {
+            return ( Functionary ) getCurrentSession().load( Functionary .class, id);
+        }
+
+        public List< Functionary > findAll() {
+            return (List< Functionary >) getCurrentSession().createCriteria( Functionary .class).list();
+        }
+
 
 	public List<Functionary> findAllActiveFunctionary() {
 		return getCurrentSession().createQuery("from Functionary f where isactive=true").list();

@@ -44,10 +44,21 @@ import java.util.List;
 import org.egov.commons.CFunction;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface FunctionDAO extends GenericDAO {
+public interface FunctionDAO  {
 	public List<CFunction> getAllActiveFunctions();
 
 	public CFunction getFunctionByCode(String functionCode);
 
 	public CFunction getFunctionById(Long Id);
+	 CFunction findById(Number id, boolean lock);
+
+	    List< CFunction > findAll();
+
+
+	     CFunction  create( CFunction  entity);
+
+
+             CFunction  update( CFunction  entity);
+
+	    void delete( CFunction  entity);
 }

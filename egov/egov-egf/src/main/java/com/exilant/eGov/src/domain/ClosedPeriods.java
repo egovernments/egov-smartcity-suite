@@ -49,9 +49,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
@@ -65,6 +67,10 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 @Transactional(readOnly = true)
 public class ClosedPeriods
 {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private String id = null;
     private String startingDate = "";
     private String endingDate = "";
@@ -104,7 +110,7 @@ public class ClosedPeriods
         final String insertQuery = "INSERT INTO closedPeriods (id, startingDate, endingDate, isClosed) " +
                 "VALUES(?,?,?,?)";
 
-        psmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+       // psmt = persistenceService.getSession().createSQLQuery(insertQuery);
         psmt.setString(1, id);
         psmt.setString(2, startingDate);
         psmt.setString(3, endingDate);
@@ -140,7 +146,7 @@ public class ClosedPeriods
         query.append(" where id=?");
         try {
             int i = 1;
-            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
+            pstmt = persistenceService.getSession().createSQLQuery(query.toString());
             if (startingDate != null)
                 pstmt.setString(i++, startingDate);
             if (endingDate != null)
@@ -156,7 +162,7 @@ public class ClosedPeriods
         }
 
     }
-
+@Deprecated
     static public boolean isClosedForPosting(final String date) throws TaskFailedException {
         boolean isClosed = true;
         String chkqry = null;
@@ -172,7 +178,7 @@ public class ClosedPeriods
                     "WHERE startingDate<='" + date + "'  AND endingDate>='" + date + "' AND isActiveForPosting=true";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Before excuting " + chkqry);
-            psmt = HibernateUtil.getCurrentSession().createSQLQuery(chkqry);
+            //psmt = persistenceService.getSession().createSQLQuery(chkqry);
             List<Object[]> rs = psmt.list();
 
             if (rs != null && rs.size() > 0)
@@ -184,7 +190,7 @@ public class ClosedPeriods
                         + "' AND endingDate>='" + date + "'";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(qry);
-                psmt1 = HibernateUtil.getCurrentSession().createSQLQuery(qry);
+                //psmt1 = persistenceService.getSession().createSQLQuery(qry);
                 rs = psmt1.list();
 
                 if (!(rs != null && rs.size() > 0))

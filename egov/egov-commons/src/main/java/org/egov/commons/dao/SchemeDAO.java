@@ -42,7 +42,7 @@ package org.egov.commons.dao;
 import org.egov.commons.Scheme;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface SchemeDAO extends GenericDAO {
+public interface SchemeDAO {
 	
 	public Scheme getSchemeById(Integer id);
 

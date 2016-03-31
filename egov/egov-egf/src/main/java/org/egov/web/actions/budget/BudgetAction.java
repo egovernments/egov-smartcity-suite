@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -80,6 +83,10 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
     @Result(name = BudgetAction.EDIT, location = "budget-" + BudgetAction.EDIT + ".jsp")
 })
 public class BudgetAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final long serialVersionUID = 1L;
     private Budget budget = new Budget();
     private PersistenceService<Budget, Long> budgetService;
@@ -232,7 +239,7 @@ public class BudgetAction extends BaseFormAction {
                 .getState().getId());
         }
         // This fix is for Phoenix Migration.budget.setState(state);
-        HibernateUtil.getCurrentSession().flush();
+        persistenceService.getSession().flush();
         budgetService.persist(budget);
         addActionMessage(getMessage("budget.update"));
         target = "SUCCESS";

@@ -42,6 +42,9 @@
  */
 package org.egov.web.actions.masters;
 
+
+
+import org.egov.infstr.services.PersistenceService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,7 +85,11 @@ public class AccountChequeAction extends BaseFormAction {
     private List<ChequeDeptMapping> chequeList;
     private Bankaccount bankaccount;
     private List<ChequeDetail> chequeDetailsList;
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     @Qualifier("accountChequesService")
     private AccountChequesService accountChequesService;
     
@@ -155,7 +162,7 @@ public class AccountChequeAction extends BaseFormAction {
             chequeDetail.setSerialNoH(fy.getFinYearRange());
             chequeDetail
                     .setReceivedDate(Constants.DDMMYYYYFORMAT2.format(chequeDeptMapping.getAccountCheque().getReceivedDate()));
-            chequeDetail.setSerialNo(chequeDeptMapping.getAccountCheque().getSerialNo());
+            chequeDetail.setSerialNo(chequeDeptMapping.getAccountCheque().getSerialNo().toString());
             if (null != chequeDeptMapping.getAccountCheque().getIsExhausted()
                     && chequeDeptMapping.getAccountCheque().getIsExhausted())
                 chequeDetail.setIsExhusted("Yes");
@@ -177,7 +184,7 @@ public class AccountChequeAction extends BaseFormAction {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("AccountChequeAction | save | Start");
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = persistenceService.getSession();
         final Map<String, AccountCheques> chequeMap = new HashMap<String, AccountCheques>();
         final Map<String, String> chequeIdMap = new HashMap<String, String>();
         AccountCheques accountCheques;

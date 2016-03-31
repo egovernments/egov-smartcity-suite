@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.report;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -274,7 +274,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strQuery...." + strQuery);
 
-            query = HibernateUtil.getCurrentSession().createSQLQuery(strQuery)
+            query = persistenceService.getSession().createSQLQuery(strQuery)
                     .addScalar("bdgApprNumber")
                     .addScalar("voucherDate",StandardBasicTypes.DATE)
                     .addScalar("billDate",StandardBasicTypes.DATE)
@@ -316,7 +316,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strsubQuery...." + strsubQuery);
 
-            query = HibernateUtil.getCurrentSession().createSQLQuery(strsubQuery)
+            query = persistenceService.getSession().createSQLQuery(strsubQuery)
                     .addScalar("bdgApprNumber")
                     .addScalar("voucherDate",StandardBasicTypes.DATE)
                     .addScalar("billDate",StandardBasicTypes.DATE)

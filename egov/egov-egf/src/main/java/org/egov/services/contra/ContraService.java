@@ -29,7 +29,7 @@
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.services.contra;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -557,7 +557,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         final String ioSql = "update EGF_INSTRUMENTOTHERDETAILS set PAYINSLIPID=:payinId,INSTRUMENTSTATUSDATE=:ihStatusDate," +
                 " LASTMODIFIEDBY=:modifiedBy, LASTMODIFIEDDATE =:modifiedDate where INSTRUMENTHEADERID=:ihId";
 
-        final SQLQuery ioSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ioSql);
+        final SQLQuery ioSQLQuery = getSession().createSQLQuery(ioSql);
         ioSQLQuery.setLong("payinId", (Long) instrumentDetailsMap.get("payinid"))
         .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
         .setDate("ihStatusDate", (Date) instrumentDetailsMap.get("depositdate"))
@@ -568,7 +568,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         final String ihSql = "update EGF_instrumentheader  set ID_STATUS=:statusId,BANKACCOUNTID=:bankAccId,LASTMODIFIEDBY=:modifiedBy,"
                 + " LASTMODIFIEDDATE =:modifiedDate where id=:ihId";
 
-        final SQLQuery ihSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ihSql);
+        final SQLQuery ihSQLQuery = getSession().createSQLQuery(ihSql);
         ihSQLQuery.setLong("statusId", (Long) instrumentDetailsMap.get("instrumentDepositedStatus"))
         .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
         .setInteger("bankAccId", (Integer) instrumentDetailsMap.get("bankaccountid"))
@@ -590,7 +590,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         final String brsSql = "Insert into bankreconciliation (ID,BANKACCOUNTID,AMOUNT,TRANSACTIONTYPE,INSTRUMENTHEADERID) values "
                 +
                 " (seq_bankreconciliation.nextVal,:bankAccId,:amount,:trType,:ihId)";
-        final SQLQuery brsSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(brsSql);
+        final SQLQuery brsSQLQuery = getSession().createSQLQuery(brsSql);
 
         brsSQLQuery.setInteger("bankAccId", (Integer) instrumentDetailsMap.get("bankaccountid"))
         .setBigDecimal("amount", (BigDecimal) instrumentDetailsMap.get("instrumentamount"))
@@ -610,7 +610,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                     +
                     " LASTMODIFIEDDATE =:modifiedDate where INSTRUMENTHEADERID=:ihId";
 
-            final SQLQuery ioSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ioSql);
+            final SQLQuery ioSQLQuery = getSession().createSQLQuery(ioSql);
             ioSQLQuery.setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
             .setBigDecimal("reconciledAmt", (BigDecimal) instrumentDetailsMap.get("instrumentamount"))
             .setDate("ihStatusDate", (Date) instrumentDetailsMap.get("depositdate"))
@@ -620,7 +620,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
             final String ihSql = "update EGF_instrumentheader  set ID_STATUS=:statusId,LASTMODIFIEDBY=:modifiedBy," +
                     " LASTMODIFIEDDATE =:modifiedDate where id=:ihId";
-            final SQLQuery ihSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ihSql);
+            final SQLQuery ihSQLQuery = getSession().createSQLQuery(ihSql);
             ihSQLQuery.setLong("statusId", (Long) instrumentDetailsMap.get("instrumentReconciledStatus"))
             .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
             .setDate("modifiedDate", new Date())
@@ -637,7 +637,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 +
                 " ,STATE_ID,CREATEDBY,LASTMODIFIEDBY) values " +
                 " (seq_contrajournalvoucher.nextVal,:vhId,null,:depositedBankId,:ihId,null,:createdBy,:createdBy)";
-        final SQLQuery ioSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ioSql);
+        final SQLQuery ioSQLQuery = getSession().createSQLQuery(ioSql);
         ioSQLQuery.setLong("vhId", (Long) instrumentDetailsMap.get("payinid"))
         .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
         .setLong("depositedBankId", (Integer) instrumentDetailsMap.get("bankaccountid"))

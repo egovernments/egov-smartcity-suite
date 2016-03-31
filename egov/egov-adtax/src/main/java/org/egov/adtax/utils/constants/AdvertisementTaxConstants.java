@@ -72,6 +72,9 @@ public class AdvertisementTaxConstants {
 
     public static final String WF_APPROVE_BUTTON = "Approve";
     public static final String WF_REJECT_BUTTON = "REJECT";
+    public static final String WF_CANCELAPPLICATION_BUTTON = "CANCEL APPLICATION";
+    public static final String WF_CANCELRENEWAL_BUTTON = "CANCEL RENEWAL";
+    
     public static final String WF_NEW_STATE = "NEW";
     public static final String WF_REJECT_STATE = "Rejected";
     public static final String WF_END_STATE = "END";
@@ -86,6 +89,7 @@ public class AdvertisementTaxConstants {
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String FEECOLLECTION = "Fee Collection";
+    public static final String ADVERTISEMENT_FUCNTION_CODE = "90939300";
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String WARD = "Ward";
     public static final String ADDRESSTYPEASOWNER = "OWNER";
@@ -105,5 +109,6 @@ public class AdvertisementTaxConstants {
     public static final String TOTAL_DEMAND = "Demand";
     public static final String PENDINGAMOUNT = "Pending Amount";
     public static final String TOTALCOLLECTION = " Total Collection";
+    public static final String PERMIT_STATUS_PAYMENTPENDING="ADTAXAMTPAYMENTPENDING";
 
 }

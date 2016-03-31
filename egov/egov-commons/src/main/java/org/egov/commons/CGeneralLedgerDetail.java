@@ -43,34 +43,36 @@ import java.math.BigDecimal;
 
 public class CGeneralLedgerDetail {
 	private Long id;
-	private Integer generalLedgerId;
-	private Integer detailKeyId;
-	private Integer detailTypeId;
-	private BigDecimal amount;
+	private CGeneralLedger generalLedgerId;
+        private Integer detailKeyId;
+        private Accountdetailtype detailTypeId;
+        private BigDecimal amount;
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Integer getGeneralLedgerId() {
-		return generalLedgerId;
-	}
-	public void setGeneralLedgerId(Integer generalLedgerId) {
-		this.generalLedgerId = generalLedgerId;
-	}
-	public Integer getDetailKeyId() {
+	
+	public CGeneralLedger getGeneralLedgerId() {
+        return generalLedgerId;
+    }
+    public void setGeneralLedgerId(CGeneralLedger generalLedgerId) {
+        this.generalLedgerId = generalLedgerId;
+    }
+    public Accountdetailtype getDetailTypeId() {
+        return detailTypeId;
+    }
+    public void setDetailTypeId(Accountdetailtype detailTypeId) {
+        this.detailTypeId = detailTypeId;
+    }
+    public Integer getDetailKeyId() {
 		return detailKeyId;
 	}
 	public void setDetailKeyId(Integer detailKeyId) {
 		this.detailKeyId = detailKeyId;
 	}
-	public Integer getDetailTypeId() {
-		return detailTypeId;
-	}
-	public void setDetailTypeId(Integer detailTypeId) {
-		this.detailTypeId = detailTypeId;
-	}
+	
 	public BigDecimal getAmount() {
 		return amount;
 	}

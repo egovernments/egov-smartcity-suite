@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +67,10 @@ import org.hibernate.FlushMode;
 
 public class ReportAction extends BaseFormAction
 {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
     private static final long serialVersionUID = 1L;
     protected ReportSearch reportSearch = new ReportSearch();
     protected List<String> headerFields = new ArrayList<String>();
@@ -93,8 +100,8 @@ public class ReportAction extends BaseFormAction
     @Override
     public void prepare()
     {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         getHeaderFields();
         if (headerFields.contains(Constants.DEPARTMENT))

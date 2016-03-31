@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -122,7 +125,11 @@ public class PendingTDSReportAction extends BaseFormAction {
     private Recovery recovery = new Recovery();
     private Fund fund = new Fund();
     private Department department = new Department();
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private EgovCommon egovCommon;
     private final List<EntityType> entitiesList = new ArrayList<EntityType>();
     private RemitRecoveryService remitRecoveryService;
@@ -152,8 +159,8 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));  
@@ -257,7 +264,7 @@ public class PendingTDSReportAction extends BaseFormAction {
         final RemittanceBean remittanceBean = new RemittanceBean();
         remittanceBean.setRecoveryId(recovery.getId());
         if (department.getId() != null && department.getId() != -1)
-            deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.vouchermis.departmentid.id="
+            deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.vouchermis.departmentid.id="
                     + department.getId();
         if (detailKey != null && detailKey != -1)
             partyNameQuery = " and egRemittanceGldtl.generalledgerdetail.detailkeyid=" + detailKey;
@@ -266,15 +273,15 @@ public class PendingTDSReportAction extends BaseFormAction {
         pendingTDS = remitRecoveryService.getRecoveryDetailsForReport(remittanceBean, getVoucherHeader(), detailKey);
         final StringBuffer query1 = new StringBuffer(1000);
         List<EgRemittanceDetail> result1 = new ArrayList<EgRemittanceDetail>();
-        query1.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalledger.glcodeId.id=? "
+        query1.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalLedgerId.glcodeId.id=? "
                 +
-                "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 5 and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.status=0 and "
+                "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 5 and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status=0 and "
                 +
-                "egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate <= ? ");
+                "egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate <= ? ");
         if (fromDate != null)
-            query1.append(" and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate >= ?");
+            query1.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate >= ?");
         query1.append(deptQuery).append(partyNameQuery);
-        query1.append(" order by egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherNumber ");
+        query1.append(" order by egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber ");
         if (fromDate != null)
             result1 = persistenceService.findAllBy(query1.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
                     asOnDate, fromDate);
@@ -316,22 +323,22 @@ public class PendingTDSReportAction extends BaseFormAction {
         }
         if (showRemittedEntries) {
             if (department.getId() != null && department.getId() != -1)
-                deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.vouchermis.departmentid.id="
+                deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.vouchermis.departmentid.id="
                         + department.getId();
             if (detailKey != null && detailKey != -1)
                 partyNameQuery = " and egRemittanceGldtl.generalledgerdetail.detailkeyid=" + detailKey;
             final StringBuffer query = new StringBuffer(1000);
            
             List<EgRemittanceDetail> result = new ArrayList<EgRemittanceDetail>();
-            query.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalledger.glcodeId.id=? "
+            query.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalLedgerId.glcodeId.id=? "
                     +
-                    "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 0 and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.status=0 and "
+                    "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 0 and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status=0 and "
                     +
-                    "egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate <= ? ");
+                    "egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate <= ? ");
             if (fromDate != null)
-                query.append(" and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate >= ?");
+                query.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate >= ?");
             query.append(deptQuery).append(partyNameQuery);
-            query.append(" order by egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherNumber ");
+            query.append(" order by egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber ");
             if (fromDate != null)
                 result = persistenceService.findAllBy(query.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
                         asOnDate, fromDate);
@@ -407,7 +414,7 @@ public class PendingTDSReportAction extends BaseFormAction {
                     + "','dd/MM/yyyy') " + deptQuery + partyNameQuery + " group by er.month,vh.name order by er.month,vh.name";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(qry);
-            result = HibernateUtil.getCurrentSession().createSQLQuery(qry).list();
+            result = persistenceService.getSession().createSQLQuery(qry).list();
             // Query to get total deduction
             final String qryTolDeduction = "SELECT type,MONTH,SUM(gldtamt) FROM (SELECT DISTINCT er.month AS MONTH,ergl.gldtlamt AS gldtamt,"
                     +
@@ -429,7 +436,7 @@ public class PendingTDSReportAction extends BaseFormAction {
                     + " vh.voucherDate >= to_date('"
                     + Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate())
                     + "','dd/MM/yyyy') " + deptQuery + partyNameQuery + ") as temptable group by type,month";
-            resultTolDeduction = HibernateUtil.getCurrentSession().createSQLQuery(qryTolDeduction).list();
+            resultTolDeduction = persistenceService.getSession().createSQLQuery(qryTolDeduction).list();
         } catch (final ApplicationRuntimeException e) {
             message = e.getMessage();
             return;
@@ -481,12 +488,12 @@ public class PendingTDSReportAction extends BaseFormAction {
         if (entry.getEgRemittanceGldtl().getRecovery() != null)
             tds.setPartyCode(entry.getEgRemittanceGldtl().getRecovery().getEgPartytype().getCode());
         tds.setEgRemittanceGlDtlId(entry.getEgRemittanceGldtl().getId());
-        tds.setNatureOfDeduction(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralledger().getVoucherHeaderId()
+        tds.setNatureOfDeduction(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralLedgerId().getVoucherHeaderId()
                 .getName());
-        tds.setVoucherNumber(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralledger().getVoucherHeaderId()
+        tds.setVoucherNumber(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getGeneralLedgerId().getVoucherHeaderId()
                 .getVoucherNumber());
         tds.setVoucherDate(Constants.DDMMYYYYFORMAT2.format(entry.getEgRemittanceGldtl().getGeneralledgerdetail()
-                .getGeneralledger().getVoucherHeaderId().getVoucherDate()));
+                .getGeneralLedgerId().getVoucherHeaderId().getVoucherDate()));
         final EntityType entityType = getEntity(entry);
         if (entityType != null) {
             tds.setPartyName(entityType.getName());
@@ -499,10 +506,10 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     private EntityType getEntity(final EgRemittanceDetail entry) {
         egovCommon.setPersistenceService(persistenceService);
-        final Integer detailKeyId = entry.getEgRemittanceGldtl().getGeneralledgerdetail().getDetailkeyid().intValue();
+        final Integer detailKeyId = entry.getEgRemittanceGldtl().getGeneralledgerdetail().getDetailKeyId().intValue();
         EntityType entityType = null;
         try {
-            entityType = egovCommon.getEntityType(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getAccountdetailtype(),
+            entityType = egovCommon.getEntityType(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getDetailTypeId(),
                     detailKeyId);
         } catch (final ApplicationException e) {
             e.printStackTrace();

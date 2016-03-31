@@ -60,7 +60,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
@@ -377,7 +376,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     public BudgetReAppropriationMisc performActionOnMisc(final String action, final BudgetReAppropriationMisc reApp,
             final String comment) {
         final BudgetReAppropriationMisc misc = miscWorkflowService.transition(action, reApp, comment);
-        HibernateUtil.getCurrentSession().flush();
+        getSession().flush();
         return misc;
     }
 
@@ -389,8 +388,9 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
      * reappropriation)
      * @return
      */
+    @Transactional
     public void updatePlanningBudget(final BudgetReAppropriation reAppropriation) {
-        HibernateUtil.getCurrentSession().flush();
+        getSession().flush();
         // BigDecimal multiplicationFactor = new
         // BigDecimal(Double.parseDouble(getAppConfigFor("EGF","planning_budget_multiplication_factor")));
         final BudgetDetail budgetDetail = budgetDetailService.find("from BudgetDetail where id=?", reAppropriation
@@ -419,7 +419,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
         budgetAvailable = planningBudgetApproved.subtract(planningBudgetUsage);
         budgetDetail.setBudgetAvailable(budgetAvailable);
         budgetDetailService.update(budgetDetail);
-        HibernateUtil.getCurrentSession().flush();
+        getSession().flush();
     }
 
     protected BigDecimal zeroOrValue(final BigDecimal value) {
@@ -529,6 +529,8 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
          */
         applyAuditing(appropriation);
         persist(appropriation);
+        //Need to call on approve (After implementing workflow)
+        updatePlanningBudget(appropriation);
     }
 
     @Transactional
@@ -589,7 +591,9 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             final BudgetReAppropriationView appropriation, final Position position, final BudgetReAppropriationMisc misc) {
         final BudgetReAppropriation reAppropriation = new BudgetReAppropriation();
         detail.setPlanningPercent(appropriation.getPlanningPercent());
-        detail.setBudgetAvailable(appropriation.getPlanningBudgetApproved());
+        detail.setBudgetAvailable(appropriation.getDeltaAmount().multiply(detail.getPlanningPercent())
+                .divide(new BigDecimal(String
+                        .valueOf(100))));
         reAppropriation.setBudgetDetail(detail);
         reAppropriation.setReAppropriationMisc(misc);
         reAppropriation.setAnticipatoryAmount(appropriation.getAnticipatoryAmount());

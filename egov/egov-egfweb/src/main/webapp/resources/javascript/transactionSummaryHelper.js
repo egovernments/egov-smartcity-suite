@@ -590,7 +590,7 @@ function autocompleteEntities(obj) {
 	oAutoCompEntityForJV.minQueryLength = 1;
 	oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 	oAutoCompEntityForJV.useShadow = true;
-	//oAutoCompEntityForJV.forceSelection = true;
+	// oAutoCompEntityForJV.forceSelection = true;
 	oAutoCompEntityForJV.maxResultsDisplayed = 10;
 	oAutoCompEntityForJV.useIFrame = true;
 	oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox,
@@ -846,8 +846,8 @@ function validateOnCreate() {
 	var flag = true;
 	var resultLength = $('#result tr').length - 2;
 	var index;
-	for (var i = 1; i <= resultLength; i++) {
-		index = i - 1;
+	for (var i = 0; i <= resultLength; i++) {
+		index = i;
 		var glcodeid = document.getElementById('transactionSummaryList['
 				+ index + '].glcodeid.id').value;
 		var glcode = document.getElementById('transactionSummaryList[' + index
@@ -865,10 +865,10 @@ function validateOnCreate() {
 		if ((glcode != '') && (glcodeid == null || glcodeid == '')) {
 			bootbox
 					.alert('Please select account code from auto complete for row '
-							+ i);
+							+ (i + 1));
 			flag = false;
 		} else if (glcode == null || glcode == '') {
-			bootbox.alert('Please select account code for row ' + i);
+			bootbox.alert('Please select account code for row ' + (i + 1));
 			flag = false;
 		} else if (subledgerlength > 1
 				&& (subledger.value == null || subledger.value == '')) {
@@ -892,64 +892,68 @@ function validateOnCreate() {
 			flag = false;
 		}
 	}
-	// Validate last row if glcode is there
-	var lastrow = resultLength;
-	var lastrowglcodeid = document.getElementById('transactionSummaryList['
-			+ lastrow + '].glcodeid.id').value;
-	var lastrowglcode = document.getElementById('transactionSummaryList['
-			+ lastrow + '].glcodeDetail').value;
-	var lastrowsubledger = document.getElementById('transactionSummaryList['
-			+ lastrow + '].accountdetailtype.id');
-	var lastrowsubledgerlength = $(lastrowsubledger).children('option').length;
-	console.log(glcode);
-	var lastrowentity = document.getElementById('transactionSummaryList['
-			+ lastrow + '].accountdetailkeyValue').value;
-	var lastrowdebit = document.getElementById('transactionSummaryList['
-			+ lastrow + '].openingdebitbalance').value;
-	var lastrowcredit = document.getElementById('transactionSummaryList['
-			+ lastrow + '].openingcreditbalance').value;
-	if (lastrowglcode != null && lastrowglcode != '') {
-		if ((lastrowglcode != '')
-				&& (lastrowglcodeid == null || lastrowglcodeid == '')) {
-			bootbox
-					.alert('Please select account code from auto complete for row '
-							+ i);
-			flag = false;
-		} else if (lastrowsubledgerlength > 1
-				&& (lastrowsubledger.value == null || lastrowsubledger.value == '')) {
-			bootbox.alert('Please select subledger type for account code  '
-					+ lastrowglcode);
-			flag = false;
-		} else if (lastrowsubledgerlength > 1
-				&& (lastrowsubledger.value != null || lastrowsubledger.value != '')
-				&& (lastrowentity == null || lastrowentity == '')) {
-			bootbox.alert('Please select entity for account code  '
-					+ lastrowglcode);
-			flag = false;
-		} else if ((lastrowdebit == '' && lastrowcredit == '')
-				|| (lastrowdebit < 0 && lastrowcredit < 0)) {
-			bootbox
-					.alert('Please select debit amount or credit amount for account code  '
-							+ lastrowglcode);
-			flag = false;
-		} else if (lastrowdebit > 0 && lastrowcredit > 0) {
-			bootbox
-					.alert("Opening debit amount and credit amount cannot be there for the account code   "
-							+ lastrowglcode);
-			flag = false;
+	if (resultLength > 0) {
+		// Validate last row if glcode is there
+		var lastrow = resultLength;
+		var lastrowglcodeid = document.getElementById('transactionSummaryList['
+				+ lastrow + '].glcodeid.id').value;
+		var lastrowglcode = document.getElementById('transactionSummaryList['
+				+ lastrow + '].glcodeDetail').value;
+		var lastrowsubledger = document
+				.getElementById('transactionSummaryList[' + lastrow
+						+ '].accountdetailtype.id');
+		var lastrowsubledgerlength = $(lastrowsubledger).children('option').length;
+		console.log(glcode);
+		var lastrowentity = document.getElementById('transactionSummaryList['
+				+ lastrow + '].accountdetailkeyValue').value;
+		var lastrowdebit = document.getElementById('transactionSummaryList['
+				+ lastrow + '].openingdebitbalance').value;
+		var lastrowcredit = document.getElementById('transactionSummaryList['
+				+ lastrow + '].openingcreditbalance').value;
+		if (lastrowglcode != null && lastrowglcode != '') {
+			if ((lastrowglcode != '')
+					&& (lastrowglcodeid == null || lastrowglcodeid == '')) {
+				bootbox
+						.alert('Please select account code from auto complete for row '
+								+ i);
+				flag = false;
+			} else if (lastrowsubledgerlength > 1
+					&& (lastrowsubledger.value == null || lastrowsubledger.value == '')) {
+				bootbox.alert('Please select subledger type for account code  '
+						+ lastrowglcode);
+				flag = false;
+			} else if (lastrowsubledgerlength > 1
+					&& (lastrowsubledger.value != null || lastrowsubledger.value != '')
+					&& (lastrowentity == null || lastrowentity == '')) {
+				bootbox.alert('Please select entity for account code  '
+						+ lastrowglcode);
+				flag = false;
+			} else if ((lastrowdebit == '' && lastrowcredit == '')
+					|| (lastrowdebit < 0 && lastrowcredit < 0)) {
+				bootbox
+						.alert('Please select debit amount or credit amount for account code  '
+								+ lastrowglcode);
+				flag = false;
+			} else if (lastrowdebit > 0 && lastrowcredit > 0) {
+				bootbox
+						.alert("Opening debit amount and credit amount cannot be there for the account code   "
+								+ lastrowglcode);
+				flag = false;
+			}
+		} else {
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].id').value = "";
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].glcodeDetail').value = "";
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].glcodeid.id').value = 0;
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].accounthead').innerHTML = "";
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].accountdetailkey').value = "";
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].accountdetailkeyValue').value = "";
 		}
-	} else {
-		document.getElementById('transactionSummaryList[' + lastrow + '].id').value = "";
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].glcodeDetail').value = "";
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].glcodeid.id').value = 0;
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].accounthead').innerHTML = "";
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].accountdetailkey').value = "";
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].accountdetailkeyValue').value = "";
 	}
 	return flag;
 }

@@ -43,6 +43,9 @@
  */
 package com.exilant.eGov.src.reports;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,7 +76,11 @@ public class DishonoredChequeReport
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS", Locale.getDefault());
-   private @Autowired CommnFunctions commnFunctions;
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired CommnFunctions commnFunctions;
     private static final Logger LOGGER = Logger.getLogger(DishonoredChequeReport.class);
 
     public DishonoredChequeReport() {
@@ -163,7 +170,7 @@ public class DishonoredChequeReport
             final String query = new StringBuffer().append(basicquery1).append(wherequery1).append(orderbyquery).toString();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("  getDishonoredChequeDetails Query is  " + query);
-            rs = HibernateUtil.getCurrentSession().createSQLQuery(query).list();
+            rs = persistenceService.getSession().createSQLQuery(query).list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("After Execute Query----getDishonoredChequeDetails");
             int i = 1;
@@ -323,7 +330,7 @@ public class DishonoredChequeReport
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("  getBankEntryDetails Query is  " + query);
 
-            rs = HibernateUtil.getCurrentSession().createSQLQuery(query).list();
+            rs = persistenceService.getSession().createSQLQuery(query).list();
 
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("After Execute Query----getBankEntryDetails");

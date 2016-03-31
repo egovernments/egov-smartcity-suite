@@ -42,14 +42,24 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<style>
 
+table tbody tr.odd td {
+    background: rgba(245, 245, 245, 0.49);
+}
+
+</style>
 <div class="row">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" action=""
 			id="bcDailyCollectionReportForm" modelAttribute="bcDailyCollectionReportResult" commandName="bcDailyCollectionReportResult"
 			method="get">
+			<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							
+						</div>
 		<div class="panel-body">
-				<div class="form-group">
+				<div class="form-group add-margin">
 					<label class="col-sm-3 control-label text-right"> Region </label>
 					<div class="col-sm-3 add-margin">
 						<input type="hidden" id="typeDefaultVal" name="typeDefaultVal" value="${typeValue}"/>  
@@ -61,10 +71,9 @@
 							<form:options items="${regions}" itemValue="name" itemLabel="name" />
 						</form:select>
 					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"> District
+					<label class="col-sm-2 control-label text-right"> District
 						</label>
-						<div class="col-sm-2 add-margin">
+						<div class="col-sm-3 add-margin">
 							<form:select path="district" id="districtId"
 								data-first-option="false" cssClass="form-control">
 								<form:option value="">
@@ -74,11 +83,8 @@
 									itemLabel="name" />
 							</form:select>
 						</div>
-					</div>
-
 				</div>
-			</div>	
-			<div class="panel-body">
+			
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"> Ulb Name</label>
 					<div class="col-sm-3 add-margin">
@@ -90,18 +96,17 @@
 							<form:options items="${cities}" itemValue="name" itemLabel="name" />
 						</form:select>
 					</div>
-					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"> Category of ownership 
 						</label>
-						<div class="col-sm-2 add-margin">
+						<div class="col-sm-3 add-margin">
 							<form:select path="type" 
 								data-first-option="false" cssClass="form-control">
 								<form:option value="ALL">
 									<spring:message code="lbl.default.all" />
 								</form:option>
-								<form:option value="PRIVATE">
+								<%-- <form:option value="PRIVATE">
 									PRIVATE
-								</form:option>
+								</form:option> --%>
 								<form:option value="PRIVATE_EXCLUDE_COURTCASE">
 									PRIVATE (Excluding Court Case)
 								</form:option>
@@ -115,11 +120,11 @@
 									Court Cases
 								</form:option>
 							</form:select>
-						</div>
 					</div>
-
-				</div>
-			</div>			
+			  </div>
+		</div>	
+		</div>	
+				
 		<div class="row">
 				<div class="text-center">
 					<button type="button" class="btn btn-primary"
@@ -135,12 +140,17 @@
 		
 		
 		</form:form>
-		<div >
-	<div id="tblulbDCBcollectionheader">
+		
+		</div>
+</div>
+		<br/>
+		
+	<div class="row" id="tblulbDCBcollectionheader">
 		<div class="col-md-8 table-header text-left"><spring:message code="lbl.uldDCbDaily.report.details" /> ${bcDailyCollectionReportResult.generatedDate}   </div>
 		<div class="col-md-4 text-right">Date : <%= new java.util.Date() %></div>
-		<div class="col-md-4 text-right">Amount in Lakhs</div>
+		<div class="col-md-4 text-right">Amount in Thousands</div>
 	</div>
+	<div  class="row">
 				<div class="col-md-12 form-group report-table-container">
 				<table class="table table-bordered datatable multiheadertbl" id="tblulbDCBcollection">
 				
@@ -215,8 +225,7 @@
 		</div>
 				
 		
-	</div>
-</div>
+	
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <script
@@ -234,5 +243,10 @@
 <script
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	type="text/javascript"></script>
+<script
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.stickytableheaders.min.js' context='/egi'/>"
+	type="text/javascript"></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/ulbWiseDcbReport.js'/>"></script>
+	
+	

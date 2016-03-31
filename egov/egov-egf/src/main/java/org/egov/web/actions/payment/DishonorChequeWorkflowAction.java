@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.payment;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -306,7 +306,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         final String instOtherDetailUpdate = "Update InstrumentOtherDetails iod set iod.dishonorBankRefNo=:refNo, iod.modifiedBy.id=:modifiedby , iod.modifiedDate=:modifiedDate , iod.instrumentStatusDate=:InstrumentUpdatedDate where "
                 +
                 " iod.instrumentHeaderId=:instrumentHeaderId ";
-        final Query instOtherDetailUpdateQuery = HibernateUtil.getCurrentSession().createQuery(instOtherDetailUpdate.toString());
+        final Query instOtherDetailUpdateQuery = persistenceService.getSession().createQuery(instOtherDetailUpdate.toString());
         instOtherDetailUpdateQuery.setString("refNo", dishonorChequeView.getBankReferenceNumber());
         instOtherDetailUpdateQuery.setLong("modifiedby", EgovThreadLocals.getUserId().intValue());
         instOtherDetailUpdateQuery.setDate("modifiedDate", new Date());
@@ -550,18 +550,18 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         new StringBuffer();
         // dishonCheqForm.setGlcodeChList(glCode);
         slDetailsCredit = persistenceService
-                .findAllBy("select distinct gl.glcode, gd.detailTypeId, gd.detailKeyId,SUM(gd.amount)" +
+                .findAllBy("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)" +
                         " from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in("
                         + dishonorChequeView.getOriginalVoucherHeader().getId() + ")" +
-                        " and gl.id = gd.generalLedgerId and gl.debitAmount >0 and gl.glcode in (" + reversalGlCodesStr
-                        + ") group by gl.glcode, gd.detailTypeId, gd.detailKeyId");
+                        " and gl.id = gd.generalLedgerId.id and gl.debitAmount >0 and gl.glcode in (" + reversalGlCodesStr
+                        + ") group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
 
-        slDetailsDebit = persistenceService.findAllBy("select distinct gl.glcode, gd.detailTypeId, gd.detailKeyId,SUM(gd.amount)"
+        slDetailsDebit = persistenceService.findAllBy("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)"
                 +
                 " from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in("
                 + dishonorChequeView.getOriginalVoucherHeader().getId() + ")" +
-                " and gl.id = gd.generalLedgerId and gl.creditAmount >0 and gl.glcode in (" + reversalGlCodesStr
-                + ") group by gl.glcode, gd.detailTypeId, gd.detailKeyId");
+                " and gl.id = gd.generalLedgerId.id and gl.creditAmount >0 and gl.glcode in (" + reversalGlCodesStr
+                + ") group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
         LOGGER.debug("Debit Side Subledger list size is " + slDetailsDebit.size());
         LOGGER.debug("Credit Side Subledger list size is " + slDetailsCredit.size());
 

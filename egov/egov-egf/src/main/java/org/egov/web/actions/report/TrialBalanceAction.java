@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -142,7 +145,11 @@ public class TrialBalanceAction extends BaseFormAction {
     private Map<String, BigDecimal> fundWiseTotalMap = new LinkedHashMap<String, BigDecimal>();
     private FinancialYearDAO financialYearDAO;
     private String removeEntrysWithZeroAmount = "";
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private AppConfigValueService appConfigValuesService;
     private Date startDate = new Date();
     private Date endDate = new Date();
@@ -158,8 +165,8 @@ public class TrialBalanceAction extends BaseFormAction {
     @Override
     public void prepare()
     {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
 
         addDropdownData("fundList", masterDataCache.get("egi-fund"));
@@ -239,7 +246,7 @@ public class TrialBalanceAction extends BaseFormAction {
             	
             	if(endFormat.compareTo(endDate1)>0)
             	{
-                    	addActionError(getText("End date should be within a financial year"));
+                    	addActionError(getText("Start Date and End Date should be in same financial year"));
                     	return "new";
                     
             	}
@@ -271,7 +278,7 @@ public class TrialBalanceAction extends BaseFormAction {
             }
             gererateReportForAsOnDate();
         }
-        if (al.size() > 1)
+        if (al.size() >= 1)
             return exportTrialBalance();
         else
         {
@@ -440,7 +447,7 @@ public class TrialBalanceAction extends BaseFormAction {
         try
         {
             new Double(0);
-            final SQLQuery SQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            final SQLQuery SQLQuery = persistenceService.getSession().createSQLQuery(query);
             SQLQuery.addScalar("accCode")
             .addScalar("accName")
             .addScalar("fundId", StringType.INSTANCE)
@@ -651,7 +658,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 " GROUP BY ts.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Query Str" + openingBalanceStr);
-        final Query openingBalanceQry = HibernateUtil.getCurrentSession().createSQLQuery(openingBalanceStr)
+        final Query openingBalanceQry = persistenceService.getSession().createSQLQuery(openingBalanceStr)
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("creditOPB", BigDecimalType.INSTANCE)
@@ -693,7 +700,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate" +
                 " AND vh.status not in (" + defaultStatusExclude + ")" +
                 " GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
-        final Query tillDateOPBQry = HibernateUtil.getCurrentSession().createSQLQuery(tillDateOPBStr)
+        final Query tillDateOPBQry = persistenceService.getSession().createSQLQuery(tillDateOPBStr)
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("tillDateCreditOPB", BigDecimalType.INSTANCE)
@@ -736,7 +743,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate" +
                 " AND vh.status not in (" + defaultStatusExclude + ") " +
                 " GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
-        final Query currentDebitCreditQry = HibernateUtil.getCurrentSession().createSQLQuery(currentDebitCreditStr)
+        final Query currentDebitCreditQry = persistenceService.getSession().createSQLQuery(currentDebitCreditStr)
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("creditAmount", BigDecimalType.INSTANCE)

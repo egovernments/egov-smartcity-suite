@@ -39,23 +39,53 @@
  ******************************************************************************/
 package org.egov.dao.budget;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.model.budget.BudgetUsage;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Transactional(readOnly = true)
 @Repository
-public class BudgetUsageHibernateDAO extends GenericHibernateDAO implements BudgetUsageDAO {
+public class BudgetUsageHibernateDAO implements BudgetUsageDAO {
+    @Transactional
+    public BudgetUsage update(final BudgetUsage entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
 
-    public BudgetUsageHibernateDAO(final Session session) {
-        super(BudgetUsage.class, session);
+    @Transactional
+    public BudgetUsage create(final BudgetUsage entity) {
+        getCurrentSession().persist(entity);
+        return entity;
     }
-    public BudgetUsageHibernateDAO()
-    {
-        super(BudgetUsage.class,null);
+
+    @Transactional
+    public void delete(BudgetUsage entity) {
+        getCurrentSession().delete(entity);
     }
+
+    @Override
+    public BudgetUsage findById(Number id, boolean lock) {
+        return (BudgetUsage) getCurrentSession().load(BudgetUsage.class, id);
+    }
+
+    public List<BudgetUsage> findAll() {
+        return (List<BudgetUsage>) getCurrentSession().createCriteria(BudgetUsage.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    
 
 }

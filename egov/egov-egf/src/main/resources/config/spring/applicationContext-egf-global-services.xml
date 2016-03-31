@@ -1,25 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-	accountability and the service delivery of the government organizations. 
-	Copyright (C) <2015> eGovernments Foundation The updated version of eGov 
-	suite of products as by eGovernments Foundation is available at http://www.egovernments.org 
-	This program is free software: you can redistribute it and/or modify it under 
-	the terms of the GNU General Public License as published by the Free Software 
-	Foundation, either version 3 of the License, or any later version. This program 
-	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-	PURPOSE. See the GNU General Public License for more details. You should 
-	have received a copy of the GNU General Public License along with this program. 
-	If not, see http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html 
-	. In addition to the terms of the GPL license to be adhered to in using this 
-	program, the following additional terms are to be complied with: 1) All versions 
-	of this program, verbatim or modified must carry this Legal Notice. 2) Any 
-	misrepresentation of the origin of the material is prohibited. It is required 
-	that all modified versions of this material be marked in reasonable ways 
-	as different from the original version. 3) This license does not grant any 
-	rights to any user of the program with regards to rights under trademark 
-	law for use of the trade names or trademarks of eGovernments Foundation. 
-	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org. -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
@@ -32,9 +50,8 @@
 		base-package="org.egov.billsaccounting.* , org.egov.dao.* , org.egov.deduction.* , org.egov.egf.* , org.egov.masters.* , org.egov.model.* , org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*" />
 
 
-	<bean id="instrumentTypeService" class="org.egov.services.instrument.InstrumentTypeService">
-		<constructor-arg index="0"
-			value="org.egov.model.instrument.InstrumentType" />
+	<bean id="instrumentTypeService" class = "org.egov.services.instrument.InstrumentTypeService" >
+		<constructor-arg index="0" value="org.egov.model.instrument.InstrumentType" />
 	</bean>
 
 	<bean id="bankService" class="org.egov.services.masters.BankService"
@@ -42,36 +59,30 @@
 		<property name="type" value="org.egov.commons.Bank" />
 	</bean>
 
-	<bean id="instrumentVoucherService" class="org.egov.services.instrument.InstrumentVoucherService">
-		<constructor-arg index="0"
-			value="org.egov.model.instrument.InstrumentVoucher" />
+	<bean id="instrumentVoucherService" class="org.egov.services.instrument.InstrumentVoucherService" >
+		<constructor-arg index="0" value="org.egov.model.instrument.InstrumentVoucher" />
 	</bean>
 
 	<bean id="bankReconciliationService" class="org.egov.services.instrument.BankReconciliationService">
-		<constructor-arg index="0"
-			value="org.egov.commons.Bankreconciliation" />
+		<constructor-arg index="0" value="org.egov.commons.Bankreconciliation" />
 	</bean>
 
-	<bean id="instrumentOtherDetailsService"
-		class="org.egov.services.instrument.InstrumentOtherDetailsService">
-		<constructor-arg index="0"
-			value="org.egov.model.instrument.InstrumentOtherDetails" />
+	<bean id="instrumentOtherDetailsService" class="org.egov.services.instrument.InstrumentOtherDetailsService" >
+		<constructor-arg index="0"  	value="org.egov.model.instrument.InstrumentOtherDetails" />
 	</bean>
-
-	<bean id="instrumentAccountCodesService"
-		class="org.egov.services.instrument.InstrumentAccountCodesService">
-		<constructor-arg index="0"
-			value="org.egov.model.instrument.InstrumentAccountCodes" />
+	
+	<bean id="instrumentAccountCodesService" class="org.egov.services.instrument.InstrumentAccountCodesService" >
+		<constructor-arg index="0"  	value="org.egov.model.instrument.InstrumentAccountCodes" />
 	</bean>
-
+	
 	<bean id="instrumentHeaderService" class="org.egov.services.instrument.InstrumentHeaderService">
-		<constructor-arg index="0"
-			value="org.egov.model.instrument.InstrumentHeader" />
+		<constructor-arg index="0" value="org.egov.model.instrument.InstrumentHeader" />
 	</bean>
 
 	<bean id="instrumentService" class="org.egov.services.instrument.InstrumentService"
 		scope="prototype">
-	</bean>
+	</bean>  
+
 
 	<bean id="contraJournalVoucherService"
 		class="org.egov.services.voucher.ContraJournalVoucherService">
@@ -137,12 +148,8 @@
 
 
 	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.commons.CFinancialYear" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	    </bean>
+		
 
 	<bean id="egwStatusHibernateDAO" class="org.egov.commons.dao.EgwStatusHibernateDAO">
 		<constructor-arg index="0" value="org.egov.commons.EgwStatus" />
@@ -151,42 +158,19 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="functionaryDAO" class="org.egov.commons.dao.FunctionaryHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.Functionary" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	<bean id="functionaryDAO" class="org.egov.commons.dao.FunctionaryHibernateDAO"/>
 
-	<bean id="fundSourceDAO" class="org.egov.commons.dao.FundSourceHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.Fundsource" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
-	<bean id="chartOfAccountsHibernateDAO" class="org.egov.commons.dao.ChartOfAccountsHibernateDAO">
-		<constructor-arg index="0"
-			value="org.egov.commons.CChartOfAccounts" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
-
-	<bean id="fiscalPeriodHibernateDAO" class="org.egov.commons.dao.FiscalPeriodHibernateDAO">
-	</bean>
-
-	<bean id="functionHibernateDAO" class="org.egov.commons.dao.FunctionHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.CFunction" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	<bean id="fundSourceDAO" class="org.egov.commons.dao.FundSourceHibernateDAO"/>
+	<bean id="chartOfAccountsHibernateDAO" class="org.egov.commons.dao.ChartOfAccountsHibernateDAO"/>
+	
+	<bean id="fiscalPeriodHibernateDAO" class="org.egov.commons.dao.FiscalPeriodHibernateDAO"/>
+	<bean id="functionHibernateDAO" class="org.egov.commons.dao.FunctionHibernateDAO"/>
 	<bean id="budgetDetailService" class="org.egov.services.budget.BudgetDetailService">
 		<constructor-arg index="0"
 			value="org.egov.model.budget.BudgetDetail">
 		</constructor-arg>
 	</bean>
-	<bean id="budgetUsageService" class="org.egov.services.budget.BudgetUsageService">
+<bean id="budgetUsageService" class="org.egov.services.budget.BudgetUsageService">
 		<constructor-arg index="0"
 			value="org.egov.model.budget.BudgetUsage">
 		</constructor-arg>
@@ -231,7 +215,7 @@
 		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-
+	
 	<bean id="billsService" class="org.egov.services.bills.BillsService"
 		scope="prototype">
 	</bean>
@@ -292,12 +276,10 @@
 		<property name="type" value="org.egov.commons.Accountdetailkey" />
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-	<bean id="generalLedgerService" class="org.egov.services.voucher.GeneralLedgerService">
-		<constructor-arg index="0"
-			value="org.egov.commons.CGeneralLedger" />
-	</bean>
-	<bean id="generalLedgerDetailService" class="org.egov.services.voucher.GeneralLedgerDetailService">
-		<constructor-arg index="0"
-			value="org.egov.commons.CGeneralLedgerDetail" />
-	</bean>
+	<bean id="generalLedgerService" class = "org.egov.services.voucher.GeneralLedgerService" >
+               <constructor-arg index="0" value="org.egov.commons.CGeneralLedger" />
+    </bean>
+	<bean id="generalLedgerDetailService" class = "org.egov.services.voucher.GeneralLedgerDetailService" >
+               <constructor-arg index="0" value="org.egov.commons.CGeneralLedgerDetail" />
+    </bean>
 </beans>

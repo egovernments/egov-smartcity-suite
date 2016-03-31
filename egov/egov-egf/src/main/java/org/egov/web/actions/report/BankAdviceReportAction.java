@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -92,6 +95,10 @@ import org.hibernate.Query;
                     "contentDisposition", "attachment; filename=${textFileName}" })
 })
 public class BankAdviceReportAction extends BaseFormAction {
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+
 
     /**
      *
@@ -136,8 +143,8 @@ public class BankAdviceReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         //persistenceService.setType(Bank.class);
         addDropdownData(
@@ -227,11 +234,11 @@ public class BankAdviceReportAction extends BaseFormAction {
                 " AND gl.voucherheaderid =m.billvhid AND gl.id=gld.generalledgerid AND gl.debitamount!=0 " +
                 " group by gld.detailtypeid ,gld.detailkeyid  ";
 
-        final Query WithNetPayableSubledgerQuery = HibernateUtil.getCurrentSession().createSQLQuery(query);
+        final Query WithNetPayableSubledgerQuery = persistenceService.getSession().createSQLQuery(query);
         WithNetPayableSubledgerQuery.setParameter(0, instrumentHeader.getId());
 
         // Get without subledger one
-        final Query getDebitsideSubledgerQuery = HibernateUtil.getCurrentSession().createSQLQuery(withNoSubledgerQry);
+        final Query getDebitsideSubledgerQuery = persistenceService.getSession().createSQLQuery(withNoSubledgerQry);
         getDebitsideSubledgerQuery.setParameter(0, instrumentHeader.getId());
         getDebitsideSubledgerQuery.setParameter(1, instrumentHeader.getId());
 
@@ -241,7 +248,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         for (final Object[] obj : retList)
             if (detailTypeMap.isEmpty()) {
                 detailKeyMap = new HashMap<Object, BigDecimal>();
-                detailKeyMap.put(obj[1], (BigDecimal.valueOf((Double) obj[2])).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                detailKeyMap.put(obj[1], ((BigDecimal) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 detailTypeMap.put(obj[0], detailKeyMap);
             }
             else {
@@ -349,7 +356,7 @@ public class BankAdviceReportAction extends BaseFormAction {
             bankAdviceReportInfo.setBank(subDetail.getBankname());
             // bankAdviceReportInfo.setBankBranch(subDetail.getBankaccount());
             bankAdviceReportInfo.setIfscCode(subDetail.getIfsccode());
-            bankAdviceReportInfo.setAmount((BigDecimal.valueOf((Double) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
+            bankAdviceReportInfo.setAmount(((BigDecimal) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN));
             totalAmount = totalAmount.add(bankAdviceReportInfo.getAmount());
             subLedgerList.add(bankAdviceReportInfo);
         }

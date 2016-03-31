@@ -39,9 +39,11 @@
  */
 package org.egov.adtax.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.adtax.entity.SubCategory;
+import org.egov.adtax.entity.SubCategorySearch;
 import org.egov.adtax.repository.SubCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SubCategoryService {
 
     private final SubCategoryRepository subCategoryRepository;
-
+    
     @Autowired
     public SubCategoryService(final SubCategoryRepository subCategoryRepository) {
         this.subCategoryRepository = subCategoryRepository;
@@ -80,4 +82,23 @@ public class SubCategoryService {
         return subCategoryRepository.findOne(id);
     }
 
+    public List<SubCategorySearch> getSubcategory(final Long category, final Long subcategory) {
+        final List<SubCategory> subcategoryList;
+
+        if (category != null && subcategory != null) {
+            subcategoryList = subCategoryRepository.searchSubcategoryByCategoryIdAndSubCategoryId(category, subcategory);
+        } else {
+            subcategoryList = subCategoryRepository.getAllSubCategoryByCategoryId(category);
+        }
+        final List<SubCategorySearch> subCategorySearchList = new ArrayList<>();
+        subcategoryList.forEach(result -> {
+            final SubCategorySearch subCategorySearch = new SubCategorySearch();
+            subCategorySearch.setCategory(result.getCategory().getName());
+            subCategorySearch.setDescription(result.getDescription());
+            subCategorySearch.setCode(result.getCode());
+            subCategorySearch.setId(result.getId());
+            subCategorySearchList.add(subCategorySearch);
+        });
+        return subCategorySearchList;
+    }
 }

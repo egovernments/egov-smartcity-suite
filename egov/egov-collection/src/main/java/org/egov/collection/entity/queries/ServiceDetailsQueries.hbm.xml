@@ -99,7 +99,7 @@
     <![CDATA[from CVoucherHeader cv where cv.voucherNumber=?]]></query>
     
      <query name="getFinancialYearByDate">
-    <![CDATA[from CFinancialYear cfinancialyear where ? between cfinancialyear.startingDate and cfinancialyear.endingDate]]></query>
+    <![CDATA[from CFinancialYear cfinancialyear where ? between date(cfinancialyear.startingDate) and date(cfinancialyear.endingDate)]]></query>
     
     <query name="getAllStatusesForModule">
 	<![CDATA[from EgwStatus s where moduletype=? order by orderId]]></query>

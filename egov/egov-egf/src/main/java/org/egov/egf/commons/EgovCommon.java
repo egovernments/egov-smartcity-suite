@@ -179,8 +179,7 @@ public class EgovCommon {
             final EmployeeServiceOld employeeService, final PersistenceService persistenceService) {
         try {
             final Query qry1 =
-                    HibernateUtil
-                    .getCurrentSession()
+                    persistenceService.getSession()
                     .createSQLQuery(
                             " select is_primary, dept_id from EG_EIS_EMPLOYEEINFO employeevi0_ where upper(trim(employeevi0_.CODE))='"
                                     + employeeService.getEmpForUserId(user.getId())
@@ -189,12 +188,12 @@ public class EgovCommon {
             final List<Object[]> employeeViewList = qry1.list();
             if (!employeeViewList.isEmpty())
                 if (employeeViewList.size() == 1)
-                    return (Department) HibernateUtil.getCurrentSession().load(Department.class,
+                    return (Department) persistenceService.getSession().load(Department.class,
                             Integer.valueOf(employeeViewList.get(0)[1].toString()));
                 else
                     for (final Object[] object : employeeViewList)
                         if (object[0].toString().equals("N"))
-                            return (Department) HibernateUtil.getCurrentSession().load(Department.class,
+                            return (Department) persistenceService.getSession().load(Department.class,
                                     Integer.valueOf(employeeViewList.get(0)[1].toString()));
         } catch (final Exception e) {
             LOGGER.error("Could not get list of assignments", e);
@@ -427,7 +426,7 @@ public class EgovCommon {
                                                     + "vh.voucherDate >= (select startingDate from FinancialYear where  startingDate <= :date AND endingDate >=:date) and"
                                                     + " vh.voucherDate <= :date and ph.state_id=es.id and es.value='END' and vh.status=0 and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
                                                     + "ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
-            final List<Object> list = HibernateUtil.getCurrentSession().createSQLQuery(paymentQuery.toString())
+            final List<Object> list = persistenceService.getSession().createSQLQuery(paymentQuery.toString())
                     .setDate("date", voucherDate).list();
             final BigDecimal amount = (BigDecimal) list.get(0);
             bankBalance = amount == null ? BigDecimal.ZERO : amount;
@@ -474,8 +473,8 @@ public class EgovCommon {
         try {
 
             query.append("select iv.instrumentHeaderId FROM CGeneralLedgerDetail gld, CGeneralLedger gl , CVoucherHeader vh, ")
-            .append(" InstrumentVoucher iv WHERE gld.generalLedgerId=gl.id AND gl.voucherHeaderId.id=vh.id")
-            .append(" AND iv.voucherHeaderId.id=vh.id AND gld.detailTypeId =? AND gld.detailKeyId=? AND gl.creditAmount >0")
+            .append(" InstrumentVoucher iv WHERE gld.generalLedgerId.id=gl.id AND gl.voucherHeaderId.id=vh.id")
+            .append(" AND iv.voucherHeaderId.id=vh.id AND gld.detailTypeId.id =? AND gld.detailKeyId=? AND gl.creditAmount >0")
             .append(" AND vh.status=0 ")
             .append(" AND vh.voucherDate<='")
             .append(Constants.DDMMYYYYFORMAT1.format(voucherToDate))
@@ -566,7 +565,7 @@ public class EgovCommon {
             final Date toBillDate)
             throws ApplicationRuntimeException, ValidationException {
         final StringBuffer query = new StringBuffer(500);
-        final Session session = HibernateUtil.getCurrentSession();
+        final Session session = persistenceService.getSession();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Inside getSumOfBillCreated -Glcode :" + glcode + " subledgerType: " + subledgerType
                     + " accountdetailkeyId: " + accountdetailkeyId + " toBillDate: " + toBillDate);
@@ -788,9 +787,9 @@ public class EgovCommon {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("data Type = " + dataType);
             if (dataType.equals("Long"))
-                entity = (EntityType) HibernateUtil.getCurrentSession().load(aClass, Long.valueOf(detailkey.toString()));
+                entity = (EntityType) persistenceService.getSession().load(aClass, Long.valueOf(detailkey.toString()));
             else
-                entity = (EntityType) HibernateUtil.getCurrentSession().load(aClass, detailkey);
+                entity = (EntityType) persistenceService.getSession().load(aClass, detailkey);
 
         } catch (final ClassCastException e) {
             LOGGER.error(e);
@@ -998,7 +997,7 @@ public class EgovCommon {
                             + " is not present in the system.")));
 
         if (null != accountdetailType) {
-            final Session session = HibernateUtil.getCurrentSession();
+            final Session session = persistenceService.getSession();
             final Query qry = session
                     .createQuery("from CChartOfAccountDetail cd,CChartOfAccounts c where "
                             + "cd.glCodeId = c.id and c.glcode=:glcode and cd.detailTypeId=:detailTypeId");
@@ -1016,7 +1015,7 @@ public class EgovCommon {
 
         }
         if (null != accountdetailkey) {
-            final Session session = HibernateUtil.getCurrentSession();
+            final Session session = persistenceService.getSession();
             final Query qry = session
                     .createQuery("from Accountdetailkey adk where adk.accountdetailtype=:detailtypeid and adk.detailkey=:detailkey");
             qry.setString(VoucherConstant.DETAILTYPEID, accountdetailType
@@ -1138,7 +1137,7 @@ public class EgovCommon {
                                             " Group by txns.GLCODEID,txns.fundid,txns.FINANCIALYEARID ");
         System.out.println("Opening balance query :" + opBalncQuery);
 
-        final List<Object> list = HibernateUtil.getCurrentSession()
+        final List<Object> list = persistenceService.getSession()
                 .createSQLQuery(opBalncQuery.toString()).list();
         if (list != null && list.size() > 0)
             opBalAsonDate = (BigDecimal) list.get(0);
@@ -1188,14 +1187,14 @@ public class EgovCommon {
             glCodeDbtBalQry
             .append("SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld ")
             .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? ")
+            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
             .append(fundCond)
             .append(deptCond)
             .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
             .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
                     Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <'").append(
                             Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId =").append(accountdetailType);
+                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeDbtBalQry.append(" and gld.detailKeyId =").append(
@@ -1213,13 +1212,13 @@ public class EgovCommon {
             glCodeCrdBalQry
             .append("SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
             .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? ")
+            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
             .append(fundCond).append(deptCond)
             .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
             .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
                     Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <'").append(
                             Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId =").append(accountdetailType);
+                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeCrdBalQry.append(" and gld.detailKeyId =").append(
@@ -1280,14 +1279,14 @@ public class EgovCommon {
             glCodeDbtBalQry
             .append("SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld ")
             .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? ")
+            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
             .append(fundCond)
             .append(deptCond)
             .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
             .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
                     Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <='").append(
                             Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId =").append(accountdetailType);
+                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeDbtBalQry.append(" and gld.detailKeyId =").append(
@@ -1305,13 +1304,13 @@ public class EgovCommon {
             glCodeCrdBalQry
             .append("SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
             .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? ")
+            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
             .append(fundCond).append(deptCond)
             .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
             .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
                     Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <='").append(
                             Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId =").append(accountdetailType);
+                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeCrdBalQry.append(" and gld.detailKeyId =").append(
@@ -1499,7 +1498,7 @@ public class EgovCommon {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Budget Usage Query >>>>>>>> " + query.toString());
-        final Query query1 = HibernateUtil.getCurrentSession().createQuery(
+        final Query query1 = persistenceService.getSession().createQuery(
                 query.toString());
         if (isNotNull(queryParamMap.get("fromDate")))
             query1.setTimestamp("from", (Date) queryParamMap.get("fromDate"));
@@ -1687,7 +1686,7 @@ public class EgovCommon {
             .append(
                     "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                     .append(
-                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? and vh.fundId.code=? ")
+                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
                             .append(
                                     " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
                                     .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
@@ -1696,7 +1695,7 @@ public class EgovCommon {
                                                             "') and vh.voucherDate <='").append(
                                                                     Constants.DDMMYYYYFORMAT1.format(asondate)).append(
                                                                             "'and vh.status = 0").append(
-                                                                                    " and gld.detailTypeId =")
+                                                                                    " and gld.detailTypeId.id =")
                                                                                     .append(accountdetailType);
             if (null != accountdetailkey)
                 query.append(" and gld.detailKeyId =").append(accountdetailkey);
@@ -1737,10 +1736,10 @@ public class EgovCommon {
 
         queryString
         .append("SELECT MIN(vh.voucherDate) as vhDate from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
-        .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? and vh.fundId.code=? ")
+        .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
         .append(" and vh.voucherDate <= '").append(Constants.DDMMYYYYFORMAT1.format(asondate))
         .append("' and vh.status = 0")
-        .append(" and gld.detailTypeId =").append(accountdetailType);
+        .append(" and gld.detailTypeId.id =").append(accountdetailType);
         queryString.append(" and gld.detailKeyId =").append(accountdetailkey);
         queryString.append(" and gl.creditAmount >0");
 
@@ -1759,11 +1758,11 @@ public class EgovCommon {
         .append(
                 "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                 .append(
-                        " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? and vh.fundId.code=? ")
+                        " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
                         .append(" and vh.voucherDate <= '").append(
                                 Constants.DDMMYYYYFORMAT1.format(asondate)).append(
                                         "' and vh.status = 0")
-                                        .append(" and gld.detailTypeId =").append(accountdetailType);
+                                        .append(" and gld.detailTypeId.id =").append(accountdetailType);
         if (null != accountdetailkey)
             query.append(" and gld.detailKeyId =").append(accountdetailkey);
         query.append(" and gl.creditAmount >0");
@@ -1812,7 +1811,7 @@ public class EgovCommon {
                                                     "GROUP BY fy.startingdate ORDER BY fy.startingdate");
         System.out.println("Opening balance query :" + opBalncQuery);
 
-        final List<Object> list = HibernateUtil.getCurrentSession().createSQLQuery(opBalncQuery.toString()).list();
+        final List<Object> list = persistenceService.getSession().createSQLQuery(opBalncQuery.toString()).list();
         if (list != null && list.size() > 0)
             opBalAsonDate = (BigDecimal) list.get(0);
         opBalAsonDate = opBalAsonDate == null ? BigDecimal.ZERO : opBalAsonDate;
@@ -1864,7 +1863,7 @@ public class EgovCommon {
             .append(
                     "SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                     .append(
-                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=?  ")
+                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=?  ")
                             .append(
                                     " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
                                     .append(Constants.DDMMYYYYFORMAT1.format(asondate))
@@ -1876,7 +1875,7 @@ public class EgovCommon {
                                     .append(statusExclude)
                                     .append(
                                             ")and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset') ) ")
-                                            .append(" and gld.detailTypeId =")
+                                            .append(" and gld.detailTypeId.id =")
                                             .append(accountdetailType);
             if (null != accountdetailkey)
                 glCodeDbtBalQry.append(" and gld.detailKeyId in (").append(
@@ -1895,7 +1894,7 @@ public class EgovCommon {
             .append(
                     "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                     .append(
-                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=?  ")
+                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=?  ")
                             .append(
                                     " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
                                     .append(Constants.DDMMYYYYFORMAT1.format(asondate))
@@ -1907,7 +1906,7 @@ public class EgovCommon {
                                     .append(statusExclude)
                                     .append(
                                             ")and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset' ) )")
-                                            .append(" and gld.detailTypeId =")
+                                            .append(" and gld.detailTypeId.id =")
                                             .append(accountdetailType);
             if (null != accountdetailkey)
                 glCodeCrdBalQry.append(" and gld.detailKeyId in(").append(
@@ -1945,7 +1944,7 @@ public class EgovCommon {
                     "glcode", "not a valid glcode :" + glcode)));
 
         if (null != accountdetailType) {
-            final Session session = HibernateUtil.getCurrentSession();
+            final Session session = persistenceService.getSession();
             final Query qry = session
                     .createQuery("from CChartOfAccountDetail cd,CChartOfAccounts c where "
                             + "cd.glCodeId = c.id and c.glcode=:glcode and cd.detailTypeId=:detailTypeId");
@@ -1963,7 +1962,7 @@ public class EgovCommon {
 
         }
         if (null != accountdetailkey) {
-            final Session session = HibernateUtil.getCurrentSession();
+            final Session session = persistenceService.getSession();
             final Query qry = session
                     .createQuery("from Accountdetailkey adk where adk.accountdetailtype=:detailtypeid and adk.detailkey=:detailkey");
             qry.setString(VoucherConstant.DETAILTYPEID, accountdetailType
@@ -2053,7 +2052,7 @@ public class EgovCommon {
             dbEntIdQuery = validationQuery + commaSeperatedEntitiesList.get(i) + " ) order by detailkey ";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(i + ":dbEntIdQuery- " + dbEntIdQuery);
-            dbEntIdList = HibernateUtil.getCurrentSession().createSQLQuery(dbEntIdQuery).list();
+            dbEntIdList = persistenceService.getSession().createSQLQuery(dbEntIdQuery).list();
             if (dbEntIdList != null && dbEntIdList.size() != limitedEntityList.get(i).size())
                 for (final Long entId : limitedEntityList.get(i)) {
                     isPresent = false;
@@ -2087,8 +2086,8 @@ public class EgovCommon {
                 LOGGER.debug(i + ": qryForExpense- " + qryForExpense);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(i + ": qryForNonExpense- " + qryForNonExpense);
-            objForExpense = HibernateUtil.getCurrentSession().createSQLQuery(qryForExpense).list();
-            objForNonExpense = HibernateUtil.getCurrentSession().createSQLQuery(qryForNonExpense).list();
+            objForExpense = persistenceService.getSession().createSQLQuery(qryForExpense).list();
+            objForNonExpense = persistenceService.getSession().createSQLQuery(qryForNonExpense).list();
             if (objForExpense != null && objForExpense.size() != 0) {
                 tempAmountObj = new BigDecimal(objForExpense.get(0)[0].toString());
                 tempCountObj = new BigDecimal(objForExpense.get(0)[1].toString());
@@ -2177,7 +2176,7 @@ public class EgovCommon {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Final payQuery - " + payQuery);
 
-        objForExpense = HibernateUtil.getCurrentSession().createSQLQuery(payQuery).list();
+        objForExpense = persistenceService.getSession().createSQLQuery(payQuery).list();
         if (objForExpense != null && objForExpense.size() != 0) {
             totalPaymentAmount = new BigDecimal(objForExpense.get(0)[0].toString());
             totalCount = new BigDecimal(objForExpense.get(0)[1].toString());
@@ -2241,7 +2240,7 @@ public class EgovCommon {
          * if(LOGGER.isDebugEnabled()) LOGGER.debug(i + ":dbEntIdQuery- " + dbEntIdQuery);
          * if(i==commaSeperatedEntitiesList.size()-1) dbEntIdQuery=dbEntIdQuery+ ")) order by detailkey "; }
          * if(LOGGER.isDebugEnabled()) LOGGER.debug("Final Query- " + dbEntIdQuery); dbEntIdList = (List<BigDecimal>)
-         * HibernateUtil.getCurrentSession().createSQLQuery(dbEntIdQuery).list(); if (dbEntIdList != null && dbEntIdList.size() !=
+         * persistenceService.getSession().createSQLQuery(dbEntIdQuery).list(); if (dbEntIdList != null && dbEntIdList.size() !=
          * limitedEntityList.size()) { for (int i = 0; i < commaSeperatedEntitiesList.size(); i++) { for (Long entId :
          * limitedEntityList.get(i)) { isPresent = false; for (BigDecimal dbEntId : dbEntIdList) { if (dbEntId.longValue() ==
          * entId.longValue()) { isPresent = true; break; } } if (!isPresent) { incorrectEntityIds.add(entId); } } } } if
@@ -2264,8 +2263,8 @@ public class EgovCommon {
                 LOGGER.debug(i + ": qryForExpense- " + qryForExpense);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(i + ": qryForNonExpense- " + qryForNonExpense);
-            objForExpense = HibernateUtil.getCurrentSession().createSQLQuery(qryForExpense).list();
-            objForNonExpense = HibernateUtil.getCurrentSession().createSQLQuery(qryForNonExpense).list();
+            objForExpense = persistenceService.getSession().createSQLQuery(qryForExpense).list();
+            objForNonExpense = persistenceService.getSession().createSQLQuery(qryForNonExpense).list();
             if (objForExpense != null && objForExpense.size() != 0) {
                 tempAmountObj = new BigDecimal(objForExpense.get(0)[0].toString());
                 deptName = objForExpense.get(0)[1].toString();
@@ -2309,7 +2308,7 @@ public class EgovCommon {
     public BigDecimal getPaymentAmount(final Long billId) throws ApplicationException {
         if (billId == null)
             throw new ApplicationException("Parameter passed is null.");
-        final EgBillregister billRegister = (EgBillregister) HibernateUtil.getCurrentSession().load(EgBillregister.class, billId);
+        final EgBillregister billRegister = (EgBillregister) persistenceService.getSession().load(EgBillregister.class, billId);
         if (billRegister == null)
             throw new ApplicationException("Incorrect billId - " + billId);
         final EgwStatus billStatus = billRegister.getStatus();
@@ -2326,7 +2325,7 @@ public class EgovCommon {
                 + " ";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("sqlQuery- " + sqlQuery);
-        final List<BigDecimal> paymentAmount = HibernateUtil.getCurrentSession().createSQLQuery(sqlQuery).list();
+        final List<BigDecimal> paymentAmount = persistenceService.getSession().createSQLQuery(sqlQuery).list();
         return paymentAmount.get(0) == null ? BigDecimal.ZERO : paymentAmount
                 .get(0);
     }
@@ -2420,7 +2419,7 @@ public class EgovCommon {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("queryForGLList >> " + queryForGLList);
-        final List<Object[]> generalLedgerList = HibernateUtil.getCurrentSession()
+        final List<Object[]> generalLedgerList = persistenceService.getSession()
                 .createSQLQuery(queryForGLList).list();
         for (final Object[] objects : generalLedgerList) {
             if (LOGGER.isInfoEnabled())
@@ -2483,7 +2482,7 @@ public class EgovCommon {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("queryForGLList >> " + queryForGLList);
-        final List<Object[]> generalLedgerList = HibernateUtil.getCurrentSession()
+        final List<Object[]> generalLedgerList = persistenceService.getSession()
                 .createSQLQuery(queryForGLList).list();
         for (final Object[] objects : generalLedgerList) {
             if (LOGGER.isInfoEnabled())
@@ -2551,7 +2550,7 @@ public class EgovCommon {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("queryForGLList >> " + queryForGLList);
-        final List<Object[]> generalLedgerList = HibernateUtil.getCurrentSession()
+        final List<Object[]> generalLedgerList = persistenceService.getSession()
                 .createSQLQuery(queryForGLList).list();
         for (final Object[] objects : generalLedgerList) {
             if (LOGGER.isInfoEnabled())
@@ -2593,13 +2592,13 @@ public class EgovCommon {
             throw new ValidationException("DetailTypeId or EntityIdList not provided",
                     "DetailTypeId or EntityIdList not provided");
         final String query = "select sum(gld.amount) from CGeneralLedger gl, CGeneralLedgerDetail gld, CVoucherHeader vh "
-                + " WHERE gl.voucherHeaderId= vh and gl.id = gld.generalLedgerId and  gld.detailTypeId  in ( :detailTypeId ) and"
+                + " WHERE gl.voucherHeaderId= vh and gl.id = gld.generalLedgerId.id and  gld.detailTypeId.id  in ( :detailTypeId ) and"
                 + " gld.detailKeyId   in ( :entityIdList ) and gl.debitAmount>0 and vh.status!=4 and vh.type = 'Journal Voucher'";
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query For getVoucherExpenditureByEntities >> " + query);
 
-        final Query expenditureQuery = HibernateUtil.getCurrentSession().createQuery(query);
+        final Query expenditureQuery = persistenceService.getSession().createQuery(query);
 
         expenditureQuery.setInteger("detailTypeId", detailTypeId);
         expenditureQuery.setParameterList("entityIdList", entityIdList);
@@ -2627,13 +2626,13 @@ public class EgovCommon {
                     "DetailTypeId or EntityIdList not provided");
         BigDecimal dbpSum = BigDecimal.ZERO;
         final String query = "select sum(gld.amount) from CGeneralLedger gl, CGeneralLedgerDetail gld, CVoucherHeader vh "
-                + " WHERE gl.voucherHeaderId= vh and gl.id = gld.generalLedgerId and  gld.detailTypeId  in ( :detailTypeId ) and"
+                + " WHERE gl.voucherHeaderId= vh and gl.id = gld.generalLedgerId.id and  gld.detailTypeId.id  in ( :detailTypeId ) and"
                 + " gld.detailKeyId   in ( :entityIdList ) and gl.debitAmount>0 and vh.status!=4 and vh.name = 'Direct Bank Payment'";
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query For getDirectBankPaymentExpenditureByEntities >> " + query);
 
-        final Query expenditureQuery = HibernateUtil.getCurrentSession().createQuery(query);
+        final Query expenditureQuery = persistenceService.getSession().createQuery(query);
 
         expenditureQuery.setInteger("detailTypeId", detailTypeId);
         expenditureQuery.setParameterList("entityIdList", entityIdList);

@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.services.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,7 +72,11 @@ public class BalanceSheetScheduleService extends ScheduleService {
     private String removeEntrysWithZeroAmount = "";
     private static final Logger LOGGER = Logger.getLogger(BalanceSheetScheduleService.class);
 
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     private  FinancialYearHibernateDAO financialYearDAO;
     
    
@@ -108,8 +115,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         final BigDecimal divisor = balanceSheet.getDivisor();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("addCurrentOpeningBalancePerFund");
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createSQLQuery(
                         "select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
                                 + balanceSheet.getFinancialYear().getId()
@@ -153,8 +159,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         final BigDecimal divisor = balanceSheet.getDivisor();
         final CFinancialYear prevFinanciaYr = financialYearDAO.getPreviousFinancialYearByDate(fromDate);
         final String prevFinancialYrId = prevFinanciaYr.getId().toString();
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createSQLQuery(
                         "select sum(openingdebitbalance)- sum(openingcreditbalance),coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
                                 + prevFinancialYrId + transactionQuery + " GROUP BY coa.glcode,coa.type");
@@ -177,7 +182,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
             }
     }
     private String getGlcodeForPurposeCode7() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createSQLQuery(
                 "select glcode from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
@@ -187,7 +192,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
     }
 
     private String getGlcodeForPurposeCode7MinorCode() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createSQLQuery(
                 "select substr(glcode,1," + minorCodeLength + ") from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
@@ -198,7 +203,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 
     /* For Detailed */
     private String getGlcodeForPurposeCode7DetailedCode() {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createSQLQuery(
                 "select substr(glcode,1," + detailCodeLength + ") from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
@@ -234,7 +239,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                 " and coa2.glcode=SUBSTR(coad.glcode,1," + minorCodeLength + ") and coad.classification=4 and coad.majorcode='"
                 + majorCode + "')  and c.majorcode='" + majorCode + "' and c.classification=4 " + filterQuery
                 + " group by c.glcode");
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());
+        final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
         final List<Object[]> result = query.list();
         for (final Object[] row : result)
             for (int index = 0; index < balanceSheet.size(); index++)

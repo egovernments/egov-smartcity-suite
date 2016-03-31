@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.services.report;
 
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,7 +78,11 @@ import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ReportService {
-    @Autowired
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
     AppConfigValueService appConfigValuesService;
     int minorCodeLength;
     List<Character> coaType = new ArrayList<Character>();
@@ -96,19 +103,19 @@ public abstract class ReportService {
     }
 
     public List<Fund> getFunds() {
-        final Criteria voucherHeaderCriteria = HibernateUtil.getCurrentSession().createCriteria(
+        final Criteria voucherHeaderCriteria = persistenceService.getSession().createCriteria(
                 CVoucherHeader.class);
         final List fundIdList = voucherHeaderCriteria.setProjection(
                 Projections.distinct(Projections.property("fundId.id"))).list();
         if (!fundIdList.isEmpty())
-            return HibernateUtil.getCurrentSession().createCriteria(Fund.class).add(
+            return persistenceService.getSession().createCriteria(Fund.class).add(
                     Restrictions.in("id", fundIdList)).list();
         return new ArrayList<Fund>();
     }
 
     //TODO- find the api for this in COA hibernate dao
     public String getGlcodeForPurposeCode(final Integer purposeId) {
-        final Query query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createSQLQuery(
                 "select majorcode from chartofaccounts where purposeid="
                         + purposeId);
         final List list = query.list();
@@ -262,7 +269,7 @@ public abstract class ReportService {
 
     protected List<StatementResultObject> getAllGlCodesFor(
             final String scheduleReportType) {
-        final Query query = HibernateUtil.getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createSQLQuery(
                         "select distinct coa.majorcode as glCode,s.schedule as scheduleNumber,"
                                 + "s.schedulename as scheduleName,coa.type as type from chartofaccounts coa, schedulemapping s "
@@ -280,8 +287,7 @@ public abstract class ReportService {
         voucherStatusToExclude = getAppConfigValueFor("EGF",
                 "statusexcludeReport");
         
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createSQLQuery(
                         "select c.majorcode as glCode,v.fundid as fundId,c.type as type,sum(debitamount)-sum(creditamount) as amount"
                                 + " from generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where v.id=mis.voucherheaderid and "
@@ -310,7 +316,7 @@ public abstract class ReportService {
 
     protected Map<String, String> getSubSchedule(final String subReportType) {
         final Map<String, String> scheduleNumberToName = new HashMap<String, String>();
-        final List<Object[]> rows = HibernateUtil.getCurrentSession()
+        final List<Object[]> rows = persistenceService.getSession()
                 .createSQLQuery(
                         "select s.schedule,sub.subschedulename from egf_subschedule sub,schedulemapping s "
                                 + "where sub.reporttype='"
@@ -412,8 +418,7 @@ public abstract class ReportService {
 
     protected void populateSchedule(final Statement statement, final String reportSubType) {
         //TODO change the query parameter
-        final Query query = HibernateUtil
-                .getCurrentSession()
+        final Query query = persistenceService.getSession()
                 .createSQLQuery(
                         "select c.majorcode,s.schedulename,s.schedule from chartofaccounts c,schedulemapping s "
                                 + "where s.id=c.scheduleid and s.reporttype = '"
