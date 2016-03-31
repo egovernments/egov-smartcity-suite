@@ -115,8 +115,8 @@ public class UsageTypeService {
         return usageTypeRepository.findByNameIgnoreCaseAndActive(name, status);
     }
 
-    public List<UsageType> getAllUsageTypesByPropertyType(final Long propertyType) {
-        return usageTypeRepository.getAllUsageTypesByPropertyType(propertyType);
+    public List<UsageType> getAllActiveUsageTypesByPropertyType(final Long propertyType) {
+        return usageTypeRepository.getAllActiveUsageTypesByPropertyType(propertyType);
     }
 
     public List<UsageType> getUsageTypeListForRest() {

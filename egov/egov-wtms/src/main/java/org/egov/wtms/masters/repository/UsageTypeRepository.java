@@ -65,6 +65,6 @@ public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
     UsageType findByNameIgnoreCaseAndActive(String name, Boolean status);
 
     @Query("select PU.usageType from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType.id=:propertyType and PU.usageType.active=true")
-    List<UsageType> getAllUsageTypesByPropertyType(@Param("propertyType") Long propertyType);
+    List<UsageType> getAllActiveUsageTypesByPropertyType(@Param("propertyType") Long propertyType);
 
 }
