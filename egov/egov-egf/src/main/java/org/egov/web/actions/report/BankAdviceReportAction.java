@@ -248,7 +248,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         for (final Object[] obj : retList)
             if (detailTypeMap.isEmpty()) {
                 detailKeyMap = new HashMap<Object, BigDecimal>();
-                detailKeyMap.put(obj[1], (BigDecimal.valueOf((Double) obj[2])).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                detailKeyMap.put(obj[1], ((BigDecimal) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 detailTypeMap.put(obj[0], detailKeyMap);
             }
             else {
@@ -356,7 +356,7 @@ public class BankAdviceReportAction extends BaseFormAction {
             bankAdviceReportInfo.setBank(subDetail.getBankname());
             // bankAdviceReportInfo.setBankBranch(subDetail.getBankaccount());
             bankAdviceReportInfo.setIfscCode(subDetail.getIfsccode());
-            bankAdviceReportInfo.setAmount((BigDecimal.valueOf((Double) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
+            bankAdviceReportInfo.setAmount(((BigDecimal) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN));
             totalAmount = totalAmount.add(bankAdviceReportInfo.getAmount());
             subLedgerList.add(bankAdviceReportInfo);
         }

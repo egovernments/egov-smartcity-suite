@@ -926,8 +926,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             ca.setChequeDate(chqAssgn.getChequeDate());
                             ca.setPaidTo(getEntity(Integer.parseInt(detailTypeKeyAmtObj[0].toString()),
                                     (Serializable) detailTypeKeyAmtObj[1]).getName());
-                            ca.setDetailtypeid((BigDecimal) detailTypeKeyAmtObj[0]);
-                            ca.setDetailkeyid((BigDecimal) detailTypeKeyAmtObj[1]);
+                            ca.setDetailtypeid(BigDecimal.valueOf(((Integer)detailTypeKeyAmtObj[0]).longValue()));
+                            ca.setDetailkeyid(BigDecimal.valueOf(((Integer) detailTypeKeyAmtObj[1]).longValue()));
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ASSIGNED BUT SURRENDARD: inside loop adding  " + ca);
                             tempExpenseChequeAssignmentList.add(ca);
