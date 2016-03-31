@@ -165,6 +165,7 @@ public class UsageTypeMasterController {
 
         if (waterpropertyUsageValidateObj != null) {
             redirectAttrs.addFlashAttribute("waterPropertyUsage", waterPropertyUsage);
+            model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("message", "Entered Usage Type for the Chosen Property Type is already Exists");
             return "usage-type-master";
         } else if (waterPropertyUsage != null) {

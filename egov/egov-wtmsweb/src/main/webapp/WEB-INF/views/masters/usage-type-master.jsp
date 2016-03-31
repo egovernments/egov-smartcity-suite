@@ -43,7 +43,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%--  <form role="form" class="form-horizontal form-groups-bordered"> --%>
 <form:form method="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="waterPropertyUsage" id="usageTypeMasterform"
 	cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<div class="panel panel-primary" data-collapsed="0">
@@ -68,7 +67,7 @@
 				</div>
 			</div>
 			<div class="form-group" id="statusdiv">
-			<label class="col-sm-3 control-label text-right">ACTIVE</label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
 				<div class="col-sm-3 add-margin" >
 					<form:checkbox id="activeid" path="usageType.active" value ="active" />
 					<form:errors path="usageType.active" />
@@ -78,14 +77,10 @@
 				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>	
 
 			<div class="form-group text-center">
-			<button type="submit" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></button>
-				<%-- <form:button type="submit" class="btn btn-primary" id="buttonid">
-					<spring:message code="lbl.submit" />
-				</form:button> --%>
-				<!-- <a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)">Add New</a> -->
+				<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
 				<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
-						<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
-						<button type="button" class="btn btn-primary" id="resetid"><spring:message code="lbl.reset"/></button>
+				<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
+				<button type="button" class="btn btn-default" id="resetid"><spring:message code="lbl.reset"/></button>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>
 		</div>
