@@ -39,6 +39,12 @@
 #-------------------------------------------------------------------------------*/
 jQuery(document).ready(function($) {
 	
+	$("#searcheditbutton").click(function() {
+		var action = '/adtax/category/updateCategory/' + $('#categorydesc').val();
+		$('#categoryForm').attr('method', 'get');
+		$('#categoryForm').attr('action', action);
+	});
+	
 	$("#buttonView").click(function() {
 		var action = '/adtax/category/success/' + $('#categorydesc').val();
 		$('#categoryForm').attr('method', 'get');
