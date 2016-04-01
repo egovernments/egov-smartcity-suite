@@ -42,6 +42,7 @@ package org.egov.works.web.controller.lineestimate;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -231,7 +232,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         try {
             final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
-                    lineEstimateService.getCurrentFinancialYear(lineEstimate.getLineEstimateDate()).getId(),
+                    lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
                     Integer.parseInt(lineEstimate
                             .getExecutingDepartment().getId().toString()),
                     lineEstimate.getFunction().getId(), null,
