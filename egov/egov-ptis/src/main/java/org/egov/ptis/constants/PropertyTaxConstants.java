@@ -962,6 +962,7 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_BILL = "Bill";
     public static final String NOTICE_TYPE_SPECIAL_NOTICE = "Special Notice";
     public static final String NOTICE_TYPE_MUTATION_CERTIFICATE = "Mutation Certificate";
+    public static final String NOTICE_TYPE_DEMAND_BILL = "Demand Bill";
 
     public static final String CREATE_AUDIT_ACTION = "Create Property";
     public static final String MODIFY_AUDIT_ACTION = "Modify Property";
