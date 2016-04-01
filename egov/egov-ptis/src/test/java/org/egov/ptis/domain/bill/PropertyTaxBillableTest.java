@@ -210,7 +210,7 @@ public class PropertyTaxBillableTest {
         assertTrue(!installmentPenaltyAndRebate.isEmpty());
         //Penalty = Demand amount * No of months * 2 / 100
         // Ex : 2000 * 2 * 2 / 100 = 80
-        assertEquals(installmentPenaltyAndRebate.get(currentInstallment).getPenalty(),new BigDecimal(80));
+        assertEquals(installmentPenaltyAndRebate.get(currentInstallment).getPenalty(),new BigDecimal(40));
     } 
     
     
