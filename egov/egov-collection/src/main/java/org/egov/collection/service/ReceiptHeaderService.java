@@ -622,7 +622,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + "fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and "
                 + "ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ";
 
-        final String whereClauseForServiceAndFund = " sd.code in (" + serviceCodes + ")" + " and fnd.code = ("
+        final String whereClauseForServiceAndFund = " sd.code in (" + serviceCodes + ")" + " and fnd.code in ("
                 + fundCodes + ")" + " and ";
 
         final String whereClause = " AND ih.ID_STATUS=(select id from egw_status where moduletype='"
@@ -947,7 +947,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
                         headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
                                 : serviceDetails.getFundSource().getCode());
                         headerdetails.put(VoucherConstant.FUNCTIONARYCODE,
@@ -1132,7 +1132,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
                         headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
                                 : serviceDetails.getFundSource().getCode());
                         headerdetails.put(VoucherConstant.FUNCTIONARYCODE,
@@ -1221,7 +1221,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
                         headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
                                 : serviceDetails.getFundSource().getCode());
                         headerdetails.put(VoucherConstant.FUNCTIONARYCODE,
