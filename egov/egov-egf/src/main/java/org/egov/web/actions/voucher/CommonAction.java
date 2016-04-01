@@ -43,8 +43,6 @@
 package org.egov.web.actions.voucher;
 
 
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -98,7 +96,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
@@ -117,6 +115,7 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -732,8 +731,7 @@ public class CommonAction extends BaseFormAction {
                                     +
                                     " AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null "
                                     +
-                                    "AND iv.voucherHeaderId     = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ih.transactionDate >= '"
-                                    + date1 + "' AND ph.type = '" + FinancialConstants.MODEOFPAYMENT_RTGS + "' " +
+                                    "AND iv.voucherHeaderId     = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type = '" + FinancialConstants.MODEOFPAYMENT_RTGS + "' " +
                                     "GROUP BY ih.transactionNumber,ih.id", bankaccountId);
             for (final Object[] obj : resultList) {
                 InstrumentHeader ih = new InstrumentHeader();
