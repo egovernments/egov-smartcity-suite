@@ -360,7 +360,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
         penalty = amount.multiply(PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths))).divide(
                 BIGDECIMAL_100);
-        return MoneyUtils.roundOff(penalty);
+        return penalty;
     }
 
     @Override
@@ -483,7 +483,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                                     PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(1))).divide(
                                     BIGDECIMAL_100);
                             penalty = penalty.subtract(monthPenalty);
-                            penaltyAndRebate.setPenalty(penalty);
+                            penaltyAndRebate.setPenalty(MoneyUtils.roundOff(penalty));
                         }
                     } else
                         penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
