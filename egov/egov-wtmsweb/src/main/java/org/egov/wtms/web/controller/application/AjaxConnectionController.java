@@ -118,7 +118,7 @@ public class AjaxConnectionController {
     public @ResponseBody List<ConnectionCategory> getAllCategoryTypesByPropertyType(
             @RequestParam final Long propertyType, @RequestParam final String connectionType) {
         List<ConnectionCategory> categoryTypes = new ArrayList<ConnectionCategory>(0);
-        categoryTypes = connectionCategoryService.getAllCategoryTypesByPropertyType(propertyType, connectionType);
+        categoryTypes = connectionCategoryService.getAllActiveCategoryTypesByPropertyType(propertyType, connectionType);
         categoryTypes.forEach(categoryType -> categoryType.toString());
         return categoryTypes;
     }

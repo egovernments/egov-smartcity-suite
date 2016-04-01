@@ -42,6 +42,8 @@ package org.egov.wtms.web.controller.masters;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
@@ -54,6 +56,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -83,6 +86,8 @@ public class CategoryMasterController {
         propertyCategory = new PropertyCategory();
         model.addAttribute("propertyCategory", propertyCategory);
         model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
+        model.addAttribute("connectionCategory", connectionCategoryService.getAllActiveConnectionCategory());
+        model.addAttribute("reqAttr", "false");
         return "category-master";
     }
 
@@ -92,14 +97,13 @@ public class CategoryMasterController {
         if (resultBinder.hasErrors())
             return "category-master";
         PropertyCategory propertycategory = new PropertyCategory();
-        ConnectionCategory categoryObj = connectionCategoryService.findByNameIgnoreCase(propertyCategory.getConnectionCategory().getName().toUpperCase()
-                .trim());
-        if (categoryObj!=null)
-        propertycategory = propertyCategoryService.getByPropertyTypeAndCategory(
-                propertyCategory.getPropertyType(),
-                categoryObj);
-        else 
-            propertycategory = null;   
+        final ConnectionCategory categoryObj = connectionCategoryService
+                .findByNameIgnoreCase(propertyCategory.getConnectionCategory().getName().toUpperCase().trim());
+        if (categoryObj != null)
+            propertycategory = propertyCategoryService.getByPropertyTypeAndCategory(propertyCategory.getPropertyType(),
+                    categoryObj);
+        else
+            propertycategory = null;
         if (propertycategory != null) {
             redirectAttrs.addFlashAttribute("propertyCategory", propertycategory);
             model.addAttribute("message", "Entered Category for the Chosen Property Type is already Exists");
@@ -120,8 +124,55 @@ public class CategoryMasterController {
                 propertyCategoryService.createPropertyCategory(propertycategoryobj);
                 redirectAttrs.addFlashAttribute("propertyCategory", propertycategoryobj);
             }
-            model.addAttribute("message", "Category Data created successfully");
         }
-        return "category-master-success";
+        final List<PropertyCategory> propertyCategoryList = propertyCategoryService.findAll();
+        model.addAttribute("propertyCategoryList", propertyCategoryList);
+        return "category-master-list";
+    }
+
+    @RequestMapping(value = "/categoryMaster/list", method = GET)
+    public String getCategoryMasterList(final Model model) {
+        final List<PropertyCategory> propertyCategoryList = propertyCategoryService.findAll();
+        model.addAttribute("propertyCategoryList", propertyCategoryList);
+        return "category-master-list";
+    }
+
+    @RequestMapping(value = "/categoryMaster/{propertyCategoryId}", method = GET)
+    public String getCategoryMasterDetails(final Model model, @PathVariable final String propertyCategoryId) {
+        final PropertyCategory propertyCategory = propertyCategoryService.findOne(Long.parseLong(propertyCategoryId));
+        model.addAttribute("propertyCategory", propertyCategory);
+        model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
+        model.addAttribute("connectionCategory", connectionCategoryService.getAllActiveConnectionCategory());
+        model.addAttribute("reqAttr", "true");
+        return "category-master";
+    }
+
+    @RequestMapping(value = "/categoryMaster/{propertyCategoryId}", method = RequestMethod.POST)
+    public String editCategoryMasterData(@Valid @ModelAttribute final PropertyCategory propertyCategory,
+            @PathVariable final long propertyCategoryId, final RedirectAttributes redirectAttrs, final Model model,
+            final BindingResult resultBinder) {
+        if (resultBinder.hasErrors())
+            return "category-master";
+        final boolean status = propertyCategory.getConnectionCategory().isActive();
+        PropertyCategory propertyCategoryValidateObj = null;
+        final ConnectionCategory categoryObj = connectionCategoryService.findByNameIgnoreCaseAndActive(
+                propertyCategory.getConnectionCategory().getName().toUpperCase().trim(), status);
+        if (categoryObj != null)
+            propertyCategoryValidateObj = propertyCategoryService
+                    .getByPropertyTypeAndCategory(propertyCategory.getPropertyType(), categoryObj);
+        if (propertyCategoryValidateObj != null) {
+            redirectAttrs.addFlashAttribute("propertyCategory", propertyCategoryValidateObj);
+            model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
+            model.addAttribute("message", "Entered Category for the Chosen Property Type is already Exists");
+            return "category-master";
+        } else if (propertyCategory != null) {
+
+            propertyCategory.getConnectionCategory().setActive(status);
+            propertyCategoryService.createPropertyCategory(propertyCategory);
+            redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
+        }
+        final List<PropertyCategory> propertyCategoryList = propertyCategoryService.findAll();
+        model.addAttribute("propertyCategoryList", propertyCategoryList);
+        return "category-master-list";
     }
 }
