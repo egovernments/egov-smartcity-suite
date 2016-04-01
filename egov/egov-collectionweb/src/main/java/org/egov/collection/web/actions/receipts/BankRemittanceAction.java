@@ -68,7 +68,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-    @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -203,32 +203,29 @@ public class BankRemittanceAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     public String create() {
         final long startTimeMillis = System.currentTimeMillis();
-        if(accountNumberId!=null && accountNumberId==-1)
-        {
-            String serviceName="";
-            String fundCode="";
-            
-            for (int i = 0; i < getServiceNameArray().length; i++) {
+        if (accountNumberId != null && accountNumberId == -1) {
+            String serviceName = "";
+            String fundCode = "";
+
+            for (int i = 0; i < getServiceNameArray().length; i++)
                 if (getServiceNameArray() != null && !getServiceNameArray()[i].isEmpty()) {
                     serviceName = getServiceNameArray()[i];
                     fundCode = getFundCodeArray()[i];
                     break;
                 }
-            }
-        final String bankAccountStr = "select asm.BANKACCOUNT from BANKACCOUNT ba,"
-                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
-                + "sd.name= '" + serviceName + "'  and fd.code='" + fundCode + "'";
+            final String bankAccountStr = "select asm.BANKACCOUNT from BANKACCOUNT ba,"
+                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
+                    + "sd.name= '" + serviceName + "'  and fd.code='" + fundCode + "'";
 
-        final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
-        final Object queryResults = bankAccountQry.uniqueResult();
-        BigInteger accountNumber = (BigInteger) queryResults;
-        accountNumberId = accountNumber!=null?accountNumber.intValue():null;
+            final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
+            final Object queryResults = bankAccountQry.uniqueResult();
+            final BigInteger accountNumber = (BigInteger) queryResults;
+            accountNumberId = accountNumber != null ? accountNumber.intValue() : null;
         }
-        if(accountNumberId == null || accountNumberId==-1)
-        {
+        if (accountNumberId == null || accountNumberId == -1) {
             list();
-            throw new ValidationException(Arrays.asList(new ValidationError("Bank Account for the Service and Fund is not mapped",
-                    "bankremittance.error.bankaccounterror")));
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
         }
         voucherHeaderValues = receiptHeaderService.createBankRemittance(getServiceNameArray(),
                 getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
@@ -436,7 +433,6 @@ public class BankRemittanceAction extends BaseFormAction {
         this.receiptNumberArray = receiptNumberArray;
     }
 
-
     public Integer getBranchId() {
         return branchId;
     }
@@ -449,7 +445,7 @@ public class BankRemittanceAction extends BaseFormAction {
         return accountNumberId;
     }
 
-    public void setAccountNumberId(Integer accountNumberId) {
+    public void setAccountNumberId(final Integer accountNumberId) {
         this.accountNumberId = accountNumberId;
     }
 
