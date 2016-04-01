@@ -126,12 +126,12 @@
 								</div>
 								<div class="col-xs-3 add-margin view-content">
 									<c:choose>
-										<c:when test="${lineEstimateDetails.estimateAmount == '0.0'}">
+										<c:when test="${lineEstimateDetails.actualEstimateAmount == '0.0'}">
 											<c:out default="N/A" value="N/A" />
 										</c:when>
 										<c:otherwise>
-											<fmt:formatNumber minFractionDigits="2"
-												value="${lineEstimateDetails.estimateAmount}" />
+											<fmt:formatNumber groupingUsed="false" maxFractionDigits="2" minFractionDigits="2"
+												value="${lineEstimateDetails.actualEstimateAmount}" />
 										</c:otherwise>
 									</c:choose>
 								</div>
@@ -144,7 +144,7 @@
 											<c:out default="N/A" value="N/A" />
 										</c:when>
 										<c:otherwise>
-											<fmt:formatNumber minFractionDigits="2"
+											<fmt:formatNumber 
 												value="${workOrder.tenderFinalizedPercentage}" />
 										</c:otherwise>
 									</c:choose>
@@ -155,7 +155,7 @@
 									<spring:message code="lbl.agreement.amount" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									<fmt:formatNumber minFractionDigits="2"
+									<fmt:formatNumber groupingUsed="false" maxFractionDigits="2" minFractionDigits="2"
 										value="${workOrder.workOrderAmount}" />
 									</p>
 								</div>
@@ -184,7 +184,7 @@
 											<c:out default="N/A" value="N/A" />
 										</c:when>
 										<c:otherwise>
-											<fmt:formatNumber minFractionDigits="2"
+											<fmt:formatNumber maxFractionDigits="2"
 												value="${workOrder.securityDeposit}" />
 										</c:otherwise>
 									</c:choose>
@@ -206,7 +206,7 @@
 											<c:out default="N/A" value="N/A" />
 										</c:when>
 										<c:otherwise>
-											<fmt:formatNumber minFractionDigits="2"
+											<fmt:formatNumber maxFractionDigits="2"
 												value="${workOrder.emdAmountDeposited}" />
 										</c:otherwise>
 									</c:choose>
@@ -223,7 +223,7 @@
 									<spring:message code="lbl.dlp" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									<fmt:formatNumber minFractionDigits="2"
+									<fmt:formatNumber groupingUsed="false" maxFractionDigits="2" minFractionDigits="2"
 										value="${workOrder.defectLiabilityPeriod}" />
 								</div>
 							</div>

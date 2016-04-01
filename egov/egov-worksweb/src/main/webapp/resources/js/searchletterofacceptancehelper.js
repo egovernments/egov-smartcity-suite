@@ -38,8 +38,8 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery('#btnsearch').click(function(e) {
-	var fromDate = $('#fromDate').val();
-	var toDate = $('#toDate').val();
+	var fromDate = $('#fromDate').data('datepicker').date;
+	var toDate = $('#toDate').data('datepicker').date;
 	var flag = true; 
 	if(toDate != '' && fromDate != '') {
 		if(fromDate > toDate) {
@@ -80,6 +80,7 @@ function callAjaxSearch() {
 				},
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
+				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
@@ -105,12 +106,13 @@ function callAjaxSearch() {
 				aaSorting : [],
 				columns : [ {
 					"data" : "",
-					"sClass" : "text-center"
+					"sClass" : "text-center","autoWidth": "false"
 				}, {
 					"data" : "workOrderNumber",
-					"sClass" : "text-left"
+					"sClass" : "text-left","autoWidth": "false"
 				}, {
 					"data" : "workOrderDate",
+					"sClass" : "text-left" ,"width": "6%",
 					render: function (data, type, full) {
 						if(full!=null &&  full.workOrderDate != undefined) {
 							var regDateSplit = full.workOrderDate.split("T")[0].split("-");		
@@ -120,22 +122,22 @@ function callAjaxSearch() {
 			    	}
 				}, {
 					"data" : "estimateNumber",
-					"sClass" : "text-left"
+					"sClass" : "text-left","autoWidth": "false"
 				}, {
 					"data" : "nameOfWork",
-					"sClass" : "text-left"
+					"sClass" : "text-left","autoWidth": "false"
 				}, {
 					"data" : "contractor",
-					"sClass" : "text-left"
+					"sClass" : "text-left","autoWidth": "false"
 				}, {
-					"data" : "workOrderAmount",
+					"data" : "workOrderAmount","width": "6%",
 					"sClass" : "text-right"
 				}, {
 					"data" : "status",
-					"sClass" : "text-left"
+					"sClass" : "text-center","autoWidth": "false"
 				}, {
 					"data" : "",
-					"sClass" : "text-left"
+					"sClass" : "text-left","width": "7%"
 				} ]
 			});
 }

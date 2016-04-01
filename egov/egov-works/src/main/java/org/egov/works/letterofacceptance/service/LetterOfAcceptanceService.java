@@ -66,6 +66,7 @@ import org.egov.works.utils.WorksUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -198,8 +199,8 @@ public class LetterOfAcceptanceService {
                 criteria.add(Restrictions.le("workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
             if (searchRequestLetterOfAcceptance.getName() != null)
                 criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()));
-            if (searchRequestLetterOfAcceptance.getTenderFileNumber() != null)
-                criteria.add(Restrictions.eq("fileNumber", searchRequestLetterOfAcceptance.getTenderFileNumber()));
+            if (searchRequestLetterOfAcceptance.getFileNumber() != null)
+                criteria.add(Restrictions.ilike("fileNumber", searchRequestLetterOfAcceptance.getFileNumber(),MatchMode.ANYWHERE));
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
                 criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()));
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
@@ -223,5 +224,5 @@ public class LetterOfAcceptanceService {
         final List<String> results = letterOfAcceptanceRepository.findDistinctContractorByContractor_codeAndNameContainingIgnoreCase("%" + name + "%");
         return results;
     }
-
+    
 }

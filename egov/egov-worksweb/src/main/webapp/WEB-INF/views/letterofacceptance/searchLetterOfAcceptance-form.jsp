@@ -54,8 +54,8 @@
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.filenumber" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="tenderFileNumber" id="tenderFileNumber" class="form-control"/>
-				<form:errors path="tenderFileNumber" cssClass="add-margin error-msg" />
+				<form:input path="fileNumber" id="fileNumber" class="form-control"/>
+				<form:errors path="fileNumber" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">

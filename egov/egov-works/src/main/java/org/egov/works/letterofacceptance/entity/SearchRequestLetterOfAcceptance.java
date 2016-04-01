@@ -8,7 +8,7 @@ public class SearchRequestLetterOfAcceptance {
     private Date fromDate;
     private Date toDate;
     private String name;
-    private String tenderFileNumber;
+    private String fileNumber;
     private Long departmentName;
     private String estimateNumber;
     private String egwStatus;
@@ -48,14 +48,6 @@ public class SearchRequestLetterOfAcceptance {
         this.estimateNumber = estimateNumber;
     }
 
-    public String getTenderFileNumber() {
-        return tenderFileNumber;
-    }
-
-    public void setTenderFileNumber(String tenderFileNumber) {
-        this.tenderFileNumber = tenderFileNumber;
-    }
-
     public Long getDepartmentName() {
         return departmentName;
     }
@@ -80,12 +72,12 @@ public class SearchRequestLetterOfAcceptance {
         this.egwStatus = egwStatus;
     }
 
-/*    public Long getName() {
-        return name;
+    public String getFileNumber() {
+        return fileNumber;
     }
 
-    public void setName(Long name) {
-        this.name = name;
-    }*/
+    public void setFileNumber(String fileNumber) {
+        this.fileNumber = fileNumber;
+    }
 
 }
