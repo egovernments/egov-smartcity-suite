@@ -37,33 +37,20 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.messaging.email;
 
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Service;
+package org.egov.infra.config.jms.messaging.errorhandler;
 
-@Service
-public class EmailService {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ErrorHandler;
 
-    @Autowired
-    private JavaMailSenderImpl mailSender;
+public class MessagingErrorHandler implements ErrorHandler {
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessagingErrorHandler.class);
 
-    public boolean sendMail(final String toEmail, final String subject, final String mailBody) {
-        boolean isSent = false;
-        if (applicationProperties.emailEnabled()) {
-            final SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(toEmail);
-            mailMessage.setSubject(subject);
-            mailMessage.setText(mailBody);
-            mailSender.send(mailMessage);
-            isSent = true;
-        }
-        return isSent;
+    @Override
+    public void handleError(final Throwable t) {
+        LOGGER.warn("Messaging Service returns with error : {}", t.getMessage());
     }
+
 }

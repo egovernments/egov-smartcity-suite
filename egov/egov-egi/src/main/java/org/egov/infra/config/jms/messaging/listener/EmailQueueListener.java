@@ -37,33 +37,34 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.messaging.email;
 
-import org.egov.infra.config.properties.ApplicationProperties;
+package org.egov.infra.config.jms.messaging.listener;
+
+import org.egov.infra.messaging.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Service;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.support.JmsUtils;
+import org.springframework.stereotype.Component;
 
-@Service
-public class EmailService {
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+
+@Component
+public class EmailQueueListener {
 
     @Autowired
-    private JavaMailSenderImpl mailSender;
+    private EmailService emailService;
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
-
-    public boolean sendMail(final String toEmail, final String subject, final String mailBody) {
-        boolean isSent = false;
-        if (applicationProperties.emailEnabled()) {
-            final SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(toEmail);
-            mailMessage.setSubject(subject);
-            mailMessage.setText(mailBody);
-            mailSender.send(mailMessage);
-            isSent = true;
+    @JmsListener(destination = "java:/jms/queue/email")
+    public void onMessage(Message message) {
+        try {
+            final MapMessage emailMessage = (MapMessage) message;
+            emailService.sendMail(emailMessage.getString("email"), emailMessage.getString("subject"),
+                    emailMessage.getString("message"));
+        } catch (final JMSException e) {
+            throw JmsUtils.convertJmsAccessException(e);
         }
-        return isSent;
     }
+
 }
