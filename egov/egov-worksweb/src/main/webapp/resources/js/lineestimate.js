@@ -43,6 +43,11 @@ $subTypeOfWorkId = 0;
 $detailsRowCount = $('#detailsSize').val();
 $(document).ready(function(){
 	
+	var lineEstimateStatus = $('#lineEstimateStatus').val();
+	if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED' || lineEstimateStatus == 'TECHNICAL_SANCTIONED') {
+		$('#actionButtons').prepend("<a href='javascript:void(0)' class='btn btn-primary' onclick='renderPdf()'>View Proceedings</a>");
+	}
+	
 	getLineEstimateDate();
 	$locationId = $('#locationValue').val();
 	$('#wardInput').trigger('blur');
@@ -53,7 +58,42 @@ $(document).ready(function(){
 
 	return showSlumFieldsValue();
 	
+	var ward = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/egworks/lineestimate/ajax-getward?name=%QUERY',
+            filter: function (data) {
+                return $.map(data, function (ct) {
+                    return {
+                        name: ct.name,
+                        value: ct.id
+                    };
+                });
+            }
+        }
+    });
+    
+    ward.initialize();
+	var ward_typeahead = $('#wardInput').typeahead({
+		hint : false,
+		highlight : false,
+		minLength : 3
+	}, {
+		displayKey : 'name',
+		source : ward.ttAdapter(),
+	});
+	
+	typeaheadWithEventsHandling(ward_typeahead,
+	'#ward');
 });
+
+function renderPdf() {
+	var id = $('#lineEstimateId').val();
+	window.open("/egworks/lineestimate/lineEstimatePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
 
 $(document).bind("input propertychange", function (e) {
 	if($(e.target).attr('name').match(/estimateAmount$/))
@@ -70,8 +110,8 @@ $('.btn-primary').click(function(){
 		
 		var lineEstimateStatus = $('#lineEstimateStatus').val();
 		if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED') {
-			var adminSanctionDate = $('#adminSanctionDate').val();
-			var technicalSanctionDate = $('#technicalSanctionDate').val();
+			var adminSanctionDate = $('#adminSanctionDate').data('datepicker').date;
+			var technicalSanctionDate = $('#technicalSanctionDate').data('datepicker').date;
 			var technicalSanctionNumber = $('#technicalSanctionNumber').val();
 			
 			if(adminSanctionDate > technicalSanctionDate && technicalSanctionDate != '') {
@@ -421,39 +461,6 @@ $('#typeofwork').blur(function(){
 			});
 		}
 	});
-
-$(document).ready(function(){
-    var ward = new Bloodhound({
-        datumTokenizer: function (datum) {
-            return Bloodhound.tokenizers.whitespace(datum.value);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '/egworks/lineestimate/ajax-getward?name=%QUERY',
-            filter: function (data) {
-                return $.map(data, function (ct) {
-                    return {
-                        name: ct.name,
-                        value: ct.id
-                    };
-                });
-            }
-        }
-    });
-    
-    ward.initialize();
-	var ward_typeahead = $('#wardInput').typeahead({
-		hint : false,
-		highlight : false,
-		minLength : 3
-	}, {
-		displayKey : 'name',
-		source : ward.ttAdapter(),
-	});
-	
-	typeaheadWithEventsHandling(ward_typeahead,
-	'#ward');
-});
 
 function validateQuantity() {
 	$( "input[name$='quantity']" ).on("keyup", function(){

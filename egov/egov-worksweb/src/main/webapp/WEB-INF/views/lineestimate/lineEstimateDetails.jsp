@@ -71,7 +71,7 @@
 								<form:errors path="lineEstimateDetails[0].nameOfWork" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].estimateAmount" name="lineEstimateDetails[0].estimateAmount" value="${lineEstimateDetails[0].estimateAmount}" data-errormsg="Estimated amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateEstimatedAmountTotal();" required="required"/>
+								<form:input path="lineEstimateDetails[0].estimateAmount" name="lineEstimateDetails[0].estimateAmount" value="${lineEstimateDetails[0].estimateAmount}" data-errormsg="Estimated amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateEstimatedAmountTotal();" onblur="calculateEstimatedAmountTotal();" required="required"/>
 								<form:errors path="lineEstimateDetails[0].estimateAmount" cssClass="add-margin error-msg" />
 							</td>
 							<td>

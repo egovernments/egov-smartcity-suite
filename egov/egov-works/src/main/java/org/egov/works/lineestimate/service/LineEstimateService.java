@@ -284,29 +284,29 @@ public class LineEstimateService {
         return criteria.list();
     }
 
-    public List<LineEstimate> searchLineEstimatesForLoa(final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest) {
+    public List<LineEstimateDetails> searchLineEstimatesForLoa(final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest) {
 
         final List<String> lineEstimateNumbers = lineEstimateDetailsRepository
                 .findEstimateNumbersToSearchLineEstimatesForLoa(WorksConstants.CANCELLED_STATUS);
 
-        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
-                .createAlias("lineEstimateDetails", "lineEstimateDetail")
-                .createAlias("status", "status");
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimateDetails.class)
+                .createAlias("lineEstimate", "lineEstimate")
+                .createAlias("lineEstimate.status", "status");
         if (lineEstimateForLoaSearchRequest != null) {
             if (lineEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
-                criteria.add(Restrictions.ilike("adminSanctionNumber", lineEstimateForLoaSearchRequest.getAdminSanctionNumber()));
+                criteria.add(Restrictions.ilike("lineEstimate.adminSanctionNumber", lineEstimateForLoaSearchRequest.getAdminSanctionNumber()));
             if (lineEstimateForLoaSearchRequest.getExecutingDepartment() != null)
-                criteria.add(Restrictions.eq("executingDepartment.id", lineEstimateForLoaSearchRequest.getExecutingDepartment()));
+                criteria.add(Restrictions.eq("lineEstimate.executingDepartment.id", lineEstimateForLoaSearchRequest.getExecutingDepartment()));
             if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null)
-                criteria.add(Restrictions.eq("lineEstimateDetail.estimateNumber",
+                criteria.add(Restrictions.eq("estimateNumber",
                         lineEstimateForLoaSearchRequest.getEstimateNumber()));
             if (lineEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
-                criteria.add(Restrictions.ge("adminSanctionDate", lineEstimateForLoaSearchRequest.getAdminSanctionFromDate()));
+                criteria.add(Restrictions.ge("lineEstimate.adminSanctionDate", lineEstimateForLoaSearchRequest.getAdminSanctionFromDate()));
             if (lineEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
-                criteria.add(Restrictions.le("adminSanctionDate", lineEstimateForLoaSearchRequest.getAdminSanctionToDate()));
+                criteria.add(Restrictions.le("lineEstimate.adminSanctionDate", lineEstimateForLoaSearchRequest.getAdminSanctionToDate()));
             if (lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy() != null)
-                criteria.add(Restrictions.eq("createdBy.id", lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
-            criteria.add(Restrictions.in("lineEstimateDetail.estimateNumber", lineEstimateNumbers));
+                criteria.add(Restrictions.eq("lineEstimate.createdBy.id", lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
+            criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
             criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -346,37 +346,21 @@ public class LineEstimateService {
 
     public List<LineEstimateForLoaSearchResult> searchLineEstimatesForLOA(
             final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest) {
-        final List<LineEstimate> lineEstimates = searchLineEstimatesForLoa(lineEstimateForLoaSearchRequest);
+        final List<LineEstimateDetails> lineEstimateDetails = searchLineEstimatesForLoa(lineEstimateForLoaSearchRequest);
         final List<LineEstimateForLoaSearchResult> lineEstimateForLoaSearchResults = new ArrayList<LineEstimateForLoaSearchResult>();
-        for (final LineEstimate le : lineEstimates)
-            for (final LineEstimateDetails led : le.getLineEstimateDetails())
-                if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null) {
-                    if (led.getEstimateNumber().equalsIgnoreCase(lineEstimateForLoaSearchRequest.getEstimateNumber())) {
-                        final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
-                        result.setId(le.getId());
-                        result.setAdminSanctionNumber(le.getAdminSanctionNumber());
-                        result.setCreatedBy(le.getCreatedBy().getName());
-                        result.setEstimateAmount(led.getEstimateAmount());
-                        result.setEstimateNumber(led.getEstimateNumber());
-                        result.setNameOfWork(led.getNameOfWork());
-                        if (le.getAdminSanctionBy() != null)
-                            result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
-                        result.setActualEstimateAmount(led.getActualEstimateAmount());
-                        lineEstimateForLoaSearchResults.add(result);
-                    }
-                } else {
-                    final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
-                    result.setId(le.getId());
-                    result.setAdminSanctionNumber(le.getAdminSanctionNumber());
-                    result.setCreatedBy(le.getCreatedBy().getName());
-                    result.setEstimateAmount(led.getEstimateAmount());
-                    result.setEstimateNumber(led.getEstimateNumber());
-                    result.setNameOfWork(led.getNameOfWork());
-                    result.setActualEstimateAmount(led.getActualEstimateAmount());
-                    if (le.getAdminSanctionBy() != null)
-                        result.setAdminSanctionBy(le.getAdminSanctionBy().getName());
-                    lineEstimateForLoaSearchResults.add(result);
-                }
+        for (final LineEstimateDetails led : lineEstimateDetails) {
+            final LineEstimateForLoaSearchResult result = new LineEstimateForLoaSearchResult();
+            result.setId(led.getLineEstimate().getId());
+            result.setAdminSanctionNumber(led.getLineEstimate().getAdminSanctionNumber());
+            result.setCreatedBy(led.getLineEstimate().getCreatedBy().getName());
+            result.setEstimateAmount(led.getEstimateAmount());
+            result.setEstimateNumber(led.getEstimateNumber());
+            result.setNameOfWork(led.getNameOfWork());
+            if (led.getLineEstimate().getAdminSanctionBy() != null)
+                result.setAdminSanctionBy(led.getLineEstimate().getAdminSanctionBy().getName());
+            result.setActualEstimateAmount(led.getActualEstimateAmount());
+            lineEstimateForLoaSearchResults.add(result);
+        }
         return lineEstimateForLoaSearchResults;
     }
 

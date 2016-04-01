@@ -43,10 +43,7 @@
 <div class="buttonbottom" align="center">
 	<table>
 		<tr>
-			<td>
-				<c:if test="${lineEstimate.status.code == 'ADMIN_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
-					<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPdf()" ><spring:message code="lbl.view.proceedings" /></a>
-				</c:if>
+			<td id="actionButtons">
 				<c:if test="${mode != 'readOnly' }">
 					<c:forEach items="${validActionList}" var="validButtons">
 						<input type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}">
@@ -59,8 +56,3 @@
 	</table>
 	<input id="confirm" type="hidden" value="<spring:message code="lbl.confirm" />" />
 </div>
-<script type="text/javascript">
-function renderPdf() {
-	window.open("/egworks/lineestimate/lineEstimatePDF/" + ${lineEstimate.id}, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
-}
-</script>

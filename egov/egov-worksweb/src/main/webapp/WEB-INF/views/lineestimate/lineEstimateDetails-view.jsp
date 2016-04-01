@@ -56,7 +56,7 @@
 						<th><spring:message code="lbl.estimatenumber"/></th>
 					</c:if>
 					<th><spring:message code="lbl.estimatedamount"/></th>					
-					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+					<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 						<th><spring:message code="lbl.actualamount"/>
 							<c:if test="${mode != 'readOnly' }">
 								<span class="mandatory"></span>
@@ -90,10 +90,10 @@
 						</td>
 						<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view' }">
 							<td class="text-right">
-								<form:input path="lineEstimateDetails[${item.index }].actualEstimateAmount" id="actualEstimateAmount${item.index}" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" required="required"/>
+								<form:input path="lineEstimateDetails[${item.index }].actualEstimateAmount" id="actualEstimateAmount${item.index}" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" onblur="calculateActualEstimatedAmountTotal(this);" required="required"/>
 							</td>
 						</c:if>
-						<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED') && mode == 'readOnly' }">
+						<c:if test="${lineEstimate.status.code == 'TECHNICAL_SANCTIONED' && mode == 'readOnly' }">
 							<td class="text-right">
 								<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${lineEstimate.lineEstimateDetails[item.index].actualEstimateAmount}" />
 							</td>
@@ -133,7 +133,7 @@
 						<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
 					</c:if>
 					<td class="text-right"> <span id="estimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${total}" /></span> </td>
-					<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+					<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 						<td class="text-right"> <span id="actualEstimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${actualEstimateTotal}" /></span> </td>
 					</c:if>
 					<td></td>

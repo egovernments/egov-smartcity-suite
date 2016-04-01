@@ -41,52 +41,54 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title"><spring:message code="lbl.techsanctiondetails" /></div>
+<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+	<div class="panel panel-primary" data-collapsed="0">
+		<div class="panel-heading">
+			<div class="panel-title"><spring:message code="lbl.techsanctiondetails" /></div>
+		</div>
+		<input type="hidden" id="errorTechDate" value="<spring:message code='error.technicalsanctiondate' />" />
+		<input type="hidden" id="errorActualAmount" value="<spring:message code='error.actualamount' />" />
+		<input type="hidden" id="errorActualAmountContinued" value="<spring:message code='error.actualamount.continued' />" />
+		<input type="hidden" id="adminSanctionDate" value='<fmt:formatDate value="${lineEstimate.adminSanctionDate }" pattern="dd/MM/yyyy"/>' />
+		<div class="panel-body">
+			<table class="table table-bordered" id="tblestimate">
+				<thead>
+					<tr>
+						<th><spring:message code="lbl.technicalsanctionnumber"/>
+							<c:if test="${mode != 'readOnly' }">
+								<span class="mandatory"></span>
+							</c:if>
+						</th>
+						<th><spring:message code="lbl.technicalsanctiondate"/>
+							<c:if test="${mode != 'readOnly' }">
+								<span class="mandatory"></span>
+							</c:if>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<c:if test="${mode != 'readOnly' }">
+								<form:input path="technicalSanctionNumber" id="technicalSanctionNumber" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="Technical Sanction Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="32" required="required" />
+								<form:errors path="technicalSanctionNumber" cssClass="add-margin error-msg" />
+							</c:if>
+							<c:if test="${lineEstimate.status.code == 'TECHNICAL_SANCTIONED' && mode == 'readOnly' }">
+								<c:out value="${lineEstimate.technicalSanctionNumber }"></c:out>
+							</c:if>
+						</td>
+						<td>
+							<c:if test="${mode != 'readOnly' }">
+								<form:input path="technicalSanctionDate" id="technicalSanctionDate" data-errormsg="Technical Sanction Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
+								<form:errors path="technicalSanctionDate" cssClass="add-margin error-msg" />
+							</c:if>
+							<c:if test="${lineEstimate.status.code == 'TECHNICAL_SANCTIONED' && mode == 'readOnly' }">
+								<fmt:formatDate value="${lineEstimate.technicalSanctionDate }" pattern="dd/MM/yyyy"/>
+							</c:if>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
-	<input type="hidden" id="errorTechDate" value="<spring:message code='error.technicalsanctiondate' />" />
-	<input type="hidden" id="errorActualAmount" value="<spring:message code='error.actualamount' />" />
-	<input type="hidden" id="errorActualAmountContinued" value="<spring:message code='error.actualamount.continued' />" />
-	<input type="hidden" id="adminSanctionDate" value='<fmt:formatDate value="${lineEstimate.adminSanctionDate }" pattern="dd/MM/yyyy"/>' />
-	<div class="panel-body">
-		<table class="table table-bordered" id="tblestimate">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.technicalsanctionnumber"/>
-						<c:if test="${mode != 'readOnly' }">
-							<span class="mandatory"></span>
-						</c:if>
-					</th>
-					<th><spring:message code="lbl.technicalsanctiondate"/>
-						<c:if test="${mode != 'readOnly' }">
-							<span class="mandatory"></span>
-						</c:if>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>
-						<c:if test="${mode != 'readOnly' }">
-							<form:input path="technicalSanctionNumber" id="technicalSanctionNumber" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="Technical Sanction Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="32" required="required" />
-							<form:errors path="technicalSanctionNumber" cssClass="add-margin error-msg" />
-						</c:if>
-						<c:if test="${mode == 'readOnly' }">
-							<c:out value="${lineEstimate.technicalSanctionNumber }"></c:out>
-						</c:if>
-					</td>
-					<td>
-						<c:if test="${mode != 'readOnly' }">
-							<form:input path="technicalSanctionDate" id="technicalSanctionDate" data-errormsg="Technical Sanction Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
-							<form:errors path="technicalSanctionDate" cssClass="add-margin error-msg" />
-						</c:if>
-						<c:if test="${mode == 'readOnly' }">
-							<fmt:formatDate value="${lineEstimate.technicalSanctionDate }" pattern="dd/MM/yyyy"/>
-						</c:if>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-</div>
+</c:if>
