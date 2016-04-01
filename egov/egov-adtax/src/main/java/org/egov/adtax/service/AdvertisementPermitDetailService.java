@@ -527,7 +527,7 @@ public class AdvertisementPermitDetailService {
 
         StringBuilder queryString = new StringBuilder();
         queryString
-                .append(" Select B From Advertisement A , AdvertisementPermitDetail B where B.agency.id=:id  and B.id=A.id and B.isActive=true and A.status="
+                .append(" Select B From Advertisement A , AdvertisementPermitDetail B where B.agency.id=:id  and B.advertisement.id=A.id and B.isActive=true and A.status="
                         + AdvertisementStatus.ACTIVE.ordinal() + "");
         if (category != null) {
             queryString.append(" and B.advertisement.category.id =:category");
