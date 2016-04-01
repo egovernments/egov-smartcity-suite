@@ -183,7 +183,7 @@ public class MiscellaneousFileUploadAction extends BaseFormAction {
                     + "UPL");
 
             final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where accountnumber=?", input[4]);
-            receiptAction.setBankAccountId(account.getId().intValue());
+            receiptAction.setBankAccountId(account.getId());
 
             receiptAction.setInstrHeaderBank(instrHeaderBank);
             receiptAction.setInstrumentTypeCashOrCard(CollectionConstants.INSTRUMENTTYPE_BANK);
