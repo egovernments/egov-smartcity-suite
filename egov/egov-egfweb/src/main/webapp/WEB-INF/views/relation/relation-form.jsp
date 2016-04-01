@@ -75,9 +75,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.mobile" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="mobile"
+							<form:input path="mobile" id="mobile"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="10" />
+								data-pattern="number" maxlength="10"   />
 							<form:errors path="mobile" cssClass="error-msg" />
 						</div>
 					</div>
@@ -166,3 +166,6 @@
 						</div>
 					</div>
 					<input type="hidden" name="relation" value="${relation.id}" />
+					
+		<script type="text/javascript" src="/egi/resources/global/js/egov/patternvalidation.js"></script>
+					
