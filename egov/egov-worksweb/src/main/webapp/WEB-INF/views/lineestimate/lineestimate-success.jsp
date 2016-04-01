@@ -50,42 +50,10 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center">
-					<%-- <c:choose>
-						<c:when test="${lineEstimate.state.value != 'End'}">
-							<span><spring:message code="msg.lineestimate.ack.success" /></span>
-							<span ><spring:message code="msg.sussess.forward" />${approverName}~${nextDesign}</span>
-						</c:when>
-						<c:when test="${lineEstimate.state.value == 'End' && lineEstimate.status.code != 'CANCELLED'}">
-							<span><spring:message code="msg.lineestimate.process.success" /></span>
-						</c:when>
-						<c:when test="${lineEstimate.status.code == 'CANCELLED'}">
-							<span><spring:message code="msg.lineestimate.rejected" /></span>
-						</c:when>
-					</c:choose> --%>
 					<c:out value="${message }" />
 				</div>
 			</div>
 		</div>
-	<%-- <div class="panel panel-default" data-collapsed="0">
-		<div class="panel-body">
-			<div class="row">
-			<c:choose>
-				<c:when test="${sewerageApplicationDetails.status.code!='SANCTIONED' && sewerageApplicationDetails.status.code!='CANCELLED'}">
-					<div class="col-xs-6 add-margin">
-						<spring:message code="lbl.disposal.date" /> : <fmt:formatDate pattern="dd/MM/yyyy" value="${sewerageApplicationDetails.disposalDate}" />
-					</div>
-					<div class="col-xs-6 view-content text-right"><spring:message code="msg.sign"/><br>
-						${currentUserDesgn}<br>${cityName}
-					</div>
-				</c:when>	
-				<c:otherwise>
-					<div class="col-xs-12 view-content text-right"><spring:message code="msg.sign"/><br>
-						${currentUserDesgn}<br>${cityName}</div>
-				</c:otherwise>
-			</c:choose>
-			</div>
-		</div>
-	</div> --%>
 		</form:form>
 	</div>					
 </div>					
@@ -95,6 +63,9 @@
 		<%-- <button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button> --%>
 		<%-- <c:choose>
 			<c:when test="${lineEstimate.status == 'ACTIVE' }"> --%>
+		<c:if test="${lineEstimate.status.code == 'ADMIN_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+			<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPdf()" ><spring:message code="lbl.view.proceedings" /></a>
+		</c:if>
 		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 			<%-- </c:when>
 			<c:otherwise>
@@ -111,5 +82,8 @@ function printDiv(divName) {
     document.body.innerHTML = printContents;
     window.print();
     document.body.innerHTML = originalContents;
+}
+function renderPdf() {
+	window.open("/egworks/lineestimate/lineEstimatePDF/" + ${lineEstimate.id}, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 </script>

@@ -100,7 +100,7 @@
 				</form:select>
 				<form:errors path="budgetHead" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimateno" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimatenumber" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="estimateNumber" id="estimateNumber" class="form-control"/>
 				<form:errors path="estimateNumber" cssClass="add-margin error-msg" />

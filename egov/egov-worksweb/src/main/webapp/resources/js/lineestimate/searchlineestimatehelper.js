@@ -38,8 +38,8 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery('#btnsearch').click(function(e) {
-	var adminSanctionToDate = $('#adminSanctionToDate').val();
-	var adminSanctionFromDate = $('#adminSanctionFromDate').val();
+	var adminSanctionToDate = $('#adminSanctionToDate').data('datepicker').date;
+	var adminSanctionFromDate = $('#adminSanctionFromDate').data('datepicker').date;
 	var flag = true; 
 	if(adminSanctionToDate != '' && adminSanctionFromDate != '') {
 		if(adminSanctionFromDate > adminSanctionToDate) {
@@ -91,7 +91,10 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
 					$('td:eq(10)',row).html(parseFloat(Math.round(data.totalAmount * 100) / 100).toFixed(2));
-					$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Line Estimate</option><option value="2">View PDF</option></select>');
+					if(data.status == 'Administrative Sanctioned' || data.status == 'Technical Sanctioned')
+						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Line Estimate</option><option value="2">View PDF</option></select>');
+					else
+						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Line Estimate</option></select>');
 					return row;
 				},
 				aaSorting: [],				
@@ -166,9 +169,4 @@ $(document).ready(function(){
 			displayKey : 'name',
 			source : adminSanctionNumber.ttAdapter()
 		});
-		
-	$('#actionDropdown').change(function() {
-		if(this.value == 1)
-			window.location.href = "";
-	});
 });
