@@ -47,14 +47,11 @@
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<input type="hidden" name="waterPropertyUsageList" id="waterPropertyUsageList" value="${waterPropertyUsageList}">
 	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${usagetypeid.name}" />
-
 	<div class="panel panel-primary" data-collapsed="0">
-		<!-- <div class="panel-heading"></div> -->
 	<div class="panel-body custom-form ">
 	<c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
-		<!-- <div class="form-group" align="center"></div> -->
 			<c:choose>
 				<c:when test="${waterPropertyUsageList.isEmpty()}">
 					<div class="form-group" align="center">No Master Data</div>
@@ -69,17 +66,13 @@
 								</div>
 							</th>
 							<th colspan="1">
-								<div align="center">
-									<spring:message code="lbl.usagetype" />
-								</div>
+								<div align="center"><spring:message code="lbl.usagetype" /></div>
 							</th>
 							<th align="center" colspan="1">
-								<div align="center">Status</div>
+								<div align="center"><spring:message code="lbl.status"/></div>
 							</th>
 							<th colspan="1">
-								<div align="center">
-									<spring:message code="lbl.edit" />
-								</div>
+								<div align="center"><spring:message code="lbl.edit" /></div>
 							</th>
 						</tr>
 					</thead>
@@ -93,7 +86,6 @@
 							<td colspan="1">
 								<div align="center">
 									<c:out value="${waterPropertyUsage.usageType.name}" />
-									<!-- 	<s:property value="bookNumber" /> -->
 								</div>
 							</td>
 							<td colspan="1">
@@ -119,10 +111,8 @@
 			</c:otherwise>
 			</c:choose>
 			<div class="form-group text-center">
-				<%-- <form:button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit" /></form:button> --%>
-				<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)">Add New</a>
+				<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)"><spring:message code="lbl.addnew" /></a>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
-				
 			</div>
 		</div>
 	</div>

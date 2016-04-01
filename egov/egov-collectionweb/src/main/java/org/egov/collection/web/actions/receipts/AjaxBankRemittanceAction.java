@@ -115,6 +115,26 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         }
         return BANKBRANCHLIST;
     }
+    
+    @Action(value = "/receipts/ajaxBankRemittance-bankBranchListOfService")
+    public String bankBranchListOfService() {
+        final String bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
+                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
+                + "ba.BRANCHID=bb.ID and bb.BANKID=b.ID";
+
+        final Query bankBranchQuery = persistenceService.getSession().createSQLQuery(bankBranchQueryString);
+        final List<Object[]> queryResults = bankBranchQuery.list();
+
+        for (int i = 0; i < queryResults.size(); i++) {
+            final Object[] arrayObjectInitialIndex = queryResults.get(i);
+            final Bankbranch newBankbranch = new Bankbranch();
+            newBankbranch.setId(Integer.valueOf(arrayObjectInitialIndex[0].toString()));
+            newBankbranch.setBranchname(arrayObjectInitialIndex[1].toString());
+            bankBranchArrayList.add(newBankbranch);
+        }
+        return BANKBRANCHLIST;
+    }
+
 
     @Override
     public Object getModel() {
@@ -133,6 +153,28 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         final String bankAccountQueryString = "select ba.id as accountid,ba.accountnumber as accountnumber from BANKACCOUNT ba,"
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
                 + "ba.BRANCHID=" + branchId + " and sd.NAME='" + serviceName + "' and fd.NAME='" + fundName + "'";
+
+        final Query bankAccountQuery = persistenceService.getSession().createSQLQuery(bankAccountQueryString);
+        final List<Object[]> queryResults = bankAccountQuery.list();
+
+        bankAccountArrayList = new ArrayList<Bankaccount>();
+        for (int i = 0; i < queryResults.size(); i++) {
+            final Object[] arrayObjectInitialIndex = queryResults.get(i);
+            final Bankaccount newBankaccount = new Bankaccount();
+            newBankaccount.setId(Long.valueOf(arrayObjectInitialIndex[0].toString()));
+            newBankaccount.setAccountnumber(arrayObjectInitialIndex[1].toString());
+            getBankAccountArrayList().add(newBankaccount);
+        }
+
+        return ACCOUNTLIST;
+
+    }
+    
+    @Action(value = "/receipts/ajaxBankRemittance-accountListOfService")
+    public String accountListOfService() {
+        final String bankAccountQueryString = "select ba.id as accountid,ba.accountnumber as accountnumber from BANKACCOUNT ba,"
+                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
+                + "ba.BRANCHID=" + branchId;
 
         final Query bankAccountQuery = persistenceService.getSession().createSQLQuery(bankAccountQueryString);
         final List<Object[]> queryResults = bankAccountQuery.list();

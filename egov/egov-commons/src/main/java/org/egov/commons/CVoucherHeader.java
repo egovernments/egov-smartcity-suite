@@ -68,7 +68,6 @@ public class CVoucherHeader extends StateAware {
     private String name;
     private String type;
     private String description;
-    @NotNull
     private Date effectiveDate;
     private String voucherNumber;
     private Date voucherDate;

@@ -50,15 +50,29 @@
           </div>
           <div class="panel-body">
             <div class="form-group">
+            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" /> </label>
+              <div class="col-sm-3 add-margin">
+                <form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric"
+                  maxlength="50" />
+                <form:errors path="name" cssClass="error-msg" />
+              </div>
               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.code" /> </label>
               <div class="col-sm-3 add-margin">
                 <form:input path="code" class="form-control text-left patternvalidation" data-pattern="alphanumeric"
                   maxlength="50" />
                 <form:errors path="code" cssClass="error-msg" />
               </div>
+              
+            </div>
+            <div class="form-group">
+              <%-- <label class="col-sm-3 control-label text-right"><spring:message code="lbl.isnotleaf" /> </label>
+              <div class="col-sm-3 add-margin">
+                <form:checkbox path="isnotleaf" />
+                <form:errors path="isnotleaf" cssClass="error-msg" />
+              </div> --%>
               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.parentid" /> </label>
               <div class="col-sm-3 add-margin">
-                <form:select path="parentId.id" id="parentId.id" cssClass="form-control"
+                <form:select path="parentId" id="parentId" cssClass="form-control"
                   cssErrorClass="form-control error">
                   <form:option value="">
                     <spring:message code="lbl.select" />
@@ -67,18 +81,12 @@
                 </form:select>
                 <form:errors path="parentId" cssClass="error-msg" />
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.isnotleaf" /> </label>
-              <div class="col-sm-3 add-margin">
-                <form:checkbox path="isnotleaf" />
-                <form:errors path="isnotleaf" cssClass="error-msg" />
-              </div>
               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.isactive" /> </label>
               <div class="col-sm-3 add-margin">
                 <form:checkbox path="isactive" />
                 <form:errors path="isactive" cssClass="error-msg" />
               </div>
+              
             </div>
             <input type="hidden" id="mode" name="mode" value="${mode}" />
             <div class="form-group">

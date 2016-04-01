@@ -88,7 +88,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
@@ -131,14 +130,17 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     private static final String PAYMENTID = "paymentid";
-    private @Autowired AppConfigValueService appConfigValuesService;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     @Qualifier("persistenceService")
-    private @Autowired PersistenceService persistenceService;
+    @Autowired
+    private  PersistenceService persistenceService;
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;
-    private @Autowired CreateVoucher createVoucher;
+    @Autowired
+    private CreateVoucher createVoucher;
     public List<CChartOfAccounts> purchaseBillGlcodeList = new ArrayList<CChartOfAccounts>();
     public List<CChartOfAccounts> worksBillGlcodeList = new ArrayList<CChartOfAccounts>();
     public List<CChartOfAccounts> salaryBillGlcodeList = new ArrayList<CChartOfAccounts>();
@@ -146,7 +148,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public List<CChartOfAccounts> contingentBillGlcodeList = new ArrayList<CChartOfAccounts>();
     public List<BigDecimal> cBillGlcodeIdList = null;
     protected List<Miscbilldetail> miscBillList = null;
-    private @Autowired  EGovernCommon eGovernCommon ;
+    @Autowired
+    private  EGovernCommon eGovernCommon ;
     private static final String EMPTY_STRING = "";
     private static final String DELIMETER = "~";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving Data";
@@ -167,9 +170,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public Integer selectedRows = 0;
     private final Date currentDate = new Date();
     List<InstrumentVoucher> instVoucherList;
-    private @Autowired EisCommonService eisCommonService;
+    @Autowired
+    private  EisCommonService eisCommonService;
     private BillsAccountingService billsAccountingService;
-    private @Autowired EgovCommon egovCommon;
+    @Autowired
+    private EgovCommon egovCommon;
     private FundFlowService fundFlowService;
     private ChequeAssignmentService chequeAssignmentService;
     private VoucherService voucherService;
@@ -1053,7 +1058,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                     final BigInteger id = ((BigInteger) obj[0]);
                     if (billIds.contains(id.longValue()))
                         deductionAmtMap.put(id.longValue(),
-                                obj[1] == null ? BigDecimal.ZERO : BigDecimal.valueOf((Double) obj[1]));
+                                obj[1] == null ? BigDecimal.ZERO : (BigDecimal) obj[1]);
                 }
         }
         if (LOGGER.isDebugEnabled())
@@ -1115,7 +1120,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                     final long id = ((BigInteger) obj[0]).longValue();
                     if (billIds.contains(id))
                         paymentAmtMap.put(((BigInteger) obj[0]).longValue(), obj[1] == null ? BigDecimal.ZERO
-                                : BigDecimal.valueOf((Double) obj[1]));
+                                : (BigDecimal) obj[1]);
                 }
         }
         if (LOGGER.isDebugEnabled())

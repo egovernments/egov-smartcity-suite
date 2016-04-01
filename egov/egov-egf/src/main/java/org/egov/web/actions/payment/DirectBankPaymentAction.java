@@ -45,6 +45,7 @@ package org.egov.web.actions.payment;
 
 
 import org.egov.infstr.services.PersistenceService;
+
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -340,9 +341,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         if (netPay.getFunctionId() != null)
         {
             vd.setFunctionIdDetail(Long.valueOf(netPay.getFunctionId()));
-            final String function = (String) persistenceService.getSession().load(CFunction.class,
-                    Long.valueOf(netPay.getFunctionId()));
-            vd.setFunctionDetail(function);
+            CFunction function =(CFunction) persistenceService.getSession().load(CFunction.class,Long.valueOf(netPay.getFunctionId()));
+            vd.setFunctionDetail(function.getId().toString());
         }
         commonBean.setAmount(BigDecimal.valueOf(netPay.getCreditAmount()));
         billDetailslist.add(vd);

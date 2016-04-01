@@ -230,8 +230,8 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         }
         if (checkNullandEmpty(generalLedgerReportBean.getFunctionCode()))
         {
-            final CFunction function = (CFunction) persistenceService.find("from CFunction where code = ?",
-                    generalLedgerReportBean.getFunctionCode());
+            final CFunction function = (CFunction) persistenceService.find("from CFunction where id = ?",
+                    Long.valueOf(generalLedgerReportBean.getFunctionCodeId()));
             heading = heading + " in " + function.getName() + " Function ";
         }
 

@@ -87,7 +87,7 @@ public class WaterPropertyUsageService {
     }
 
     public List<WaterPropertyUsage> findAll() {
-        return waterPropertyUsageRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
+        return waterPropertyUsageRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
     }
 
     public List<WaterPropertyUsage> findAllByPropertyTypeAndUsageType(final PropertyType propertyType,
@@ -95,4 +95,4 @@ public class WaterPropertyUsageService {
         return waterPropertyUsageRepository.findAllByPropertyTypeAndUsageType(propertyType, usagetype);
     }
 
- }
+}
