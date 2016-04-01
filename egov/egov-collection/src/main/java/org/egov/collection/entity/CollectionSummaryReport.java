@@ -39,19 +39,21 @@
  ******************************************************************************/
 package org.egov.collection.entity;
 
+import java.math.BigDecimal;
+
 
 public class CollectionSummaryReport {
 
     private String source;
     private String serviceName;
     private String cashCount;
-    private Double cashAmount;
+    private BigDecimal cashAmount;
     private String chequeddCount;
-    private Double chequeddAmount;
+    private BigDecimal chequeddAmount;
     private String onlineCount;
-    private Double onlineAmount;
+    private BigDecimal onlineAmount;
     private String totalReceiptCount;
-    private Double totalAmount;
+    private BigDecimal totalAmount;
     private String employeeName;
     private String counterName;
 
@@ -79,11 +81,11 @@ public class CollectionSummaryReport {
         this.cashCount = cashCount;
     }
 
-    public Double getCashAmount() {
+    public BigDecimal getCashAmount() {
         return cashAmount;
     }
 
-    public void setCashAmount(final Double cashAmount) {
+    public void setCashAmount(final BigDecimal cashAmount) {
         this.cashAmount = cashAmount;
     }
 
@@ -95,11 +97,11 @@ public class CollectionSummaryReport {
         this.chequeddCount = chequeddCount;
     }
 
-    public Double getChequeddAmount() {
+    public BigDecimal getChequeddAmount() {
         return chequeddAmount;
     }
 
-    public void setChequeddAmount(final Double chequeddAmount) {
+    public void setChequeddAmount(final BigDecimal chequeddAmount) {
         this.chequeddAmount = chequeddAmount;
     }
 
@@ -111,11 +113,11 @@ public class CollectionSummaryReport {
         this.onlineCount = onlineCount;
     }
 
-    public Double getOnlineAmount() {
+    public BigDecimal getOnlineAmount() {
         return onlineAmount;
     }
 
-    public void setOnlineAmount(final Double onlineAmount) {
+    public void setOnlineAmount(final BigDecimal onlineAmount) {
         this.onlineAmount = onlineAmount;
     }
 
@@ -127,11 +129,11 @@ public class CollectionSummaryReport {
         this.totalReceiptCount = totalReceiptCount;
     }
 
-    public Double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(final Double totalAmount) {
+    public void setTotalAmount(final BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
