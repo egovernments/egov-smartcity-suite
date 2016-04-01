@@ -1411,6 +1411,7 @@ public class CommonAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxLoadRTGSNumberByAccountId")
     public String ajaxLoadRTGSNumberByAccountId() throws ClassNotFoundException
     {
         if (LOGGER.isDebugEnabled())

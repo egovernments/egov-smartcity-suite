@@ -92,7 +92,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
                 "contentDisposition", "attachment; filename=${textFileName}" })
 })
 public class BankAdviceReportAction extends BaseFormAction {
-    
+
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
