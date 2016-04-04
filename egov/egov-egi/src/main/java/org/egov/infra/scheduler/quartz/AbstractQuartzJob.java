@@ -114,8 +114,12 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
         this.isTransactional = isTransactional;
     }
 
+    protected City getCurrentCity() {
+        return this.cityService.findAll().get(0);
+    }
+
     protected void prepareCityThreadLocal() {
-        City city = this.cityService.findAll().get(0);
+        City city = getCurrentCity();
         EgovThreadLocals.setCityCode(city.getCode());
         EgovThreadLocals.setCityName(city.getName());
         EgovThreadLocals.setMunicipalityName(city.getPreferences().getMunicipalityName());
