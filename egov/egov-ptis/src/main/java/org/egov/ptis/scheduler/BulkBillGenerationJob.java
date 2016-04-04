@@ -72,6 +72,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob  {
     @Override
     public void executeJob() {
         LOGGER.debug("Entered into executeJob" + modulo);
+        super.prepareCityThreadLocal();
         DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
         demandBillService.bulkBillGeneration(modulo, billsCount);
     }
