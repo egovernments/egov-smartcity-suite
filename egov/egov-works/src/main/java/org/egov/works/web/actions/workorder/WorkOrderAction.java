@@ -39,24 +39,7 @@
  */
 package org.egov.works.web.actions.workorder;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import net.sf.jasperreports.engine.JRException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -66,7 +49,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
@@ -120,7 +103,23 @@ import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Results(value = {
@@ -142,6 +141,8 @@ public class WorkOrderAction extends BaseFormAction {
     private TenderResponseService tenderResponseService;
     private AbstractEstimateService abstractEstimateService;
     private PersistenceService<SetStatus, Long> worksStatusService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
@@ -187,8 +188,6 @@ public class WorkOrderAction extends BaseFormAction {
     private List<WorkOrder> workOrderList = null;
     // private List<String> workOrderActions;
     private Long workOrderId;
-    @Autowired
-    private CommonsService commonsService;
     private String sourcepage = "";
     private String percTenderType = "";
     private String tenderResponseType = null;
@@ -429,7 +428,7 @@ public class WorkOrderAction extends BaseFormAction {
             validateWorkOrderDate();
 
         if (SAVE_ACTION.equals(actionName) && workOrder.getEgwStatus() == null)
-            workOrder.setEgwStatus(commonsService.getStatusByModuleAndCode("WorkOrder", "NEW"));
+            workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("WorkOrder", "NEW"));
 
         workOrder = workOrderService.persist(workOrder);
         workOrder = workOrderWorkflowService.transition(actionName, workOrder, workOrder.getWorkflowapproverComments());
@@ -662,13 +661,13 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     public List<EgwStatus> getWorkOrderStatuses() {
-        final List<EgwStatus> woStatusList = commonsService.getStatusByModule(WorkOrder.class.getSimpleName());
-        woStatusList.remove(commonsService.getStatusByModuleAndCode(WorkOrder.class.getSimpleName(), "NEW"));
+        final List<EgwStatus> woStatusList = egwStatusHibernateDAO.getStatusByModule(WorkOrder.class.getSimpleName());
+        woStatusList.remove(egwStatusHibernateDAO.getStatusByModuleAndCode(WorkOrder.class.getSimpleName(), "NEW"));
         return woStatusList;
     }
 
     public List<EgwStatus> getWorkOrderStatusesForMBCreation() {
-        return commonsService.getStatusListByModuleAndCodeList(WorkOrder.class.getSimpleName(),
+        return egwStatusHibernateDAO.getStatusListByModuleAndCodeList(WorkOrder.class.getSimpleName(),
                 worksService.getNatureOfWorkAppConfigValues("Works", "WORKORDER_STATUS"));
     }
 
@@ -1213,10 +1212,6 @@ public class WorkOrderAction extends BaseFormAction {
         this.workOrderId = workOrderId;
     }
 
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
     public Long getId() {
         return id;
     }
@@ -1542,7 +1537,7 @@ public class WorkOrderAction extends BaseFormAction {
         final WorkOrder workOrder = workOrderService.findById(workOrderId, false);
         validateARFForWO(workOrder);
         workOrder
-                .setEgwStatus(commonsService.getStatusByModuleAndCode(WO_OBJECT_TYPE, WorksConstants.CANCELLED_STATUS));
+                .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WO_OBJECT_TYPE, WorksConstants.CANCELLED_STATUS));
 
         if (workOrder.getCurrentState() != null) {
             final PersonalInformation prsnlInfo = employeeServiceOld.getEmpForUserId(worksService

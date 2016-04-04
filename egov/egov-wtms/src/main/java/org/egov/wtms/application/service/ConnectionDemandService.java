@@ -58,6 +58,7 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBill;
@@ -117,7 +118,7 @@ public class ConnectionDemandService {
     private ModuleService moduleService;
 
     @Autowired
-    private InstallmentDao installmentDao;
+    private InstallmentHibDao installmentDao;
 
     @Autowired
     private DemandGenericDao demandGenericDao;

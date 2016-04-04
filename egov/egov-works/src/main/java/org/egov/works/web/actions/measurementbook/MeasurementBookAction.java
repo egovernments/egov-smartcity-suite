@@ -39,25 +39,13 @@
  */
 package org.egov.works.web.actions.measurementbook;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
@@ -95,6 +83,18 @@ import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 @ParentPackage("egov")
 @Result(name = MeasurementBookAction.NEW, location = "measurementBook-new.jsp")
 public class MeasurementBookAction extends BaseFormAction {
@@ -117,6 +117,9 @@ public class MeasurementBookAction extends BaseFormAction {
     private EmployeeServiceOld employeeServiceOld;
     @Autowired
     private UserService userService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
     private EmployeeView mbPreparedByView;
     private MeasurementBookService measurementBookService;
     private WorksService worksService;
@@ -167,8 +170,6 @@ public class MeasurementBookAction extends BaseFormAction {
     private EisUtilService eisService;
 
     private static final String ACTION_NAME = "actionName";
-    @Autowired
-    private CommonsService commonsService;
     private String activitySearchMode;
     private boolean isLegacyMB;
     private static final String NON_TENDERED = "nonTendered";
@@ -661,7 +662,7 @@ public class MeasurementBookAction extends BaseFormAction {
         // }
 
         if (SAVE_ACTION.equals(actionName) && mbHeader.getEgwStatus() == null)
-            mbHeader.setEgwStatus(commonsService.getStatusByModuleAndCode("MBHeader", "NEW"));
+            mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("MBHeader", "NEW"));
 
         mbHeader = measurementBookService.persist(mbHeader);
         if (!actionName.isEmpty())
@@ -847,7 +848,7 @@ public class MeasurementBookAction extends BaseFormAction {
 
     public String cancelApprovedMB() {
         final MBHeader mbHeader = measurementBookService.findById(mbId, false);
-        mbHeader.setEgwStatus(commonsService.getStatusByModuleAndCode("MBHeader",
+        mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("MBHeader",
                 MBHeader.MeasurementBookStatus.CANCELLED.toString()));
 
         final PersonalInformation prsnlInfo = employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
@@ -1170,14 +1171,6 @@ public class MeasurementBookAction extends BaseFormAction {
 
     public void setUserService(final UserService userService) {
         this.userService = userService;
-    }
-
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public String getActivitySearchMode() {

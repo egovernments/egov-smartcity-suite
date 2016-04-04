@@ -39,20 +39,11 @@
  ******************************************************************************/
 package org.egov.dao.bills;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.Serializable;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
-
 import org.egov.model.bills.EgBillregister;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -60,6 +51,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 @Transactional(readOnly = true)

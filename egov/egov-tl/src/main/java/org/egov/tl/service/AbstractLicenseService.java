@@ -51,6 +51,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -222,7 +223,7 @@ public abstract class AbstractLicenseService<T extends License> {
         ld.setLicense(license);
         ld.setIsLateRenewal('0');
         ld.setCreateDate(new Date());
-        List<FeeMatrixDetail> feeMatrixDetails = feeMatrixService.findFeeList(license);
+        final List<FeeMatrixDetail> feeMatrixDetails = feeMatrixService.findFeeList(license);
         for (final FeeMatrixDetail fm : feeMatrixDetails) {
             final EgDemandReasonMaster reasonMaster = demandGenericDao
                     .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), moduleName);
@@ -249,17 +250,14 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.getApplicationDate());
         final Set<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails();
         final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
-        for (final EgDemandDetails dmd : demandDetails) {
-            for (final FeeMatrixDetail fm : feeList) {
-                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId())) {
+        for (final EgDemandDetails dmd : demandDetails)
+            for (final FeeMatrixDetail fm : feeList)
+                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()))
                     if (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
                         dmd.setAmount(fm.getAmount());
                         dmd.setModifiedDate(new Date());
                     }
-                }
-            }
-        }
         recalculateBaseDemand(licenseDemand);
         return license;
 
@@ -270,19 +268,16 @@ public abstract class AbstractLicenseService<T extends License> {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
         BigDecimal totalAmount = ZERO;
         final LicenseDemand licenseDemand = license.getCurrentDemand();
-        //Recalculating current demand detail according to fee matrix
-        for (final EgDemandDetails dmd : licenseDemand.getEgDemandDetails()) {
-            for (final FeeMatrixDetail fm : feeList) {
-                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId())) {
+        // Recalculating current demand detail according to fee matrix
+        for (final EgDemandDetails dmd : licenseDemand.getEgDemandDetails())
+            for (final FeeMatrixDetail fm : feeList)
+                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()))
                     if (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
                         dmd.setAmount(fm.getAmount());
                         dmd.setAmtCollected(ZERO);
                         totalAmount = totalAmount.add(fm.getAmount());
                     }
-                }
-            }
-        }
         recalculateBaseDemand(licenseDemand);
         return totalAmount;
     }
@@ -317,7 +312,7 @@ public abstract class AbstractLicenseService<T extends License> {
         licenseDemand.setLicense(license);
         licenseDemand.setIsLateRenewal('0');
         final Module module = getModuleName();
-        for (final Map.Entry<Integer, Integer> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet()) {
+        for (final Map.Entry<Integer, Integer> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
             if (legacyInstallmentwiseFee.getValue() != null && legacyInstallmentwiseFee.getValue() > 0) {
                 final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
                         legacyInstallmentwiseFee.getKey());
@@ -335,7 +330,6 @@ public abstract class AbstractLicenseService<T extends License> {
                 licenseDemand.setBaseDemand(demandAmount.add(licenseDemand.getBaseDemand()));
                 licenseDemand.setAmtCollected(amtCollected.add(licenseDemand.getAmtCollected()));
             }
-        }
         license.setLicenseDemand(licenseDemand);
 
     }
@@ -376,7 +370,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
         // Create demand details which is newly entered
         final Module module = getModuleName();
-        for (final Map.Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet()) {
+        for (final Map.Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
             if (updatedInstallmentFee.getValue() != null && updatedInstallmentFee.getValue() > 0) {
                 final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
                         updatedInstallmentFee.getKey());
@@ -390,7 +384,6 @@ public abstract class AbstractLicenseService<T extends License> {
                                         installment, module),
                                 amtCollected));
             }
-        }
         // Recalculating BasedDemand
         recalculateBaseDemand(licenseDemand);
 
@@ -575,7 +568,9 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     public List<Installment> getLastFiveYearInstallmentsForLicense() {
-        return installmentDao.fetchInstallments(getModuleName(), new Date(), 6);
+        final List<Installment> installmentList = installmentDao.fetchInstallments(getModuleName(), new Date(), 6);
+        Collections.reverse(installmentList);
+        return installmentList;
     }
 
     public Map<String, Map<String, BigDecimal>> getOutstandingFee(final T license) {
@@ -612,11 +607,11 @@ public abstract class AbstractLicenseService<T extends License> {
     public void setUpdateIndexService(final TradeLicenseUpdateIndexService updateIndexService) {
         this.updateIndexService = updateIndexService;
     }
-    
+
     public List<T> getAllLicensesByNatureOfBusiness(final String natureOfBusiness) {
-        return licensePersitenceService.getSession().createCriteria(License.class).
-                createAlias("natureOfBusiness", "nb", JoinType.LEFT_OUTER_JOIN).add(Restrictions.eq("nb.name", natureOfBusiness))
+        return licensePersitenceService.getSession().createCriteria(License.class)
+                .createAlias("natureOfBusiness", "nb", JoinType.LEFT_OUTER_JOIN).add(Restrictions.eq("nb.name", natureOfBusiness))
                 .setCacheMode(CacheMode.IGNORE).list();
     }
-    
+
 }

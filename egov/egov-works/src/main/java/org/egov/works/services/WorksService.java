@@ -39,18 +39,6 @@
  */
 package org.egov.works.services;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
@@ -60,7 +48,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
@@ -82,12 +70,22 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 public class WorksService {
     private static final Logger logger = Logger.getLogger(WorksService.class);
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    @Autowired
-    private CommonsService commonsService;
     private PersistenceService persistenceService;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
     @Autowired
@@ -98,6 +96,9 @@ public class WorksService {
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO ;
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     /**
      * This method will return the value in AppConfigValue table for the given module and key.
@@ -206,7 +207,7 @@ public class WorksService {
                 } else
                     statList.add(stat);
         }
-        return commonsService.getStatusListByModuleAndCodeList(objType, statList);
+        return egwStatusHibernateDAO.getStatusListByModuleAndCodeList(objType, statList);
     }
 
     public void createAccountDetailKey(final Long id, final String type) {
@@ -217,10 +218,6 @@ public class WorksService {
         adk.setDetailname(accountdetailtype.getAttributename());
         adk.setAccountdetailtype(accountdetailtype);
         accountdetailkeyHibernateDAO.create(adk);
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public List getWorksRoles() {

@@ -39,17 +39,14 @@
  */
 package org.egov.commons.dao;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.Vouchermis;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 public class VouchermisHibernateDAO  {
     @Transactional
