@@ -240,7 +240,7 @@ function PageValidatorObject(){
 		var color = ele.style.backgroundColor;
 		ele.style.backgroundColor = 'red';
 		if (ele.getAttribute('exilErrorMessage')) err = ele.getAttribute('exilErrorMessage');
-		alert(err);
+		bootbox.alert(err);
 		ele.style.backgroundColor = color;
 		if (typeof ele.select != 'undefined') ele.select();
 		return false;

@@ -1,46 +1,46 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-    <SCRIPT type="text/javascript">
+<SCRIPT type="text/javascript">
     //makeGrantTable for CFC, SFC & Stamp Duty
     var makeGrantTable = function() {
     	var grantTableColumns = [ 
@@ -88,7 +88,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -190,7 +190,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -380,7 +380,7 @@
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch Funding Agency Grant Amount');
+			bootbox.alert('Cannot fetch Funding Agency Grant Amount');
 		}
 	}
 	//Populating Grant Amount and Subledger name for EntertainmentTax
@@ -396,7 +396,7 @@
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch GrantAmount and Subledger');
+			bootbox.alert('Cannot fetch GrantAmount and Subledger');
 		}
 	}
 	var chequeNoAndDate={
@@ -410,7 +410,7 @@
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	}
 	function createTextFieldFormatterWithStyle(tableType,prefix,suffix,style){
@@ -463,7 +463,7 @@
 		var dat=validateDate(obj.value);
 		if (!dat && dat!=null) 
 		{
-			alert('Invalid date format : Enter Date as dd/mm/yyyy');
+			bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 			obj.value="";
 			return;
 		}
@@ -482,35 +482,35 @@
 			var obj7=document.getElementById(GRANTLIST+'['+i+'].receiptVoucher.voucherNumber');
 			var obj8=document.getElementById(GRANTLIST+'['+i+'].department.id');
 			if(obj8==null || obj8.value==-1  || obj8.value==0 || obj8.value==''){
-				alert("Select Department in Row "+(i+1));
+				bootbox.alert("Select Department in Row "+(i+1));
 				return false;
 			}
 			if(obj1==null || obj1.value==-1  || obj1.value==0 || obj1.value==''){
-				alert("Select Financial Year in Row "+(i+1));
+				bootbox.alert("Select Financial Year in Row "+(i+1));
 				return false;
 			}
 			if(obj2==null || obj2.value==-1  || obj2.value==0 || obj2.value==''){
-				alert("Select Period in Row "+(i+1));
+				bootbox.alert("Select Period in Row "+(i+1));
 				return false;
 			}
 			if(obj3==null || obj3.value==-1  || obj3.value==0 || obj3.value==''){
-				alert("Enter Proceedings No. in Row "+(i+1));
+				bootbox.alert("Enter Proceedings No. in Row "+(i+1));
 				return false;
 			}
 			if(obj4==null || obj4.value==-1  || obj4.value==0 || obj4.value==''){
-				alert("Enter Proceedings Date in Row "+(i+1));
+				bootbox.alert("Enter Proceedings Date in Row "+(i+1));
 				return false;
 			}
 			if(obj5==null || obj5.value==-1  || obj5.value==0 || obj5.value==''){
-				alert("Link Accrual GJV in Row "+(i+1));
+				bootbox.alert("Link Accrual GJV in Row "+(i+1));
 				return false;
 			}
 			if((obj6==null || obj6.value==-1  || obj6.value==0 || obj6.value=='') && (obj7==null || obj7.value==-1  || obj7.value==0 || obj7.value=='')){
-				alert("Link GJV or Receipt in Row "+(i+1));
+				bootbox.alert("Link GJV or Receipt in Row "+(i+1));
 				return false;
 			}
 			if(!(obj6==null || obj6.value==-1  || obj6.value==0 || obj6.value=='') && !(obj7==null || obj7.value==-1  || obj7.value==0 || obj7.value=='')){
-				alert("You have linked both GJV and Receipt in Row "+(i+1));
+				bootbox.alert("You have linked both GJV and Receipt in Row "+(i+1));
 				obj6.value="";
 				obj7.value="";	
 				return false;
@@ -520,23 +520,32 @@
 	}
 	//validation
    </SCRIPT>
- 
 
-    
-		<br></br>
-		<div id="labelAD" align="center">
-	 	<h1><s:text name="revenue.heading.create"/></h1></div>
-	 	<br></br>
-	 	
-		<div class="formmainbox"><div class="formheading"/><div class="subheadnew"><s:text name="revenue.heading.detail"/></div></div></div>
-		<div id="listid" style="display:block"></div>
-		<br></br>
-	 	
-	 	<div class="yui-skin-sam" align="center" style="overflow-x:scroll">
-       		<div id="grantTablediv"  ></div>
-     	</div>
-		     	
-     	<script type="text/javascript">
+
+
+<br></br>
+<div id="labelAD" align="center">
+	<h1>
+		<s:text name="revenue.heading.create" />
+	</h1>
+</div>
+<br></br>
+
+<div class="formmainbox">
+	<div class="formheading" />
+	<div class="subheadnew">
+		<s:text name="revenue.heading.detail" />
+	</div>
+</div>
+</div>
+<div id="listid" style="display: block"></div>
+<br></br>
+
+<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
+	<div id="grantTablediv"></div>
+</div>
+
+<script type="text/javascript">
      		<s:if test="%{grantsType =='Entertainment Tax'}">
      			makeGrantTableET();
 			</s:if>
@@ -545,7 +554,7 @@
 			</s:else>
      		document.getElementById('grantTablediv').getElementsByTagName('table')[0].width="80%";
      	</script>
-     	
-		
 
- 
+
+
+

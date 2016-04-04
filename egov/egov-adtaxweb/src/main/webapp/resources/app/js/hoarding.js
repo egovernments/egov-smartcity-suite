@@ -6,7 +6,7 @@ $(document).ready(function(){
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: '/adtax/agency/agencies?name=%QUERY',
+			url: '/adtax/agency/active-agencies?name=%QUERY',
 			filter: function (data) {
 				return $.map(data, function (ct) {
 					return {
@@ -177,11 +177,12 @@ $(document).ready(function(){
 			console.log(propertyNo); 
 			jQuery.ajax({
 			//	url: "/ptis/rest/property/" + propertyNo,
-				url:"/restapi/property/assessmentDetails",
-				type:"post",
+				url:"/adtax/ajax-assessmentDetails",
+				type:"GET",
 				contentType:"application/json", 
 				dataType :"json",
-			    data: JSON.stringify({"assessmentNo":propertyNo}),
+			    //data: JSON.stringify({"assessmentNoRequest":propertyNo}),
+			    data:{'assessmentNoRequest' : propertyNo},
 				success:function(data){
 					if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
 						alert(data.errorDetails.errorMessage);
@@ -311,8 +312,10 @@ $(document).ready(function(){
 					'rateClassId' : $('#rateClass').val()
 					}
 			}).done(function(value) {
-				//alert(value);
-				$('#taxAmount').val(value); 
+				if(value==0)
+					 $('#taxAmount').val(''); 
+					else
+						$('#taxAmount').val(value); 
 			
 			});
 		}

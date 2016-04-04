@@ -45,7 +45,7 @@ jQuery(document).ready(function($)
 });
 
 function refreshInbox(obj){
-	alert('hi');
+	bootbox.alert('hi');
 	$.ajax({
 		url: "/portal/home/refreshInbox",
 		type : "GET",

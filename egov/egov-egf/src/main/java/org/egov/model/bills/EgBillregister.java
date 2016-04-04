@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.model.bills;
@@ -78,323 +78,331 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "EG_BILLREGISTER")
 @SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
 public class EgBillregister extends StateAware implements java.io.Serializable {
-	
-	private static final long serialVersionUID = -4312140421386028968L;
 
-	public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
-	@DocumentId
+    private static final long serialVersionUID = -4312140421386028968L;
+
+    public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
+    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_EG_BILLREGISTER, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	@NotNull
-	private String billnumber;
-	@NotNull
-	private Date billdate;
-	@NotNull
-	private BigDecimal billamount;
+    private Long id;
+    @NotNull
+    @Length(min=1)
+    private String billnumber;
+    @NotNull
+    private Date billdate;
+    @NotNull
+    private BigDecimal billamount;
 
-	private BigDecimal fieldid;
+    private BigDecimal fieldid;
 
-	private String billstatus;
+    private String billstatus;
 
-	private String narration;
+    private String narration;
 
-	private BigDecimal passedamount;
+    private BigDecimal passedamount;
 
-	private String billtype;
-	@NotNull
-	private String expendituretype;
+    private String billtype;
+    @NotNull
+    private String expendituretype;
 
-	private BigDecimal advanceadjusted;
+    private BigDecimal advanceadjusted;
 
-	private String zone;
+    private String zone;
 
-	private String division;
+    private String division;
 
-	private String workordernumber;
+    private String workordernumber;
 
-	private String billapprovalstatus;
+    private String billapprovalstatus;
 
-	private Boolean isactive;
+    private Boolean isactive;
 
-	private Date billpasseddate;
+    private Date billpasseddate;
 
-	private Date workorderdate;
-	
-	@ManyToOne
-	@JoinColumn(name = "statusid", nullable = true)
-	private EgwStatus status;
-	
-	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy="egBillregister")
-	private EgBillregistermis egBillregistermis;	
-	
-	private String worksdetailId;
-	@Transient
-	private User approver;
-	@Transient
-	private Date approvedOn;
-	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "egBillregister")
-	private Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
+    private Date workorderdate;
 
-	/**
-	 * @return the worksdetail
-	 */
-	public String getWorksdetailId() {
-		return worksdetailId;
-	}
+    @ManyToOne
+    @JoinColumn(name = "statusid", nullable = true)
+    private EgwStatus status;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister", targetEntity = EgBillregistermis.class)
+    private EgBillregistermis egBillregistermis;
 
-	/**
-	 * @param worksdetail the worksdetail to set
-	 */
-	public void setWorksdetailId(String worksdetail) {     
-		this.worksdetailId = worksdetail;
-	}
+    private String worksdetailId;
+    @Transient
+    private User approver;
+    @Transient
+    private Date approvedOn;
 
-	public EgBillregister() {   
-	}
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillregister", targetEntity = EgBilldetails.class)
+    private Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
 
-	public EgBillregister(String billnumber, Date billdate,
-			BigDecimal billamount, String billstatus, String expendituretype,
-			BigDecimal createdby, Date createddate) {
-		this.billnumber = billnumber;
-		this.billdate = billdate;
-		this.billamount = billamount;
-		this.billstatus = billstatus;
-		this.expendituretype = expendituretype;
-		//this.createdby = createdby;
-		//this.createddate = createddate;
-	}
+    /**
+     * @return the worksdetail
+     */
+    public String getWorksdetailId() {
+        return worksdetailId;
+    }
 
-	public EgBillregister(  String billnumber,
-			Date billdate, BigDecimal billamount, BigDecimal fieldid,
-			String billstatus, String narration, BigDecimal passedamount,
-			String billtype, String expendituretype,
-			BigDecimal advanceadjusted, BigDecimal createdby, Date createddate,
-			BigDecimal lastmodifiedby, Date lastmodifieddate, String zone,
-			String division, String workordernumber, String billapprovalstatus,
-			Boolean isactive, Date billpasseddate, Date workorderdate,
-			EgBillregistermis egBillregistermis,Set<EgBilldetails> egBilldetailes,EgwStatus status) {
-		this.billnumber = billnumber;
-		this.billdate = billdate;
-		this.billamount = billamount;
-		this.fieldid = fieldid;
-		this.billstatus = billstatus;
-		this.narration = narration;
-		this.passedamount = passedamount;
-		this.billtype = billtype;
-		this.expendituretype = expendituretype;
-		this.advanceadjusted = advanceadjusted;
-	//	this.createdby = createdby;
-	//	this.createddate = createddate;
-	//	this.lastmodifiedby = lastmodifiedby;
-	//	this.lastmodifieddate = lastmodifieddate;
-		this.zone = zone;
-		this.division = division;
-		this.workordernumber = workordernumber;
-		this.billapprovalstatus = billapprovalstatus;
-		this.isactive = isactive;
-		this.billpasseddate = billpasseddate;
-		this.workorderdate = workorderdate;
-		this.egBillregistermis = egBillregistermis;
-		this.egBilldetailes = egBilldetailes ;
-		this.status = status;
-	}
+    /**
+     * @param worksdetail the worksdetail to set
+     */
+    public void setWorksdetailId(final String worksdetail) {
+        worksdetailId = worksdetail;
+    }
 
-	public Long getId() {
-		return this.id;
-	}
+    public EgBillregister() {
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getBillnumber() {
-		return this.billnumber;
-	}
+    public EgBillregister(final String billnumber, final Date billdate,
+            final BigDecimal billamount, final String billstatus, final String expendituretype,
+            final BigDecimal createdby, final Date createddate) {
+        this.billnumber = billnumber;
+        this.billdate = billdate;
+        this.billamount = billamount;
+        this.billstatus = billstatus;
+        this.expendituretype = expendituretype;
+        // this.createdby = createdby;
+        // this.createddate = createddate;
+    }
 
-	public void setBillnumber(String billnumber) {
-		this.billnumber = billnumber;
-	}
-	public Date getBilldate() {
-		return this.billdate;
-	}
-	
-	public void setBilldate(Date billdate) {
-		this.billdate = billdate;
-	}
+    public EgBillregister(final String billnumber,
+            final Date billdate, final BigDecimal billamount, final BigDecimal fieldid,
+            final String billstatus, final String narration, final BigDecimal passedamount,
+            final String billtype, final String expendituretype,
+            final BigDecimal advanceadjusted, final BigDecimal createdby, final Date createddate,
+            final BigDecimal lastmodifiedby, final Date lastmodifieddate, final String zone,
+            final String division, final String workordernumber, final String billapprovalstatus,
+            final Boolean isactive, final Date billpasseddate, final Date workorderdate,
+            final EgBillregistermis egBillregistermis, final Set<EgBilldetails> egBilldetailes, final EgwStatus status) {
+        this.billnumber = billnumber;
+        this.billdate = billdate;
+        this.billamount = billamount;
+        this.fieldid = fieldid;
+        this.billstatus = billstatus;
+        this.narration = narration;
+        this.passedamount = passedamount;
+        this.billtype = billtype;
+        this.expendituretype = expendituretype;
+        this.advanceadjusted = advanceadjusted;
+        // this.createdby = createdby;
+        // this.createddate = createddate;
+        // this.lastmodifiedby = lastmodifiedby;
+        // this.lastmodifieddate = lastmodifieddate;
+        this.zone = zone;
+        this.division = division;
+        this.workordernumber = workordernumber;
+        this.billapprovalstatus = billapprovalstatus;
+        this.isactive = isactive;
+        this.billpasseddate = billpasseddate;
+        this.workorderdate = workorderdate;
+        this.egBillregistermis = egBillregistermis;
+        this.egBilldetailes = egBilldetailes;
+        this.status = status;
+    }
 
-	public BigDecimal getBillamount() {
-		return this.billamount;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setBillamount(BigDecimal billamount) {
-		this.billamount = billamount;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public BigDecimal getFieldid() {
-		return this.fieldid;
-	}
+    public String getBillnumber() {
+        return billnumber;
+    }
 
-	public void setFieldid(BigDecimal fieldid) {
-		this.fieldid = fieldid;
-	}
+    public void setBillnumber(final String billnumber) {
+        this.billnumber = billnumber;
+    }
 
-	public String getBillstatus() {
-		return this.billstatus;
-	}
+    public Date getBilldate() {
+        return billdate;
+    }
 
-	public void setBillstatus(String billstatus) {
-		this.billstatus = billstatus;
-	}
-	@Length(max=1024,message="Max 1024 characters are allowed for narration")
-	public String getNarration() {
-		return this.narration;
-	}
+    public void setBilldate(final Date billdate) {
+        this.billdate = billdate;
+    }
 
-	public void setNarration(String narration) {
-		this.narration = narration;
-	}
+    public BigDecimal getBillamount() {
+        return billamount;
+    }
 
-	public BigDecimal getPassedamount() {
-		return this.passedamount;
-	}
+    public void setBillamount(final BigDecimal billamount) {
+        this.billamount = billamount;
+    }
 
-	public void setPassedamount(BigDecimal passedamount) {
-		this.passedamount = passedamount;
-	}
+    public BigDecimal getFieldid() {
+        return fieldid;
+    }
 
-	public String getBilltype() {
-		return this.billtype;
-	}
+    public void setFieldid(final BigDecimal fieldid) {
+        this.fieldid = fieldid;
+    }
 
-	public void setBilltype(String billtype) {
-		this.billtype = billtype;
-	}
+    public String getBillstatus() {
+        return billstatus;
+    }
 
-	public String getExpendituretype() {
-		return this.expendituretype;
-	}
+    public void setBillstatus(final String billstatus) {
+        this.billstatus = billstatus;
+    }
 
-	public void setExpendituretype(String expendituretype) {
-		this.expendituretype = expendituretype;
-	}
+    @Length(max = 1024, message = "Max 1024 characters are allowed for narration")
+    public String getNarration() {
+        return narration;
+    }
 
-	public BigDecimal getAdvanceadjusted() {
-		return this.advanceadjusted;
-	}
+    public void setNarration(final String narration) {
+        this.narration = narration;
+    }
 
-	public void setAdvanceadjusted(BigDecimal advanceadjusted) {
-		this.advanceadjusted = advanceadjusted;
-	}
-	public String getZone() {
-		return this.zone;
-	}
+    public BigDecimal getPassedamount() {
+        return passedamount;
+    }
 
-	public void setZone(String zone) {
-		this.zone = zone;
-	}
+    public void setPassedamount(final BigDecimal passedamount) {
+        this.passedamount = passedamount;
+    }
 
-	public String getDivision() {
-		return this.division;
-	}
+    public String getBilltype() {
+        return billtype;
+    }
 
-	public void setDivision(String division) {
-		this.division = division;
-	}
+    public void setBilltype(final String billtype) {
+        this.billtype = billtype;
+    }
 
-	public String getWorkordernumber() {
-		return this.workordernumber;
-	}
+    public String getExpendituretype() {
+        return expendituretype;
+    }
 
-	public void setWorkordernumber(String workordernumber) {
-		this.workordernumber = workordernumber;
-	}
+    public void setExpendituretype(final String expendituretype) {
+        this.expendituretype = expendituretype;
+    }
 
-	public String getBillapprovalstatus() {
-		return this.billapprovalstatus;
-	}
+    public BigDecimal getAdvanceadjusted() {
+        return advanceadjusted;
+    }
 
-	public void setBillapprovalstatus(String billapprovalstatus) {
-		this.billapprovalstatus = billapprovalstatus;
-	}
+    public void setAdvanceadjusted(final BigDecimal advanceadjusted) {
+        this.advanceadjusted = advanceadjusted;
+    }
 
-	public Boolean getIsactive() {
-		return this.isactive;
-	}
+    public String getZone() {
+        return zone;
+    }
 
-	public void setIsactive(Boolean isactive) {
-		this.isactive = isactive;
-	}
+    public void setZone(final String zone) {
+        this.zone = zone;
+    }
 
-	public Date getBillpasseddate() {
-		return this.billpasseddate;
-	}
+    public String getDivision() {
+        return division;
+    }
 
-	public void setBillpasseddate(Date billpasseddate) {
-		this.billpasseddate = billpasseddate;
-	}
+    public void setDivision(final String division) {
+        this.division = division;
+    }
 
-	public Date getWorkorderdate() {
-		return this.workorderdate;
-	}
+    public String getWorkordernumber() {
+        return workordernumber;
+    }
 
-	public void setWorkorderdate(Date workorderdate) {
-		this.workorderdate = workorderdate;
-	}
+    public void setWorkordernumber(final String workordernumber) {
+        this.workordernumber = workordernumber;
+    }
 
-	public EgBillregistermis getEgBillregistermis() {
-		return this.egBillregistermis;
-	}
+    public String getBillapprovalstatus() {
+        return billapprovalstatus;
+    }
 
-	public void setEgBillregistermis(EgBillregistermis egBillregistermis) {
-		this.egBillregistermis = egBillregistermis;
-	}
+    public void setBillapprovalstatus(final String billapprovalstatus) {
+        this.billapprovalstatus = billapprovalstatus;
+    }
 
-	public Set<EgBilldetails> getEgBilldetailes() {
-		return egBilldetailes;
-	}
+    public Boolean getIsactive() {
+        return isactive;
+    }
 
-	public void setEgBilldetailes(Set<EgBilldetails> egBilldetailes) {
-		this.egBilldetailes = egBilldetailes;
-	}
-	public void addEgBilldetailes(EgBilldetails egBilldetail)
-	{			
-		//System.out.println("adding egbilldetails to billregister"+egBilldetail);
-		getEgBilldetailes().add(egBilldetail);
-	}
+    public void setIsactive(final Boolean isactive) {
+        this.isactive = isactive;
+    }
 
-	public EgwStatus getStatus() {
-		return status;
-	}
+    public Date getBillpasseddate() {
+        return billpasseddate;
+    }
 
-	public void setStatus(EgwStatus status) {
-		this.status = status;
-	}
-	
-	
-	public String getStateDetails() {
-		return this.getBillnumber();
-	}
+    public void setBillpasseddate(final Date billpasseddate) {
+        this.billpasseddate = billpasseddate;
+    }
 
-	public User getApprover() {
-		return approver;
-	}
+    public Date getWorkorderdate() {
+        return workorderdate;
+    }
 
-	public void setApprover(User approver) {
-		this.approver = approver;
-	}
+    public void setWorkorderdate(final Date workorderdate) {
+        this.workorderdate = workorderdate;
+    }
 
-	public Date getApprovedOn() {
-		return approvedOn;
-	}
+    public EgBillregistermis getEgBillregistermis() {
+        return egBillregistermis;
+    }
 
-	public void setApprovedOn(Date approvedOn) {
-		this.approvedOn = approvedOn;
-	}
-	public void removeEgBilldetailes(EgBilldetails egBilldetail)
-	{			
-		if(egBilldetail!=null)
-		getEgBilldetailes().remove(egBilldetail);
-	}
+    public void setEgBillregistermis(final EgBillregistermis egBillregistermis) {
+        this.egBillregistermis = egBillregistermis;
+    }
+
+    public Set<EgBilldetails> getEgBilldetailes() {
+        return egBilldetailes;
+    }
+
+    public void setEgBilldetailes(final Set<EgBilldetails> egBilldetailes) {
+        this.egBilldetailes = egBilldetailes;
+    }
+
+    public void addEgBilldetailes(final EgBilldetails egBilldetail)
+    {
+        // System.out.println("adding egbilldetails to billregister"+egBilldetail);
+        getEgBilldetailes().add(egBilldetail);
+    }
+
+    public EgwStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(final EgwStatus status) {
+        this.status = status;
+    }
+
+    @Override
+    public String getStateDetails() {
+        return getBillnumber();
+    }
+
+    public User getApprover() {
+        return approver;
+    }
+
+    public void setApprover(final User approver) {
+        this.approver = approver;
+    }
+
+    public Date getApprovedOn() {
+        return approvedOn;
+    }
+
+    public void setApprovedOn(final Date approvedOn) {
+        this.approvedOn = approvedOn;
+    }
+
+    public void removeEgBilldetailes(final EgBilldetails egBilldetail)
+    {
+        if (egBilldetail != null)
+            getEgBilldetailes().remove(egBilldetail);
+    }
 
 }

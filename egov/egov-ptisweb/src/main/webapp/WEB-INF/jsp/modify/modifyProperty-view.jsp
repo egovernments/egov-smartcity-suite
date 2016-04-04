@@ -50,6 +50,9 @@
 			<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
 				<s:text name='BifurProp.title' />
 			</s:elseif>
+			<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)}">
+		                <s:text name='GenRevPetition.title' />
+	         </s:elseif>
 		</title>
 		<sx:head />
 		<link
@@ -115,9 +118,9 @@
 				enableFieldsForPropTypeView();
 				enableAppartnaumtLandDetailsView();
 				enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
-				enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 				toggleFloorDetailsView();
 				showHideFirmName();
+				showHideLengthBreadth();
 			}
 
 			function enableDisableFirmName(obj){ 
@@ -135,10 +138,73 @@
 				}
 			}  
 
+			function showHideLengthBreadth(){
+				var tbl=document.getElementById("floorDetails");
+		        var tabLength = (tbl.rows.length)-1;
+		        for(var i=1;i<=tabLength;i++){
+		             enableDisableLengthBreadth(getControlInBranch(tbl.rows[i],'unstructuredLand'));
+		        }
+			}
+
 			function showHideFirmName(){
-				var rows = document.getElementById('floorDetails').rows.length - 1;  
-				for (var i = 0; i < rows; i++) {
-						enableDisableFirmName(document.forms[0].floorUsage[i]);
+				var tbl=document.getElementById("floorDetails");
+		        var tabLength = (tbl.rows.length)-1;
+		        for(var i=1;i<=tabLength;i++){
+		             enableDisableFirmName(getControlInBranch(tbl.rows[i],'floorUsage'));
+		        }
+			}
+
+			function calculatePlintArea(obj){ 
+				var rIndex = getRow(obj).rowIndex;
+				var tbl = document.getElementById('floorDetails');
+				var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+				if(getControlInBranch(tbl.rows[rIndex],'unstructuredLand').value=='true'){
+					if(obj.value!=null && obj.value!=""){
+						var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+						var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
+						  
+						if(buildLength.value!=null && buildLength.value!="" && buildbreadth.value!=null && buildbreadth.value!=""){
+							builtUpArea.value= roundoff(eval(buildLength.value * buildbreadth.value));
+							trim(builtUpArea,builtUpArea.value);
+							checkForTwoDecimals(builtUpArea,'Assessable Area');
+							checkZero(builtUpArea,'Assessable Area');
+						}
+						else
+							builtUpArea.value="";
+					}else
+						builtUpArea.value="";
+				}
+			}
+			
+			function enableDisableLengthBreadth(obj){ 
+				var selIndex = obj.selectedIndex;
+				if(obj.value=='true'){
+						obj.value='true';
+						obj.options[selIndex].selected = true;
+				}
+				else{
+					obj.value='false';
+					obj.options[selIndex].selected = true;
+				}
+				
+				if(selIndex != undefined){
+					var selText = obj.options[selIndex].text; 
+					var rIndex = getRow(obj).rowIndex;
+					var tbl = document.getElementById('floorDetails');
+					var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+					var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');  
+					var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+					if(selText!=null && selText=='No'){
+						buildLength.value="";
+						buildLength.readOnly = true;      
+						buildbreadth.value="";
+						buildbreadth.readOnly = true;
+						builtUpArea.readOnly = false;
+					} else{
+						buildLength.readOnly = false; 
+						buildbreadth.readOnly = false;
+						builtUpArea.readOnly = true;
+					}
 				}
 			}
 
@@ -166,8 +232,6 @@
 						jQuery('tr.extentSite').hide();
 						jQuery('tr.appurtenant').hide();
 						jQuery('tr.superStructureRow').hide();
-						jQuery('tr.bpddetailsheader').hide();
-						jQuery('tr.bpddetails').hide();
 						jQuery("#apartment").prop('selectedIndex', 0);
 						jQuery('td.apartmentRow').hide();
 					} else {
@@ -179,8 +243,6 @@
 						jQuery('tr.extentSite').show();
 						jQuery('tr.appurtenant').show();
 						jQuery('tr.superStructureRow').show();
-						jQuery('tr.bpddetailsheader').show();
-						jQuery('tr.bpddetails').show();
 						jQuery('td.apartmentRow').show();
 					}
 				}
@@ -194,7 +256,7 @@
 					jQuery('tr.floordetails').show();
 				}
 				if (propType == "Apartments") {
-					alert("Please select Apartment/Complex Name");
+					bootbox.alert("Please select Apartment/Complex Name");
 				}
 			}
 
@@ -256,6 +318,9 @@
 						<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
 							<s:text name='BifurProp.title' />
 						</s:elseif>
+						<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)}">
+		                    <s:text name='GenRevPetition.title' />
+	                    </s:elseif> 
 					</div>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<s:if test="%{(model.state.nextAction!=null && 

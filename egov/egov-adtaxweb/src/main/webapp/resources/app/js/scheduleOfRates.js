@@ -39,15 +39,27 @@
 #-------------------------------------------------------------------------------*/
 var tableContainer;
 jQuery(document).ready(function ($) {
+
 	if ($('#mode').val() == 'dataFound') {
 		jQuery('#schedleOfrateDiv').removeClass('hidden');
 	}
+	
+	$("#addnewsche").click(function() {
+		
+		alert('called!');
+		console.log($('#noscheduleofrateDataFoundDiv').html());
+		$('div[id="noscheduleofrateDataFoundDiv"]').addClass('hidden');
+		$('div[id="schedleOfrateDiv"]').removeClass('hidden');
+		
+		return false;
+	});
+	
 	$("#addnewscheduleofrate").click(function() {
 		$("#noscheduleofrateDataFoundDiv").hide();
 		$("#schedleOfrateDiv").show();
 		jQuery('#schedleOfrateDiv').removeClass('hidden');
 	});
-	
+
 	$('#category').change(function(){
 		$.ajax({
 			url: "/adtax/ajax-subCategories",    
@@ -71,29 +83,67 @@ jQuery(document).ready(function ($) {
 		});
 	});
 	
-	$(".btn-add")
-	.click(
-			function() {
+	$(".btn-add").click(function() {
 				var currentIndex = $("#schedleOfrateTable tr").length;
 				    	addNewRowToTable(currentIndex);
 			});
 
-	
-	$('#schedleOfrateBtn').click(function() {
+	$('#schedleOfrateBtn').click(function() {  
 			$('#scheduleOfRateformResult').attr('method', 'post');
 	 	$('#scheduleOfRateformResult').attr('action', '/adtax/rates/create');
-	 //	$('#viewEscalation').submit(); 
 	});
-	$('#scheduleOfRateSearch').click(function() {
+	$('#scheduleOfRateSearch').click(function() {  
 		$('#scheduleOfRateform').attr('method', 'post');
  	$('#scheduleOfRateform').attr('action', '/adtax/rates/search');
 
 	});
 	
 	$('#scheduleOfRateSearchAgain').click(function() {
-		$('#scheduleOfRateform').attr('method', 'GET');
- 	$('#scheduleOfRateform').attr('action', '/adtax/rates/search');
+		$('#scheduleOfRateSearchform').attr('method', 'get');
+ 	$('#scheduleOfRateSearchform').attr('action', '/adtax/rates/search');
 
+	});
+		
+	var datadcbtbl = $('#search-scheduleofrate-table');
+	$('#searchScheduleOfRate').click(function(e){
+	if(!validateInput())
+		return false;
+			
+		datadcbtbl.dataTable({
+			"ajax": {url:"/adtax/rates/search-for-scheduleofrate",
+				type:"POST",
+				data : {
+					category : $('#category').val(),
+	        		subCategory : $('#subCategory').val(),
+	        		uom : $('#unitofmeasure').val(),
+	        		rateClass :$('#rateClass').val(),
+	        		finyear : $('#financialyear').val(),
+	        	}
+			},
+			"sPaginationType": "bootstrap",
+			"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"bDestroy": true,
+			"autoWidth": false,
+			"oTableTools" : {
+				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+				"aButtons" : [ "xls", "pdf", "print" ]
+			},
+			"columns" : [
+			  { "data" : "financialyear", "title":"Financial Year"},
+			  { "data" : "unitfactor", "title":"Unit Rate"},
+			  { "data" : "category", "title":"Category"},
+			  { "data" : "subCategory", "title":"Sub Category"},
+			  { "data" : "unitofmeasure", "title":"Unit Of Measure"},
+			  { "data" : "classtype", "title":"Rate Class"},
+		      { "data" : "unitfrom", "title":"Unit From"},
+			  { "data" : "unitto", "title": "Unit To"},
+			  { "data" : "amount", "title": "Amount"}
+			  
+			  ]
+		});
+		e.stopPropagation();
+		e.preventDefault();
 	});
 
 });
@@ -109,6 +159,17 @@ function validateUnitToValue(obj)
 		return false;
 	}
 	return true;
+}
+function validatePerUnit(obj) 
+{
+	var unit=parseFloat(obj.value);
+	if(unit<=0)
+    	{
+    	alert('Per unit should be greater than zero');
+    	obj.value="";
+    return false;
+    	}
+    return true;
 }
 function addNewRowToTable(currentIndex)
 {
@@ -144,6 +205,22 @@ function addNewRowToTable(currentIndex)
 				
 				$('#advertisementRatesDetailsUnitFrom'+(currentIndex - 1)).val($('#advertisementRatesDetailsUnitTo'+(currentIndex - 2)).val());
 				
-				
 	    	}
+}
+
+function validateInput()
+{
+	var catVal= document.getElementById("category").value;
+	var subCatVal=document.getElementById("subCategory").value;
+	var uomVal=document.getElementById("unitofmeasure").value;
+	var rateClassVal=document.getElementById("rateClass").value;
+	var financialYearVal=document.getElementById("financialyear").value;
+	
+	if(catVal=="" && subCatVal=="" && uomVal=="" && rateClassVal=="" && financialYearVal=="")
+		{
+		bootbox.alert("Please Select atleast one field", function(result){
+		});
+		return false;
+		}
+	return true;
 }

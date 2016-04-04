@@ -47,6 +47,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><s:text name="editDemand" /> </title>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 	<script type="text/javascript">
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
@@ -58,12 +59,34 @@
 	    var lastIndexOnError;
 	    var noOfDemandRsns = mapSize;
 	    var isFirstInstVisible = true;
-		
+	    var isAddedFirstNewInsRow=false;
+
 	    function addNewInstallment() {
+	    	
+	    	var validationsuccess=true;
+	    	jQuery("#instDetails tbody tr:visible").find('input, select').each(function() {
+
+	                  if ((jQuery(this).data('optional') === 0)
+	                      && ((!jQuery(this).val()) || jQuery(this).val() === '-1')) {
+	                      jQuery(this).focus();
+	                      bootbox.alert(jQuery(this).data('errormsg'));
+	                      validationsuccess = false;// set validation failure
+	                      return false;
+	                  }
+
+	        });
+	        
+	        if(!validationsuccess)
+	        {
+		        return false
+	        }
+		    
 	    	newDemandRsnsCount = document.getElementById("mapSize").value;
 			var rowIndex = document.getElementById("newInstallmentRow").rowIndex;
 			var trClones = new Array();
 			var instDetailsTable = document.getElementById("instDetails");
+
+			console.log(newDemandRsnsCount, rowIndex);
 		   		   
 			if (newInstallmentCount == 0) { 
 				for (var i = 0; i < noOfDemandRsns; i++) {
@@ -79,35 +102,64 @@
 				}
 				
 				for (var j = 0; j < k; j++) {
+					trClones[j].style.display = "table-row";
 					if (j == 0) {
 						instDetailsTable.tBodies[0].insertBefore(trClones[j], instDetailsTable.rows[rowIndex]);	
 					} else {
 						instDetailsTable.tBodies[0].insertBefore(trClones[j], instDetailsTable.rows[rowIndex+j]);
-					}
+					} 
 				}
 				newInstallmentCount++;
 			}
+
+			if(!isAddedFirstNewInsRow)
+			{
+				setDefaultTemplateRowCount();
+			}
+
+			rearrangeIndexes();
 		}
 		
 		function deleteRecentInstallment() {
+			
 			var instDetailsTable = document.getElementById("instDetails");
+
+			//if for existing demand info row delete prevention and else if new installment first delete prevention
+			if((!isAddedFirstNewInsRow) && (jQuery('#demandinfos').length>0))
+			{
+				return;
+			}
+			else if((noOfDemandRsns === jQuery('#instDetails tbody tr:visible[id="newInstallmentRow"]').length) && (jQuery('#demandinfos').length===0))
+			{
+				return;
+			}
 			
 			if (newInstallmentCount > 1) {
 				for (var i = 0; i < newDemandRsnsCount; i++) {				
 					instDetailsTable.tBodies[0].deleteRow(instDetailsRowIndex);
 					lastIndex--;
-				}				
+				}
+				newInstallmentCount--;
+								
 			} else if (newInstallmentCount == 1) {
 				isFirstInstVisible = false;
 				var instDetailsTable = document.getElementById("instDetails");
 				for (var i = 0; i < noOfDemandRsns; i++) {
 					var row = instDetailsTable.rows[i+instDetailsRowIndex];
-					row.style.display = "none";
+					if(jQuery(row).attr('id') === 'newInstallmentRow')
+					{
+						row.style.display = "none";
+					}
 					lastIndex--;
 				}
+				setDefaultTemplateRowCount();
+			}
+
+			if(lastIndex)
+			{
+				document.getElementById("lastIdx").value=lastIndex;
 			}
 			
-			newInstallmentCount--;			
 		}
 		
 		function rearrangeIndexes() {
@@ -178,9 +230,32 @@
 			var instDetailsTable = document.getElementById("instDetails");
 			var selRowIndex = obj.parentNode.parentNode.parentNode.rowIndex;
 			var mapSize = document.getElementById("mapSize").value;
-			for (var i = 1; i <= mapSize+1; i++) {
+			for (var i = 1; i <= mapSize; i++) {
 				var row = instDetailsTable.rows[i+selRowIndex];
 				row.cells[0].childNodes[1].childNodes[1].setAttribute("value", id);
+			}
+		}
+
+		jQuery(document).ready(function($){
+			setDefaultTemplateRowCount();
+			/* if($('#property_error_area:visible').length > 0)
+			{
+				$('#actionoptions').hide();
+			} */
+		});
+
+		function setDefaultTemplateRowCount()
+		{
+			var rowTemplateCount=jQuery('#instDetails tbody tr:visible[id="newInstallmentRow"]').length;
+			if(rowTemplateCount !== 0)
+			{
+				isAddedFirstNewInsRow=true;
+				noOfDemandRsns=rowTemplateCount;
+				console.log('Template row count is ->'+noOfDemandRsns);
+			}
+			else if(rowTemplateCount === 0)
+			{
+				isAddedFirstNewInsRow=false;
 			}
 		}
 		
@@ -195,7 +270,6 @@
 		</div>
 	</s:if>
 	<div class="formmainbox">
-  	<div class="formheading"></div>
 		<div class="headingbg"><s:text name="editDemand"/></div>
 		<s:form name="editDemandForm" action="editDemand-update" theme="simple">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -256,18 +330,18 @@
 											<s:text name="revisedCollection" />
 										</th>								 
 									</tr>
-									<tr>										
-										<td colspan="8" align="right">
-										   Add/Remove Installment
-											<img id="addInstallment" name="addInstallment"
-												src="${pageContext.request.contextPath}/resources/image/addrow.gif"
-												alt="Add Installment" onclick="javascript: addNewInstallment(); rearrangeIndexes();" width="18"
-												height="18" border="0" />
-											<img id="delInstallment"
-												name="delInstallment"
-												src="${pageContext.request.contextPath}/resources/image/removerow.gif"
-												alt="Remove Installment" onclick="javascript: deleteRecentInstallment();"
-												width="18" height="18" border="0" />
+									<tr id="actionoptions">										
+										<td colspan="8" align="right" style="border-right: 1px solid #E9E9E9;padding: 3px;border-left: 1px solid #E9E9E9;background: #fcf8e3;">
+										   <span style="vertical-align: top;">Add/Remove Installment</span>
+										   &nbsp;
+										   <span id="addInstallment" name="addInstallment" class="tblactionicon add" alt="addOwnerBtn" onclick="addNewInstallment();">
+											    <i class="fa fa-plus-circle"></i>
+										   </span>
+										  &nbsp;
+										  <span id="delInstallment" name="delInstallment" class="tblactionicon delete" alt="removeOwnerBtn" onclick="deleteRecentInstallment();">
+										        <i class="fa fa-minus-circle"></i>
+										  </span>
+											
 										</td>
 									</tr> 		
 									<%-- <s:if test="%{hasActionErrors() == false}"> --%>
@@ -283,7 +357,8 @@
 														<s:select id="installments" name="installments"
 														list="dropdownData.allInstallments" headerKey="-1"
 														headerValue="%{getText('default.select')}" listKey="id"
-														listValue="description" cssStyle="width:80px" onchange="assignInstallmentId(this, this.value)"/>
+														data-optional="0" data-errormsg="Please select installment!"
+														listValue="description" onchange="assignInstallmentId(this, this.value)"/>
 													</div>
 													<s:hidden />
 												</td>
@@ -304,12 +379,23 @@
 												</td>		
 												<td class="blueborderfortd" align="center">
 													<div align="right">
+													  <s:if test="%{#itrStatus.count == 1}" >
 														<s:textfield
 															name="demandDetailBeanList[%{#idx}].actualAmount"
 															id="revisedTax" size="10" maxlength="10"
 															onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Tax');"
-															value="%{demandDetailBeanList[#idx].actualAmount}"													
+															value="%{demandDetailBeanList[#idx].actualAmount}"	
+															data-optional="0" data-errormsg="Actual amount is required!"												
 															style="text-align: right" />
+													  </s:if>
+													  <s:else>
+													  	<s:textfield
+															name="demandDetailBeanList[%{#idx}].actualAmount"
+															id="revisedTax" size="10" maxlength="10"
+															onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Tax');"
+															value="%{demandDetailBeanList[#idx].actualAmount}"	
+															style="text-align: right" />
+													  </s:else>
 													</div>
 												</td>
 												<td class="blueborderfortd">
@@ -346,9 +432,9 @@
 											} 
 										</script>	
 									<%-- </s:if>	 --%>			
-										<!-- <script type="text/javascript">
+										<script type="text/javascript">
 											var newInstCountOnError = 0;
-										</script>		 -->
+										</script>
 										<s:set value="%{demandDetailBeanList.size()}" var="listSize" />										
 										<s:set value="0" var="count" />						
 										<s:set value="#listSize" var="j" />
@@ -370,7 +456,8 @@
 																value="%{demandDetailBeanList[#idx].installment.id}"
 																list="dropdownData.allInstallments" headerKey="-1"
 																headerValue="%{getText('default.select')}" listKey="id"
-																listValue="description" cssStyle="width:80px"
+																listValue="description"
+																data-optional="0" data-errormsg="Please select installment!"
 																onchange="assignInstallmentId(this, this.value)" />
 														</div> <s:hidden
 															name="demandDetailBeanList[%{#idx}].isNew"
@@ -405,12 +492,23 @@
 												</td>
 												<td class="blueborderfortd">
 													<div align="right">
-														<s:textfield
-															name="demandDetailBeanList[%{#idx}].actualAmount"
-															id="revisedTax" size="10" maxlength="7"
-															onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Tax');"
-															value="%{demandDetailBeanList[#idx].actualAmount}"
-															style="text-align: right" />
+													    <s:if test="%{#demandInfoStatus.count == 1}" >
+															<s:textfield
+																name="demandDetailBeanList[%{#idx}].actualAmount"
+																id="revisedTax" size="10" maxlength="7"
+																onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Tax');"
+																value="%{demandDetailBeanList[#idx].actualAmount}"
+																data-optional="0" data-errormsg="Actual amount is required"
+																style="text-align: right" />
+															</s:if>
+														<s:else>
+															<s:textfield
+																name="demandDetailBeanList[%{#idx}].actualAmount"
+																id="revisedTax" size="10" maxlength="7"
+																onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Tax');"
+																value="%{demandDetailBeanList[#idx].actualAmount}"
+																style="text-align: right" />
+														</s:else>
 													</div>
 												</td>
 												<td class="blueborderfortd">
@@ -459,10 +557,11 @@
 			              class="mandatory1">*</span> :
 						</td>
 						<td class="bluebox" colspan="2">
-							<s:textarea name="remarks" id="remarks" cols="60" onkeypress="checkTextAreaLength(this, 256)"></s:textarea>
+							<s:textarea name="remarks" id="remarks" cols="60" rows="5" onkeypress="checkTextAreaLength(this, 256)"></s:textarea>
 						</td>
 					</tr> 
 				</table>
+				<br/>
 			</div>
 		 	<div class="buttonbottom" align="center">
 				<s:submit name="Update" value="Update" cssClass="buttonsubmit" method="update"/>				
@@ -471,7 +570,7 @@
 		</s:form>
 	<s:if test="%{hasActionErrors() == false || isFirstInstVisible == false}">
 		<script type="text/javascript">
-			//alert('isFirstInstVisible' + isFirstInstVisible);
+			//bootbox.alert('isFirstInstVisible' + isFirstInstVisible);
 			//rearrangeIndexes();	
 		</script>
 	</s:if>

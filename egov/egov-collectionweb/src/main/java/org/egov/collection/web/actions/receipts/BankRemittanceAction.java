@@ -39,11 +39,14 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -57,11 +60,15 @@ import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-    @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -80,8 +87,10 @@ public class BankRemittanceAction extends BaseFormAction {
     private String[] totalOnlineAmountArray;
     private String[] fundCodeArray;
     private String[] departmentCodeArray;
-    private Integer accountNumberMaster;
+    private Integer accountNumberId;
     private CollectionsUtil collectionsUtil;
+    private Integer branchId;
+    private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
 
     // Added for Manual Work Flow
     private Integer positionUser;
@@ -91,7 +100,8 @@ public class BankRemittanceAction extends BaseFormAction {
     private EmployeeService employeeService;
 
     /**
-     * @param collectionsUtil the collectionsUtil to set
+     * @param collectionsUtil
+     *            the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -108,7 +118,34 @@ public class BankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/bankRemittance-list")
     public String list() {
+        populateBankAccountList();
         final long startTimeMillis = System.currentTimeMillis();
+        paramList = receiptHeaderService.findAllRemitanceDetails(getJurisdictionBoundary());
+        addDropdownData("approverDepartmentList",
+                collectionsUtil.getDepartmentsAllowedForBankRemittanceApproval(collectionsUtil.getLoggedInUser()));
+        addDropdownData("designationMasterList", Collections.EMPTY_LIST);
+        addDropdownData("postionUserList", Collections.EMPTY_LIST);
+
+        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+
+        LOGGER.info("$$$$$$ Time taken to populate the remittance list (ms) = " + elapsedTimeMillis);
+        return NEW;
+    }
+
+    public void populateBankAccountList() {
+        final AjaxBankRemittanceAction ajaxBankRemittanceAction = new AjaxBankRemittanceAction();
+        ajaxBankRemittanceAction.setPersistenceService(getPersistenceService());
+        ajaxBankRemittanceAction.bankBranchListOfService();
+        addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
+        if (branchId != null) {
+            ajaxBankRemittanceAction.setBranchId(branchId);
+            ajaxBankRemittanceAction.accountListOfService();
+            addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
+        } else
+            addDropdownData(ACCOUNT_NUMBER_LIST, Collections.EMPTY_LIST);
+    }
+
+    public String getJurisdictionBoundary() {
         final User user = collectionsUtil.getLoggedInUser();
         final Employee employee = employeeService.getEmployeeById(user.getId());
         final StringBuilder jurValuesId = new StringBuilder();
@@ -122,15 +159,28 @@ public class BankRemittanceAction extends BaseFormAction {
                 jurValuesId.append(boundary.getId());
             }
         }
-        paramList = receiptHeaderService.findAllRemitanceDetails(jurValuesId.toString());
-        addDropdownData("approverDepartmentList",
-                collectionsUtil.getDepartmentsAllowedForBankRemittanceApproval(collectionsUtil.getLoggedInUser()));
-        addDropdownData("designationMasterList", Collections.EMPTY_LIST);
-        addDropdownData("postionUserList", Collections.EMPTY_LIST);
+        return jurValuesId.toString();
+    }
 
-        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+    @Action(value = "/receipts/bankRemittance-listData")
+    public String listData() {
+        populateBankAccountList();
+        final String serviceFundQueryStr = "select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,"
+                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
+                + "ba.id=" + accountNumberId;
 
-        LOGGER.info("$$$$$$ Time taken to populate the remittance list (ms) = " + elapsedTimeMillis);
+        final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(serviceFundQueryStr);
+        final List<Object[]> queryResults = serviceFundQuery.list();
+
+        final List serviceCodeList = new ArrayList<String>();
+        final List fundCodeList = new ArrayList<String>();
+        for (int i = 0; i < queryResults.size(); i++) {
+            final Object[] arrayObjectInitialIndex = queryResults.get(i);
+            serviceCodeList.add(arrayObjectInitialIndex[0].toString());
+            fundCodeList.add(arrayObjectInitialIndex[1].toString());
+        }
+        paramList = receiptHeaderService.findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(), "'"
+                + StringUtils.join(serviceCodeList, "','") + "'", "'" + StringUtils.join(fundCodeList, "','") + "'");
         return NEW;
     }
 
@@ -150,12 +200,37 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     @Action(value = "/receipts/bankRemittance-create")
+    @ValidationErrorPage(value = NEW)
     public String create() {
         final long startTimeMillis = System.currentTimeMillis();
+        if (accountNumberId != null && accountNumberId == -1) {
+            String serviceName = "";
+            String fundCode = "";
+
+            for (int i = 0; i < getServiceNameArray().length; i++)
+                if (getServiceNameArray() != null && !getServiceNameArray()[i].isEmpty()) {
+                    serviceName = getServiceNameArray()[i];
+                    fundCode = getFundCodeArray()[i];
+                    break;
+                }
+            final String bankAccountStr = "select asm.BANKACCOUNT from BANKACCOUNT ba,"
+                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
+                    + "sd.name= '" + serviceName + "'  and fd.code='" + fundCode + "'";
+
+            final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
+            final Object queryResults = bankAccountQry.uniqueResult();
+            final BigInteger accountNumber = (BigInteger) queryResults;
+            accountNumberId = accountNumber != null ? accountNumber.intValue() : null;
+        }
+        if (accountNumberId == null || accountNumberId == -1) {
+            list();
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
+        }
         voucherHeaderValues = receiptHeaderService.createBankRemittance(getServiceNameArray(),
                 getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
                 getTotalOnlineAmountArray(), getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(),
-                accountNumberMaster, positionUser, getReceiptNumberArray());
+                accountNumberId, positionUser, getReceiptNumberArray());
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         return INDEX;
@@ -178,7 +253,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param paramList the paramList to set
+     * @param paramList
+     *            the paramList to set
      */
     public void setParamList(final List<HashMap<String, Object>> paramList) {
         this.paramList = paramList;
@@ -192,7 +268,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param serviceName the serviceName to set
+     * @param serviceName
+     *            the serviceName to set
      */
     public void setServiceNameArray(final String[] serviceNameArray) {
         this.serviceNameArray = serviceNameArray;
@@ -206,7 +283,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalCashAmount the totalCashAmount to set
+     * @param totalCashAmount
+     *            the totalCashAmount to set
      */
     public void setTotalCashAmountArray(final String[] totalCashAmountArray) {
         this.totalCashAmountArray = totalCashAmountArray;
@@ -220,7 +298,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalChequeAmount the totalChequeAmount to set
+     * @param totalChequeAmount
+     *            the totalChequeAmount to set
      */
     public void setTotalChequeAmountArray(final String[] totalChequeAmountArray) {
         this.totalChequeAmountArray = totalChequeAmountArray;
@@ -234,7 +313,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param receiptDate the receiptDate to set
+     * @param receiptDate
+     *            the receiptDate to set
      */
     public void setReceiptDateArray(final String[] receiptDateArray) {
         this.receiptDateArray = receiptDateArray;
@@ -248,24 +328,11 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param voucherHeaderValues the voucherHeaderValues to set
+     * @param voucherHeaderValues
+     *            the voucherHeaderValues to set
      */
     public void setVoucherHeaderValues(final List voucherHeaderValues) {
         this.voucherHeaderValues = voucherHeaderValues;
-    }
-
-    /**
-     * @return the accountNumberMaster
-     */
-    public Integer getAccountNumberMaster() {
-        return accountNumberMaster;
-    }
-
-    /**
-     * @param accountNumberMaster the accountNumberMaster to set
-     */
-    public void setAccountNumberMaster(final Integer accountNumberMaster) {
-        this.accountNumberMaster = accountNumberMaster;
     }
 
     /**
@@ -276,7 +343,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalOnlineAmountArray the totalOnlineAmountArray to set
+     * @param totalOnlineAmountArray
+     *            the totalOnlineAmountArray to set
      */
     public void setTotalOnlineAmountArray(final String[] totalOnlineAmountArray) {
         this.totalOnlineAmountArray = totalOnlineAmountArray;
@@ -290,7 +358,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param fundCodeArray the fundCodeArray to set
+     * @param fundCodeArray
+     *            the fundCodeArray to set
      */
     public void setFundCodeArray(final String[] fundCodeArray) {
         this.fundCodeArray = fundCodeArray;
@@ -304,7 +373,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param departmentCodeArray the departmentCodeArray to set
+     * @param departmentCodeArray
+     *            the departmentCodeArray to set
      */
     public void setDepartmentCodeArray(final String[] departmentCodeArray) {
         this.departmentCodeArray = departmentCodeArray;
@@ -318,7 +388,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalCardAmountArray the totalCardAmountArray to set
+     * @param totalCardAmountArray
+     *            the totalCardAmountArray to set
      */
     public void setTotalCardAmountArray(final String[] totalCardAmountArray) {
         this.totalCardAmountArray = totalCardAmountArray;
@@ -332,7 +403,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param positionUser the positionUser to set
+     * @param positionUser
+     *            the positionUser to set
      */
     public void setPositionUser(final Integer positionUser) {
         this.positionUser = positionUser;
@@ -346,7 +418,8 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param designationId the designationId to set
+     * @param designationId
+     *            the designationId to set
      */
     public void setDesignationId(final Integer designationId) {
         this.designationId = designationId;
@@ -358,6 +431,22 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setReceiptNumberArray(final String[] receiptNumberArray) {
         this.receiptNumberArray = receiptNumberArray;
+    }
+
+    public Integer getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(final Integer branchId) {
+        this.branchId = branchId;
+    }
+
+    public Integer getAccountNumberId() {
+        return accountNumberId;
+    }
+
+    public void setAccountNumberId(final Integer accountNumberId) {
+        this.accountNumberId = accountNumberId;
     }
 
 }

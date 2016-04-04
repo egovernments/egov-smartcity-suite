@@ -1,70 +1,114 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <html>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <head>
-<title><s:text name="contingent.bill"/></title>
-<sx:head/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
+<title><s:text name="contingent.bill" /></title>
+<sx:head />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
+	TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 
 
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-	<style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:600px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-	.yui-skin-sam tr.yui-dt-odd{background-color:#FFF;}
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
+<style type="text/css">
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
 
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 600px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+
+.yui-skin-sam tr.yui-dt-odd {
+	background-color: #FFF;
+}
 </style>
 
 <script>
@@ -331,7 +375,7 @@ if(button!=undefined && button!="")
 
 if(document.getElementById("Errors").innerHTML=='')  
 {
-alert(succesMessage);
+bootbox.alert(succesMessage);
 
 if(button=="Save_Close")
 {
@@ -399,7 +443,7 @@ var	url = path+"/voucher/common!ajaxLoadCheckList.action?billSubtypeId="+obj.val
 				document.getElementById("checkListsTable["+(Len)+"].val").options[<s:property value="#stat.index"/>]=new Option("<s:property value='value'/>", "<s:property value='key'/>");
 			</s:iterator>
 			document.getElementById("checkListsTable["+(Len)+"].val").value='na';
-			//alert("1");
+			//bootbox.alert("1");
 			}
 			}
 			
@@ -408,7 +452,7 @@ var	url = path+"/voucher/common!ajaxLoadCheckList.action?billSubtypeId="+obj.val
 	  }
  	};
 	req2.open("GET", url, true);
-	//alert(url)
+	//bootbox.alert(url)
 	req2.send(null);
 
 }
@@ -427,94 +471,126 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 </script>
 </head>
 <body>
-<s:form action="contingentBill" theme="css_xhtml" name="cbill" validate="true" >
-<s:push value="model">
-<div id="loading" style="position:absolute; left:25%; top:70%; padding:2px; z-index:20001; height:auto;width:500px;display: none;">
-    <div class="loading-indicator" style="background:white;  color:#444; font:bold 13px tohoma,arial,helvetica; padding:10px; margin:0; height:auto;">
-        <img src="/egi/resources/erp2/images/loading.gif" width="32" height="32" style="margin-right:8px;vertical-align:top;"/> Loading...
-    </div>
-</div>
-<div class="tabber" id="main" align="left">
-<div class="tabbertab" id=maintab style="height:420px;overflow:false" >
-<h2>Header</h2>
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Contingent Bill" name="heading"/>
-</jsp:include>
-<div class="formmaininbox"><div class="formheading"/><div class="subheadnew"><s:text name="contingent.bill"/></div></div>
-<center>
-<span class="mandatory">
-<div id="Errors"><s:actionerror/><s:fielderror/></div>
-<s:actionmessage/>
-</span>
-</center>
-<table border="0" width="100%" cellspacing="0" cellpadding="0">
-<tr> 
-<td class="bluebox"></td>
-<s:if test="%{!billNumberGenerationAuto}">
-<td class="bluebox"><s:text name="bill.Number"/><span class="mandatory">*</span></td>
-<td class="bluebox"><s:textfield name="commonBean.billNumber"/></td>
-</s:if>
-<td class="bluebox"><s:text name="bill.Date"/><span class="mandatory">*</span></td>
-<s:date name='commonBean.billDate' id="commonBean.billDateId" format='dd/MM/yyyy'/>
-<td class="bluebox"><s:textfield name="commonBean.billDate"  id="billDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{commonBean.billDateId}"/>
-	<a tabindex="-1" href="javascript:show_calendar('cbill.billDate');"	style="text-decoration: none">&nbsp;<img 
-										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A></td>
-</tr>
-<%@include file="contingentBill-form.jsp"%>
-</table>
-</div>
-</div>
-<div class="tabbertab" id="checkList">
-<h2>Check List</h2>
- 				<div class="yui-skin-sam" align="center">
-					<div id="checkListTable"></div>
+	<s:form action="contingentBill" theme="css_xhtml" name="cbill"
+		validate="true">
+		<s:push value="model">
+			<div id="loading"
+				style="position: absolute; left: 25%; top: 70%; padding: 2px; z-index: 20001; height: auto; width: 500px; display: none;">
+				<div class="loading-indicator"
+					style="background: white; color: #444; font: bold 13px tohoma, arial, helvetica; padding: 10px; margin: 0; height: auto;">
+					<img src="/egi/resources/erp2/images/loading.gif" width="32"
+						height="32" style="margin-right: 8px; vertical-align: top;" />
+					Loading...
+				</div>
+			</div>
+			<div class="tabber" id="main" align="left">
+				<div class="tabbertab" id=maintab
+					style="height: 420px; overflow: false">
+					<h2>Header</h2>
+					<jsp:include page="../budget/budgetHeader.jsp">
+						<jsp:param value="Contingent Bill" name="heading" />
+					</jsp:include>
+					<div class="formmaininbox">
+						<div class="formheading" />
+						<div class="subheadnew">
+							<s:text name="contingent.bill" />
+						</div>
 					</div>
-				
-					<script>
+					<center>
+						<span class="mandatory">
+							<div id="Errors">
+								<s:actionerror />
+								<s:fielderror />
+							</div> <s:actionmessage />
+						</span>
+					</center>
+					<table border="0" width="100%" cellspacing="0" cellpadding="0">
+						<tr>
+							<td class="bluebox"></td>
+							<s:if test="%{!billNumberGenerationAuto}">
+								<td class="bluebox"><s:text name="bill.Number" /><span
+									class="mandatory">*</span></td>
+								<td class="bluebox"><s:textfield
+										name="commonBean.billNumber" /></td>
+							</s:if>
+							<td class="bluebox"><s:text name="bill.Date" /><span
+								class="mandatory">*</span></td>
+							<s:date name='commonBean.billDate' id="commonBean.billDateId"
+								format='dd/MM/yyyy' />
+							<td class="bluebox"><s:textfield name="commonBean.billDate"
+									id="billDate"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									value="%{commonBean.billDateId}" /> <a tabindex="-1"
+								href="javascript:show_calendar('cbill.billDate');"
+								style="text-decoration: none">&nbsp;<img
+									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+						</tr>
+						<%@include file="contingentBill-form.jsp"%>
+					</table>
+				</div>
+			</div>
+			<div class="tabbertab" id="checkList">
+				<h2>Check List</h2>
+				<div class="yui-skin-sam" align="center">
+					<div id="checkListTable"></div>
+				</div>
+
+				<script>
 			   	makeCheckListTable();
 			   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
 	</script>
 
 
-<s:hidden name="billRegisterId" id="billRegisterId" />
-<s:hidden name="actionName" id="actionName" />
+				<s:hidden name="billRegisterId" id="billRegisterId" />
+				<s:hidden name="actionName" id="actionName" />
 
-</div>
-<div class="tabbertab" id="approval">
-<h2>Approval Information</h2>
-<font  style='color: red ;align'> 
-<div align="center" class="error-block" id="lblError" style="font:bold;text-align:center"></div>
-<div align="center" class="error-block" id="Errors" style="font:bold;text-align:center"></div>
-</font>
-<s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
+			</div>
+			<div class="tabbertab" id="approval">
+				<h2>Approval Information</h2>
+				<font style='color: red;'>
+					<div align="center" class="error-block" id="lblError"
+						style="font: bold; text-align: center"></div>
+					<div align="center" class="error-block" id="Errors"
+						style="font: bold; text-align: center"></div>
+				</font>
+				<s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
 
-	<%@include file="../voucher/workflowApproval-contingent.jsp"%>
-</s:if>
-<s:hidden name="nextLevel" id="nextLevel"/>
+					<%@include file="../voucher/workflowApproval-contingent.jsp"%>
+				</s:if>
+				<s:hidden name="nextLevel" id="nextLevel" />
 
-<div align="center">
-		<table border="0" width="100%">
-			<tr>
-				<td  class="bluebox">Comments</td> 
-				<td  class="bluebox" ><s:textarea name="comments" id="comments" cols="150" rows="3" onblur="checkLength(this)"/></td>
-			</tr>
-			<br/>
-		</table>
-	</div>
-<div class="buttonbottom" >
-<table border="0" width="75%" cellspacing="0" align="center"><tr></tr>
-<s:hidden name="button" id="button"/>
-			<tr><s:iterator value="%{validButtons}" var="p"><td><s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="edit" onclick="document.getElementById('button').value='%{description}';return validate('%{name}','%{description}');"/></td></s:iterator>
-			<td><input type="button" id="closeButton" value="Close" onclick="javascript:window.close()" class="button"/></td>
-			</tr>
-</table>
-</div>
-</div>
-</div>
-</s:push>
-</s:form>
+				<div align="center">
+					<table border="0" width="100%">
+						<tr>
+							<td class="bluebox">Comments</td>
+							<td class="bluebox"><s:textarea name="comments"
+									id="comments" cols="150" rows="3" onblur="checkLength(this)" /></td>
+						</tr>
+						<br />
+					</table>
+				</div>
+				<div class="buttonbottom">
+					<table border="0" width="75%" cellspacing="0" align="center">
+						<tr></tr>
+						<s:hidden name="button" id="button" />
+						<tr>
+							<s:iterator value="%{validButtons}" var="p">
+								<td><s:submit type="submit" cssClass="buttonsubmit"
+										value="%{description}" id="%{name}" name="%{name}"
+										method="edit"
+										onclick="document.getElementById('button').value='%{description}';return validate('%{name}','%{description}');" /></td>
+							</s:iterator>
+							<td><input type="button" id="closeButton" value="Close"
+								onclick="javascript:window.close()" class="button" /></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			</div>
+		</s:push>
+	</s:form>
 
-<script>
+	<script>
 autocompleteEntitiesBy20();
 document.getElementById("budgetReappRow").style.display="none";
 document.getElementById("billDetailsTableNet[0].detailTypes").value='<s:property value="%{detailTypeIdandName}"/>';
@@ -557,7 +633,7 @@ if(button!=undefined && button!="")
 
 if(document.getElementById("Errors").innerHTML=='')  
 {
-alert(succesMessage);
+bootbox.alert(succesMessage);
 
 if(button=="Save_Close")
 {

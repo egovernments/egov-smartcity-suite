@@ -39,23 +39,23 @@
  */
 package org.egov.infra.persistence.validator;
 
-import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.Query;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
 public class UniqueCheckValidator implements ConstraintValidator<Unique, Object> {
 
     private Unique unique;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -66,58 +66,36 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
 
     @Override
     public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
-        boolean isValid = true;
-        if (unique.fields() == null || unique.fields().length == 0)
-            return isValid;
-        for (int i = 0; i < unique.fields().length; i++)
-            if (!isUnique(arg0, unique.fields()[i], unique.columnName()[i])) {
-                if(unique.enableDfltMsg())
-                    constraintValidatorContext.buildConstraintViolationWithTemplate(unique.message())
-                        .addPropertyNode(unique.fields()[i]).addConstraintViolation();
-                isValid = false;
-            }
-        return isValid;
-    }
-
-    private boolean isUnique(final Object arg0, final String field, final String columnName) {
-        final Object value = getValue(arg0, field);
-        if (value == null)
-            return true;
-        final Long id = getId(arg0);
-        final Session currentSession = entityManager.unwrap(Session.class);
-        boolean isValid = true;
-        if (id == null) {
-            final Query q = currentSession.createSQLQuery("select * from " + unique.tableName() + " where upper("
-                    + columnName + ")=:value");
-            q.setString("value", value.toString().trim().toUpperCase());
-            if (!q.list().isEmpty())
-                isValid = false;
-        } else {
-            final Query q = currentSession.createSQLQuery("select * from " + unique.tableName() + " where upper("
-                    + columnName + ")=:value and id!=:id");
-            q.setString("value", value.toString().trim().toUpperCase());
-            q.setLong("id", id);
-            if (!q.list().isEmpty())
-                isValid = false;
-        }
-        return isValid;
-    }
-
-    private Long getId(final Object arg0) {
-        return (Long) getValue(arg0, unique.id());
-    }
-
-    private Object getValue(final Object target, final String field) {
         try {
-            final BeanInfo info = java.beans.Introspector.getBeanInfo(target.getClass());
-            final PropertyDescriptor[] props = info.getPropertyDescriptors();
-            for (final PropertyDescriptor propertyDescriptor : props)
-                if (propertyDescriptor.getName().equals(field))
-                    return propertyDescriptor.getReadMethod().invoke(target);
-            return null;
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException(e.getMessage(), e);
+            final Number id = (Number) FieldUtils.readField(arg0, unique.id(), true);
+            boolean isValid = true;
+            for (final String fieldName : unique.fields())
+                if (!checkUnique(arg0, id, fieldName)) {
+                    isValid = false;
+                    if (unique.enableDfltMsg())
+                        constraintValidatorContext.buildConstraintViolationWithTemplate(unique.message())
+                                .addPropertyNode(fieldName)
+                                .addConstraintViolation();
+
+                }
+            return isValid;
+        } catch (final IllegalAccessException e) {
+            throw new ApplicationRuntimeException("Error while validating unique key", e);
         }
+
+    }
+
+    private boolean checkUnique(final Object arg0, final Number id, final String fieldName) throws IllegalAccessException {
+        final Criteria criteria = entityManager.unwrap(Session.class)
+                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass());
+        final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
+        if (fieldValue instanceof String)
+            criteria.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
+        else
+            criteria.add(Restrictions.eq(fieldName, fieldValue));
+        if (id != null)
+            criteria.add(Restrictions.ne(unique.id(), id));
+        return criteria.setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
     }
 
 }

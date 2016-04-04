@@ -13,25 +13,35 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_
 import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -55,6 +65,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
@@ -99,6 +110,12 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     @Autowired
     private PtDemandDao ptDemandDAO;
 
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
+
+    @Autowired
+    private MessagingService messagingService;
+
     @Transactional
     public BasicProperty saveProperty(final Property newProperty, final Property oldProperty, final Character status,
             final String approvalComment, final String workFlowAction, final Long approvalPosition,
@@ -134,11 +151,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         propertyModel.setEffectiveDate(propCompletionDate);
-        try {
-            propService.createDemand(propertyModel, new Date());
-        } catch (TaxCalculatorExeption e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        for (Ptdemand ptdemand : propertyModel.getPtDemandSet()) {
+            propertyPerService.applyAuditing(ptdemand.getDmdCalculations());
         }
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
@@ -192,6 +206,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                buildSMS(property, workFlowAction);
             }
 
         } else {
@@ -205,7 +220,10 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                         currentState, null);
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_TAX_EXEMPTION);
+                        .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(NATURE_TAX_EXEMPTION);
+                //to be enabled once acknowledgement feature is developed
+                //buildSMS(property, workFlowAction);
             } else {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         property.getCurrentState().getValue(), null);
@@ -215,10 +233,13 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                         property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                                 .withComments(approvarComments).withDateInfo(currentDate.toDate());
                     else
-                        property.transition(false).withSenderName(user.getUsername() + "::" + user.getName())
+                        property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                                 .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
+                
+                	if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+                		buildSMS(property, workFlowAction);
             }
         }
         if (LOGGER.isDebugEnabled())
@@ -275,6 +296,33 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             final HashMap<String, String> meesevaParams) {
         return saveProperty(newProperty, oldProperty, status, approvalComment, workFlowAction, approvalPosition,
                 taxExemptedReason, propertyByEmployee, EXEMPTION);
+
+    }
+
+    public void buildSMS(Property property, String workFlowAction) {
+        final User user = property.getBasicProperty().getPrimaryOwner();
+        final String assessmentNo = property.getBasicProperty().getUpicNo();
+        final String mobileNumber = user.getMobileNumber();
+        final String applicantName = user.getName();
+        String smsMsg = "";
+        if (workFlowAction.equals(WFLOW_ACTION_STEP_FORWARD)) {
+        	//to be enabled once acknowledgement feature is developed
+        	/*smsMsg = messageSource.getMessage("msg.initiateexemption.sms",
+                    new String[] { applicantName, assessmentNo }, null);*/
+        } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
+            smsMsg = messageSource.getMessage("msg.rejectexemption.sms", new String[] { applicantName, assessmentNo,
+                    EgovThreadLocals.getMunicipalityName() }, null);
+        } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
+            Installment installment = propertyTaxUtil.getInstallmentListByStartDate(new Date()).get(0);
+            Date effectiveDate = DateUtils.addDays(installment.getToDate(), 1);
+            smsMsg = messageSource.getMessage("msg.approveexemption.sms", new String[] { applicantName, assessmentNo,
+                    new SimpleDateFormat("dd/MM/yyyy").format(effectiveDate), EgovThreadLocals.getMunicipalityName() },
+                    null);
+        }
+
+        if (StringUtils.isNotBlank(mobileNumber)) {
+            messagingService.sendSMS(mobileNumber, smsMsg);
+        }
 
     }
 

@@ -9,7 +9,7 @@
       is available at http://www.egovernments.org
   
       This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
+      it under the terms of the GNU GenReral Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       any later version.
   
@@ -88,7 +88,9 @@
 		<many-to-one name="constructionTypeSet" class="org.egov.ptis.domain.entity.property.PropertyUsage" column="ID_USG_MSTR"/>
 		-->	
 		<component name="builtUpArea" class="org.egov.commons.Area">
-			<property name="area" column="BUILTUP_AREA"/>	
+			<property name="area" column="BUILTUP_AREA"/>
+			<property name="length" column="BUILTUP_LENGTH"/>	
+			<property name="breadth" column="BUILTUP_BREADTH"/>		
 		</component>
 		
 		<component name="floorArea" class="org.egov.commons.Area">
@@ -100,9 +102,15 @@
 		<property name="occupantName" column="occupantname" type="java.lang.String"/> 
 		<property name="occupancyDate" column="occupancydate" type="java.util.Date"/>
 		<property name="waterRate" column="WATER_RATE" />
-		<property name="noOfSeats" column="no_of_seats"	type="integer" />
-		<property name="drainage" column="drainage"	type="boolean" />
+		<property name="unstructuredLand" column="unstructuredLand"	type="boolean" />
+		
 		<property name="firmName" column="firmname" type="java.lang.String"/> 
+		<property name="buildingPermissionNo" column="building_permission_no" type="java.lang.String"/> 		
+		<property name="buildingPermissionDate" column="building_permission_date" type="java.util.Date"/>
+		
+		<component name="buildingPlanPlinthArea" class="org.egov.commons.Area">
+			<property name="area" column="building_permission_pintharea"/>	
+		</component>
 		<!--
 		EXTRA_FIELD1 varchar
 		
@@ -122,5 +130,6 @@
 		<one-to-one name="floorDmdCalc" lazy="proxy" outer-join="true"
 			class="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" property-ref="floor"
 			cascade="none" />
+		<property name="floorUid" column="FLOOR_UID" type="java.lang.Integer"/>
 	</class>
 </hibernate-mapping>

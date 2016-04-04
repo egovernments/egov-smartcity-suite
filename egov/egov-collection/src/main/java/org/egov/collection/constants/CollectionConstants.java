@@ -56,7 +56,6 @@ public final class CollectionConstants {
     public static final String SERVICE_TYPE_BILLING = "B";
     public static final String SERVICE_TYPE_COLLECTION = "C";
     public static final String SERVICE_TYPE_PAYMENT = "P";
-    public static final String CHALLAN_SERVICE_TYPE = "H";
 
     // Dropdown data
     public static final String DROPDOWN_DATA_SERVICE_LIST = "serviceList";
@@ -174,7 +173,7 @@ public final class CollectionConstants {
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
     public static final String QUERY_CREATEDBYUSERS_OF_RECEIPTS = "CREATEDBYUSERS_OF_RECEIPTS";
-    public static final String QUERY_LOCATION_BY_USER = "getLocationByUser";
+    //public static final String QUERY_LOCATION_BY_USER = "getLocationByUser";
     public static final String QUERY_SERVICES_BY_TYPE = "getServicesByType";
     public static final String QUERY_COLLECTION_SERVICS = "getCollectionServices";
     public static final String QUERY_FUNCTIONARY_BY_CODE = "getFunctionaryByCode";
@@ -193,6 +192,7 @@ public final class CollectionConstants {
     public static final String QUERY_ACCOUNTDETAILKEY_BY_DETAILKEY = "getAccountDetailkeyByDetailKey";
     public static final String QUERY_ALL_STATUSES_FOR_MODULE = "getAllStatusesForModule";
     public static final String QUERY_STATUSES_FOR_MODULE_AND_CODES = "getStatusesForModuleAndCodes";
+    public static final String QUERY_RECEIPT_BY_ID_AND_CITYCODE = "QUERY_RECEIPT_BY_ID_AND_CITYCODE";
 
     public static final String QUERY_ALL_DEPARTMENTS = "getAllDepartment";
     public static final String QUERY_ALL_LOCATIONS = "getAllLocations";
@@ -263,7 +263,7 @@ public final class CollectionConstants {
     public static final String SESSION_VAR_LOGIN_USER_NAME = "com.egov.user.LoginUserName";
     public static final String SESSION_VAR_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
     public static final String SUPER_USER_NAME = "egovernments";
-    public static final String SESSION_VAR_LOGIN_USER_COUNTERID = "counterId";
+    public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
 
     public static final String CITIZEN_USER_NAME = "9999999999";
 
@@ -463,6 +463,7 @@ public final class CollectionConstants {
     public static final String COLLECTION_DEPARTMENT_COLLMODES = "COLLECTIONDEPARTMENTCOLLMODES";
     public static final String COLLECTION_DEPARTMENTFORWORKFLOWAPPROVER = "COLLECTIONDEPARTMENTFORWORKFLOWAPPROVER";
     public static final String COLLECTION_DESIGNATIONFORAPPROVER = "COLLECTIONDESIGNATIONFORAPPROVER";
+    public static final String COLLECTION_DESIG_CHALLAN_WORKFLOW = "COLLECTIONDESIGCHALLANWORKFLOW";
 
     // AXIS payment gateway variables name
     public static final String ONLINE_PAYMENT_AXIS_MERCHANTID = "TESTEPAYCDMA";
@@ -497,7 +498,10 @@ public final class CollectionConstants {
     public static final String MESSAGEKEY_AXIS_PASSWORD = "axis.password";
     public static final String MESSAGEKEY_AXIS_RECONCILE_URL = "axis.reconcile.url";
     public static final String AXIS_SECURE_SECRET = "axis.secure.secret";
-
+    public static final String AXIS_FAILED_ABORTED_MESSAGE= "Failed/Aborted Transaction.";
+    public static final String AXIS_CHECK_DR_EXISTS="vpc_DRExists=N";
+    public static final String AXIS_ABORTED_AUTH_STATUS="A";
+    
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
             'B', 'C', 'D', 'E', 'F' };
@@ -524,5 +528,6 @@ public final class CollectionConstants {
     
     
     public static final String USER_TYPE_FOR_CITIZEN = "CITIZEN";
+    public static final String DEPT_CODE_FOR_ACCOUNTS = "ACC";
 
 }

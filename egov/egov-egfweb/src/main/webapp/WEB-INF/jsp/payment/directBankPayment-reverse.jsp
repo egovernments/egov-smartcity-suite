@@ -1,65 +1,104 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <html>
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <head>
-<sx:head/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
-
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<sx:head />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
 </style>
 <script>
 	path="${pageContext.request.contextPath}";
@@ -97,7 +136,7 @@
 					check();
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 			
@@ -189,7 +228,7 @@
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});
@@ -224,62 +263,83 @@
 	</script>
 </head>
 <body onload="onLoadTask_reverse();">
-<s:form  action="directBankPayment" theme="css_xhtml" name="dbpform" validate="true">
-<s:push value="model">
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Bank to Bank Transfer" name="heading"/>
-</jsp:include>
-<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Reverse Direct  Bank Payment</div>
-		<div id="listid" style="display:block">
-		<br/>
-		</div></div>
-		<div align="center">
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" ></p>
-</font>
-</div>
-<span class="mandatory" >
-				<div id="Errors" ><s:actionerror /><s:fielderror /></div>
-				<s:actionmessage />
+	<s:form action="directBankPayment" theme="css_xhtml" name="dbpform"
+		validate="true">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param value="Bank to Bank Transfer" name="heading" />
+			</jsp:include>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Reverse Direct Bank Payment</div>
+				<div id="listid" style="display: block">
+					<br />
+				</div>
+			</div>
+			<div align="center">
+				<font style='color: red;'>
+					<p class="error-block" id="lblError"></p>
+				</font>
+			</div>
+			<span class="mandatory">
+				<div id="Errors">
+					<s:actionerror />
+					<s:fielderror />
+				</div> <s:actionmessage />
 			</span>
-	<table border="0" width="100%" cellspacing="0" cellpadding="0">
-						<tr>
-		<td class="bluebox" width="10%"></td>
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/></td>
-			<td class="bluebox" width="22%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
-			<s:hidden name="id"/>
-			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="38%"><input type="text" name="voucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A></td>
-		</tr>
-						<%@include file="directBankPayment-form.jsp"%>
-		<table border="0" width="100%" cellspacing="0" cellpadding="0">
-										
-						<tr>
-		<td class="bluebox" width="10%"></td>
-		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			
-			<td class="bluebox" width="22%"><s:text name="reversalVoucherNumber"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="22%"><s:textfield name="reversalVoucherNumber" id="reversalVoucherNumber" /></td></s:if>
-			<td class="bluebox" width="18%"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="38%"><s:textfield name="reversalVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('dbpform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
-		</tr>
-	</table>
-	</div>	
-<%@include file="../voucher/ReverseButtons.jsp"%>
-	</table>
-	<div class="subheadsmallnew"/></div>
-	<div class="mandatory" align="left">* Mandatory Fields</div>
-	</div>	
-</s:push>
-</s:form>
+			<table border="0" width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="bluebox" width="10%"></td>
+					<td class="bluebox" width="22%"><s:text name="voucher.number" /></td>
+					<td class="bluebox" width="22%"><s:textfield
+							name="voucherNumber" id="voucherNumber" /></td>
+					<s:hidden name="id" />
+					<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox" width="38%"><input type="text"
+						name="voucherDate"
+						onkeyup="DateFormat(this,this.value,event,false,'3')"
+						value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
+						href="javascript:show_calendar('cbtbform.voucherDate');"
+						style="text-decoration: none">&nbsp;<img tabIndex="-1"
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+				</tr>
+				<%@include file="directBankPayment-form.jsp"%>
+				<table border="0" width="100%" cellspacing="0" cellpadding="0">
 
-<SCRIPT type="text/javascript">
+					<tr>
+						<td class="bluebox" width="10%"></td>
+						<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+
+							<td class="bluebox" width="22%"><s:text
+									name="reversalVoucherNumber" /><span class="mandatory">*</span></td>
+							<td class="bluebox" width="22%"><s:textfield
+									name="reversalVoucherNumber" id="reversalVoucherNumber" /></td>
+						</s:if>
+						<td class="bluebox" width="18%"><s:text
+								name="reversalVoucherDate" /><span class="mandatory">*</span></td>
+						<td class="bluebox" width="38%"><s:textfield
+								name="reversalVoucherDate" id="reversalVoucherDate"
+								onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+							href="javascript:show_calendar('dbpform.reversalVoucherDate');"
+							style="text-decoration: none">&nbsp;<img tabIndex="-1"
+								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+					</tr>
+				</table>
+				</div>
+				<%@include file="../voucher/ReverseButtons.jsp"%>
+			</table>
+			<div class="subheadsmallnew" /></div>
+			<div class="mandatory" align="left">* Mandatory Fields</div>
+			</div>
+		</s:push>
+	</s:form>
+
+	<SCRIPT type="text/javascript">
  function onLoadTask_reverse() {
         if (button != null && button != "") {
 				if (document.getElementById("Errors").innerHTML == '') {
-				alert(succesMessage);
+				bootbox.alert(succesMessage);
 						if (button == "Reverse_Close") {
 							window.close();
 						} else if (button == "Reverse_View") {

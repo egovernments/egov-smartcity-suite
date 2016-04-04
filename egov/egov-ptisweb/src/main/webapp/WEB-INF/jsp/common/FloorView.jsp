@@ -48,9 +48,13 @@
 		<th class="bluebgheadtd"><s:text name="Occupancy"/></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname"/></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /></th>
+		<th class="bluebgheadtd"><s:text name="unstructuredLand" /></th>
+		<th class="bluebgheadtd"><s:text name="plinthLength" /></th>
+		<th class="bluebgheadtd"><s:text name="plinthBreadth" /></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /></th>
-		<th class="bluebgheadtd"><s:text name="drainage" /></th>
-		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
+		<th class="bluebgheadtd"><s:text name="building.permNo" />
+		<th class="bluebgheadtd"><s:text name="buildingpermdate" />
+		<th class="bluebgheadtd"><s:text name="buildingpermplintharea" />
 		<th class="bluebgheadtd"><s:text name="unit.rate.amount" /></th>
     </tr>
     <s:iterator value="floorDetails" status="floorsstatus">
@@ -97,20 +101,38 @@
 	    <s:date name="occupancyDate" var="cdFormat" format="dd/MM/yyyy"/>
 	    <span class="bold"><s:property default="N/A" value="%{cdFormat}"/></span>
 	    </td>
+	    
+	     <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center">
+			<s:if test="%{unstructuredLand}">Yes</s:if> 
+			<s:else>No</s:else>
+			</div></span>
+	    </td>
+	    
+	     <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{builtUpArea.length}" /></div></span>
+	    </td>
+	    
+	     <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{builtUpArea.breadth}" /></div></span>
+	    </td>
+	    
 	   
         <td class="blueborderfortd" style="padding: 2px 2px">
 			<span class="bold"><div align="center"><s:property default="N/A" value="%{builtUpArea.area}" /></div></span>
 	    </td>
-	    
+	     
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-			<s:if test="%{drainage == true}">
-	          <span class="bold"> Yes</span>
-	        </s:if>
-	         <span class="bold"> <s:else>No</s:else></span>
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{buildingPermissionNo}" /></div></span>
 	    </td>
 	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-			<span class="bold"><div align="center"><s:property default="N/A" value="%{noOfSeats}" /></div></span>
+			<s:date name="buildingPermissionDate" var="bpdate" format="dd/MM/yyyy"/>
+	    <span class="bold"><s:property default="N/A" value="%{bpdate}"/></span> 
+	    </td>
+	    
+	    <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{buildingPlanPlinthArea.area}" /></div></span>
 	    </td>
 	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">

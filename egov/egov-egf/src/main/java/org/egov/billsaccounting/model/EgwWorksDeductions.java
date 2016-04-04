@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.billsaccounting.model;
@@ -43,6 +43,7 @@ package org.egov.billsaccounting.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.model.recoveries.Recovery;
 
@@ -51,89 +52,92 @@ import org.egov.model.recoveries.Recovery;
  */
 public class EgwWorksDeductions implements java.io.Serializable {
 
-	// Fields
+    // Fields
 
-	private Integer id; 
+    /**
+     *
+     */
+    private static final long serialVersionUID = -6184267122794654219L;
 
-	private Worksdetail worksdetail;
+    private Integer id;
 
-	private CChartOfAccounts chartofaccounts;
+    private Worksdetail worksdetail;
 
-	private Recovery recovery;
+    private CChartOfAccounts chartofaccounts;
 
-	private BigDecimal amount;
+    private Recovery recovery;
 
-	private Double perc;
+    private BigDecimal amount;
 
-	private char dedtype;
+    private Double perc;
 
-	private Date lastmodifieddate;
+    private char dedtype;
 
-	
+    private Date lastmodifieddate;
 
-	// Property accessors
-	public Integer getId() {
-		return this.id;
-	}
+    // Property accessors
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(final Integer id) {
+        this.id = id;
+    }
 
-	public Worksdetail getWorksdetail() {
-		return this.worksdetail;
-	}
+    public Worksdetail getWorksdetail() {
+        return worksdetail;
+    }
 
-	public void setWorksdetail(Worksdetail worksdetail) {
-		this.worksdetail = worksdetail;
-	}
+    public void setWorksdetail(final Worksdetail worksdetail) {
+        this.worksdetail = worksdetail;
+    }
 
-	public CChartOfAccounts getChartofaccounts() {
-		return this.chartofaccounts;
-	}
+    public CChartOfAccounts getChartofaccounts() {
+        return chartofaccounts;
+    }
 
-	public void setChartofaccounts(CChartOfAccounts chartofaccounts) {
-		this.chartofaccounts = chartofaccounts;
-	}
+    public void setChartofaccounts(final CChartOfAccounts chartofaccounts) {
+        this.chartofaccounts = chartofaccounts;
+    }
 
-	public Recovery getRecovery() {
-		return recovery;
-	}
+    public Recovery getRecovery() {
+        return recovery;
+    }
 
-	public void setRecovery(Recovery recovery) {
-		this.recovery = recovery;
-	}
+    public void setRecovery(final Recovery recovery) {
+        this.recovery = recovery;
+    }
 
-	public BigDecimal getAmount() {
-		return this.amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public void setAmount(final BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public Double getPerc() {
-		return this.perc;
-	}
+    public Double getPerc() {
+        return perc;
+    }
 
-	public void setPerc(Double perc) {
-		this.perc = perc;
-	}
+    public void setPerc(final Double perc) {
+        this.perc = perc;
+    }
 
-	public char getDedtype() {
-		return this.dedtype;
-	}
+    public char getDedtype() {
+        return dedtype;
+    }
 
-	public void setDedtype(char dedtype) {
-		this.dedtype = dedtype;
-	}
+    public void setDedtype(final char dedtype) {
+        this.dedtype = dedtype;
+    }
 
-	public Date getLastmodifieddate() {
-		return this.lastmodifieddate;
-	}
+    public Date getLastmodifieddate() {
+        return lastmodifieddate;
+    }
 
-	public void setLastmodifieddate(Date lastmodifieddate) {
-		this.lastmodifieddate = lastmodifieddate;
-	}
+    public void setLastmodifieddate(final Date lastmodifieddate) {
+        this.lastmodifieddate = lastmodifieddate;
+    }
 
 }

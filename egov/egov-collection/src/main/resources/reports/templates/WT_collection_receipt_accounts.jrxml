@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2015-12-11T12:58:45 -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-01-14T16:01:17 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="097af81c-f4bf-4e72-9596-ed5b89f2e492">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="org.egov.infstr.utils.*"/>
 	<import value="java.math.*"/>
+	<import value="org.egov.infstr.utils.*"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -23,6 +23,9 @@
 	</field>
 	<field name="crAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Credit Amount]]></fieldDescription>
+	</field>
+	<field name="creditAmountToBePaid" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Actual credit amount to be paid]]></fieldDescription>
 	</field>
 	<field name="drAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Debit Amount]]></fieldDescription>

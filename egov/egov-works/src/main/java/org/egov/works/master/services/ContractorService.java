@@ -41,10 +41,14 @@ package org.egov.works.master.services;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.validation.exception.ValidationException;
@@ -52,6 +56,7 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.ExemptionForm;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
@@ -60,22 +65,48 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StringType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public class ContractorService extends PersistenceService<Contractor, Long>implements EntityTypeService {
+@Service
+public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {
+
+ public ContractorService()
+    {
+     super(Contractor.class) ;    
+    }
+ 
+ 
     private final Logger logger = Logger.getLogger(getClass());
+    @Autowired
     private WorksService worksService;
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+
     @Override
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
         return findAllBy("select distinct contractorDet.contractor from ContractorDetail contractorDet " +
                 "where contractorDet.status.description=? and contractorDet.status.moduletype=?", "Active", "Contractor");
     }
 
+    public static final Map<String, String> exemptionForm = new LinkedHashMap<String, String>() {
+
+        private static final long serialVersionUID = 408579850562980945L;
+
+        {
+            put(ExemptionForm.INCOME_TAX.toString(), ExemptionForm.INCOME_TAX.toString().replace("_", " "));
+            put(ExemptionForm.EARNEST_MONEY_DEPOSIT.toString(), ExemptionForm.EARNEST_MONEY_DEPOSIT.toString().replace("_", " "));
+            put(ExemptionForm.VAT.toString(), ExemptionForm.VAT.toString().replace("_", " "));
+        }
+    };
+
     @Override
     public List<Contractor> filterActiveEntities(final String filterKey,
             final int maxRecords, final Integer accountDetailTypeId) {
         final Integer pageSize = maxRecords > 0 ? maxRecords : null;
         final String param = "%" + filterKey.toUpperCase() + "%";
-        final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet " +
+        final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
+                +
                 "where cont.id=contractorDet.contractor.id and contractorDet.status.description=? and contractorDet.status.moduletype=? and (upper(cont.code) like ? "
                 +
                 "or upper(cont.name) like ?) order by cont.code,cont.name";
@@ -112,22 +143,22 @@ public class ContractorService extends PersistenceService<Contractor, Long>imple
     }
 
     public List<Contractor> getAllContractors() {
-    	List<Contractor> entities = null;
-    	final Query entityQuery = getSession().createQuery(" from Contractor con order by code asc");
-    	entities = entityQuery.list();
-    	return entities;
+        List<Contractor> entities = null;
+        final Query entityQuery = getSession().createQuery(" from Contractor con order by code asc");
+        entities = entityQuery.list();
+        return entities;
     }
-    
+
     public List<Contractor> getContractorListForCriterias(final Map<String, Object> criteriaMap) {
         List<Contractor> contractorList = null;
         String contractorStr = null;
         final List<Object> paramList = new ArrayList<Object>();
         Object[] params;
-        String contractorName = (String)criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
-        String contractorCode = (String)criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
-        Long departmentId = (Long)criteriaMap.get(WorksConstants.DEPARTMENT_ID);
-        Integer statusId = (Integer)criteriaMap.get(WorksConstants.STATUS_ID);
-        Long gradeId = (Long)criteriaMap.get(WorksConstants.GRADE_ID);
+        final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
+        final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
+        final Long departmentId = (Long) criteriaMap.get(WorksConstants.DEPARTMENT_ID);
+        final Integer statusId = (Integer) criteriaMap.get(WorksConstants.STATUS_ID);
+        final Long gradeId = (Long) criteriaMap.get(WorksConstants.GRADE_ID);
         contractorStr = " select distinct contractor from Contractor contractor ";
 
         if (statusId != null || departmentId != null || gradeId != null)
@@ -176,11 +207,11 @@ public class ContractorService extends PersistenceService<Contractor, Long>imple
     public SearchQuery prepareQuery(final Map<String, Object> criteriaMap) {
         String contractorStr = null;
         final List<Object> paramList = new ArrayList<Object>();
-        String contractorName = (String)criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
-        String contractorCode = (String)criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
-        Long departmentId = (Long)criteriaMap.get(WorksConstants.DEPARTMENT_ID);
-        Integer statusId = (Integer)criteriaMap.get(WorksConstants.STATUS_ID);
-        Long gradeId = (Long)criteriaMap.get(WorksConstants.GRADE_ID);
+        final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
+        final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
+        final Long departmentId = (Long) criteriaMap.get(WorksConstants.DEPARTMENT_ID);
+        final Integer statusId = (Integer) criteriaMap.get(WorksConstants.STATUS_ID);
+        final Long gradeId = (Long) criteriaMap.get(WorksConstants.GRADE_ID);
         contractorStr = " from ContractorDetail detail ";
 
         if (statusId != null || departmentId != null || gradeId != null || contractorCode != null && !contractorCode.equals("")
@@ -218,14 +249,13 @@ public class ContractorService extends PersistenceService<Contractor, Long>imple
     }
 
     public void searchContractor(final Map<String, Object> criteriaMap) {
-        logger.debug("Inside searchContractor");
-        String contractorName = (String)criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
-        String contractorCode = (String)criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
-        Long departmentId = (Long)criteriaMap.get(WorksConstants.DEPARTMENT_ID);
-        Long gradeId = (Long)criteriaMap.get(WorksConstants.GRADE_ID);
-        Date searchDate = (Date)criteriaMap.get(WorksConstants.SEARCH_DATE);
-        List<Contractor> contractorList = null;
-        
+        if (logger.isDebugEnabled())
+            logger.debug("Inside searchContractor");
+        final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
+        final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
+        final Long departmentId = (Long) criteriaMap.get(WorksConstants.DEPARTMENT_ID);
+        final Long gradeId = (Long) criteriaMap.get(WorksConstants.GRADE_ID);
+        final Date searchDate = (Date) criteriaMap.get(WorksConstants.SEARCH_DATE);
         final List<AppConfigValues> configList = worksService.getAppConfigValue("Works", "CONTRACTOR_STATUS");
         final String status = configList.get(0).getValue();
 
@@ -253,6 +283,16 @@ public class ContractorService extends PersistenceService<Contractor, Long>imple
 
         criteria.addOrder(Order.asc("name"));
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        contractorList = criteria.list();
+        criteria.list();
+    }
+
+    public void createAccountDetailKey(final Contractor cont) {
+        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("contractor");
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setGroupid(1);
+        adk.setDetailkey(cont.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        adk.setAccountdetailtype(accountdetailtype);
+        accountdetailkeyHibernateDAO.create(adk);
     }
 }

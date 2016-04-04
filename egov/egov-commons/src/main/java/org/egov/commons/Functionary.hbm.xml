@@ -22,7 +22,7 @@
         <property name="updatetimestamp" type="date">
             <column name="UPDATETIMESTAMP" length="7" />
         </property>
-        <property name="isactive" type="java.lang.Boolean">
+        <property name="isactive" >
             <column name="ISACTIVE" precision="1" scale="0" />
         </property>
     </class>

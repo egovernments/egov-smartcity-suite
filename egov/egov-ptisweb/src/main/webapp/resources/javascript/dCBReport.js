@@ -55,10 +55,10 @@ jQuery(document).ready(function() {
 	jQuery('#btnsearch').click(function(e) {
 		dom.get("dcbError").style.display='none';
         dom.get("dcbError").innerHTML='';
-		if(jQuery('#zoneId').val()=="-1"){
+		if(jQuery('#wardId').val()=="-1"){
 			dom.get("dcbError").style.display='';
-	        dom.get("dcbError").innerHTML='Please Enter Zone';
-	        dom.get('zoneId').focus();
+	        dom.get("dcbError").innerHTML='Please select ward'; 
+	        dom.get('wardId').focus(); 
 			return false;
 		}
 		callAjaxByBoundary();
@@ -69,23 +69,25 @@ jQuery(document).ready(function() {
 		var valArray=temp.split('-');
 		if(jQuery('#mode').val()=='property'){
 			if(valArray.length>0){
-				var propVal=valArray[2].split('~');
+				var propVal=valArray[1].split('~');
 				if(propVal.length>0){
 					jQuery('#mode').val(propVal[0]);
 					jQuery('#boundaryId').val(propVal[1]);
 				}
-				jQuery('#selectedModeBndry').val(valArray[0]+"-"+valArray[1]);
+				jQuery('#selectedModeBndry').val(valArray[0]);
 			}
 		} else if(jQuery('#mode').val()=='block'){
 			if(valArray.length>0){
-				var blockVal=valArray[1].split('~');
+				var blockVal=valArray[0].split('~');
 				if(blockVal.length>0){
 					jQuery('#mode').val(blockVal[0]);
 					jQuery('#boundaryId').val(blockVal[1]);
 				}
-				jQuery('#selectedModeBndry').val(valArray[0]);
+				jQuery('#selectedModeBndry').val('');
 			}
-		} else if(jQuery('#mode').val()=='ward'){
+		} 
+		//Commented as part of PHOENIX-2373 fix and for WardWise DCB
+		/*else if(jQuery('#mode').val()=='ward'){
 			if(valArray.length>0){
 				var wardVal=valArray[0].split('~');
 				if(wardVal.length>0){
@@ -94,7 +96,7 @@ jQuery(document).ready(function() {
 				}
 				jQuery('#selectedModeBndry').val('');
 			}
-		} 
+		} */
 		callAjaxByBoundary(); 
 	});
 
@@ -106,9 +108,7 @@ function setHiddenValueByLink(obj, param) {
 	if(param.value=='property'){
 		window.open("../view/viewDCBProperty-displayPropInfo.action?propertyId="+jQuery('#boundaryId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	} else{
-		if(param.value=='zone'){
-			jQuery('#mode').val("ward");
-		} else if(param.value=='ward'){
+	  if(param.value=='ward'){
 			jQuery('#mode').val("block");
 		} else if(param.value=='block'){ 
 			jQuery('#mode').val("property");   
@@ -117,13 +117,29 @@ function setHiddenValueByLink(obj, param) {
 	}
 }
 
+function setDefaultCourtCaseValue(){
+	checkCourtCase(document.getElementById("courtCase")); 
+}
+
+function checkCourtCase(obj){
+	if(obj.checked == true)
+		document.getElementById("courtCase").value = 'true';
+	else
+		document.getElementById("courtCase").value = 'false';
+}
+
 function callAjaxByBoundary() {
 	var modeVal = "";
 	var boundary_Id = "";
 	var temp="";
+	var propTypes = "";
+	var courtCase = false;
+	propTypes = jQuery('#propTypes').val();
+	courtCase = jQuery('#courtCase').val(); 
 	modeVal = jQuery('#mode').val(); 
-	if(modeVal=='zone'){
-		boundary_Id = jQuery('#zoneId').val();
+	
+	if(modeVal=='ward'){
+		boundary_Id = jQuery('#wardId').val();
 		temp=modeVal+"~"+boundary_Id;
 		jQuery('#selectedModeBndry').val(temp);
 		jQuery('#report-backbutton').hide();
@@ -136,6 +152,7 @@ function callAjaxByBoundary() {
 	}
 	jQuery('.report-section').removeClass('display-hide');
 	jQuery('#report-footer').show();
+
 	
 	reportdatatable = drillDowntableContainer
 			.dataTable({
@@ -143,7 +160,9 @@ function callAjaxByBoundary() {
 					url : "/ptis/reports/ajaxDCBReport-getBoundaryWiseDCBList.action",      
 					data : {
 						mode : modeVal,
-						boundaryId : boundary_Id
+						boundaryId : boundary_Id, 
+						propTypes : JSON.stringify(propTypes!='-1'?propTypes:null),
+						courtCase : courtCase
 					}
 				},
 				"sPaginationType" : "bootstrap",
@@ -152,7 +171,22 @@ function callAjaxByBoundary() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : [ 
+					               {
+						             "sExtends": "pdf",
+	                                 "sTitle": "DCB Report",
+					                },
+					                {
+							             "sExtends": "xls",
+		                                 "sTitle": "DCB Report",
+		                                 "fnClick": function ( nButton, oConfig, oFlash ) {
+	                            	    	 reCalculateTotalFooterWhenExport('tbldcbdrilldown');
+	                            		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
+	                            		 }
+						             },{
+							             "sExtends": "print",
+		                                 "sTitle": "DCB Report"
+						               }],
 				},
 				columns : [{
 							"data" : function(row, type, set, meta){
@@ -168,23 +202,34 @@ function callAjaxByBoundary() {
 										+ data.id + '">' + data.name + '</a>';
 							},
 							"sTitle" : "Name"
-						},
-						{
+						}, {
+							"data" : "houseNo",
+							"sTitle" : "Door No"
+						}, {
+							"data" : "ownerName",
+							"sTitle" : "Owner Name"
+						}, {
 							"data" : "dmnd_arrearPT",
 							"sTitle" : "Arrear Property Tax"
 						}, {
+							"data" : "dmnd_arrearPFT",
+							"sTitle" : "Penalty On Arrear"
+						},/*{
 							"data" : "dmnd_arrearLC",
 							"sTitle" : "Arrear LibraryCess"
-						}, {
+						},*/ {
 							"data" : "dmnd_arrearTotal",
 							"sTitle" : "Arrear Total"
 						}, {
 							"data" : "dmnd_currentPT",
 							"sTitle" : "Current Property Tax"
 						}, {
+							"data" : "dmnd_currentPFT",
+							"sTitle" : "Penalty On Current"
+						},/*{
 							"data" : "dmnd_currentLC",
 							"sTitle" : "Current LibraryCess"
-						}, {
+						},*/ {
 							"data" : "dmnd_currentTotal",
 							"sTitle" : "Current Total"
 						}, {
@@ -193,10 +238,10 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "clctn_arrearPT",
 							"sTitle" : "Arrear Property Tax"
-						}, {
+						}, /*{
 							"data" : "clctn_arrearLC",
 							"sTitle" : "Arrear LibraryCess"
-						}, {
+						},*/ {
 							"data" : "clctn_arrearPFT",
 							"sTitle" : "Penalty On Arrear"
 						}, {
@@ -205,10 +250,10 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "clctn_currentPT",
 							"sTitle" : "Current Property Tax"
-						}, {
+						}, /*{
 							"data" : "clctn_currentLC",
 							"sTitle" : "Current LibraryCess"
-						}, {
+						},*/ {
 							"data" : "clctn_currentPFT",
 							"sTitle" : "Penalty On Current"
 						}, {
@@ -221,8 +266,14 @@ function callAjaxByBoundary() {
 							"data" : "bal_arrearPT",
 							"sTitle" : "Arrear Property Tax"
 						}, {
+							"data" : "bal_arrearPFT",
+							"sTitle" : "Penalty On Arrear"
+						}, {
 							"data" : "bal_currentPT",
 							"sTitle" : "Current Property Tax"
+						}, {
+							"data" : "bal_currentPFT",
+							"sTitle" : "Penalty On Current"
 						}, {
 							"data" : "totalPTBalance",
 							"sTitle" : "Total PropertyTax Balance"
@@ -235,34 +286,31 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						updateTotalFooter(1, api);
-						updateTotalFooter(2, api);
-						updateTotalFooter(3, api);
-						updateTotalFooter(4, api);
-						updateTotalFooter(5, api);
-						updateTotalFooter(6, api);
-						updateTotalFooter(7, api);
-						updateTotalFooter(8, api);
-						updateTotalFooter(9, api);
-						updateTotalFooter(10, api);
-						updateTotalFooter(11, api);
-						updateTotalFooter(12, api);
-						updateTotalFooter(13, api);
-						updateTotalFooter(14, api);
-						updateTotalFooter(15, api);
-						updateTotalFooter(16, api);
-						updateTotalFooter(17, api);
-						updateTotalFooter(18, api);
-						updateTotalFooter(19, api);
+						for(var i=3;i<=21;i++)
+						{
+						  updateTotalFooter(i, api);	
+						}
 					}
-				},
+				}, 
 				"aoColumnDefs" : [ {
-					"aTargets" : [ 1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],
+					"aTargets" : [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21], 
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}
 				} ]
 			});
+	
+			if(jQuery("#mode").val() === "property")
+			{
+				reportdatatable.fnSetColumnVis( 1, true );
+				reportdatatable.fnSetColumnVis( 2, true );
+			}
+			else
+			{
+				reportdatatable.fnSetColumnVis( 1, false );
+				reportdatatable.fnSetColumnVis( 2, false );
+			}
+	
 }
 
 
@@ -274,7 +322,7 @@ function updateTotalFooter(colidx, api) {
 	};
 
 	// Total over all pages
-	total = api.column(colidx).data().reduce(function(a, b) {
+	total = api.column(colidx).data().reduce(function(a, b) { 
 		return intVal(a) + intVal(b);
 	});
 

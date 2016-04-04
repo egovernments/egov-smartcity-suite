@@ -7,7 +7,7 @@ org.egov.infstr.utils.EGovConfig,org.egov.infra.admin.master.service.DepartmentS
 org.egov.commons.Bankaccount,org.springframework.beans.factory.annotation.Autowired" %>
 
 <%
-//System.out.println("process");
+System.out.println("process");
 
 List<Object[]> rs=null;
 StringBuffer accCode=new StringBuffer();
@@ -26,9 +26,9 @@ rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllCoaCodes")){
 String query="select glcode||'`-`'||name||'`~`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true order by glcode ";
-System.out.println("query :"+query);
+//System.out.println("query :"+query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
-System.out.println("rs.size :"+rs.size());
+//System.out.println("rs.size :"+rs.size());
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllCoaCodesExceptCashBank")){
 String query="SELECT glcode ||'`-`'||NAME ||'`~`'||ID AS \"code\" FROM chartofaccounts   WHERE classification = 4 AND isactiveforposting = true AND parentid  not in(select id  from chartofaccounts where purposeid in ( SELECT ID FROM egf_accountcode_purpose WHERE UPPER (NAME) = UPPER ('Cash In Hand') OR UPPER (NAME) = UPPER ('Bank Codes') OR UPPER (NAME) = UPPER ('Cheque In Hand')) ) "+
@@ -37,55 +37,54 @@ String query="SELECT glcode ||'`-`'||NAME ||'`~`'||ID AS \"code\" FROM chartofac
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllAssetCodes")){
-String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'A' order by glcode ";
-//String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'A' order by glcode ";
+String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true and type = 'A' order by glcode ";
+//String query="select glcode as \"code\" from chartofaccounts where classification=4 and isActiveForPosting=true and type = 'A' order by glcode ";
 //System.out.println("query :"+query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllLiabCodes")){
-String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'L' order by glcode ";
-//String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'L' order by glcode ";
+String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true and type = 'L' order by glcode ";
+//String query="select glcode as \"code\" from chartofaccounts where classification=4 and isActiveForPosting=true and type = 'L' order by glcode ";
 //System.out.println("query :"+query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("coaDetailCode")){
 
 String accountCode=request.getParameter("glCode");
-String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and glcode like '"+accountCode+"'|| '%' order by glcode ";
+String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true and glcode like '"+accountCode+"'|| '%' order by glcode ";
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllBankName")){
-String query="select name||'`-`'||id as \"code\" from bank where  isactive = 1 order by name ";
+String query="select name||'`-`'||id as \"code\" from bank where  isactive = true order by name ";
 rs = HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }	
 else if(request.getParameter("type").equalsIgnoreCase("coaDetailCodeType")){
 
 String accountCode=request.getParameter("glCode");
 String typeClass=request.getParameter("typeClass");
-String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and glcode like '"+accountCode+"'|| '%' and type = '"+typeClass+"' order by glcode ";
+String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true and glcode like '"+accountCode+"'|| '%' and type = '"+typeClass+"' order by glcode ";
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("functionName")){
 
 String functionCode=request.getParameter("name");
-String query="select name as \"code\" from function where  isactive = 1 AND isnotleaf=0 and upper(name) like upper('"+functionCode+"%')  order by name ";
+String query="select name as \"code\" from function where  isactive = true AND isnotleaf=false and upper(name) like upper('"+functionCode+"%')  order by name ";
 //System.out.println(query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllFunctionName")){
-String query="select code||'`-`'||name||'`~`'||id as \"code\" from function where  isactive = 1 AND isnotleaf=0 order by name ";
+String query="select code||'`-`'||name||'`~`'||id as \"code\" from function where  isactive = true AND isnotleaf=false order by name ";
 //System.out.println(query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 
 else if(request.getParameter("type").equalsIgnoreCase("contractorName")){
- 	String query="select name||'`-`'||code as \"code\" from relation where id in(select relationid from worksdetail where totalvalue>0 and isactive=1) and isactive=1 and relationTypeid=2  order by upper(\"code\") ";
+ 	String query="select name||'`-`'||code as \"code\" from relation where id in(select relationid from worksdetail where totalvalue>0 and isactive=true) and isactive=true and relationTypeid=2  order by upper(\"code\") ";
  	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
-
 else if(request.getParameter("type").equalsIgnoreCase("supplierName")){
-	String query="select name||'`-`'||code as \"code\" from relation where id in(select relationid from worksdetail where totalvalue>0 and isactive=1) and isactive=1 and relationTypeid=1  order by upper(\"code\") ";
+	String query="select name||'`-`'||code as \"code\" from relation where id in(select relationid from worksdetail where totalvalue>0 and isactive=true) and isactive=true and relationTypeid=1  order by upper(\"code\") ";
 	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
@@ -94,27 +93,27 @@ else if(request.getParameter("type").equalsIgnoreCase("workDetailName")){
 	String relTypeId=request.getParameter("relationTypeId");
 	String relationId=request.getParameter("relationId");
 	name=name+'%';
-	String query="select ' '||wd.name||'`-`'||wd.code as \"code\" from worksdetail wd,relation r where wd.relationid=r.id and r.relationtypeid="+relTypeId+" and r.isactive=1 and wd.relationid="+relationId+"  order by upper(wd.name) ";
+	String query="select ' '||wd.name||'`-`'||wd.code as \"code\" from worksdetail wd,relation r where wd.relationid=r.id and r.relationtypeid="+relTypeId+" and r.isactive=true and wd.relationid="+relationId+"  order by upper(wd.name) ";
 	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getGLreportCodes")){ 
 	////System.out.println("inside common function "+type);
 	String query="SELECT concat(concat(concat(concat(glCode,'`-`'), name),'-$-'), ID) as \"code\" FROM chartofaccounts WHERE glcode not in (select glcode from chartofaccounts where glcode like '47%' AND glcode not like '471%' AND glcode !='4741') "+
-		" AND glcode not in (select glcode from chartofaccounts where glcode='471%') AND isactiveforposting=1 AND classification=4 ORDER BY glcode ";
+		" AND glcode not in (select glcode from chartofaccounts where glcode='471%') AND isactiveforposting=true AND classification=4 ORDER BY glcode ";
 	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();   
 }
 
 else if(request.getParameter("type").equalsIgnoreCase("getActiveContractorListwithCode")){ 
 	//System.out.println("inside common function "+request.getParameter("type"));
-	String query="SELECT   NAME || '`--`' || code  || '`-`' ||ID  AS \"code\"  FROM relation  WHERE 1 = 1 AND relationtypeid = 2 AND isactive = 1 ORDER BY NAME";
+	String query="SELECT   NAME || '`--`' || code  || '`-`' ||ID  AS \"code\"  FROM relation  WHERE 1 = 1 AND relationtypeid = 2 AND isactive = true ORDER BY NAME";
 	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();   
 }
 else if(request.getParameter("type").equalsIgnoreCase("getActiveSupplierListwithCode")){ 
 	//System.out.println("inside common function "+request.getParameter("type"));
-	String query="SELECT   NAME || '`--`' || code  || '`-`' ||ID  AS \"code\"  FROM relation  WHERE 1 = 1 AND relationtypeid = 1 AND isactive = 1 ORDER BY NAME";
+	String query="SELECT   NAME || '`--`' || code  || '`-`' ||ID  AS \"code\"  FROM relation  WHERE 1 = 1 AND relationtypeid = 1 AND isactive = true ORDER BY NAME";
 	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();   
 }
@@ -124,7 +123,7 @@ else if(request.getParameter("type").equalsIgnoreCase("getAllActivePartyName")){
 	////System.out.println("inside common function "+request.getParameter("type"));
 	String relTypeId=request.getParameter("relationTypeId");
 	
-	String query="SELECT   NAME || '`-`' ||ID  AS \"code\"  FROM relation  WHERE relationtypeid="+relTypeId+" AND isactive = 1 ORDER BY upper(NAME)";
+	String query="SELECT   NAME || '`-`' ||ID  AS \"code\"  FROM relation  WHERE relationtypeid="+relTypeId+" AND isactive = true ORDER BY upper(NAME)";
 	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();   
 }
@@ -156,7 +155,7 @@ else if(request.getParameter("type").equalsIgnoreCase("getGlcodeForPayReversal")
 	String glcodeParam =request.getParameter("glcodeParam");
 	
 	String query="select ca.glcode || '`--`' || ca.name || '`--`' || ca.id as \"code\" "
-	+" from Chartofaccounts ca where ca.isactiveforposting = 1 and ca.classification=4 and ca.glcode='"+glcodeParam+"' ";
+	+" from Chartofaccounts ca where ca.isactiveforposting = true and ca.classification=4 and ca.glcode='"+glcodeParam+"' ";
 	
 	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();   
@@ -197,14 +196,14 @@ String tableName=request.getParameter("tableName");
 if(tableName.equalsIgnoreCase("eg_employee"))
 {
 //System.out.println("tableName inside process 2" + tableName);
- query="select name||'`-`'||id  as \"code\" from "+tableName+" where isactive=1 and code like '"+detailCode+"'  order by name  " ;
+ query="select name||'`-`'||id  as \"code\" from "+tableName+" where isactive=true and code like '"+detailCode+"'  order by name  " ;
 }else if(tableName.equalsIgnoreCase("eg_item"))
 {
 	
 	query="select itemno||'`-`'||id  as \"code\" from "+tableName+" where itemno like '"+detailCode+"'  order by itemno  " ;
 }
 else
- query="select name||'`-`'||id  as \"code\" from "+tableName+" where isactive=1 and code like '"+detailCode+"'  order by name  " ;
+ query="select name||'`-`'||id  as \"code\" from "+tableName+" where isactive=true and code like '"+detailCode+"'  order by name  " ;
 //System.out.println(query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
@@ -226,12 +225,12 @@ else if(request.getParameter("type").equalsIgnoreCase("getBankAccountGlcode"))
 	 String glCode =request.getParameter("glCode");
 	 String accEntityKey =request.getParameter("accEntityKey");
 	////System.out.println("inside common function "+type);
-	String query="SELECT distinct concat ( concat ( concat ( concat ( decode ( adk.DETAILTYPEID ,(select id from accountdetailtype where UPPER(name)= UPPER('Creditor') ),(select code from relation where id = adk.detailkey),(select id from accountdetailtype where UPPER(name) = UPPER('Employee') ),(select code from eg_employee where id = adk.detailkey ),(select code from accountentitymaster where ID =adk.detailkey   AND detailtypeid = adk.detailtypeid )), '`-`' )," 
-	+" decode ( adk.DETAILTYPEID ,(select id from accountdetailtype where UPPER(name) = UPPER('Creditor') ),(select name from relation where id = adk.detailkey ),(select id from accountdetailtype where UPPER(name) = UPPER('Employee') ),(select emp_firstname from eg_employee where id= adk.detailkey ),(select name from accountentitymaster where  detailtypeid = adk . detailtypeid AND ID = adk.detailkey ))), '-$-' ),adk.detailkey ) as \"code\" "
+	String query="SELECT distinct concat ( concat ( concat ( concat ( case when  adk.DETAILTYPEID  when (select id from accountdetailtype where UPPER(name)= UPPER('Creditor') ) then (select code from relation where id = adk.detailkey) when (select id from accountdetailtype where UPPER(name) = UPPER('Employee') ) then (select code from eg_employee where id = adk.detailkey ) else (select code from accountentitymaster where ID =adk.detailkey   AND detailtypeid = adk.detailtypeid ) end, '`-`' )," 
+	+" case when adk.DETAILTYPEID when (select id from accountdetailtype where UPPER(name) = UPPER('Creditor') ) then (select name from relation where id = adk.detailkey ) when (select id from accountdetailtype where UPPER(name) = UPPER('Employee') ) then (select emp_firstname from eg_employee where id= adk.detailkey ) else (select name from accountentitymaster where  detailtypeid = adk . detailtypeid AND ID = adk.detailkey ) end), '-$-' ),adk.detailkey ) as \"code\" "
 	+" from generalledgerdetail gld, accountdetailkey adk where gld.generalledgerid in (select id from generalledger where glcode = '"+glCode+"' ) and gld.detailkeyid = adk.detailkey and gld.detailtypeid = adk.detailtypeid and adk.DETAILTYPEID ="+accEntityKey+""
 	+" UNION "
-	+" SELECT distinct concat ( concat ( concat ( concat ( decode ( adk.DETAILTYPEID,(select id from accountdetailtype where UPPER(name)=UPPER('Creditor')),(select code from relation where id = adk.detailkey),(select id from accountdetailtype where UPPER(name) = UPPER('Employee') ),(select code from eg_employee where id = adk.detailkey ),(select code from accountentitymaster where detailtypeid = adk.detailtypeid AND ID = adk.detailkey)), '`-`' ),"
-	+" decode ( adk.DETAILTYPEID,(select id from accountdetailtype where UPPER(name) = UPPER('Creditor') ),(select name from relation where id = adk.detailkey ),(select id from accountdetailtype where UPPER(name) = UPPER('Employee') ),(select emp_firstname from eg_employee where id= adk . detailkey ),(select name from accountentitymaster where detailtypeid = adk . detailtypeid  AND ID = adk.detailkey))), '-$-' ),adk.detailkey ) as \"code\" "
+	+" SELECT distinct concat ( concat ( concat ( concat ( case when  adk.DETAILTYPEID when (select id from accountdetailtype where UPPER(name)=UPPER('Creditor')) then (select code from relation where id = adk.detailkey) when (select id from accountdetailtype where UPPER(name) = UPPER('Employee') ) then (select code from eg_employee where id = adk.detailkey ) else (select code from accountentitymaster where detailtypeid = adk.detailtypeid AND ID = adk.detailkey) end , '`-`' ),"
+	+" case when  adk.DETAILTYPEID when (select id from accountdetailtype where UPPER(name) = UPPER('Creditor') ) then (select name from relation where id = adk.detailkey ) when (select id from accountdetailtype where UPPER(name) = UPPER('Employee') ) then (select emp_firstname from eg_employee where id= adk . detailkey ) else (select name from accountentitymaster where detailtypeid = adk . detailtypeid  AND ID = adk.detailkey) end), '-$-' ),adk.detailkey ) as \"code\" "
 	+" from transactionsummary ts, accountdetailkey adk where ts.GLCODEID=(select id from chartofaccounts where glcode='"+glCode+"') and ts.ACCOUNTDETAILTYPEID=adk.detailtypeid and adk.detailtypeid="+accEntityKey+" and ts.accountdetailkey=adk.detailkey";
 	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();   
@@ -255,7 +254,7 @@ try{
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }catch(Exception e)
 		{
-	//System.out.println(e.getMessage());
+	System.out.println(e.getMessage());
 		}
 
 }
@@ -267,13 +266,13 @@ String tdsid=request.getParameter("id");
 String amount=request.getParameter("amt");
 
 
-String query="SELECT DISTINCT   DECODE (dt.incometax,NULL, 0.0,dt.incometax)+DECODE (dt.surcharge, NULL, 0.0, dt.surcharge)                + DECODE (dt.education, NULL, 0.0, dt.education) ||'`-`'||DECODE (dt.amount, NULL, '0', dt.amount) ||'`-`'||b.glcode ||'`-`'||b.name AS \"code\" FROM tds t, eg_deduction_details dt, chartofaccounts b WHERE t.ID = dt.tdsid AND t.glcodeid = b.ID             AND SYSDATE BETWEEN dt.datefrom AND DECODE (dt.dateto, NULL, SYSDATE, dt.dateto) AND "+amount+" BETWEEN dt.lowlimit                          AND DECODE (dt.highlimit,NULL, 99999999999999999999999,dt.highlimit)AND t.id="+tdsid;
+String query="SELECT DISTINCT   case when dt.incometax=NULL then 0.0 else dt.incometax end+case when dt.surcharge = NULL then 0.0 else dt.surcharge + case when dt.education= NULL then 0.0 else dt.education end ||'`-`'||case when dt.amount =NULL then '0' else dt.amount end ||'`-`'||b.glcode ||'`-`'||b.name AS \"code\" FROM tds t, eg_deduction_details dt, chartofaccounts b WHERE t.ID = dt.tdsid AND t.glcodeid = b.ID AND SYSDATE BETWEEN dt.datefrom AND case when dt.dateto = NULL then SYSDATE else dt.dateto end AND "+amount+" BETWEEN dt.lowlimit                          AND case when dt.highlimit=NULL then 99999999999999999999999 else dt.highlimit end AND t.id="+tdsid;
 //System.out.println("query :"+query);
 try{
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }catch(Exception e)
 		{
-	//System.out.println(e.getMessage());
+	System.out.println(e.getMessage());
 		}
 
 }
@@ -304,12 +303,12 @@ else if(request.getParameter("type").equalsIgnoreCase("supplierCode")){
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("validateGLcode")){
- 	String query="select glcode||'`-`'||name||'`-`'||ID as \"code\" from chartofaccounts where glcode='"+request.getParameter("glcode")+"' and classification=4 and isactiveforposting = 1";
+ 	String query="select glcode||'`-`'||name||'`-`'||ID as \"code\" from chartofaccounts where glcode='"+request.getParameter("glcode")+"' and classification=4 and isactiveforposting = true";
 //System.out.println(query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("validateFunctionName")){
- 	String query="SELECT name||'`-`'||id AS \"code\" from function where  isactive = 1 AND isnotleaf=0 and name='"+request.getParameter("functionName")+"' ";
+ 	String query="SELECT name||'`-`'||id AS \"code\" from function where  isactive = true AND isnotleaf=false and name='"+request.getParameter("functionName")+"' ";
 //System.out.println(query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
@@ -329,13 +328,22 @@ else if(request.getParameter("type").equalsIgnoreCase("validaUniquePanTinno"))
 //System.out.println(query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
+else if(request.getParameter("type").equalsIgnoreCase("getAllCoaNames"))
+{//TESTED
+	final String query="select name||'`-`'||glcode||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true order by glcode ";
+	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
+}
+else if(request.getParameter("type").equalsIgnoreCase("getAllFunctionCode")){
+	final String query="select code||'`~`'||name||'`~~`'||id as \"code\" from function where  isactive = true AND isnotleaf=false order by name ";
+	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
+}
 int i = 0;
 try{
-System.out.println("resultset"+rs);
+//System.out.println("resultset"+rs);
 if(rs!=null)
 {
-System.out.println("resultset size:"+rs.size());
-System.out.println("resultset first value:"+rs.get(0));
+//System.out.println("resultset size:"+rs.size());
+//System.out.println("resultset first value:"+rs.get(0));
 int size = rs.size();
 while(size!=0){
 if(i > 0)

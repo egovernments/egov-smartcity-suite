@@ -42,8 +42,10 @@ package org.egov.model.budget;
 import java.util.Date;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
 
@@ -66,11 +68,14 @@ public class Budget extends StateAware {
     private String materializedPath;
     private Budget referenceBudget;
     private Long documentNumber;
+    private EgwStatus status;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -128,8 +133,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isbere
-     *            the isbere to set
+     * @param isbere the isbere to set
      */
     public void setIsbere(final String isbere) {
         this.isbere = isbere;
@@ -143,8 +147,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isActiveBudget
-     *            the isActiveBudget to set
+     * @param isActiveBudget the isActiveBudget to set
      */
     public void setIsActiveBudget(final boolean isActiveBudget) {
         this.isActiveBudget = isActiveBudget;
@@ -158,8 +161,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isPrimaryBudget
-     *            the isPrimaryBudget to set
+     * @param isPrimaryBudget the isPrimaryBudget to set
      */
     public void setIsPrimaryBudget(final boolean isPrimaryBudget) {
         this.isPrimaryBudget = isPrimaryBudget;
@@ -178,8 +180,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param materialized_path
-     *            the materialized_path to set
+     * @param materialized_path the materialized_path to set
      */
     public void setMaterializedPath(final String materializedPath) {
         this.materializedPath = materializedPath;
@@ -206,4 +207,15 @@ public class Budget extends StateAware {
         return getId().toString();
     }
 
+    public EgwStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EgwStatus status) {
+        this.status = status;
+    }
+
+    public void setWfState(State state) {
+        setState(state);
+    }
 }

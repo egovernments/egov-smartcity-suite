@@ -77,7 +77,7 @@ vDateType = dateType;
 // 3 = dd/mm/yyyy
 //Enter a tilde sign for the first number and you can check the variable information.
 if (vDateValue == "~") {
-alert("AppVersion = "+navigator.appVersion+" \nNav. 4 Version = "+isNav4+" \nNav. 5 Version = "+isNav5+" \nIE Version = "+isIE4+" \nYear Type = "+vYearType+" \nDate Type = "+vDateType+" \nSeparator = "+strSeperator);
+bootbox.alert("AppVersion = "+navigator.appVersion+" \nNav. 4 Version = "+isNav4+" \nNav. 5 Version = "+isNav5+" \nIE Version = "+isIE4+" \nYear Type = "+vYearType+" \nDate Type = "+vDateType+" \nSeparator = "+strSeperator);
 vDateName.value = "";
 vDateName.focus();
 return true;
@@ -112,7 +112,7 @@ var strCheck = '47,48,49,50,51,52,53,54,55,56,57,58,59,95,96,97,98,99,100,101,10
 if (strCheck.indexOf(whichCode) != -1) {
 if (isNav4) {
 if (((vDateValue.length < 6 && dateCheck) || (vDateValue.length == 7 && dateCheck)) && (vDateValue.length >=1)) {
-alert("Invalid Date\nPlease Re-Enter");
+bootbox.alert("Invalid Date\nPlease Re-Enter");
 vDateName.value = "";
 vDateName.focus();
 vDateName.select();
@@ -135,7 +135,7 @@ mYear = '20' + mYear;
 }
 var vDateValueCheck = mMonth+strSeperator+mDay+strSeperator+mYear;
 if (!dateValid(vDateValueCheck)) {
-alert("Invalid Date\nPlease Re-Enter");
+bootbox.alert("Invalid Date\nPlease Re-Enter");
 vDateName.value = "";
 vDateName.focus();
 vDateName.select();
@@ -173,7 +173,7 @@ var vDateTypeTemp = vDateType;
 vDateType = 1;
 var vDateValueCheck = mMonth+strSeperator+mDay+strSeperator+mYear;
 if (!dateValid(vDateValueCheck)) {
-alert("Invalid Date\nPlease Re-Enter");
+bootbox.alert("Invalid Date\nPlease Re-Enter");
 vDateType = vDateTypeTemp;
 vDateName.value = "";
 vDateName.focus();
@@ -185,7 +185,7 @@ return true;
 }
 else {
 if (((vDateValue.length < 8 && dateCheck) || (vDateValue.length == 9 && dateCheck)) && (vDateValue.length >=1)) {
-alert("Invalid Date\nPlease Re-Enter");
+bootbox.alert("Invalid Date\nPlease Re-Enter");
 vDateName.value = "";
 vDateName.focus();
 vDateName.select();
@@ -197,7 +197,7 @@ return false;
 else {
 // Non isNav Check
 if (((vDateValue.length < 8 && dateCheck) || (vDateValue.length == 9 && dateCheck)) && (vDateValue.length >=1)) {
-alert("Invalid Date\nPlease Re-Enter");
+bootbox.alert("Invalid Date\nPlease Re-Enter");
 vDateName.value = "";
 vDateName.focus();
 return true;
@@ -226,7 +226,7 @@ var mYear = vDateName.value.substr(6,4)
 }
 if (vYearLength == 4) {
 if (mYear.length < 4) {
-alert("Invalid Date\nPlease Re-Enter");
+bootbox.alert("Invalid Date\nPlease Re-Enter");
 vDateName.value = "";
 vDateName.focus();
 return true;
@@ -258,7 +258,7 @@ if (vDateTypeTemp == 3) // dd/mm/yyyy
 vDateName.value = mDay+strSeperator+mMonth+strSeperator+mYear;
 }
 if (!dateValid(vDateValueCheck)) {
-alert("Invalid Date\nPlease Re-Enter");
+bootbox.alert("Invalid Date\nPlease Re-Enter");
 vDateType = vDateTypeTemp;
 vDateName.value = "";
 vDateName.focus();
@@ -298,8 +298,8 @@ return true;
 if (vDateValue.length == 10&& dateCheck) {
 if (!dateValid(vDateName)) {
 // Un-comment the next line of code for debugging the dateValid() function error messages
-//alert(err);
-alert("Invalid Date\nPlease Re-Enter");
+//bootbox.alert(err);
+bootbox.alert("Invalid Date\nPlease Re-Enter");
 vDateName.focus();
 vDateName.select();
    }

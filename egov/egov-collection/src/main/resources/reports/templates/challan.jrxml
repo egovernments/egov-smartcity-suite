@@ -1,44 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="challan_receipt"  language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2016-02-02T17:00:26 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="challan_receipt" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e4312988-b816-4aef-b2b1-6b6b0e6a9351">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -88,7 +51,7 @@
 	<detail>
 		<band height="15" splitType="Stretch">
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15" uuid="503c1900-48ef-408e-b0e7-d367975c237d"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -99,10 +62,10 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Demand No:]]></text>
+				<text><![CDATA[Challan No:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="175" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="175" height="15" uuid="df374ade-3625-492f-928f-78c003a42c13"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -113,10 +76,10 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{challanNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{challanNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="275" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="275" y="0" width="100" height="15" uuid="4c6032b5-8c5a-4b85-a9ae-8ac001dad7db"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -127,10 +90,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Demand Date:]]></text>
+				<text><![CDATA[Challan Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy">
-				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="180" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="180" height="15" uuid="b7c8f4b0-7940-4397-a871-351530eb16df"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -141,12 +104,12 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="false" isUnderline="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{challanDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{challanDate}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="15">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="175" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="175" height="15" uuid="62555b96-2707-4b8c-9a52-6962ad9ae03f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -157,10 +120,10 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{payeeName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{payeeName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15" uuid="c29fac7e-cf13-4920-8e27-95d545883ecb"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -174,7 +137,7 @@
 				<text><![CDATA[Payee Name:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="275" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="275" y="0" width="100" height="15" uuid="b7dc4ecb-b526-406d-a792-e997f6b7fe61"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -188,7 +151,7 @@
 				<text><![CDATA[Payee Address:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="180" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="180" height="15" uuid="a47dabf0-9c82-4443-bd7f-df62f96b859c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -199,12 +162,12 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{payeeAddress}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{payeeAddress}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="15">
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="275" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="275" y="0" width="100" height="15" uuid="85454dcb-e6d9-4f07-b243-2f73521e5cca"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -218,7 +181,7 @@
 				<text><![CDATA[Narration:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="180" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="180" height="15" uuid="53c527cf-c5bd-4d68-8df9-976ed706d517"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -229,10 +192,10 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15" uuid="e46329ec-317b-492e-9785-6bd9d947ca21"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -246,7 +209,7 @@
 				<text><![CDATA[Department:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="175" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="175" height="15" uuid="f0e05fdb-5109-4f6d-900a-8eb2e6cfa7f4"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -257,17 +220,17 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptMisc}.department.deptName]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptMisc}.department.name]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="15">
 			<printWhenExpression><![CDATA[$F{challanServiceName} != null && 
 $F{challanServiceName}.trim().length() > 0 && 
 $F{receiptMisc}.getBoundary() != null && 
-$F{receiptMisc}.getBoundary().getBndryNameLocal() != null && 
-$F{receiptMisc}.getBoundary().getBndryNameLocal().trim().length() > 0]]></printWhenExpression>
+$F{receiptMisc}.getBoundary().getLocalName() != null && 
+$F{receiptMisc}.getBoundary().getLocalName().trim().length() > 0]]></printWhenExpression>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15" uuid="83d19e58-9751-477d-9e3a-d20d3998474d"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -281,7 +244,7 @@ $F{receiptMisc}.getBoundary().getBndryNameLocal().trim().length() > 0]]></printW
 				<text><![CDATA[Service:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="175" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="175" height="15" uuid="92b77f7f-febf-4998-a72d-be01f3e20d78"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -292,10 +255,10 @@ $F{receiptMisc}.getBoundary().getBndryNameLocal().trim().length() > 0]]></printW
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{challanServiceName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{challanServiceName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="180" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="180" height="15" uuid="ee7a71ac-0b16-4d55-bfed-161a12499ffc"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -306,10 +269,10 @@ $F{receiptMisc}.getBoundary().getBndryNameLocal().trim().length() > 0]]></printW
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptMisc}.getBoundary().getBndryNameLocal()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptMisc}.getBoundary().getLocalName()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="275" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="275" y="0" width="100" height="15" uuid="0831df21-f041-43e0-9abc-4ba04cb80b3a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -325,7 +288,7 @@ $F{receiptMisc}.getBoundary().getBndryNameLocal().trim().length() > 0]]></printW
 		</band>
 		<band height="15">
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15" uuid="7b4d6242-7468-415d-9308-48a904125f54"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -339,7 +302,7 @@ $F{receiptMisc}.getBoundary().getBndryNameLocal().trim().length() > 0]]></printW
 				<text><![CDATA[Fund:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="15" uuid="2565de61-aeb0-4c35-be3c-9eb9e60874d8"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -350,13 +313,13 @@ $F{receiptMisc}.getBoundary().getBndryNameLocal().trim().length() > 0]]></printW
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptMisc}.getFund().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptMisc}.getFund().getName()]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="15">
 			<printWhenExpression><![CDATA[$F{challanVoucherNum}!=null && $F{challanVoucherNum}!=""]]></printWhenExpression>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15" uuid="8f80209c-722f-43d9-abd6-cd5b16c120db"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -370,7 +333,7 @@ $F{receiptMisc}.getBoundary().getBndryNameLocal().trim().length() > 0]]></printW
 				<text><![CDATA[Link Reference No:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="15"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="15" uuid="f07e3ea7-0ae8-4318-bb90-67517462ef5b"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -381,24 +344,24 @@ $F{receiptMisc}.getBoundary().getBndryNameLocal().trim().length() > 0]]></printW
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{challanVoucherNum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{challanVoucherNum}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="15">
 			<subreport>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="15" forecolor="#000000"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="15" forecolor="#000000" uuid="e7288d29-a750-4262-a784-412e6d36d035"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{accountDetails}, false)]]></dataSourceExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("challan_receipt_accounts.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("challan_receipt_accounts.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="15">
 			<subreport>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="15" isRemoveLineWhenBlank="true" forecolor="#000000"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="7df32fa6-d9ba-4cd2-b8f2-599cd88b857a"/>
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{accountPayeeDetails}, false)]]></dataSourceExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("challan_receipt_accountpayeedetails.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("challan_receipt_accountpayeedetails.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

@@ -92,7 +92,6 @@ public class PropertyImpl extends Property {
 		 */
 		
 		PTBillServiceImpl billServiceInterface = new PTBillServiceImpl();
-		billServiceInterface.setPropertyTaxCollection(propertyTaxCollection);
 		billServiceInterface.setPropertyTaxUtil(propTaxUtil);
 		EgBill bill = billServiceInterface.generateBill(billable);
 

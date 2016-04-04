@@ -1,43 +1,43 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <SCRIPT type="text/javascript">
@@ -101,7 +101,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -235,7 +235,7 @@
 		return function(el, oRecord, oColumn, oData) {
 			var value = (YAHOO.lang.isValue(oData))?oData:"";
 			var index=getIndexForTableType(tableType);
-			//alert("hiii");
+			//bootbox.alert("hiii");
 			var fieldName = prefix+"[" + index + "]" +  suffix;
 			var idt=oColumn.getKey()+oRecord.getId();
 			var id=idt.replace("-","");
@@ -282,7 +282,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	                  
 }
@@ -290,7 +290,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 		var branchId=obj.value;
 		selectedname=obj.name;
 		
-		//alert("object in get branch>>"+selectedname);
+		//bootbox.alert("object in get branch>>"+selectedname);
 		var url = '../voucher/common!ajaxLoadBranchAccountNumbers.action?branchId='+branchId;
 		YAHOO.util.Connect.asyncRequest('POST', url, bankAccountList, null);
 	
@@ -310,7 +310,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 	
 		
 		<s:iterator var="p" value="fixedDepositList" status="fixedDep_staus">
-		//alert('<s:property value="#fixedDep_staus.index"/>'+"   "+ind);
+		//bootbox.alert('<s:property value="#fixedDep_staus.index"/>'+"   "+ind);
 		
 		if('<s:property value="#fixedDep_staus.index"/>'==ind){
 		
@@ -321,7 +321,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 			 {
 				res1[i]=new Array(accSize);
 				resId[i]=new Array(accSize);
-				///alert(accSize);
+				///bootbox.alert(accSize);
 				
 				if(j<accSize){
 					res1[i][j]='<s:property value="accountnumber"/>'+"-"+'<s:property value="%{chartofaccounts.glcode}"/>';
@@ -334,14 +334,14 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 		
 		}
 		</s:iterator>    
-		//alert(res1.length);
+		//bootbox.alert(res1.length);
 		var accNumid1=selectedname;
 		accNumid1=accNumid1.replace('Branch','Account');
-		//alert("accnum "+accNumid);
+		//bootbox.alert("accnum "+accNumid);
 		var x=document.getElementById(accNumid1);
 				x.length=0;
 				x.options[0]=new Option("----Choose----","-1");  
-				//alert(res1);     
+				//bootbox.alert(res1);     
 				var k=0;    
  							for(var i=0;i<res1.length;i++)
  							{ 
@@ -357,9 +357,9 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 				var docs=o.responseText;               
 				res=docs.split("$");
 				var accNumid=selectedname;
-				//alert("docs "+docs);
+				//bootbox.alert("docs "+docs);
 				accNumid=accNumid.replace('Branch','Account');
-				//alert("accnum "+accNumid);
+				//bootbox.alert("accnum "+accNumid);
 				var x=document.getElementById(accNumid);
 				x.length=0;
 				x.options[0]=new Option("----Choose----","-1");  
@@ -374,7 +374,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 			}
 		},                                         
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	}
 	            
@@ -395,7 +395,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 		document.getElementById(id).value=data[2];   // vouchderid
 		patt1 = name.match("outFlowVoucher.voucherNumber");
 		patt2 = name.match("inFlowVoucher.voucherNumber");
-		//alert(name+" >>> hi name");                     
+		//bootbox.alert(name+" >>> hi name");                     
 		              
 		if(patt1=="outFlowVoucher.voucherNumber"){
 			onlyName=name.replace(".outFlowVoucher.voucherNumber","")
@@ -404,7 +404,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 			onlyName=name.replace(".inFlowVoucher.voucherNumber","")
 		}
 		else{
-			alert("inside Challan reciept voucher");
+			bootbox.alert("inside Challan reciept voucher");
 			onlyName=name.replace(".challanReceiptVoucher.voucherNumber","")
 			loadChequeNoAndDate(data[2],onlyName);
 			
@@ -442,29 +442,29 @@ function updateFDTableIndex()
 }
 
 </SCRIPT>
-		
-		<div id="labelAD" align="center">
-			<h1>
-				<s:text name="fixeddeposit.heading.view" />
-			</h1>
-		</div>
-		<br></br>
 
-		<div class="formmainbox">
-			<div class="formheading" />
-				<div class="subheadnew">
-					<s:text name="fixeddeposit.heading.detail" />
-				</div>
-			</div>
-		</div>
-		<div id="listid" style="display: block"></div>
-		<br></br>
-		<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
-			<div id="fdTablediv"></div>
-		</div>
-		
+<div id="labelAD" align="center">
+	<h1>
+		<s:text name="fixeddeposit.heading.view" />
+	</h1>
+</div>
+<br></br>
 
-		<script type="text/javascript">
+<div class="formmainbox">
+	<div class="formheading" />
+	<div class="subheadnew">
+		<s:text name="fixeddeposit.heading.detail" />
+	</div>
+</div>
+</div>
+<div id="listid" style="display: block"></div>
+<br></br>
+<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
+	<div id="fdTablediv"></div>
+</div>
+
+
+<script type="text/javascript">
      		makeFDTable('fdTablediv');
      		document.getElementById('fdTablediv').getElementsByTagName('table')[0].width="80%";
      		 

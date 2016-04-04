@@ -13,19 +13,19 @@
 	function validateWorkFlowApprover(name) {
 	    document.getElementById("workFlowAction").value=name;
 	    var approverPosId = document.getElementById("approverPositionId");
-	    if(approverPosId && approverPosId.value != -1) {
+	    if(approverPosId && approverPosId.value != -1 && approverPosId.value != "") {
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}   
 		<s:if test="%{getNextAction()!='END'}">
-	    if((name=="Forward" || name=="forward") && approverPosId && approverPosId.value == -1) {
-	        alert("Please Select the Approver ");
+	    if((name=="Forward" || name=="forward") && approverPosId && (approverPosId.value == -1 || approverPosId.value == "")) {
+	        bootbox.alert("Please Select the Approver ");
 			return false;
 	    }
 	    if ((name=="Reject" || name=="reject")) {
 	    	var approverComments = document.getElementById("approverComments").value;
 	    	if (approverComments == null || approverComments == "") {
-	    		alert("Please Enter Approver Remarks ");
+	    		bootbox.alert("Please Enter Approver Remarks ");
 				return false;
 	    	}
 		}

@@ -71,10 +71,12 @@ public class DishonorCheque extends StateAware {
     private boolean firstStepWk;
     private Set<DishonorChequeDetails> details = new HashSet<DishonorChequeDetails>(0);
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }

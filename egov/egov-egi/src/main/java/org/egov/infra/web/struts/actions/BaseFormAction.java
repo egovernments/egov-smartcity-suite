@@ -48,12 +48,15 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.SessionAware;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
@@ -63,130 +66,148 @@ import com.opensymphony.xwork2.interceptor.ParameterNameAware;
 
 @ParentPackage("egov")
 public abstract class BaseFormAction extends ActionSupport
-        implements ModelDriven<Object>, ParameterAware, SessionAware, Preparable, RequestAware, ParameterNameAware {
-    private static final long serialVersionUID = 1L;
-    private Map<String, Object> session;
-    public static final String INDEX = "index";
-    public static final String NEW = "new";
-    public static final String EDIT = "edit";
-    public static final String VIEW = "view";
-    
-    public static final String TRANSACTIONSUCCESS = "transactionsuccess";
-    protected PersistenceService persistenceService;
-    protected Map<String, Object> request;
-    protected Map<String, List> dropdownData = new HashMap<String, List>();
-    protected Map<String, Class> relations = new HashMap<String, Class>();
-    protected Map<String, String> ordering = new HashMap<String, String>();
-    protected Map<String, String[]> parameters;
+implements ModelDriven<Object>, ParameterAware, SessionAware, Preparable, RequestAware, ParameterNameAware {
 
-    protected Map<String, Object> session() {
-        return session;
-    }
+	private static final Logger LOGGER = Logger.getLogger(BaseFormAction.class);
+	private static final long serialVersionUID = 1L;
+	private Map<String, Object> session;
+	public static final String INDEX = "index";
+	public static final String NEW = "new";
+	public static final String EDIT = "edit";
+	public static final String VIEW = "view";
 
-    @Override
-    public void setSession(final Map<String, Object> session) {
-        this.session = session;
-    }
+	public static final String TRANSACTIONSUCCESS = "transactionsuccess";
+	@Autowired
+	@Qualifier("persistenceService")
+	protected PersistenceService persistenceService;
+	protected Map<String, Object> request;
+	protected Map<String, List> dropdownData = new HashMap<String, List>();
+	protected Map<String, Class> relations = new HashMap<String, Class>();
+	protected Map<String, String> ordering = new HashMap<String, String>();
+	protected Map<String, String[]> parameters;
 
-    public Map<String, Object> getSession() {
-        return session;
-    }
+	protected Map<String, Object> session() {
+		return session;
+	}
 
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
-    }
+	@Override
+	public void setSession(final Map<String, Object> session) {
+		this.session = session;
+	}
 
-    @Override
-    public void prepare() {
-        final Map<String, Class> relationships = getRelationships();
-        for (final Entry<String, Class> rel : relationships.entrySet())
-            setRelationship(rel.getKey(), rel.getValue());
-    }
+	public Map<String, Object> getSession() {
+		return session;
+	}
 
-    private void setRelationship(final String relationshipName, final Class class1) {
-        final String[] ids = parameters.get(relationshipName);
-        Object relation = null;
-        if (ids != null && ids.length > 0) {
-            final String id = ids[0];
-            if (StringUtils.isNotBlank(id) && Long.valueOf(id) > 0)
-                try {
-                    final PropertyDescriptor propDiscriptor = new PropertyDescriptor("id", class1);
-                    if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
-                        relation = getPersistenceService().load(Long.valueOf(id), class1);
-                    else
-                        relation = getPersistenceService().load(Integer.valueOf(id), class1);
-                    setValue(relationshipName, relation);
+	public PersistenceService getPersistenceService() {
+		return persistenceService;
+	}
 
-                } catch (final Exception iae) {
-                    throw new ApplicationRuntimeException("Model class does not have getId method", iae);
-                }
-        }
-    }
+	@Override
+	public void prepare() {
+		final Map<String, Class> relationships = getRelationships();
+		for (final Entry<String, Class> rel : relationships.entrySet())
+			setRelationship(rel.getKey(), rel.getValue());
+	}
 
-    protected void setValue(final String relationshipName, final Object relation) {
-        ActionContext.getContext().getValueStack().setValue("model." + relationshipName, relation);
-    }
+	private void setRelationship(final String relationshipName, final Class class1) {
+		final String[] ids = parameters.get(relationshipName);
+		Object relation = null;
+		if (ids != null && ids.length > 0) {
+			final String id = ids[0];
+			if (StringUtils.isNotBlank(id) && Long.valueOf(id) > 0)
+				try {
 
-    public Map<String, Class> getRelationships() {
-        return relations;
-    }
+					final PropertyDescriptor propDiscriptor = new PropertyDescriptor("id", class1);
+					if(LOGGER.isDebugEnabled())
+					{
+						LOGGER.debug(class1.getCanonicalName());
+						LOGGER.debug(propDiscriptor.getPropertyType());
+						LOGGER.debug(propDiscriptor.getPropertyType().isAssignableFrom(Integer.class));
+						LOGGER.debug(propDiscriptor.getPropertyType().isAssignableFrom(Long.class));
+						LOGGER.debug(propDiscriptor.getPropertyType().getCanonicalName());
+					}
+					if(class1!=null && "Fund".equals(class1.getSimpleName()))
+					{
+						relation = getPersistenceService().load(Integer.valueOf(id), class1);
+					}
+					else if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
+						relation = getPersistenceService().load(Long.valueOf(id), class1);
+					else
+						relation = getPersistenceService().load(Integer.valueOf(id), class1);
 
-    public Map<String, List> getDropdownData() {
-        return dropdownData;
-    }
+					setValue(relationshipName, relation);
 
-    @Override
-    public void setRequest(final Map<String, Object> request) {
-        this.request = request;
-    }
+				} catch (final Exception iae) {
+					throw new ApplicationRuntimeException("Model class does not have getId method", iae);
+				}
+		}
+	}
 
-    public void setPersistenceService(final PersistenceService service) {
-        persistenceService = service;
-    }
+	protected void setValue(final String relationshipName, final Object relation) {
+		ActionContext.getContext().getValueStack().setValue("model." + relationshipName, relation);
+	}
 
-    protected void setupDropdownDataExcluding(final String... excluded) {
-        final List<String> excludedRelations = new ArrayList<String>();
-        if (excluded != null)
-            for (final String e : excluded)
-                excludedRelations.add(e);
-        for (final Entry<String, Class> rel : relations.entrySet())
-            if (!excludedRelations.contains(rel.getKey()))
-                if (!ordering.containsKey(rel.getKey()))
-                    dropdownData.put(rel.getKey() + "List",
-                            getPersistenceService().findAllBy("from " + relations.get(rel.getKey()).getSimpleName()));
-                else
-                    dropdownData.put(rel.getKey() + "List", getPersistenceService().findAllBy(
-                            "from " + relations.get(rel.getKey()).getSimpleName() + " order by " + ordering.get(rel.getKey())));
-    }
+	public Map<String, Class> getRelationships() {
+		return relations;
+	}
 
-    protected void addRelatedEntity(final String name, final Class type) {
-        relations.put(name, type);
-    }
+	public Map<String, List> getDropdownData() {
+		return dropdownData;
+	}
 
-    protected void addRelatedEntity(final String name, final Class type, final String order) {
-        relations.put(name, type);
-        ordering.put(name, order);
-    }
+	@Override
+	public void setRequest(final Map<String, Object> request) {
+		this.request = request;
+	}
 
-    protected void addDropdownData(final String name, final List values) {
-        dropdownData.put(name, values);
-    }
+	public void setPersistenceService(final PersistenceService service) {
+		persistenceService = service;
+	}
 
-    @Override
-    public boolean acceptableParameterName(final String paramName) {
-        return !relations.containsKey(paramName);
-    }
+	protected void setupDropdownDataExcluding(final String... excluded) {
+		final List<String> excludedRelations = new ArrayList<String>();
+		if (excluded != null)
+			for (final String e : excluded)
+				excludedRelations.add(e);
+		for (final Entry<String, Class> rel : relations.entrySet())
+			if (!excludedRelations.contains(rel.getKey()))
+				if (!ordering.containsKey(rel.getKey()))
+					dropdownData.put(rel.getKey() + "List",
+							getPersistenceService().findAllBy("from " + relations.get(rel.getKey()).getSimpleName()));
+				else
+					dropdownData.put(rel.getKey() + "List", getPersistenceService().findAllBy(
+							"from " + relations.get(rel.getKey()).getSimpleName() + " order by " + ordering.get(rel.getKey())));
+	}
 
-    @Override
-    public void setParameters(final Map<String, String[]> parameters) {
-        this.parameters = parameters;
-    }
+	protected void addRelatedEntity(final String name, final Class type) {
+		relations.put(name, type);
+	}
 
-    public Map<String, String> getOrdering() {
-        return ordering;
-    }
+	protected void addRelatedEntity(final String name, final Class type, final String order) {
+		relations.put(name, type);
+		ordering.put(name, order);
+	}
 
-    public String tokenName() {
-        return this.getClass().getSimpleName() + UUID.randomUUID();
-    }
+	protected void addDropdownData(final String name, final List values) {
+		dropdownData.put(name, values);
+	}
+
+	@Override
+	public boolean acceptableParameterName(final String paramName) {
+		return !relations.containsKey(paramName);
+	}
+
+	@Override
+	public void setParameters(final Map<String, String[]> parameters) {
+		this.parameters = parameters;
+	}
+
+	public Map<String, String> getOrdering() {
+		return ordering;
+	}
+
+	public String tokenName() {
+		return this.getClass().getSimpleName() + UUID.randomUUID();
+	}
 }

@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -67,16 +66,18 @@ public class WaterPropertyUsage extends AbstractPersistable<Long> {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "usagetype")
-    private UsageType usagetype;
+    private UsageType usageType;
 
-    @Column(name = "propertytype")
-    private Long propertyType;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "propertytype")
+    private PropertyType propertyType;
 
-    public Long getPropertyType() {
+    public PropertyType getPropertyType() {
         return propertyType;
     }
 
-    public void setPropertyType(final Long propertyType) {
+    public void setPropertyType(PropertyType propertyType) {
         this.propertyType = propertyType;
     }
 
@@ -90,12 +91,12 @@ public class WaterPropertyUsage extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public UsageType getUsagetype() {
-        return usagetype;
+    public UsageType getUsageType() {
+        return usageType;
     }
 
-    public void setUsagetype(final UsageType usagetype) {
-        this.usagetype = usagetype;
+    public void setUsageType(UsageType usageType) {
+        this.usageType = usageType;
     }
 
 }

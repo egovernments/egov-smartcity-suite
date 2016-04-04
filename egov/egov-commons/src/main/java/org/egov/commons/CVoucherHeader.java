@@ -32,7 +32,6 @@ package org.egov.commons;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -42,7 +41,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -52,7 +50,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
-
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
@@ -68,33 +65,29 @@ public class CVoucherHeader extends StateAware {
     @GeneratedValue(generator = SEQ_VOUCHERHEADER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private String cgn;
     private String name;
     private String type;
     private String description;
-    @NotNull
     private Date effectiveDate;
     private String voucherNumber;
     private Date voucherDate;
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "fundId")
     private Fund fundId;
     private Integer fiscalPeriodId;
     private Integer status;
     private Long originalvcId;
     private Integer isConfirmed;
-    private String refcgNo;
+    private Long refvhId;
     private String cgvn;
     private Integer moduleId;
     @Transient
     private String voucherSubType;
     @Transient
     private Boolean isRestrictedtoOneFunctionCenter;
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "generalLedger", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "voucherHeaderId"))
-    private Set<CGeneralLedger> genenralLedger = new HashSet<CGeneralLedger>(0);
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="voucherHeaderId",targetEntity=CGeneralLedger.class )
+    private Set<CGeneralLedger> generalLedger;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid" , targetEntity=Vouchermis.class)
     private Vouchermis vouchermis;
 
     public Long getId() {
@@ -105,19 +98,6 @@ public class CVoucherHeader extends StateAware {
         this.id = id;
     }
 
-    /**
-     * @return Returns the cgn.
-     */
-    public String getCgn() {
-        return cgn;
-    }
-
-    /**
-     * @param cgn The cgn to set.
-     */
-    public void setCgn(final String cgn) {
-        this.cgn = cgn;
-    }
 
     /**
      * @return Returns the name.
@@ -280,19 +260,13 @@ public class CVoucherHeader extends StateAware {
         this.isConfirmed = isConfirmed;
     }
 
-    /**
-     * @return Returns the refcgNo.
-     */
 
-    public String getRefcgNo() {
-        return refcgNo;
+    public Long getRefvhId() {
+        return refvhId;
     }
 
-    /**
-     * @param refcgNo The refcgNo to set.
-     */
-    public void setRefcgNo(final String refcgNo) {
-        this.refcgNo = refcgNo;
+    public void setRefvhId(Long refvhId) {
+        this.refvhId = refvhId;
     }
 
     /**
@@ -324,7 +298,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     public Set<CGeneralLedger> getGeneralledger() {
-        return genenralLedger;
+        return generalLedger;
     }
 
     public Vouchermis getVouchermis() {
@@ -337,7 +311,6 @@ public class CVoucherHeader extends StateAware {
 
     public void reset() {
 
-        cgn = null;
         name = null;
         type = null;
         description = null;
@@ -349,7 +322,7 @@ public class CVoucherHeader extends StateAware {
         status = null;
         originalvcId = null;
         isConfirmed = null;
-        refcgNo = null;
+        refvhId = null;
         cgvn = null;
         moduleId = null;
         vouchermis = null;
@@ -358,7 +331,7 @@ public class CVoucherHeader extends StateAware {
 
     public BigDecimal getTotalAmount() {
         BigDecimal amount = BigDecimal.ZERO;
-        for (final CGeneralLedger detail : genenralLedger)
+        for (final CGeneralLedger detail : generalLedger)
             amount = amount.add(new BigDecimal(detail.getDebitAmount()));
         return amount;
     }
@@ -377,6 +350,14 @@ public class CVoucherHeader extends StateAware {
 
     public void setVoucherSubType(final String voucherSubType) {
         this.voucherSubType = voucherSubType;
+    }
+
+    public Set<CGeneralLedger> getGeneralLedger() {
+        return generalLedger;
+    }
+
+    public void setGeneralLedger(Set<CGeneralLedger> generalLedger) {
+        this.generalLedger = generalLedger;
     }
 
 }

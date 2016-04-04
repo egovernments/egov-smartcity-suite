@@ -46,12 +46,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AgencyWiseCollection;
-import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.service.AdvertisementDemandService;
+import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.AgencyService;
 import org.egov.adtax.service.AgencyWiseCollectionService;
-import org.egov.adtax.service.HoardingService;
 import org.egov.adtax.service.collection.AdvertisementBillServiceImpl;
 import org.egov.adtax.service.collection.AdvertisementBillable;
 import org.egov.adtax.service.collection.AgencyWiseBillServiceImpl;
@@ -70,10 +70,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/hoarding")
 public class AdvertisementBillGeneratorController {
 
-    private final AdvertisementBillServiceImpl advertisementBillServiceImpl;
-    private final HoardingService hoardingService;
-    private final AdvertisementBillable advertisementBillable;
-    private final AgencyWiseBillable agencyWiseBillable;
+    private @Autowired AdvertisementBillServiceImpl advertisementBillServiceImpl;
+    private @Autowired AdvertisementService advertisementService;
+    private @Autowired AdvertisementBillable advertisementBillable;
+    private @Autowired AgencyWiseBillable agencyWiseBillable;
 
     private @Autowired AgencyWiseBillServiceImpl agencyWiseBillServiceImpl;
     private @Autowired SequenceNumberGenerator sequenceNumberGenerator;
@@ -82,16 +82,7 @@ public class AdvertisementBillGeneratorController {
     private @Autowired AgencyService agencyService;
     private String ADVERTISEMENT_BILLNUMBER = "SEQ_advertisementbill_NUMBER";
 
-    @Autowired
-    public AdvertisementBillGeneratorController(final AgencyWiseBillable agencyWiseBillable,
-            final AdvertisementBillable advertisementBillable,
-            final AdvertisementBillServiceImpl advertisementBillServiceImpl, final HoardingService hoardingService) {
-        this.hoardingService = hoardingService;
-        this.advertisementBillServiceImpl = advertisementBillServiceImpl;
-        this.advertisementBillable = advertisementBillable;
-        this.agencyWiseBillable = agencyWiseBillable;
-    }
-
+    
     @RequestMapping(value = "/collectTaxByAgency/{agencyName}/{hoardingIds}/{total}", method = GET)
     public String collectFeeByAgency(final Model model, @PathVariable final String hoardingIds,
             @PathVariable final String agencyName, @PathVariable final BigDecimal total) {
@@ -137,19 +128,24 @@ public class AdvertisementBillGeneratorController {
     public String showCollectFeeForm(final Model model, @PathVariable final String collectionType,
             @PathVariable final String hoardingCode) {
 
-        final Hoarding hoarding = hoardingService.findByHoardingNumber(hoardingCode);
-        if (hoarding != null && hoarding.getDemandId() != null) {
+        final Advertisement advertisement = advertisementService.findByAdvertisementNumber(hoardingCode);
+        if (advertisement != null && advertisement.getDemandId() != null) {
             // CHECK ANY DEMAND PENDING OR NOT
-            if (!advertisementDemandService.checkAnyTaxIsPendingToCollect(hoarding)) {
+            if (!advertisementDemandService.checkAnyTaxIsPendingToCollect(advertisement)) {
                 model.addAttribute("message", "msg.collection.noPendingTax");
                 return "collectAdvtax-error";
             }
-
-            if (collectionType != null && !"".equals(collectionType))
-                advertisementBillable.setCollectionType(collectionType);
-            else
-                advertisementBillable.setCollectionType("Hoarding");
-            advertisementBillable.setHoarding(hoarding);
+            
+             advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);
+            
+             if (collectionType != null && !"".equals(collectionType)){
+                 if(collectionType.equalsIgnoreCase("hoarding"))
+                     advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);  
+                 else
+                     advertisementBillable.setCollectionType(collectionType);
+                           
+             }
+            advertisementBillable.setAdvertisement(advertisement);
 
             final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(ADVERTISEMENT_BILLNUMBER);
             advertisementBillable.setReferenceNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
@@ -165,15 +161,16 @@ public class AdvertisementBillGeneratorController {
     }
 
     @RequestMapping(value = "/generatebill/{hoardingCode}", method = POST)
-    public String payTax(@ModelAttribute Hoarding hoarding, @PathVariable final String collectionType,
+    public String payTax(@ModelAttribute Advertisement advertisement, @PathVariable final String collectionType,
             final RedirectAttributes redirectAttributes, @PathVariable final String hoardingCode, final Model model) {
 
-        hoarding = hoardingService.findByHoardingNumber(hoardingCode);
-        if (advertisementBillable != null)
+        advertisement = advertisementService.findByAdvertisementNumber(hoardingCode);
+        
+        advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);
+        if (advertisementBillable != null && collectionType!=null)
             advertisementBillable.setCollectionType(collectionType);
-        else
-            advertisementBillable.setCollectionType("Hoarding");
-        advertisementBillable.setHoarding(hoarding);
+            
+        advertisementBillable.setAdvertisement(advertisement);
         model.addAttribute("collectxml", advertisementBillServiceImpl.getBillXML(advertisementBillable));
 
         return "collecttax-redirection";

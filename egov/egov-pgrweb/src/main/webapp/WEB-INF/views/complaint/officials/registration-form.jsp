@@ -84,12 +84,14 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.mobileNo"/><span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.mobileNo"/><span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin">
-							<form:input path="complainant.mobile" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number"/>
+							<div class="input-group">
+								<span class="input-group-addon">+91</span>
+								  	<form:input path="complainant.mobile" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number"/>
+							</div>
 							<form:errors path="complainant.mobile" cssClass="add-margin error-msg"/>
 						</div>
-						
 						<div class="col-sm-1">
 							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
 						</div>
@@ -150,7 +152,7 @@
 					</div>
 					
 					<div class="form-group">
-						<div class="col-sm-3 col-xs-12 text-right">
+						<div class="col-sm-3 col-xs-12 text-center">
 							<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.uploadPhotoVid"/></a>
 							<input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"/>
 							<input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"/>
@@ -241,9 +243,9 @@
 		</div>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
+<script src="<c:url value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/app/complaint.js'/>"></script>
+<script src="<c:url value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
 <script>
 	var receivingMode = '${complaint.receivingMode}';
 	if(receivingMode === 'MANUAL') {

@@ -123,7 +123,7 @@ public class CityService {
         return String.format(CITY_PREFS_CK, EgovThreadLocals.getDomainName());
     }
     
-    private Object cityDataForKey(final String key) {
+    public Object cityDataForKey(final String key) {
         return cityPrefCache.entries(cityPrefCacheKey()).get(key);
     }
 }

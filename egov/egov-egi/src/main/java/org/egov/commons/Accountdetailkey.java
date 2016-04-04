@@ -44,25 +44,10 @@ public class Accountdetailkey implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
-	private CChartOfAccounts chartofaccounts;
 	private Integer groupid;
 	private String detailname;
 	private Integer detailkey;
 	private Accountdetailtype accountdetailtype;
-
-	/**
-	 * @return Returns the chartofaccounts.
-	 */
-	public CChartOfAccounts getChartofaccounts() {
-		return chartofaccounts;
-	}
-
-	/**
-	 * @param chartofaccounts The chartofaccounts to set.
-	 */
-	public void setChartofaccounts(CChartOfAccounts chartofaccounts) {
-		this.chartofaccounts = chartofaccounts;
-	}
 
 	/**
 	 * @return Returns the detailkey.

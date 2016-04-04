@@ -1,64 +1,104 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <html>
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <head>
-<sx:head/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
+<sx:head />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js?rnd=${app_release_no}"></script>
 
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
 </style>
 <script>
 	path="${pageContext.request.contextPath}";
@@ -111,7 +151,7 @@
 					check();
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 			
@@ -203,7 +243,7 @@
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});
@@ -238,135 +278,136 @@
 	var 	button='<s:property value="button"/>';
 	</script>
 </head>
-<body onload="onLoadTask_edit();loadDropDownCodesExcludingCashAndBank();loadDropDownCodesFunction();">
-<s:form  action="directBankPayment" theme="css_xhtml" name="dbpform" validate="true">
-<s:push value="model">
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Bank to Bank Transfer" name="heading"/>
-</jsp:include>
-<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Modify Direct  Bank Payment</div>
-		<div id="listid" style="display:block">
-		<br/>
-		</div></div>
-		<div align="center">
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" ></p>
-</font>
-</div>
-<span class="mandatory" >
-				<div id="Errors" ><s:actionerror /><s:fielderror /></div>
-				<s:actionmessage />
+<body
+	onload="onLoadTask_edit();loadDropDownCodesExcludingCashAndBank();loadDropDownCodesFunction();">
+	<s:form action="directBankPayment" theme="css_xhtml" name="dbpform"
+		validate="true">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param value="Bank to Bank Transfer" name="heading" />
+			</jsp:include>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Modify Direct Bank Payment</div>
+				<div id="listid" style="display: block">
+					<br />
+				</div>
+			</div>
+			<div align="center">
+				<font style='color: red;'>
+					<p class="error-block" id="lblError"></p>
+				</font>
+			</div>
+			<span class="mandatory">
+				<div id="Errors">
+					<s:actionerror />
+					<s:fielderror />
+				</div> <s:actionmessage />
 			</span>
-	<table border="0" width="100%" cellspacing="0" cellpadding="0">
-						<tr>
-							<td class="bluebox" width="10%"></td>
-							<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-								<td class="bluebox" width="22%">
-									<s:text name="voucher.number" />
-									<span class="mandatory">*</span>
-								</td>
-								<td class="bluebox" width="22%">
-									<table width="100%">
-										<tr>
-											<td style="width: 25%">
-												<input type="text" name="voucherNumberPrefix"
-													id="voucherNumberPrefix" readonly="true"
-													style="width: 100%" />
-											</td>
-											<td width="75%">
-												<input type="text" name="voucherNumberRest"
-													id="voucherNumberRest" onblur="updateVoucherNumber();" />
-											</td>
-										</tr>
-									</table>
-								</td>
+			<table border="0" width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="bluebox" width="10%"></td>
+					<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+						<td class="bluebox" width="22%"><s:text name="voucher.number" />
+							<span class="mandatory">*</span></td>
+						<td class="bluebox" width="22%">
+							<table width="100%">
+								<tr>
+									<td style="width: 25%"><input type="text"
+										name="voucherNumberPrefix" id="voucherNumberPrefix"
+										readonly="true" style="width: 100%" /></td>
+									<td width="75%"><input type="text"
+										name="voucherNumberRest" id="voucherNumberRest"
+										onblur="updateVoucherNumber();" /></td>
+								</tr>
+							</table>
+						</td>
 
-								<s:hidden name="voucherNumber" id="voucherNumber" />
-							</s:if>
-							<s:else>
-								<td class="bluebox" width="22%">
-									<s:text name="voucher.number" />
-									<span class="mandatory">*</span>
-								</td>
-								<td class="bluebox" width="22%">
-									<table width="100%">
-										<tr>
-											<td style="width: 25%">
-												<input type="text" name="voucherNumberPrefix"
-													id="voucherNumberPrefix" readonly="true"
-													style="width: 100%" />
-											</td>
-											<td width="75%">
-												<input type="text" name="voucherNumberRest"
-													id="voucherNumberRest" readonly="true" />
-											</td>
-										</tr>
-									</table>
-								</td>
-								<s:hidden name="voucherNumber" id="voucherNumber" />
-							</s:else>
-							<s:hidden name="id" />
-							<td class="bluebox" width="18%%">
-								<s:text name="voucher.date" />
-								<span class="mandatory">*</span>
-							</td>
-							<td class="bluebox" width="34%">
-							<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy'/>
-								<s:textfield  name="voucherDate" id="voucherDate"
-									value='%{voucherDateId}'
-									onkeyup="DateFormat(this,this.value,event,false,'3')" />  
-								<a href="javascript:show_calendar('dbpform.voucherDate');"
-									style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="/egi/resources/erp2/images/calendaricon.gif"
-										border="0" />
-								</A>
-							</td>
-						</tr>
-						<%@include file="directBankPayment-form.jsp"%>
-						<s:hidden name="typeOfAccount" id="typeOfAccount" value="%{typeOfAccount}"/>
-	<tr>
-  		<td  colspan="6"> 
-			<%@include file="../voucher/workflowApproval.jsp"%>
-		</td>
-  	</tr>
-	<tr>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox" ><strong>Comments</strong></td>
-		<td class="bluebox" colspan="4"><s:textarea name="comments" id="comments" cols="100" rows="3" onblur="checkLength(this)" value="%{getComments()}"/></td>
-	</tr>
-	</table>
-	<table align="center">
-	<tr class="buttonbottom" id="buttondiv" style="align:middle">
-		<s:hidden  name="actionname" id="actionName" value="%{action}"/>   
-		<s:iterator value="%{getValidActions()}" var="p"  status="s">
-	 	<td> <s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="wfBtn%{#s.index}" name="%{name}" method="edit" onclick="return validate('%{name}','%{description}')"/> </td> 
-		</s:iterator>
-		<td><s:submit method="cancelPayment" value="Cancel Payment" cssClass="buttonsubmit" id="updatebtnid" onclick="document.getElementById('actionName').value='canccelPayment';"/></td>
-		<td><input type="submit" value="Close" onclick="javascript:window.close()" class="button"/></td>
-	</tr>
-	</table>
-	<div class="subheadsmallnew"/></div>
-	<div class="mandatory" align="left">* Mandatory Fields</div>
-	</div>	
-</s:push>
-	<s:if test="%{validateUser('balancecheck')}">
-		<script>
+						<s:hidden name="voucherNumber" id="voucherNumber" />
+					</s:if>
+					<s:else>
+						<td class="bluebox" width="22%"><s:text name="voucher.number" />
+							<span class="mandatory">*</span></td>
+						<td class="bluebox" width="22%">
+							<table width="100%">
+								<tr>
+									<td style="width: 25%"><input type="text"
+										name="voucherNumberPrefix" id="voucherNumberPrefix"
+										readonly="true" style="width: 100%" /></td>
+									<td width="75%"><input type="text"
+										name="voucherNumberRest" id="voucherNumberRest"
+										readonly="true" /></td>
+								</tr>
+							</table>
+						</td>
+						<s:hidden name="voucherNumber" id="voucherNumber" />
+					</s:else>
+					<s:hidden name="id" />
+					<td class="bluebox" width="18%%"><s:text name="voucher.date" />
+						<span class="mandatory">*</span></td>
+					<td class="bluebox" width="34%"><s:date name='voucherDate'
+							id="voucherDateId" format='dd/MM/yyyy' /> <s:textfield
+							name="voucherDate" id="voucherDate" value='%{voucherDateId}'
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('dbpform.voucherDate');"
+						style="text-decoration: none">&nbsp;<img tabIndex="-1"
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" />
+					</A></td>
+				</tr>
+				<%@include file="directBankPayment-form.jsp"%>
+				<s:hidden name="typeOfAccount" id="typeOfAccount"
+					value="%{typeOfAccount}" />
+				<tr>
+					<td colspan="6"><%@include
+							file="../voucher/workflowApproval.jsp"%>
+					</td>
+				</tr>
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><strong>Comments</strong></td>
+					<td class="bluebox" colspan="4"><s:textarea name="comments"
+							id="comments" cols="100" rows="3" onblur="checkLength(this)"
+							value="%{getComments()}" /></td>
+				</tr>
+			</table>
+			<table align="center">
+				<tr class="buttonbottom" id="buttondiv" style="align: middle">
+					<s:hidden name="actionname" id="actionName" value="%{action}" />
+					<s:iterator value="%{getValidActions()}" var="p" status="s">
+						<td><s:submit type="submit" cssClass="buttonsubmit"
+								value="%{description}" id="wfBtn%{#s.index}" name="%{name}"
+								method="edit"
+								onclick="return validate('%{name}','%{description}')" /></td>
+					</s:iterator>
+					<td><s:submit method="cancelPayment" value="Cancel Payment"
+							cssClass="buttonsubmit" id="updatebtnid"
+							onclick="document.getElementById('actionName').value='canccelPayment';" /></td>
+					<td><input type="submit" value="Close"
+						onclick="javascript:window.close()" class="button" /></td>
+				</tr>
+			</table>
+			<div class="subheadsmallnew" /></div>
+			<div class="mandatory" align="left">* Mandatory Fields</div>
+			</div>
+		</s:push>
+		<s:if test="%{validateUser('balancecheck')}">
+			<script>
 			if(document.getElementById('balanceText'))
 			{
 				document.getElementById('bankbalanceRow').style.visibility='visible';
 				//document.getElementById('balance').innerHTML='<s:property value="%{balance}"/>'
 			}
 		</script>
-	</s:if>
-	<script>
+		</s:if>
+		<script>
 		{
 			if(opener && opener.top && opener.top.document.getElementById('inboxframe'))
 				opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
 		}
 	</script>
-				
-</s:form>
-<SCRIPT type="text/javascript">
+
+	</s:form>
+	<SCRIPT type="text/javascript">
 function validateAppoveUser(name,value){
 			//document.getElementById('lblError').innerHTML ="";
 			document.getElementById("actionName").value= name;
@@ -379,7 +420,7 @@ function validateAppoveUser(name,value){
 			</s:if>
 			<s:else>
 				if( (value == 'Approve' || value == 'Forward' || value=='Save And Forward' ) && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-					alert("please select User");
+					bootbox.alert("please select User");
 					//document.getElementById('lblError').innerHTML ="Please Select the user";
 					return false;
 				}
@@ -396,7 +437,7 @@ function onLoadTask_edit() {
 			   updateVoucherNumber();
 		     if (button != null && button != "") {
 					if (document.getElementById("Errors").innerHTML == '') {
-					alert(succesMessage);
+					bootbox.alert(succesMessage);
 					   if (button == "Save_Close") {
 							window.close();
 						} else if (button == "Save_View") {
@@ -423,7 +464,7 @@ function onLoadTask_edit() {
 			{
 				if(parseFloat(document.getElementById('amount').value)>parseFloat(document.getElementById('availableBalance').value))
 				{
-					alert(insuffiecientBankBalance);
+					bootbox.alert(insuffiecientBankBalance);
 					return false;
 				}
 			}

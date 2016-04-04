@@ -37,113 +37,63 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<script>
-function setFocus(obj,defaultval) {
-	if(obj.value==defaultval ) {
-		document.getElementById(obj.id).value="";
-		document.getElementById(obj.id).style.color='#000000';
-	}
-}
-function setBlur(obj,defaultval) {
-  if(obj.value == "") {
-		document.getElementById(obj.id).value=defaultval;
-		document.getElementById(obj.id).style.color='#999999';
-	}
-}
-function methodTest() {
- 	if(document.getElementById("code").value=="Category Code"){
-		document.getElementById("code").value="";
-	}
-	if(document.getElementById("description").value=="Category Name") {
-		document.getElementById("description").value="";		
-	}
-}
-</script>
-	<div class="formmainbox">
-	<div class="insidecontent">
-	<div class="rbroundbox2">
-	<div class="rbtop2">
-	<div></div>
-	</div>
-	<div class="rbcontent2">
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-			<td></td>
-		</tr>
-		<tr>
-			<td>
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td colspan="4" class="headingwk">
-					<div class="arrowiconwk"><img
-						src="/egi/resources/erp2/images/arrow.gif" /></div>
-					<div class="headplacer"><s:text name="scheduleCategory.sor.category"/></div>
-					</td>
-				</tr>
-				<td class="aligncenter">
-				<table align="center" width="300" border="0" cellpadding="0"
-					cellspacing="0">
-					<tr>
-						<td width="42%" class="tablesubheadwka"><s:text name="schedCategory.code"/></td>
-						<td width="42%" class="tablesubheadwka"><s:text name="schedCategory.description"/></td>
 
-					</tr>
-			</table>
-				<% 
-							int count=0;
-						%>
-					<s:iterator var="p" value="scheduleCategoryList" > 
-						<% 
-							count++;
-						%>
-					</s:iterator>
-				<% if(count>10){ %>
-
-				<div class="findscroller">
-				<%}%>
-				<table align="center" width="300" border="0" cellpadding="0"
-					cellspacing="0">
-					<s:iterator var="p" value="scheduleCategoryList">
-						<tr>
-							<td width="42%" class="whitebox3wka"><s:property value="%{code}" /></td>
-							<td width="42%" class="whitebox3wka"><s:property value="%{description}" />
-							</td>
-						</tr>
-					</s:iterator>
-				</table>
-				</td>
-
-				<tr>
-					<td>
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-							<td width="30%" class="greyboxwk"><span class="bold"><s:text name="scheduleCategory.add.sor.category"/>:</span></td>
-
-							<td width="70%" class="greybox2wk"><s:textfield
-								cssClass="selectwk grey" name="code" maxlength="15" id="code" value ="Category Code" size="40" onfocus="setFocus(this,'Category Code')" onblur="setBlur(this,'Category Code')"/> <span
-								cssClass="buttonholderwk"> <s:textfield
-								cssClass="selectwk grey" name="description" maxlength="150" id="description" value = "Category Name"  size="40" onfocus="setFocus(this,'Category Name')" onblur="setBlur(this,'Category Name')"/> <s:submit cssClass="buttonfinal" value="SAVE" id="saveButton" name="button" method="save" onclick="methodTest();"/> </span></td>
-						</tr>
-					</table>
-					</td>
-				     </tr>
-				    <tr> 
-				  <td class="shadowwk"></td> 
-                		</tr> 
-			</table>
-			</td>
-		</tr>
-	</table>
-	<% if(count>10){ %>
-
+	<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+				<div class="panel-heading">
+					<div class="panel-title">
+					    <s:text name="scheduleCategory.sor.category"/>
+					</div>
 				</div>
-				<%}%>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right">
+						    Category Code
+						</label>
+						<div class="col-sm-3 add-margin">
+							<s:textfield
+								cssClass="form-control" name="code" maxlength="15" id="code" size="40"/>
+						</div>
+						<label class="col-sm-2 control-label text-right">
+						    Category Name
+						</label>
+						<div class="col-sm-3 add-margin">
+							<s:textfield
+								cssClass="form-control" name="description" maxlength="150" id="description"  size="40" />
+						</div>
+					</div>
+				</div>
+	</div>
 	
+	<div class="row">
+		<div class="col-sm-12 text-center buttonholdersearch">
+			<s:submit cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save"/> &nbsp;
+			<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button"
+				onclick="window.close();" />
+		</div>
 	</div>
-	<div class="rbbot2">
-	<div></div>
-	</div>
-	</div>
-	</div>
-	<input type="button" class="buttonfinal" value="CLOSE" id="closeButton"
-		name="closeButton" onclick="window.close();" />
+	
+	<div class="row report-section">
+				
+				<br/>
+				
+				<div class="col-md-6 col-md-offset-3 report-table-container">
+					<table align="center" width="300" border="0" cellpadding="0"
+									cellspacing="0" class="table table-hover">
+									<thead>
+						<tr>
+						  <th><s:text name="schedCategory.code"/></th>
+						  <th><s:text name="schedCategory.description"/></th>
+						</tr>
+						</thead>
+						<tbody>
+						<s:iterator var="p" value="scheduleCategoryList">
+							<tr>
+								<td class="whitebox3wka"><s:property value="%{code}" /></td>
+								<td class="whitebox3wka"><s:property value="%{description}" />
+								</td>
+							</tr>
+						</s:iterator>
+						</tbody>
+					</table>
+			  </div>
+   </div>

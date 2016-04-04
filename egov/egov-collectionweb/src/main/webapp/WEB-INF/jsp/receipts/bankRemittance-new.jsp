@@ -58,7 +58,7 @@
 
 	var newServiceName = "###########";
 	var newFundName = "###########";
-	function handleReceiptSelectionEvent(serviceName, fundName, obj) {
+	function handleReceiptSelectionEvent(obj) {
 
 		isSelected = document.getElementsByName('receiptIds');
 		dom.get("multipleserviceselectionerror").style.display = "none";
@@ -105,10 +105,7 @@
 						if ((document.getElementsByName('serviceNameArray')[j].value == document
 								.getElementsByName('serviceNameTempArray')[k].value)
 								&& (document.getElementsByName('fundCodeArray')[j].value == document
-										.getElementsByName('fundCodeTempArray')[k].value)
-								&& (document
-										.getElementsByName('departmentCodeArray')[j].value == document
-										.getElementsByName('departmentCodeTempArray')[k].value)) {
+										.getElementsByName('fundCodeTempArray')[k].value)) {
 						} else {
 							dom.get("multipleserviceselectionerror").style.display = "block";
 							dom.get("button32").disabled = true;
@@ -119,14 +116,6 @@
 				}
 			}
 		}
-		if (serviceName != "" && fundName != "" && obj == true) {
-			newServiceName = serviceName;
-			newFundName = fundName;
-		}
-		populatebankBranchMaster({
-			serviceName : newServiceName,
-			fundName : newFundName
-		});
 	}
 
 	// Check if at least one receipt is selected
@@ -169,14 +158,6 @@
 			dom.get("selectremittanceerror").style.display = "block";
 			return false;
 		} else {
-			if (dom.get("bankBranchMaster").value == 0) {
-				dom.get("bankselectionerror").style.display = "block";
-				return false;
-			}
-			if (dom.get("accountNumberMaster").value == 0) {
-				dom.get("accountselectionerror").style.display = "block";
-				return false;
-			}
 			/* if (document.getElementById('positionUser') != null
 					&& document.getElementById('positionUser').value == -1) {
 				dom.get("approvalSelectionError").style.display = "block";
@@ -191,12 +172,24 @@
 	}
 
 	function onChangeBankAccount(branchId) {
-		populateaccountNumberMaster({
+		populateaccountNumberId({
 			branchId : branchId,
-			serviceName : newServiceName,
-			fundName : newFundName
 		});
 	}
+
+	function searchDataToRemit() {
+		if (dom.get("bankBranchMaster").value!=null && dom.get("bankBranchMaster").value == -1) {
+			dom.get("bankselectionerror").style.display = "block";
+			return false;
+		}
+		if (dom.get("accountNumberId").value!=null && dom.get("accountNumberId").value == -1) {
+			dom.get("bankselectionerror").innerHTML="";
+			dom.get("accountselectionerror").style.display = "block";
+			return false;
+		}
+		document.bankRemittanceForm.action = "bankRemittance-listData.action?bankAccountId="+dom.get("accountNumberId").value;
+		document.bankRemittanceForm.submit();
+		}
 
 	function onChangeDeparment(approverDeptId) {
 		var receiptheaderId = '<s:property value="model.id"/>';
@@ -218,6 +211,59 @@
 				designationId : designationId,
 				approverDeptId : approverDeptId
 			});
+		}
+	}
+
+	// Check if at least one receipt is selected
+	function isChecked(chk) {
+		if (chk.length == undefined) {
+	 		if (chk.checked == true) {
+	  			return true;
+	 		} else {
+	 	 		return false;
+	 		}	
+	 	} else {
+	 		for (i = 0; i < chk.length; i++)
+			{
+				if (chk[i].checked == true ) {
+					return true;
+				}
+			}
+			return false;
+	 	}
+	}
+
+
+	//DeSelect all receipts
+	function deSelectAll() {
+		// DeSelect all checkboxes
+		changeSelectionOfAllReceipts(false);
+
+	 	// Set all amounts to zero
+		totalAmount = 0;
+		cashAmount = 0;
+		chequeAmount = 0;
+		ddAmount = 0;
+		cardAmount = 0;
+
+		// Refresh the summary section
+		refreshSummary();
+
+		// Enable/disable buttons
+		enableButtons();
+	}
+
+	// Select all receipts
+	function selectAll() {
+		// Select all checkboxes
+		changeSelectionOfAllReceipts(true);
+	}
+
+	function setCheckboxStatuses(isSelected) {
+		if(isSelected == true) {
+			selectAll();
+		} else {
+			deSelectAll();
 		}
 	}
 </script>
@@ -245,26 +291,64 @@
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
 	<s:form theme="simple" name="bankRemittanceForm">
-		<s:token />
+			<s:token />
+		<s:if test="%{hasErrors()}">
+	    <div id="actionErrorMessages" class="errorstyle">
+	      <s:actionerror/>
+	      <s:fielderror/>
+	    </div>
+		</s:if>
+		<s:if test="%{hasActionMessages()}">
+		    <div id="actionMessages" class="messagestyle">
+		    	<s:actionmessage theme="simple"/>
+		    </div>
+		</s:if>
 		<div class="formmainbox">
 			<div class="subheadnew">
 				<s:text name="bankRemittance.title" />
 			</div>
 			<logic:notEmpty name="paramList">
 					<div align="center">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="4%" class="bluebox">&nbsp;</td>
+						<td width="15%" class="bluebox"><s:text
+								name="bankremittance.bank" />:</td>
+						<td width="36%" class="bluebox"><s:select
+								headerValue="--Select--" headerKey="-1"
+								list="dropdownData.bankBranchList" listKey="id"
+								id="bankBranchMaster" listValue="branchname"
+								label="bankBranchMaster" name="branchId"
+								value="%{branchId}"
+								onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
+								id="accountNumberIdDropdown" fields="['Text','Value']"
+								dropdownId='accountNumberId'
+								url='receipts/ajaxBankRemittance-accountListOfService.action'
+								selectedValue="%{accountNumberId}" /></td>
+						<td width="15%" class="bluebox"><s:text
+								name="bankremittance.accountnumber" />:</td>
+						<td width="30%" class="bluebox"><s:select
+								headerValue="--Select--" headerKey="-1"
+								list="dropdownData.accountNumberList" listKey="id"
+								id="accountNumberId" listValue="accountnumber"
+								label="accountNumberMaster" name="accountNumberId"
+								value="%{accountNumberId}" /></td>
+								</tr>
+						<tr>
+					</table>
+					<div class="buttonbottom">
+							<input name="button32" type="button" class="buttonsubmit"
+							id="button32" value="Search" onclick="return searchDataToRemit()" />
+					</div>
 						<display:table name="paramList" uid="currentRow" pagesize="30"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
 							export="false" requestURI="" excludedParams="*">
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Submit"
-								style="width:5%;text-align: center">
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
+								style="width:5%; text-align: center">
 								<input name="receiptIds" type="checkbox" id="receiptIds"
 									value="${currentRow.id}"
-									onClick="handleReceiptSelectionEvent('${currentRow.SERVICENAME}','${currentRow.FUNDNAME}',this.checked)" />
-								<egov:ajaxdropdown id="bankBranchMasterDropdown"
-									fields="['Text','Value']" dropdownId='bankBranchMaster'
-									url='receipts/ajaxBankRemittance-bankBranchList.action'
-									selectedValue="%{bankbranch.id}" />
+									onClick="handleReceiptSelectionEvent(this.checked)" />
 								<input type="hidden" name="serviceNameTempArray"
 									id="serviceNameTempArray" value="${currentRow.SERVICENAME}" />
 								<input type="hidden" name="fundCodeTempArray"
@@ -373,30 +457,6 @@
 					</div>
 					<br />
 
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<td width="4%" class="bluebox2">&nbsp;</td>
-						<td width="15%" class="bluebox2"><s:text
-								name="bankremittance.bank" /><span class="mandatory">*</span>:</td>
-						<td width="36%" class="bluebox2"><s:select
-								headerValue="--Select--" headerKey="0"
-								list="dropdownData.bankBranchList" listKey="id"
-								id="bankBranchMaster" listValue="branchname"
-								label="bankBranchMaster" name="bankBranchMaster"
-								value="%{bankbranch.id}"
-								onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
-								id="accountNumberMasterDropdown" fields="['Text','Value']"
-								dropdownId='accountNumberMaster'
-								url='receipts/ajaxBankRemittance-accountList.action'
-								selectedValue="%{bankaccount.id}" /></td>
-						<td width="15%" class="bluebox2"><s:text
-								name="bankremittance.accountnumber" /><span class="mandatory">*</span>:</td>
-						<td width="30%" class="bluebox2"><s:select
-								headerValue="--Select--" headerKey="0"
-								list="dropdownData.accountNumberList" listKey="id"
-								id="accountNumberMaster" listValue="accountnumber"
-								label="accountNumberMaster" name="accountNumberMaster"
-								value="%{bankaccount.id}" /></td>
-					</table>
 			<%-- 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<div class="subheadnew">
@@ -404,12 +464,12 @@
 							</div>
 						</tr>
 						<tr>
-							<td width="4%" class="bluebox2">&nbsp;</td>
-							<td width="15%" class="bluebox2">Approver Department: <s:if
+							<td width="4%" class="bluebox">&nbsp;</td>
+							<td width="15%" class="bluebox">Approver Department: <s:if
 									test="%{model.id==null}">
 									<span class="mandatory">*</span>
 								</s:if></td>
-							<td width="20%" class="bluebox2"><s:select headerKey=""
+							<td width="20%" class="bluebox"><s:select headerKey=""
 									headerValue="%{getText('challan.select')}"
 									name="approverDeptId" id="approverDeptId" cssClass="selectwk"
 									list="dropdownData.approverDepartmentList" listKey="id"
@@ -420,12 +480,12 @@
 									selectedValue="%{designationId}" /></td>
 
 
-							<td width="15%" class="bluebox2"><s:text
+							<td width="15%" class="bluebox"><s:text
 									name="challan.approve.designation" />
 								<s:if test="%{model.id==null}">
 									<span class="mandatory">*</span>
 								</s:if></td>
-							<td width="20%" class="bluebox2"><s:select headerKey=""
+							<td width="20%" class="bluebox"><s:select headerKey=""
 									headerValue="--Select--" name="designationId"
 									id="designationId" cssClass="selectwk"
 									list="dropdownData.designationMasterList" listKey="id"
@@ -434,12 +494,12 @@
 									fields="['Text','Value']" dropdownId='positionUser'
 									url='receipts/ajaxBankRemittance-positionUserList.action'
 									selectedValue="%{position.id}" /></td>
-							<td width="15%" class="bluebox2"><s:text
+							<td width="15%" class="bluebox"><s:text
 									name="challan.approve.userposition" />
 								<s:if test="%{model.id==null}">
 									<span class="mandatory">*</span>
 								</s:if></td>
-							<td width="20%" class="bluebox2"><s:select
+							<td width="20%" class="bluebox"><s:select
 									headerValue="--Select--" headerKey="-1"
 									list="dropdownData.postionUserList" listKey="position.id"
 									id="positionUser" listValue="position.name"

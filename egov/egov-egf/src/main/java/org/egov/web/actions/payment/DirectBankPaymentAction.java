@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -41,6 +41,10 @@
  *
  */
 package org.egov.web.actions.payment;
+
+
+
+import org.egov.infstr.services.PersistenceService;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -86,22 +90,30 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.payment.Paymentheader;
 import org.egov.model.voucher.CommonBean;
 import org.egov.model.voucher.VoucherDetails;
+import org.egov.model.voucher.WorkflowBean;
+import org.egov.payment.services.PaymentActionHelper;
 import org.egov.pims.commons.Designation;
 import org.egov.services.contra.ContraService;
+import org.egov.services.payment.MiscbilldetailService;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -117,18 +129,26 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  */
 @ParentPackage("egov")
 @Results({
-    @Result(name = DirectBankPaymentAction.NEW, location = "directBankPayment-" + DirectBankPaymentAction.NEW + ".jsp"),
-    @Result(name = DirectBankPaymentAction.EDIT, location = "directBankPayment-" + DirectBankPaymentAction.EDIT + ".jsp"),
-    @Result(name = "reverse", location = "directBankPayment-reverse.jsp"),
-    @Result(name = "view", location = "directBankPayment-view.jsp")
+        @Result(name = DirectBankPaymentAction.NEW, location = "directBankPayment-" + DirectBankPaymentAction.NEW + ".jsp"),
+        @Result(name = DirectBankPaymentAction.EDIT, location = "directBankPayment-" + DirectBankPaymentAction.EDIT + ".jsp"),
+        @Result(name = "reverse", location = "directBankPayment-reverse.jsp"),
+        @Result(name = "view", location = "directBankPayment-view.jsp")
 })
-public class DirectBankPaymentAction extends BasePaymentAction { 
+public class DirectBankPaymentAction extends BasePaymentAction {
+    private final static String FORWARD = "Forward";
     private static final String FAILED_WHILE_REVERSING = "Failed while Reversing";
     private static final String FAILED = "Transaction failed";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     private static final long serialVersionUID = 1L;
-    private CreateVoucher createVoucher ;
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
+    private CreateVoucher createVoucher;
     private PaymentService paymentService;
+    @Autowired
+    private PaymentActionHelper paymentActionHelper;
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     public Map<String, String> modeOfPaymentMap;
@@ -150,7 +170,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private CommonBean commonBean;
     private EgovCommon egovCommon;
 
-    private Paymentheader paymentheader;
+    private Paymentheader paymentheader = new Paymentheader();
     public boolean showApprove = false;
 
     private Integer departmentId;
@@ -159,6 +179,10 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
     private BigDecimal balance;
     private ScriptService scriptService;
+    private ChartOfAccounts chartOfAccounts;
+    @Autowired
+    @Qualifier("miscbilldetailService")
+    private MiscbilldetailService miscbilldetailService;
 
     public BigDecimal getBalance() {
         return balance;
@@ -169,7 +193,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         return voucherHeader;
 
@@ -245,28 +269,22 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
                 if (showMode != null && showMode.equalsIgnoreCase("nonbillPayment"))
                     if (voucherHeader.getId() != null)
-                        billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
+                        billVhId = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class,
                                 voucherHeader.getId());
                 voucherHeader.setId(null);
-                voucherHeader = createVoucherAndledger();
-                paymentheader = paymentService.createPaymentHeader(voucherHeader,
-                        Integer.valueOf(commonBean.getAccountNumberId()), commonBean
-                        .getModeOfPayment(), commonBean.getAmount());
-                if (commonBean.getDocumentId() != null)
-                    billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
-                            commonBean.getDocumentId());
-                createMiscBillDetail(billVhId);
-                //paymentheader.start().withOwner(paymentService.getPosition());
-                //sendForApproval();
-                addActionMessage(getText("directbankpayment.transaction.success") + voucherHeader.getVoucherNumber());
+                populateWorkflowBean();
+                paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader,voucherHeader,billVhId, commonBean, billDetailslist, subLedgerlist,workflowBean);
+                showMode = "create";
+                addActionMessage(getText("directbankpayment.transaction.success") + paymentheader.getVoucherheader().getVoucherNumber());
+                addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
+                        .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
             } else
                 throw new ValidationException(Arrays.asList(new ValidationError("engine.validation.failed", "Validation Faild")));
 
         } catch (final ValidationException e) {
             LOGGER.error(e.getMessage(), e);
-            clearMessages();
-            List<ValidationError> errors=new ArrayList<ValidationError>();
-            errors.add(new ValidationError("exp",e.getErrors().get(0).getMessage()));
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final NumberFormatException e) {
             LOGGER.error(e.getMessage(), e);
@@ -278,7 +296,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         } finally {
             if (subLedgerlist.size() == 0)
                 subLedgerlist.add(new VoucherDetails());
-          //  loadApproverUser(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+            // loadApproverUser(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         }
         return VIEW;
     }
@@ -296,7 +314,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @SkipValidation
     public String nonBillPayment()
     {
-        voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class, voucherHeader.getId());
+        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class, voucherHeader.getId());
         final String vName = voucherHeader.getName();
         String appconfigKey = "";
         if (vName.equalsIgnoreCase(FinancialConstants.JOURNALVOUCHER_NAME_CONTRACTORJOURNAL))
@@ -323,9 +341,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         if (netPay.getFunctionId() != null)
         {
             vd.setFunctionIdDetail(Long.valueOf(netPay.getFunctionId()));
-            final String function = (String) HibernateUtil.getCurrentSession().load(CFunction.class,
-                    Long.valueOf(netPay.getFunctionId()));
-            vd.setFunctionDetail(function);
+            CFunction function =(CFunction) persistenceService.getSession().load(CFunction.class,Long.valueOf(netPay.getFunctionId()));
+            vd.setFunctionDetail(function.getId().toString());
         }
         commonBean.setAmount(BigDecimal.valueOf(netPay.getCreditAmount()));
         billDetailslist.add(vd);
@@ -341,7 +358,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             vdetails.setGlcode(netPay.getGlcodeId());
             vdetails.setSubledgerCode(netPay.getGlcode());
             vdetails.setAccounthead(netPay.getGlcodeId().getName());
-            final Accountdetailtype detailType = (Accountdetailtype) HibernateUtil.getCurrentSession().load(
+            final Accountdetailtype detailType = (Accountdetailtype) persistenceService.getSession().load(
                     Accountdetailtype.class,
                     gldetail.getDetailTypeId());
             vdetails.setDetailTypeName(detailType.getName());
@@ -374,7 +391,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             EntityType entity = null;
             if (dataType.equals("Long"))
                 entity = (EntityType) entityPersistenceService
-                .findById(Long.valueOf(gldetail.getDetailKeyId().toString()), false);
+                        .findById(Long.valueOf(gldetail.getDetailKeyId().toString()), false);
             else
                 entity = (EntityType) entityPersistenceService.findById(gldetail.getDetailKeyId(), false);
             vdetails.setDetailCode(entity.getCode());
@@ -388,7 +405,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         if (subLedgerlist.size() == 0)
             subLedgerlist.add(new VoucherDetails());
         loadAjaxedDropDowns();
-        loadApproverUser(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         return NEW;
     }
 
@@ -413,13 +429,9 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                         throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e
                                 .getMessage())));
                     }
-                    voucherDetail.setDetailType((Accountdetailtype) HibernateUtil.getCurrentSession().load(
+                    voucherDetail.setDetailType((Accountdetailtype) persistenceService.getSession().load(
                             Accountdetailtype.class, voucherDetail.getDetailType()
-                            .getId()));
-                    if (voucherDetail.getDetailType().getName().equalsIgnoreCase("creditor")) {
-                        rel = (Relation) entity;
-                        type = rel.getRelationtype().getName();
-                    }
+                                    .getId()));
 
                     // type will be null in case of DBP
                     if (type.equalsIgnoreCase("Contractor")
@@ -447,7 +459,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                         LOGGER.error("BankAccount,IFSC Code is mandatory for RTGS Payment for " + entity.getName());
                         errors.add(new ValidationError("paymentMode",
                                 "BankName, BankAccount,IFSC Code is mandatory for RTGS Payment for type " + type
-                                + " and Entity " + entity.getName()));
+                                        + " and Entity " + entity.getName()));
                         throw new ValidationException(errors);
                     }
                 }
@@ -458,20 +470,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     }
 
-    private void createMiscBillDetail(final CVoucherHeader billVhId) {
-        final Miscbilldetail miscbillDetail = new Miscbilldetail();
-        miscbillDetail.setBillnumber(commonBean.getDocumentNumber());
-        miscbillDetail.setBilldate(commonBean.getDocumentDate());
-        miscbillDetail.setBillamount(commonBean.getAmount());
-        miscbillDetail.setPaidamount(commonBean.getAmount());
-        miscbillDetail.setPassedamount(commonBean.getAmount());
-        miscbillDetail.setPayVoucherHeader(voucherHeader);
-        miscbillDetail.setBillVoucherHeader(billVhId);
-        miscbillDetail.setPaidto(commonBean.getPaidTo().trim());
-        persistenceService.setType(Miscbilldetail.class);
-        persistenceService.persist(miscbillDetail);
-
-    }
+  
 
     private void updateMiscBillDetail(final CVoucherHeader billVhId) {
         final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService.find(
@@ -486,8 +485,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         miscbillDetail.setPassedamount(commonBean.getAmount());
         miscbillDetail.setPaidamount(commonBean.getAmount());
         miscbillDetail.setPaidto(commonBean.getPaidTo().trim());
-        persistenceService.setType(Miscbilldetail.class);
-        persistenceService.persist(miscbillDetail);
+        miscbilldetailService.persist(miscbillDetail);
     }
 
     @SkipValidation
@@ -502,7 +500,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @Action(value = "/payment/directBankPayment-beforeEdit")
     public String beforeEdit() {
         prepareForViewModifyReverse();
-        loadApproverUser(voucherHeader.getType());
         return EDIT;
     }
 
@@ -519,7 +516,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         instrumentQuery.append(
                 "select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?")
                 .append(" order by ih.id");
-        voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class, voucherHeader.getId());
+        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class, voucherHeader.getId());
         paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
         commonBean.setAmount(paymentheader.getPaymentAmount());
         commonBean.setAccountNumberId(paymentheader.getBankaccount().getId().toString());
@@ -557,17 +554,13 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             billDetailslist.remove(bankdetail);
         loadAjaxedDropDowns();
         // find it last so that rest of the data loaded
-        if (!"view".equalsIgnoreCase(showMode))
-            validateUser("balancecheck");
-        else {
+        if ("view".equalsIgnoreCase(showMode))
+        {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("fetching cheque detail ------------------------");
 
             instrumentHeaderList = getPersistenceService()
                     .findAllBy(instrumentQuery.toString(), paymentheader.getVoucherheader().getId());
-
-            // LOGGER.error("==============fetching cheque detail  done-----------------------");
-
         }
     }
 
@@ -598,9 +591,9 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                         .find("from Paymentheader where voucherheader=?", voucherHeader);
                 paymentService.updatePaymentHeader(paymentheader, voucherHeader,
                         Integer.valueOf(commonBean.getAccountNumberId()), commonBean
-                        .getModeOfPayment(), commonBean.getAmount());
+                                .getModeOfPayment(), commonBean.getAmount());
                 if (commonBean.getDocumentId() != null)
-                    billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
+                    billVhId = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class,
                             commonBean.getDocumentId());
                 updateMiscBillDetail(billVhId);
                 sendForApproval();
@@ -616,7 +609,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             if (subLedgerlist.size() == 0)
                 subLedgerlist.add(new VoucherDetails());
             loadAjaxedDropDowns();
-            loadApproverUser(voucherHeader.getType());
         }
 
         return VIEW;
@@ -625,7 +617,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @ValidationErrorPage("reverse")
     public String reverse() {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final CreateVoucher cv = new CreateVoucher();
         CVoucherHeader reversalVoucher = null;
         final HashMap<String, Object> reversalVoucherMap = new HashMap<String, Object>();
         reversalVoucherMap.put("Original voucher header id", voucherHeader.getId());
@@ -642,7 +633,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         final List<HashMap<String, Object>> reversalList = new ArrayList<HashMap<String, Object>>();
         reversalList.add(reversalVoucherMap);
         try {
-            reversalVoucher = cv.reverseVoucher(reversalList);
+            reversalVoucher = createVoucher.reverseVoucher(reversalList);
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ValidationException(Arrays.asList(new ValidationError(FAILED_WHILE_REVERSING, FAILED_WHILE_REVERSING)));
@@ -657,92 +648,12 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         return REVERSE;
     }
 
-    private CVoucherHeader createVoucherAndledger() {
-        try {
-            final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
-            // update DirectBankPayment source path
-            headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/payment/directBankPayment-beforeView.action?voucherHeader.id=");
-            HashMap<String, Object> detailMap = null;
-            HashMap<String, Object> subledgertDetailMap = null;
-            final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
-            final List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
-
-            detailMap = new HashMap<String, Object>();
-            detailMap.put(VoucherConstant.CREDITAMOUNT, commonBean.getAmount().toString());
-            detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
-            final Bankaccount account = (Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,
-                    Long.valueOf(commonBean.getAccountNumberId()));
-            detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
-            accountdetails.add(detailMap);
-            final Map<String, Object> glcodeMap = new HashMap<String, Object>();
-            for (final VoucherDetails voucherDetail : billDetailslist)
-
-            {
-                detailMap = new HashMap<String, Object>();
-                if (voucherDetail.getFunctionIdDetail() != null) {
-                    final CFunction function = (CFunction) HibernateUtil.getCurrentSession().load(CFunction.class,
-                            voucherDetail.getFunctionIdDetail());
-                    detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
-                }
-                if (voucherDetail.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0) {
-
-                    detailMap.put(VoucherConstant.DEBITAMOUNT, voucherDetail.getDebitAmountDetail().toString());
-                    detailMap.put(VoucherConstant.CREDITAMOUNT, ZERO);
-                    detailMap.put(VoucherConstant.GLCODE, voucherDetail.getGlcodeDetail());
-                    accountdetails.add(detailMap);
-                    glcodeMap.put(voucherDetail.getGlcodeDetail(), VoucherConstant.DEBIT);
-                }
-                else {
-                    detailMap.put(VoucherConstant.CREDITAMOUNT, voucherDetail.getCreditAmountDetail().toString());
-                    detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
-                    detailMap.put(VoucherConstant.GLCODE, voucherDetail.getGlcodeDetail());
-                    accountdetails.add(detailMap);
-                    glcodeMap.put(voucherDetail.getGlcodeDetail(), VoucherConstant.CREDIT);
-                }
-
-            }
-
-            for (final VoucherDetails voucherDetail : subLedgerlist) {
-                subledgertDetailMap = new HashMap<String, Object>();
-                final String amountType = glcodeMap.get(voucherDetail.getSubledgerCode()) != null ? glcodeMap.get(
-                        voucherDetail.getSubledgerCode()).toString() : null; // Debit or Credit.
-                        if (null != amountType && amountType.equalsIgnoreCase(VoucherConstant.DEBIT))
-                            subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT, voucherDetail.getAmount());
-                        else if (null != amountType)
-                            subledgertDetailMap.put(VoucherConstant.CREDITAMOUNT, voucherDetail.getAmount());
-                        subledgertDetailMap.put(VoucherConstant.DETAILTYPEID, voucherDetail.getDetailType().getId());
-                        subledgertDetailMap.put(VoucherConstant.DETAILKEYID, voucherDetail.getDetailKeyId());
-                        subledgertDetailMap.put(VoucherConstant.GLCODE, voucherDetail.getSubledgerCode());
-                        subledgerDetails.add(subledgertDetailMap);
-            }
-
-            voucherHeader = createVoucher.createPreApprovedVoucher(headerDetails, accountdetails, subledgerDetails);
-
-        } catch (final HibernateException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, FAILED)));
-        } catch (final ApplicationRuntimeException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
-        } catch (final ValidationException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw e;
-        } catch (final Exception e) {
-            // handle engine exception
-            LOGGER.error(e.getMessage(), e);
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
-        }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Posted to Ledger " + voucherHeader.getId());
-        return voucherHeader;
-
-    }
+  
 
     private void reCreateLedger() {
-        final CreateVoucher createVoucher = new CreateVoucher();
         try {
             createVoucher.deleteVoucherdetailAndGL(voucherHeader);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
             HashMap<String, Object> detailMap = null;
 
             // HashMap<String, Object> headerMap = null;
@@ -758,7 +669,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
              */
             detailMap.put(VoucherConstant.CREDITAMOUNT, commonBean.getAmount().toString());
             detailMap.put(VoucherConstant.DEBITAMOUNT, "0");
-            final Bankaccount account = (Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,
+            final Bankaccount account = (Bankaccount) persistenceService.getSession().load(Bankaccount.class,
                     Integer.valueOf(commonBean.getAccountNumberId()));
             detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
             // Addind this line since function code is made mandatory for all transaction
@@ -770,7 +681,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             for (final VoucherDetails voucherDetail : billDetailslist) {
                 detailMap = new HashMap<String, Object>();
                 if (voucherDetail.getFunctionIdDetail() != null) {
-                    final CFunction function = (CFunction) HibernateUtil.getCurrentSession().load(CFunction.class,
+                    final CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
                             voucherDetail.getFunctionIdDetail());
                     detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
                 }
@@ -798,26 +709,25 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 subledgertDetailMap = new HashMap<String, Object>();
                 final String amountType = glcodeMap.get(voucherDetail.getSubledgerCode()) != null ? glcodeMap.get(
                         voucherDetail.getSubledgerCode()).toString() : null; // Debit or Credit.
-                        if (null != amountType && amountType.equalsIgnoreCase(VoucherConstant.DEBIT))
-                            subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT, voucherDetail.getAmount());
-                        else if (null != amountType)
-                            subledgertDetailMap.put(VoucherConstant.CREDITAMOUNT, voucherDetail.getAmount());
-                        subledgertDetailMap.put(VoucherConstant.DETAILTYPEID, voucherDetail.getDetailType().getId());
-                        subledgertDetailMap.put(VoucherConstant.DETAILKEYID, voucherDetail.getDetailKeyId());
-                        subledgertDetailMap.put(VoucherConstant.GLCODE, voucherDetail.getSubledgerCode());
-                        subledgerDetails.add(subledgertDetailMap);
+                if (null != amountType && amountType.equalsIgnoreCase(VoucherConstant.DEBIT))
+                    subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT, voucherDetail.getAmount());
+                else if (null != amountType)
+                    subledgertDetailMap.put(VoucherConstant.CREDITAMOUNT, voucherDetail.getAmount());
+                subledgertDetailMap.put(VoucherConstant.DETAILTYPEID, voucherDetail.getDetailType().getId());
+                subledgertDetailMap.put(VoucherConstant.DETAILKEYID, voucherDetail.getDetailKeyId());
+                subledgertDetailMap.put(VoucherConstant.GLCODE, voucherDetail.getSubledgerCode());
+                subledgerDetails.add(subledgertDetailMap);
             }
 
             // createVoucher.validateFunction(accountdetails,subledgerDetails);
             final List<Transaxtion> transactions = createVoucher.createTransaction(null, accountdetails, subledgerDetails,
                     voucherHeader);
-            HibernateUtil.getCurrentSession().flush();
+            persistenceService.getSession().flush();
 
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data",
                         "Transaction Failed")));
         } catch (final HibernateException e) {
@@ -851,7 +761,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         totalCrAmt = totalCrAmt.add(commonBean.getAmount());
         int index = 0;
         boolean isValFailed = false;
-        isValFailed = validateOnlyRTGS();
+        // isValFailed = validateOnlyRTGS();
         for (final VoucherDetails voucherDetails : billDetailslist) {
             index = index + 1;
             totalDrAmt = totalDrAmt.add(voucherDetails.getDebitAmountDetail());
@@ -893,220 +803,113 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         return isValFailed;
     }
 
-    private boolean validateOnlyRTGS() {
-        boolean isValFailed = false;
-        final String paymentRestrictionDateForCJV = paymentService.getAppConfDateValForCJVPaymentModeRTGS();
-        Date rtgsModeRestrictionDateForCJV = null;
-        try {
-            rtgsModeRestrictionDateForCJV = formatter.parse(paymentRestrictionDateForCJV);
-        } catch (final ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        if (voucherHeader.getVoucherDate().after(rtgsModeRestrictionDateForCJV)
-                && !commonBean.getModeOfPayment().equalsIgnoreCase(MDP_RTGS))
-        {
-
-            EntityType entity = null;
-            new ArrayList<ValidationError>();
-            Relation rel = null;
-            String type = null;
-            if (subLedgerlist != null && !subLedgerlist.isEmpty())
-                for (final VoucherDetails voucherDetail : subLedgerlist) {
-                    try {
-                        type = voucherDetail.getDetailTypeName();
-                        entity = paymentService.getEntity(voucherDetail.getDetailType().getId(),
-                                voucherDetail.getDetailKeyId());
-                        if (entity == null)
-                            throw new ValidationException(Arrays.asList(new ValidationError("No.entity.for.detailkey",
-                                    "There is no entity defined for" + voucherDetail.getDetailCode(),
-                                    new String[] { voucherDetail.getDetailCode() })));
-                    } catch (final ApplicationException e) {
-                        throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e
-                                .getMessage())));
-                    }
-                    voucherDetail.setDetailType((Accountdetailtype) HibernateUtil.getCurrentSession().load(
-                            Accountdetailtype.class, voucherDetail.getDetailType()
-                            .getId()));
-                    if (voucherDetail.getDetailType().getName().equalsIgnoreCase("creditor")) {
-                        rel = (Relation) entity;
-                        type = rel.getRelationtype().getName();
-                    }
-                    if (type.equalsIgnoreCase("Supplier") || type.equalsIgnoreCase("Contractor"))
-                    {
-                        isValFailed = true;
-                        throw new ValidationException(
-                                Arrays.asList(new ValidationError(
-                                        "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013",
-                                        "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013")));
-
-                    }
-
-                }
-        }
-        return isValFailed;
-    }
-
-    @SuppressWarnings("unchecked")
-    @SkipValidation
-    public boolean validateUser(final String purpose) {
-        final Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,
-                "Paymentheader.show.bankbalance").get(0);
-        final List<String> list = (List<String>) scriptService.executeScript(validScript,
-                ScriptService.createContext("persistenceService", paymentService, "purpose", purpose));
-
-        if (list.get(0).equals("true"))
-            try {
-                canCheckBalance = true;
-                commonBean.setAvailableBalance(egovCommon.getAccountBalance(new Date(), paymentheader.getBankaccount().getId(),
-                        paymentheader.getPaymentAmount(), paymentheader.getId(), paymentheader.getBankaccount()
-                        .getChartofaccounts().getId()));
-                balance = commonBean.getAvailableBalance();
-                return true;
-            } catch (final Exception e) {
-                balance = BigDecimal.valueOf(-1);
-                return true;
-            }
-        else
-            return false;
-    }
+    /*
+     * private boolean validateOnlyRTGS() { boolean isValFailed = false; final String paymentRestrictionDateForCJV =
+     * paymentService.getAppConfDateValForCJVPaymentModeRTGS(); Date rtgsModeRestrictionDateForCJV = null; try {
+     * rtgsModeRestrictionDateForCJV = formatter.parse(paymentRestrictionDateForCJV); } catch (final ParseException e) { // TODO
+     * Auto-generated catch block e.printStackTrace(); } if (voucherHeader.getVoucherDate().after(rtgsModeRestrictionDateForCJV)
+     * && !commonBean.getModeOfPayment().equalsIgnoreCase(MDP_RTGS)) { EntityType entity = null; new ArrayList<ValidationError>();
+     * Relation rel = null; String type = null; if (subLedgerlist != null && !subLedgerlist.isEmpty()) for (final VoucherDetails
+     * voucherDetail : subLedgerlist) { try { type = voucherDetail.getDetailTypeName(); entity =
+     * paymentService.getEntity(voucherDetail.getDetailType().getId(), voucherDetail.getDetailKeyId()); if (entity == null) throw
+     * new ValidationException(Arrays.asList(new ValidationError("No.entity.for.detailkey", "There is no entity defined for" +
+     * voucherDetail.getDetailCode(), new String[] { voucherDetail.getDetailCode() }))); } catch (final ApplicationException e) {
+     * throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e .getMessage()))); }
+     * voucherDetail.setDetailType((Accountdetailtype) persistenceService.getSession().load( Accountdetailtype.class,
+     * voucherDetail.getDetailType() .getId())); if (voucherDetail.getDetailType().getName().equalsIgnoreCase("creditor")) { rel =
+     * (Relation) entity; type = rel.getRelationtype().getName(); } if (type.equalsIgnoreCase("Supplier") ||
+     * type.equalsIgnoreCase("Contractor")) { isValFailed = true; throw new ValidationException( Arrays.asList(new
+     * ValidationError(
+     * "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013",
+     * "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013"))); } }
+     * } return isValFailed; }
+     */
 
     @ValidationErrorPage(value = VIEW)
     @SkipValidation
     @Action(value = "/payment/directBankPayment-viewInboxItem")
     public String viewInboxItem() {
         paymentheader = getPayment();
-        /*
-         * if(paymentheader != null && paymentheader.getState() != null){ if(!validateOwner(paymentheader.getState())){
-         * List<ValidationError> errors=new ArrayList<ValidationError>(); errors.add(new ValidationError("exp","Invalid Access"));
-         * throw new ValidationException(errors); } }
-         */
-        if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty()
-                && paymentheader.getState().getValue().contains("Rejected"))
-            // phoenix migration voucherHeader.setId(paymentheader.getVoucherheader().getId());
-            return beforeEdit();
         showApprove = true;
-        // phoenix migration voucherHeader.setId(paymentheader.getVoucherheader().getId());
+        if (paymentheader.getVoucherheader() != null)
+            voucherHeader.setId(paymentheader.getVoucherheader().getId());
         prepareForViewModifyReverse();
-        loadApproverUser(voucherHeader.getType());
         return VIEW;
 
     }
 
     @ValidationErrorPage(value = VIEW)
     @SkipValidation
+    @Action(value = "/payment/directBankPayment-sendForApproval")
     public String sendForApproval() {
-        paymentheader = getPayment();
-        /*
-         * if(paymentheader != null && paymentheader.getState() != null){ if(!validateOwner(paymentheader.getState())){
-         * List<ValidationError> errors=new ArrayList<ValidationError>(); errors.add(new ValidationError("exp","Invalid Access"));
-         * throw new ValidationException(errors); } }
-         */
-        // if(LOGGER.isDebugEnabled()) LOGGER.debug("Paymentheader==" + paymentheader.getId() + ", actionname=" +
-        // parameters.get(ACTIONNAME)[0]);
-        action = parameters.get(ACTIONNAME)[0];
 
-        Integer userId = null;
-        if (parameters.get(ACTIONNAME)[0] != null && parameters.get(ACTIONNAME)[0].contains("reject"))
-            userId = paymentheader.getCreatedBy().getId().intValue();
-        else if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0]) != -1)
-            userId = Integer.valueOf(parameters.get("approverUserId")[0]);
-        else
-            userId = EgovThreadLocals.getUserId().intValue();
-
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("userId  ==" + userId);
-        paymentWorkflowService.transition(parameters.get(ACTIONNAME)[0] + "|" + userId, paymentheader,
-                parameters.get("comments")[0]);
-        paymentService.persist(paymentheader);
-        if (parameters.get(ACTIONNAME)[0].contains("approve")) {
-            if ("END".equals(paymentheader.getState().getValue()))
+        if (paymentheader.getId() == null)
+            paymentheader = getPayment();
+       
+        populateWorkflowBean();
+        paymentheader =  paymentActionHelper.sendForApproval(paymentheader,workflowBean);
+              
+        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getText("payment.voucher.rejected",
+                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
+                            .getOwnerPosition()) }));
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
+                    .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+        if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getText("payment.voucher.cancelled"));
+        else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if ("Closed".equals(paymentheader.getState().getValue()))
                 addActionMessage(getText("payment.voucher.final.approval"));
             else
                 addActionMessage(getText("payment.voucher.approved",
                         new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
                                 .getOwnerPosition()) }));
-            setAction(parameters.get(ACTIONNAME)[0]);
+            setAction(workflowBean.getWorkFlowAction());
 
-        } else
-            addActionMessage(getText("payment.voucher.rejected", new String[] { paymentService
-                    .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+        }
+        showMode = "view";
         return viewInboxItem();
     }
 
-    @SuppressWarnings("unchecked")
-    private void loadApproverUser(String atype) {
-        final String scriptName = "paymentHeader.nextDesg";
-        if (paymentheader != null && paymentheader.getPaymentAmount() != null)
-        {
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("paymentheader.getPaymentAmount() >>>>>>>>>>>>>>>>>>> :" + paymentheader.getPaymentAmount());
-            atype = atype + "|" + paymentheader.getPaymentAmount();
-        } else
-            atype = atype + "|";
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        departmentId = voucherService.getCurrentDepartment().getId().intValue();
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("departmentId :" + departmentId);
-        Map<String, Object> map = new HashMap<String, Object>();
-        if (paymentheader != null && paymentheader.getVoucherheader().getFiscalPeriodId() != null)
-            map = voucherService.getDesgByDeptAndTypeAndVoucherDate(atype, scriptName, paymentheader.getVoucherheader()
-                    .getVoucherDate(), paymentheader);
-        else
-            map = voucherService.getDesgByDeptAndTypeAndVoucherDate(atype, scriptName, new Date(), paymentheader);
-        addDropdownData("departmentList", masterCache.get("egi-department"));
-
-        final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
-        String strDesgId = "", dName = "";
-        boolean bDefaultDeptId = false;
-        final List<Map<String, Object>> designationList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> desgFuncryMap;
-        for (final Map<String, Object> desgIdAndName : desgList) {
-            desgFuncryMap = new HashMap<String, Object>();
-
-            if (desgIdAndName.get("designationName") != null)
-                desgFuncryMap.put("designationName", desgIdAndName.get("designationName"));
-
-            if (desgIdAndName.get("designationId") != null) {
-                strDesgId = (String) desgIdAndName.get("designationId");
-                if (strDesgId.indexOf("~") != -1) {
-                    strDesgId = strDesgId.substring(0, strDesgId.indexOf('~'));
-                    dName = (String) desgIdAndName.get("designationId");
-                    dName = dName.substring(dName.indexOf('~') + 1);
-                    bDefaultDeptId = true;
-                }
-                desgFuncryMap.put("designationId", strDesgId);
+    public List<String> getValidActions() {
+        List<String> validActions = Collections.emptyList();
+        if (null == paymentheader || null == paymentheader.getId() || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+            validActions = Arrays.asList(FORWARD);
+        } else {
+            if (paymentheader.getCurrentState() != null) {
+                validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
+                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                        getAdditionalRule(), paymentheader.getCurrentState().getValue(),
+                        getPendingActions(), paymentheader.getCreatedDate());
             }
-            designationList.add(desgFuncryMap);
         }
-        map.put("designationList", designationList);
-
-        addDropdownData("designationList", (List<Designation>) map.get("designationList"));
-
-        if (bDefaultDeptId && !dName.equals("")) {
-            final Department dept = (Department) persistenceService.find("from Department where deptName like '%" + dName + "' ");
-            departmentId = dept.getId().intValue();
-        }
-        wfitemstate = map.get("wfitemstate") != null ? map.get("wfitemstate").toString() : "";
+        return validActions;
     }
 
-    @SkipValidation
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
-        return paymentWorkflowService.getValidActions(getPayment());
+    public String getNextAction() {
+        WorkFlowMatrix wfMatrix = null;
+        if (paymentheader.getId() != null) {
+            if (paymentheader.getCurrentState() != null) {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), paymentheader
+                                .getCurrentState().getValue(), getPendingActions(), paymentheader
+                                .getCreatedDate());
+            } else {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                        State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), paymentheader
+                                .getCreatedDate());
+            }
+        }
+        return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
     public Paymentheader getPayment() {
         String paymentid = null;
-        // System.out.println("Payment id is"+parameters.get(PAYMENTID));
-        if (parameters.get(PAYMENTID) == null)
-        {
-            final Object obj = getSession().get(PAYMENTID);
-            if (obj != null)
-                paymentid = (String) obj;
-        } else
-            paymentid = parameters.get(PAYMENTID)[0];
-        if (paymentheader == null && paymentid != null)
-            paymentheader = (Paymentheader) HibernateUtil.getCurrentSession().load(Paymentheader.class, Long.valueOf(paymentid));
+        paymentid = parameters.get(PAYMENTID)[0];
+        if (paymentid != null)
+            paymentheader = paymentService.findById(Long.valueOf(paymentid), false);
         if (paymentheader == null)
             paymentheader = new Paymentheader();
 
@@ -1117,10 +920,10 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @SkipValidation
     public String cancelPayment()
     {
-        voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class, voucherHeader.getId());
+        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class, voucherHeader.getId());
         paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-        persistenceService.setType(CVoucherHeader.class);
+        // persistenceService.setType(CVoucherHeader.class);
         paymentheader.transition(true).end();
         persistenceService.persist(voucherHeader);
         addActionMessage(getText("payment.cancel.success"));
@@ -1224,7 +1027,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     }
 
     public String getComments() {
-        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount().toPlainString() });
+        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
     }
 
     public String getTypeOfAccount() {
@@ -1251,12 +1054,25 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         this.scriptService = scriptService;
     }
 
-    public CreateVoucher getCreateVoucher() {
-        return createVoucher;
+ 
+
+    public ChartOfAccounts getChartOfAccounts() {
+        return chartOfAccounts;
     }
 
-    public void setCreateVoucher(CreateVoucher createVoucher) {
-        this.createVoucher = createVoucher;
+    public void setChartOfAccounts(ChartOfAccounts chartOfAccounts) {
+        this.chartOfAccounts = chartOfAccounts;
     }
 
+    public WorkflowBean getWorkflowBean() {
+        return workflowBean;
+    }
+
+    public void setWorkflowBean(WorkflowBean workflowBean) {
+        this.workflowBean = workflowBean;
+    }
+
+    public String getCurrentState() {
+        return paymentheader.getState().getValue();
+    }
 }

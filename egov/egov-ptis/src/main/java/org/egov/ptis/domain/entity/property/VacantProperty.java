@@ -51,8 +51,8 @@ import org.egov.exceptions.InvalidPropertyException;
 /**
  * The Implementation Class for the VacantProperty
  * 
- * @see org.egov.ptis.domain.entity.property.PropertyDetail org.egov.ptis.property.model.AbstractProperty,
- * 
+ * @see org.egov.ptis.domain.entity.property.PropertyDetail
+ *      org.egov.ptis.property.model.AbstractProperty,
  */
 public class VacantProperty extends AbstractProperty {
 
@@ -107,31 +107,22 @@ public class VacantProperty extends AbstractProperty {
     private Double marketValue;
     private String categoryType;
     private String occupancyCertificationNo;
-    private String buildingPermissionNo;
-    private Date buildingPermissionDate;
-    private String deviationPercentage;
     private Boolean appurtenantLandChecked;
-    private Boolean buildingPlanDetailsChecked;
     private Boolean corrAddressDiff;
 
-    public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea,
-            Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,
-            String surveyNumber, Character fieldVerified, Date fieldVerificationDate,
-            List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
-            String elec_Meter_Num, Integer no_of_floors, char fieldIrregular,
-            Date dateOfCompletion, Property property, Date updatedTime,
-            PropertyUsage propertyUsage, PropertyCreationReason creationReason,
+    public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
+            Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
+            Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
+            String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Date dateOfCompletion, Property property,
+            Date updatedTime, PropertyUsage propertyUsage, PropertyCreationReason creationReason,
             PropertyTypeMaster propertyTypeMaster, String propertyType, Installment installment,
-            PropertyOccupation propertyOccupation, PropertyMutationMaster propertyMutationMaster,
-            Character comZone, Character cornerPlot, Double extentSite,
-            Double extentAppartenauntLand, FloorType floorType, RoofType roofType,
-            WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
-            boolean structure, boolean electricity, boolean attachedBathRoom,
-            boolean waterHarvesting, boolean cable, String siteOwner, String pattaNumber,
-            Double currentCapitalValue, Double marketValue, String categoryType,
-            String occupancyCertificationNo, String buildingPermissionNo,
-            Date buildingPermissionDate, String deviationPercentage,
-            Boolean appurtenantLandChecked, Boolean buildingPlanDetailsChecked, Boolean corrAddressDiff) {
+            PropertyOccupation propertyOccupation, PropertyMutationMaster propertyMutationMaster, Character comZone,
+            Character cornerPlot, Double extentSite, Double extentAppartenauntLand, FloorType floorType,
+            RoofType roofType, WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
+            boolean structure, boolean electricity, boolean attachedBathRoom, boolean waterHarvesting, boolean cable,
+            String siteOwner, String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
+            String occupancyCertificationNo, Boolean appurtenantLandChecked,
+            Boolean corrAddressDiff) {
         super();
         this.sitalArea = sitalArea;
         this.totalBuiltupArea = totalBuiltupArea;
@@ -180,11 +171,7 @@ public class VacantProperty extends AbstractProperty {
         this.marketValue = marketValue;
         this.categoryType = categoryType;
         this.occupancyCertificationNo = occupancyCertificationNo;
-        this.buildingPermissionNo = buildingPermissionNo;
-        this.buildingPermissionDate = buildingPermissionDate;
-        this.deviationPercentage = deviationPercentage;
         this.appurtenantLandChecked = appurtenantLandChecked;
-        this.buildingPlanDetailsChecked = buildingPlanDetailsChecked;
         this.corrAddressDiff = corrAddressDiff;
     }
 
@@ -207,7 +194,8 @@ public class VacantProperty extends AbstractProperty {
     /**
      * This method removes the Floor Object from the Set view of the Floor
      * 
-     * @param floor The floor to set .
+     * @param floor
+     *            The floor to set .
      */
     public void removeFloor(Floor floor) {
         LOGGER.debug("BuildUpFloor.removeFloor");
@@ -223,7 +211,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param commBuiltUpArea The commBuiltUpArea to set.
+     * @param commBuiltUpArea
+     *            The commBuiltUpArea to set.
      */
     public void setCommBuiltUpArea(Area commBuiltUpArea) {
         this.commBuiltUpArea = commBuiltUpArea;
@@ -237,7 +226,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param commVacantLand The commVacantLand to set.
+     * @param commVacantLand
+     *            The commVacantLand to set.
      */
     public void setCommVacantLand(Area commVacantLand) {
         this.commVacantLand = commVacantLand;
@@ -251,7 +241,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param creationReason The creationReason to set.
+     * @param creationReason
+     *            The creationReason to set.
      */
     public void setCreationReason(PropertyCreationReason creationReason) {
         this.creationReason = creationReason;
@@ -265,7 +256,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param elec_Meter_Num The elec_Meter_Num to set.
+     * @param elec_Meter_Num
+     *            The elec_Meter_Num to set.
      */
     public void setElec_Meter_Num(String elec_Meter_Num) {
         this.elec_Meter_Num = elec_Meter_Num;
@@ -279,7 +271,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param fieldIrregular The fieldIrregular to set.
+     * @param fieldIrregular
+     *            The fieldIrregular to set.
      */
     public void setFieldIrregular(char fieldIrregular) {
         this.fieldIrregular = fieldIrregular;
@@ -293,7 +286,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param fieldVerificationDate The fieldVerificationDate to set.
+     * @param fieldVerificationDate
+     *            The fieldVerificationDate to set.
      */
     public void setFieldVerificationDate(java.util.Date fieldVerificationDate) {
         this.fieldVerificationDate = fieldVerificationDate;
@@ -307,7 +301,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param fieldVerified The fieldVerified to set.
+     * @param fieldVerified
+     *            The fieldVerified to set.
      */
     public void setFieldVerified(Character fieldVerified) {
         this.fieldVerified = fieldVerified;
@@ -321,7 +316,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param floorDetails The floorDetails to set.
+     * @param floorDetails
+     *            The floorDetails to set.
      */
     public void setFloorDetails(java.util.List<Floor> floorDetails) {
         this.floorDetails = floorDetails;
@@ -335,12 +331,12 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param irregular The irregular to set.
+     * @param irregular
+     *            The irregular to set.
      */
     public void setIrregular(Boolean irregular) {
         this.irregular = irregular;
     }
-
 
     @Override
     public Integer getNoofFloors() {
@@ -360,7 +356,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param plinthArea The plinthArea to set.
+     * @param plinthArea
+     *            The plinthArea to set.
      */
     public void setPlinthArea(Area plinthArea) {
         this.plinthArea = plinthArea;
@@ -374,7 +371,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param property The property to set.
+     * @param property
+     *            The property to set.
      */
     public void setProperty(Property property) {
         this.property = property;
@@ -388,7 +386,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param propertyDetailsID The propertyDetailsID to set.
+     * @param propertyDetailsID
+     *            The propertyDetailsID to set.
      */
     public void setPropertyDetailsID(Integer propertyDetailsID) {
         this.propertyDetailsID = propertyDetailsID;
@@ -402,7 +401,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param propertyTypeMaster The propertyTypeMaster to set.
+     * @param propertyTypeMaster
+     *            The propertyTypeMaster to set.
      */
     public void setPropertyTypeMaster(PropertyTypeMaster propertyTypeMaster) {
         this.propertyTypeMaster = propertyTypeMaster;
@@ -416,7 +416,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param propertyUsage The propertyUsage to set.
+     * @param propertyUsage
+     *            The propertyUsage to set.
      */
     public void setPropertyUsage(PropertyUsage propertyUsage) {
         this.propertyUsage = propertyUsage;
@@ -430,7 +431,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param sitalArea The sitalArea to set.
+     * @param sitalArea
+     *            The sitalArea to set.
      */
     public void setSitalArea(Area sitalArea) {
         this.sitalArea = sitalArea;
@@ -444,7 +446,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param surveyNumber The surveyNumber to set.
+     * @param surveyNumber
+     *            The surveyNumber to set.
      */
     public void setSurveyNumber(String surveyNumber) {
         this.surveyNumber = surveyNumber;
@@ -458,7 +461,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param totalBuiltupArea The totalBuiltupArea to set.
+     * @param totalBuiltupArea
+     *            The totalBuiltupArea to set.
      */
     public void setTotalBuiltupArea(Area totalBuiltupArea) {
         this.totalBuiltupArea = totalBuiltupArea;
@@ -472,7 +476,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param updatedTime The updatedTime to set.
+     * @param updatedTime
+     *            The updatedTime to set.
      */
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
@@ -486,7 +491,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param water_Meter_Num The water_Meter_Num to set.
+     * @param water_Meter_Num
+     *            The water_Meter_Num to set.
      */
     public void setWater_Meter_Num(String water_Meter_Num) {
         this.water_Meter_Num = water_Meter_Num;
@@ -500,7 +506,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param propertyType The propertyType to set.
+     * @param propertyType
+     *            The propertyType to set.
      */
     public void setPropertyType(String propertyType) {
         this.propertyType = propertyType;
@@ -553,24 +560,21 @@ public class VacantProperty extends AbstractProperty {
      */
     public boolean validateProperty() throws InvalidPropertyException {
         if (getSitalArea() == null) {
-            throw new InvalidPropertyException(
-                    "VacantProperty.validate : SitalArea Data is NULL, Please Check !!");
+            throw new InvalidPropertyException("VacantProperty.validate : SitalArea Data is NULL, Please Check !!");
         }
         /*
          * if(getTotalBuiltupArea() == null) throw newEGOVRuntimeException(
-         * "VacantProperty.validate : TotalBuiltUpArea is NULL, Please Check !!" );
+         * "VacantProperty.validate : TotalBuiltUpArea is NULL, Please Check !!"
+         * );
          */
 
         if (getPropertyAddress() == null) {
-            throw new InvalidPropertyException(
-                    "VacantProperty.validate : PropertyAddress is NULL, Please Check !!");
+            throw new InvalidPropertyException("VacantProperty.validate : PropertyAddress is NULL, Please Check !!");
         }
         if (getProperty() == null) {
-            throw new InvalidPropertyException(
-                    "VacantProperty.validate : Property is NULL, Please Check !!");
+            throw new InvalidPropertyException("VacantProperty.validate : Property is NULL, Please Check !!");
         } else if (!getProperty().validateProperty()) {
-            throw new InvalidPropertyException(
-                    "VacantProperty.validate : Property Validate() failed, Please Check !!");
+            throw new InvalidPropertyException("VacantProperty.validate : Property Validate() failed, Please Check !!");
         }
         // can't use validate, not implemented
         /*
@@ -578,21 +582,25 @@ public class VacantProperty extends AbstractProperty {
          * "VacantProperty.validate : Boundary is NULL, Please Check !!");
          */
         /*
-         * if(getAddress() == null) throw newEGOVRuntimeException( "VacantProperty.validate : Address is NULL, Please Check !!");
-         * else if(getAddress().validate() == false) throw newEGOVRuntimeException( "VacantProperty.validate : Address Validate()
-         * failed, Please Check !!" );
+         * if(getAddress() == null) throw newEGOVRuntimeException(
+         * "VacantProperty.validate : Address is NULL, Please Check !!"); else
+         * if(getAddress().validate() == false) throw newEGOVRuntimeException(
+         * "VacantProperty.validate : Address Validate() failed, Please Check
+         * !!" );
          */
         if (getPropertySource() == null) {
-            throw new InvalidPropertyException(
-                    "VacantProperty.validate : PropertySource is NULL, Please Check !!");
+            throw new InvalidPropertyException("VacantProperty.validate : PropertySource is NULL, Please Check !!");
         } else if (!getPropertySource().validate()) {
             throw new InvalidPropertyException(
                     "VacantProperty.validate : PropertySource Validate() failed, Please Check !!");
         }
         /*
          * if(getPropertyUsage() == null) throw newEGOVRuntimeException(
-         * "VacantProperty.validate : PropertyUsage is NULL, Please Check !!"); else if(getPropertyUsage().validate() == false)
-         * throw new ApplicationRuntimeException( "VacantProperty.validate : PropertyUsage Validate() failed, Please Check !!" );
+         * "VacantProperty.validate : PropertyUsage is NULL, Please Check !!");
+         * else if(getPropertyUsage().validate() == false) throw new
+         * ApplicationRuntimeException(
+         * "VacantProperty.validate : PropertyUsage Validate() failed, Please Check !!"
+         * );
          */
         return true;
     }
@@ -605,7 +613,8 @@ public class VacantProperty extends AbstractProperty {
     }
 
     /**
-     * @param propertyMutationMaster The propertyMutationMaster to set.
+     * @param propertyMutationMaster
+     *            The propertyMutationMaster to set.
      */
     public void setPropertyMutationMaster(PropertyMutationMaster propertyMutationMaster) {
         this.propertyMutationMaster = propertyMutationMaster;
@@ -643,8 +652,8 @@ public class VacantProperty extends AbstractProperty {
     public String toString() {
         StringBuilder objStr = new StringBuilder();
 
-        objStr.append("Id: ").append(getId()).append("|Sital Area: ")
-                .append(getSitalArea().getArea()).append("|NoOfFloors: ").append(getNoofFloors());
+        objStr.append("Id: ").append(getId()).append("|Sital Area: ").append(getSitalArea().getArea())
+                .append("|NoOfFloors: ").append(getNoofFloors());
 
         return objStr.toString();
     }
@@ -870,36 +879,6 @@ public class VacantProperty extends AbstractProperty {
     }
 
     @Override
-    public String getBuildingPermissionNo() {
-        return buildingPermissionNo;
-    }
-
-    @Override
-    public void setBuildingPermissionNo(String buildingPermissionNo) {
-        this.buildingPermissionNo = buildingPermissionNo;
-    }
-
-    @Override
-    public Date getBuildingPermissionDate() {
-        return buildingPermissionDate;
-    }
-
-    @Override
-    public void setBuildingPermissionDate(Date buildingPermissionDate) {
-        this.buildingPermissionDate = buildingPermissionDate;
-    }
-
-    @Override
-    public String getDeviationPercentage() {
-        return deviationPercentage;
-    }
-
-    @Override
-    public void setDeviationPercentage(String deviationPercentage) {
-        this.deviationPercentage = deviationPercentage;
-    }
-
-    @Override
     public Boolean isAppurtenantLandChecked() {
         return appurtenantLandChecked;
     }
@@ -907,16 +886,6 @@ public class VacantProperty extends AbstractProperty {
     @Override
     public void setAppurtenantLandChecked(Boolean appurtenantLandChecked) {
         this.appurtenantLandChecked = appurtenantLandChecked;
-    }
-
-    @Override
-    public Boolean isBuildingPlanDetailsChecked() {
-        return buildingPlanDetailsChecked;
-    }
-
-    @Override
-    public void setBuildingPlanDetailsChecked(Boolean buildingPlanDetailsChecked) {
-        this.buildingPlanDetailsChecked = buildingPlanDetailsChecked;
     }
 
     @Override

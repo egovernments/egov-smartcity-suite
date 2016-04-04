@@ -1,4 +1,5 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -23,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
+	1) All versions of this program, verbatim or modified must carry this
+	   Legal Notice.
 
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
+	   reasonable ways as different from the original version.
 
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
+	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -52,6 +53,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.EgwStatus;
@@ -66,7 +68,9 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -103,12 +107,13 @@ public class DailyWTCollectionReportService {
 
     public Set<User> getUsers() {
         final String operatorDesignation = appConfigValueService
-                .getAppConfigValueByDate("Collection", "COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK", new Date()).getValue();
+                .getAppConfigValueByDate(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR, new Date()).getValue();
         return assignmentService.getUsersByDesignations(operatorDesignation.split(","));
     }
 
     public List<EgwStatus> getStatusByModule() {
-        return egwStatusHibernateDAO.getStatusByModule("ReceiptHeader");
+        return egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
     }
 
     public List<DailyWTCollectionReport> getCollectionDetails(final Date fromDate, final Date toDate,
@@ -129,23 +134,20 @@ public class DailyWTCollectionReportService {
         final Query query = getCurrentSession().createQuery(queryStr.toString());
         query.setString("service", WaterTaxConstants.EGMODULES_NAME);
         query.setDate("fromDate", new DateTime(fromDate).withTimeAtStartOfDay().toDate());
-        query.setDate("toDate", new DateTime(toDate).withTime(23, 59, 59, 59).toDate());
+        query.setDate("toDate", new DateTime(toDate).plusDays(1).toDate());
         if (StringUtils.isNotBlank(collectionMode))
-            query.setLong("mode", Long.valueOf(collectionMode));
+            query.setString("mode", collectionMode);
         if (StringUtils.isNotBlank(collectionOperator))
             query.setLong("operator", Long.valueOf(collectionOperator));
         if (StringUtils.isNotBlank(status))
             query.setLong("status", Long.valueOf(status));
         final List<ReceiptHeader> receiptHeaderList = query.list();
         final List<DailyWTCollectionReport> dailyWTCollectionReportList = new ArrayList<DailyWTCollectionReport>(0);
-        DailyWTCollectionReport result = null;
-        BigDecimal currCollection = null;
-        BigDecimal arrCollection = null;
 
         for (final ReceiptHeader receiptHeader : receiptHeaderList) {
-            currCollection = BigDecimal.ZERO;
-            arrCollection = BigDecimal.ZERO;
-            result = new DailyWTCollectionReport();
+            BigDecimal currCollection = BigDecimal.ZERO;
+            BigDecimal arrCollection = BigDecimal.ZERO;
+            DailyWTCollectionReport result = new DailyWTCollectionReport();
             result.setReceiptNumber(receiptHeader.getReceiptnumber());
             result.setReceiptDate(receiptHeader.getReceiptdate());
             result.setConsumerCode(receiptHeader.getConsumerCode());
@@ -155,14 +157,21 @@ public class DailyWTCollectionReportService {
                     .findByApplicationNumberOrConsumerCode(receiptHeader.getConsumerCode());
             if (null != waterConnection)
                 result.setConnectionType(waterConnection.getConnectionType().toString());
-            final String[] address = receiptHeader.getPayeeAddress().split(",");
+            final StringBuilder queryString = new StringBuilder();
+            queryString.append(
+                    "select wardboundary.name as \"wardName\",dcbinfo.houseno as \"houseNo\" from egwtr_mv_dcb_view dcbinfo"
+                            + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = '"+receiptHeader.getConsumerCode()+"'");
+            final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryString.toString());
+            finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
+            List<DefaultersReport> listforWardAndHsc = new ArrayList<DefaultersReport>();
+            listforWardAndHsc =finalQuery.list();
+            if (!listforWardAndHsc.isEmpty())
+            {
+            result.setDoorNumber(listforWardAndHsc.get(0).getHouseNo());
+            result.setWardName(listforWardAndHsc.get(0).getWardName());
+            }
             result.setTotal(receiptHeader.getTotalAmount());
-            if (address.length >= 4)
-                result.setDoorNumber(address[0]);
-            else
-                result.setDoorNumber("N/A");
             result.setStatus(receiptHeader.getStatus().getDescription());
-
             if ("CANCELLED".equalsIgnoreCase(receiptHeader.getStatus().getCode()))
                 result.setCancellationDetails(receiptHeader.getReasonForCancellation());
             else
@@ -200,17 +209,17 @@ public class DailyWTCollectionReportService {
                     String currentInstallment = null;
                     if (Arrays.asList(WaterTaxConstants.CREATECONNECTIONDMDDESC).contains(receiptDmdRsnDesc))
                         currentInstallment = connectionDemandService
-                        .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
-                        .getDescription();
+                                .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
+                                .getDescription();
                     else if (Arrays.asList(WaterTaxConstants.WATERCHARGESDMDDESC).contains(receiptDmdRsnDesc))
                         if (ConnectionType.METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                            .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
-                            .getDescription();
+                                    .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
+                                    .getDescription();
                         else if (ConnectionType.NON_METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                            .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
-                            .getDescription();
+                                    .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
+                                    .getDescription();
 
                     if (null != rdesc
                             && rdesc.substring(rdesc.indexOf("-") + 1, rdesc.indexOf("#")).trim().equals(currentInstallment))
@@ -234,6 +243,8 @@ public class DailyWTCollectionReportService {
         collectionModeMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
         collectionModeMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
         collectionModeMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
+        collectionModeMap.put(Source.SOFTTECH.toString(), Source.SOFTTECH.toString());
+        collectionModeMap.put(Source.SYSTEM.toString(), Source.SYSTEM.toString());
         return collectionModeMap;
     }
 }

@@ -42,30 +42,24 @@ package org.egov.works.models.tender;
 import javax.script.ScriptContext;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorksPackageNumberGenerator {
     @Autowired
-    private SequenceGenerator sequenceGenerator;
-    // private PersistenceService<Script, Long> scriptService;
+    private SequenceNumberGenerator squenceGenerator;
+    @Autowired
+    private DBSequenceGenerator dbSequenceGenerator;
     @Autowired
     private ScriptService scriptService;
 
     public String getWorksPackageNumber(final WorksPackage entity, final CFinancialYear finYear) {
-        try {
-            final ScriptContext scriptContext = ScriptService.createContext("worksPackage", entity, "finYear", finYear,
-                    "sequenceGenerator", sequenceGenerator);
-            return scriptService.executeScript("works.wpNumber.generator", scriptContext).toString();
-        } catch (final ValidationException sequenceException) {
-            throw sequenceException;
-        }
-        // List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
-        // "works.wpNumber.generator");
-        // return
-        // scripts.get(0).eval(Script.createContext("worksPackage",entity,"finYear",finYear,"sequenceGenerator",sequenceGenerator)).toString();
+        final ScriptContext scriptContext = ScriptService.createContext("worksPackage", entity, "finYear", finYear,
+                "sequenceGenerator", squenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
+        return scriptService.executeScript("works.wpNumber.generator", scriptContext).toString();
+
     }
 
 }

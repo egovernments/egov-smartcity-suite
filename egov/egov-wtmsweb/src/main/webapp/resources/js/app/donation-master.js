@@ -218,7 +218,7 @@ function overwritedonation(res)
 	var todaysDate=getTodayDate();
 	if(compareDate(formdate,todaysDate) == 1  )
 	{		
-		alert('Effective Date should not be less than todays date');
+		bootbox.alert('Effective Date should not be less than todays date');
 		obj.value="";
 		return false;
 		}

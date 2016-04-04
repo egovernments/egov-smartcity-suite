@@ -1,46 +1,47 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *     accountability and the service delivery of the government  organizations.
+ *    accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
- *      The updated version of eGov suite of products as by eGovernments Foundation
- *      is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *      This program is free software: you can redistribute it and/or modify
- *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation, either version 3 of the License, or
- *      any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *      This program is distributed in the hope that it will be useful,
- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *      GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with this program. If not, see http://www.gnu.org/licenses/ or
- *      http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *      In addition to the terms of the GPL license to be adhered to in using this
- *      program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *  	1) All versions of this program, verbatim or modified must carry this
- *  	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *  	2) Any misrepresentation of the origin of the material is prohibited. It
- *  	   is required that all modified versions of this material be marked in
- *  	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  	3) This license does not grant any rights to any user of the program
- *  	   with regards to rights under trademark law for use of the trade names
- *  	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.tl.web.actions.domain;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,23 +58,27 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
-import org.egov.tl.domain.entity.FeeMatrixDetail;
-import org.egov.tl.domain.entity.LicenseSubCategory;
-import org.egov.tl.domain.service.FeeMatrixDetailService;
-import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
+import org.egov.tl.entity.FeeMatrixDetail;
+import org.egov.tl.entity.FeeType;
+import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.entity.PenaltyRates;
+import org.egov.tl.service.FeeMatrixDetailService;
+import org.egov.tl.service.PenaltyRatesService;
+import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
-
 @Results({
-@Result(name = "ward", location = "commonAjax-ward.jsp"),
-@Result(name = "subcategory", location = "commonAjax-subcategory.jsp"),
-
-@Result(name = "designation", location = "commonAjax-designation.jsp"),
-@Result(name = "users", location = "commonAjax-users.jsp"),
-@Result(name = "SUCCESS", type = "redirectAction", location = "CommonAjaxAction.action"),
-@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" })
+        @Result(name = "ward", location = "commonAjax-ward.jsp"),
+        @Result(name = "subcategory", location = "commonAjax-subcategory.jsp"),
+        @Result(name = "feeType", location = "commonAjax-feeType.jsp"),
+        @Result(name = "unitOfMeasurement", location = "commonAjax-unitOfMeasurement.jsp"),
+        @Result(name = "designation", location = "commonAjax-designation.jsp"),
+        @Result(name = "users", location = "commonAjax-users.jsp"),
+        @Result(name = "deleteRow", location = "commonAjax-deleteRow.jsp"),
+        @Result(name = "SUCCESS", type = "redirectAction", location = "CommonAjaxAction.action"),
+        @Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" })
 })
 public class CommonAjaxAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -91,7 +96,10 @@ public class CommonAjaxAction extends BaseFormAction {
     private int locationId;
     private int zoneId;
     private Long categoryId;
+    private Long subCategoryId;
+    private Long feeTypeId;
     private Long feeMatrixDetailId;
+    private Long penaltyRateId;
     private List<Boundary> locationList = new LinkedList<Boundary>();
     private List<Boundary> areaList = new LinkedList<Boundary>();
     private List<Boundary> streetList = new LinkedList<Boundary>();
@@ -109,9 +117,16 @@ public class CommonAjaxAction extends BaseFormAction {
     @Autowired
     private EisCommonService eisCommonService;
     @Autowired
-    private  FeeMatrixDetailService feeMatrixDetailService;
-	private LicenseSubCategoryService licenseSubCategoryService;
-	private List<LicenseSubCategory> subCategoryList;
+    private FeeMatrixDetailService feeMatrixDetailService;
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
+    private String rateType;
+    private Long uomId;
+    private String uomName;
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
+    private List<LicenseSubCategory> subCategoryList;
+    private List<FeeType> feeTypeList = new ArrayList<FeeType>();
 
     public InputStream getReturnStream() {
         final ByteArrayInputStream is = new ByteArrayInputStream(returnStream.getBytes());
@@ -159,7 +174,7 @@ public class CommonAjaxAction extends BaseFormAction {
      *
      * @return the string
      */
-@Action(value="/commonAjax-populateDivisions")
+    @Action(value = "/commonAjax-populateDivisions")
     public String populateDivisions() {
         try {
             final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(zoneId));
@@ -174,7 +189,7 @@ public class CommonAjaxAction extends BaseFormAction {
         return "ward";
     }
 
-@Action(value="/commonAjax-ajaxPopulateDesignationsByDept")
+    @Action(value = "/commonAjax-ajaxPopulateDesignationsByDept")
     public String ajaxPopulateDesignationsByDept() {
         try {
 
@@ -189,7 +204,7 @@ public class CommonAjaxAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
-@Action(value="/domain/commonAjax-ajaxPopulateUsersByDesignation")
+    @Action(value = "/domain/commonAjax-ajaxPopulateUsersByDesignation")
     public String ajaxPopulateUsersByDesignation() {
         try {
             allActiveUsersByGivenDesg = eisCommonService.getAllActiveUsersByGivenDesig(Long.valueOf(designationId));
@@ -200,26 +215,56 @@ public class CommonAjaxAction extends BaseFormAction {
         }
         return "users";
     }
-    
-    @Action(value="/domain/commonAjax-ajaxPopulateSubCategory")  
+
+    @Action(value = "/domain/commonAjax-ajaxPopulateSubCategory")
     public String ajaxPopulateSubCategory() {
-    subCategoryList = licenseSubCategoryService.findAllBy("select s from org.egov.tl.domain.entity.LicenseSubCategory s  where s.category.id ="+categoryId);
-    return "subcategory";       
+        subCategoryList = licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
+        return "subcategory";
     }
-    
+
+    @Action(value = "/domain/commonAjax-ajaxPopulateFeeType")
+    public String ajaxPopulateFeeType() {
+        final LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
+        if (subCategory != null)
+            if (!subCategory.getLicenseSubCategoryDetails().isEmpty())
+                for (final LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails())
+                    feeTypeList.add(scd.getFeeType());
+        return "feeType";
+    }
+
+    @Action(value = "/domain/commonAjax-ajaxPopulateUom")
+    public String ajaxPopulateUom() {
+        final LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
+        if (subCategory != null)
+            if (!subCategory.getLicenseSubCategoryDetails().isEmpty())
+                for (final LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails())
+                    if (scd.getFeeType().getId() == feeTypeId) {
+                        uomId = scd.getUom().getId();
+                        uomName = scd.getUom().getName();
+                        rateType = scd.getRateType().toString();
+                    }
+        return "unitOfMeasurement";
+    }
+
     /**
      * @description delete feedetail
      * @return
      */
-    @Action(value="/domain/commonAjax-deleteFee")  
-    public String deleteFee(){
-        FeeMatrixDetail feeMatrixDetail=feeMatrixDetailService.findByFeeMatrixDetailId(feeMatrixDetailId);
-        if(feeMatrixDetail!=null){
+    @Action(value = "/domain/commonAjax-deleteFee")
+    public String deleteFee() {
+        final FeeMatrixDetail feeMatrixDetail = feeMatrixDetailService.findByFeeMatrixDetailId(feeMatrixDetailId);
+        if (feeMatrixDetail != null)
             feeMatrixDetailService.delete(feeMatrixDetail);
-        }
-        return "deleteFee"; 
+        return "deleteFee";
     }
 
+    @Action(value = "/domain/commonAjax-deleteRow")
+    public String deleteRow() {
+        final PenaltyRates penaltyRates = penaltyRatesService.findOne(Long.valueOf(penaltyRateId));
+        if (penaltyRates != null)
+            penaltyRatesService.delete(penaltyRates);
+        return "deleteRow";
+    }
 
     public List<User> getAllActiveUsersByGivenDesg() {
         return allActiveUsersByGivenDesg;
@@ -325,61 +370,117 @@ public class CommonAjaxAction extends BaseFormAction {
         this.licenseUtils = licenseUtils;
     }
 
-	public BoundaryService getBoundaryService() {
-		return boundaryService;
-	}
+    public BoundaryService getBoundaryService() {
+        return boundaryService;
+    }
 
-	public void setBoundaryService(BoundaryService boundaryService) {
-		this.boundaryService = boundaryService;
-	}
+    public void setBoundaryService(final BoundaryService boundaryService) {
+        this.boundaryService = boundaryService;
+    }
 
-	public DesignationService getDesignationService() {
-		return designationService;
-	}
+    public DesignationService getDesignationService() {
+        return designationService;
+    }
 
-	public void setDesignationService(DesignationService designationService) {
-		this.designationService = designationService;
-	}
+    public void setDesignationService(final DesignationService designationService) {
+        this.designationService = designationService;
+    }
 
-	public EisCommonService getEisCommonService() {
-		return eisCommonService;
-	}
+    public EisCommonService getEisCommonService() {
+        return eisCommonService;
+    }
 
-	public void setEisCommonService(EisCommonService eisCommonService) {
-		this.eisCommonService = eisCommonService;
-	}
+    public void setEisCommonService(final EisCommonService eisCommonService) {
+        this.eisCommonService = eisCommonService;
+    }
 
-	public LicenseSubCategoryService getLicenseSubCategoryService() {
-		return licenseSubCategoryService;
-	}
+    public LicenseSubCategoryService getLicenseSubCategoryService() {
+        return licenseSubCategoryService;
+    }
 
-	public void setLicenseSubCategoryService(
-			LicenseSubCategoryService licenseSubCategoryService) {
-		this.licenseSubCategoryService = licenseSubCategoryService;
-	}
+    public void setLicenseSubCategoryService(
+            final LicenseSubCategoryService licenseSubCategoryService) {
+        this.licenseSubCategoryService = licenseSubCategoryService;
+    }
 
-	public Long getCategoryId() {
-		return categoryId;
-	}
+    public Long getCategoryId() {
+        return categoryId;
+    }
 
-	public void setCategoryId(Long categoryId) {
-		this.categoryId = categoryId;
-	}
+    public void setCategoryId(final Long categoryId) {
+        this.categoryId = categoryId;
+    }
 
-	public List<LicenseSubCategory> getSubCategoryList() {
-		return subCategoryList;
-	}
+    public List<LicenseSubCategory> getSubCategoryList() {
+        return subCategoryList;
+    }
 
-	public void setSubCategoryList(List<LicenseSubCategory> subCategoryList) {
-		this.subCategoryList = subCategoryList;
-	}
+    public void setSubCategoryList(final List<LicenseSubCategory> subCategoryList) {
+        this.subCategoryList = subCategoryList;
+    }
 
     public Long getFeeMatrixDetailId() {
         return feeMatrixDetailId;
     }
 
-    public void setFeeMatrixDetailId(Long feeMatrixDetailId) {
+    public void setFeeMatrixDetailId(final Long feeMatrixDetailId) {
         this.feeMatrixDetailId = feeMatrixDetailId;
+    }
+
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(final Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    public Long getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(final Long feeTypeId) {
+        this.feeTypeId = feeTypeId;
+    }
+
+    public List<FeeType> getFeeTypeList() {
+        return feeTypeList;
+    }
+
+    public void setFeeTypeList(final List<FeeType> feeTypeList) {
+        this.feeTypeList = feeTypeList;
+    }
+
+    public String getRateType() {
+        return rateType;
+    }
+
+    public void setRateType(final String rateType) {
+        this.rateType = rateType;
+    }
+
+    public Long getUomId() {
+        return uomId;
+    }
+
+    public void setUomId(final Long uomId) {
+        this.uomId = uomId;
+    }
+
+    public String getUomName() {
+        return uomName;
+    }
+
+    public void setUomName(final String uomName) {
+        this.uomName = uomName;
+    }
+
+    public Long getPenaltyRateId() {
+        return penaltyRateId;
+    }
+
+    public void setPenaltyRateId(final Long penaltyRateId) {
+        this.penaltyRateId = penaltyRateId;
     }
 
 }

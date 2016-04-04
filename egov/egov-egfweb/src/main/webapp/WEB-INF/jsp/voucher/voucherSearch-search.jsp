@@ -1,51 +1,52 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <%@ page language="java"%>
-<%@ include file="/includes/taglibs.jsp" %>
-<link href="<egov:url path='/resources/css/displaytagFormatted.css'/>" rel="stylesheet" type="text/css" />
+<%@ include file="/includes/taglibs.jsp"%>
+<link href="<egov:url path='/resources/css/displaytagFormatted.css?rnd=${app_release_no}'/>"
+	rel="stylesheet" type="text/css" />
 
-<html>  
-<head>  
-    <title>Voucher Search</title>
-	<base target="_self" />
-	<script type="text/javascript">
+<html>
+<head>
+<title>Voucher Search</title>
+<base target="_self" />
+<script type="text/javascript">
 	function disableTypeForEditMode()
 	{
 		var showMode='<s:property value="showMode" />';
@@ -54,168 +55,200 @@
 	}
 	</script>
 </head>
-	<body onload="disableTypeForEditMode()">  
-		<s:form action="voucherSearch" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-	        		<jsp:param name="heading" value="Voucher Search" />
-				</jsp:include>
-			<span class="mandatory1">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-			<div class="formmainbox">
+<body onload="disableTypeForEditMode()">
+	<s:form action="voucherSearch" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="Voucher Search" />
+		</jsp:include>
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
+		</span>
+		<div class="formmainbox">
 			<s:if test="%{showMode=='nonbillPayment'}">
-			<div class="subheadnew">Non Bill Payment Search</div>
+				<div class="subheadnew">Non Bill Payment Search</div>
 			</s:if>
 			<s:else>
-			<div class="subheadnew">Voucher Search</div>
+				<div class="subheadnew">Voucher Search</div>
 			</s:else>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td style="width:5%"></td>
-					<td class="greybox" ><s:text name="voucher.number"/> </td>
-					<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" maxlength="25" value="%{voucherNumber}"/></td>
-					<td class="greybox" ></td>
-					<td class="greybox" ></td>
+					<td style="width: 5%"></td>
+					<td class="greybox"><s:text name="voucher.number" /></td>
+					<td class="greybox"><s:textfield name="voucherNumber"
+							id="voucherNumber" maxlength="25" value="%{voucherNumber}" /></td>
+					<td class="greybox"></td>
+					<td class="greybox"></td>
 				</tr>
 				<tr>
-				<td style="width:5%"></td>
-				<td class="bluebox" ><s:text name="voucher.type"/> </td>
-				<td class="bluebox"><s:select name="type" id="type" list="dropdownData.typeList" headerKey="-1" headerValue="----Choose----" onchange="loadVoucherNames(this.value)" /></td>
-				<td class="bluebox" ><s:text name="voucher.name"/></td>
-				<td class="bluebox"><s:select name="name" id="name" list="%{nameList}" headerKey="-1" headerValue="----Choose----" /></td>
+					<td style="width: 5%"></td>
+					<td class="bluebox"><s:text name="voucher.type" /></td>
+					<td class="bluebox"><s:select name="type" id="type"
+							list="dropdownData.typeList" headerKey="-1"
+							headerValue="----Choose----"
+							onchange="loadVoucherNames(this.value)" /></td>
+					<td class="bluebox"><s:text name="voucher.name" /></td>
+					<td class="bluebox"><s:select name="name" id="name"
+							list="%{nameList}" headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>
 				<tr>
-					<td style="width:5%"></td>
-					<td class="greybox" ><s:text name="voucher.fromdate"/><span class="mandatory1">*</span> </td>
-					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate"/>
-					<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{tempFromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
-					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate"/>
-					<td class="greybox"><s:text name="voucher.todate"/><span class="mandatory1">*</span> </td>
-					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{tempToDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
+					<td style="width: 5%"></td>
+					<td class="greybox"><s:text name="voucher.fromdate" /><span
+						class="mandatory1">*</span></td>
+					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
+					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
+							maxlength="20" value="%{tempFromDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('forms[0].fromDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
+					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />
+					<td class="greybox"><s:text name="voucher.todate" /><span
+						class="mandatory1">*</span></td>
+					<td class="greybox"><s:textfield name="toDate" id="toDate"
+							maxlength="20" value="%{tempToDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('forms[0].toDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
-				<jsp:include page="../voucher/voucher-filter.jsp"/>
+					<jsp:include page="../voucher/voucher-filter.jsp" />
 				</tr>
 				<tr>
-				<td style="width:5%"></td>
-				<td class="greybox" ><s:text name="voucher.source"/> </td>
-				<td class="greybox"><s:select name="moduleId" id="moduleId" list="sourceMap"  headerKey="-1" headerValue="----Choose----"  /></td>
+					<td style="width: 5%"></td>
+					<td class="greybox"><s:text name="voucher.source" /></td>
+					<td class="greybox"><s:select name="moduleId" id="moduleId"
+							list="sourceMap" headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>
-				<s:hidden name="mode" value="%{mode}" id="mode"/>  
+				<s:hidden name="mode" value="%{mode}" id="mode" />
 			</table>
 		</div>
-			<div align = "center" class="buttonbottom">
-				<s:submit value="Search" onclick="return validateAndSubmit()" cssClass="buttonsubmit" />
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-			</div>
-			<br/>
-			 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<div align="center" class="buttonbottom">
+			<s:submit value="Search" onclick="return validateAndSubmit()"
+				cssClass="buttonsubmit" />
+			<input type="button" value="Close"
+				onclick="javascript:window.close()" class="button" />
+		</div>
+		<br />
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<s:if test="%{pagedResults!=null}">
-			 <tr>
-				<td width="100%">
-          			 	  <display:table name="pagedResults" uid="currentRowObject" cellpadding="0" cellspacing="0" 
-          			 	  requestURI="" class="its"  style=" border-left: 1px solid #C5C5C5; border-top: 1px solid #C5C5C5;border-right: 1px solid #C5C5C5;border-bottom: 1px solid #C5C5C5;">	
-							 <display:column  title=" Sl No" style="text-align:center;"  >
- 						 	 <s:property value="%{#attr.currentRowObject_rowNum+ (page-1)*pageSize}"/></display:column>
-          			 	   	<display:column    title="Voucher Number"  style="text-align:center;">
- 						 	
-          			 	   <a href="#" onclick="openVoucher('<s:property value='%{#attr.currentRowObject.id}'/>','<s:property value="%{#attr.currentRowObject.vouchernumber}" />','<s:date name="%{#attr.currentRowObject.voucherdate}" format="dd/MM/yyyy"/>');"><s:property value="%{#attr.currentRowObject.vouchernumber}" /> </display:column>
- 						 			
- 						 	</a>
- 						 	 
-          			 	    <display:column   title="Voucher Type" style="text-align:center;">
-          			 	    <s:property value="%{#attr.currentRowObject.type}" /> </display:column>
-          			 	    <display:column    title="Voucher Name" style="text-align:center;" >
-          			 	    <s:property value="%{#attr.currentRowObject.name}" /> </display:column>
-          			 	    <display:column      title="Voucher Date" style="text-align:center;" >
-          			 	    <s:date name="%{#attr.currentRowObject.voucherdate}" format="dd/MM/yyyy"/>
-          			 	    </display:column>
-          			 	    <display:column    title="Fund Name" style="text-align:center;">
-          			 	    <s:property value="%{#attr.currentRowObject.fundname}" /> </display:column>
-          			 	    <display:column    title="Department Name" style="text-align:center;">
-          			 	    <s:property value="%{#attr.currentRowObject.deptName}" /> </display:column>
-          			 	    <display:column      title="Total Amount" style="text-align:right;" >
-          			 	    <s:property value="%{#attr.currentRowObject.amount}" /> </display:column>
-          			 	    <display:column      title="Status" style="text-align:center;">
-          			 	    <s:property value="%{#attr.currentRowObject.status}" /> </display:column>
-          			 	     <display:column    title="Source" style="text-align:center;">
-          			 	    <s:property value="%{#attr.currentRowObject.source}" /> </display:column>
-          			 	   
-          			 	  </display:table>
-          			 	  </td>
-          		<tr>
-          		
+				<tr>
+					<td width="100%"><display:table name="pagedResults"
+							uid="currentRowObject" cellpadding="0" cellspacing="0"
+							requestURI="" class="its"
+							style=" border-left: 1px solid #C5C5C5; border-top: 1px solid #C5C5C5;border-right: 1px solid #C5C5C5;border-bottom: 1px solid #C5C5C5;">
+							<display:column title=" Sl No" style="text-align:center;">
+								<s:property
+									value="%{#attr.currentRowObject_rowNum+ (page-1)*pageSize}" />
+							</display:column>
+							<display:column title="Voucher Number" style="text-align:center;">
+
+								<a href="#"
+									onclick="openVoucher('<s:property value='%{#attr.currentRowObject.id}'/>','<s:property value="%{#attr.currentRowObject.vouchernumber}" />','<s:date name="%{#attr.currentRowObject.voucherdate}" format="dd/MM/yyyy"/>');"><s:property
+										value="%{#attr.currentRowObject.vouchernumber}" />
+							</display:column>
+
+							</a>
+
+							<display:column title="Voucher Type" style="text-align:center;">
+								<s:property value="%{#attr.currentRowObject.type}" />
+							</display:column>
+							<display:column title="Voucher Name" style="text-align:center;">
+								<s:property value="%{#attr.currentRowObject.name}" />
+							</display:column>
+							<display:column title="Voucher Date" style="text-align:center;">
+								<s:date name="%{#attr.currentRowObject.voucherdate}"
+									format="dd/MM/yyyy" />
+							</display:column>
+							<display:column title="Fund Name" style="text-align:center;">
+								<s:property value="%{#attr.currentRowObject.fundname}" />
+							</display:column>
+							<display:column title="Department Name"
+								style="text-align:center;">
+								<s:property value="%{#attr.currentRowObject.deptName}" />
+							</display:column>
+							<display:column title="Total Amount" style="text-align:right;">
+								<s:property value="%{#attr.currentRowObject.amount}" />
+							</display:column>
+							<display:column title="Status" style="text-align:center;">
+								<s:property value="%{#attr.currentRowObject.status}" />
+							</display:column>
+							<display:column title="Source" style="text-align:center;">
+								<s:property value="%{#attr.currentRowObject.source}" />
+							</display:column>
+
+						</display:table></td>
+				<tr>
+
 				</tr>
 			</s:if>
 			<s:elseif test="%{voucherList.size!=0 || voucherList!=null}">
-			<div id="listid" style="display:none">
-					<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
-			        <tr>  
-			            <th class="bluebgheadtd">Sl.No.</th>  
-			            <th class="bluebgheadtd">Voucher Number</th>
-			            <th class="bluebgheadtd">Type</th>
-			            <th class="bluebgheadtd">Name</th>
-			            <th class="bluebgheadtd">Voucher Date</th>  
-			            <th class="bluebgheadtd">Fund Name</th>
-			             <th class="bluebgheadtd">Department Name</th>
-			            <th class="bluebgheadtd">Amount(Rs)</th>
-			            <th class="bluebgheadtd">Status</th>
-						<th class="bluebgheadtd">Source</th>  
-			        </tr>  
-			        <c:set var="trclass" value="greybox"/>
-			        
-				    <s:iterator var="p" value="voucherList" status="s">  
-				    <tr>  
-				    	<td class="<c:out value="${trclass}"/>">  
-				            <s:property value="#s.index+1" />
-				        </td>
-						<td align="left"  class="<c:out value="${trclass}"/>">  
-				            <a href="#" onclick="openVoucher(<s:property value='%{id}'/>,'<s:text name="%{name}.%{showMode}" />','<s:property value="%{vouchernumber}" /> ' ,'<s:date name="%{voucherdate}" format="dd/MM/yyyy"/>');"><s:property value="%{vouchernumber}" /> </a> 
-				        </td>
-				        <td align="left"  class="<c:out value="${trclass}"/>">  
-				            <s:property value="%{type}" />
-				        </td>
-				         <td align="left"  class="<c:out value="${trclass}"/>">  
-				            <s:property value="%{name}" />
-				        </td>
-				        <td  class="<c:out value="${trclass}"/>">  
-				            <s:date name="%{voucherdate}" format="dd/MM/yyyy"/>  
-				        </td>
-				        <td align="left"  class="<c:out value="${trclass}"/>">  
-				            <s:property value="%{fundname}" />
-				        </td>
-				        <td align="left"  class="<c:out value="${trclass}"/>">  
-				            <s:property value="%{deptName}" />
-				        </td>
-				        <td style="text-align:right"  class="<c:out value="${trclass}"/>">  
-				            <s:text name="format.number" ><s:param value="%{amount}"/></s:text>
-				        </td>
-				        <td  class="<c:out value="${trclass}"/>">  
-				      	    <s:text name="%{status}" />
-				        </td>
-				        <td  class="<c:out value="${trclass}"/>">  
-				      	    <s:text name="%{source}" />
-				        </td>
-				        <c:choose>
-					        <c:when test="${trclass=='greybox'}"><c:set var="trclass" value="bluebox"/></c:when>
-					        <c:when test="${trclass=='bluebox'}"><c:set var="trclass" value="greybox"/></c:when>
-				        </c:choose>
-				    </tr>  
-				    </s:iterator>
-				    <s:hidden name="targetvalue" value="%{target}" id="targetvalue"/>  
-				</table>  
-			</div>
+				<div id="listid" style="display: none">
+					<table width="100%" border="0" align="center" cellpadding="0"
+						cellspacing="0" class="tablebottom">
+						<tr>
+							<th class="bluebgheadtd">Sl.No.</th>
+							<th class="bluebgheadtd">Voucher Number</th>
+							<th class="bluebgheadtd">Type</th>
+							<th class="bluebgheadtd">Name</th>
+							<th class="bluebgheadtd">Voucher Date</th>
+							<th class="bluebgheadtd">Fund Name</th>
+							<th class="bluebgheadtd">Department Name</th>
+							<th class="bluebgheadtd">Amount(Rs)</th>
+							<th class="bluebgheadtd">Status</th>
+							<th class="bluebgheadtd">Source</th>
+						</tr>
+						<c:set var="trclass" value="greybox" />
+
+						<s:iterator var="p" value="voucherList" status="s">
+							<tr>
+								<td class="<c:out value="${trclass}"/>"><s:property
+										value="#s.index+1" /></td>
+								<td align="left" class="<c:out value="${trclass}"/>"><a
+									href="#"
+									onclick="openVoucher(<s:property value='%{id}'/>,'<s:text name="%{name}.%{showMode}" />','<s:property value="%{vouchernumber}" /> ' ,'<s:date name="%{voucherdate}" format="dd/MM/yyyy"/>');"><s:property
+											value="%{vouchernumber}" /> </a></td>
+								<td align="left" class="<c:out value="${trclass}"/>"><s:property
+										value="%{type}" /></td>
+								<td align="left" class="<c:out value="${trclass}"/>"><s:property
+										value="%{name}" /></td>
+								<td class="<c:out value="${trclass}"/>"><s:date
+										name="%{voucherdate}" format="dd/MM/yyyy" /></td>
+								<td align="left" class="<c:out value="${trclass}"/>"><s:property
+										value="%{fundname}" /></td>
+								<td align="left" class="<c:out value="${trclass}"/>"><s:property
+										value="%{deptName}" /></td>
+								<td style="text-align: right"
+									class="<c:out value="${trclass}"/>"><s:text
+										name="format.number">
+										<s:param value="%{amount}" />
+									</s:text></td>
+								<td class="<c:out value="${trclass}"/>"><s:text
+										name="%{status}" /></td>
+								<td class="<c:out value="${trclass}"/>"><s:text
+										name="%{source}" /></td>
+								<c:choose>
+									<c:when test="${trclass=='greybox'}">
+										<c:set var="trclass" value="bluebox" />
+									</c:when>
+									<c:when test="${trclass=='bluebox'}">
+										<c:set var="trclass" value="greybox" />
+									</c:when>
+								</c:choose>
+							</tr>
+						</s:iterator>
+						<s:hidden name="targetvalue" value="%{target}" id="targetvalue" />
+					</table>
+				</div>
 			</s:elseif>
-			</table>
-			<br/>
-			<br/>
-			<br/>
-			<s:hidden name="showMode"  id="showMode"/>
-		</s:form>  
-		
-		<script>
+		</table>
+		<br />
+		<br />
+		<br />
+		<s:hidden name="showMode" id="showMode" />
+	</s:form>
+
+	<script>
 		
 		function loadVoucherNames(selected)
 		{
@@ -286,30 +319,26 @@
 			var fundId=document.getElementById('fundId').value;
 
 			if(fromDate == ""){
-				alert("Please select from date");
+				bootbox.alert("Please select from date");
 				return false;
 				}
 			
 			if(toDate == ""){
-				alert("Please select to date");
+				bootbox.alert("Please select to date");
 				return false;
 				}
 
 			if(fundId == "-1"){
-				alert("Please select fund");
+				bootbox.alert("Please select fund");
 				return false;
 				}
 			
 			if(fromDate>todayDateText){
-				alert("Invalid Date! from date is greater than current date");
-				return false;
-			}
-			if(toDate>todayDateText){
-				alert("Invalid Date! to date is greater than current date");
+				bootbox.alert("Invalid Date! from date is greater than current date");
 				return false;
 			}
 			if (fromDate > toDate) {
-				alert("Invalid Date Range! From Date cannot be after To Date!")
+				bootbox.alert("Invalid Date Range! From Date cannot be after To Date!")
 				return false;
 				} 
 			
@@ -328,5 +357,5 @@
 			document.title="Non Bill Payment Search";
 		}
 		</script>
-	</body>  
+</body>
 </html>

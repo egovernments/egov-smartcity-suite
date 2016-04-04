@@ -1,42 +1,42 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@page  import="com.exilant.eGov.src.reports.LongAmountWrapper,com.exilant.eGov.src.reports.*,java.io.*,java.util.*,java.sql.*,javax.sql.*,javax.naming.InitialContext,com.exilant.GLEngine.*,org.egov.infstr.utils.EGovConfig"%>
@@ -53,7 +53,7 @@
 <SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
 <SCRIPT type="text/javascript" src="../resources/javascript/calendar.js" type="text/javascript" ></SCRIPT>
 <SCRIPT LANGUAGE="javascript">
 
@@ -111,19 +111,19 @@ function getConSupCodes()
 	var tdate = document.getElementById('toDate').value;
 	if(fdate.length==0)
 	{
-		alert("please select from date ");
+		bootbox.alert("please select from date ");
 		document.getElementById('conSupType').value="";
 		return;
 	}
 	if(tdate.length==0)
 	{
-		alert("please select to date ");
+		bootbox.alert("please select to date ");
 		document.getElementById('conSupType').value="";
 		return;
 	}
 	if(compareDate(formatDate6(fdate),formatDate6(tdate)) == -1 )
 	{
-		alert('From Date can not be greater than To Date');
+		bootbox.alert('From Date can not be greater than To Date');
 		document.getElementById('conSupType').value="";
 		document.getElementById('fdate').focus();
 		return false;
@@ -159,7 +159,7 @@ function getConSupCodes()
 }
 function getCode()
 {
-	//alert('getcode sIndex'+sIndex+',sText='+sText+',sValue='+sValue);
+	//bootbox.alert('getcode sIndex'+sIndex+',sText='+sText+',sValue='+sValue);
 	if(!(document.getElementById("conSupName").value !=''))
 	{
 		document.getElementById("code").value="";
@@ -174,7 +174,7 @@ function getCode()
 	{
 		document.forms[0].conSupName.options[sIndex]= new Option(sText,sValue);
 	}
-	//alert('getcode');
+	//bootbox.alert('getcode');
 	sIndex=obj.selectedIndex;
 	sValue=obj.options[obj.selectedIndex].value;
 	sText=obj1[0]+"-"+obj1[1];
@@ -212,7 +212,7 @@ function afterRefreshPage(dc)
 
 function accntMod(obj)
 {
-	//alert('accntMod=sIndex'+sIndex+',sText='+sText+',sValue='+sValue)
+	//bootbox.alert('accntMod=sIndex'+sIndex+',sText='+sText+',sValue='+sValue)
 	if(obj.selectedIndex==-1)	 return;
 	if(sIndex!=null)
 	{
@@ -234,7 +234,7 @@ function accntMod(obj)
 	   if(temp[1]!=null && temp[1]!="" )
 	   {
 	    obj.options[obj.selectedIndex].text=temp[0];
-	   // alert('acc');
+	   // bootbox.alert('acc');
 	   }
 	}catch(err){}
 }
@@ -248,7 +248,7 @@ function getData1()
 	tdate1 = document.getElementById('toDate').value;
 	if(compareDate(formatDate6(fdate1),formatDate6(tdate1)) == -1 )
 	{
-		alert('From Date can not be greater than To Date');
+		bootbox.alert('From Date can not be greater than To Date');
 		document.getElementById('fromDate').focus();
 		return;
 	}

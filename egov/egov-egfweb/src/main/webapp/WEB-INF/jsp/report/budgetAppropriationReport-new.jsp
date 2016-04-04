@@ -1,44 +1,45 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %> 
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}" rel="stylesheet"
+	type="text/css" />
 <link href="/EGF/css/commonegov.css" rel="stylesheet" type="text/css" />
 <script>
 
@@ -65,7 +66,7 @@ function getData(){
 		doLoadingMask();
 		var frmdate=document.getElementById('fromDate').value;
 		var todate=document.getElementById('toDate').value;
-		//alert("<<<>>>"+budName+"<<>>"+depName+"<<>>"+fndName+"<<<>>>"+funcName);
+		//bootbox.alert("<<<>>>"+budName+"<<>>"+depName+"<<>>"+fndName+"<<<>>>"+funcName);
 		var url = '/EGF/report/budgetAppropriationReport!ajaxGenerateReport.action?showDropDown=false'
 					+'&model.budgetDetail.executingDepartment.id='+document.getElementById('department').value
 					+'&model.budgetDetail.function.id='+document.getElementById('function').value
@@ -100,10 +101,10 @@ function validateMandatoryField(){
 	var frmdate=document.getElementById('fromDate').value;
 	var todate=document.getElementById('toDate').value;
 	if(budgetval.value==null || budgetval.value==''){
-		alert("Please Select Budget");
+		bootbox.alert("Please Select Budget");
 		return false;
 	}if(frmdate=='' || todate=='' ){
-		alert("Please Select Date Range");
+		bootbox.alert("Please Select Date Range");
 		return false;
 	}
 	doLoadingMask();
@@ -114,88 +115,114 @@ function doAfterSubmit(){
 }
 </script>
 
- <style type="text/css">
-
-    @media print
-    {
-        #non-printable { display: none; }
-    }
-    </style>
+<style type="text/css">
+@media print {
+	#non-printable {
+		display: none;
+	}
+}
+</style>
 
 <style>
-th.bluebgheadtd{
-	padding:0px;
-	margin:0px;
+th.bluebgheadtd {
+	padding: 0px;
+	margin: 0px;
 }
-.extracontent{
-	font-weight:bold;
-	font-size:xx-small;
-	color:#CC0000;
+
+.extracontent {
+	font-weight: bold;
+	font-size: xx-small;
+	color: #CC0000;
 }
 </style>
 <div id="non-printable">
-<s:form name="budgetAppropriationReport" action="budgetAppropriationReport" theme="simple">
-<div class="formmainbox">
-	<div class="subheadnew">Budget Addition/Deduction Appropriation Report</div>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	  
-	  <tr>
-	  <td class="bluebox"  width="4%"></td>
-	    <td class="bluebox"  width="8%"><s:text name="report.fund"/></td>
-	    <td class="bluebox">
-		<s:select name="budgetDetail.fund" id="fund" list="dropdownData.fundDropDownList" listKey="id" listValue="name" headerKey="" headerValue="----Select----"  value="budgetDetail.fund.id" />
-		</td>
-	    
-	    <td class="bluebox"><s:text name="report.department"/></td>
-	    <td class="bluebox"  width="8%">
-		<s:select name="budgetDetail.executingDepartment" id="department" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="" headerValue="----Select----"  value="budgetDetail.executingDepartment.id" />      
-		 </td>
-	    
-	  </tr>
-	  <tr>
-	  <td class="greybox"  width="4%"></td>
-	<td class="greybox"  width="8%"><s:text name="report.function"/></td>
-	<td class="greybox"  width="8%">
-	<s:select name="budgetDetail.function" id="function" list="dropdownData.functionList" listKey="id" listValue="name" headerKey="" headerValue="----Select----"  value="budgetDetail.function.id" />
-	</td>
-	
-	<td class="greybox"  width="8%"><s:text name="report.budget"/><span class="mandatory">*</span></td>
-	    <td class="greybox">
-		<s:select name="budgetDetail.budget" id="budget" list="dropdownData.budList" listKey="id" listValue="name" headerKey="" headerValue="----Select----"  value="%{budgetDetail.budget.id}" />       
-		 </td>
-		 
-	</tr>
-	<tr>
-		<td class="bluebox"  width="4%"></td>
-				<td  class="bluebox" width="8%"> <s:text name="report.fromdate" /><span class="mandatory">*</span></td>
-				<td  class="bluebox" width="8%"><s:date name="fromDate" format="dd/MM/yyyy" var="fromDateId"/>
-				<s:textfield name="budgetAppropriationReport.fromDate" id="fromDate" value="%{fromDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('budgetAppropriationReport.fromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
-				</td>
-				<td  class="bluebox" width="8%"><s:text name="report.todate" /><span class="mandatory">*</span></td>
-				<td  class="bluebox">
-				<s:date name="toDate" id="toDateId" format="dd/MM/yyyy"/>
-				<s:textfield name="budgetAppropriationReport.toDate" id="toDate" value="%{toDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('budgetAppropriationReport.toDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
-			</tr>
-	</table>
-		<div align="left" class="mandatory">* <s:text name="report.mandatory.fields"/></div>
-		
-		<div class="buttonbottom" style="padding-bottom:10px;"> 
-			<input type="hidden" id="budgetName" name="budgetName" />
-			<input type="hidden" id="fundName" name="fundName" />
-			<input type="hidden" id="functionName" name="functionName" />
-			<input type="hidden" id="deptName" name="deptName" />
-			<input type="button" value="Submit" class="buttonsubmit" onclick="return getData()"/>
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
+	<s:form name="budgetAppropriationReport"
+		action="budgetAppropriationReport" theme="simple">
+		<div class="formmainbox">
+			<div class="subheadnew">Budget Addition/Deduction Appropriation
+				Report</div>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+				<tr>
+					<td class="bluebox" width="4%"></td>
+					<td class="bluebox" width="8%"><s:text name="report.fund" /></td>
+					<td class="bluebox"><s:select name="budgetDetail.fund"
+							id="fund" list="dropdownData.fundDropDownList" listKey="id"
+							listValue="name" headerKey="" headerValue="----Select----"
+							value="budgetDetail.fund.id" /></td>
+
+					<td class="bluebox"><s:text name="report.department" /></td>
+					<td class="bluebox" width="8%"><s:select
+							name="budgetDetail.executingDepartment" id="department"
+							list="dropdownData.departmentList" listKey="id"
+							listValue="name" headerKey="" headerValue="----Select----"
+							value="budgetDetail.executingDepartment.id" /></td>
+
+				</tr>
+				<tr>
+					<td class="greybox" width="4%"></td>
+					<td class="greybox" width="8%"><s:text name="report.function" /></td>
+					<td class="greybox" width="8%"><s:select
+							name="budgetDetail.function" id="function"
+							list="dropdownData.functionList" listKey="id" listValue="name"
+							headerKey="" headerValue="----Select----"
+							value="budgetDetail.function.id" /></td>
+
+					<td class="greybox" width="8%"><s:text name="report.budget" /><span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:select name="budgetDetail.budget"
+							id="budget" list="dropdownData.budList" listKey="id"
+							listValue="name" headerKey="" headerValue="----Select----"
+							value="%{budgetDetail.budget.id}" /></td>
+
+				</tr>
+				<tr>
+					<td class="bluebox" width="4%"></td>
+					<td class="bluebox" width="8%"><s:text name="report.fromdate" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox" width="8%"><s:date name="fromDate"
+							format="dd/MM/yyyy" var="fromDateId" /> <s:textfield
+							name="budgetAppropriationReport.fromDate" id="fromDate"
+							value="%{fromDateId}" maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('budgetAppropriationReport.fromDate',null,null,'DD/MM/YYYY');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
+					</td>
+					<td class="bluebox" width="8%"><s:text name="report.todate" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox"><s:date name="toDate" id="toDateId"
+							format="dd/MM/yyyy" /> <s:textfield
+							name="budgetAppropriationReport.toDate" id="toDate"
+							value="%{toDateId}" maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('budgetAppropriationReport.toDate',null,null,'DD/MM/YYYY');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+				</tr>
+			</table>
+			<div align="left" class="mandatory">
+				*
+				<s:text name="report.mandatory.fields" />
+			</div>
+
+			<div class="buttonbottom" style="padding-bottom: 10px;">
+				<input type="hidden" id="budgetName" name="budgetName" /> <input
+					type="hidden" id="fundName" name="fundName" /> <input
+					type="hidden" id="functionName" name="functionName" /> <input
+					type="hidden" id="deptName" name="deptName" /> <input
+					type="button" value="Submit" class="buttonsubmit"
+					onclick="return getData()" /> <input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
+			</div>
+
 		</div>
-		
-</div>
-<div id="loading" class="loading" style="width: 700; height: 700;display:none " align="center" >
-	<blink style="color: red">Searching processing, Please wait...</blink>
-</div> 
-</s:form>
+		<div id="loading" class="loading"
+			style="width: 700; height: 700; display: none" align="center">
+			<blink style="color: red">Searching processing, Please
+				wait...</blink>
+		</div>
+	</s:form>
 </div>
 
-<div id="result">
-</div>
+<div id="result"></div>

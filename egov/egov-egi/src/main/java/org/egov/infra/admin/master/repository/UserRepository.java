@@ -67,8 +67,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByAadhaarNumber(String aadhaarNumber);
 
-    User findByAadhaarNumberAndType(String aadhaarNumber, UserType type);
-
+    List<User> findByAadhaarNumberAndType(String aadhaarNumber, UserType type);
+    
     User findByMobileNumber(String mobileNumber);
 
     @Query("select distinct usr.roles from User usr where usr.username = :usrName ")
@@ -82,6 +82,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName ")
     Set<User> findUsersByRoleName(@Param("roleName") String roleName);
+
+    @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName and usr.username = :usrName ")
+    List<User> findUsersByUserAndRoleName(@Param("usrName") String userName, @Param("roleName") String roleName);
 
     @Query(" select count(*) from User usr where usr.username like :name||'%' ")
     public Integer getUserSerialNumberByName(@Param("name") final String name);

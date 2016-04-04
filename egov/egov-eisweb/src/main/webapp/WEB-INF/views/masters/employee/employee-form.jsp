@@ -45,20 +45,12 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <script src="<c:url value='/resources/js/app/employeecreate.js'/>"></script>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+
 <script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -140,17 +132,17 @@
 									</div>
 
 									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.mobile"/><span class="mandatory"></span></label>
-										
+										<label class="col-sm-3 control-label"><spring:message code="lbl.mobile"/><span class="mandatory"></span></label>
 										<div class="col-sm-2 add-margin">
-											<form:input type="text" path="mobileNumber" id="mobileNumber" data-inputmask="'mask': '9999999999'" 
+											<div class="input-group">
+												<span class="input-group-addon">+91</span>
+												  	<form:input type="text" path="mobileNumber" id="mobileNumber" data-inputmask="'mask': '9999999999'" 
 											required="required" cssClass="form-control" maxlength="10" placeholder="Mobile Number"/>
+											</div>
 											<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
-										</div>
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.email"/></label>
 										
 										<div class="col-sm-3">
 											<form:input type="text" cssClass="form-control" id="emial" path="emailId" placeholder="abc@xyz.com" />
@@ -165,9 +157,7 @@
 											<form:input type="text" path="altContactNumber" id="altcontact" cssClass="form-control" data-inputmask="'mask': '9999999999'" maxlength="10" placeholder="Mobile Number"/>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.DOB"/></label>
-										</div>
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.DOB"/></label>
 										
 										<div class="col-sm-3 add-margin">
 											<form:input id="DOB" path="dob" type="text" class="form-control datepicker" 
@@ -182,10 +172,9 @@
 											<form:input id="DOA" path="dateOfAppointment" type="text" cssClass="form-control datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY"/>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.status"/><span class="mandatory"></span></label>
-										</div>
-										<div class="col-sm-3 add-margin">
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.status"/><span class="mandatory"></span></label>
+									 	
+									 	<div class="col-sm-3 add-margin">
 											<form:select path="employeeStatus" id="employeeStatus" required="required"
 												cssClass="form-control" cssErrorClass="form-control error">
 												<form:option value="">
@@ -212,11 +201,8 @@
 											<form:errors path="employeeType" cssClass="error-msg" />
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.code"/><span class="mandatory"></span></label>
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.code"/><span class="mandatory"></span></label>
 											
-										</div>
-										
 										<div class="col-sm-3">
 											<form:input path="code" id="code" type="text" required="required" cssClass="form-control is_valid_alphanumeric"/>
 											<form:errors path="code" cssClass="add-margin error-msg"/>
@@ -225,21 +211,22 @@
 									</div>
 
 									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.pan"/></label>
+									
+										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.aadhar"/></label>
 										
 										<div class="col-sm-2 add-margin">
+											<form:input type="text" id="aadhaarNumber" path="aadhaarNumber" cssClass="form-control is_valid_nuber" maxlength="12"/>
+											<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
+										</div>
+										
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.pan"/></label>
+										
+										<div class="col-sm-3 add-margin">
 											<form:input path="pan" id="pan" type="text" cssClass="form-control is_valid_alphanumeric" maxlength="10"/>
 											<form:errors path="pan" cssClass="add-margin error-msg"/>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.aadhar"/></label>
-										</div>
 										
-										<div class="col-sm-3 add-margin">
-											<form:input type="text" id="aadhaarNumber" path="aadhaarNumber" cssClass="form-control is_valid_nuber" maxlength="12"/>
-											<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
-										</div>
 									</div>
 									
 								    <c:if test="${not empty image}">
@@ -250,7 +237,7 @@
 									  	</div>
 								    </div>
 								    <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.new.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -266,7 +253,7 @@
 								     
 									<c:if test="${ empty image}">
                                     <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -289,7 +276,7 @@
 										</div>
 
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<form:radiobutton path="active" id="isactive_no" value="true"/>
+											<form:radiobutton path="active" id="isactive_no" value="false"/>
 											<label>No</label>
 										</div>
 
@@ -405,9 +392,7 @@
 											</select>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label">Function</label>
-										</div>
+										<label for="field-1" class="col-sm-1 control-label">Function</label>
 										
 										<div class="col-sm-3 add-margin">
 											<select class="form-control" id="functionId">
@@ -435,9 +420,7 @@
 											</select>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label">Functionary</label>
-										</div>
+										<label for="field-1" class="col-sm-1 control-label">Functionary</label>
 										
 										<div class="col-sm-3 add-margin">
 											<select class="form-control" id="functionaryId">
@@ -482,7 +465,7 @@
 										</div>
 									</div>
 
-									<div class="row form-group">
+									<div class="panel-heading custom_form_panel_heading">
 										<table id="assignmentTable" class="table table-bordered">
 										<thead>
 										<div class="col-sm-12 table-div-border view-content header-color hidden-xs">
@@ -574,8 +557,8 @@
 														</c:if>
 													</td>
 													<td>
-														<span class="parallel-actions" data-toggle="tooltip" title="Edit"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
-													   <span class="parallel-actions" data-toggle="tooltip" title="Delete"><i
+														<span class="add-padding" data-toggle="tooltip" title="Edit"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
+													   <span class="add-padding" data-toggle="tooltip" title="Delete"><i
 														id="delete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 													</td>
 												</tr>
@@ -626,7 +609,7 @@
 										/ Modify</button>
 							</div>
 							</div>
-							<div class="row form-group">
+							<div class="panel-heading custom_form_panel_heading">
 								<table id="jurisdictionTable" class="table table-bordered">
 									<thead>
 										<div
@@ -661,9 +644,9 @@
 													id="table_boundary${status.index}" class="form-control"
 													readonly="readonly" style="text-align: center"
 													value="${jurdctn.boundary.name}" /></td>
-													<td><span class="parallel-actions" data-toggle="tooltip" title="Edit"><i
+													<td><span class="add-padding" data-toggle="tooltip" title="Edit"><i
 														id="jurdctnedit_row" class="fa fa-edit"  value="${status.index}"></i></span>
-														<span class="parallel-actions" data-toggle="tooltip" title="Delete"><i
+														<span class="add-padding" data-toggle="tooltip" title="Delete"><i
 														id="jurdctndelete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 												</td>
 												
@@ -682,7 +665,7 @@
 				<div class="row">
 					<div class="text-center">
 						<button type="submit" id="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
+						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>
                 

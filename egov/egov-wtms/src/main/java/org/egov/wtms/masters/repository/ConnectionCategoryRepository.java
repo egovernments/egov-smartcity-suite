@@ -42,7 +42,6 @@ package org.egov.wtms.masters.repository;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.PropertyCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -53,19 +52,21 @@ public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCa
 
     ConnectionCategory findByName(String name);
 
+    ConnectionCategory findByNameIgnoreCase(String name);
+
     List<ConnectionCategory> findByNameContainingIgnoreCase(String name);
 
     ConnectionCategory findByCode(String code);
 
     List<ConnectionCategory> findByActiveTrueOrderByNameAsc();
 
-    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType=:propertyType ")
-    List<ConnectionCategory> getAllCategoryTypesByPropertyType(@Param("propertyType") Long propertyType);
+    ConnectionCategory findByNameIgnoreCaseAndActive(String name, Boolean status);
 
-    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType=:propertyType and PC.categorytype.name != 'BPL' ")
+    @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.connectionCategory.active=true")
+    List<ConnectionCategory> getAllActiveCategoryTypesByPropertyType(@Param("propertyType") Long propertyType);
+
+    @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.connectionCategory.name != 'BPL' ")
     List<ConnectionCategory> getAllCategoryTypesByPropertyTypeNotInBPL(@Param("propertyType") Long propertyType);
-    
-    @Query("select PC from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType in (select PT.id from PropertyType PT where PT.code =:propertyType) and PC.categorytype.code =:categoryCode ")
-    PropertyCategory getAllCategoryTypesByPropertyTypeAndCategory(@Param("propertyType") String propertyType,@Param("categoryCode") String categoryCode);
+    // findAllByApplicationTypeOrderByApplicationNumberAsc
 
 }

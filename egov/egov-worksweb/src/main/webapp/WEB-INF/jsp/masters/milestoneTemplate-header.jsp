@@ -104,33 +104,59 @@ obj.value=obj.value.substring(0,mlength)
 }
 </script>
 
-     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-             <tr>
-                <td width="11%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="milestone.template.code" />:</td>
-                <td width="21%" class="whitebox2wk"><s:textfield name="code" value="%{code}" id="code" cssClass="selectwk" maxlength="25" />
-                <td width="15%" class="whiteboxwk"><s:text name="milestone.template.status" />:</td>
-                <td width="53%" class="whitebox2wk"><s:select headerKey="1"  list="#{ '1':'ACTIVE','0':'INACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="selectwk" /> </td>
-                </td>
-              </tr>
-               <tr>
-                <td class="greyboxwk"><span class="mandatory">*</span><s:text name="milestone.template.name" />:</td>
-                <td class="greybox2wk"><s:textarea name="name" cols="35" cssClass="selectwk" id="name" maxlength="256" onkeyup="return ismaxlength(this)" value="%{name}"/></td>
-                <td class="greyboxwk"><span class="mandatory">*</span><s:text name="milestone.template.description" />:</td>
 
-                <td class="greybox2wk"><s:textarea name="description" cols="35" cssClass="selectwk" id="description" maxlength="1024" onkeyup="return ismaxlength(this)" value="%{description}"/></td>
-              </tr>
-              <tr>
-                <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="milestone.template.type" />:</td>
-                <td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="workType" id="workType" cssClass="selectwk" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
-                <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate!subcategories.action' selectedValue="%{subType.id}"/>
-                </td>
-
-                <td class="whiteboxwk"><s:text name="milestone.template.subtype" />:</td>
-                <td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="selectwk" list="dropdownData.categoryList" listKey="id" listValue="description"/>
-                </td>
-              </tr>
-                 <tr>
-                <td  colspan="4" class="shadowwk"> </td>               
-                </tr>
-                <tr><td>&nbsp;</td></tr>			
-          </table>
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+		<div class="panel-heading">
+			<div class="panel-title"></div>
+		</div>
+		<div class="panel-body no-margin-bottom">
+			<div class="form-group">
+				<label class="col-sm-2 control-label text-right">
+				    <s:text name="milestone.template.code" /> <span class="mandatory"/>
+				</label>
+				<div class="col-sm-3 add-margin">
+					<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" maxlength="25" />
+				</div>
+				<label class="col-sm-2 control-label text-right">
+				    <s:text name="milestone.template.status" />
+				</label>
+				<div class="col-sm-3 add-margin">
+					<s:select headerKey="1"  list="#{ '1':'ACTIVE','0':'INACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control" />
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-2 control-label text-right">
+				    <s:text name="milestone.template.name" /> <span class="mandatory"></span>
+				</label>
+				<div class="col-sm-3 add-margin">
+					<s:textarea name="name" cols="35" cssClass="form-control" id="name" maxlength="256" onkeyup="return ismaxlength(this)" value="%{name}"/>
+				</div>
+				<label class="col-sm-2 control-label text-right">
+				    <s:text name="milestone.template.description" /> <span class="mandatory"></span>
+				</label>
+				<div class="col-sm-3 add-margin">
+					<s:textarea name="description" cols="35" cssClass="form-control" id="description" maxlength="1024" onkeyup="return ismaxlength(this)" value="%{description}"/>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-2 control-label text-right">
+				    <s:text name="milestone.template.type" /> <span class="mandatory"></span>
+				</label>
+				<div class="col-sm-3 add-margin">
+					<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
+                	<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate!subcategories.action' selectedValue="%{subType.id}"/>
+				</div>
+				<label class="col-sm-2 control-label text-right">
+				    <s:text name="milestone.template.subtype" />
+				</label>
+				<div class="col-sm-3 add-margin">
+					<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
+				</div>
+			</div>
+			
+			
+			
+		</div>
+</div>

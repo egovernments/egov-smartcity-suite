@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittedTDSReport" pageWidth="752" pageHeight="612" orientation="Landscape" columnWidth="712" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="621f7dba-f153-436c-9ace-a3c4d18f4184">
+	<property name="net.sf.jasperreports.export.pdf.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.html.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="81"/>
+	<property name="ireport.y" value="0"/>
+	<field name="natureOfDeduction" class="java.lang.String"/>
+	<field name="voucherNumber" class="java.lang.String"/>
+	<field name="voucherDate" class="java.lang.String"/>
+	<field name="partyName" class="java.lang.String"/>
+	<field name="partyCode" class="java.lang.String"/>
+	<field name="panNo" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="chequeAmount" class="java.math.BigDecimal"/>
+	<field name="paymentVoucherNumber" class="java.lang.String"/>
+	<field name="chequeNumber" class="java.lang.String"/>
+	<field name="drawnOn" class="java.lang.String"/>
+	<field name="remittedOn" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="6" width="752" height="20" uuid="12ac6cad-29a6-43d2-ba9f-9a4f0f98862e"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remitted Details]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="695" y="0" width="57" height="40" uuid="f0507ef4-4582-41cd-8cd1-26137fc1e8d9"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cheque Amount(Rs)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="157" y="0" width="59" height="40" uuid="e2832d20-fe6b-4e92-8bf9-d3cf356e3147"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Voucher Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="0" width="58" height="40" uuid="e3d3231d-7069-4e2d-92a7-ae850f640a51"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nature Of Deduction]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="22" height="40" uuid="024fa3c2-5077-47c0-b964-9361b5df901b"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SL No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="77" height="40" uuid="96bc0f6d-75d1-499c-b73f-ba688a344827"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reference Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="216" y="20" width="85" height="20" uuid="e7a39618-2bd0-447d-af91-4ce25ed63040"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Party Name/Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="301" y="20" width="68" height="20" uuid="8196243b-6f3f-4b9e-8544-911666062cf6"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAN Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="369" y="0" width="75" height="40" uuid="ee8ff33b-79ce-42c4-8552-bff2ac3de002"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payment Voucher]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="553" y="0" width="78" height="40" uuid="43ceb906-de37-4ceb-8575-6114bfd5ac76"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cheque Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="631" y="0" width="63" height="40" uuid="ca49e199-48ed-413c-a616-8db1608c90da"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Drawn On]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="444" y="0" width="53" height="40" uuid="74a02376-aff1-48b2-9e13-c8b0a30c5e15"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remitted On]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="216" y="0" width="153" height="20" uuid="79809ede-ca52-403d-89e5-a2e8ccbbceeb"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Party Details]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="497" y="0" width="56" height="40" uuid="efb63a54-fa77-41c5-97ab-e2d6b6963501"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payment Amount]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="695" y="0" width="57" height="40" uuid="a86a2ef2-c81c-4cf6-9cf7-b37005f987cb"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{chequeAmount}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="157" y="0" width="59" height="40" uuid="067dd8c6-c7a3-4de9-a1df-5ba1bd8b23a5"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{voucherDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="22" y="0" width="58" height="40" uuid="5779485f-d178-4092-8cc0-9d41ef89d9d2"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{natureOfDeduction}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="22" height="40" uuid="f11704fe-57f0-485d-9026-27d6845cc025"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="216" y="0" width="85" height="40" uuid="816439c6-cf22-4bee-a604-e30dd75dc808"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{partyName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="80" y="0" width="77" height="40" uuid="812c5371-d5ad-4a01-bc95-719b910da421"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{voucherNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="301" y="0" width="68" height="40" uuid="b37465d4-fabe-43a0-800f-d97d6cc91233"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{panNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="369" y="0" width="75" height="40" uuid="0df99134-1025-4e8d-8172-3abbe1e23dba"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{paymentVoucherNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="553" y="0" width="78" height="40" uuid="39d0998e-3216-47fb-b5d5-fc4cc8ae7812"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{chequeNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="631" y="0" width="63" height="40" uuid="e85fac4f-791a-42f3-b445-289c165d41e6"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{drawnOn}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="0" width="53" height="40" uuid="d70d1cbe-793e-468b-8aa9-3b78c74357c2"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{remittedOn}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00">
+				<reportElement x="497" y="0" width="56" height="40" uuid="470d2c8d-0357-4ea0-a43a-b21bd8f750db"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0" lineColor="#010101"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="43" splitType="Stretch"/>
+	</summary>
+</jasperReport>

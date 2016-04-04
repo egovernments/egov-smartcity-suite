@@ -71,7 +71,7 @@ PageManager.Helper.getDescFields = function(obj){
 
 PageManager.Helper.dispatchService = function (src){
 	if (typeof(exilParms) == 'undefined' || exilParms.verbose) {  
-		alert('Going to call Exility with ' + src );
+		bootbox.alert('Going to call Exility with ' + src );
 	}
 	var ifrdiv=exilWindow.document.createElement('div');
 	ifrdiv.innerHTML='<iframe style="width:0px;height:0px" src="' +src +'">	</iframe>';
@@ -144,7 +144,7 @@ function DataService_refreshPage(dc, isListService){
 	}
 
 	if (typeof(exilParms) == 'undefined' || exilParms.verbose) {  
-		var str = this.dcToAlert(dc);
+		var str = this.dcTobootbox.alert(dc);
 		alert (str);
 	}
 
@@ -575,7 +575,7 @@ function dataService_getQueryString(){
 }
 
 
-function dataService_dcToAlert(dc){
+function dataService_dcTobootbox.alert(dc){  
 	var str = "";
 	str += "There are " + dc.messages.length + " Messages";
 	for (var i=0; i<dc.messages.length; i++) str+= "\n" + dc.messages[i];
@@ -728,7 +728,7 @@ function updateService_resetCheckBoxes(frm){
 function updateService_returnedFromServer(dc){
 	if (typeof(exilParms) == 'undefined' || exilParms.verbose) {  
 		var str = 'returned from update service with dc as follows:';
-		str += PageManager.DataService.dcToAlert(dc);
+		str += PageManager.DataService.dcTobootbox.alert(dc);
 		alert (str);
 	}
 	
@@ -761,7 +761,7 @@ function updateService_fillMessage(messages){
 		msgArea.innerHTML=msg.replace("&","&amp;");
 		msgArea.style.display = (msg == "")? 'none' : 'block';
 	}else{
-		if (msg != "")alert(msg); 
+		if (msg != "")bootbox.alert(msg); 
 	}
 }
          /*******************Code for Description Service***********************/
@@ -811,10 +811,10 @@ function descService_getDesc(obj){
 }
 
 function descService_setDescToObjects(obj, code, desc, validity){
-	//alert(obj);//object
-	//alert( code);//input text value
-	//alert(desc);//null(wrong means)
-	//alert(validity);//unknown,false
+	//bootbox.alert(obj);//object
+	//bootbox.alert( code);//input text value
+	//bootbox.alert(desc);//null(wrong means)
+	//bootbox.alert(validity);//unknown,false
 
 	if (obj.value != code) return; 
 	obj.setAttribute('exilValidity', validity);
@@ -830,7 +830,7 @@ function descService_setDescToObjects(obj, code, desc, validity){
 					//Added by  Iliyaraja----- Alert for Function Name Invalid input 
 		      		if(obj.getAttribute('exilDataSource')=="functionIdKey")
 				{
-					alert("Invalid Function Name.");
+					bootbox.alert("Invalid Function Name.");
 					text="";
 					obj.value='';
 					obj.focus();
@@ -838,7 +838,7 @@ function descService_setDescToObjects(obj, code, desc, validity){
 					// Alert for Account code Invalid input 
 				else
 				{
-					alert("Invalid Account code or Not Active for Posting\n or Not a Detailed Code.");
+					bootbox.alert("Invalid Account code or Not Active for Posting\n or Not a Detailed Code.");
 					text="";
 					obj.value='';
 					obj.focus();
@@ -853,7 +853,7 @@ function descService_setDescToObjects(obj, code, desc, validity){
 	else {
 		var len = descFields.length;
 		if (len > desc.length){
-			alert("Server returned only " + desc.length + " fields while description service for " +obj.id + " expected " + len + " fields. ");
+			bootbox.alert("Server returned only " + desc.length + " fields while description service for " +obj.id + " expected " + len + " fields. ");
 			return;
 		}  
 		for(var i=0; i<len; i++){
@@ -937,16 +937,16 @@ this.displayTree = function (dc){
 	
 	var divObj = exilWindow.document.getElementById(divName);
 	if (!divObj){
-		alert('div name ' + divName + ' is not an id of a div element');
+		bootbox.alert('div name ' + divName + ' is not an id of a div element');
 		return;
 	}
 	
 	if (typeof(exilParms) == 'undefined' || exilParms.verbose) 
-		alert ('Dc returned from Tree Service' + PageManager.DataService.dcToAlert(dc));
+		alert ('Dc returned from Tree Service' + PageManager.DataService.dcTobootbox.alert(dc));
 
 	var grid = dc.grids[treeName];
 	if (!grid) {
-		alert('Tree service did not return data in grid with name' + divName);
+		bootbox.alert('Tree service did not return data in grid with name' + divName);
 		return; 
 	}
 

@@ -46,6 +46,7 @@ import java.util.Set;
 
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
@@ -106,9 +107,25 @@ public interface BillingIntegrationService {
      * created on later/same day with status as APPROVED/SUBMITTED/TO_BE_SUBMITTED
      * @param billReferenceNumber Bill Reference Number of the bill send by billing system
      * @param actualAmountPaid Actual amount paid by the citizen
+     * @param receiptDetailList List of existing receipt details
      * @return Reconstructed List of ReceiptDetail objects
      *
      */
-    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid);
+    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid,
+            List<ReceiptDetail> receiptDetailList);
 
+    /**
+     * Collection system will invoke billing system to frame up the additional message to be printed in receipt
+     * @param billReceiptInfo
+     * @return Message to be printed in receipt
+     */
+    public String constructAdditionalInfoForReceipt(BillReceiptInfo billReceiptInfo);
+
+    /**
+     * Collection system invokes billing system to get the amount bifurcation information from <BillReceiptInfo> object passed as
+     * parameter.
+     * @param billReceiptInfo
+     * @return
+     */
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo);
 }

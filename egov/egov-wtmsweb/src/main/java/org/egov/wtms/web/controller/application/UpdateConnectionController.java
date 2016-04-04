@@ -308,9 +308,10 @@ public class UpdateConnectionController extends GenericConnectionController {
     public String update(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
-
+   
         String mode = "";
         String workFlowAction = "";
+        String sourceChannel = request.getParameter("Source");
 
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
@@ -381,7 +382,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             try {
                 // For Closure Connection
                 if (waterConnectionDetails.getCloseConnectionType() != null)
-                    if (waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSE))
+                    if (waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSE) || waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE))
                         waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
                     else
                         waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
@@ -466,7 +467,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                     } else
                         waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                                 approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
-                                mode, null);
+                                mode, null ,sourceChannel);
             } catch (final ValidationException e) {
                 throw new ValidationException(e.getMessage());
             }

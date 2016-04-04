@@ -1,42 +1,42 @@
-<!--
-	eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-    Copyright (C) <2015>  eGovernments Foundation
- 
-	The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
- 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
- 
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -59,28 +59,29 @@
 	<script>
 
 	function bodyOnLoad(){
-		if(dom.get("userMode").value=='view'  || dom.get("userMode").value=='success'){
-			 dom.get("code").disabled=true;
-			 dom.get("name").disabled=true;
-			 dom.get("categoryId").disabled=true;
-			 jQuery("span").remove(".mandatory");
+		if(document.getElementById("userMode").value=='view'  || document.getElementById("userMode").value=='success'){
+			 for(i=0;i<document.licenseSubCategoryForm.elements.length;i++){ 
+					if(document.licenseSubCategoryForm.elements[i].id!='btnclose'){
+					document.licenseSubCategoryForm.elements[i].disabled=true;
+					document.licenseSubCategoryForm.elements[i].readonly=true;
+					} 
+			 }
+			 subCategoryMappingDataTable.removeListener('cellClickEvent');
+			 jQuery("span").remove(".mandatory");  
 		}
 	}
 
 
 	function reload(){
-		dom.get("code").value="";
-		dom.get("name").value="";
-		dom.get("categoryId").value="-1";
+		document.licenseSubCategoryForm.reset();
 		document.licenseSubCategoryForm.action='${pageContext.request.contextPath}/masters/licenseSubCategory-newform.action';
     	document.licenseSubCategoryForm.submit();
-		
 	}
 
 	function validateFormAndSubmit(){
-		var code= dom.get("code").value;
-		var name= dom.get("name").value;
-		var categoryId= dom.get("categoryId").value;
+		var code= document.getElementById("code").value;
+		var name= document.getElementById("name").value;
+		var categoryId= document.getElementById("categoryId").value;
 		if (categoryId == '-1'){
 			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategoryid.null" />');
 			return false;
@@ -91,11 +92,28 @@
 			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategorycode.null" />');
 			return false;
 		}
+		if(!validateMappingDetails())
+			return false;
 		else {
 		    	clearMessage('subcategory_error')
 		    	document.licenseSubCategoryForm.action='${pageContext.request.contextPath}/masters/licenseSubCategory-save.action';
 		    	document.licenseSubCategoryForm.submit();
 		 	}
+	}
+
+	function validateMappingDetails(){ 
+		var records= subCategoryMappingDataTable.getRecordSet();
+	   	for(var i=0;i<subCategoryMappingDataTable.getRecordSet().getLength();i++)
+	   	{
+	   	  	var record = subCategoryMappingDataTable.getRecord(i);
+	   		 if(document.getElementById("feeType"+record.getId()).value==0 || document.getElementById("rateType"+record.getId()).value==0 ||
+	   				document.getElementById("uom"+record.getId()).value==0){
+	   			document.getElementById("scDtl_error").innerHTML='Please select all the details for '+(i+1)+' row.'; 
+	            document.getElementById("scDtl_error").style.display='';
+	            return false;
+	    	  }
+	   	}
+	   	return true;
 	}
 
 	function validateData(obj,param){
@@ -122,9 +140,9 @@
 		    if(!(results[0].errorMsg=="" || results[0].errorMsg==null)){
 		    	showMessage('subcategory_error',results[0].errorMsg);
 		    	if(results[0].paramType=="name")
-			    	dom.get("name").value="";
+			    	document.getElementById("name").value="";
 		    	else if(results[0].paramType=="code")
-			    	dom.get("code").value="";
+			    	document.getElementById("code").value="";
 	 			return false;
 	     	} 
 	    }
@@ -171,7 +189,8 @@
 					
 						<s:hidden name="id" /> 
 						<s:hidden name="userMode" id="userMode"/>
-					
+						<s:hidden name="licenseFee" id="licenseFee"/>
+						<s:hidden name="feeExists" id="feeExists"/>
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.category.lbl" /><span class="mandatory"></span></label>
@@ -196,6 +215,10 @@
 							<div class="col-sm-3 add-margin">
 								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="32" onchange="return validateData(this,'code')"/>
 							</div>
+						</div>
+						
+						<div>
+            				<%@ include file="subCategory-details.jsp"%>  
 						</div>
 						
 					</div>

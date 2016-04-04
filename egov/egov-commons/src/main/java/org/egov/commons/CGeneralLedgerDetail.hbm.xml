@@ -8,16 +8,17 @@
 			<generator class="native">
 				<param name="sequence">SEQ_GENERALLEDGERDETAIL</param>
 			</generator>
+			
 		</id>	
-		<property name="generalLedgerId">
-			<column name="GENERALLEDGERID"/>
-		</property>	
+			 <many-to-one name="generalLedgerId" class="org.egov.commons.CGeneralLedger" fetch="select">
+            <column name="GENERALLEDGERID" precision="22" scale="0" />
+        </many-to-one>  
 		<property name="detailKeyId">
 			<column name="DETAILKEYID"/>
 		</property>	
-		<property name="detailTypeId">
-			<column name="DETAILTYPEID"/>
-		</property>	
+		 <many-to-one name="detailTypeId" class="org.egov.commons.Accountdetailtype" fetch="select">
+            <column name="DETAILTYPEID" precision="22" scale="0" />
+        </many-to-one>  
 		<property name="amount">
 			<column name="AMOUNT"/>
 		</property>	

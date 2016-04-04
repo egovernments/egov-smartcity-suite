@@ -45,7 +45,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.Billable;
@@ -68,24 +69,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AdvertisementBillable extends AbstractBillable implements Billable {
     private static final Logger LOGGER = Logger.getLogger(AdvertisementBillable.class);
-    public static final String collectionTypeHoarding = "hoarding";
-    public static final String FEECOLLECTIONMESSAGE = "Fee Collection : Hoarding Number -";
-    private static final String STRING_DEPARTMENT_CODE = "REV";
-    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
-    public static final String DEFAULT_FUND_SRC_CODE = "01";
-    public static final String DEFAULT_FUND_CODE = "01";
-
-    public static final String FEECOLLECTION = "Fee Collection";
-    public static final String AUTO = "AUTO";
-    public static final String WARD = "Ward";
-    public static final String ADDRESSTYPEASOWNER = "OWNER";
     private String referenceNumber;
     private String transanctionReferenceNumber;
 
     @Autowired
     private ModuleService moduleService;
 
-    private Hoarding hoarding;
+    private Advertisement advertisement;
     private String collectionType;
 
     @Autowired
@@ -93,29 +83,40 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public String getBillPayee() {
-        if (hoarding != null)
-            /*
-             * if (collectionType != null &&
-             * collectionTypeHoarding.equalsIgnoreCase(collectionType)) { return
-             * hoarding.getOwnerDetail(); } else
-             */
-            return hoarding.getAgency() != null ? hoarding.getAgency().getName() : " ";
+        AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
+        if (advertisement != null)
+        { 
+            if (collectionType != null && advPermit != null
+                    && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType)) {
+                
+                return (advPermit.getAgency() != null && advPermit.getAgency().getName()!=null? advPermit.getAgency().getName():(advPermit.getOwnerDetail()!=null ? advPermit.getOwnerDetail(): " ") );
+            } else
+            {
+                return advPermit != null
+                        && advPermit.getAgency() != null && advPermit.getAgency().getName()!=null ? advPermit.getAgency().getName() : " ";
+            }
+        }
         return null;
     }
 
     @Override
     public String getBillAddress() {
-        if (hoarding != null)
-            if (collectionType != null && collectionTypeHoarding.equalsIgnoreCase(collectionType))
-                return " ";
+        AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
+        if (advertisement != null){
+            if (collectionType != null && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType))
+                return (advPermit!=null && advPermit.getAgency() != null && advPermit.getAgency().getAddress()!=null) ? advPermit.getAgency().getAddress() : ( advPermit != null && advPermit.getOwnerDetail()!=null?advPermit.getOwnerDetail():" ");
             else
-                return hoarding.getAgency() != null ? hoarding.getAgency().getAddress() : " ";
+            {
+            //     advPermit=  advertisement.getActiveAdvertisementPermit();
+                return advPermit!=null && advPermit.getAgency() != null && advPermit.getAgency().getAddress()!=null ? advPermit.getAgency().getAddress() : " ";
+            }
+        }
         return null;
     }
 
     @Override
     public EgDemand getCurrentDemand() {
-        return hoarding != null ? hoarding.getDemandId() : null;
+        return advertisement != null ? advertisement.getDemandId() : null;
     }
 
     @Override
@@ -128,7 +129,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public EgBillType getBillType() {
-        return egBillDAO.getBillTypeByCode(AUTO);
+        return egBillDAO.getBillTypeByCode(AdvertisementTaxConstants.BILL_TYPE_AUTO);
 
     }
 
@@ -139,37 +140,37 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public Long getBoundaryNum() {
-        if (hoarding != null && hoarding.getWard() != null)
-            return hoarding.getWard().getBoundaryNum();
+        if (advertisement != null && advertisement.getWard() != null)
+            return advertisement.getWard().getBoundaryNum();
         return null;
     }
 
     @Override
     public String getBoundaryType() {
 
-        if (hoarding != null && hoarding.getWard() != null)
-            return hoarding.getWard().getBoundaryType().getName();
+        if (advertisement != null  &&  advertisement.getWard() != null && advertisement.getWard().getBoundaryType()!=null)
+            return advertisement.getWard().getBoundaryType().getName();
         return null;
     }
 
     @Override
     public String getDepartmentCode() {
-        return STRING_DEPARTMENT_CODE;
+        return AdvertisementTaxConstants.STRING_DEPARTMENT_CODE;
     }
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        return new BigDecimal(DEFAULT_FUNCTIONARY_CODE);
+        return new BigDecimal(AdvertisementTaxConstants.DEFAULT_FUNCTIONARY_CODE);
     }
 
     @Override
     public String getFundCode() {
-        return DEFAULT_FUND_CODE;
+        return AdvertisementTaxConstants.DEFAULT_FUND_CODE;
     }
 
     @Override
     public String getFundSourceCode() {
-        return DEFAULT_FUNCTIONARY_CODE;
+        return AdvertisementTaxConstants.DEFAULT_FUNCTIONARY_CODE;
     }
 
     @Override
@@ -179,7 +180,8 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public Date getLastDate() {
-        return hoarding.getPenaltyCalculationDate() != null ? hoarding.getPenaltyCalculationDate() : null;
+        return advertisement!=null && 
+                advertisement.getPenaltyCalculationDate() != null ? advertisement.getPenaltyCalculationDate() : null;
     }
 
     @Override
@@ -206,8 +208,8 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public BigDecimal getTotalAmount() {
         BigDecimal balance = BigDecimal.ZERO;
 
-        if (hoarding != null && hoarding.getDemandId() != null)
-            for (final EgDemandDetails det : hoarding.getDemandId().getEgDemandDetails()) {
+        if (advertisement != null && advertisement.getDemandId() != null)
+            for (final EgDemandDetails det : advertisement.getDemandId().getEgDemandDetails()) {
                 final BigDecimal dmdAmt = det.getAmount();
                 final BigDecimal collAmt = det.getAmtCollected();
                 balance = balance.add(dmdAmt.subtract(collAmt));
@@ -224,16 +226,16 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public String getDescription() {
         final StringBuffer description = new StringBuffer();
 
-        if (hoarding != null && hoarding.getHoardingNumber() != null) {
-            description.append(FEECOLLECTIONMESSAGE);
-            description.append(hoarding.getHoardingNumber() != null ? hoarding.getHoardingNumber() : "");
+        if (advertisement != null ) {
+            description.append(AdvertisementTaxConstants.FEECOLLECTIONMESSAGE);
+            description.append(advertisement.getAdvertisementNumber() != null ? advertisement.getAdvertisementNumber() : "");
         }
         return description.toString();
     }
 
     @Override
     public String getDisplayMessage() {
-        return FEECOLLECTION;
+        return AdvertisementTaxConstants.FEECOLLECTION;
     }
 
     @Override
@@ -244,8 +246,8 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public String getConsumerId() {
-        if (hoarding != null)
-            return hoarding.getId().toString();
+        if (advertisement != null)
+            return advertisement.getId().toString();
         return null;
     }
 
@@ -259,13 +261,14 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
         throw new IllegalArgumentException("Apportioning is always TRUE and shouldn't be changed");
 
     }
+  
 
-    public Hoarding getHoarding() {
-        return hoarding;
+    public Advertisement getAdvertisement() {
+        return advertisement;
     }
 
-    public void setHoarding(final Hoarding hoarding) {
-        this.hoarding = hoarding;
+    public void setAdvertisement(Advertisement advertisement) {
+        this.advertisement = advertisement;
     }
 
     public String getCollectionType() {

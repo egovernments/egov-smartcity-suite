@@ -67,11 +67,11 @@ public class InstallmentBuilder {
 		} else {
 			fromDate.set(Calendar.DATE, 1);
 			fromDate.set(Calendar.MONTH, 9);
-			fromDate.set(Calendar.YEAR, year);
+			fromDate.set(Calendar.YEAR, year-1);
 
 			toDate.set(Calendar.DATE, 31);
 			toDate.set(Calendar.MONTH, 2);
-			toDate.set(Calendar.YEAR, year + 1);
+			toDate.set(Calendar.YEAR, year);
 		}
 
 		withFromDate(fromDate.getTime());

@@ -54,7 +54,7 @@
     		var fiscalYearStartDate="01/04/"+endDate.substr(endDate.length-4,4);
     	if(compareDate(fiscalYearStartDate,strtDate) == -1 )
    		{ 
-	       alert("Start Date and End Date should be in same financial year");
+	       bootbox.alert("Start Date and End Date should be in same financial year");
 	       document.getElementById('startDate').focus();
 	       return false;
 	    
@@ -63,7 +63,7 @@
     	/*To check whether Start Date is Greater than End Date*/
     	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
     	{
-	    	alert('Start Date cannot be greater than End Date');
+	    	bootbox.alert('Start Date cannot be greater than End Date');
 	    	document.getElementById('startDate').value='';
 	    	document.getElementById('endDate').value='';
 	    	document.getElementById('startDate').focus();
@@ -72,13 +72,38 @@
     	   /*to check whether the End Date is greater than the Current Date*/
     	if( compareDate(formatDate6(currentDate),formatDate6(endDate)) == 1 )
     	{
-    		alert('End Date cannot be greater than Current Date');
+    		bootbox.alert('End Date cannot be greater than Current Date');
     		document.getElementById('endDate').value='';
     		document.getElementById('endDate').focus();	
     		return false;	
    		}	
         document.getElementById("glCode2").value=document.getElementById("glCode1").value;
         document.getElementById("accEntityId").value=document.getElementById("subledger").value;
+        
+        doLoadingMask();
+      	 /*var formObj = jQuery(document.getElementById("subLedgerForm"));
+          var formURL = '/EGF/report/subLedgerReport-search.action';
+          var formData = new FormData(document.getElementById("subLedgerForm"));
+          jQuery.ajax({
+              url: formURL,
+              data:  formData,
+              type : 'POST',
+      		async : false,
+      		datatype : 'text',  
+      		processData: false, 
+      		contentType: false,
+          	
+          success: function(data)
+          {
+        	  undoLoadingMask();
+          },
+          error: function(jqXHR, textStatus, errorThrown)
+           {
+          	 undoLoadingMask();
+           }         
+          });*/
+        document.subLedgerForm.action = "/EGF/report/subLedgerReport-search.action";
+        document.subLedgerForm.submit();
         return true;
            
     	
@@ -87,7 +112,7 @@
 	var oAutoCompEntityForJV;
 	function autocompleteAccountCodes(obj)
 	{
-	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common!ajaxLoadSLreportCodes.action", [ "~^"]);
+	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common-ajaxLoadSLreportCodes.action", [ "~^"]);
 		   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 		   oACDS.scriptQueryParam = "startsWith";
 		   oAutoCompEntityForJV = new YAHOO.widget.AutoComplete(obj.name,'codescontainer',oACDS);
@@ -99,7 +124,7 @@
 		   oAutoCompEntityForJV.minQueryLength = 3;
 		   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 		   oAutoCompEntityForJV.useShadow = true;
-		   oAutoCompEntityForJV.forceSelection = true;
+		   //oAutoCompEntityForJV.forceSelection = true;
 		   oAutoCompEntityForJV.maxResultsDisplayed = 20;
 		   oAutoCompEntityForJV.useIFrame = true;
 		   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
@@ -127,7 +152,7 @@
 	}
 	function autocompleteEntityDetails(obj)
 	{
-	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common!ajaxLoadEntitesBy20.action", [ "~^"]);
+	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common-ajaxLoadEntitesBy20.action", [ "~^"]);
 		   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 		   oACDS.scriptQueryParam = "startsWith";
 		   oAutoCompEntityForJV = new YAHOO.widget.AutoComplete(obj.name,'codescontainer',oACDS);
@@ -139,7 +164,7 @@
 		   oAutoCompEntityForJV.minQueryLength = 3;
 		   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 		   oAutoCompEntityForJV.useShadow = true;
-		   oAutoCompEntityForJV.forceSelection = true;
+		   //oAutoCompEntityForJV.forceSelection = true;
 		   oAutoCompEntityForJV.maxResultsDisplayed = 20;
 		   oAutoCompEntityForJV.useIFrame = true;
 		   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
@@ -164,7 +189,7 @@
 				document.getElementById('entityName').value=entity_array[0].split("`-`")[1];
 				
 			}else{
-				alert("Invalid entity selected.");
+				bootbox.alert("Invalid entity selected.");
 				document.getElementById('accEntitycode').value="";
 				document.getElementById('accEntityKey').value="";
 				document.getElementById('entityName').value="";
@@ -173,7 +198,7 @@
 	}
 	
 	function viewVoucher(vid){
-		var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+vid;
+		var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+vid;
 		window.open(url,'','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700,status=yes');
 	}
 	

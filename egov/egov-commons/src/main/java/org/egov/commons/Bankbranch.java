@@ -72,7 +72,7 @@ public class Bankbranch implements java.io.Serializable {
 
         private String contactperson;
 
-        private int isactive;
+        private Boolean isactive;
 
         private Date created;
 
@@ -90,7 +90,7 @@ public class Bankbranch implements java.io.Serializable {
                 //For hibernate to work
         }
 
-        public Bankbranch(String branchcode, String branchname, String branchaddress1, int isactive, Date created, Date lastmodified, BigDecimal modifiedby) {
+        public Bankbranch(String branchcode, String branchname, String branchaddress1, Boolean isactive, Date created, Date lastmodified, BigDecimal modifiedby) {
                 this.branchcode = branchcode;
                 this.branchname = branchname;
                 this.branchaddress1 = branchaddress1;
@@ -100,7 +100,7 @@ public class Bankbranch implements java.io.Serializable {
                 this.modifiedby = modifiedby;
         }
 
-        public Bankbranch(Bank bank, String branchcode, String branchname, String branchaddress1, String branchaddress2, String branchcity, String branchstate, String branchpin, String branchphone, String branchfax, String contactperson, int isactive,
+        public Bankbranch(Bank bank, String branchcode, String branchname, String branchaddress1, String branchaddress2, String branchcity, String branchstate, String branchpin, String branchphone, String branchfax, String contactperson, Boolean isactive,
                         Date created, Date lastmodified, BigDecimal modifiedby, String narration, String branchMICR, Set<Bankaccount> bankaccounts) {
                 this.bank = bank;
                 this.branchcode = branchcode;
@@ -268,11 +268,11 @@ public class Bankbranch implements java.io.Serializable {
                 this.bankaccounts = bankaccounts;
         }
 
-        public int getIsactive() {
+        public Boolean getIsactive() {
             return isactive;
         }
 
-        public void setIsactive(int isactive) {
+        public void setIsactive(Boolean isactive) {
             this.isactive = isactive;
         }
 

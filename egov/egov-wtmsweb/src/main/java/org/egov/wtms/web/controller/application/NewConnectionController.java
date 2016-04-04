@@ -56,6 +56,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -88,6 +89,7 @@ public class NewConnectionController extends GenericConnectionController {
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ApplicationTypeService applicationTypeService;
     private final ConnectionDemandService connectionDemandService;
+    private final WaterConnectionService waterConnectionService;
     private final NewConnectionService newConnectionService;
     private final WaterTaxUtils waterTaxUtils;
     @Autowired
@@ -98,13 +100,14 @@ public class NewConnectionController extends GenericConnectionController {
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
             final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,
-            final WaterTaxUtils waterTaxUtils, final NewConnectionService newConnectionService,
+            final WaterTaxUtils waterTaxUtils, final NewConnectionService newConnectionService, final WaterConnectionService waterConnectionService,
             final SmartValidator validator) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
         this.applicationTypeService = applicationTypeService;
         this.connectionDemandService = connectionDemandService;
         this.waterTaxUtils = waterTaxUtils;
         this.newConnectionService = newConnectionService;
+        this.waterConnectionService = waterConnectionService;
 
     }
 
@@ -168,7 +171,8 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors) {
-
+        String sourceChannel = request.getParameter("Source");
+        System.out.println("sourceChannel"+sourceChannel);
         validatePropertyID(waterConnectionDetails, resultBinder);
         waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
@@ -240,11 +244,11 @@ public class NewConnectionController extends GenericConnectionController {
                 waterConnectionDetails.setSource(Source.MEESEVA);
                 waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
-                        meesevaParams);
+                        meesevaParams,sourceChannel);
             }
         } else
             waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                    approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
+                    approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,sourceChannel);
         if (LOG.isDebugEnabled())
             LOG.debug("createNewWaterConnection is completed ");
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
@@ -283,7 +287,7 @@ public class NewConnectionController extends GenericConnectionController {
     }
 
     // used to create/update existing details
-    @RequestMapping(value = "/newConnection-createExisting", method = POST)
+    @RequestMapping(value = "/newConnection-dataEntryForm", method = POST)
     public String createExisting(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model) {
@@ -299,6 +303,10 @@ public class NewConnectionController extends GenericConnectionController {
             connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION).getId(),
                     WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
             model.addAttribute("radioButtonMap", connectionTypeMap);
+            model.addAttribute("radioButtonMap", connectionTypeMap);
+            model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
+            model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
+            model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
             if (waterConnectionDetails.getId() == null)
                 return "newconnection-dataEntryForm";
             else
@@ -404,7 +412,7 @@ public class NewConnectionController extends GenericConnectionController {
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
-        model.addAttribute("cityName", waterTaxUtils.getCityName());
+        model.addAttribute("cityName", waterTaxUtils.getMunicipalityName());
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
@@ -459,7 +467,8 @@ public class NewConnectionController extends GenericConnectionController {
             errors.rejectValue("existingConnection.arrears", "err.required");
         if (waterConnectionDetails.getExistingConnection().getDonationCharges() == null)
             errors.rejectValue("existingConnection.donationCharges", "err.required");
-
+       if (waterConnectionService.findByConsumerCode(waterConnectionDetails.getConnection().getConsumerCode())!=null)
+           errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
         if (waterConnectionDetails.getConnectionType() != null
                 && waterConnectionDetails.getConnectionType() == ConnectionType.METERED) {
             if (waterConnectionDetails.getExistingConnection().getMeterCost() == null)
@@ -506,6 +515,9 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("radioButtonMap", connectionTypeMap);
         model.addAttribute("mode", "dataEntry");
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
+        model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
+        model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
+        model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
         return "newconnection-dataEntryEditForm";
     }
 }

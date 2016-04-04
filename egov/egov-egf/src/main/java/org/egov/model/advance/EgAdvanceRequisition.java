@@ -67,10 +67,12 @@ public class EgAdvanceRequisition extends StateAware implements java.io.Serializ
     public EgAdvanceRequisition() {
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }

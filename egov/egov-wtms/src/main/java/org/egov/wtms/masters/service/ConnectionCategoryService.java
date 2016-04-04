@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.repository.ConnectionCategoryRepository;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +82,14 @@ public class ConnectionCategoryService {
         return connectionCategoryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
+    public ConnectionCategory findByNameIgnoreCase(final String name) {
+        return connectionCategoryRepository.findByNameIgnoreCase(name);
+    }
+
+    public ConnectionCategory findByNameIgnoreCaseAndActive(final String name, final Boolean status) {
+        return connectionCategoryRepository.findByNameIgnoreCaseAndActive(name, status);
+    }
+
     public List<ConnectionCategory> findAllByNameLike(final String name) {
         return connectionCategoryRepository.findByNameContainingIgnoreCase(name);
     }
@@ -108,21 +115,17 @@ public class ConnectionCategoryService {
         return connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
     }
 
-    public List<ConnectionCategory> getAllCategoryTypesByPropertyType(final Long propertyType,
+    public List<ConnectionCategory> getAllActiveCategoryTypesByPropertyType(final Long propertyType,
             final String connectionType) {
         if (connectionType.equals(WaterTaxConstants.ADDNLCONNECTION))
             return connectionCategoryRepository.getAllCategoryTypesByPropertyTypeNotInBPL(propertyType);
         else
-            return connectionCategoryRepository.getAllCategoryTypesByPropertyType(propertyType);
+            return connectionCategoryRepository.getAllActiveCategoryTypesByPropertyType(propertyType);
     }
 
-    public PropertyCategory getAllCategoryTypesByPropertyTypeAndCategory(final String propertyType,
-            final String categoryType) {
-       
-            return connectionCategoryRepository.getAllCategoryTypesByPropertyTypeAndCategory(propertyType,categoryType);
-    }
     public List<ConnectionCategory> getConnectionCategoryListForRest() {
-        final List<ConnectionCategory> connectionCategoryList = connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
+        final List<ConnectionCategory> connectionCategoryList = connectionCategoryRepository
+                .findByActiveTrueOrderByNameAsc();
         final List<ConnectionCategory> prepareListForRest = new ArrayList<ConnectionCategory>(0);
 
         for (final ConnectionCategory connectionCategory : connectionCategoryList) {

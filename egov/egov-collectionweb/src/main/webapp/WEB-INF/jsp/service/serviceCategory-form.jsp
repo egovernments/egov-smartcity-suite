@@ -38,19 +38,18 @@
 -->  
 <fieldset>
 <br/>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:960px;margin:0 auto;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:960px;margin:0 auto;border-collapse: separate;	border-spacing: 10px;">
 <s:token />
-
 	 	<tr>
 			<td class="greybox">&nbsp;</td>
 		    <td class="greybox"><label for="serviceCategoryName"><s:text name="masters.serviceCategory.serviceCategoryName"/><span class="mandatory1">*</span> :</label></td>
 		    <td class="greybox"><s:textfield label="serviceCategoryName" name="model.name"/></td>
 		  </tr>		
 		 <tr>
-			<td class="bluebox">&nbsp;</td>
-		    <td class="bluebox"><label for="serviceCode"><s:text name="masters.serviceCategory.servicCategoryeCode"/><span class="mandatory1">*</span> :</label></td>
-		    <td class="bluebox"><s:textfield label="servicCategoryeCode" name="model.code"/></td>
-		 </tr>		    
+			<td class="greybox">&nbsp;</td>
+		    <td class="greybox"><label for="serviceCode"><s:text name="masters.serviceCategory.servicCategoryeCode"/><span class="mandatory1">*</span> :</label></td>
+		    <td class="greybox"><s:textfield label="servicCategoryeCode" name="model.code"/></td>
+		 </tr>	
 		 <tr>
 			<td class="greybox">&nbsp;</td>
 		    <td class="greybox"><label for="isActive"><s:text name="masters.serviceCategory.serviceIsEnable/Disable"/> :</label></td>

@@ -40,11 +40,17 @@
 <%@ include file="/includes/taglibs.jsp" %> 
 <html>
 <title><s:text name='page.title.estimate'/></title>
+<style>
+body
+{
+  font-size: 14px;
+  font-family:regular;
+}
+</style>
 <body onload="onPageLoad()" onpageshow="if(event.persisted) noBack();" onunload="" class="yui-skin-sam">
 <script src="<egov:url path='resources/js/works.js'/>"></script>
-<script src="../resources/js/jquery-1.7.2.min.js"></script>
 <script>
-var jq = jQuery.noConflict(true);
+var jQuery=jQuery.noConflict();
 
 window.history.forward(1);
 function noBack() {
@@ -114,25 +120,15 @@ function showSORTab(){
   document.getElementById('sorTable').style.display='';
   document.getElementById('nonSorHeaderTable').style.display='';
   document.getElementById('nonSorTable').style.display='';
-  document.getElementById('sorTab').setAttribute('class','Active');
-  document.getElementById('sorTab').setAttribute('className','Active');   
   hideHeaderTab();
   hideOverheadsTab();
   hideAssetTab();
-  setCSSClasses('assetTab','Last');
-  setCSSClasses('sorTab','Active');
-  setCSSClasses('headerTab','First BeforeActive');
-  setCSSClasses('overheadsTab','');
   disableTables();
 }
 
 function showHeaderTab(){
   var hiddenid = document.forms[0].id.value;
   document.getElementById('estimate_header').style.display='';
-  setCSSClasses('assetTab','Last');
-  setCSSClasses('sorTab','');
-  setCSSClasses('headerTab','First Active');
-  setCSSClasses('overheadsTab','');
   hideSORTab();
   hideOverheadsTab();
   hideAssetTab();
@@ -152,10 +148,6 @@ function showOverheadsTab(){
   	 	showMessage('overheads_error','Fill in the estimate date before adding over head details');
   }
     document.getElementById('estimate_overheads').style.display='';
-    setCSSClasses('headerTab','First');
-    setCSSClasses('sorTab','BeforeActive');
-    setCSSClasses('overheadsTab','Active');
-	setCSSClasses('assetTab','Last');
 	document.getElementById('overheadsHeaderTable').style.display='';
     document.getElementById('overheadTable').style.display='';
     disableTables();    
@@ -171,13 +163,6 @@ function showAssetTab(){
   	 	showMessage('asset_error','Select the nature of work before adding asset details');
   }
     document.getElementById('estimate_asset').style.display='';
-    setCSSClasses('headerTab','First');
-    setCSSClasses('sorTab','');
-    
-    setCSSClasses('overheadsTab','BeforeActive');
-    setCSSClasses('assetTab','Last Active ActiveLast');
-    
-   
 	document.getElementById('assetsHeaderTable').style.display='';
     document.getElementById('assetTable').style.display='';
 	setAssetTableMessage();
@@ -215,7 +200,6 @@ function hideOverheadsTab(){
 }
 
 function validateDataBeforeSubmit(abstractEstimateForm) {
-	setupDocNumberBeforeSave();
     return validateHeaderBeforeSubmit(abstractEstimateForm) && validateMultiYearEstimateForm();
 }
 
@@ -226,22 +210,8 @@ function enableFields(){
 	setAssetStatusHiddenField();
 }
 
-function refreshInbox() {
-		//TODO:Fixme - commented out for time being
-       /* var x=opener.top.opener;
-        if(x==null){
-            x=opener.top;
-        }
-        x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
-	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();*/
-}
-
 function setCurrentdate(){
 	
-    <s:if test="%{sourcepage!='search'}">
-    	//TODO:Fixme - commented out for time being
-		//populateDesignation();
-	</s:if>	
 	var estdate=document.getElementById('estimateDate').value;
 	if(estdate=='') {
 		document.getElementById('estimateDate').value='<%=new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())%>';
@@ -260,9 +230,7 @@ function validateCancel() {
 		return true;
 	}
 }
-function viewDocument(){
-	  viewDocumentManager(dom.get("docNumber").value); 
-}
+
 function onSubmit() {
 	action = document.getElementById("workFlowAction").value;
 	return validate(action);
@@ -294,44 +262,76 @@ function validate(text){
 			return false;	
 		}
 	}
-	/*if(!validateUser(text))
-		return false;*/
 	enableFields();
-	//setDocumentValues();
 	document.abstractEstimateForm.action='${pageContext.request.contextPath}/estimate/abstractEstimate-save.action';
 	document.abstractEstimateForm.submit();
 	return true;
 }
 
 
-jq(document).on('click', '#wpView', function(){
-	var wpId = jq(this).attr("data-wpId");
+jQuery(document).on('click', '#wpView', function(){
+	var wpId = jQuery(this).attr("data-wpId");
     var url="${pageContext.request.contextPath}/tender/worksPackage-edit.action?id="+wpId+"&sourcepage=search";
     window.open(url,'','height=650,width=980,scrollbars=yes,status=yes');
 });
 
-jq(document).on('click', '#woView', function(){
-	var woId = jq(this).attr("data-woId");
+jQuery(document).on('click', '#woView', function(){
+	var woId = jQuery(this).attr("data-woId");
 	var url = "${pageContext.request.contextPath}/workorder/workOrder-edit.action?id="+woId+"&mode=search";
 	window.open(url,'', 'height=650,width=980,scrollbars=yes,status=yes');
 });
 
+
+jQuery(document).ready(function(e){
+
+	jQuery('a[data-toggle="tab"]').click(function(e){
+		var target = jQuery(e.target).attr("href");
+		if(target === "#estimate_header")
+		{
+			showHeaderTab();
+		}
+		else if(target === "#estimate_sor")
+		{
+			showSORTab();
+		}
+		else if(target === "#estimate_overheads")
+		{
+			showOverheadsTab();
+		}
+		else if(target === "#estimate_asset")
+		{
+			showAssetTab();
+		}		
+	});
+
+});
+
 </script>
 
-<div id="worktypeerror" class="errorstyle" style="display:none;"></div>
-    <s:if test="%{hasErrors()}">
-        <div id="errorstyle" class="errorstyle" >
+    
+    
+    
+<div class="new-page-header">
+	Create Abstract Estimate
+</div>
+
+<s:if test="%{hasErrors()}">
+        <div id="errorstyle" class="alert alert-danger" >
           <s:actionerror/>
           <s:fielderror/>
         </div>
-    </s:if>
-    <s:if test="%{hasActionMessages()}">
-        <div class="messagestyle">
-        	<s:property value="%{estimateNumber}"/> &nbsp; <s:actionmessage theme="simple"/>
-        	
-        </div>
-    </s:if>
-      <s:form theme="simple" name="abstractEstimateForm" onsubmit="return validateDataBeforeSubmit(this);">
+</s:if>
+
+<s:if test="%{hasActionMessages()}">
+    <div class="messagestyle">
+    	<s:property value="%{estimateNumber}"/> &nbsp; <s:actionmessage theme="simple"/>
+    	
+    </div>
+</s:if>
+
+<div id="worktypeerror" class="alert alert-danger" style="display:none;"></div>
+
+      <s:form theme="simple" name="abstractEstimateForm" onsubmit="return validateDataBeforeSubmit(this);" cssClass="form-horizontal form-groups-bordered">
        <s:if test="%{sourcepage!='search'}">
       	<s:token name="%{tokenName()}"/>
       </s:if>
@@ -341,25 +341,33 @@ jq(document).on('click', '#woView', function(){
 	</s:if>
 <s:hidden name="mode" id="mode"/>
 <s:hidden name="isAllowEstDateModify" id=""/> 
-<div class="formmainbox"><div class="insidecontent">
-  <div class="rbroundbox2">
-	<div class="rbtop2"><div></div></div>
-	  <div class="rbcontent2"><div class="datewk">
-	  <s:if test="%{not model.projectCode}">
-	       <div class="estimateno">Estimate No: <s:if test="%{not model.estimateNumber}">&lt; Not Assigned &gt;</s:if><s:property value="model.estimateNumber" /></div>
+
+
+<div class="row">
+
+   <div class="col-sm-10" style="padding-bottom:5px;">
+   
+      <s:if test="%{not model.projectCode}">
+         <div class="col-sm-3">Estimate No</div>
+	     <div class="col-sm-3 estimateno"><s:if test="%{not model.estimateNumber}">&lt; Not Assigned &gt;</s:if><s:property value="model.estimateNumber" /></div>
 	  </s:if>
 	  <s:else>
-	       <div class="estimateno">
-	       Estimate No:  <s:property value="model.estimateNumber" /> </div>
-	       <div class="estimateno" style="text-align: right"> 
-	       Project Code: <s:property value="model.projectCode.code" /> </div>
-	  </s:else>
-	 <!-- <span class="bold"><s:text name="message.today" /></span> <egov:now/>--></div>
-	 <s:if test="%{model.projectCode}">
-	 	<div class="datewk" style="position: relative;">
+	  
+	   <div class="col-sm-3">Estimate No</div>
+	   <div class="col-sm-3 estimateno"><s:property value="model.estimateNumber" /></div>
+	   <div class="col-sm-3">Project Code</div>
+	   <div class="col-sm-3 estimateno"><s:property value="model.projectCode.code" /></div>
+	  
+	 </s:else>
+	   
+   
+   </div>
+   
+      <s:if test="%{model.projectCode}">
+	 	<div class="col-sm-10">
 	 		<s:if test="%{wpDetails.size!=0}">
-	 			<div class="estimateno" style="padding-top: 10px;width:10%;"> <s:text name="label.estimate.works.package" />: </div>
-	 			<div class="estimateno" style="padding-top: 10px;width: 22%;white-space: wrap;">
+	 			<div class="col-sm-3" style="padding-bottom:5px;"> <s:text name="label.estimate.works.package" /> </div>
+	 			<div class="col-sm-3 estimateno" style="padding-bottom:5px;">
 	 				<s:iterator value="wpDetails" var="wpDetails" status="wpStatus"> 
 			 			<a href="javascript:void(0)" id="wpView" data-wpId='<s:property value="#wpDetails[0]"/>'><s:property value="%{#wpDetails[1]}"/></a>
 			 			<s:if test="!#wpStatus.last">,</s:if>
@@ -367,8 +375,8 @@ jq(document).on('click', '#woView', function(){
 			 	</div>
 		 	 </s:if>
 		 	 <s:if test="%{woDetails.size!=0}">
-		 		<div class="estimateno" style="padding-top: 10px;text-align: right;width:8%;"><s:text name="label.estimate.work.order" />: </div>
-		 	 	<div class="estimateno" style="padding-top: 10px;padding-left:5px; width:25%;white-space: wrap;">
+		 		<div class="col-sm-3" style="padding-bottom:5px;"><s:text name="label.estimate.work.order" />: </div>
+		 	 	<div class="col-sm-3 estimateno" style="padding-bottom:5px;">
 		 	 		<s:iterator value="woDetails" var="woDetails" status="woStatus">
 						 <a href="javascript:void(0)" id="woView" data-woId='<s:property value="#woDetails[0]"/>'><s:property value="%{#woDetails[1]}"/></a>
 						 <s:if test="!#woStatus.last">,</s:if>
@@ -376,125 +384,106 @@ jq(document).on('click', '#woView', function(){
 		 	 	</div>
 		 	 </s:if>
 		 	 <s:if test="%{wpDetails.size!=0 || woDetails.size!=0}">
-		 	 	 <div class="estimateno" style="position: absolute; right:0px;top:26px;text-align: right;width: 33%">
-			 		 <s:text name="label.estimate.payments.released" />: <s:property value="paymentReleased"/>
+		 	 	 <div class="col-sm-3" style="padding-bottom:5px;">
+			 		 <s:text name="label.estimate.payments.released" />
+		 	 	 </div>
+		 	 	 <div class="col-sm-3 estimateno" style="padding-bottom:5px;">
+		 	 	     <s:property value="paymentReleased"/>
 		 	 	 </div>
 		 	 </s:if>
 		 	 <s:elseif  test="%{paymentReleased != 0.0}">
-		 	 	<div class="estimateno" style="padding-top: 10px;">
-			 		 <s:text name="label.estimate.payments.released" />:<s:property value="paymentReleased"/>
+		 	 	<div class="col-sm-3" style="padding-bottom:5px;">
+			 		 <s:text name="label.estimate.payments.released" />
 		 	 	</div>
+		 	   <div class="col-sm-3 estimateno" style="padding-bottom:5px;">
+		 	       <s:property value="paymentReleased"/>
+		 	   </div>	
 		 	 </s:elseif>
 	  	</div>
 	  </s:if>
-<s:hidden name="model.documentNumber" id="docNumber" />
 
-	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td><div id="header">
-				<ul id="Tabs">
-					<li id="headerTab" class="First Active"><a id="header_1" href="#" onclick="showHeaderTab();">Header</a></li>
-		 			<li id="sorTab" class=""><a id="header_2" href="#" onclick="showSORTab();">Work Details</a></li>					
-					<li id="overheadsTab" class="Befor"><a id="header_3" href="#" onclick="showOverheadsTab();">Overheads</a></li>
-					<li id="assetTab" class="Last"><a id="header_4" href="#" onclick="showAssetTab();">Asset Info</a></li>
-				</ul>
-            </div></td>
-          </tr>
-      	<tr><td>&nbsp;</td></tr>
-           <tr>
-            <td>
-            <div id="estimate_overheads" style="display:none;">
-                 <%@ include file="estimate-overheads.jsp"%>                
-            </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-            <div id="estimate_asset" style="display:none;">
-                 <%@ include file="estimate-asset.jsp"%>                
-            </div>
-            </td>
-          </tr>      
-          <tr>
-            <td>
-            <div id="estimate_header">
-            <%@ include file="estimate-header.jsp"%>            
-			<br />	
-            <%@ include file="estimate-multiYearEstimate.jsp"%>  
-            </div>            
-            </td> 
-          </tr>            
-          <tr>
-            <td>
-            <div id="estimate_sor" style="display:none;"> 
-            	<%@ include file="estimate-template.jsp"%> 
-                <%@ include file="estimate-sor.jsp"%>            
-            	<%@ include file="estimate-nonSor.jsp"%>
-            </div>
-            </td>
-          </tr>
-        <tr>
-            <td><table width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-	            <td width="17%" class="whiteboxwk"><s:text name="estimate.value" />:</td>
-                <td width="17%" class="whitebox2wk"><s:textfield name="estimateValue" value="%{estimateValue}"  id="estimateValue" cssClass="selectamountwk" readonly="true" align="right" tabindex="-1" />
-              </td>
-	            <td class="whiteboxwk">&nbsp;</td>
-	            <td class="whiteboxwk">&nbsp;</td>
-            </tr>            
-            </table></td>
-          </tr>
-          
-          <tr><td>&nbsp;</td></tr>
-          <!-- TODO:Fixeme - Commented out for time being Need to implement new workflow which is based on matrix and correspodning jsp needs to be included here -->
-	  	<tr> 
-		    <td>
-		    <div id="manual_workflow">
-		    <s:if test="%{sourcepage!='search'}">
+   
+</div>
+
+<br/>
+
+
+
+<ul class="nav nav-tabs" id="settingstab">
+	<li class="active">
+	   <a data-toggle="tab" href="#estimate_header" data-tabidx=0>
+	     Header
+	   </a>
+	</li>
+	<li>
+	   <a data-toggle="tab" href="#estimate_sor" data-tabidx=1>
+	     Work Details
+	   </a>
+	</li>
+	<li>
+	    <a data-toggle="tab" href="#estimate_overheads" data-tabidx=2>
+	      Overheads
+	    </a>
+    </li>
+    <li>
+	    <a data-toggle="tab" href="#estimate_asset" data-tabidx=2>
+	      Asset Info
+	    </a>
+    </li>
+</ul>
+
+
+
+<div id="estimate_overheads" style="display:none;">
+    <%@ include file="estimate-overheads.jsp"%>                
+</div>
+
+<div id="estimate_asset" style="display:none;">
+     <%@ include file="estimate-asset.jsp"%>                
+</div>
+            
+<div id="estimate_header">
+	<%@ include file="estimate-header.jsp"%>            
+	<%@ include file="estimate-multiYearEstimate.jsp"%>  
+</div> 
+
+<div id="estimate_sor" style="display:none;"> 
+	<%@ include file="estimate-template.jsp"%> 
+    <%@ include file="estimate-sor.jsp"%>            
+	<%@ include file="estimate-nonSor.jsp"%>
+</div>
+
+<div class="panel-body">
+	   
+	  <div class="form-group" style="margin-bottom: 5px;"> 
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.value" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="estimateValue" value="%{estimateValue}"  id="estimateValue" cssClass="form-control" readonly="true" align="right" tabindex="-1" /> 
+			</div>
+	 </div>
+		
+</div>
+
+<div id="manual_workflow">
+		  <s:if test="%{sourcepage!='search'}">
 				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%> 
 				<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-		         <!--%@ include file="workflowApproval.jsp"% -->   
 		  </s:if>
-		    </div>
-		    </td>
-          </tr>
-          <tr>
-          	<td colspan="4" class="shadowwk"> </td>                  
-          </tr>          
-                   
-         <tr>
-            <td><div align="right" class="mandatory" style="font-size:11px;padding-right:20px;">* <s:text name="message.mandatory" /></div></td>
-          </tr>
-        </table>
-        <div class="rbbot2"><div></div></div>
-      </div>     
-	
 </div>
-  </div>
-</div>
+
 <div class="buttonholderwk">
-<input type="hidden" name="actionName" id="actionName"/> 
+
 <!-- Action buttons have to displayed only if the page is directed from the inbox -->	
-<s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || model.egwStatus.code=='NEW' 
+<%-- <s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || model.egwStatus.code=='NEW' 
 || model.egwStatus.code=='REJECTED') && (sourcepage=='inbox' || model.egwStatus==null || hasErrors())}">
-<!-- TODO:Fixeme - hard coded save button for time being till we implement common workflow -->
-<!--<input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');" />	  
-<input type="submit" class="buttonfinal" value="SAVE & SUBMIT" id="submit_for_approval" name="submit_for_approval" onclick="document.abstractEstimateForm.actionName.value='submit_for_approval';return validate('submit_for_approval');" />		
-	<s:iterator value="%{validActions}"> 
-	  <s:if test="%{description!=''}">
-	  	<s:if test="%{description=='CANCEL' && model.estimateNumber!=null}">
-			<s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" name="%{name}" method="cancel" onclick="return validateCancel();document.abstractEstimateForm.actionName.value='%{name}'"/>
-	  	</s:if>
-	    <s:else>
-	  	  <s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" name="%{name}" method="moveEstimate" onclick="document.abstractEstimateForm.actionName.value='%{name}';return validate('%{name}');"/>	  	  
-	  </s:else>
-	  </s:if>
-	</s:iterator> -->
+
 	<s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' || model.egwStatus.code=='REJECTED') && 
 	(model.currentState.nextAction=='Pending Budgetary Appropriation' || model.currentState.nextAction=='Pending Deposit Code Appropriation') }">
-		 	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!add.action?estimateId=<s:property value='%{model.id}'/>&sourcepage=<s:property value='%{sourcepage}'/>&source=UpdateFinancialDetail', '_self');" class="buttonadd" value="Update Financial Details " id="updateFinancialDetailButton" name="updateFinancialDetailButton"/>
+		 	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!add.action?estimateId=<s:property value='%{model.id}'/>&sourcepage=<s:property value='%{sourcepage}'/>&source=UpdateFinancialDetail', '_self');" class="btn btn-primary" value="Update Financial Details " id="updateFinancialDetailButton" name="updateFinancialDetailButton"/>&nbsp;
   </s:if>
-</s:if>
+</s:if> --%>
 <%-- 
 <s:if test="%{model.id==null}">
 	  <input type="button" class="buttonfinal" value="CLEAR" id="button" name="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-newform.action','_self');"/>
@@ -503,11 +492,11 @@ jq(document).on('click', '#woView', function(){
 	<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="confirmClose('<s:text name='estimate.close.confirm'/>');"/>
 </s:if> --%>
 <s:if test="%{sourcepage=='search'}" >
-	<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();"/>
+	<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();"/>&nbsp;
 </s:if>
 <s:if test="%{model.id!=null && model.estimateNumber!=null}">
-  	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimatePDF.action?estimateID=<s:property value='%{model.id}'/>');" class="buttonpdf" value="VIEW PDF" id="pdfButton" name="pdfButton"/>
-  	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-viewBillOfQuantitiesXls.action?sourcepage=boqPDF&id=<s:property value='%{model.id}'/>');" class="buttonpdf" value="VIEW BOQ XLS" id="BOQxlsButton" name="BOQxlsButton"/>
+  	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimatePDF.action?estimateID=<s:property value='%{model.id}'/>');" class="btn btn-primary" value="View PDF" id="pdfButton" name="pdfButton"/>&nbsp;
+  	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-viewBillOfQuantitiesXls.action?sourcepage=boqPDF&id=<s:property value='%{model.id}'/>');" class="btn btn-primary" value="View BOQ XLS" id="BOQxlsButton" name="BOQxlsButton"/>&nbsp;
   </s:if>
   <!-- TODO:Fixeme - Commented out for time being. Need to replace with new file upload feature -->
  <!-- <s:if test="%{sourcepage=='search' || (sourcepage=='inbox' && (model.egwStatus.code=='ADMIN_SANCTIONED' || model.egwStatus.code=='CANCELLED'))}">
@@ -516,7 +505,7 @@ jq(document).on('click', '#woView', function(){
   <s:else>
   	<input type="submit" class="buttonadd" value="Upload Document" id="docUploadButton" onclick="showDocumentManager();return false;" />
   </s:else> --> 
- <s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' && (model.currentState.nextAction!='Pending Budgetary Appropriation' 
+ <%-- <s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' && (model.currentState.nextAction!='Pending Budgetary Appropriation' 
  || model.currentState.nextAction=='Pending Deposit Code Appropriation')) || 
  
  (model.egwStatus.code=='RESUBMITTED' && (model.currentState.nextAction=='Pending Budgetary Appropriation Check' || model.currentState.nextAction=='Pending Budgetary Appropriation Approval' 
@@ -527,8 +516,8 @@ jq(document).on('click', '#woView', function(){
  (model.egwStatus.code=='ADMIN_SANCTIONED' || model.egwStatus.code=='BUDGETARY_APPR_CHECKED' || 
  model.egwStatus.code=='ADMIN_CHECKED' || model.egwStatus.code=='BUDGETARY_APPROPRIATION_DONE' || 
  model.egwStatus.code=='DEPOSIT_CODE_APPR_CHECKED' || model.egwStatus.code=='DEPOSIT_CODE_APPR_DONE')}">
-  	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!add.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonadd" 
-  	value="View Financial Details" id="financialDetailButton" name="financialDetailButton"/>
+  	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!add.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="btn btn-primary" 
+  	value="View Financial Details" id="financialDetailButton" name="financialDetailButton"/>&nbsp;
     <!--  for View Budget Folio  -->
    
 </s:if>
@@ -543,15 +532,15 @@ jq(document).on('click', '#woView', function(){
  model.egwStatus.code=='ADMIN_CHECKED' || model.egwStatus.code=='BUDGETARY_APPROPRIATION_DONE' ||
  model.egwStatus.code=='DEPOSIT_CODE_APPR_CHECKED' || model.egwStatus.code=='DEPOSIT_CODE_APPR_DONE') }">
   <s:if test="%{appConfigValuesToSkipBudget.contains(model.type.name) }">
- 	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!viewDepositWorksFolio.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonadd" value="View Deposit Folio" id="depositfolioreportButton" name="depositfolioreportButton"/>
+ 	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!viewDepositWorksFolio.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="btn btn-primary" value="View Deposit Folio" id="depositfolioreportButton" name="depositfolioreportButton"/>&nbsp;
  </s:if>
-  <s:else> <input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!viewBudgetFolio.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonadd" 
-     value="View Budget Folio" id="viewBudgetFolio" name="viewBudgetFolio"/>
+  <s:else> <input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!viewBudgetFolio.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="btn btn-primary" 
+     value="View Budget Folio" id="viewBudgetFolio" name="viewBudgetFolio"/>&nbsp;
  </s:else>   
-	
- </s:if>
+	 
+ </s:if>--%>
    <s:if test="%{sourcepage=='search'}">
-   		<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateId=<s:property value='%{state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonfinal" value="History" id="history" name="History"/>
+   		<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateId=<s:property value='%{state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="btn btn-primary" value="History" id="history" name="History"/>
    </s:if>
 </div>
 </s:push>
@@ -763,7 +752,7 @@ jq(document).on('click', '#woView', function(){
 	<s:if test="%{!isAllowEstDateModify}">
 		document.abstractEstimateForm.estimateDate.readonly=true;
 		document.abstractEstimateForm.estimateDate.disabled=true;
-		document.getElementById('estDatePicker').onclick = function(){return false};
+		/* document.getElementById('estDatePicker').onclick = function(){return false}; */
 	</s:if>
 	
 	

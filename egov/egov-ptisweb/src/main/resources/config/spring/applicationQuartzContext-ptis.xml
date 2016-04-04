@@ -79,7 +79,6 @@
 	</bean>
 	
 	<bean id="bulkBillGenerationJobDelegate0" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
-        <property name="persistenceService" ref="persistenceService" />
 		<property name="modulo" value="0" />
 		<property name="billsCount" value="10" />
     </bean>
@@ -88,7 +87,7 @@
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler0" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger0"/>
-        <property name="cronExpression" value="0 0 19 * * ?" />
+        <property name="cronExpression" value="0 */2 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
      
@@ -113,16 +112,15 @@
 	</bean>
 	
 	<bean id="bulkBillGenerationJobDelegate1" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
-        <property name="persistenceService" ref="persistenceService" />
 		<property name="modulo" value="1" />
 		<property name="billsCount" value="10" />
     </bean>
-   
+    
     <bean id="bulkBillGenerationCronTrigger1" name="bulkBillGenerationCronTrigger1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler1" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger1"/>
-        <property name="cronExpression" value="0 0 19 * * ?" />
+        <property name="cronExpression" value="0 */2 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
      
@@ -147,7 +145,6 @@
 	</bean>
 	
 	<bean id="bulkBillGenerationJobDelegate2" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
-        <property name="persistenceService" ref="persistenceService" />
 		<property name="modulo" value="2" />
 		<property name="billsCount" value="10" />
     </bean>
@@ -156,7 +153,7 @@
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler2" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger2"/>
-        <property name="cronExpression" value="0 0 19 * * ?" />
+        <property name="cronExpression" value="0 */2 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
      
@@ -181,7 +178,6 @@
 	</bean>
 	
 	<bean id="bulkBillGenerationJobDelegate3" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
-        <property name="persistenceService" ref="persistenceService" />
 		<property name="modulo" value="3" />
 		<property name="billsCount" value="10" />
     </bean>
@@ -190,7 +186,7 @@
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler3" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger3"/>
-        <property name="cronExpression" value="0 0 19 * * ?" />
+        <property name="cronExpression" value="0 */2 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
      
@@ -215,7 +211,6 @@
 	</bean>
 	
 	<bean id="bulkBillGenerationJobDelegate4" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
-        <property name="persistenceService" ref="persistenceService" />
 		<property name="modulo" value="4" />
 		<property name="billsCount" value="10" />
     </bean>
@@ -224,7 +219,7 @@
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler4" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger4"/>
-        <property name="cronExpression" value="0 0 19 * * ?" />
+        <property name="cronExpression" value="0 */2 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
      

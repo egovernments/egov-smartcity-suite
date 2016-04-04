@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-02-05T17:46:37 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="journalVoucherReport" pageWidth="599" pageHeight="842" orientation="Landscape" columnWidth="559" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b6d8f2d9-355e-4afe-bfb2-72df572b464f">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="0.9090909090909095"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="238"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="fundName" class="java.lang.String"/>
+	<parameter name="departmentName" class="java.lang.String"/>
+	<parameter name="voucherNumber" class="java.lang.String"/>
+	<parameter name="voucherName" class="java.lang.String"/>
+	<parameter name="voucherDate" class="java.lang.String"/>
+	<parameter name="voucherDescription" class="java.lang.String"/>
+	<parameter name="workFlowHistory" class="java.util.List"/>
+	<parameter name="workFlowJasper" class="java.io.InputStream"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="budgetAppropriationDetailJasper" class="java.io.InputStream"/>
+	<parameter name="budgetDetail" class="java.util.List"/>
+	<field name="functionName" class="java.lang.String">
+		<fieldDescription><![CDATA[generalLedger.voucherHeaderId.vouchermis.function.name]]></fieldDescription>
+	</field>
+	<field name="slCode" class="java.lang.String">
+		<fieldDescription><![CDATA[slCode]]></fieldDescription>
+	</field>
+	<field name="debitAmount" class="java.lang.Double">
+		<fieldDescription><![CDATA[generalLedger.debitAmount]]></fieldDescription>
+	</field>
+	<field name="creditAmount" class="java.lang.Double">
+		<fieldDescription><![CDATA[generalLedger.creditAmount]]></fieldDescription>
+	</field>
+	<field name="glCode" class="java.lang.String">
+		<fieldDescription><![CDATA[generalLedger.glcode]]></fieldDescription>
+	</field>
+	<field name="accountDescription" class="java.lang.String">
+		<fieldDescription><![CDATA[generalLedger.glcodeId.name]]></fieldDescription>
+	</field>
+	<variable name="debitTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{debitAmount}]]></variableExpression>
+	</variable>
+	<variable name="creditTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{creditAmount}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="141" splitType="Stretch">
+			<frame>
+				<reportElement key="frame" x="0" y="0" width="559" height="140" uuid="7bac26e2-f951-4b14-81fe-8f25ae4ffa92"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement key="staticText" x="101" y="11" width="355" height="20" uuid="99ee80b6-7f14-47b1-b71a-2175414557c2"/>
+					<textElement textAlignment="Center">
+						<font size="16" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="155" y="41" width="225" height="20" uuid="2f3914ea-f0f2-44be-af37-aa0e1df2e819"/>
+					<textElement textAlignment="Center">
+						<font size="13" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{voucherName}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText" x="0" y="91" width="74" height="20" uuid="1c109041-a10e-4668-b304-60dc8cf36345"/>
+					<text><![CDATA[Department:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" x="0" y="116" width="41" height="20" uuid="b47ff603-7743-44c5-9b20-f77e6a28b762"/>
+					<text><![CDATA[Fund:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField" x="74" y="91" width="156" height="20" uuid="c8ffd169-ec4c-473b-8f9b-1a536c1f716e"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{departmentName}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField" x="41" y="116" width="126" height="20" uuid="af361d78-e828-4aae-b281-d9da941f37e9"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{fundName}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="256" y="91" width="92" height="20" uuid="54d1591c-4966-4404-9798-3b7e89e0492c"/>
+					<text><![CDATA[Voucher Number:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="256" y="116" width="50" height="20" uuid="54d1591c-4966-4404-9798-3b7e89e0492c"/>
+					<text><![CDATA[Date:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="350" y="91" width="177" height="20" uuid="15d8a9fa-9b2f-430e-bac4-012594419b09"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{voucherNumber}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="320" y="116" width="177" height="20" uuid="15d8a9fa-9b2f-430e-bac4-012594419b09"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{voucherDate}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="80" width="559" height="1" uuid="dc4b99e9-40a1-4af6-a523-b0d71aa1c0ed"/>
+				</line>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="48" splitType="Stretch">
+			<frame>
+				<reportElement key="frame" x="0" y="0" width="25" height="48" uuid="ab6aad6b-7d6c-4285-82ab-92945c396610"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<staticText>
+					<reportElement key="staticText" x="1" y="13" width="20" height="20" uuid="a7c49202-f2bb-4540-bc38-097d77a7f925"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Seq No.]]></text>
+				</staticText>
+			</frame>
+			<staticText>
+				<reportElement x="25" y="0" width="70" height="48" uuid="0f306d83-5360-4fe9-9993-887c27ef54f0"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Function Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="95" y="0" width="59" height="48" uuid="e6f17fd8-6182-4d3a-8846-64643284dd4e"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Account Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="0" width="105" height="48" uuid="93b7a682-ef24-40c9-ac7a-5bb370981859"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Account Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="259" y="0" width="85" height="48" uuid="9d176a4e-dd15-446f-ad10-779a81ed168e"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="404" y="0" width="75" height="48" uuid="0355f1e8-6886-4792-aa1b-039e2ca35c4e"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Debit Rs.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="479" y="0" width="80" height="48" uuid="15071255-a0f4-4d28-9d34-6a5d34fd40c4"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Credit Rs.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="344" y="0" width="60" height="23" uuid="da65de26-89ba-46f8-81b1-15e91b6fb0a2"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Link Ref]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="344" y="23" width="31" height="25" uuid="e93d0f95-636a-4f86-b908-389bf4d60014"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="375" y="23" width="29" height="25" uuid="e041c4f1-a9fd-4d6d-8c2b-279c575bf5fc"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[No]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="62" splitType="Stretch">
+			<frame>
+				<reportElement key="frame" x="0" y="0" width="25" height="62" uuid="e24cf87f-3a36-4d2d-8a88-f86c4ca40051"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField" x="10" y="12" width="10" height="20" uuid="63d2af36-934d-4afb-bc7f-864c46098436"/>
+					<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement key="frame" x="344" y="0" width="31" height="62" uuid="462e2439-4250-45e6-84c5-9d5ccf4031b7"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+			</frame>
+			<frame>
+				<reportElement key="frame" x="404" y="0" width="75" height="62" uuid="21884956-c39a-4a95-8b83-dd192307979f"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textField pattern="###0.00" isBlankWhenNull="true">
+					<reportElement key="textField" x="5" y="22" width="69" height="20" uuid="63aa9e9d-206e-4a83-a4e9-1811437369e2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{debitAmount}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement key="frame" x="375" y="0" width="29" height="62" uuid="7875523c-e1af-4f29-9b20-cb3de0466da5"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement x="154" y="0" width="105" height="62" uuid="9fae9429-368f-4d71-8221-56846632bd00"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{accountDescription}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="0" width="59" height="62" uuid="61f4bd88-2a06-4fd0-b426-278cfaaf02aa"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{glCode}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement key="frame" x="479" y="0" width="80" height="62" uuid="8c1869da-c3bd-4e7a-bbc8-0056155ac0e8"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textField pattern="###0.00" isBlankWhenNull="true">
+					<reportElement key="textField" x="5" y="22" width="63" height="20" uuid="08fa4116-d4fb-407d-ba1f-7e1cdf710006"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{creditAmount}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement x="25" y="0" width="70" height="62" uuid="a1548ab9-783c-4157-b3a1-0361748f8bbc"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{functionName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="0" width="85" height="62" uuid="0019576d-c4d3-4d18-8ff7-422600c18c7f"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{slCode}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="276" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" x="0" y="0" width="404" height="28" uuid="b3379f9d-c583-49ea-87e5-2029766f4006"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<frame>
+				<reportElement key="frame" x="404" y="0" width="75" height="28" uuid="ae5f5ba3-2c62-416a-82d3-5d6eff365ccb"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textField pattern="###0.00" isBlankWhenNull="true">
+					<reportElement key="textField" x="3" y="3" width="69" height="20" uuid="4dcc8879-5080-4075-8bc4-58794a1690f9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{debitTotal}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement key="frame" x="479" y="0" width="80" height="28" uuid="c7f9842a-c41e-4660-aa53-e5f34d627791"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textField pattern="###0.00" isBlankWhenNull="true">
+					<reportElement key="textField" x="2" y="2" width="75" height="20" uuid="8d43f708-0b2e-435a-9773-f0b01d5189ad"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{creditTotal}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement key="frame" x="0" y="29" width="559" height="81" uuid="91794286-b94d-4ddc-966f-35fb1ed8b20e"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<staticText>
+					<reportElement key="staticText" x="25" y="10" width="57" height="20" uuid="1ab63ae0-3823-4169-acf6-4c55d00696c4"/>
+					<text><![CDATA[Narration:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField" x="95" y="10" width="463" height="59" uuid="9c01f55e-8147-46d0-b79d-91e558019f25"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{voucherDescription}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement key="frame" x="-20" y="127" width="579" height="68" uuid="c6eb86e3-37dc-4e76-81ab-602e606fe497"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<subreport>
+					<reportElement positionType="Float" x="0" y="44" width="559" height="24" uuid="2a2e1001-c6dc-479f-81a9-d9e6c5df63e0"/>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{workFlowHistory})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{workFlowJasper}]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="0" y="0" width="559" height="44" uuid="dca0c6b6-9001-426d-b0c5-89b29eee1199"/>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{budgetDetail})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{budgetAppropriationDetailJasper}]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

@@ -46,6 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSM
 import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
@@ -63,6 +64,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPE
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MODIFY_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
@@ -72,6 +75,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_COURT_RULE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_UPDATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
@@ -198,6 +202,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String WF_PENDING_MSG = "wf.pending.msg";
     private static final String PROPERTY_ALTER_ADDITION = "Property Alter/Addition";
     private static final String PROPERTY_BIFURCATION = "Property Bifurcation";
+    private static final String PROPERTY_GENERAL_REVISION_PETITION = "Property General Revision Petition";
     private static final long serialVersionUID = 1L;
     private final Logger LOGGER = Logger.getLogger(getClass());
     private static final String BIFURCATION = "Bifurcation";
@@ -206,6 +211,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String RESULT_ERROR = "error";
     protected static final String VIEW = "view";
     private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
+    private static final String GRP_ACK_TEMPLATE = "GRP_Property_ack";
     public static final String PRINT_ACK = "printAck";
     private PersistenceService<Property, Long> propertyImplService;
     private PersistenceService<Floor, Long> floorService;
@@ -412,8 +418,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             final List<String> msgParams = new ArrayList<String>();
             if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn))
                 msgParams.add(PROPERTY_BIFURCATION);
-            else
+            else if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equalsIgnoreCase(modifyRsn))
                 msgParams.add(PROPERTY_ALTER_ADDITION);
+            else
+                msgParams.add(PROPERTY_GENERAL_REVISION_PETITION);
             setWfErrorMsg(getText(WF_PENDING_MSG, msgParams));
             target = TARGET_WORKFLOW_ERROR;
         } else {
@@ -595,9 +603,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
-            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
-                    || (getModel().getState().getNextAction()!=null && getModel().getState().getNextAction().equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
-                    || !propertyByEmployee)
+            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
+                    || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
+                    || (getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
+                            .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)) || !propertyByEmployee)
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -612,9 +621,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         transitionWorkFlow(propertyModel);
         basicProp.setUnderWorkflow(Boolean.TRUE);
         basicPropertyService.applyAuditing(propertyModel.getState());
-        propService.updateIndexes(propertyModel,
-                PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
-                        : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        propService.updateIndexes(propertyModel, getApplicationType());
         // added to set createdDate for DemandCalculation object
         if (basicProp.getWFProperty() != null && basicProp.getWFProperty().getPtDemandSet() != null
                 && !basicProp.getWFProperty().getPtDemandSet().isEmpty()) {
@@ -625,13 +632,20 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.update(basicProp);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
-        buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        buildEmailandSms(propertyModel, getApplicationType());
         addActionMessage(getText(PROPERTY_FORWARD_SUCCESS,
                 new String[] { propertyModel.getBasicProperty().getUpicNo() }));
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("forwardModify: Modify property forwarded successfully; Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("forwardModify: Modify property forward ended");
         return RESULT_ACK;
+    }
+
+    private String getApplicationType() {
+        final String applicationType = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ALTERATION_OF_ASSESSMENT
+                : PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT
+                        : APPLICATION_TYPE_GRP;
+        return applicationType;
     }
 
     /**
@@ -646,8 +660,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into forwardView");
         validateApproverDetails();
         if (hasErrors())
-            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
-                    ||(getModel().getState().getNextAction()!=null && getModel().getState().getNextAction().equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)))
+            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
+                    || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
+                    || (getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
+                            .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)))
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -656,9 +672,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 Long.valueOf(getModelId()));
         LOGGER.debug("forwardView: Workflow property: " + propertyModel);
         transitionWorkFlow(propertyModel);
-        propService.updateIndexes(propertyModel,
-                PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
-                        : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        propService.updateIndexes(propertyModel, getApplicationType());
         basicPropertyService.update(basicProp);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
@@ -700,23 +714,23 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
          * be made active only when all the changes are completed in case of
          * modify reason is 'ADD_OR_ALTER' or 'BIFURCATE'
          */
-        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
+                || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
             propertyModel.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
             propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
         }
         processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
-                || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
+                || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)
+                || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn))
             updateAddress();
-        propService.updateIndexes(propertyModel,
-                PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
-                        : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        propService.updateIndexes(propertyModel, getApplicationType());
         basicPropertyService.update(basicProp);
         setBasicProp(basicProp);
         setAckMessage(getText(PROPERTY_MODIFY_APPROVE_SUCCESS, new String[] { getModifyReasonString(),
                 propertyModel.getBasicProperty().getUpicNo() }));
-        buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        buildEmailandSms(propertyModel, getApplicationType());
         addActionMessage(getText(PROPERTY_MODIFY_APPROVE_SUCCESS, new String[] { getModifyReasonString(),
                 propertyModel.getBasicProperty().getUpicNo() }));
         LOGGER.debug("Exiting approve");
@@ -734,8 +748,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("reject: Property rejection started");
         if (isBlank(approverComments)) {
             addActionError(getText("property.workflow.remarks"));
-            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
-                    || (getModel().getState().getNextAction()!=null && getModel().getState().getNextAction().equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)))
+            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
+                    || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
+                    || (getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
+                            .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)))
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -752,20 +768,18 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         setBasicProp(basicProperty);
         LOGGER.debug("reject: BasicProperty: " + basicProperty);
         transitionWorkFlow(propertyModel);
-        propService.updateIndexes(propertyModel,
-                PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
-                        : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        propService.updateIndexes(propertyModel, getApplicationType());
         propertyImplService.update(propertyModel);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         String username = "";
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForPositon(propertyModel
                 .getStateHistory().get(0).getOwnerPosition().getId());
-        if (propService.isEmployee(propertyModel.getCreatedBy())){
+        if (propService.isEmployee(propertyModel.getCreatedBy())) {
             Assignment assignment = assignmentService.getPrimaryAssignmentForUser(propertyModel.getCreatedBy().getId());
             username = propertyModel.getCreatedBy().getName().concat("~").concat(assignment.getPosition().getName());
-        }
-        else
-            username = userAssignment.getEmployee().getName().concat("~").concat(userAssignment.getPosition().getName());
+        } else
+            username = userAssignment.getEmployee().getName().concat("~")
+                    .concat(userAssignment.getPosition().getName());
         final Assignment wfInitiator = propService.getWorkflowInitiator(propertyModel);
         if (wfInitiator.getEmployee().getUsername().equals(securityUtils.getCurrentUser().getUsername())) {
             wfInitiatorRejected = Boolean.TRUE;
@@ -773,7 +787,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         } else
             setAckMessage(getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { getModifyReasonString(), username }));
 
-        buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        buildEmailandSms(propertyModel, getApplicationType());
         LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("reject: Property rejection ended");
         return RESULT_ACK;
@@ -813,7 +827,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
         final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
         final List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
-                "from PropertyTypeMaster order by orderNo");
+                "from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
         List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
@@ -913,7 +927,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 "from PropertyMutationMaster PM where upper(PM.code) = ?", modifyRsn);
         basicProp.setPropertyMutationMaster(propMutMstr);
         // AMALG & BIFUR
-        if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
+        if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
+                || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
             basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, getModifyRsn(),
                     propCompletionDate, null, null, null, null));
             if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
@@ -1153,12 +1168,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
      */
     private void prepareAckMsg() {
         LOGGER.debug("Entered into prepareAckMsg, ModifyRsn: " + modifyRsn);
-        Assignment assignment = assignmentService
-                .getPrimaryAssignmentForPositon(approverPositionId);
+        Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(approverPositionId);
         final User approverUser = eisCommonService.getUserForPosition(approverPositionId, new Date());
         final String action = getModifyReasonString();
-        setAckMessage(getText("property.modify.forward.success", new String[] { action, approverUser.getName().concat("~").concat(assignment.getPosition().getName()),
-                propertyModel.getApplicationNo() }));
+        setAckMessage(getText("property.modify.forward.success",
+                new String[] { action, approverUser.getName().concat("~").concat(assignment.getPosition().getName()),
+                        propertyModel.getApplicationNo() }));
 
         LOGGER.debug("AckMessage: " + getAckMessage() + "\nExiting from prepareAckMsg");
     }
@@ -1171,7 +1186,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private String getModifyReasonString() {
         final String action = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ALTERATION_OF_ASSESSMENT
                 : PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? BIFURCATION_OF_ASSESSMENT
-                        : AMALGAMATION_OF_ASSESSMENT;
+                        : PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn) ? GRP_OF_ASSESSMENT
+                                : AMALGAMATION_OF_ASSESSMENT;
         return action;
     }
 
@@ -1372,7 +1388,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         reportParams.put("logoPath", imagePath);
         reportParams.put("cityName", cityName);
         reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
-        final ReportRequest reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, ackBean, reportParams);
+        ReportRequest reportInput = null;
+        if (modifyRsn.equals(PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION))
+            reportInput = new ReportRequest(GRP_ACK_TEMPLATE, ackBean, reportParams);
+        else
+            reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, ackBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
@@ -1957,8 +1977,14 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Override
     public String getAdditionalRule() {
-        return PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ADDTIONAL_RULE_ALTER_ASSESSMENT
-                : ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+        String addittionalRule = "";
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
+            addittionalRule = ADDTIONAL_RULE_ALTER_ASSESSMENT;
+        else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn))
+            addittionalRule = ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+        else
+            addittionalRule = GENERAL_REVISION_PETITION;
+        return addittionalRule;
     }
 
     public BigDecimal getCurrentPropertyTax() {

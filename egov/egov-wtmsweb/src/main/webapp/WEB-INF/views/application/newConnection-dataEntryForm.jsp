@@ -45,7 +45,7 @@
 <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
-		<form:form role="form" action="/wtms/application/newConnection-createExisting" 
+		<form:form role="form" action="/wtms/application/newConnection-dataEntryForm" 
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -110,7 +110,7 @@
 		 }
 		
 			function validate(){
-				//alert(document.forms[0].action);
+				//bootbox.alert(document.forms[0].action);
 				if($('#connectionType').val() !='METERED')
 					{
 						$('#monthlyFee').attr('required', 'required');
@@ -140,7 +140,7 @@
 		//default ajax callback function
 		function callBackAjax()
 		{
-			//alert('callback function called!');
+			//bootbox.alert('callback function called!');
 			
 		}
 		function resetPropertyDetailsafterCheckBox() {
@@ -173,5 +173,5 @@
 	</div>
 </div>
 
-<script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
-<script src="<c:url value='/resources/js/app/newconnection-dataentry.js'/>"></script>
+<script src="<c:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/app/newconnection-dataentry.js?rnd=${app_release_no}'/>"></script>

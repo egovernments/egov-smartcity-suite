@@ -45,6 +45,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.utils.Constants;
 
@@ -54,6 +55,7 @@ public class BudgetReAppropriationMisc extends StateAware {
     private String sequenceNumber;
     private String remarks;
     private Date reAppropriationDate;
+    private EgwStatus status;
     private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<BudgetReAppropriation>();
 
     public Set<BudgetReAppropriation> getBudgetReAppropriations() {
@@ -118,6 +120,14 @@ public class BudgetReAppropriationMisc extends StateAware {
             if (id.equals(reAppropriation.getId()))
                 return reAppropriation;
         return null;
+    }
+
+    public EgwStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EgwStatus status) {
+        this.status = status;
     }
 
 }

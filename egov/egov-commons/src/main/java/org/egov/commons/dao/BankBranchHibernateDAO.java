@@ -39,36 +39,55 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Bankbranch;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Session; 
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class BankBranchHibernateDAO extends GenericHibernateDAO {
+public class BankBranchHibernateDAO  {
+    @Transactional
+    public Bankbranch update(final Bankbranch entity) {
+        getCurrentSession().update(entity);
+        return entity;
+    }
+
+    @Transactional
+    public Bankbranch create(final Bankbranch entity) {
+        getCurrentSession().persist(entity);
+        return entity;
+    }
+
+    @Transactional
+    public void delete(Bankbranch entity) {
+        getCurrentSession().delete(entity);
+    }
+
+    public Bankbranch findById(Number id, boolean lock) {
+        return (Bankbranch) getCurrentSession().load(Bankbranch.class, id);
+    }
+
+    public List<Bankbranch> findAll() {
+        return (List<Bankbranch>) getCurrentSession().createCriteria(Bankbranch.class).list();
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     
-        @PersistenceContext
-        private EntityManager entityManager;
-        
-        @Override
-        public Session  getCurrentSession() {
-                return entityManager.unwrap(Session.class);
-        }
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-        public BankBranchHibernateDAO() {
-                super(Bankbranch.class, null);
-        }
+   
 
-        public BankBranchHibernateDAO(final Class persistentClass, final Session session) {
-                super(persistentClass, session);
-        }
-
-        public List<Bankbranch> getAllBankBranchs() {
-                return getCurrentSession().createQuery("from Bankbranch BB order by BB.bank.name").list();
-        }
+    public List<Bankbranch> getAllBankBranchs() {
+        return getCurrentSession().createQuery("from Bankbranch BB order by BB.bank.name").list();
+    }
 }

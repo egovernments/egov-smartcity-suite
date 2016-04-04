@@ -141,8 +141,8 @@
 					
 					<div class="form-group">
 						<div class="text-center">
-							<a href="javascript:void(0);" class="btn btn-primary" id="searchapplication" 
-								><spring:message code='lbl.search' /></a>
+							<button type="button" class="btn btn-primary" id="searchapplication" 
+								><spring:message code='lbl.search' /></button>
 								
 							<button class="btn btn-danger" type="reset" ><spring:message code="lbl.reset"/></button>
 							<a href="javascript:void(0);" id="closeComplaints"
@@ -201,5 +201,5 @@
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 
-<script src="<c:url value='/resources/js/app/applicationsearch.js'/>"
+<script src="<c:url value='/resources/js/app/applicationsearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

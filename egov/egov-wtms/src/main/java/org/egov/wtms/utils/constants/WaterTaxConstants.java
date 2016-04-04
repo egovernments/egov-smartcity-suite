@@ -77,6 +77,9 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPENEWCONNESTNOTICE = "newconnestnotice";
     public static final String SMSEMAILTYPEADDCONNESTNOTICE = "addconnestnotice";
     public static final String DONATIONMASTER = "DONATIONMASTER";
+    public static final String REVENUE_WARD = "WARD";
+    public static final String SYSTEM = "SYSTEM";
+    
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
@@ -171,6 +174,9 @@ public class WaterTaxConstants {
     public static final String SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE = "CLOSURECONNECTION";
     public static final String SEARCH_MENUTREE_APPLICATIONTYPE_METERED = "METERENTRY";
     public static final String SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX = "COLLECTTAX";
+    public static final String APPLICATION_STATUS_CLOSER = "Close Connection By AE";
+    public static final String APPLICATION_STATUS_RE_CONN = "ReConnection By AE";
+    
 
     // appconfig key
     public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";
@@ -261,6 +267,7 @@ public class WaterTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
     public static final String USERNAME_ANONYMOUS = "anonymous";
+    public static final String USERNAME_MEESEVA = "meeseva";
     
     public static final String PREVIEWWORKFLOWACTION = "Preview";
     public static final String SIGNWORKFLOWACTION = "Sign";

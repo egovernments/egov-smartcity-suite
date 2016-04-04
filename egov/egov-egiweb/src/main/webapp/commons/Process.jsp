@@ -121,59 +121,59 @@ try {
 		final String query="select glcode as \"code\" from chartofaccounts where classification=? and glcode like ? order by glcode ";
 		result = executeWithParam(query,classValue,accountCode+"%");		
 	} else if (type.equalsIgnoreCase("getAllCoaCodes")) {//TESTED
-		final String query="select glcode||'`-`'||name||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 order by glcode ";
+		final String query="select glcode||'`-`'||name||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and isActiveForPosting=true order by glcode ";
 		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("getAllCoaNames")){//TESTED
-		final String query="select name||'`-`'||glcode||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 order by glcode ";
+		final String query="select name||'`-`'||glcode||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and isActiveForPosting=true order by glcode ";
 		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("getAllAssetCodes")){//TESTED
-		final String query="select glcode||'`-`'||name as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'A' order by glcode ";
+		final String query="select glcode||'`-`'||name as \"code\" from chartofaccounts where classification=4 and isActiveForPosting=true and type = 'A' order by glcode ";
 		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("getAllLiabCodes")){//TESTED
-		final String query="select glcode||'`-`'||name as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and type = 'L' order by glcode ";
+		final String query="select glcode||'`-`'||name as \"code\" from chartofaccounts where classification=4 and isActiveForPosting=true and type = 'L' order by glcode ";
 		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("coaDetailCode")){ //TESTED
 		String accountCode= SecurityUtils.checkSQLInjection(request.getParameter("glCode"));
-		String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and glcode like ? order by glcode ";
+		String query="select glcode as \"code\" from chartofaccounts where classification=4 and isActiveForPosting=true and glcode like ? order by glcode ";
 		result = executeWithParam(query,accountCode+"%");
 	} else if(type.equalsIgnoreCase("coaDetailCodeType")){//TESTED
 		String accountCode= SecurityUtils.checkSQLInjection(request.getParameter("glCode"));
 		String typeClass= SecurityUtils.checkSQLInjection(request.getParameter("typeClass"));
-		String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and glcode like ? and type = ? order by glcode ";
+		String query="select glcode as \"code\" from chartofaccounts where classification=4 and isActiveForPosting=true and glcode like ? and type = ? order by glcode ";
 		result = executeWithParam(query,accountCode+"%",typeClass);
 	} else if(type.equalsIgnoreCase("functionName")){//TESTED
 		String functionCode= SecurityUtils.checkSQLInjection(request.getParameter("name"));
-		String query="select name as \"code\" from function where  isactive = 1 AND isnotleaf=0 and upper(name) like upper(?)  order by name ";
+		String query="select name as \"code\" from function where  isactive = true AND isnotleaf=false and upper(name) like upper(?)  order by name ";
 		result = executeWithParam(query,functionCode+"%");
 	} else if(type.equalsIgnoreCase("getAllFunctionName")){//TESTED
-		final String query="select name||'`-`'||id as \"code\" from function where  isactive = 1 AND isnotleaf=0 order by name ";
+		final String query="select name||'`-`'||id as \"code\" from function where  isactive = true AND isnotleaf=false order by name ";
 		result = simpleExecute(query);
 	}  else if(type.equalsIgnoreCase("getAllFunctionCode")){
-		final String query="select code||'`~`'||name||'`~~`'||id as \"code\" from function where  isactive = 1 AND isnotleaf=0 order by name ";
+		final String query="select code||'`~`'||name||'`~~`'||id as \"code\" from function where  isactive = true AND isnotleaf=false order by name ";
 		result = simpleExecute(query);
 	}else if(type.equalsIgnoreCase("getAllBankName")){//TESTED
-		final String query="select name||'`-`'||id as \"code\" from bank where  isactive = 1 order by name ";
+		final String query="select name||'`-`'||id as \"code\" from bank where  isactive = true order by name ";
 		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("contractorName")){//TESTED
- 		final String query="select name||'`-`'||code as \"code\" from relation where id in(select relationid from worksdetail where totalvalue>0 and isactive=1) and isactive=1 and relationTypeid=2  order by upper(\"code\") ";
+ 		final String query="select name||'`-`'||code as \"code\" from relation where id in(select relationid from worksdetail where totalvalue>0 and isactive=true) and isactive=true and relationTypeid=2  order by upper(\"code\") ";
  		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("supplierName")){//TESTED
-		final String query="select name||'`-`'||code as \"code\" from relation where id in(select relationid from worksdetail where totalvalue>0 and isactive=1) and isactive=1 and relationTypeid=1  order by upper(\"code\") ";
+		final String query="select name||'`-`'||code as \"code\" from relation where id in(select relationid from worksdetail where totalvalue>0 and isactive=true) and isactive=true and relationTypeid=1  order by upper(\"code\") ";
 		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("workDetailName")){//TESTED
 		final String relTypeId= SecurityUtils.checkSQLInjection(request.getParameter("relationTypeId"));
 		final String relationId= SecurityUtils.checkSQLInjection(request.getParameter("relationId"));
-		final String query="select ' '||wd.name||'`-`'||wd.code as \"code\" from worksdetail wd,relation r where wd.relationid=r.id and r.relationtypeid=? and r.isactive=1 and wd.relationid=? order by upper(wd.name) ";
+		final String query="select ' '||wd.name||'`-`'||wd.code as \"code\" from worksdetail wd,relation r where wd.relationid=r.id and r.relationtypeid=? and r.isactive=true and wd.relationid=? order by upper(wd.name) ";
 		result = executeWithParam(query,relTypeId,relationId);
 	} else if(type.equalsIgnoreCase("getGLreportCodes")){//TESTED
 		final String query="SELECT concat(concat(concat(concat(glCode,'`-`'), name),'-$-'), ID) as \"code\" FROM chartofaccounts WHERE glcode not in (select glcode from chartofaccounts where glcode like '47%' AND glcode not like '471%' AND glcode !='4741') "+
-		" AND glcode not in (select glcode from chartofaccounts where glcode='471%') AND isactiveforposting=1 AND classification=4 ORDER BY glcode ";
+		" AND glcode not in (select glcode from chartofaccounts where glcode='471%') AND isactiveforposting=true AND classification=4 ORDER BY glcode ";
 		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("getActiveContractorListwithCode")){//TESTED
-		final String query="SELECT   NAME || '`--`' || code  || '`-`' ||ID  AS \"code\"  FROM relation  WHERE relationtypeid = 2 AND isactive = 1 ORDER BY NAME";
+		final String query="SELECT   NAME || '`--`' || code  || '`-`' ||ID  AS \"code\"  FROM relation  WHERE relationtypeid = 2 AND isactive = true ORDER BY NAME";
 		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("getActiveSupplierListwithCode")){//TESTED
-		final String query="SELECT   NAME || '`--`' || code  || '`-`' ||ID  AS \"code\"  FROM relation  WHERE relationtypeid = 1 AND isactive = 1 ORDER BY NAME";
+		final String query="SELECT   NAME || '`--`' || code  || '`-`' ||ID  AS \"code\"  FROM relation  WHERE relationtypeid = 1 AND isactive = true ORDER BY NAME";
 		result = simpleExecute(query);
 	} else if(type.equalsIgnoreCase("getBankGlcode")){//TESTED
 		// For Dishonored cheque fill Bank Charges glcode and Receipt reversal Chque glcode
@@ -194,7 +194,7 @@ try {
 			query.append("?,");
 		}
 		query.deleteCharAt(query.length() - 1);
-		query.append(")) AND userimpl0_.isactive = 1 AND userimpl0_.USER_NAME=? ");
+		query.append(")) AND userimpl0_.isactive = true AND userimpl0_.USER_NAME=? ");
 		query.append("AND ((userroles1_.todate IS NULL) AND userroles1_.fromdate <= ? OR userroles1_.fromdate <= ? AND ");
 		query.append("userroles1_.todate >= ?) AND ((userimpl0_.todate IS NULL) AND userimpl0_.fromdate <=? ");
 		query.append("OR userimpl0_.fromdate <=? AND userimpl0_.todate >=?) ");
@@ -220,10 +220,6 @@ try {
 				}	
 			}
 		});
-	} else if(type.equalsIgnoreCase("getCounterByEnteringCode")){//TESTED
-		final String counterName=SecurityUtils.checkSQLInjection(request.getParameter("code"));
-		final String query="select ca.name || '`--`' || ca.id  as \"code\" from eg_location ca where ca.name=? and ca.isactive=1";
-		result = executeWithParam(query,counterName);
 	} else if(type.equalsIgnoreCase("getAllUserNames")) {//TESTED
 		final java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
 		final String includeRolesList = EGovConfig.getProperty("INCLUDE_ROLES","","IP-BASED-LOGIN");
@@ -237,7 +233,7 @@ try {
 			query.append("?,");
 		}
 		query.deleteCharAt(query.length() - 1);
-		query.append(") AND userimpl0_.isactive = 1 AND ((userroles1_.todate IS NULL) ");
+		query.append(") AND userimpl0_.isactive = true AND ((userroles1_.todate IS NULL) ");
 		query.append("AND userroles1_.fromdate <= ? OR userroles1_.fromdate <= ? AND ");
 		query.append("userroles1_.todate >= ?) AND ((userimpl0_.todate IS NULL) AND userimpl0_.fromdate <=? ");
 		query.append("OR userimpl0_.fromdate <=? AND userimpl0_.todate >= ?) ");
@@ -262,10 +258,6 @@ try {
 				}	
 			}
 		});
-	} else if(type.equalsIgnoreCase("getAllCounters")) {//TESTED
-		final String locationId = SecurityUtils.checkSQLInjection(request.getParameter("id"));
-		final String query="select l.name|| '`--`' ||l.id as \"code\" from eg_location l where l.locationid=? and l.isactive=1";
-		result = executeWithParam(query,locationId);
 	} else if(type.equalsIgnoreCase("getAllBoundary")){//TESTED
 		final String btypeId= SecurityUtils.checkSQLInjection(request.getParameter("btypeId"));
 		final String query="SELECT  ID_BNDRY,NAME    FROM EG_BOUNDARY b  WHERE b.IS_HISTORY='N' and b.ID_BNDRY_TYPE=? ORDER BY ID_BNDRY";
@@ -319,17 +311,6 @@ try {
 	    	String cgn = SecurityUtils.checkSQLInjection(request.getParameter("cgn"));
 	    	result = executeWithParam(query+" union "+queryedit,cgn);
        	}
-	} else if (type.equalsIgnoreCase("checkUserCounterMapping")) {//TESTED
-		String fDate = SecurityUtils.checkSQLInjection(request.getParameter("fDate"));
-		String tDate = SecurityUtils.checkSQLInjection(request.getParameter("tDate"));
-		String userId = SecurityUtils.checkSQLInjection(request.getParameter("userId"));
-		String counterId = SecurityUtils.checkSQLInjection(request.getParameter("counterId"));
-		
-		String query="SELECT  id  AS \"code\"  FROM EG_USERCOUNTER_MAP b  WHERE b.USERID=? and  "+
-					"((b.TODATE IS NULL and b.FROMDATE <= TO_DATE(?,'DD/MM/YYYY')) OR (b.FROMDATE<= TO_DATE(?,'DD/MM/YYYY') AND b.TODATE>=TO_DATE(?,'DD/MM/YYYY'))) and b.counterid=? ORDER BY b.id";
-		
-		result = dataExist(query,userId,fDate,fDate,tDate,counterId);
-		
 	} else if(type.equalsIgnoreCase("checkJurisdictionDates")){//TESTED
 		String fDate = SecurityUtils.checkSQLInjection(request.getParameter("fDate"));
 		String tDate = SecurityUtils.checkSQLInjection(request.getParameter("tDate"));

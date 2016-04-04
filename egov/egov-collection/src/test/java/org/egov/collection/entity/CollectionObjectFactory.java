@@ -39,8 +39,7 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.Number;
 import org.egov.infstr.utils.Sequence;
-import org.egov.lib.security.terminal.model.Location;
-import org.egov.lib.security.terminal.model.UserCounterMap;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.model.instrument.InstrumentAccountCodes;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
@@ -115,8 +114,7 @@ public class CollectionObjectFactory {
 		Bankaccount bankaccount = new Bankaccount();
 		bankaccount.setAccountnumber("123456789");
 		bankaccount.setAccounttype("NATIONALISED BANKS");
-		bankaccount.setIsactive(1);
-		bankaccount.setCurrentbalance(BigDecimal.valueOf(10000));
+		bankaccount.setIsactive(true);
 		bankaccount.setFund(createFund("testFund"));
 		bankaccount.setChartofaccounts(createCOA(this.getRandomNumber(99999999)+""));
 		bankaccount.setBankbranch(createBankBranch());
@@ -130,7 +128,7 @@ public class CollectionObjectFactory {
 		bankbranch.setBranchname("test  branch");
 		bankbranch.setBranchaddress1("test branch address");
 		bankbranch.setBranchcity("branch city");
-		bankbranch.setIsactive(1);
+		bankbranch.setIsactive(true);
 		bankbranch.setBank(createBank());
 		bankbranch.setCreated(new Date());
 		bankbranch.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
@@ -144,7 +142,7 @@ public class CollectionObjectFactory {
 		Bank bank = new Bank();
 		bank.setCode("TEST" + getRandomNumber());
 		bank.setName("Test Bank" + getRandomNumber());
-		bank.setIsactive(1);
+		bank.setIsactive(true);
 		bank.setCreated(new Date());
 		bank.setLastmodified(new Date());
 		bank.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
@@ -346,8 +344,6 @@ public class CollectionObjectFactory {
 
 		User user = createUser(userName);
 		Location counter = createCounter(counterName);
-		createUserCounterMap(user, counter);
-
 		return createReceiptHeaderWithInstrument(receiptNum, receiptType,
 				statusCode, refNum, instrumentType, instrumentNum,
 				instrumentAmount, instrumentDate, instrumentStatusCode, glCode,
@@ -473,8 +469,8 @@ public class CollectionObjectFactory {
 		function.setName(name);
 		function.setCode(name + getRandomNumber());
 		function.setIsActive(true);
-		function.setIsNotLeaf(0);
-		function.setLevel(1);
+		function.setIsNotLeaf(false);
+		///function.setLevel(1);
 		function.setType(name);
 		session.saveOrUpdate(function);
 		return function;
@@ -485,8 +481,8 @@ public class CollectionObjectFactory {
 		function.setName(name);
 		function.setCode(code);
 		function.setIsActive(true);
-		function.setIsNotLeaf(0);
-		function.setLevel(1);
+		function.setIsNotLeaf(false);
+		//function.setLevel(1);
 		function.setType(name);
 		session.saveOrUpdate(function);
 		return function;
@@ -525,31 +521,13 @@ public class CollectionObjectFactory {
 
 	public Location createCounter(String counterName) {
 		Location counter = new Location();
-		counter.setIsActive(Integer.valueOf(1));
-		counter.setIsLocation(Integer.valueOf(0));
+		counter.setActive(true);
 		counter.setName(counterName);
-		counter.setDesc("testCounterDesc");
+		counter.setDescription("testCounterDesc");
 		session.saveOrUpdate(counter);
 		return counter;
 	}
 
-	public UserCounterMap createUserCounterMap(User user, Location counter) {
-		Date currentDate = new Date();
-		UserCounterMap ucm = new UserCounterMap();
-		ucm.setUserId(user);
-		ucm.setCounterId(counter);
-		ucm.setFromDate(currentDate);
-		ucm.setModifiedBy(user.getId().intValue());
-		ucm.setModifiedDate(currentDate);
-		try {
-			ucm.setToDate(new SimpleDateFormat("dd/MM/yyyy")
-					.parse("31/12/2099"));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		session.saveOrUpdate(ucm);
-		return ucm;
-	}
 
 	public User createUser(String userName) {
 		User user = new User();
@@ -855,14 +833,13 @@ public class CollectionObjectFactory {
 
 	public CVoucherHeader createVoucher(String name) {
 		CVoucherHeader voucher = new CVoucherHeader();
-		voucher.setCgn(("CGN" + getRandomNumber()).substring(0, 9));
 		voucher.setName("testVoucher" + name);
 		voucher.setType("testType");
 		voucher.setEffectiveDate(new Date());
 		voucher.setVoucherDate(new Date());
 		voucher.setFiscalPeriodId(1);
 		voucher.setVoucherNumber("testVoucherNumber");
-		voucher.setCgvn("testCGVN" + name + voucher.getCgn());
+		voucher.setCgvn("testCGVN" + name );
 		session.saveOrUpdate(voucher);
 		return voucher;
 	}
@@ -1076,8 +1053,8 @@ public class CollectionObjectFactory {
 		fund.setName(code);
 		fund.setCode(code + getRandomNumber());
 		fund.setLlevel(BigDecimal.valueOf(0));
-		fund.setIsactive(1);
-		fund.setCreated(new Date());
+		fund.setIsactive(true);
+		fund.setCreatedDate(new Date());
 		session.saveOrUpdate(fund);
 		return fund;
 	}
@@ -1327,7 +1304,6 @@ public class CollectionObjectFactory {
 	public Accountdetailkey createAccountdetailkey(String keyname) {
 		Accountdetailkey accountdetailkey = new Accountdetailkey();
 		accountdetailkey.setAccountdetailtype(createAccountdetailtype("testAccountDetailTypeName"));
-		accountdetailkey.setChartofaccounts(createCOA("10001"));
 		accountdetailkey.setDetailkey(1);
 		accountdetailkey.setDetailname(keyname);
 		accountdetailkey.setGroupid(1);
@@ -1389,7 +1365,7 @@ public class CollectionObjectFactory {
 		subscheme.setValidfrom(new Date());
 		subscheme.setValidto(new Date());
 		subscheme.setScheme(scheme);
-		subscheme.setIsactive("1");
+		subscheme.setIsactive(true);
 		subscheme.setLastmodifieddate(new Date());
 		session.saveOrUpdate(subscheme);
 		return subscheme;

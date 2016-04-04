@@ -41,7 +41,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<script src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/appconfig.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <div class="row" id="page-content">
     <div class="col-md-12">
                 <c:if test="${not empty message}">

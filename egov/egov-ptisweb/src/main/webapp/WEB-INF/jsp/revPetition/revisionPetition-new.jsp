@@ -57,7 +57,7 @@
 			function validateRecordObjection(){
 				document.getElementById("lblError").style.display='none';
 			if(dom.get('details').value==''){
-					alert('Please enter Revision Petition Details');
+					bootbox.alert('Please enter Revision Petition Details');
 					return false;
 				}
 				return true;
@@ -106,17 +106,17 @@
            
           <tr>
             <td>
+            
             <div id="property_header">
-            <br/>
-         			<jsp:include page="../view/viewProperty.jsp"/>
-         			 <s:hidden name="basicProperty"   id="basicProperty" value="%{basicProperty.id}"></s:hidden>
-          			
-            </div>            
+         		<jsp:include page="../view/viewProperty.jsp"/>
+         		<s:hidden name="basicProperty"   id="basicProperty" value="%{basicProperty.id}"></s:hidden>
+            </div> 
+                       
             </td> 
           </tr>            
           <tr>
             <td>
-            <div id="objection_header" style="display:none;"> 
+            <div id="objection_header" class="formmainbox" style="display:none;"> 
         	
 				<jsp:include page="recordRevisionPetition.jsp"/>
             </div>
@@ -125,7 +125,7 @@
          <s:if test="%{loggedUserIsEmployee == true}">
           <tr>
             <td>
-            <div > 
+            <div class="formmainbox"> 
          	 <jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
          		<br/>
             </div>

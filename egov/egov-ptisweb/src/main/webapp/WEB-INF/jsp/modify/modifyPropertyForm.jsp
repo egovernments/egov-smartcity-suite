@@ -170,50 +170,7 @@
 				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
 		<td class="greybox" colspan="2">&nbsp;</td>
 	</tr>
-	<tr class="bpddetailsheader">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
-		<td class="bluebox"><s:checkbox
-				name="propertyDetail.buildingPlanDetailsChecked"
-				id="buildingPlanDetailsChecked"
-				value="%{propertyDetail.buildingPlanDetailsChecked}"
-				onclick="enableOrDisableBPADetails(this);" /></td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
-	</tr>
-
-	<tr class="bpddetails">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="building.permNo"></s:text><span
-			class="mandatory1"> *</span> :</td>
-		<td class="greybox"><s:textfield
-				name="propertyDetail.buildingPermissionNo" id="buildingPermissionNo"
-				size="16" maxlength="16" onchange="trim(this,this.value);"
-				onblur="checkZero(this);"
-				value="%{propertyDetail.buildingPermissionNo}"></s:textfield></td>
-		<td class="greybox"><s:text name="buildingpermdate"></s:text><span
-			class="mandatory1"> *</span> :</td>
-		<td class="greybox"><s:date
-				name="propertyDetail.buildingPermissionDate" var="buildingPermDate"
-				format="dd/MM/yyyy" /> <s:textfield
-				name="propertyDetail.buildingPermissionDate" cssClass="datepicker"
-				value="%{#buildingPermDate}" autocomplete="off"
-				id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
-		</td>
-
-	</tr>
-
-	<tr class="bpddetails">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="deviationper"></s:text>:</td>
-		<td class="bluebox"><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}"
-				name="propertyDetail.deviationPercentage" id="deviationPercentage"
-				listKey="key" listValue="value" list="deviationPercentageMap"
-				value="%{propertyDetail.deviationPercentage}" cssClass="selectnew" />
-		</td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
-	</tr>
-
+	
 	<!-- Amenities section -->
 
 	<tr id="amenitiesHeaderRow" class="amenities">

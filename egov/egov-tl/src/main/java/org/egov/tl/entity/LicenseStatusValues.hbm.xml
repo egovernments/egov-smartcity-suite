@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.tl.entity.LicenseStatusValues"
+		table="EGTL_STATUS_VALUES"> 
+		<id name="id" column="ID" type="java.lang.Long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGTL_STATUS_VALUES</param>
+			</generator>
+		</id>
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATED_DATE" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="MODIFIED_DATE" not-null="true" /> 
+		</property>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
+			cascade="all"> 
+			<column name="CREATED_BY" />
+		</many-to-one>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
+			cascade="all">
+			<column name="MODIFIED_BY" />
+		</many-to-one>
+
+		<many-to-one name="license" column="ID_LICENSE"
+					 class="org.egov.tl.entity.License" insert="false"
+					 update="false" />
+
+		<many-to-one name="licenseStatus" column="ID_STATUS"
+			class="org.egov.tl.entity.LicenseStatus" />
+
+		<property name="reason" column="ID_REASON" />
+		<property name="docNumber" column="DOC_NUM" />
+		<property name="referenceDate" column="REF_DATE" />
+		<property name="referenceNo" column="REF_NUM" />
+		<property name="remarks" column="REMARKS" />
+		<property name="active" column="IS_ACTIVE" type="boolean" />
+		<property name="extraField1" column="EXTRA_FIELD1" />
+		<property name="extraField2" column="EXTRA_FIELD2" />
+		<property name="extraField3" column="EXTRA_FIELD3" />
+		
+		<many-to-one name="previousStatusVal" class="org.egov.tl.entity.LicenseStatusValues" column="PARENT_STATUS_VAL"/>
+
+	</class>
+</hibernate-mapping>

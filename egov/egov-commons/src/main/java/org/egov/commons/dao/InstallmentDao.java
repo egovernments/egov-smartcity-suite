@@ -59,4 +59,11 @@ public interface InstallmentDao extends GenericDAO {
 
     public Installment getInsatllmentByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
             String installmentType);
+    List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallments);
+    Installment fetchInstallmentByModuleAndInstallmentNumber(final Module module, final Integer installmentNumber);
+
+    public List<Installment> fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(Module module, Date installmentDate,
+            int noOfInstallmentToFetch);
+
+    public Installment getInsatllmentByModuleAndDescription(Module moduleByName, String description);
 }

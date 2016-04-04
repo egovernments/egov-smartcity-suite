@@ -191,7 +191,7 @@ function validateDigitsAndDecimal(obj)
 {
 	if(isNaN(obj.value.trim()))
 	{
-		alert("Invalid Amount")
+		bootbox.alert("Invalid Amount")
 		obj.value=0;
 		obj.focus();
 	}
@@ -199,7 +199,7 @@ function validateDigitsAndDecimal(obj)
 	{
 		if(parseFloat(obj.value.trim())<0)
 		{
-			alert("Negetive Amount is not allowed");
+			bootbox.alert("Negetive Amount is not allowed");
 			obj.value=0;
 			obj.focus();
 		}

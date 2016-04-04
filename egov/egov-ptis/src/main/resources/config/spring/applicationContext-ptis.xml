@@ -113,4 +113,18 @@
 
 	<bean id="demolitionService" class="org.egov.ptis.domain.service.demolition.PropertyDemolitionService" scope="prototype" />
 	
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="parentMessageSource" ref="parentMessageSource" />
+        <property name="basenames">
+            <list>
+                <value>messages/labels</value>
+                <value>messages/errors</value>
+                <value>messages/message</value>
+            </list>
+        </property>
+        <property name="cacheSeconds" value="0"/>
+    </bean>
+    
+    <bean class="org.egov.ptis.client.integration.utils.SpringBeanUtil" lazy-init="false"/>
+	
 </beans>

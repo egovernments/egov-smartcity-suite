@@ -51,6 +51,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.commons.Installment;
 import org.egov.demand.interfaces.BillServiceInterface;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBillDetails;
@@ -96,9 +97,9 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
                 if (creaditAmt.compareTo(BigDecimal.ZERO) > 0) {
 
                     final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, creaditAmt,
-                            demandDetail.getEgDemandReason().getGlcodeId().getGlcode(), demandDetail
-                            .getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                            + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX);
+                            demandDetail.getEgDemandReason().getGlcodeId().getGlcode(),  getReceiptDetailDescription(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                    +" "+AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,demandDetail.getEgDemandReason().getEgInstallmentMaster()));
+                            
                     orderNo++;
                     billDetailList.add(billdetail);
                 }
@@ -107,12 +108,15 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
         // TODO: IF LIST SIZE IS ZERO THEN RETURN NULL OR THROW EXCEPTION.
         return billDetailList;
     }
-
+    private String getReceiptDetailDescription(String reasonType, Installment instlment) {
+        return reasonType+(instlment!=null? " "+instlment.getDescription():"");
+    
+   }
     private EgBillDetails createBillDetailObject(final int orderNo, final BigDecimal debitAmount,
             final BigDecimal creditAmount, final String glCodeForDemandDetail, final String description) {
 
         final EgBillDetails billdetail = new EgBillDetails();
-        billdetail.setFunctionCode(null); // TODO ADD FUNCTIONCODE
+        billdetail.setFunctionCode(AdvertisementTaxConstants.ADVERTISEMENT_FUCNTION_CODE);
         billdetail.setOrderNo(orderNo);
         billdetail.setCreateDate(new Date());
         billdetail.setModifiedDate(new Date());

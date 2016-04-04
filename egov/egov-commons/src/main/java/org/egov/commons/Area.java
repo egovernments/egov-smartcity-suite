@@ -39,11 +39,17 @@
  */
 package org.egov.commons;
 
+import java.math.BigDecimal;
+
+
 public class Area {
 
 	private Float length = null;
 	private Float breadth = null;
 	private Float area = null;
+	
+	
+	public Area(){}
 
 	/**
 	 * @return Returns the length.
@@ -79,7 +85,7 @@ public class Area {
 	public Float getArea() {
 		Float TotalArea = null;
 		if ((length != null) && (breadth != null))
-			TotalArea = length * breadth;
+			TotalArea = new BigDecimal(length * breadth).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
 		else
 			TotalArea = area;
 		return TotalArea;

@@ -137,7 +137,7 @@ public class CollectionIntegrationServiceImplTest { /*extends
 		finUtil = new FinancialsUtil(){
 			
 			public InstrumentType getInstrumentTypeByType(String type){
-				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=1",type);
+				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=true",type);
 			}
 		};
 		finUtil.setInstrumentService(instrumentService);

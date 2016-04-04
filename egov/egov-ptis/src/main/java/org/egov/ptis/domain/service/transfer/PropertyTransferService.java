@@ -39,16 +39,13 @@
 package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -62,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.impl.client.NoopUserTokenHandler;
+import org.apache.commons.lang.StringUtils;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
@@ -75,7 +72,6 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -91,6 +87,7 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -98,9 +95,12 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.PropertyAddress;
+import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyMutationTransferee;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
@@ -108,7 +108,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
-import org.hibernate.FlushMode;
+import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,10 +183,17 @@ public class PropertyTransferService {
 
     @Autowired
     private PropertyService propertyService;
-    
+
     @Autowired
     private NoticeService noticeService;
 
+    @Autowired
+    @Qualifier("waterChargesIntegrationServiceImpl")
+    private WaterChargesIntegrationService waterChargesIntegrationService;
+
+    @Autowired
+    private PtDemandDao ptDemandDAO;
+    
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
@@ -196,7 +203,7 @@ public class PropertyTransferService {
         propertyMutation.setMutationDate(new Date());
         if (propertyMutation.getApplicationNo() == null)
             propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
-        createUserIfNotExist(propertyMutation.getTransfereeInfos());
+        createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation.getDocuments());
@@ -208,13 +215,16 @@ public class PropertyTransferService {
     public void approvePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         final PropertySource propertySource = basicProperty.getPropertyOwnerInfo().get(0).getSource();
         basicProperty.getPropertyOwnerInfo().clear();
-        createUserIfNotExist(propertyMutation.getTransfereeInfos());
+        createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
         int order = 1;
-        for (final User propertyOwner : propertyMutation.getTransfereeInfos()) {
+        for (final PropertyMutationTransferee propertyOwner : propertyMutation.getTransfereeInfosProxy()) {
             final PropertyOwnerInfo propertyOwnerInfo = new PropertyOwnerInfo(basicProperty, propertySource,
-                    propertyOwner, order++);
+                    propertyOwner.getTransferee(), order++);
             basicProperty.getPropertyOwnerInfo().add(propertyOwnerInfo);
         }
+        propertyMutation.setMutationDate(new Date());
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        waterChargesIntegrationService.updateConsumerIndex(propertyService.loadAssessmentDetails(basicProperty));
         basicPropertyService.persist(basicProperty);
     }
 
@@ -222,7 +232,7 @@ public class PropertyTransferService {
     public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         processAndStoreDocument(propertyMutation.getDocuments());
         checkAllMandatoryDocumentsAttached(propertyMutation);
-        createUserIfNotExist(propertyMutation.getTransfereeInfos());
+        createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
         basicProperty.setUnderWorkflow(true);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
@@ -236,9 +246,9 @@ public class PropertyTransferService {
 
     @Transactional
     public void deleteTransferee(final PropertyMutation propertyMutation, final Long transfereeId) {
-        User userToRemove = null;
-        for (final User user : propertyMutation.getTransfereeInfos())
-            if (user.getId().equals(transfereeId))
+        PropertyMutationTransferee userToRemove = null;
+        for (final PropertyMutationTransferee user : propertyMutation.getTransfereeInfos())
+            if (user.getTransferee().getId().equals(transfereeId))
                 userToRemove = user;
         propertyMutation.getTransfereeInfos().remove(userToRemove);
         propertyMutationService.persist(propertyMutation);
@@ -310,8 +320,8 @@ public class PropertyTransferService {
         ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
         if (propertyMutation.getTransfereeInfos() != null && propertyMutation.getTransfereeInfos().size() > 0) {
             String newOwnerName = "";
-            for (final User usr : propertyMutation.getTransfereeInfos())
-                newOwnerName = newOwnerName + usr.getName() + ",";
+            for (final PropertyMutationTransferee usr : propertyMutation.getTransfereeInfos())
+                newOwnerName = newOwnerName + usr.getTransferee().getName() + ",";
             ackBean.setOwnerName(newOwnerName.substring(0, newOwnerName.length() - 1));
         }
         ackBean.setOwnerAddress(basicProperty.getAddress().toString());
@@ -325,7 +335,7 @@ public class PropertyTransferService {
 
     @Transactional
     public ReportOutput generateTransferNotice(final BasicProperty basicProperty,
-            final PropertyMutation propertyMutation, final String cityName, final String cityLogo, String actionType) {
+            final PropertyMutation propertyMutation, final String cityName, final String cityLogo, String actionType,boolean isCorporation) {
         PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
                 propertyMutation.getApplicationNo());
         ReportOutput reportOutput = new ReportOutput();
@@ -344,30 +354,44 @@ public class PropertyTransferService {
             basicProperty.setUnderWorkflow(false);
         } else {
             final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
-            noticeBean.setUlbLogo(cityLogo);
             noticeBean.setMunicipalityName(cityName);
+            BasicProperty basicProp = propertyMutation.getBasicProperty();
             final Map<String, Object> reportParams = new HashMap<String, Object>();
             reportParams.put("userId", EgovThreadLocals.getUserId());
+            reportParams.put("isCorporation", isCorporation);
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
-            noticeBean.setNewOwnerParentName(propertyMutation.getFullTransfereeGuardianName());
+            noticeBean.setNewOwnerGuardianRelation(propertyMutation.getTransfereeGuardianRelation());
             noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
             noticeBean.setRegDocNo(propertyMutation.getDeedNo());
-            noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
-            final ReportRequest reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_NOTICE, noticeBean, reportParams);
+            noticeBean.setAssessmentNo(basicProp.getUpicNo());
+            noticeBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
+            if (basicProp.getAddress() != null) {
+                PropertyAddress address = basicProp.getAddress();
+                noticeBean.setOwnerAddress(address.toString());
+                if (StringUtils.isNotBlank(address.getHouseNoBldgApt()))
+                    noticeBean.setDoorNo(address.getHouseNoBldgApt());
+                else
+                    noticeBean.setDoorNo("N/A");
+            }
+            PropertyID propertyId = basicProp.getPropertyID();
+            noticeBean.setLocalityName(propertyId.getLocality().getName());
+            final ReportRequest reportInput = new ReportRequest(
+                    PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_CERTIFICATE, noticeBean, reportParams);
             reportInput.setReportFormat(FileFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
                 if (notice == null) {
                     String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_MUTATION_CERTIFICATE);
-                    noticeService.saveNotice(propertyMutation.getApplicationNo(), noticeNo, NOTICE_TYPE_MUTATION_CERTIFICATE,
-                            basicProperty, new ByteArrayInputStream(reportOutput.getReportOutputData()));
+                    noticeService.saveNotice(propertyMutation.getApplicationNo(), noticeNo,
+                            NOTICE_TYPE_MUTATION_CERTIFICATE, basicProperty,
+                            new ByteArrayInputStream(reportOutput.getReportOutputData()));
                 } else {
                     noticeService.updateNotice(notice, new ByteArrayInputStream(reportOutput.getReportOutputData()));
                 }
                 noticeService.getSession().flush();
-            } 
+            }
         }
         return reportOutput;
     }
@@ -379,46 +403,59 @@ public class PropertyTransferService {
                         "Please attach mandatory/marked enclosed documents."));
     }
 
-    private void createUserIfNotExist(final List<User> transferees) {
-        final List<User> newOwners = new ArrayList<>();
-        transferees.forEach(transferee -> {
-            if (transferee.isNew()) {
+    private void createUserIfNotExist(final PropertyMutation propertyMutation,final List<PropertyMutationTransferee> transferees) {
+        final List<PropertyMutationTransferee> newOwners = new ArrayList<PropertyMutationTransferee>();
+            propertyMutation.getTransfereeInfos().clear();
+            for(PropertyMutationTransferee transferee : transferees){ 
+            if (transferee!=null) { 
                 User user = null;
-                propertyMutationService.getSession().setFlushMode(FlushMode.MANUAL);
-                if (null != transferee.getAadhaarNumber() && !transferee.getAadhaarNumber().isEmpty())
-                    user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(),
-                            transferee.getType());
+                if (null != transferee.getTransferee().getAadhaarNumber() && !transferee.getTransferee().getAadhaarNumber().isEmpty()){
+                    List<User> userList =  new ArrayList<User>(); 
+                    userList = userService.getUserByAadhaarNumberAndType(transferee.getTransferee().getAadhaarNumber(), 
+                            transferee.getTransferee().getType());
+                    if(userList!=null && !userList.isEmpty()){
+                        for(int i=0; i<userList.size();i++){
+                            if(userList.get(i).getAadhaarNumber().equalsIgnoreCase(transferee.getTransferee().getAadhaarNumber()) && 
+                                    userList.get(i).getMobileNumber().equalsIgnoreCase(transferee.getTransferee().getMobileNumber()) &&
+                                    userList.get(i).getName().equalsIgnoreCase(transferee.getTransferee().getName())){
+                                user=userList.get(i);
+                            }
+                        }
+                    }
+                }
                 else
                     user = (User) basicPropertyService.find(
-                            "From User where name = ? and mobileNumber = ? and gender = ? ", transferee.getName(),
-                            transferee.getMobileNumber(), transferee.getGender());
+                            "From User where name = ? and mobileNumber = ? and gender = ? ", transferee.getTransferee().getName(),
+                            transferee.getTransferee().getMobileNumber(), transferee.getTransferee().getGender());
                 if (user == null) {
-                    if (UserType.CITIZEN.equals(transferee.getType())) {
+                    if (UserType.CITIZEN.equals(transferee.getTransferee().getType())) {
                         final Citizen newOwner = new Citizen();
-                        newOwner.setAadhaarNumber(transferee.getAadhaarNumber());
-                        newOwner.setEmailId(transferee.getEmailId());
-                        newOwner.setMobileNumber(transferee.getMobileNumber());
-                        newOwner.setGender(transferee.getGender());
-                        newOwner.setGuardian(transferee.getGuardian());
-                        newOwner.setGuardianRelation(transferee.getGuardianRelation());
-                        newOwner.setSalutation(transferee.getSalutation());
-                        newOwner.setName(transferee.getName());
+                        newOwner.setAadhaarNumber(transferee.getTransferee().getAadhaarNumber());
+                        newOwner.setEmailId(transferee.getTransferee().getEmailId());
+                        newOwner.setMobileNumber(transferee.getTransferee().getMobileNumber());
+                        newOwner.setGender(transferee.getTransferee().getGender());
+                        newOwner.setGuardian(transferee.getTransferee().getGuardian());
+                        newOwner.setGuardianRelation(transferee.getTransferee().getGuardianRelation());
+                        newOwner.setSalutation(transferee.getTransferee().getSalutation());
+                        newOwner.setName(transferee.getTransferee().getName());
                         newOwner.setPassword("NOTSET");
-                        newOwner.setUsername(propertyTaxUtil.generateUserName(transferee.getName()));
-                        newOwners.add(newOwner);
+                        newOwner.setUsername(propertyTaxUtil.generateUserName(transferee.getTransferee().getName()));
+                        userService.createUser(newOwner);
+                        transferee.setTransferee(newOwner);
+                        transferee.setPropertyMutation(propertyMutation);
+                       
                     }
                 } else {
-                    user.setEmailId(transferee.getEmailId());
-                    user.setGuardian(transferee.getGuardian());
-                    user.setGuardianRelation(transferee.getGuardianRelation());
-                    newOwners.add(user);
+                    user.setEmailId(transferee.getTransferee().getEmailId());
+                    user.setGuardian(transferee.getTransferee().getGuardian());
+                    user.setGuardianRelation(transferee.getTransferee().getGuardianRelation());
+                    transferee.setTransferee(user);
+                    transferee.setPropertyMutation(propertyMutation);
+                   
                 }
-            } else
-                newOwners.add(transferee);
-        });
-        propertyMutationService.getSession().setFlushMode(FlushMode.AUTO);
-        transferees.clear();
-        transferees.addAll(newOwners);
+            } 
+            propertyMutation.addTransfereeInfos(transferee);
+            }
     }
 
     private void processAndStoreDocument(final List<Document> documents) {

@@ -38,6 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <!DOCTYPE html>
 <html class="no-js" oncontextmenu="return false;">
 	<head>
@@ -47,18 +48,19 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta name="description" content="eGov Urban Portal" />
 		<meta name="author" content="" />
-		
+		<spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
+		<spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="true"/>
 		<title>eGov Urban Portal</title>
 		
-		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/multi-level-menu/jquery.multilevelpushmenu.css'/>"> 
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 		
+		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
@@ -118,7 +120,7 @@
 					</div>
 					
 					<div class="navbar-brand">
-						<h3 class="horizontal-page-title homepage" id="hp-citizen-title">${sessionScope.citymunicipalityname}</h3>
+						<h3 class="horizontal-page-title homepage hidden-xs hidden-sm" id="hp-citizen-title">${sessionScope.citymunicipalityname}</h3>
 					</div>
 					
 					<!-- notifications and other links -->
@@ -361,6 +363,7 @@
 									<label class="control-label">Old Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
+									<input style="display:none">
 									<input type="password" class="form-control" id="old-pass" required="required">
 								</div>
 							</div>
@@ -369,7 +372,7 @@
 									<label class="control-label">New Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="new-pass" minlength="8" maxlength="32" data-container="#wrap" data-toggle="popover" data-content="Minimum 8 to 32 characters long and should contain upper case, lower case alphabet,number and special character except [& < > # % \" ' / and space]">
+									<input type="password" class="form-control check-password" id="new-pass" maxlength="32" data-container="#wrap" data-toggle="popover" data-content="${pwdmsg}">
 								</div>
 							</div>
 							<div class="form-group">
@@ -377,7 +380,7 @@
 									<label class="control-label">Re-type Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="retype-pass" minlength="8" maxlength="32">
+									<input type="password" class="form-control check-password" id="retype-pass" maxlength="32">
 									<div class="password-error error-msg display-hide">Password is incorrect</div>
 								</div>
 							</div>
@@ -398,6 +401,12 @@
 			<script>
 			$('.change-password').modal('show');
 			$('.pass-cancel').attr('disabled','disabled');
+			</script>
+		</c:if>
+		<c:if test="${warn_pwd_expire}">
+			<script>
+				var pwdExpireInDays = ${pwd_expire_in_days};
+				bootbox.alert("Your password will expire in "+pwdExpireInDays+" day(s), please update your password.");
 			</script>
 		</c:if>
 		<div class="modal fade favourites" data-backdrop="static">
@@ -470,14 +479,14 @@
 		var focussedmenu = "worklist";
 		var now;
 		</script>
-		<script src="<c:url value='/resources/js/app/custom-menu.js'/>"></script>
+		<script src="<c:url value='/resources/js/app/custom-menu.js?rnd=${app_release_no}'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js'/>"></script>
-		<script src="<c:url value='/resources/global/js/egov/custom.js'/>"></script>
-		<script src="<c:url value='/resources/js/app/homepageofficial.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"></script>
+		<script src="<c:url value='/resources/js/app/homepageofficial.js?rnd=${app_release_no}'/>"></script>
 		<script type="text/javascript">
 			$(window).load(function(){
 		        document.getElementById("loading").style.display = "none";

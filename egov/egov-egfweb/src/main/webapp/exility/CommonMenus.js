@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-<!--
+ 
 /*
 ---------------------------------------------------------------------
  File Name	:  CommonMenus.js
@@ -93,7 +93,7 @@ function doNothing(){
 
 
 function changeto(){
-	window.alert("This is being reached");
+	bootbox.alert("This is being reached");
 	one.style.backgroundColor="#FFCE00";
 	setInterval("changto()", 1200);
 	one.style.backgroundColor="#DADADA";
@@ -114,14 +114,14 @@ function hide(id) {
 
 function swap(idhide, idshow)
 {
-	//alert("This is running");
+	//bootbox.alert("This is running");
 	hide(idhide);
 	show(idshow);
 }
 
 function swapall(idshow, hide1, hide2, hide3, hide4, hide5, hide6)
 {
-	//alert("This is running");
+	//bootbox.alert("This is running");
 	if (ns4) document.layers[hide1].visibility.all = "hide"
         else if (ie4) document.all[hide1].style.visibility = "hidden"
 	if (ns4) document.layers[hide2].visibility.all = "hide"
@@ -140,7 +140,7 @@ function swapall(idshow, hide1, hide2, hide3, hide4, hide5, hide6)
 
 function swapall2(idshow, hide1, hide2)
 {
-	//alert("This is running");
+	//bootbox.alert("This is running");
 	if (ns4) document.layers[hide1].visibility.all = "hide"
         else if (ie4) document.all[hide1].style.visibility = "hidden"
 	if (ns4) document.layers[hide2].visibility.all = "hide"
@@ -150,8 +150,8 @@ function swapall2(idshow, hide1, hide2)
 
 function CheckAll(formName)
 {
-	//window.alert("This function is running " + document.IncludeForm1.selectAll.checked)
-	//window.alert(formName.elements.length);
+	//bootbox.alert("This function is running " + document.IncludeForm1.selectAll.checked)
+	//bootbox.alert(formName.elements.length);
 
 	for (var i=0;i<formName.elements.length;i++)
 	{
@@ -829,7 +829,7 @@ function displayPageTitle(userName) {
 
 	if (showAlert == true){
 		if (alertButton == true){
-			//window.alert("This is being reached");
+			//bootbox.alert("This is being reached");
 			document.write("					<td id='one' align='right'><a href='wcm-home-client2-nomsg.htm'><img src='" + imgPath + "alert_button.gif' border='0'></a>");
 			document.write("					</td>");
 		}

@@ -66,6 +66,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -238,10 +239,8 @@ public class WaterTaxUtils {
         return documentName;
     }
 
-    public String getCityName() {
-        return null != cityService.getCityByURL(EgovThreadLocals.getDomainName()).getPreferences() ? cityService
-                .getCityByURL(EgovThreadLocals.getDomainName()).getPreferences().getMunicipalityName() : cityService
-                .getCityByURL(EgovThreadLocals.getDomainName()).getName();
+    public String getMunicipalityName() {
+        return EgovThreadLocals.getMunicipalityName();
     }
 
     public String getCityCode() {
@@ -252,7 +251,7 @@ public class WaterTaxUtils {
             final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code, new String[] { applicantName, approvalComment,
-                getCityName() }, locale);
+                getMunicipalityName() }, locale);
         return smsMsg;
     }
 
@@ -261,7 +260,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
+                waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
         return smsMsg;
     }
 
@@ -279,11 +278,13 @@ public class WaterTaxUtils {
         messagingService.sendEmail(email, emailSubject, emailBody);
     }
 
-    public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
+    public Position getCityLevelCommissionerPosition(final String commissionerDesgn,String assessmentNumber) {
         String commdesgnname = "";
         final String[] degnName = commissionerDesgn.split(",");
         if (degnName.length > 1)
+        {
             commdesgnname = degnName[0];
+        }
         else
             commdesgnname = commissionerDesgn;
         final Designation desgnObj = designationService.getDesignationByName(commissionerDesgn);
@@ -299,9 +300,10 @@ public class WaterTaxUtils {
            
             return assignlist.get(0).getPosition();
         } else
-            return !assignmentService.findPrimaryAssignmentForDesignationName(commdesgnname).isEmpty() ? assignmentService
-                    .findPrimaryAssignmentForDesignationName(commdesgnname).get(0).getPosition()
-                    : null;
+        {
+        	Position userPosition = getZonalLevelClerkForLoggedInUser(assessmentNumber);
+        	return userPosition;
+        }
     }
 
     public String getApproverUserName(final Long approvalPosition) {
@@ -396,7 +398,7 @@ public class WaterTaxUtils {
 
     public Position getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         Assignment assignmentObj = null;
         /*
          * final HierarchyType hierarchy =

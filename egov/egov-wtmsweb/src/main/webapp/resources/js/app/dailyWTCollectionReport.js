@@ -41,6 +41,7 @@
 jQuery(document).ready(function() {
 	$('#dailyCollectionReport-header').hide();
 	$('#report-footer').hide();
+	
 $('#dailyCollectionReportSearch').click(function(e){
 		if($('form').valid()){
 			var fromDate = $("#fromDate").val();
@@ -94,11 +95,9 @@ $('#dailyCollectionReportSearch').click(function(e){
 							  { "data" : "consumerCode", "title": "Consumer Number"},
 							  { "data" : "consumerName", "title": "Consumer Name"},
 							  { "data" : "doorNumber", "title": "Door no"},
+							  { "data" : "wardName", "title": "Ward Name"},
 							  { "data" : "paidAt", "title": "Paid at"},
 							  { "data" : "paymentMode", "title": "Pay mode"},
-							  { "data" : "status", "title": "Status"},
-							  { "data" : "fromInstallment", "title": "Paid From Date"},
-							  { "data" : "toInstallment", "title": "Paid To Date"},
 							  { "data" : "connectionType", "title": "Connection Type"},
 							  { "data" : "arrearTotal", "title": "Arrear Total"},
 							  { "data" : "currentTotal", "title": "Current Total"},
@@ -114,13 +113,13 @@ $('#dailyCollectionReportSearch').click(function(e){
 										jQuery('#report-footer').show(); 
 									}
 									if (data.length > 0) {
+										updateTotalFooter(9, api);
+										updateTotalFooter(10, api);
 										updateTotalFooter(11, api);
-										updateTotalFooter(12, api);
-										updateTotalFooter(13, api);
 									}
 								},
 								"aoColumnDefs" : [ {
-									"aTargets" : [11,12,13],
+									"aTargets" : [9,10,11],
 									"mRender" : function(data, type, full) {
 										return formatNumberInr(data);    
 									}

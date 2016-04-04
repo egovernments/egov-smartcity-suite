@@ -233,38 +233,7 @@
 			&nbsp;
 		</td>
 	</tr>
-	<tr class="bpddetailsheader">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
-		<td class="bluebox">
-		 	<span class="bold"><s:checkbox name="propertyDetail.buildingPlanDetailsChecked" disabled="true" id="buildingPlanDetailsChecked"/></span>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
-	</tr>
-	<tr class="bpddetails">
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{propertyDetail.buildingPermissionNo}" default="N/A"/></span>
-		</td>
-		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox">
-		   <s:date name="propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
-			<span class="bold"><s:property value="%{#buildingPermDate}" default="N/A"/></span>
-		</td>
-	</tr>
-	<tr class="bpddetails">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="deviationper"></s:text> :</td>
-		<td class="bluebox">
-			<span class="bold"><s:property value="%{propertyDetail.deviationPercentage}" default="N/A"/></span>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
-   </tr>
+	
 	<!-- Amenities section -->
 	
 	<tr id="amenitiesHeaderRow" class="amenities">
@@ -373,6 +342,5 @@
 </table>
 <script type="text/javascript">
 	jQuery('td.siteowner').hide();
-	jQuery('tr.bpddetails').hide();
 	jQuery('tr.vacantlanddetaills').hide();
 </script>

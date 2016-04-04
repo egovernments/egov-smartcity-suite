@@ -170,18 +170,6 @@
 	<bean id="budgetGroupDAO" class="org.egov.dao.budget.BudgetGroupHibernateDAO">
 	</bean>
 	
-	<!-- <bean id="contractorService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.masters.Contractor" />
-	</bean> -->
-	<bean id="contractorService" class="org.egov.works.master.services.ContractorService">
-		<property name="type" value="org.egov.works.models.masters.Contractor"/>
-	</bean>
-
-	<bean class="org.egov.works.services.WorksService" id="worksService"
-		scope="prototype">
-		<property name="persistenceService" ref="persistenceService" />
-	</bean>
-
 	<bean id="tenderHeaderService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.tender.TenderHeader" />
 	</bean>
@@ -570,7 +558,7 @@
 		<constructor-arg
 			value="org.egov.works.models.contractoradvance.ContractorAdvanceRequisition" />
 	</bean> -->
-	<bean id="billsDaoFactory" class="org.egov.dao.bills.BillsHibernateDaoFactory"/>
+	<!-- <bean id="billsDaoFactory" class="org.egov.dao.bills.BillsHibernateDaoFactory"/> -->
 	<bean id="genericDao" class="org.egov.infstr.dao.GenericHibernateDAO"/>
 	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
 	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"/>

@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,7 +52,9 @@ import org.apache.commons.io.IOUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.entity.Source;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
@@ -84,6 +86,9 @@ public class DailyCollectionReportController {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    
+    @Autowired
+    private BoundaryService boundaryService;
 
     @ModelAttribute
     public void getReportModel(final Model model) {
@@ -92,13 +97,19 @@ public class DailyCollectionReportController {
     }
 
     @ModelAttribute("operators")
-    public List<User> loadCollectionOperators() {
+    public Set<User> loadCollectionOperators() {
         return reportService.getCollectionOperators();
     }
 
     @ModelAttribute("status")
     public List<EgwStatus> loadStatus() {
         return egwStatushibernateDAO.getStatusByModule("ReceiptHeader");
+    }
+    
+    @ModelAttribute("wards")
+    public List<Boundary> wardBoundaries() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
+                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -115,6 +126,7 @@ public class DailyCollectionReportController {
         String collectionMode = "";
         String collectionOperator = "";
         String status = "";
+        String ward = "";
         if (null != request.getParameter("collectionMode")) {
             collectionMode = request.getParameter("collectionMode");
         }
@@ -124,8 +136,12 @@ public class DailyCollectionReportController {
         if (null != request.getParameter("status")) {
             status = request.getParameter("status");
         }
+        
+        if (null != request.getParameter("ward")) {
+            ward = request.getParameter("ward");
+        }
         final List<DailyCollectionReportResult> collectionDetailsList = reportService.getCollectionDetails(fromDate,
-                toDate, collectionMode, collectionOperator, status);
+                toDate, collectionMode, collectionOperator, status, ward);
         final String result = new StringBuilder("{ \"data\":").append(toJSON(collectionDetailsList)).append("}")
                 .toString();
         IOUtils.write(result, response.getWriter());

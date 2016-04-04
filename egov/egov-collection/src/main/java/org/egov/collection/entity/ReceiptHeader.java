@@ -48,20 +48,17 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.ServiceLoader;
 import java.util.Set;
 
 import javax.validation.constraints.Size;
 
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.utils.FinancialsUtil;
-import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.ServiceDetails;
-import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -92,7 +89,6 @@ public class ReceiptHeader extends StateAware implements Auditable {
 
     private ServiceDetails service;
     private Character collectiontype;
-    @Size(min = 1)
     private Set<ReceiptDetail> receiptDetails = new LinkedHashSet<ReceiptDetail>(0);
     private ReceiptMisc receiptMisc;
     private Set<InstrumentHeader> receiptInstrument = new HashSet<InstrumentHeader>(0);
@@ -121,6 +117,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
     private String source;
+    
 
     public ReceiptHeader() {
     }
@@ -270,23 +267,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
         this.location = location;
     }
 
-    /**
-     * Returns total amount of the receipt
-     *
-     * @return total amount of the receipt
-     */
-    public BigDecimal getAmount() {
-        BigDecimal totalAmount = BigDecimal.valueOf(0);
-        final List<CChartOfAccounts> bankCOAList = FinancialsUtil.getBankChartofAccountCodeList();
-        for (final ReceiptDetail detail : receiptDetails)
-            if (!FinancialsUtil.isRevenueAccountHead(detail.getAccounthead(), bankCOAList)) {
-                totalAmount = totalAmount.add(detail.getCramount());
-                totalAmount = totalAmount.subtract(detail.getDramount());
-            }
-        ServiceLoader.loadInstalled(FinancialsUtil.class);
-        return totalAmount;
-    }
-
+    
     /**
      * Returns instrument type of receipts associated with the receipt. Since multiple modes of payment for a receipt are not
      * allowed (as of now), this method will return the type of the first instrument associated with this receipt.
@@ -462,10 +443,24 @@ public class ReceiptHeader extends StateAware implements Auditable {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         final StringBuilder linkId = new StringBuilder();
 
-        linkId.append(getCurrentState().getNextAction() + CollectionConstants.SEPARATOR_HYPHEN + service.getCode()
-                + CollectionConstants.SEPARATOR_HYPHEN + getCreatedBy().getUsername()
-                + CollectionConstants.SEPARATOR_HYPHEN + sdf.format(getReceiptdate())
-                + (location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId()));
+        linkId.append(getCurrentState().getNextAction()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(service.getCode()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(getCreatedBy().getUsername()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(sdf.format(getReceiptdate()))
+        .append(location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId())
+        .append(CollectionConstants.SEPARATOR_HYPHEN).append(receipttype);
+
+        return linkId.toString();
+    }
+
+    public String myLinkIdForChallanMisc() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        final StringBuilder linkId = new StringBuilder();
+
+        linkId.append(getCurrentState().getNextAction()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(getCreatedBy().getUsername()).append(CollectionConstants.SEPARATOR_HYPHEN)
+        .append(sdf.format(getReceiptdate()))
+        .append(location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId());
 
         return linkId.toString();
     }
@@ -718,7 +713,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
                         + new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(instrument
                                 .getInstrumentDate()));
 
-            instrumentDetailsBuilder.append(" - " + instrument.getInstrumentAmount());
+            instrumentDetailsBuilder.append(" - " + instrument.getInstrumentAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
         }
         return instrumentDetailsBuilder.toString();
     }

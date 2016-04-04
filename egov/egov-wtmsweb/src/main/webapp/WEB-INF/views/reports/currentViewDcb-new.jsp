@@ -92,7 +92,7 @@
 										Balance</th>
 								</tr>
 								<tr>
-									<th>Installments</th>
+									<th>Installments <br/><a href="javascript:void(0);" onclick="openNewWindow();">Show Receipts</a></th>
 									<th>Water charges</th>
 
 									<th>Water charges</th>
@@ -172,10 +172,7 @@
 											</span>
 										</div>
 									</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
+									
 								</tr>
 								<tr>
 									<td class="blueborderfortd">&nbsp;</td>
@@ -194,10 +191,6 @@
 											</span>
 										</div>
 									</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
 								</tr>
 								<tr>
 									<td class="blueborderfortd">&nbsp;</td>
@@ -216,15 +209,8 @@
 											</span>
 										</div>
 									</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
 								</tr>
 							</table>
-						<td class="blueborderfortd">&nbsp;</td>
-						<td class="blueborderfortd">&nbsp;</td>
-
 					</tr>
 					<c:if test="${!activeRcpts.isEmpty()}">
 						<td colspan="9"><div class="panel-heading">
@@ -380,5 +366,14 @@ function onsubmitpay()
 											$('#editmeterWate11rConnectionform').attr('action', url);
 											window.location = url;
 }
+
+
+function openNewWindow() {
+	var consumerNumber=$('#consumerCode').val();
+	var applicationTypeCode=$('#applicationTypeCode').val();
+	window.open("/wtms/viewDcb/showMigData/"+consumerNumber+"/"+applicationTypeCode, '',
+			'scrollbars=yes,width=1000,height=700,status=yes');
+}
+
 </script>
-<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
+<script src="<c:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>

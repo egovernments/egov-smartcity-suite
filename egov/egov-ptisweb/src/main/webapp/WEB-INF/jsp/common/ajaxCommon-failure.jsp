@@ -38,5 +38,5 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
 <script>
- alert("Category doesnt exists");
+ bootbox.alert("Category doesnt exists");
 </script>

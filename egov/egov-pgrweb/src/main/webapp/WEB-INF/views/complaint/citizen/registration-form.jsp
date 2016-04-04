@@ -99,7 +99,7 @@
 					</div>
 					
 					<div class="form-group">
-						<div class="col-sm-3 col-xs-12 text-right"  id="upload-section">
+						<div class="col-sm-3 col-xs-12 text-center"  id="upload-section">
 							<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.uploadPhotoVid"/></a>
 							<input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"/>
 							<input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"/>
@@ -190,7 +190,7 @@
 		</div>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
+<script src="<c:url value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/app/complaint.js'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

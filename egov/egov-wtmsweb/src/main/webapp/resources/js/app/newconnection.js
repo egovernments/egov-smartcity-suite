@@ -126,14 +126,14 @@ $(document).ready(function(){
 							 loadPropertyDetails();
 							else{
 								resetPropertyDetails();
-								alert(response);
+								bootbox.alert(response);
 							}
 
 						}
 						else
 						{	
 							resetPropertyDetails();
-							alert(response);
+							bootbox.alert(response);
 						}
 					}
 					else {
@@ -143,7 +143,7 @@ $(document).ready(function(){
 				error: function (response) {
 					console.log("failed");
 					resetPropertyDetails();
-					alert("Primary connection validation failed");
+					bootbox.alert("Primary connection validation failed");
 				}
 			});
 		}		
@@ -195,7 +195,7 @@ $(document).ready(function(){
 			
 		}, 
 		error: function (response) {
-			alert('json fail');
+			bootbox.alert('json fail');
 			console.log("failed");
 		}
 	});
@@ -238,7 +238,7 @@ $('#consumerCodeData').blur(function(){
 					dataType: "json",
 			}).done(function(value) {
 				 if(value == true) {
-					 alert('Entered ConsumerCode Allready Exist');
+					 bootbox.alert('Entered ConsumerCode Allready Exist');
 					 $('#consumerCodeData').val('');
 					 return false;
 				 } else {
@@ -267,13 +267,13 @@ function loadPropertyDetails() {
 					{
 				    resetPropertyDetails();
 					}
-					alert(response.errorDetails.errorMessage);
+					bootbox.alert(response.errorDetails.errorMessage);
 				}
 				else {	
 					if(allowIfPTDueExists=='false' && response.propertyDetails.taxDue > 0) {
 						resetPropertyDetails();
 						errorMessage = "Property tax is due with Rs. "+response.propertyDetails.taxDue+"/- for the assessment no "+propertyID+", please pay the due amount to create new water tap connection"
-						alert(errorMessage);
+						bootbox.alert(errorMessage);
 					}
 					else {					
 						$('#propertyIdentifierError').html('');

@@ -39,16 +39,26 @@
  */
 package org.egov.adtax.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang.StringUtils;
 import org.egov.adtax.entity.AdvertisementRate;
 import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.RatesClass;
+import org.egov.adtax.entity.ScheduleOfRateSearch;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.repository.AdvertisementRateDetailRepository;
 import org.egov.adtax.repository.AdvertisementRateRepository;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.repository.CFinancialYearRepository;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,12 +68,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdvertisementRateService {
     private final AdvertisementRateRepository ratesRepository;
     private final AdvertisementRateDetailRepository rateDetailRepository;
+    private final CFinancialYearRepository cFinancialYearRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+    
     @Autowired
     public AdvertisementRateService(final AdvertisementRateRepository ratesRepository,
-            final AdvertisementRateDetailRepository rateDetailRepository) {
+            final AdvertisementRateDetailRepository rateDetailRepository,
+            final CFinancialYearRepository cFinancialYearRepository) {
         this.ratesRepository = ratesRepository;
         this.rateDetailRepository = rateDetailRepository;
+        this.cFinancialYearRepository = cFinancialYearRepository;
     }
 
     public AdvertisementRate getScheduleOfRateById(final Long id) {
@@ -72,9 +92,9 @@ public class AdvertisementRateService {
 
     public List<AdvertisementRatesDetails> findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(
             final HoardingCategory category, final SubCategory subCategory, final UnitOfMeasure unitOfMeasure,
-            final RatesClass ratesClass) {
+            final RatesClass ratesClass, final CFinancialYear financialYear) {
         return rateDetailRepository.findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(category, subCategory,
-                unitOfMeasure, ratesClass);
+                unitOfMeasure, ratesClass, financialYear);
     }
 
     @Transactional
@@ -85,37 +105,152 @@ public class AdvertisementRateService {
     }
 
     public AdvertisementRate findScheduleOfRateByCategorySubcategoryUomAndClass(final HoardingCategory category,
-            final SubCategory subCategory, final UnitOfMeasure unitofmeasure, final RatesClass classtype) {
+            final SubCategory subCategory, final UnitOfMeasure unitofmeasure, final RatesClass classtype,
+            final CFinancialYear financialYear) {
         return ratesRepository.findScheduleOfRateByCategorySubcategoryUomAndClass(category, subCategory, unitofmeasure,
-                classtype);
+                classtype, financialYear);
     }
 
     public void deleteAllInBatch(final List<AdvertisementRatesDetails> existingRateDetails) {
         rateDetailRepository.deleteInBatch(existingRateDetails);
 
     }
-    
+
     public Double getAmountByCategorySubcategoryUomAndClass(final HoardingCategory category,
-            final SubCategory subCategory, final UnitOfMeasure unitofmeasure, final RatesClass classtype, Double units) {
+            final SubCategory subCategory, final UnitOfMeasure unitofmeasure, final RatesClass classtype, final Double units,
+            final CFinancialYear financialYear) {
         Double rate = Double.valueOf(0);
 
         if (units != null && category != null && subCategory != null && unitofmeasure != null && classtype != null)
             rate = rateDetailRepository.getAmountByCategorySubcategoryUomAndClass(category, subCategory, unitofmeasure,
-                    classtype, units);
+                    classtype, units, financialYear);
 
         return rate;
     }
 
-    public Double getAmountBySubcategoryUomClassAndMeasurement(Long subCategoryId, Long unitOfMeasureId,
-            Long rateClassId, Double measurement) {
+    public Double getAmountBySubcategoryUomClassAndMeasurement(final Long subCategoryId, final Long unitOfMeasureId,
+            final Long rateClassId, final Double measurement) {
         Double rate = Double.valueOf(0);
 
-        if (measurement != null && subCategoryId != null && unitOfMeasureId != null && rateClassId != null )
+        if (measurement != null && subCategoryId != null && unitOfMeasureId != null && rateClassId != null)
             rate = rateDetailRepository.getAmountBySubcategoryUomClassAndMeasurement(measurement, subCategoryId, unitOfMeasureId,
                     rateClassId);
-        if(rate==null) return Double.valueOf(0);
+        if (rate == null)
+            return Double.valueOf(0);
         return rate;
+    }
+    public AdvertisementRatesDetails getRatesBySubcategoryUomClassFinancialYearAndMeasurement(final Long subCategoryId, final Long unitOfMeasureId,
+            final Long rateClassId, final Double units,CFinancialYear cfinancialYear) {
+        List<AdvertisementRatesDetails> rate = null;
+        if (units != null && subCategoryId != null && unitOfMeasureId != null && rateClassId != null)
+            rate = rateDetailRepository.getRatesBySubcategoryUomClassFinancialYearAndMeasurement(units, subCategoryId, unitOfMeasureId,
+                    rateClassId,cfinancialYear.getId());
+        if(rate!=null && rate.size()>0)
+            return rate.get(0);
+        
+        return null;
+    }
+    
+    public AdvertisementRatesDetails getRatesBySubcategoryUomClassAndMeasurementByFinancialYearInDecendingOrder(final Long subCategoryId, final Long unitOfMeasureId,
+            final Long rateClassId, final Double units) {
+        List<AdvertisementRatesDetails> rate = null;
+
+        if (units != null && subCategoryId != null && unitOfMeasureId != null && rateClassId != null)
+            rate = rateDetailRepository.getRatesBySubcategoryUomClassMeasurementLessthanCurrentFinancialYearAndFinancialYearInDecendingOrder(units, subCategoryId, unitOfMeasureId,
+                    rateClassId);
+        if(rate!=null && rate.size()>0)
+            return rate.get(0);
+        
+        return null;
     }
     
 
+   @SuppressWarnings("unchecked")
+    public List<ScheduleOfRateSearch> getScheduleOfRateSearchResult(final String category, final String subCategory,final String unitofmeasure,
+            final String classtype, final String finyear) {
+        
+        StringBuilder queryString = new StringBuilder();
+        queryString.append("Select A From AdvertisementRatesDetails A where ");
+        Boolean var = Boolean.FALSE;
+        if(!StringUtils.isEmpty(category))
+        {
+            queryString.append(" A.advertisementRate.category.id=:category ");
+            var = Boolean.TRUE;
+        }
+        
+        if(!StringUtils.isEmpty(subCategory))
+        {       if(var) {
+            queryString.append(" and " );
+        }
+            queryString.append(" A.advertisementRate.subCategory.id=:subCategory ");
+            var = Boolean.TRUE;
+        }
+        
+        if(!StringUtils.isEmpty(unitofmeasure))
+        {
+            if(var) {
+                queryString.append(" and " );
+            }
+            queryString.append(" A.advertisementRate.unitofmeasure.id=:unitofmeasure ");
+            var = Boolean.TRUE;
+        }
+        
+        if(!StringUtils.isEmpty(classtype))
+        {
+            if(var) {
+                queryString.append(" and " );
+            }
+            queryString.append(" A.advertisementRate.classtype.id=:classtype ");
+            var = Boolean.TRUE;
+
+        }
+        
+        if(!StringUtils.isEmpty(finyear))
+        {
+            if(var) {
+                queryString.append(" and " );
+            }
+            queryString.append(" A.advertisementRate.financialyear.id=:finyear ");
+            
+        }
+        
+        Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());        
+        if(!StringUtils.isEmpty(category)){
+              query.setParameter("category", Long.parseLong(category));
+        }
+        if(!StringUtils.isEmpty(subCategory)){
+            query.setParameter("subCategory", Long.parseLong(subCategory));
+        }
+        if(!StringUtils.isEmpty(unitofmeasure)){
+             query.setParameter("unitofmeasure", Long.parseLong(unitofmeasure));
+        }
+        if(!StringUtils.isEmpty(classtype)){
+              query.setParameter("classtype",  Long.parseLong(classtype));
+        }
+        if(!StringUtils.isEmpty(finyear)){
+              query.setParameter("finyear",  Long.parseLong(finyear));
+        }
+        List<AdvertisementRatesDetails>  rateList = query.list();
+        List<ScheduleOfRateSearch> scheduleOfRateList = new ArrayList<ScheduleOfRateSearch>();
+        rateList.forEach(result ->{
+            
+           ScheduleOfRateSearch scheduleOfRateSearch = new ScheduleOfRateSearch();
+           scheduleOfRateSearch.setCategory(result.getAdvertisementRate().getCategory().getCode());
+           scheduleOfRateSearch.setSubCategory(result.getAdvertisementRate().getSubCategory().getCode());
+           scheduleOfRateSearch.setUnitofmeasure(result.getAdvertisementRate().getUnitofmeasure().getCode());
+           scheduleOfRateSearch.setClasstype(result.getAdvertisementRate().getClasstype().getDescription());
+           scheduleOfRateSearch.setFinancialyear(result.getAdvertisementRate().getFinancialyear().getFinYearRange());
+           scheduleOfRateSearch.setUnitfrom(result.getUnitFrom());
+           scheduleOfRateSearch.setUnitto(result.getUnitTo());
+           scheduleOfRateSearch.setAmount(result.getAmount());
+           scheduleOfRateSearch.setUnitfactor(result.getAdvertisementRate().getUnitrate());
+           scheduleOfRateList.add(scheduleOfRateSearch);
+       });
+        
+        return scheduleOfRateList;
+    }
+
+    public List<CFinancialYear> getAllFinancialYears() {
+        return cFinancialYearRepository.getAllFinancialYears();
+    }
 }

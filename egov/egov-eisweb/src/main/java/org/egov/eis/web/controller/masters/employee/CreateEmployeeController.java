@@ -41,13 +41,19 @@ package org.egov.eis.web.controller.masters.employee;
 
 import java.io.IOException;
 import java.util.Arrays;
+
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.commons.service.AccountDetailKeyService;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.EmployeeService;
+import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.postgresql.util.Base64;
@@ -79,6 +85,13 @@ public class CreateEmployeeController {
     @Autowired
     private BoundaryTypeService boundaryTypeService;
 
+    
+    
+    @Autowired
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+    @Autowired
+    private AccountDetailKeyService accountDetailKeyService;
+
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String createForm(final Model model) {
         model.addAttribute("employee", new Employee());
@@ -97,14 +110,22 @@ public class CreateEmployeeController {
         }
         try {
             employee.setSignature(file.getBytes());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error("Error in loading Employee Signature" + e.getMessage(), e);
         }
         employeeService.create(employee);
+
+        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO.getAccountdetailtypeByName(EisConstants.ROLE_EMPLOYEE);
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setAccountdetailtype(accountdetailtype);
+        adk.setGroupid(1);
+        adk.setDetailkey(employee.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        accountDetailKeyService.createAccountDetailKey(adk);
+
         String image = null;
-        if (null != employee.getSignature()) {
+        if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        }
         model.addAttribute("image", image);
         redirectAttrs.addFlashAttribute("employee", employee);
         model.addAttribute("message", "Employee created successfully");
@@ -121,4 +142,5 @@ public class CreateEmployeeController {
         model.addAttribute("gradeList", employeeService.getAllGrades());
         model.addAttribute("boundaryType", boundaryTypeService.getBoundaryTypeByHierarchyTypeName("ADMINISTRATION"));
     }
+
 }

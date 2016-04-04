@@ -39,22 +39,22 @@
 #-------------------------------------------------------------------------------*/
 function validateData(){
 	if(document.getElementById('asOnDate').value ==''){
-		alert("Please enter a valid date")
+		bootbox.alert("Please enter a valid date")
 		return false;
 	}
 	var asOnDate =  Date.parse(document.getElementById('asOnDate').value);
 	if(asOnDate == ''){
-		alert("Please enter a valid date")
+		bootbox.alert("Please enter a valid date")
 		return false;
 	}
 	var recovery =  document.getElementById('recovery').value;
 	if(recovery == -1){
-		alert("Please select a Recovery Code")
+		bootbox.alert("Please select a Recovery Code")
 		return false;
 	}
 	var fund =  document.getElementById('fund').value;
 	if(fund == -1){
-		alert("Please select a Fund")
+		bootbox.alert("Please select a Fund")
 		return false;
 	}
 	return true;	
@@ -64,7 +64,7 @@ var entities;
 function loadEntities(){
 	var element = document.getElementById("recovery").value;
 	if(element != -1){
-		var	url = "/EGF/report/pendingTDSReport!ajaxLoadEntites.action?recoveryId="+element;
+		var	url = "/EGF/report/pendingTDSReport-ajaxLoadEntites.action?recoveryId="+element;
 		var req2 = initiateRequest();
 		req2.onreadystatechange = function(){
 		  if (req2.readyState == 4){

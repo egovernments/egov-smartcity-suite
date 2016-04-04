@@ -42,9 +42,13 @@ package org.egov.pgr.repository.dashboard;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -130,6 +134,22 @@ public class DashboardRepository {
         qry.setParameter("toDate", toDate);
         return qry.list();
     }
+    
+    public List<Object[]> fetchGISCompPerPropertyWardWise() {
+		final SQLQuery qry = getQuery("pgr.comp.per.property.six.month.wardwise");
+		return qry.list();
+	}
+    
+    public List<Object[]> fetchGISCompRedressedWardWise() {
+    	final SQLQuery qry = getQuery("pgr.comp.redressed.six.month.wardwise");
+    	return qry.list();
+    }
+    
+    public List<Object[]> fetchGISRegCompWardWise() {
+    	final SQLQuery qry = getQuery("pgr.comp.reg.six.month.wardwise");
+    	return qry.list();
+    }
+    
 
     private SQLQuery getQuery(final String sqlKey) {
         return entityManager.unwrap(Session.class)

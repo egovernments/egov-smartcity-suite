@@ -41,23 +41,34 @@ package org.egov.adtax.web.controller.category;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.SubCategory;
+import org.egov.adtax.entity.SubCategorySearch;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.SubCategoryService;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/subcategory")
@@ -66,6 +77,9 @@ public class SubCategoryController {
     private final SubCategoryService subCategoryService;
     @Autowired
     private  HoardingCategoryService hoardingCategoryService;
+    
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @Autowired
     public SubCategoryController(final SubCategoryService subCategoryService) {
@@ -112,6 +126,15 @@ public class SubCategoryController {
     public ModelAndView successView(@PathVariable("id") final Long id, @ModelAttribute final SubCategory subCategory) {
         return new ModelAndView("subcategory/subcategory-success", "subCategory", subCategoryService.getSubCategoryById(id));
 
+    }
+    
+    @RequestMapping(value = "/searchSubCategory", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody void searchSubcategory(final Model model, @ModelAttribute final SubCategory subCategory, @RequestParam final String category, 
+             @RequestParam final String description,   final HttpServletResponse response) throws IOException{
+        List<SubCategorySearch> SubCategoryJson = subCategoryService.getSubcategory(Long.valueOf(category),description!=null ? Long.valueOf(description):null);
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+                .toJson(SubCategoryJson)
+                + "}", response.getWriter());
     }
 
 }

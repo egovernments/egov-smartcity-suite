@@ -38,7 +38,8 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
   function  populateService(serviceCategory){
-        
+		    dom.get('fundId').value="-1";
+		    dom.get('functionId').value="-1";
         	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
         }
         
@@ -49,15 +50,15 @@
         	
         	var path = '/collection';
         	
-        	var url1 = path+"/receipts/ajaxReceiptCreate!ajaxFinMiscDtlsByService.action?serviceId="+service+"&deptId="+dept;
+        	var url1 = path+"/receipts/ajaxReceiptCreate-ajaxFinMiscDtlsByService.action?serviceId="+service+"&deptId="+dept;
         	var transaction = YAHOO.util.Connect.asyncRequest('POST', url1,loadMiscDetails, null);
         	
     		
-        	var url2 = path+"/receipts/ajaxReceiptCreate!ajaxFinAccDtlsByService.action";
-        	makeJSONCall(["functionIdDetail","functionDetail","glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
+        	var url2 = path+"/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService.action";
+        	makeJSONCall(["functionIdDetail","glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
         	,url2,{serviceId:service,deptId:dept},loadFinAccSuccessHandler,loadFinAccFailureHandler);
         
-        	var url3 = path+"/receipts/ajaxReceiptCreate!ajaxFinSubledgerByService.action";
+        	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
         	makeJSONCall(["subledgerCode","glcodeId","detailTypeId","detailTypeName","detailCode","detailKeyId",
         	"detailKey","amount"],url3,{serviceId:service,deptId:dept},loadFinSubledgerSuccessHandler,loadFinSubledgerFailureHandler);
         	
@@ -77,34 +78,30 @@ success: function(o) {
 						 setFundId();
 				}
 				if(null != dom.get('schemeId') ){
-						var url= "/EGF/voucher/common!ajaxLoadSchemes.action";
+						var url= "/collection/receipts/ajaxReceiptCreate-ajaxLoadSchemes.action";
 						var fundId = dom.get('fundId').value;
         				makeJSONCall(["Text","Value"],url,{fundId:miscArray[0]},schemeDropDownSuccessHandler,schemeDropDownFailureHandler);
 				}
 				if(null != dom.get('subschemeId')  ){
 
-						var url= "/EGF/voucher/common!ajaxLoadSubSchemes.action";
+						var url= "/collection/receipts/ajaxReceiptCreate-ajaxLoadSubSchemes.action";
 						var schemeId = dom.get('schemeId').value;
         				makeJSONCall(["Text","Value"],url,{schemeId:miscArray[1]},subschemeDropDownSuccessHandler,subschemeDropDownFailureHandler);
 						
 				}
 				
 				if(null != dom.get('fundSourceId') ){
-						var url= "/EGF/voucher/common!ajaxLoadFundSource.action";
+						var url= "/EGF/voucher/common-ajaxLoadFundSource.action";
 						var subschemeId = dom.get('subschemeId').value;
         				makeJSONCall(["Text","Value"],url,{subSchemeId:miscArray[2]},fundsourceDropDownSuccessHandler,fundsourceDropDownFailureHandler);
 		
 				}
 				
 				if(null != dom.get('receiptMisc.idFunctionary.id') ){
-						 dom.get('receiptMisc.idFunctionary.id').value = parseInt(miscArray[4]);
+						 dom.get('receiptMisc.idFunctionary.id').selectedIndex = parseInt(miscArray[4]);
 				}
 				
 		}
-		
-    },
-    failure: function(o) {
-    	alert('failure');
     }
 }
 
@@ -127,7 +124,7 @@ schemeDropDownSuccessHandler=function(req,res){
 }
 
 schemeDropDownFailureHandler=function(){
-  alert('failure while loading scheme drop down');
+  bootbox.alert('failure while loading scheme drop down');
 }
 
 
@@ -149,7 +146,7 @@ subschemeDropDownSuccessHandler=function(req,res){
 }
 
 subschemeDropDownFailureHandler=function(){
-  alert('failure while loading sub scheme drop down');
+  bootbox.alert('failure while loading sub scheme drop down');
 }
 
 
@@ -171,7 +168,7 @@ fundsourceDropDownSuccessHandler=function(req,res){
 }
 
 fundsourceDropDownFailureHandler=function(){
-  alert('failure while loading fundource drop down');
+  bootbox.alert('failure while loading fundource drop down');
 }
 
 
@@ -181,8 +178,6 @@ loadFinAccSuccessHandler=function(req,res){
       billCreditDetailsTable.deleteRows(0,noOfRows); 
       billDetailTableIndex = 0;
 	  billCreditDetailsTable.addRow({SlNo:billCreditDetailsTable.getRecordSet().getLength()+1,
-	 		"functionid":"",
-	 		 "function":"",
              "glcodeid":"",
              "glcode":"",
              "accounthead":"",
@@ -192,10 +187,8 @@ loadFinAccSuccessHandler=function(req,res){
 	  totalcramt = "0.00";          
 	  billDetailTableIndex = 1;
 	for(i=0;i<res.results.length-1;i++){
-		
+		dom.get("functionId").value=res.results[i].functionIdDetail;
 	  	 billCreditDetailsTable.addRow({SlNo:billCreditDetailsTable.getRecordSet().getLength()+1,
-	  	 			"functionid":res.results[i].functionIdDetail,
-	  	 			"function":res.results[i].functionDetail,
                     "glcodeid":res.results[i].glcodeIdDetail,
                     "glcode":res.results[i].glcodeDetail,
                     "accounthead":res.results[i].accounthead,
@@ -205,8 +198,7 @@ loadFinAccSuccessHandler=function(req,res){
        }
        
         for(i=0;i<res.results.length;i++){  
-        		updateGridMisc(VOUCHERCREDITDETAILLIST,'functionIdDetail',i,res.results[i].functionIdDetail);
-      		 	updateGridMisc(VOUCHERCREDITDETAILLIST,'functionDetail',i,res.results[i].functionDetail);
+        	    dom.get("functionId").value=res.results[i].functionIdDetail;
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeIdDetail',i,res.results[i].glcodeIdDetail);
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeDetail',i,res.results[i].glcodeDetail);
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'accounthead',i,res.results[i].accounthead);
@@ -220,7 +212,7 @@ loadFinAccSuccessHandler=function(req,res){
 		 document.getElementById('totalcramount').value=totalcramt;
     }
  loadFinAccFailureHandler=function(){
-  alert('failure');
+  bootbox.alert('unable to load Function');
 }
 
 
@@ -270,5 +262,5 @@ loadFinSubledgerSuccessHandler=function(req,res){
 }
 
  loadFinSubledgerFailureHandler=function(){
-  alert('failure');
+  bootbox.alert('Unable to load Sub Ledger');
 }

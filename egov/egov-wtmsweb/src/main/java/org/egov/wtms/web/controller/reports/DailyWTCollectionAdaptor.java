@@ -61,6 +61,7 @@ public class DailyWTCollectionAdaptor implements JsonSerializer<DailyWTCollectio
         jsonObject.addProperty("consumerCode", dailyWTCollectionReport.getConsumerCode());
         jsonObject.addProperty("consumerName", dailyWTCollectionReport.getConsumerName());
         jsonObject.addProperty("doorNumber", dailyWTCollectionReport.getDoorNumber());
+        jsonObject.addProperty("wardName", dailyWTCollectionReport.getWardName());
         jsonObject.addProperty("paidAt", dailyWTCollectionReport.getPaidAt());
         jsonObject.addProperty("connectionType", dailyWTCollectionReport.getConnectionType());
         jsonObject.addProperty("fromInstallment", dailyWTCollectionReport.getFromInstallment());

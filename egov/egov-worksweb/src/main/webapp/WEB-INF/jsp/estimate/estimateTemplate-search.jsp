@@ -80,8 +80,14 @@ function bodyOnLoad(){
 <body onload="bodyOnLoad()" class="yui-skin-sam">
 
 <script src="<egov:url path='resources/js/works.js'/>"></script>
-   <s:if test="%{hasErrors()}">
-        <div id="errorstyle" class="errorstyle" >
+
+   
+<div class="new-page-header">
+	Search Estimate Template
+</div>   
+ 
+    <s:if test="%{hasErrors()}">
+        <div id="errorstyle" class="alert alert-danger" >
           <s:actionerror/>
           <s:fielderror/>
         </div>
@@ -91,93 +97,96 @@ function bodyOnLoad(){
         	<s:actionmessage theme="simple"/>
        </div>
    </s:if>
-<s:form theme="simple" name="estimateTemplateSearchForm" onsubmit="return validateDataBeforeSubmit(this);">
+   
+<s:form theme="simple" name="estimateTemplateSearchForm" onsubmit="return validateDataBeforeSubmit(this);" cssClass="form-horizontal form-groups-bordered">
+
   <s:hidden name="estimateTemplateCode" id="estimateTemplateCode" />
   <s:hidden name="typeOfWork" id="typeOfWork" />
   <s:hidden name="subTypeOfWork" id="subTypeOfWork" />
-<div class="errorstyle" id="estimateTemplate_error"
-				style="display: none;"></div>
-<div class="formmainbox"><div class="insidecontent">
-  <div class="rbroundbox2">
-	<div class="rbtop2"><div></div></div>
-	<div class="rbcontent2"><div class="datewk">
-	 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-             <tr>
-				<td colspan="4">&nbsp;</td>
-			 </tr>
-			 <tr>
-				<td colspan="4">&nbsp;</td>
-			 </tr>
-			 <tr>
-			 <td colspan="4" class="headingwk" align="left">
-				<div class="arrowiconwk">
-				  <img src="/egi/resources/erp2/images/arrow.gif" />
-				</div>
-				<div class="headplacer">
-				  <s:text name='title.search.criteria' />
-				</div>
-			  </td>
-			 </tr>
-             <tr>
-                <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.template.search.type" />:</td>
-                <td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="workType" id="workType" cssClass="selectwk" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
-                <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{subType.id}" afterSuccess="loadSubType" />
-                </td>
-                <td class="whiteboxwk"><s:text name="estimate.template.search.subtype" />:</td>
-                <td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="selectwk" list="dropdownData.categoryList" listKey="id" listValue="description"/></td>
-              </tr>
-               <tr>
-                <td width="11%" class="greyboxwk"><s:text name="estimate.template.search.code" />:</td>
-                <td width="21%" class="greybox2wk"><s:textfield name="code" value="%{code}" id="code" cssClass="selectwk" />
-                <td class="greyboxwk"><s:text name="estimate.template.search.description" />:</td>
-                <td class="greybox2wk"><s:textarea name="description" cols="35" cssClass="selectwk" id="description" value="%{description}"/></td>
-               </tr>
-               <tr>
-                <td class="whiteboxwk"><s:text name="estimate.template.search.name" />:</td>
-                <td class="whitebox2wk"><s:textarea name="name" cols="35" cssClass="selectwk" id="name" value="%{name}"/></td>
-                <td width="15%" class="whiteboxwk"><s:text name="estimate.template.search.status" />:</td>
-                <td width="53%" class="whitebox2wk"><s:select headerKey="0"  list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="selectwk"/> </td>
-               </tr>
-               <tr>
-                <td  colspan="4" class="shadowwk"> </td>               
-               </tr>
-               <tr><td>&nbsp;</td></tr>			
-               <tr>
-                 <td colspan="4"> 
-                   <div class="buttonholderwk">
-		             <p>
-			           <input type="submit" class="buttonadd" value="SEARCH" id="searchButton" name="button" onclick="submitEstimateTemplateSearchForm()" />&nbsp;
-			           <input type="button" class="buttonfinal" value="RESET" id="resetbutton" name="clear" onclick="this.form.reset();">&nbsp;
-		               <input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" />
-	                 </p>
-		          </div>
-                </td>
-              </tr>
-              <tr>
-				<td colspan="4" align="left">
-					 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-						 <tr>
-							<td class="headingwk">
-								<div class="arrowiconwk">
-									<img src="/egi/resources/erp2/images/arrow.gif" />
-								</div>
-								<div class="headplacer">
-									<s:text name="estimate.template.searh.result.title" />
-								</div>
-							</td>
-						 </tr>
-                      </table> 
-                 </td>
-               </tr> 
-     </table>               
-     </div>
-        <%@ include file='estimateTemplate-searchResults.jsp'%> 	
-	 <div class="rbbot2"><div></div></div>
+  
+  <div class="alert alert-danger" id="estimateTemplate_error"	style="display: none;"></div>
+  
+  
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   <s:text name='title.search.criteria' />
+		</div>
+	</div>
+	<div class="panel-body">
+	   
+	  <div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.work.type" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
+                <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{subType.id}" afterSuccess="loadSubType" /> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.work.subtype" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.template.search.code" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" /> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.template.search.description" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="description" cols="35" cssClass="form-control" id="description" value="%{description}"/>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.template.search.name" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="name" cols="35" cssClass="form-control" id="name" value="%{name}"/> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.template.search.status" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="0"  list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
+			</div>
+		</div>
+		
+	</div>
 </div>
+  
+<div class="row">
+	<div class="col-xs-12 text-center buttonholdersearch">
+		<input type="submit" class="btn btn-primary" value="Search" id="searchButton" name="button" onclick="submitEstimateTemplateSearchForm()" />&nbsp;
+        <input type="button" class="btn btn-default" value="Reset" id="resetbutton" name="clear" onclick="this.form.reset();">&nbsp;
+        <input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
+	</div>
 </div>
+
+
+<div class="row report-section">
+   <s:if test="%{searchResult.fullListSize != 0}">
+		<div class="col-md-12 table-header text-left">
+		  Search Result
+		</div>
+   </s:if>	
+   			
+   <div class="col-md-12 report-table-container">
+	   <%@ include file='estimateTemplate-searchResults.jsp'%> 
+   </div>
 </div>
-<s:hidden name="sourcePage" id="sourcePage"
-									value="%{sourcePage}" />								
+
+<s:hidden name="sourcePage" id="sourcePage"	value="%{sourcePage}" />
+								
 </s:form>
 </body>
 

@@ -1,31 +1,31 @@
 /**
  * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
- * 
+ *
  * Copyright (C) <2015> eGovernments Foundation
- * 
+ *
  * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
  * complied with:
- * 
+ *
  * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
- * 
+ *
  * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
  * material be marked in reasonable ways as different from the original version.
- * 
+ *
  * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
  * trade names or trademarks of eGovernments Foundation.
- * 
+ *
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.commons.service;
@@ -74,41 +74,55 @@ import org.egov.infstr.utils.FinancialYear;
 public interface CommonsService {
     /**
      * Returns a installment object identified by its identifier.
-     * @return Installment object if found or null refernce if not found in the system.
+     * 
+     * @return Installment object if found or null refernce if not found in the
+     *         system.
      * @see Installment.java
-     * @throws ApplicationRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException,
+     *             if it finds a System exception.
      */
     public Installment getInstallmentByID(Integer id);
 
     /**
-     * Persists the Installment passed in. Also rolls back the current transaction, if it fails to create the installment.
+     * Persists the Installment passed in. Also rolls back the current
+     * transaction, if it fails to create the installment.
+     * 
      * @param installment
-     * @throws ApplicationRuntimeException, if it fails to create.
+     * @throws ApplicationRuntimeException,
+     *             if it fails to create.
      * @see Installment.java
      */
     public void createInstallment(Installment installment);
 
     /**
-     * Deletes the Installment passed in. Also rolls back the current transaction, if it fails to delete the installment.
+     * Deletes the Installment passed in. Also rolls back the current
+     * transaction, if it fails to delete the installment.
+     * 
      * @param installment
-     * @throws ApplicationRuntimeException, if it fails to delete.
+     * @throws ApplicationRuntimeException,
+     *             if it fails to delete.
      * @see Installment.java
      */
 
     public void deleteInstallment(Installment installment);
 
     /**
-     * Updates the Installment passed in. Also rolls back the current transaction, if it fails to update the installment.
+     * Updates the Installment passed in. Also rolls back the current
+     * transaction, if it fails to update the installment.
+     * 
      * @param installment
-     * @throws ApplicationRuntimeException, if it fails to update.
+     * @throws ApplicationRuntimeException,
+     *             if it fails to update.
      * @see Installment.java
      */
     public void updateInstallment(Installment installment);
 
     /**
      * Returns all the Installments belonging to the passed in module.
+     * 
      * @param module
-     * @throws ApplicationRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException,
+     *             if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -116,9 +130,13 @@ public interface CommonsService {
     public List<Installment> getInsatllmentByModule(Module module);
 
     /**
-     * Returns all the Installments belonging to the passed in module and for a particular year.
-     * @param module, Date year
-     * @throws ApplicationRuntimeException, if it finds a System exception.
+     * Returns all the Installments belonging to the passed in module and for a
+     * particular year.
+     * 
+     * @param module,
+     *            Date year
+     * @throws ApplicationRuntimeException,
+     *             if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -126,9 +144,13 @@ public interface CommonsService {
     public List<Installment> getInsatllmentByModule(Module module, Date year);
 
     /**
-     * Returns a Installment belonging to the passed in module and for a particular year and having the given number.
-     * @param module, Date year, installment number
-     * @throws ApplicationRuntimeException, if it finds a System exception.
+     * Returns a Installment belonging to the passed in module and for a
+     * particular year and having the given number.
+     * 
+     * @param module,
+     *            Date year, installment number
+     * @throws ApplicationRuntimeException,
+     *             if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -136,20 +158,27 @@ public interface CommonsService {
     public Installment getInsatllmentByModule(Module module, Date year, Integer installmentNumber);
 
     /**
-     * Returns all the Installments in the system, for all modules and for all years.
-     * @throws ApplicationRuntimeException, if it finds a System exception.
+     * Returns all the Installments in the system, for all modules and for all
+     * years.
+     * 
+     * @throws ApplicationRuntimeException,
+     *             if it finds a System exception.
      * @see Installment.java
      */
 
     public List<Installment> getAllInstallments();
 
     /**
-     * Returns an appropriate Installment belonging to the passed in module and for a particular period of that year. This is
-     * helpful when there are many installments in a given year. So the installment returned will pertain that period of the given
-     * date.
+     * Returns an appropriate Installment belonging to the passed in module and
+     * for a particular period of that year. This is helpful when there are many
+     * installments in a given year. So the installment returned will pertain
+     * that period of the given date.
+     * 
      * @param module
-     * @param Date a particular installment date.
-     * @throws ApplicationRuntimeException, if it finds a System exception.
+     * @param Date
+     *            a particular installment date.
+     * @throws ApplicationRuntimeException,
+     *             if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -157,11 +186,14 @@ public interface CommonsService {
     public Installment getInsatllmentByModuleForGivenDate(Module module, Date installmentDate);
 
     /**
-     * Returns an appropriate Installment belonging to the passed in module and for a current date of the current year. This is
-     * helpful when there are many installments in a given year. So the installment returned will pertain that period of the given
-     * date.
+     * Returns an appropriate Installment belonging to the passed in module and
+     * for a current date of the current year. This is helpful when there are
+     * many installments in a given year. So the installment returned will
+     * pertain that period of the given date.
+     * 
      * @param module
-     * @throws ApplicationRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException,
+     *             if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -177,14 +209,18 @@ public interface CommonsService {
     public Map<Integer, Integer> getHeight(Integer bndryID);
 
     /**
-     * used in Inventory,Wardworks Returns the Fund if Id found ,otherwise throws an exception
+     * used in Inventory,Wardworks Returns the Fund if Id found ,otherwise
+     * throws an exception
+     * 
      * @param id
      * @return Fund
      */
     public Fund fundById(Integer id);
 
     /**
-     * used in Inventory,Wardworks Returns the Fundsource if Id found ,otherwise throws an exception
+     * used in Inventory,Wardworks Returns the Fundsource if Id found ,otherwise
+     * throws an exception
+     * 
      * @param id
      * @return Fundsource
      */
@@ -192,6 +228,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns the EgwStatus if Id found
+     * 
      * @param statsuId
      * @return EgwStatus
      */
@@ -199,6 +236,7 @@ public interface CommonsService {
 
     /**
      * Returns the EgwStatus if Code found
+     * 
      * @param code
      * @return EgwStatus
      */
@@ -206,27 +244,34 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns all the Active Funds
+     * 
      * @return Fund
      */
     public List<Fund> getAllFunds();
 
     /**
      * used in Wardworks Returns all the Fundsource
+     * 
      * @return Fundsource
      */
     public List<Fundsource> getAllFundSource();
 
     /**
-     * used in Wardworks Returns all the EgActiondetails filtered by Module Id, Action Type and Module Type
+     * used in Wardworks Returns all the EgActiondetails filtered by Module Id,
+     * Action Type and Module Type
+     * 
      * @param moduleId
      * @param actionType
      * @param moduleType);
      * @return EgActiondetails
      */
-    public List<EgActiondetails> getEgActiondetailsFilterBy(String moduleId, ArrayList<String> actionType, String moduleType);
+    public List<EgActiondetails> getEgActiondetailsFilterBy(String moduleId, ArrayList<String> actionType,
+            String moduleType);
 
     /**
-     * used in Wardworks Returns the EgActiondetails object filtered by Module Id, Action Type and Module Type
+     * used in Wardworks Returns the EgActiondetails object filtered by Module
+     * Id, Action Type and Module Type
+     * 
      * @param moduleId
      * @param actionType
      * @param moduleType);
@@ -236,24 +281,28 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Creates the EgActiondetails
+     * 
      * @param egActiondetails
      */
     public void createEgActiondetails(EgActiondetails egActiondetails);
 
     /**
      * used in Wardworks Updates the EgActiondetails
+     * 
      * @param egActiondetails
      */
     public void updateEgActiondetails(EgActiondetails egActiondetails);
 
     /**
      * used in Wardworks Creates the EgwSatuschange
+     * 
      * @param egwSatuschange
      */
     public void createEgwSatuschange(EgwSatuschange egwSatuschange);
 
     /**
      * used in Wardworks Returns the Fundsource object if Id found
+     * 
      * @param fundSourceId
      * @return Fundsource
      */
@@ -261,6 +310,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns the Fund object if Id found
+     * 
      * @param fundId
      * @return Fund
      */
@@ -268,12 +318,14 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns all the EgUom
+     * 
      * @return EgUom
      */
     /* public List<EgUom> findAllUom(); */
 
     /**
      * used in Wardworks Returns the Relation object if Id found
+     * 
      * @param relationId
      * @return Relation
      */
@@ -281,6 +333,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns the EgUom object if Id found
+     * 
      * @param uomId
      * @return EgUom
      */
@@ -288,14 +341,17 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns all the EgwStatus for the list of Ids found
+     * 
      * @param statusId
      * @return EgwStatus
      */
     public List<EgwStatus> getEgwStatusFilterByStatus(ArrayList<Integer> statusId);
 
     /**
-     * @param moduleType Module type
-     * @param statusCode Status code
+     * @param moduleType
+     *            Module type
+     * @param statusCode
+     *            Status code
      * @return EgwStatus object for given module type and status code
      */
     public EgwStatus getStatusByModuleAndCode(String moduleType, String statusCode);
@@ -304,12 +360,14 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns all the Status if moduleType found
+     * 
      * @param moduleType
      */
     public List<Status> getStatusByModuleType(String moduleType);
 
     /**
      * used in Wardworks Creates Accountdetailkey
+     * 
      * @param accountdetailkey
      * @return Accountdetailkey
      */
@@ -317,6 +375,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns Status object if id found
+     * 
      * @param id
      * @return Status
      */
@@ -324,6 +383,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns EgwStatus object if id found
+     * 
      * @param id
      * @return EgwStatus
      */
@@ -336,6 +396,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns CFinancialYear object if id found
+     * 
      * @param id
      * @return CFinancialYear
      */
@@ -343,6 +404,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns CFunction object if id found
+     * 
      * @param functionId
      * @return CFunction
      */
@@ -350,6 +412,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns CChartOfAccounts object if id found
+     * 
      * @param majorCode
      * @return CChartOfAccounts
      */
@@ -362,6 +425,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns CChartOfAccounts object if id found
+     * 
      * @param chartOfAccountsId
      * @return CChartOfAccounts
      */
@@ -369,6 +433,7 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns List of CGeneralLedger objects
+     * 
      * @param voucherHeaderId
      */
     public List<CGeneralLedger> getGeneralLedgerList(Long voucherHeaderId) throws Exception;
@@ -396,11 +461,12 @@ public interface CommonsService {
     /**
      * Returns All FinancialYear List
      */
-    public Collection<FinancialYear> getFinancialYearList() throws Exception;
+    public Collection<CFinancialYear> getFinancialYearList() throws Exception;
 
     /**
-     * This API will return the transaction no for any type of txn. Input :Type,transaction date and connection Output
-     * :Transaction number in the format txnType+number+/+month+/+year
+     * This API will return the transaction no for any type of txn. Input
+     * :Type,transaction date and connection Output :Transaction number in the
+     * format txnType+number+/+month+/+year
      */
     public String getTxnNumber(String txnType, String vDate, Connection con) throws Exception;
 
@@ -428,7 +494,8 @@ public interface CommonsService {
     public List<CFinancialYear> getAllActivePostingFinancialYear();
 
     /**
-     * used in Wardworks Returns List of EgwTypeOfWork objects where parent is null
+     * used in Wardworks Returns List of EgwTypeOfWork objects where parent is
+     * null
      */
     public List<EgwTypeOfWork> getAllParentOrderByCode();
 
@@ -439,24 +506,28 @@ public interface CommonsService {
 
     /**
      * used in Wardworks Returns EgwTypeOfWork object
+     * 
      * @param id
      */
     public EgwTypeOfWork getTypeOfWorkById(Long id);
 
     /**
      * used in Wardworks Returns EgwTypeOfWork object
+     * 
      * @param code
      */
     public EgwTypeOfWork findByCode(String code);
 
     /**
      * used in Wardworks Creates EgwTypeOfWork
+     * 
      * @param egwTypeOfWork
      */
     public void createEgwTypeOfWork(EgwTypeOfWork egwTypeOfWork);
 
     /**
      * used in Wardworks Updates EgwTypeOfWork
+     * 
      * @param egwTypeOfWork
      */
     public void updateEgwTypeOfWork(EgwTypeOfWork egwTypeOfWork);
@@ -497,7 +568,9 @@ public interface CommonsService {
     public String getPrevYearFiscalId();
 
     /**
-     * used in birth and Death project Returns all the EgwStatus object filtered by ModuleType
+     * used in birth and Death project Returns all the EgwStatus object filtered
+     * by ModuleType
+     * 
      * @param moduleType
      * @return List
      */
@@ -505,18 +578,21 @@ public interface CommonsService {
 
     /**
      * used in Deductions Returns EgPartytype object
+     * 
      * @param id
      */
     public EgPartytype getPartytypeById(Integer id);
 
     /**
      * used in Deductions Creates EgPartytype
+     * 
      * @param egPartytype
      */
     public void createEgPartytype(EgPartytype egPartytype);
 
     /**
      * used in Deductions Updates EgPartytype
+     * 
      * @param egPartytype
      */
     public void updateEgPartytype(EgPartytype egPartytype);
@@ -539,7 +615,8 @@ public interface CommonsService {
      * @param status
      * @param type
      * @return
-     * @throws Exception if glcode is not a control code it will return 0
+     * @throws Exception
+     *             if glcode is not a control code it will return 0
      */
     public List<CVoucherHeader> getVoucherHeadersByStatusAndType(Integer status, String type) throws Exception;
 
@@ -560,12 +637,14 @@ public interface CommonsService {
 
     /**
      * Creates EgSurrenderedCheques
+     * 
      * @param egSurrenderedCheques
      */
     public void createEgSurrenderedCheques(EgSurrenderedCheques egSurrenderedCheques);
 
     /**
      * Updates EgSurrenderedCheques
+     * 
      * @param egSurrenderedCheques
      */
     public void updateEgSurrenderedCheques(EgSurrenderedCheques egSurrenderedCheques);
@@ -609,9 +688,12 @@ public interface CommonsService {
     public CVoucherHeader getVoucherHeadersByCGN(String cgn);
 
     /**
-     * @param moduleType Module type
-     * @param codeList List of status codes
-     * @return List of all EgwStatus objects filtered by given module type and list of status codes
+     * @param moduleType
+     *            Module type
+     * @param codeList
+     *            List of status codes
+     * @return List of all EgwStatus objects filtered by given module type and
+     *         list of status codes
      */
     public List<EgwStatus> getStatusListByModuleAndCodeList(String moduleType, List codeList);
 
@@ -625,12 +707,15 @@ public interface CommonsService {
 
     /**
      * This method returns all active functionary records.
+     * 
      * @return
      */
     public List<Functionary> getActiveFunctionaries();
 
     /**
-     * This method returns the active and is active for posting Account records having classification as '4' , for a given type.
+     * This method returns the active and is active for posting Account records
+     * having classification as '4' , for a given type.
+     * 
      * @param type
      * @return
      */
@@ -638,13 +723,16 @@ public interface CommonsService {
 
     /**
      * to get the list of chartofaccounts based on the purposeId
+     * 
      * @param purposeId
      * @return list of COA object(s)
      */
     public List<CChartOfAccounts> getAccountCodeByPurpose(Integer purposeId) throws ApplicationException;
 
     /**
-     * This menthos will list the accoyntdetailtype for the account code and detail type name
+     * This menthos will list the accoyntdetailtype for the account code and
+     * detail type name
+     * 
      * @param glCode
      * @param name
      * @return
@@ -653,7 +741,9 @@ public interface CommonsService {
     public Accountdetailtype getAccountDetailTypeIdByName(String glCode, String name) throws Exception;
 
     /**
-     * This method will list the detailed chartofaccounts object that are active for posting
+     * This method will list the detailed chartofaccounts object that are active
+     * for posting
+     * 
      * @return
      * @throws ApplicationException
      */
@@ -661,6 +751,7 @@ public interface CommonsService {
 
     /**
      * This method returns the active and is leaf fund sources.
+     * 
      * @return a list of <code>Fundsource</code> objects
      * @throws ApplicationException
      */
@@ -668,6 +759,7 @@ public interface CommonsService {
 
     /**
      * to get the function object
+     * 
      * @param id
      * @return
      */
@@ -675,6 +767,7 @@ public interface CommonsService {
 
     /**
      * To get the scheme object
+     * 
      * @param id
      * @return
      * @throws ApplicationException
@@ -683,6 +776,7 @@ public interface CommonsService {
 
     /**
      * To get the scheme object
+     * 
      * @param id
      * @return
      * @throws ApplicationException
@@ -691,6 +785,7 @@ public interface CommonsService {
 
     /**
      * to get the financial year
+     * 
      * @param id
      * @return
      */
@@ -699,7 +794,9 @@ public interface CommonsService {
     public CFunction getFunctionById(Long Id);
 
     /**
-     * This will return the accountdetailkeyid if the object passed is mapped as a subledger type
+     * This will return the accountdetailkeyid if the object passed is mapped as
+     * a subledger type
+     * 
      * @param master
      * @return accountdetailtypeid in case of subledger, else returns null
      * @throws ApplicationException
@@ -780,13 +877,16 @@ public interface CommonsService {
     public List<CChartOfAccounts> getListOfDetailCode(String glCode) throws ValidationException;
 
     /*
-     * public List<EgUom> getAllUomsWithinCategoryByUom(Integer uomId) throws ValidationException; public BigDecimal
-     * getConversionFactorByUom(Integer uomId) throws ValidationException; public BigDecimal
-     * getConversionFactorByFromUomToUom(Integer fromuomId, Integer touomId) throws ValidationException;
+     * public List<EgUom> getAllUomsWithinCategoryByUom(Integer uomId) throws
+     * ValidationException; public BigDecimal getConversionFactorByUom(Integer
+     * uomId) throws ValidationException; public BigDecimal
+     * getConversionFactorByFromUomToUom(Integer fromuomId, Integer touomId)
+     * throws ValidationException;
      */
 
     /**
      * used in Financials Returns Financial Year based on date
+     * 
      * @param estDate
      */
     public CFinancialYear getFinancialYearByDate(Date date);
@@ -794,8 +894,9 @@ public interface CommonsService {
     public List<EgPartytype> getSubPartyTypes(String code);
 
     /**
-     * @description - This API Returns Ward Boundary based on Latitutde and Longitude Provided the Shape file with approprate
-     * boundary (Ward) is available in classpath.
+     * @description - This API Returns Ward Boundary based on Latitutde and
+     *              Longitude Provided the Shape file with approprate boundary
+     *              (Ward) is available in classpath.
      * @param latitude
      * @param longitude
      * @return Wardid if available else null
@@ -805,8 +906,11 @@ public interface CommonsService {
 
     /**
      * Returns Financial Year based on date irrespective of active status
+     * 
      * @param date
      */
     public CFinancialYear getFinYearByDate(Date date);
+
+    public Accountdetailtype getAccountDetailTypeByName(String name);
 
 }

@@ -46,7 +46,7 @@ function checkAlpaNumeric(obj){
 		var num = obj.value;
 		var objRegExp  = /^([a-zA-Z0-9]+)$/i;
 	if(!objRegExp.test(num)){
-		alert('Please enter valid code for target area');  
+		bootbox.alert('Please enter valid code for target area');  
 		obj.value = "";
 		obj.focus();
 	}

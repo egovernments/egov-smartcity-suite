@@ -60,6 +60,12 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.dao.FunctionaryHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.service.AssignmentService;
@@ -114,6 +120,14 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     @Autowired
     private AssignmentService assignmentService;
     private PersonalInformationService personalInformationService;
+    @Autowired
+    private FundHibernateDAO fundDao;
+    @Autowired
+    private FunctionHibernateDAO functionHibDao;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     @Autowired
     private CommonsService commonsService;
     private static final String BUDGET_HEADS_APPCONFIG_KEY = "WORK_PROGRESS_ABSTRACT_RPT2_BUDGT_HEADS";
@@ -180,9 +194,9 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
         populateCategoryList(ajaxEstimateAction, getWorksType() == -1 ? false : getWorksType() != -1);
-        addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
-        addDropdownData("functionList", commonsService.getAllFunction());
-        addDropdownData("schemeList", getPersistenceService().findAllBy("from Scheme sc where sc.isactive=1"));
+        addDropdownData("fundList", fundDao.findAllActiveIsLeafFunds());
+        addDropdownData("functionList", functionHibDao.findAll());
+        addDropdownData("schemeList", getPersistenceService().findAllBy("from Scheme sc where sc.isactive=true"));
         final AjaxWorkProgressAction ajaxWorkProgressAction = new AjaxWorkProgressAction();
         populateSubSchemeList(ajaxWorkProgressAction, getScheme() != null);
         addDropdownData("budgetHeadList", getBudgetGroupsFromAppConfig());
@@ -197,7 +211,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
                 getPersistenceService()
                         .findAllBy(
                                 "select distinct(fd.budgetGroup) from FinancialDetail fd where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe where woe.workOrder.egwStatus.code='APPROVED' ) order by name  "));
-        final CFinancialYear financialYear = commonsService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = finHibernateDao.getFinancialYearByDate(new Date());
         if (financialYear != null)
             currentFinancialYearId = financialYear.getId().toString();
         finYearRangeStr = generateFinYrList(finYrList);
@@ -810,13 +824,13 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
             final String[] budgetHeadsFromAppConf = budgetHeadsAppConfValue.split(",");
             for (final String element : budgetHeadsFromAppConf)
                 // Split and obtain only the glcode
-                coaList.addAll(commonsService.getListOfDetailCode(element.split("-")[0]));
+                coaList.addAll(chartOfAccountsHibernateDAO.getListOfDetailCode(element.split("-")[0]));
             budgetHeadList.addAll(budgetDetailsDAO.getBudgetHeadForGlcodeList(coaList));
         }
         // Incase all is not selected
         if (!dropDownBudgetHeads.get(0).equalsIgnoreCase(WorksConstants.ALL)) {
             for (int i = 0; i < dropDownBudgetHeads.size(); i++)
-                coaList.addAll(commonsService.getListOfDetailCode(dropDownBudgetHeads.get(i).split("-")[0]));
+                coaList.addAll(chartOfAccountsHibernateDAO.getListOfDetailCode(dropDownBudgetHeads.get(i).split("-")[0]));
             budgetHeadList.addAll(budgetDetailsDAO.getBudgetHeadForGlcodeList(coaList));
         }
         final List<Long> budgetHeadIdsLong = new ArrayList<Long>();
@@ -835,12 +849,12 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         if (dropDownDepositCodes.size() == 1 && dropDownDepositCodes.get(0).equalsIgnoreCase(WorksConstants.ALL)) {
             final String[] depositCodesFromAppConf = depositCodesAppConfValue.split(",");
             for (final String element : depositCodesFromAppConf)
-                coaList.addAll(commonsService.getListOfDetailCode(element.split("-")[0]));
+                coaList.addAll(chartOfAccountsHibernateDAO.getListOfDetailCode(element.split("-")[0]));
         }
         // Incase all is not selected
         if (!dropDownDepositCodes.get(0).equalsIgnoreCase(WorksConstants.ALL))
             for (int i = 0; i < dropDownDepositCodes.size(); i++)
-                coaList.addAll(commonsService.getListOfDetailCode(dropDownDepositCodes.get(i).split("-")[0]));
+                coaList.addAll(chartOfAccountsHibernateDAO.getListOfDetailCode(dropDownDepositCodes.get(i).split("-")[0]));
         final List<Long> depositCodeIdsLong = new ArrayList<Long>();
         if (coaList != null && coaList.size() > 0)
             for (final CChartOfAccounts coa : coaList)

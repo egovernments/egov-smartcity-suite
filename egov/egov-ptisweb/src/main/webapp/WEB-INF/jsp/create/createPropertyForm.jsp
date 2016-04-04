@@ -184,36 +184,6 @@
 				name="propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
 	</tr>
 	
-	<tr class="bpddetailsheader">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
-		<td class="bluebox">
-		 <s:checkbox name="propertyDetail.buildingPlanDetailsChecked" title="BP details if available" id="buildingPlanDetailsChecked"
-			value="%{propertyDetail.buildingPlanDetailsChecked}" onclick="enableOrDisableBPADetails(this);" />
-		</td>
-	</tr>
-	
-	<tr class="bpddetails">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="building.permNo"></s:text><span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield name="propertyDetail.buildingPermissionNo" id="buildingPermissionNo" size="16" maxlength="16"
-				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{propertyDetail.buildingPermissionNo}"></s:textfield>
-		</td>
-		<td class="greybox"><s:text name="buildingpermdate"></s:text><span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:date name="propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
-		<s:textfield name="propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
-				id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
-		</td>
-	</tr>
-
-    <tr class="bpddetails">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
-		<td class="greybox"><s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
-				id="deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.deviationPercentage}"
-				cssClass="selectnew"/>
-		</td>
-   </tr>
 	<tr>
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="reg.docno"></s:text><span class="mandatory1">*</span> :</td>
@@ -226,9 +196,6 @@
 		 <s:textfield name="basicProperty.regdDocDate" title="Document dated" id="basicProperty.regdDocDate" value="%{#docDate}" size="12" autocomplete="off"
 				maxlength="12" cssClass="datepicker"></s:textfield></td>
 	</tr>
-
-
-
 
 	<!-- Amenities section -->
 

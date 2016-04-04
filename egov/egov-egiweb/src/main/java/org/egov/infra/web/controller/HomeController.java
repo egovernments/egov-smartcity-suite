@@ -61,6 +61,8 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.infra.web.support.ui.Menu;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -102,6 +104,9 @@ public class HomeController {
     @Autowired
     private CityService cityService;
 
+    @Autowired
+    private ValidatorUtils validatorUtils;
+
     @RequestMapping
     public String showHome(final HttpSession session, final HttpServletRequest request,
             final HttpServletResponse response, final ModelMap modelData) {
@@ -129,7 +134,7 @@ public class HomeController {
             @RequestParam final String retypeNewPwd) {
         final User user = securityUtils.getCurrentUser();
         if (passwordEncoder.matches(currentPwd, user.getPassword())) {
-            if (!ValidatorUtils.isValidPassword(newPwd))
+            if (!validatorUtils.isValidPassword(newPwd))
                 return "NEWPWD_INVALID";
             if (newPwd.equals(retypeNewPwd)) {
                 user.setPassword(passwordEncoder.encode(newPwd));
@@ -182,10 +187,14 @@ public class HomeController {
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         modelData.addAttribute("app_version", applicationProperties.appVersion());
         modelData.addAttribute("app_buildno", applicationProperties.appBuildNo());
-        if (!applicationProperties.devMode())
+        if (!applicationProperties.devMode()) {
             modelData.addAttribute("app_core_build_no", applicationProperties.appCoreBuildNo());
+            modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPassworResetRequired(user));
+            final int daysToExpirePwd = daysToExpirePassword(user);
+            modelData.addAttribute("pwd_expire_in_days", daysToExpirePwd);
+            modelData.addAttribute("warn_pwd_expire", daysToExpirePwd <= 5);
+        }
         modelData.addAttribute("issue_report_url", applicationProperties.issueReportingUrl());
-        modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPassworResetRequired(user));
         session.setAttribute("app_release_no", applicationProperties.appVersion() + "_" + applicationProperties.appBuildNo());
         return "home";
     }
@@ -289,7 +298,11 @@ public class HomeController {
     }
 
     private boolean checkDefaultPassworResetRequired(final User user) {
-        return !applicationProperties.devMode() && (passwordEncoder.matches("12345678", user.getPassword()) || passwordEncoder.matches("demo", user.getPassword()));
+        return passwordEncoder.matches("12345678", user.getPassword()) || passwordEncoder.matches("demo", user.getPassword());
+    }
+
+    private int daysToExpirePassword(final User user) {
+        return Days.daysBetween(new LocalDate(), user.getPwdExpiryDate().toLocalDate()).getDays();
     }
 
 }

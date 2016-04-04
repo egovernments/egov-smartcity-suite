@@ -1,192 +1,182 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js?rnd=${app_release_no}"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
 <title>Journal voucher Create</title>
 </head>
-   	
-<body onload="loadDropDownCodes();loadDropDownCodesFunction();onloadtask()">
 
-<s:form action="journalVoucher" theme="simple" name="jvcreateform" >
-<s:token/>
-<div id="loading" style="position:absolute; left:25%; top:70%; padding:2px; z-index:20001; height:auto;width:500px;display: none;">
-    <div class="loading-indicator" style="background:white;  color:#444; font:bold 13px tohoma,arial,helvetica; padding:10px; margin:0; height:auto;">
-        <img src="/egi/resources/erp2/images/loading.gif" width="32" height="32" style="margin-right:8px;vertical-align:top;"/> Loading...
-    </div>
-</div>
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Journal voucher Create" />
-			</jsp:include>
-			
-			<span class="mandatory1">
-			<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
+<body
+	onload="loadDropDownCodes();loadDropDownCodesFunction();onloadtask()">
+
+	<s:form action="journalVoucher" theme="simple" name="jvcreateform">
+		<s:token />
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="Journal voucher Create" />
+		</jsp:include>
+
+		<span class="mandatory1"> <font
+			style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
 				<s:actionmessage /></font>
-			</span>
-<div class="formmainbox">
-	<div class="subheadnew">Journal Voucher
-	</div>
-		<div id="listid" style="display:block">
-<div align="center">
-<font  style='color: red ; font-weight:bold '> 
-<p class="error-block" id="lblError" ></p></font>
+		</span>
+		<div class="formmainbox">
+			<div class="subheadnew">Journal Voucher</div>
+			<div id="listid" style="display: block">
+				<div align="center">
+					<font style='color: red; font-weight: bold'>
+						<p class="error-block" id="lblError"></p>
+					</font>
 
-	<table border="0" width="100%">
-	<tr>
-		<td style="width:5%"></td>
-		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory1">*</span></td>
-			<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" maxlength="30" /></td>
-		</s:if>
-			<td class="greybox"><s:text name="voucher.date"/><span class="mandatory1">*</span></td>
-			<td class="greybox"><s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
-			<s:textfield name="voucherDate" id="voucherDate" value="%{voucherDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('jvcreateform.voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
-			</td>
-		<s:else>
-			<td class="greybox">&nbsp;</td>
-			<td class="greybox">&nbsp;</td>
-		</s:else>	
-	</tr>
-	<jsp:include page="loadYIDataTable.jsp"/>
-	
-	<jsp:include page="voucherSubType.jsp"/>
-	<jsp:include page="vouchertrans-filter.jsp"/>
-	
-		
-		<tr>
-			<td style="width:5%"></td>
-			<td class="greybox"><s:text name="voucher.narration" /></td>
-			<td class="greybox" colspan="3"><s:textarea  id="narration" name="description" cols="100" rows="3" onblur="checkVoucherNarrationLen(this)"/></td>
-		</tr>	
-	</tr>
-	</table>
-	</div>
-	<br/>
-	<div id="labelAD" align="center">
-	 		<table width="80%" border=0 id="labelid"><th>Account Details</th></table>
-	</div>
-	<div class="yui-skin-sam" align="center">
-       <div id="billDetailTable"></div>
-     </div>
-     <script>
+					<table border="0" width="100%">
+						<tr>
+							<td style="width: 5%"></td>
+							<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+								<td class="greybox"><s:text name="voucher.number" /><span
+									class="mandatory1">*</span></td>
+								<td class="greybox"><s:textfield name="voucherNumber"
+										id="voucherNumber" maxlength="30" /></td>
+							</s:if>
+							<td class="greybox"><s:text name="voucher.date" /><span
+								class="mandatory1">*</span></td>
+							<td class="greybox"><s:date name="voucherDate"
+									id="voucherDateId" format="dd/MM/yyyy" /> <s:textfield
+									name="voucherDate" id="voucherDate" value="%{voucherDateId}"
+									maxlength="10"
+									onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+								href="javascript:show_calendar('jvcreateform.voucherDate',null,null,'DD/MM/YYYY');"
+								style="text-decoration: none">&nbsp;<img tabIndex=-1
+									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
+							</td>
+							<s:else>
+								<td class="greybox">&nbsp;</td>
+								<td class="greybox">&nbsp;</td>
+							</s:else>
+						</tr>
+						<jsp:include page="loadYIDataTable.jsp" />
+
+						<jsp:include page="voucherSubType.jsp" />
+						<jsp:include page="vouchertrans-filter.jsp" />
+
+
+						<tr>
+							<td style="width: 5%"></td>
+							<td class="greybox"><s:text name="voucher.narration" /></td>
+							<td class="greybox" colspan="3"><s:textarea id="narration"
+									name="description" cols="100" rows="3"
+									onblur="checkVoucherNarrationLen(this)" /></td>
+						</tr>
+						</tr>
+					</table>
+				</div>
+				<br />
+				<div id="labelAD" align="center">
+					<table width="80%" border=0 id="labelid">
+						<th>Account Details</th>
+					</table>
+				</div>
+				<div class="yui-skin-sam" align="center">
+					<div id="billDetailTable"></div>
+				</div>
+				<script>
 		
 		makeVoucherDetailTable();
 		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
 	 </script>
-	 <div id="codescontainer"></div>
-	 <br/>
-	 	<div id="labelSL" align="center">
-	 		<table width="80%" border=0 id="labelid"><th>Sub-Ledger Details</th></table>
-	 	</div>
-	 	
-		<div class="yui-skin-sam" align="center">
-	       <div id="subLedgerTable"></div>
-	     </div>
-		<script>
+				<br />
+				<div id="labelSL" align="center">
+					<table width="80%" border=0 id="labelid">
+						<th>Sub-Ledger Details</th>
+					</table>
+				</div>
+
+				<div class="yui-skin-sam" align="center">
+					<div id="subLedgerTable"></div>
+				</div>
+				<script>
 			
 			makeSubLedgerTable();
 			
 			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="80%"
 		</script>
-		<br/>
-		<div class="subheadsmallnew"/></div>
-		<!-- <div class="mandatory1" align="left">* Mandatory Fields</div> -->
-		<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
-			<%@include file="voucherWorkflow.jsp"%>         
-		</s:if>	
-	  	<div align="center">
-		<table border="0" width="100%">
-			<tr>
-				<td style="width:5%"></td>
-				<td  class="bluebox">Comments</td> 
-				<td  class="bluebox" ><s:textarea name="comments" id="comments" cols="110" rows="3" onblur="checkLength(this)"/></td>
-				<td>  
-			</tr>
-			<br/>
-		</table> 
-		</div> 
-		<div  align = "center" class="buttonbottom" id="buttondiv">                   
-			<s:iterator value="%{getValidActions('')}" var="p">
-				<s:if test="%{description !='Cancel'}">
-					<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="create" onclick="return validateJV('save','%{name}','%{description}')"/>
-				</s:if>
-			</s:iterator>	
-			<input type="submit" class="buttonsubmit" value="Send for Approval" id="%{aa_approve}" name="%{aa_approve}" onclick="return validateAndSubmitJV('save','%{aa_approve}','%{Send for Approval}');" />
-			<input type="reset" id="Reset" value="Cancel" class="button"/>
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />        
+				<br />
+				<div class="subheadsmallnew" /></div>
+				<%@ include file='../workflow/commonWorkflowMatrix.jsp'%>
+				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
+				<br />
+			</div>
 		</div>
-	<!-- 		
-	<div class="buttonbottom" style="padding-bottom:10px;">
-		<s:submit type="submit" cssClass="buttonsubmit" value="Save & Close" id="save&close" name="save&close" method="create" onclick="return validateJV('close')"/> 
-   		<input type="reset" id="Reset" value="Cancel" class="buttonsubmit"/>
-		<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-	</div>  -->
-	<br/>
-	</div>
-</div>
 
-<div id="codescontainer"></div>
-<s:hidden  name="actionName" id="actionName"/>
-<input type="hidden" id="voucherTypeBean.voucherName" name="voucherTypeBean.voucherName" value="${voucherTypeBean.voucherName}"/>
-<input type="hidden" id="voucherTypeBean.voucherType" name="voucherTypeBean.voucherType" value="Journal Voucher"/>
-<input type="hidden" id="voucherTypeBean.voucherNumType" name="voucherTypeBean.voucherNumType" value="${voucherTypeBean.voucherNumType}" />
-<input type="hidden" id="voucherTypeBean.cgnType" name="voucherTypeBean.cgnType" value="JVG"/>
-<input type="hidden" id="buttonValue" name="buttonValue" />
+		<div id="codescontainer"></div>
+		<s:hidden name="actionName" id="actionName" />
+		<input type="hidden" id="voucherTypeBean.voucherName"
+			name="voucherTypeBean.voucherName"
+			value="${voucherTypeBean.voucherName}" />
+		<input type="hidden" id="voucherTypeBean.voucherType"
+			name="voucherTypeBean.voucherType" value="Journal Voucher" />
+		<input type="hidden" id="voucherTypeBean.voucherNumType"
+			name="voucherTypeBean.voucherNumType"
+			value="${voucherTypeBean.voucherNumType}" />
+		<input type="hidden" id="voucherTypeBean.cgnType"
+			name="voucherTypeBean.cgnType" value="JVG" />
+		<input type="hidden" id="buttonValue" name="buttonValue" />
 
-</s:form>
+	</s:form>
 
-<s:hidden name="targetvalue" value="%{target}" id="targetvalue"/>
-<s:hidden name="functionValue"  id="functionValue"/>
-<s:hidden name="functionId"  id="functionId"/>
-<script type="text/javascript">
+	<s:hidden name="targetvalue" value="%{target}" id="targetvalue" />
+	<s:hidden name="functionValue" id="functionValue" />
+	<s:hidden name="functionId" id="functionId" />
+	<script type="text/javascript">
 		
 			if(dom.get('targetvalue').value=='success')
 			{
@@ -221,42 +211,56 @@
 				}
 			}	
 			function validateApproverUser(name,value){
-				//alert("action name"+name);     
+				//bootbox.alert("action name"+name);     
 				document.getElementById("actionName").value= name;
-				//alert("button value"+value);  
+				//bootbox.alert("button value"+value);  
 				<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
 					if(!validateUser(name,value)){ return false; }
 				</s:if>
 				return true;
 			}
-	function validateAndSubmitJV(btnval,name,value)
+	function onSubmit()
 	{
-		if(validateJV(btnval,name,value)){
-				document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucher-create.action';
-	    		document.forms[0].submit();
+		if(validateJV()){
+				document.jvcreateform.action='/EGF/voucher/journalVoucher-create.action';
+	    		document.jvcreateform.submit();
 				
 			}else{
 				return false;
 				}
 	}
-	function validateJV(btnval,name,value)
+	function validateJV()
 	{
-	 // alert("inside validate jv");  
-	// alert(document.getElementById('billDetailTable'));
-	
-	   document.getElementById("buttonValue").value=btnval;
+	   //document.getElementById("buttonValue").value=btnval;
 		document.getElementById('lblError').innerHTML ="";
 		var cDate = new Date();
 		
 		var currDate = cDate.getDate()+"/"+(parseInt(cDate.getMonth())+1)+"/"+cDate.getYear();
 		var vhDate=document.getElementById('voucherDate').value;
-	
+		var vhType=document.getElementById('vType').value;
+
+		console.log(vhType);
+		
+		if(vhType =='-1' )	{
+			document.getElementById('lblError').innerHTML = "Please select voucher sub type ";
+			document.getElementById('voucherDate').focus();
+			return false;
+		}
 		if(vhDate == '' )	{
 			document.getElementById('lblError').innerHTML = "Please enter the Voucher date ";
 			document.getElementById('voucherDate').focus();
 			return false;
 		}
-	
+
+		var voucherdate = vhDate.substring(0, 2);
+	    var vouchermonth = vhDate.substring(3, 5);
+	    var voucheryear = vhDate.substring(6, 10);
+	    var voucherDate = new Date(voucheryear, vouchermonth - 1, voucherdate);
+	    var today = new Date();
+	    if (voucherDate > today) {
+	        bootbox.alert("Voucher date is greater than today's date ");
+	        return false
+	    }
 		var vVoucherSubType = document.getElementById('vType').value;
 		if(vVoucherSubType != 'JVGeneral' && vVoucherSubType != '-1' )	{
 			if(document.getElementById('voucherTypeBean.partyName').value == '' ) {
@@ -265,7 +269,26 @@
 				return false;
 			}
 		}
-		
+		var billDate = document.getElementById("billDate").value;
+	    var date = billDate.substring(0, 2);
+	    var month = billDate.substring(3, 5);
+	    var year = billDate.substring(6, 10);
+	    var myBillDate = new Date(year, month - 1, date);
+
+	    if (myBillDate > today) {
+	        bootbox.alert("Bill date is greater than today's date ");
+	        return false
+	    }
+	    var partyBillDate = document.getElementById("partyBillDate").value;
+	    var partydate = partyBillDate.substring(0, 2);
+	    var partymonth = partyBillDate.substring(3, 5);
+	    var partyyear = partyBillDate.substring(6, 10);
+	    var myPartyBillDate = new Date(partyyear, partymonth - 1, partydate);
+
+	    if (myPartyBillDate > today) {
+	        bootbox.alert("Party bill date is greater than today's date ");
+	        return false
+	    }
 		
 	// Javascript validation of the MIS Manadate attributes.
 		<s:if test="%{isFieldMandatory('vouchernumber')}"> 
@@ -369,8 +392,8 @@ function onloadtask(){
 		document.getElementById('voucherTypeBean.billNum').readOnly=true;
 		document.getElementById('billDate').readOnly=true;
 	}
-	document.getElementById('vouchermis.function').style.display="none";
-	document.getElementById('functionnametext').style.display="none";
+	//document.getElementById('vouchermis.function').style.display="none";
+	//document.getElementById('functionnametext').style.display="none";
 	var message = '<s:property value="message"/>';
 	if(message != null && message != '')
 		showMessage(message);
@@ -384,7 +407,9 @@ function onloadtask(){
 		document.getElementById('voucherTypeBean.voucherSubType').value = "JVGeneral";
 	</s:if>
 	if(message == null || message == '')
-		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.	
+		populateslDropDown(); // to load the subledger detils when page loads, required when validation fails.
+	if(document.getElementById('approverDepartment'))
+		document.getElementById('approverDepartment').value = "-1";
   }
 function showMessage(message){
 	var buttonValue = '<s:property value="buttonValue"/>';
@@ -393,10 +418,13 @@ function showMessage(message){
 		if( document.forms[0].elements[i].id!='Close')
 		document.forms[0].elements[i].disabled =true;
 	} 
-	alert(message);
-	var voucherHeaderId = '<s:property value="voucherHeader.id"/>';
-	document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+voucherHeaderId;
-	document.forms[0].submit();      
+	//bootbox.alert(message);
+	bootbox.alert(message, function() {
+		var voucherHeaderId = '<s:property value="voucherHeader.id"/>';
+		document.forms[0].action = "/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+voucherHeaderId;
+		document.forms[0].submit(); 
+	});
+	     
 	
 }
 

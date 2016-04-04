@@ -1,42 +1,42 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <%@ page language="java"  import="org.egov.infstr.utils.EGovConfig"%>
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
@@ -52,13 +52,13 @@
 <!--
 <link rel=stylesheet href="../exility/global.css" type="text/css">
 -->
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
-<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js" type="text/javascript" ></SCRIPT>
-<script language="javascript" src="../resources/javascript/ajaxCommonFunctions.js"></script>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js?rnd=${app_release_no}"></SCRIPT>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js?rnd=${app_release_no}" type="text/javascript" ></SCRIPT>
+<script language="javascript" src="../resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
 <!--
 <link rel="stylesheet" href="../exility/screen.css" type="text/css" media="screen, print" />
 -->
@@ -146,7 +146,7 @@ var subGLcodes="<%= subGLcodes %>";
 	       document.getElementById("repSubType").style.display="none";
 	   }
    /* document.getElementById("userId").value=PageManager.DataService.getQueryField("current_UserID");
-    alert(document.getElementById("userId").value);
+    bootbox.alert(document.getElementById("userId").value);
     */
   }
   function setLists()
@@ -161,10 +161,10 @@ var subGLcodes="<%= subGLcodes %>";
   }
   function getRepLineItem(obj)
   {
-    //alert(obj.options[obj.selectedIndex].value);
+    //bootbox.alert(obj.options[obj.selectedIndex].value);
     if(!validateCombo("repType"))
     {
-       alert("Select any one of Report Type Options");
+    	bootbox.alert("Select any one of Report Type Options");
        return;
     }
     //On change of report type Clening up all the fields
@@ -213,7 +213,7 @@ var subGLcodes="<%= subGLcodes %>";
      if(B2ScheduleMajorCode!="null" && report=='BS' && obj.options[obj.selectedIndex].text==B2ScheduleMajorCode)
      	{
      	
-     	if(subGLcodes=="null") { alert("property  subGLcodes doesn't exists in config file"); return;}
+     	if(subGLcodes=="null") { bootbox.alert("property  subGLcodes doesn't exists in config file"); return;}
      	loadSelectData('../commonyui/egov/loadComboAjax.jsp', "chartofaccounts", "id||'  ~  '||name", "glcode", " glcode in("+subGLcodes+")", 'repLineItem', 'accnt_Code');
      	var repLineItemObjvalue=document.getElementById('repLineItem').options[document.getElementById('repLineItem').selectedIndex].text;
      	PageManager.DataService.setQueryField("glcode",repLineItemObjvalue);
@@ -299,10 +299,10 @@ var subGLcodes="<%= subGLcodes %>";
 		var table = document.getElementById(TableId);
 		if(!table || !table.rows) return false;
 		var accntLength=document.getElementById("accnt_Code").options.length;
-		//alert(table.rows.length);			
+		//bootbox.alert(table.rows.length);			
 		if(table.rows.length>accntLength)
 		{
-		  alert("No more Account Codes to select!...");
+			bootbox.alert("No more Account Codes to select!...");
 		  return;
 		}
 	    //addGrid(table);
@@ -315,7 +315,7 @@ var subGLcodes="<%= subGLcodes %>";
 		var table = document.getElementById(TableId);
 		if(!table || !table.rows) return false;	
 		var schLineItemGrid=document.getElementById('schLineItem');
-		if(schLineItemGrid.rows.length<=2) { alert('There should be atleast one line item'); return false;}
+		if(schLineItemGrid.rows.length<=2) { bootbox.alert('There should be atleast one line item'); return false;}
 		removeGrid(document.getElementById(TableId),1);
 	}
   }
@@ -373,7 +373,7 @@ var subGLcodes="<%= subGLcodes %>";
   {
     if(!validateCombo("repType"))
     {
-      alert("Select any one of Report Type Options");
+    	bootbox.alert("Select any one of Report Type Options");
       return;
     }
     var repType=document.getElementById("repType")
@@ -381,18 +381,18 @@ var subGLcodes="<%= subGLcodes %>";
     {
 	    if(!validateCombo("repSubType"))
 	    {
-	      alert("Select any one of Sub-Report Type Options");
+	    	bootbox.alert("Select any one of Sub-Report Type Options");
 	      return;
 	    }
 	}
 	if(!chkAccountCode())
 	{
-		alert('Duplicate Account Codes are not allowed\n \t\tor \n Delete empty rows if exists by pressing "Delete" button');
+		bootbox.alert('Duplicate Account Codes are not allowed\n \t\tor \n Delete empty rows if exists by pressing "Delete" button');
 		return false;
 	}
 	if(!chkAccountCodeRowEmpty())
 	{
-		alert('Account Code can not be empty\n \t\tor \n Delete empty rows if exists by pressing "Delete" button');
+		bootbox.alert('Account Code can not be empty\n \t\tor \n Delete empty rows if exists by pressing "Delete" button');
 		return false;
 	}
 
@@ -407,9 +407,9 @@ var subGLcodes="<%= subGLcodes %>";
 	   document.getElementById("repLineItem").disabled=false;
 	   document.getElementById("isRemission").disabled=false;
 	}
-	//alert("submit");
+	//bootbox.alert("submit");
 	PageManager.UpdateService.submitForm('scheduleMaster');
-	//alert("submited");
+	//bootbox.alert("submited");
 	
   }
   function chkAccountCode()
@@ -420,7 +420,7 @@ var subGLcodes="<%= subGLcodes %>";
 
 	  	 // rowObj=PageManager.DataService.getControlInBranch(table.rows[i]);
 	  	  accNo=PageManager.DataService.getControlInBranch(table.rows[i],'accnt_Code');
-	  	 // alert("Acc no:"+accNo+"**"+accNo.value);
+	  	 // bootbox.alert("Acc no:"+accNo+"**"+accNo.value);
 	 	 accNo=accNo.value;
 	  	 accNo=accNo.toLowerCase();
 	  	  for(var j=i+1;j<table.rows.length;j++)
@@ -446,7 +446,7 @@ var subGLcodes="<%= subGLcodes %>";
   	   {
     	  	  accNo=PageManager.DataService.getControlInBranch(table.rows[i],'accnt_Code');
   	  	  accNo=accNo.value;
-    	  	//alert("accNo----->"+accNo);
+    	  	//bootbox.alert("accNo----->"+accNo);
   	  	  if(!accNo!="")
   	  	  return false;
   		  

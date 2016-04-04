@@ -49,12 +49,15 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egadtax_revenueinspectors")
 @SequenceGenerator(name = RevenueInspector.SEQ_REVENUE_INSPECTORS, sequenceName = RevenueInspector.SEQ_REVENUE_INSPECTORS, allocationSize = 1)
+@Unique(id = "id", tableName = "egadtax_revenueinspectors", columnName = { "code" }, fields = {
+"code" }, enableDfltMsg = true)
 public class RevenueInspector  extends AbstractPersistable<Long> { 
 
     private static final long serialVersionUID = -8688346654911767440L;
@@ -72,6 +75,12 @@ public class RevenueInspector  extends AbstractPersistable<Long> {
     private String name;
 
     private boolean active;
+    
+    @NotNull
+    @SafeHtml
+    @Length(max = 50)
+    @Column(name = "code", unique = true)
+    private String code;
 
     @Override
     public Long getId() {
@@ -97,6 +106,14 @@ public class RevenueInspector  extends AbstractPersistable<Long> {
 
     public void setActive(final boolean active) {
         this.active = active;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
 }

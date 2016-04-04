@@ -870,7 +870,7 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     public String getApprovedValue() {
-        return worksService.getWorksConfigValue("WORKS_PACKAGE_STATUS");
+        return WorksConstants.APPROVED;
     }
 
     public String getLastStatus() {

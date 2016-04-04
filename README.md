@@ -1,4 +1,4 @@
-# eGov Opensource [![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Master)](http://ci.egovernments.org/job/eGov-Github-Master/) [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# [eGov Opensource][GHPAGE] [![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Master)](http://ci.egovernments.org/job/eGov-Github-Master/) [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 eGovernments Foundation transforms urban governance with the use of scalable and replicable technology solutions that enable efficient and effective municipal operations, better decision making, and contact-less urban service delivery.
 
@@ -17,6 +17,7 @@ The eGov suit is released under version 3.0 of the [GPL][].
 
 ## User Guide
 This section contains steps that are involved in build and deploy the application.
+FAQ related to various deployment and development issues are discussed [here][FAQ]
 
 #### Prerequisites
 
@@ -98,6 +99,29 @@ One can override any default settings available in `/egov/egov-egi/src/main/reso
 
  ```bash
  mvn clean package -s settings.xml -Ddb.user=<db_username> -Ddb.password=<db_password> -Ddb.driver=<driver_class_fqn> -Ddb.url=<jdbc_url>
+ ```
+
+#### Redis Server Setup
+
+By default eGov suit uses embedded redis server (work only in Linux & OSx), to make eGov suit works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
+ 
+1. Installing redis server on Linux
+ 
+ ```bash
+ sudo apt-get install redis-server
+ ```
+2. Installing redis server on Windows :- There is no official installable avialable for Windows OS. To install redis on Windows OS, follow the instruction given in https://chocolatey.org/packages/redis-64
+
+3. Once installed, set the below property in ```egov-erp-override.properties``` or ```egov-erp-<username>.properties```. 
+
+ ```properties
+ redis.enable.embedded=false ## true by default
+ ```
+ to control the redis server host and port use the following property values (only required if installed with non default).
+
+ ```properties
+ redis.host.name=<your_redis_server_host> ## localhost by default
+ redis.host.port=<your_redis_server_port> ## 6379 by default
  ```
 
 #### Deploying Application
@@ -243,7 +267,9 @@ Browser:-
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.1.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Flyway]: http://flywaydb.org/documentation/
-[eGov Tools Repository]: http://182.74.137.193/downloads/
+[eGov Tools Repository]: http://downloads.egovernments.org/
 [PostgreSQL]: http://www.postgresql.org/download/
 [Maven]: http://maven.apache.org/download.cgi
 [GPL]: http://www.gnu.org/licenses/
+[FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
+[GHPAGE]:http://egovernments.github.io/eGov/

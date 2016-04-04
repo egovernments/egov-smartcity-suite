@@ -53,7 +53,7 @@ div.topbar {
 
 
 input.buttonfinal {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 10px;
 	font-weight: bolder;
 	padding-top: -2px;
@@ -85,7 +85,7 @@ input.buttonfinal {
 }
 
 input.buttonfinal1 {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	font-weight: bolder;
 	padding-top: -2px;
@@ -116,7 +116,7 @@ input.buttonadd {
 }
 
 .selectwk {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000000;
 	background-color: #FFFFFF;
@@ -128,7 +128,7 @@ input.buttonadd {
 }
 
 .selectamountwk {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	font-weight: bold;
 	color: #000000;
@@ -142,7 +142,7 @@ input.buttonadd {
 }
 
 .selectmultilinewk {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000000;
 	background-color: #FFFFFF;
@@ -155,7 +155,7 @@ input.buttonadd {
 }
 
 .slnowk {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000000;
 	background-color: #FFFFFF;
@@ -169,7 +169,7 @@ input.buttonadd {
 }
 
 .selectboldwk {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	font-weight: bolder;
 	color: #000000;
@@ -189,7 +189,7 @@ div.formheading {
 }
 
 div.insidecontent {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	color: #333333;
 	background-color: #F3F3F3;
@@ -239,7 +239,7 @@ div.insidecontent {
 	padding-right: 12px;
 	padding-bottom: 0px;
 	padding-left: 12px;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	font-weight: normal;
 	color: #333333;
@@ -328,7 +328,7 @@ div.datewk {
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	border-bottom-color: #BABABB;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #00639B;
 	text-align: right;
@@ -347,7 +347,7 @@ UNKNOWN {
 	background-image: url(/egi/resources/erp2/images/bg.gif);
 	background-repeat: repeat-x;
 	background-position: 50% bottom;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-weight: bold;
 }
 
@@ -385,7 +385,7 @@ UNKNOWN {
 	background-image: url(../image/right.gif);
 	background-repeat: no-repeat;
 	background-position: right top;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 }
 
@@ -415,7 +415,7 @@ td.whiteboxwk {
 	padding-left: 25px;
 	color: #000000;
 	text-align: right;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #FFFFFF;
 	white-space: nowrap;
 }
@@ -428,7 +428,7 @@ td.whitebox2wk {
 	padding-left: 5px;
 	color: #333333;
 	text-align: left;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #FFFFFF;
 	white-space: nowrap;
 }
@@ -441,7 +441,7 @@ td.whitebox3wk {
 	padding-left: 5px;
 	color: #333333;
 	text-align: left;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #FFFFFF;
 	white-space: nowrap;
 }
@@ -454,7 +454,7 @@ td.whiteboxwkwrap {
 	padding-left: 5px;
 	color: #333333;
 	text-align: left;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #FFFFFF;
 }
 
@@ -466,7 +466,7 @@ td.whitebox3wka {
 	padding-left: 5px;
 	color: #333333;
 	text-align: left;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	white-space: nowrap;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
@@ -487,7 +487,7 @@ td.whiteboxamount {
 	padding-left: 5px;
 	color: #333333;
 	text-align: right;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	white-space: nowrap;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
@@ -508,7 +508,7 @@ td.whitebox3wka1 {
 	padding-left: 5px;
 	color: #333333;
 	text-align: left;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-left-width: 1px;
@@ -527,7 +527,7 @@ td.whitebox4wknoalign {
 	padding-right: 5px;
 	padding-left: 5px;
 	color: #333333;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #EBEFF3;
 	white-space: nowrap;
 }
@@ -540,7 +540,7 @@ td.whitebox4wk {
 	padding-left: 5px;
 	color: #333333;
 	text-align: left;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #EBEFF3;
 	white-space: nowrap;
 }
@@ -553,7 +553,7 @@ td.greyboxwk {
 	padding-left: 25px;
 	color: #000000;
 	text-align: right;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #F1F1F1;
 	border-top-style: double;
 	border-top-color: #E3E3E3;
@@ -572,7 +572,7 @@ td.greybox2wk {
 	padding-left: 5px;
 	color: #333333;
 	text-align: left;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #F1F1F1;
 	border-top-style: double;
 	border-top-color: #E3E3E3;
@@ -584,7 +584,7 @@ td.greybox2wk {
 }
 
 .formrelatedmk {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #333333;
 	border: #999999;
@@ -618,7 +618,7 @@ td.headingwk {
 	border-right-color: #CED6DE;
 	border-bottom-color: #FFFFFF;
 	border-left-color: #CED6DE;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: bold;
 	color: #000000;
@@ -630,7 +630,7 @@ td.headingwk {
 }
 
 td.tablesubheadwk {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #E8EDF1;
 	text-align: left;
 	padding-top: 4px;
@@ -647,7 +647,7 @@ td.tablesubheadwk {
 }
 
 td.choosecategorydrop {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #E8EDF1;
 	text-align: left;
 	font-size: 11px;
@@ -666,7 +666,7 @@ td.choosecategorydrop {
 }
 
 td.tablesubheadwka {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #E8EDF1;
 	padding-top: 6px;
 	padding-right: 5px;
@@ -708,7 +708,7 @@ div.shadowwk3 {
 }
 
 .epstylewk {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #00639B;
 	text-decoration: underline;
@@ -780,12 +780,7 @@ div.headplacer {
 }
 
 div.estimateno {
-	width: 50%;
-	float: left;
-	font-size: 12px;
-	font-weight: bold;
-	color: #000000;
-	text-align: left;
+	font-family:semibold;
 }
 
 div.estimateno2 {
@@ -810,7 +805,7 @@ div.errorstyle {
 	margin-bottom: 10px;
 	padding: 10px;
 	background-color: #FFFFEE;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border: 1px solid #EEEE00;
 }
 
@@ -957,7 +952,7 @@ div.homeheadingnewl {
 }
 
 input.highlight {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000000;
 	background-color: #FFFFFF;
@@ -1093,7 +1088,7 @@ div.scrollerboxaddestimate {
 }
 
 select {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000000;
 	background-color: #FFFFFF;
@@ -1176,7 +1171,7 @@ table#table-header th {
 	overflow: hidden;
 	border-left: 1px solid #D1D9E1;
 	color: #00639B;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	font-weight: bold;
 	line-height: 12px;
@@ -1202,7 +1197,7 @@ div#header-container {
 
 table#table-body td {
 	color: #333333;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 10px;
 	text-align: left;
 	line-height: 12px;
@@ -1219,8 +1214,8 @@ th.pagetableth {
 	overflow: hidden;
 	border-left: 1px solid #D1D9E1;
 	color: #00639B;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11px;
+	font-family: semibold;
+	font-size: 12px;
 	font-weight: bold;
 	line-height: 12px;
 	padding: 3px;
@@ -1230,8 +1225,8 @@ th.pagetableth {
 
 td.pagetabletd{
 	color: #333333;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 10px;
+	font-family: regular;
+	font-size: 12px;
 	text-align: left;
 	line-height: 12px;
 	overflow: hidden;
@@ -1239,10 +1234,15 @@ td.pagetabletd{
 	padding: 3px;
 }
 
+td.pagetabletd .btn
+{
+	font-size:12px;
+}
+
 td.pagetabletdAmount{
 	color: #333333;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 10px;
+	font-family: regular;
+	font-size: 12px;
 	text-align: right;
 	line-height: 12px;
 	overflow: hidden;
@@ -1250,5 +1250,8 @@ td.pagetabletdAmount{
 	padding-right: 3px;
 }
 
+.yui-dt table {
+    width: 100%;
+}
 
 	

@@ -38,6 +38,10 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_FATHER;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_HUSBAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_MOTHER;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 
 import java.math.BigDecimal;
@@ -47,6 +51,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.workflow.entity.StateAware;
 
 public class PropertyMutation extends StateAware {
@@ -65,7 +70,8 @@ public class PropertyMutation extends StateAware {
     private BasicProperty basicProperty;
     private Property property;
     private List<User> transferorInfos = new ArrayList<>();
-    private List<User> transfereeInfos = new ArrayList<>();
+    private List<PropertyMutationTransferee> transfereeInfos = new ArrayList<PropertyMutationTransferee>();
+    private List<PropertyMutationTransferee> transfereeInfosProxy = new ArrayList<PropertyMutationTransferee>();
     private boolean feePayable;
     private String deedNo;
     private Date deedDate;
@@ -193,14 +199,6 @@ public class PropertyMutation extends StateAware {
         this.transferorInfos = transferorInfos;
     }
 
-    public List<User> getTransfereeInfos() {
-        return transfereeInfos;
-    }
-
-    public void setTransfereeInfos(final List<User> transfereeInfos) {
-        this.transfereeInfos = transfereeInfos;
-    }
-
     public boolean isFeePayable() {
         return feePayable;
     }
@@ -254,18 +252,32 @@ public class PropertyMutation extends StateAware {
     }
 
     public String getFullTranferorName() {
-        return buildOwnerName(getTransferorInfos());
+        return buildTransferorOwnerName(getTransferorInfos());
     }
 
     public String getFullTransferorGuardianName() {
-        return buildGuarianName(getTransferorInfos());
+        return buildTransferorGuarianName(getTransferorInfos());
     }
 
     public String getFullTransfereeGuardianName() {
         return buildGuarianName(getTransfereeInfos());
     }
 
-    private String buildGuarianName(final List<User> userInfo) {
+    public String getTransfereeGuardianRelation(){
+    	return buildOwnerGuardianRelation(getTransfereeInfos());
+    }
+    
+    private String buildGuarianName(final List<PropertyMutationTransferee> userInfo) {
+        final StringBuilder guardianName = new StringBuilder();
+        for (final PropertyMutationTransferee owner : userInfo)
+            if (StringUtils.isNotBlank(owner.getTransferee().getGuardian()))
+                guardianName.append(owner.getTransferee().getGuardian()).append(", ");
+        if (guardianName.length() > 0)
+            guardianName.deleteCharAt(guardianName.length() - 2);
+        return guardianName.toString();
+    }
+    
+    private String buildTransferorGuarianName(final List<User> userInfo) {
         final StringBuilder guardianName = new StringBuilder();
         for (final User owner : userInfo)
             if (StringUtils.isNotBlank(owner.getGuardian()))
@@ -275,7 +287,17 @@ public class PropertyMutation extends StateAware {
         return guardianName.toString();
     }
 
-    private String buildOwnerName(final List<User> userInfos) {
+    private String buildOwnerName(final List<PropertyMutationTransferee> userInfos) {
+        final StringBuilder ownerName = new StringBuilder();
+        for (final PropertyMutationTransferee owner : userInfos)
+            ownerName.append(owner.getTransferee().getName()).append(", ");
+        if (ownerName.length() > 0)
+            ownerName.deleteCharAt(ownerName.length() - 2);
+        return ownerName.toString();
+    }
+    
+    
+    private String buildTransferorOwnerName(final List<User> userInfos) {
         final StringBuilder ownerName = new StringBuilder();
         for (final User owner : userInfos)
             ownerName.append(owner.getName()).append(", ");
@@ -284,10 +306,36 @@ public class PropertyMutation extends StateAware {
         return ownerName.toString();
     }
 
+    private String buildOwnerGuardianRelation(final List<PropertyMutationTransferee> userInfo) {
+        final StringBuilder ownerGuardianRelation = new StringBuilder();
+        String relation = "";
+        for (final PropertyMutationTransferee owner : userInfo){
+            if (StringUtils.isNotBlank(owner.getTransferee().getGuardian())){
+            	ownerGuardianRelation.append(owner.getTransferee().getName());
+            	if(owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_FATHER) || owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_MOTHER)){
+            		if(owner.getTransferee().getGender().equals(Gender.FEMALE))
+            			relation = " D/O ";
+            		else if(owner.getTransferee().getGender().equals(Gender.MALE))
+                		relation = " S/O ";
+            	}
+            	else if(owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_HUSBAND))
+            		relation = " W/O ";
+            	else if(owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_WIFE))
+            		relation = " H/O ";
+            	else
+            		relation = " C/O ";
+            	ownerGuardianRelation.append(relation).append(owner.getTransferee().getGuardian()).append(", ");
+            }
+        }    	
+        if (ownerGuardianRelation.length() > 0)
+        	ownerGuardianRelation.deleteCharAt(ownerGuardianRelation.length() - 2);
+        return ownerGuardianRelation.toString();
+    }
+    
     public User getPrimaryTransferee() {
         User user = new User();
-        for (final User transferee : getTransfereeInfos()) {
-            user = transferee;
+        for (final PropertyMutationTransferee transferee : getTransfereeInfos()) {
+            user = transferee.getTransferee();
             break;
         }
         return user;
@@ -317,6 +365,30 @@ public class PropertyMutation extends StateAware {
 
     public void setSource(Character source) {
         this.source = source;
+    }
+
+    public List<PropertyMutationTransferee> getTransfereeInfos() {
+        return transfereeInfos;
+    }
+
+    public void setTransfereeInfos(List<PropertyMutationTransferee> transfereeInfos) {
+        this.transfereeInfos = transfereeInfos;
+    }
+    
+    public void addTransfereeInfos(final PropertyMutationTransferee transfereeInfo) {
+        getTransfereeInfos().add(transfereeInfo);
+    }
+
+    public void removeTransfereeInfos(final PropertyMutationTransferee transfereeInfo) {
+        getTransfereeInfos().remove(transfereeInfo);
+    }
+
+    public List<PropertyMutationTransferee> getTransfereeInfosProxy() {
+        return transfereeInfosProxy;
+    }
+
+    public void setTransfereeInfosProxy(List<PropertyMutationTransferee> transfereeInfosProxy) {
+        this.transfereeInfosProxy = transfereeInfosProxy;
     }
 
    

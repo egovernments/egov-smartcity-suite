@@ -202,5 +202,64 @@
         <put-attribute name="page-title" value="title.dailyCollectionReport" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dailyWTCollection-search.jsp"/>
     </definition>
-     
+    <definition name="category-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master.jsp"/>
+    </definition>
+     <definition name="category-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-success.jsp"/>
+    </definition>
+    <definition name="category-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-list.jsp"/>
+    </definition>
+    <definition name="application-process-time-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master.jsp"/>
+    </definition>
+    <definition name="application-process-time-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-success.jsp"/>
+    </definition>
+     <definition name="document-name-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/document-name-master.jsp"/>
+    </definition>
+    <definition name="document-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/document-master-success.jsp"/>
+    </definition>
+    <definition name="usage-type-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-master.jsp"/>
+    </definition>
+     <definition name="usage-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-master-success.jsp"/>
+    </definition>
+    <definition name="usage-type-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-master-view.jsp"/>
+    </definition> 
+    <definition name="pipesize-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master.jsp"/>
+    </definition>
+    <definition name="pipesize-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-success.jsp"/>
+    </definition>
+    <definition name="defaultersWTReport-search" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.defaultersReport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/defaultersWTReport-search.jsp"/>
+    </definition>
+    <definition name="dcbview-migdata" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.migrateddata" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dcbViewMigratedData.jsp"/>
+    </definition>
+    <definition name="waterRates-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master-view.jsp"/>
+    </definition>
 </tiles-definitions>

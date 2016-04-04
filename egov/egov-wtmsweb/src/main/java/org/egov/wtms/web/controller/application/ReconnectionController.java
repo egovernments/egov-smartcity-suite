@@ -163,7 +163,7 @@ public class ReconnectionController extends GenericConnectionController {
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
-
+        String sourceChannel = request.getParameter("Source");
         String workFlowAction = "";
 
         if (request.getParameter("mode") != null)
@@ -194,7 +194,7 @@ public class ReconnectionController extends GenericConnectionController {
         final String addrule = request.getParameter("additionalRule");
         // waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
         final WaterConnectionDetails savedWaterConnectionDetails = reconnectionService.updateReConnection(
-                waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction);
+                waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction,sourceChannel);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());

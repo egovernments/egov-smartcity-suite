@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -27,6 +26,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 
 public class PropertyPersistenceService extends PersistenceService<BasicProperty, Long> {
 
@@ -53,8 +53,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
                 else
-                    user = (User) find("From User where name = ? and mobileNumber = ? and gender = ? ", ownerInfo.getOwner()
-                            .getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner().getGender());
+                    user = (User) find("From User where name = ? and mobileNumber = ? and gender = ? ", ownerInfo
+                            .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
+                            .getGender());
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
                     newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
@@ -68,14 +69,14 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     newOwner.setPassword("NOT SET");
                     newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
                     userService.createUser(newOwner);
-                    persistUponPaymentResponse( basicProperty);
+                    persistUponPaymentResponse(basicProperty);
                     ownerInfo.setBasicProperty(basicProperty);
                     ownerInfo.setOwner(newOwner);
                     ownerInfo.setOrderNo(orderNo);
                     LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(ownerAddress);
                 } else {
-                	//If existing user, then do not add correspondence address
+                    // If existing user, then do not add correspondence address
                     user.setEmailId(ownerInfo.getOwner().getEmailId());
                     user.setGuardian(ownerInfo.getOwner().getGuardian());
                     user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
@@ -90,22 +91,20 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
     }
 
     public BasicProperty persistUponPaymentResponse(BasicProperty basicProperty) {
-       return basicProperty;
+        return basicProperty;
     }
-    
-    public BasicProperty createBasicProperty(BasicProperty basicProperty,HashMap meesevaParams) {
-        return   persist(basicProperty);
-     }
-     
-  
-    
-    
-    public ReportOutput propertyAcknowledgement(PropertyImpl property,String cityLogo,String cityName) {
+
+    public BasicProperty createBasicProperty(BasicProperty basicProperty, HashMap meesevaParams) {
+        return persist(basicProperty);
+    }
+
+    public ReportOutput propertyAcknowledgement(PropertyImpl property, String cityLogo, String cityName) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setOwnerName(property.getBasicProperty().getFullOwnerName());
         ackBean.setOwnerAddress(property.getBasicProperty().getAddress().toString());
-        ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(property.getBasicProperty().getCreatedDate()));
+        ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(property.getBasicProperty()
+                .getCreatedDate()));
         ackBean.setApplicationNo(property.getApplicationNo());
         ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(property.getState().getCreatedDate()));
         final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
@@ -116,5 +115,36 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         final ReportRequest reportInput = new ReportRequest(CREATE_ACK_TEMPLATE, ackBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         return reportService.createReport(reportInput);
+    }
+
+    public String updateOwners(Property property, BasicProperty basicProperty, String doorNumber,
+            final BindingResult errors) {
+        LOGGER.debug("Update Owner and door number for property: " + property + ", basicProperty: " + basicProperty
+                + ", doorNumber: " + doorNumber);
+        basicProperty.getAddress().setHouseNoBldgApt(doorNumber);
+        StringBuilder errorMesg = new StringBuilder();
+        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
+            if (ownerInfo != null) {
+                User user = null;
+                for (Address address : ownerInfo.getOwner().getAddress()) {
+                    address.setHouseNoBldgApt(doorNumber);
+                }
+                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
+                    user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                if (user == null || user.getId().equals(ownerInfo.getOwner().getId())) {
+                    userService.updateUser(ownerInfo.getOwner());
+                } else {
+                    BasicProperty basicProp = find("select basicProperty from PropertyOwnerInfo where owner = ?",user.getId());
+                    errorMesg.append("With entered aadhar number - ").append(ownerInfo.getOwner().getAadhaarNumber())
+                            .append(" there is already owner present with owner name: ")
+                            .append(user.getName()).append(" for assessment number : ")
+                            .append(basicProp.getUpicNo());
+                    break;
+                }
+            }
+        }
+        persist(basicProperty);
+        LOGGER.debug("Exit from updateOwners");
+        return errorMesg.toString();
     }
 }

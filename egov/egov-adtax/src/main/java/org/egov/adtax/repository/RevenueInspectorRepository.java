@@ -49,4 +49,5 @@ public interface RevenueInspectorRepository extends JpaRepository<RevenueInspect
     RevenueInspector findByName(String name);
 
     List<RevenueInspector> findByActiveTrueOrderByNameAsc();
+   
 }

@@ -66,6 +66,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     public List<Employee> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
             @Param("desigId") final Long desigId, @Param("boundaryIds") final Set<Long> boundaryIds);
 
+    public List<Employee> findByNameLikeOrCodeLike(String name, String code);
+
     public Employee findByName(String name);
 
 }

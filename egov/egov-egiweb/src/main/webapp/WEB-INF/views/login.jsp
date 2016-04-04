@@ -59,14 +59,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta name="description" content="eGov Urban Portal" />
 		<meta name="author" content="eGovernments Foundation" />
-		
+        <spring:eval expression="@environment.getProperty('app.core.build.no')" scope="application" var="buildno"/>
 		<title>eGov Urban Portal Login</title>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/header-custom.css">
+		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -104,6 +103,11 @@
 			</header>
 			<div class="main-content">
 				<div class="row top-space">
+				    <div class="text-center error-msg">
+					<noscript>
+					    	You don't have javascript enabled.  Make sure Javascript is enabled.
+					</noscript>
+					</div>
 					<div class="col-md-6 side-space">
 						<div class="col-md-12 community-card">
 							<a href="/portal/citizen/register" target="_blank">
@@ -156,6 +160,8 @@
 								<div class="form-group">
 									<div class="signin-title"><spring:message code="lbl.login"/></div>
 								</div>
+								<input style="display:none" type="text">
+								<input style="display:none" type="password" />
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
@@ -174,8 +180,16 @@
 										</div>
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
-											autocomplete="off" required="required" /> <span
+											autocomplete="new-password" required="required" /> <span
 											class="mandatory set-mandatory"></span>
+									</div>
+								</div>
+								<div class="form-group display-hide" id="counter-section">
+									<div class="input-group">
+										<div class="input-group-addon style-label">
+											<i class="entypo-location theme-color style-color"></i>
+										</div>
+										<select class="form-control style-form" name="locationId" id="locationId"></select>
 									</div>
 								</div>
 								<c:if test="${param.error}">
@@ -232,12 +246,12 @@
 								</c:if>
 								<div class="form-group signin-leftpadding">
 									<button type="submit"
-										class="btn btn-custom btn-block btn-login signin-submit">
+										class="btn btn-custom btn-block btn-login signin-submit" id="signin-action">
 										<i class="entypo-login"></i><spring:message code="lbl.login"/>
 									</button>
 								</div>
 								<div class="row">
-									<div class="col-md-12 col-xs-12 text-right"
+									<div class="col-md-12 col-xs-12 text-right add-margin"
 										style="font-size: 12px;">
 										<a href="javascript:void(0);" data-toggle="modal"
 											data-target="#fpassword" data-backdrop="static"><spring:message code="lbl.forgot.pwd"/></a>
@@ -319,9 +333,22 @@
 				</div>
 			</div>
 		</div>
+		<div class="modal fade" id="cookieornoscript" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Enable Cookies</h4>
+					</div>
+					<div class="modal-body">
+						Oops! Your browser seems to have cookies disabled. Make sure cookies are enabled or try opening a new browser window.
+					</div>
+				</div>
+			</div>
+		</div>
 		<script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
-		<script src="/egi/resources/global/js/egov/custom.js" type="text/javascript"></script>
-		<script src="/egi/resources/js/app/login.js" type="text/javascript"></script>
+		<script src="/egi/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
+		<script src="/egi/resources/global/js/jquery/plugins/jquery.validate.min.js"></script>
+		<script src="/egi/resources/js/app/login.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
 	</body>
 </html>
 <%session.invalidate();%>

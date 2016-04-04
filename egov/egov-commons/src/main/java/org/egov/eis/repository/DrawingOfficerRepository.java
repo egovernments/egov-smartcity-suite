@@ -57,5 +57,8 @@ public interface DrawingOfficerRepository extends JpaRepository<DrawingOfficer, 
     List<DrawingOfficer> findByNameContainingIgnoreCase(String name);
     
     List<DrawingOfficer> findByCodeContainingIgnoreCase(String code);
+    
+    public List<DrawingOfficer> findByNameLikeOrCodeLike(String name, String code);
+
 
 }

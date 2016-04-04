@@ -1,42 +1,42 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!--
 	Report Name : STATEMENT OF OUTSTANDING LIABILITY FOR EXPENSES FOR CONTRACTORS/SUPPLIERS
 	Author		: Ilayaraja P
@@ -58,18 +58,18 @@
 		<META http-equiv=pragma content=no-cache>
 		<link rel=stylesheet href="../css/egov.css" type="text/css" media="screen, print"/>
 
-		<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js"></SCRIPT>
-		<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
-		<SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>
-		<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-		<script LANGUAGE="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
-		<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js"></SCRIPT>
+		<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js?rnd=${app_release_no}"></SCRIPT>
+		<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js?rnd=${app_release_no}"></SCRIPT>
+		<SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js?rnd=${app_release_no}"></SCRIPT>
+		<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js?rnd=${app_release_no}"></SCRIPT>
+		<script LANGUAGE="javascript" src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+		<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js?rnd=${app_release_no}"></SCRIPT>
 		<script type="text/javascript" src="../commonyui/build/yahoo/yahoo.js"></script>
 		<script type="text/javascript" src="../commonyui/build/dom/dom.js" ></script>
 		<script type="text/javascript" src="../commonyui/build/autocomplete/autocomplete-debug.js"></script>
 		<script type="text/javascript" src="../commonyui/build/event/event-debug.js"></script>
 		<script type="text/javascript" src="../commonyui/build/animation/animation.js"></script>
-		<script language="javascript" src="../resources/javascript/ajaxCommonFunctions.js"></script>
+		<script language="javascript" src="../resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
 		
 		<link type="text/css" rel="stylesheet" href="../commonyui/build/reset/reset.css">
 		<link type="text/css" rel="stylesheet" href="../commonyui/build/fonts/fonts.css">
@@ -95,7 +95,7 @@
 			function onLoad()
 			{
 				PageValidator.addCalendars();
-				loadSelectData('../commonyui/egov/loadComboAjax.jsp', "fund", "id", "name", " isactive=1 and isnotleaf!=1", 'dummy', 'fund');
+				loadSelectData('../commonyui/egov/loadComboAjax.jsp', "fund", "id", "name", " isactive=true and isnotleaf!=true", 'dummy', 'fund');
 				var fromBean = '<%=request.getParameter("fromBean")%>';
 				PageManager.DataService.callDataService('companyDetailData'); 
 				if(fromBean==null || fromBean=='null')
@@ -246,7 +246,7 @@
 				var endDate = document.getElementById('endDate').value;
 				if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 				{
-							alert('Start Date cannot be greater than End Date');
+					bootbox.alert('Start Date cannot be greater than End Date');
 							document.getElementById('startDate').value='';
 							document.getElementById('endDate').value='';
 							document.getElementById('startDate').focus();
@@ -573,7 +573,7 @@
 						
 						 %>
 						 <script>
-							 alert("Error :<%=e.getMessage()%>");
+						 bootbox.alert("Error :<%=e.getMessage()%>");
 						 </script>
 						 <%
 					}

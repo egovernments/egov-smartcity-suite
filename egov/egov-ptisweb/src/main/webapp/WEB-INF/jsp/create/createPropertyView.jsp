@@ -172,42 +172,7 @@
 	<td class="greybox siteowner"><s:text name="siteowner"/> :</td>
 		<td class="greybox siteowner"><span class="bold"><s:property default="N/A" value="%{propertyDetail.siteOwner}" /> </span></td>
 	</tr>
-	<tr class="bpddetailsheader">
-	<td class="greybox" width="5%">&nbsp;</td>
-	<td class="greybox"><s:text name="builidingdetails"></s:text> :</td>
-	<td class="greybox" width="20%">
-	<s:if test="propertyDetail.buildingPlanDetailsChecked == true">
-				<span class="bold">Yes</span>
-			</s:if> <s:else>
-				<span class="bold">No</span>
-			</s:else>
-		</td>
-	</tr>
 	
-	<tr class="bpddetails">
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{propertyDetail.buildingPermissionNo}" default="N/A"/></span>
-		</td>
-		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox">
-		    <s:date name="%{propertyDetail.buildingPermissionDate}" var="buildingPermNo" format="dd/MM/yyyy" />
-			<span class="bold"><s:property value="%{#buildingPermNo}" default="N/A"/></span>
-		</td>
-
-	</tr>
-	<tr class="bpddetails">
-	<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
-		<td class="greybox" width="">
-			<span class="bold">
-				<s:if test='%{propertyDetail.deviationPercentage == ""}'>N/A</s:if>
-				<s:else><s:property value="%{propertyDetail.deviationPercentage}" default="N/A"/></s:else>
-			</span>
-		</td>
-	
-	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>

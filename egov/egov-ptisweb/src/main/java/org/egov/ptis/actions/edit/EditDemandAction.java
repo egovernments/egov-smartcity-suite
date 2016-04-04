@@ -1,5 +1,5 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+n * eGov suite of products aim to improve the internal efficiency,transparency, 
  *    accountability and the service delivery of the government  organizations.
  * 
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -145,10 +145,10 @@ public class EditDemandAction extends BaseFormAction {
             + "LEFT JOIN ptd.egDemandDetails dd " + "LEFT JOIN ptd.egptProperty p " + "LEFT JOIN  p.basicProperty bp "
             + "WHERE bp = ? " + "AND bp.active = true " + "AND p.status = 'A' ";
 
-    private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS + "AND dd.amount > 0 ";
+    private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS /*+ "AND dd.amount > 0 "*/;
 
     private static final String queryInstallmentDemandDetails = QUERY_NONZERO_DEMAND_DETAILS
-            + " AND ptd.egInstallmentMaster = ? ";
+            /*+ " AND ptd.egInstallmentMaster = ? "*/;
 
     private static final String EDIT_TYPE_DEMAND = "Demand";
     private static final String EDIT_TYPE_COLLECTION = "Collection";
@@ -345,9 +345,8 @@ public class EditDemandAction extends BaseFormAction {
         } else {
             ownerName = basicProperty.getFullOwnerName();
             propertyAddress = basicProperty.getAddress().toString();
-            demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty,
-                    propertyTaxUtil.getCurrentInstallment());
-
+            demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty/*,*/
+                    /*propertyTaxUtil.getCurrentInstallment()*/);
             if (!demandDetails.isEmpty()) {
                 Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
                     @Override
@@ -614,7 +613,7 @@ public class EditDemandAction extends BaseFormAction {
         }
 
         List<EgDemandDetails> currentInstdemandDetailsFromDB = getPersistenceService().findAllBy(
-                queryInstallmentDemandDetails, basicProperty, propertyTaxUtil.getCurrentInstallment());
+                queryInstallmentDemandDetails, basicProperty/*, propertyTaxUtil.getCurrentInstallment()*/);
 
         EgDemand currentPtdemand = null;
         if (!currentInstdemandDetailsFromDB.isEmpty())

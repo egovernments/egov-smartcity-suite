@@ -155,7 +155,7 @@ function setHiddenValueByLink(obj, param, event, boundaryId) {
 	$('input[name=' + $(obj).data('hiddenele') + ']')
 			.val($(obj).data('eleval'));
 	if (param.value == 'property') {
-		window.open("/ptis/view/viewProperty-viewForm.action?propertyId="
+		window.open("/wtms/viewDcb/consumerCodeWis/"
 				+ boundaryId, '',
 				'scrollbars=yes,width=1000,height=700,status=yes');
 	} else {
@@ -252,7 +252,7 @@ function callAjaxByBoundary(event) {
 								} else {
 									return {
 										name : row.hscno,
-										id : row.propertyid
+										id : row.hscno
 									};
 								}
 							},
@@ -262,14 +262,14 @@ function callAjaxByBoundary(event) {
 										+ ');" data-hiddenele="boundaryId" data-eleval="'
 										+ data.id + '">' + data.name + '</a>';
 							},
-							"sTitle" : "Number"
-						}, {
-							"data" : "username",
-							"sTitle" : "User Name"
-						}, {
+							"sTitle" : "Municipality Name"
+						},{
+							"data" : "no_of_users",
+							"sTitle" : "No.of Consumer No."
+						},{
 							"data" : "arr_demand",
 							"sTitle" : "Arrears"
-						}, {
+						},{
 							"data" : "curr_demand",
 							"sTitle" : "Current"
 						}, {
@@ -321,10 +321,15 @@ function callAjaxByBoundary(event) {
 					}
 				} ]
 			});
-	jQuery('.loader-class').modal('hide');
+	    jQuery('.loader-class').modal('hide');
 	
-		reportdatatable.fnSetColumnVis(1, true);
-	
+	    if ($('#mode').val() == 'property') {
+	    	reportdatatable.fnSetColumnVis(1, false);
+	    }
+	    else
+    	{
+	       reportdatatable.fnSetColumnVis(1, true);
+    	}
 
 }
 

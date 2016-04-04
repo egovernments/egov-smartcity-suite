@@ -1,41 +1,39 @@
 /*******************************************************************************
  * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
- * 
+ *
  * Copyright (C) <2015> eGovernments Foundation
- * 
+ *
  * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
  * complied with:
- * 
+ *
  * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
- * 
+ *
  * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
  * material be marked in reasonable ways as different from the original version.
- * 
+ *
  * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
  * trade names or trademarks of eGovernments Foundation.
- * 
+ *
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.contra;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Action;
 
+
+import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,33 +45,42 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.services.contra.ContraService;
+import org.egov.services.instrument.InstrumentHeaderService;
+import org.egov.services.instrument.InstrumentOtherDetailsService;
 import org.egov.services.instrument.InstrumentService;
+import org.egov.services.instrument.InstrumentVoucherService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
-import org.springframework.transaction.annotation.Transactional;
+import org.hibernate.search.annotations.CharFilterDef;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 
-@Transactional(readOnly = true)
+
 @Results({
-@Result(name = ContraCTBAction.NEW, location = "contraCTB-"+ContraCTBAction.NEW+".jsp")
+        @Result(name = ContraCTBAction.NEW, location = "contraCTB-" + ContraCTBAction.NEW + ".jsp")
 })
 public class ContraCTBAction extends BaseVoucherAction
 {
@@ -87,15 +94,31 @@ public class ContraCTBAction extends BaseVoucherAction
     private String message;
     private boolean close;
     private InstrumentService instrumentService;
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
+    @Qualifier("instrumentHeaderService")
+    private InstrumentHeaderService instrumentHeaderService;
+    @Autowired
+    @Qualifier("instrumentVoucherService")
+    private InstrumentVoucherService instrumentVoucherService;
+    @Autowired
+    @Qualifier("instrumentOtherDetailsService")
+    private InstrumentOtherDetailsService instrumentOtherDetailsService;
+    @Autowired
+    private ChartOfAccounts chartOfAccounts;
 
     public InstrumentService getInstrumentService() {
         return instrumentService;
     }
 
-    public void setInstrumentService(InstrumentService instrumentService) {
+    public void setInstrumentService(final InstrumentService instrumentService) {
         this.instrumentService = instrumentService;
     }
 
+    @Override
     @SkipValidation
     @Action(value = "/contra/contraCTB-newform")
     public String newform()
@@ -115,7 +138,7 @@ public class ContraCTBAction extends BaseVoucherAction
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA);
         addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
         addDropdownData("accNumList", Collections.EMPTY_LIST);
-        Map<String, Object> boundaryMap = egovCommon.getCashChequeInfoForBoundary();// contraService.getBoundaryLevel();
+        final Map<String, Object> boundaryMap = egovCommon.getCashChequeInfoForBoundary();// contraService.getBoundaryLevel();
         addDropdownData("boundaryLevelList", (List<Boundary>) boundaryMap.get("listBndryLvl"));
         contraBean.setChequeInHand(boundaryMap.get("chequeInHand") != null ? boundaryMap.get("chequeInHand").toString() : null);
         contraBean.setCashInHand(boundaryMap.get("cashInHand") != null ? boundaryMap.get("cashInHand").toString() : null);
@@ -127,7 +150,7 @@ public class ContraCTBAction extends BaseVoucherAction
         mandatoryFields.add("boundarylevel");
     }
 
-@Action(value="/contra/contraCTB-create")
+    @Action(value = "/contra/contraCTB-create")
     public String create() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ContraCTBAction | depositCTB | Start ");
@@ -143,11 +166,12 @@ public class ContraCTBAction extends BaseVoucherAction
                 if (null != contraBean.getMode() && contraBean.getMode().equalsIgnoreCase("edit")) {
 
                     voucherHeader = voucherService.updateVoucherHeader(voucherHeader, voucherTypeBean);
-                    InstrumentVoucher iVoucher = (InstrumentVoucher) persistenceService.find("from InstrumentVoucher where " +
-                            "voucherHeaderId=?", voucherHeader);
-                    Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                    final InstrumentVoucher iVoucher = (InstrumentVoucher) persistenceService.find(
+                            "from InstrumentVoucher where " +
+                                    "voucherHeaderId=?", voucherHeader);
+                    final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                             Integer.valueOf(contraBean.getAccountNumberId()));
-                    InstrumentHeader instrHeader = iVoucher.getInstrumentHeaderId();
+                    final InstrumentHeader instrHeader = iVoucher.getInstrumentHeaderId();
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info("instrument header id " + instrHeader.getBankAccountId().getId());
                     instrHeader.setBankAccountId(bankAccount);
@@ -157,18 +181,18 @@ public class ContraCTBAction extends BaseVoucherAction
                     instrHeader.setTransactionNumber(contraBean.getChequeNumber());
                     try {
                         instrHeader.setTransactionDate(Constants.DDMMYYYYFORMAT2.parse(contraBean.getChequeDate()));
-                    } catch (ParseException e) {
+                    } catch (final ParseException e) {
                         throw new ValidationException(Arrays.asList(new ValidationError("Invalid Referece Date", "invalid.date")));
                     }
 
-                    InstrumentOtherDetails iOther = (InstrumentOtherDetails) persistenceService.find(
+                    final InstrumentOtherDetails iOther = (InstrumentOtherDetails) persistenceService.find(
                             "from InstrumentOtherDetails where instrumentHeaderId=?",
                             instrHeader);
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("cash deposit amount : = " + instrHeader.getInstrumentAmount());
-                    instrumentService.instrumentHeaderService.update(instrHeader);
-                    instrumentService.instrumentVouherService.update(iVoucher);
-                    instrumentService.instrumentOtherDetailsService.update(iOther);
+                    instrumentHeaderService.update(instrHeader);
+                    instrumentVoucherService.update(iVoucher);
+                    instrumentOtherDetailsService.update(iOther);
                     contraService.updateIntoContraJournal(voucherHeader, contraBean);
                     contraService.updateBankreconciliation(instrHeader, contraBean);
                     voucherService.deleteGLDetailByVHId(voucherHeader.getId());
@@ -178,11 +202,13 @@ public class ContraCTBAction extends BaseVoucherAction
                     voucherService.insertIntoRecordStatus(voucherHeader);
                     // contraService.postIntoContraJournal(voucherHeader,contraBean);
                     // contraService.postIntoBankreconciliation(voucherHeader,contraBean);
-                    List<InstrumentHeader> instrumentList = instrumentService.addToInstrument(createInstruments(contraBean));
-                    HibernateUtil.getCurrentSession().flush();
-                    Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                    final List<InstrumentHeader> instrumentList = instrumentService
+                            .addToInstrument(createInstruments(contraBean));
+                    persistenceService.getSession().flush();
+                    final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                             Integer.valueOf(contraBean.getAccountNumberId()));
-                    Map valuesMap = contraService.prepareForUpdateInstrumentDeposit(bankAccount.getChartofaccounts().getGlcode());
+                    final Map valuesMap = contraService.prepareForUpdateInstrumentDeposit(bankAccount.getChartofaccounts()
+                            .getGlcode());
                     contraService.updateCashDeposit(voucherHeader.getId(), bankAccount.getChartofaccounts().getGlcode(),
                             instrumentList.get(0), valuesMap);
                     updateInstrument(instrumentList.get(0), voucherHeader);
@@ -190,24 +216,21 @@ public class ContraCTBAction extends BaseVoucherAction
 
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("going to post into transactions");
-                List<Transaxtion> transactions = contraService.postInTransaction(voucherHeader, contraBean);
-                HibernateUtil.getCurrentSession().flush();
-                ChartOfAccounts engine = ChartOfAccounts.getInstance();
+                final List<Transaxtion> transactions = contraService.postInTransaction(voucherHeader, contraBean);
+                persistenceService.getSession().flush();
                 Transaxtion txnList[] = new Transaxtion[transactions.size()];
-                txnList = (Transaxtion[]) transactions.toArray(txnList);
-                SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-                Connection conn = null;
-                if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
+                txnList = transactions.toArray(txnList);
+                final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+                if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
                 {
-                    List<ValidationError> errors = new ArrayList<ValidationError>();
+                    final List<ValidationError> errors = new ArrayList<ValidationError>();
                     errors.add(new ValidationError("exp", "Engine Validation failed"));
                     throw new ValidationException(errors);
-                } else {
+                } else
                     contraBean.setResult("sucess");
-                }
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
-                List<ValidationError> errors = new ArrayList<ValidationError>();
+                final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exp", e.getMessage()));
                 throw new ValidationException(errors);
             }
@@ -223,7 +246,7 @@ public class ContraCTBAction extends BaseVoucherAction
         iMap.put("Is pay cheque", FinancialConstants.IS_PAYCHECK_ZERO);
         iMap.put("Instrument type", FinancialConstants.INSTRUMENT_TYPE_CASH);
         iMap.put("Instrument amount", Double.valueOf(cBean.getAmount().toString()));
-        Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+        final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                 Integer.valueOf(cBean.getAccountNumberId()));
 
         iMap.put("Bank code", bankAccount.getBankbranch().getBank().getCode());
@@ -233,7 +256,7 @@ public class ContraCTBAction extends BaseVoucherAction
         iMap.put("Transaction number", cBean.getChequeNumber());
         try {
             iMap.put("Transaction date", Constants.DDMMYYYYFORMAT2.parse(cBean.getChequeDate()));
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             throw new ValidationException(Arrays.asList(new ValidationError("Invalid Referece Date", "invalid.date")));
         }
 
@@ -252,22 +275,20 @@ public class ContraCTBAction extends BaseVoucherAction
     }
 
     public String loadCTBVoucher() {
-        String vhid = parameters.get("vhid")[0];
+        final String vhid = parameters.get("vhid")[0];
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("voucher header id received is :" + vhid);
-        Map<String, Object> vhInfoMap = contraService.getCTBVoucher(vhid, contraBean);
+        final Map<String, Object> vhInfoMap = contraService.getCTBVoucher(vhid, contraBean);
         voucherHeader = (CVoucherHeader) vhInfoMap.get(Constants.VOUCHERHEADER);
         contraBean = (ContraBean) vhInfoMap.get("contrabean");
         loadSchemeSubscheme();
         loadBankAccountNumber(contraBean);
-        if (null != parameters.get("showMode")) {
+        if (null != parameters.get("showMode"))
             contraBean.setMode(parameters.get("showMode")[0]);
-        }
-        if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("reverse")) {
+        if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("reverse"))
             return "reverse";
-        } else if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("edit")) {
+        else if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("edit"))
             return EDIT;
-        }
         return NEW;
     }
 
@@ -285,7 +306,7 @@ public class ContraCTBAction extends BaseVoucherAction
             addActionError(getText("contra.validate.amt"));
             return false;
         }
-        BigDecimal cashBalance = egovCommon.getCashBalance(voucherHeader.getVoucherDate(), contraBean.getCashInHand(),
+        final BigDecimal cashBalance = egovCommon.getCashBalance(voucherHeader.getVoucherDate(), contraBean.getCashInHand(),
                 voucherHeader.getFundId().getId());
 
         if (cashBalance.compareTo(contraBean.getAmount()) == -1) {
@@ -293,7 +314,7 @@ public class ContraCTBAction extends BaseVoucherAction
             return false;
         } else {
             // get bank account balance.
-            BigDecimal accountBalance = egovCommon.getAccountBalance(voucherHeader.getVoucherDate(),
+            final BigDecimal accountBalance = egovCommon.getAccountBalance(voucherHeader.getVoucherDate(),
                     Long.valueOf(contraBean.getAccountNumberId()));
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Account balance for the bank account id : " + contraBean.getAccountNumberId() + " is :"
@@ -307,7 +328,7 @@ public class ContraCTBAction extends BaseVoucherAction
         return contraService;
     }
 
-    public void setContraService(ContraService contraService) {
+    public void setContraService(final ContraService contraService) {
         this.contraService = contraService;
     }
 
@@ -315,7 +336,7 @@ public class ContraCTBAction extends BaseVoucherAction
         return voucherService;
     }
 
-    public void setVoucherService(VoucherService voucherService) {
+    public void setVoucherService(final VoucherService voucherService) {
         this.voucherService = voucherService;
     }
 
@@ -323,7 +344,7 @@ public class ContraCTBAction extends BaseVoucherAction
         return contraBean;
     }
 
-    public void setContraBean(ContraBean contraBean) {
+    public void setContraBean(final ContraBean contraBean) {
         this.contraBean = contraBean;
     }
 
@@ -331,7 +352,7 @@ public class ContraCTBAction extends BaseVoucherAction
         return voucherTypeBean;
     }
 
-    public void setVoucherTypeBean(VoucherTypeBean voucherTypeBean) {
+    public void setVoucherTypeBean(final VoucherTypeBean voucherTypeBean) {
         this.voucherTypeBean = voucherTypeBean;
     }
 
@@ -339,7 +360,7 @@ public class ContraCTBAction extends BaseVoucherAction
         return egovCommon;
     }
 
-    public void setEgovCommon(EgovCommon egovCommon) {
+    public void setEgovCommon(final EgovCommon egovCommon) {
         this.egovCommon = egovCommon;
     }
 
@@ -354,7 +375,7 @@ public class ContraCTBAction extends BaseVoucherAction
     }
 
     @Override
-    public void setReversalVoucherDate(String reversalVoucherDate) {
+    public void setReversalVoucherDate(final String reversalVoucherDate) {
         super.setReversalVoucherDate(reversalVoucherDate);
     }
 
@@ -376,7 +397,7 @@ public class ContraCTBAction extends BaseVoucherAction
         return Constants.VIEW;
     }
 
-    public void setClose(boolean close) {
+    public void setClose(final boolean close) {
         this.close = close;
     }
 
@@ -384,7 +405,7 @@ public class ContraCTBAction extends BaseVoucherAction
         return close;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
         this.message = message;
     }
 

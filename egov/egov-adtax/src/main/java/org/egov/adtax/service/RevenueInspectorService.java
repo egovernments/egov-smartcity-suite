@@ -60,8 +60,27 @@ public class RevenueInspectorService {
     public RevenueInspector findByCode(final String name) {
         return revenueInspectorRepository.findByName(name);
     }
-
+  
+    public RevenueInspector findById(final Long id) {
+        return revenueInspectorRepository.findOne(id);
+    }
     public List<RevenueInspector> findAllActiveRevenueInspectors() {
         return revenueInspectorRepository.findByActiveTrueOrderByNameAsc();
+    }
+
+    @Transactional
+    public RevenueInspector create(final RevenueInspector revenueInspectorRecord) {
+
+        return revenueInspectorRepository.save(revenueInspectorRecord);
+    }
+    
+    @Transactional
+    public RevenueInspector update(RevenueInspector revenueInspectorRecord) {
+        return revenueInspectorRepository.save(revenueInspectorRecord);
+             
+    }
+
+    public List<RevenueInspector> findAll(){
+        return revenueInspectorRepository.findAll();
     }
 }

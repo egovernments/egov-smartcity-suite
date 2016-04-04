@@ -66,14 +66,9 @@
 							
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${hoarding.hoardingNumber}
+									${hoarding.advertisementNumber}
 								</div>
-								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.hoarding.agency"/>
-								</label>
-								<div class="col-sm-3 add-margin view-content">
-									 	${hoarding.agency.name}
-								</div>
+								
 							</div>
 			
 													

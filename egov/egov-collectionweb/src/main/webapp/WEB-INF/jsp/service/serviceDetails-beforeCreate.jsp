@@ -39,7 +39,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/finAccountsTable.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/finAccountsTable.js?rnd=${app_release_no}"></script>
 <script type="text/javascript">
 function onBodyLoad()
 {

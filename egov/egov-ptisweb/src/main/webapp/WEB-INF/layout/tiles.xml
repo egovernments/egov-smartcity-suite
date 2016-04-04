@@ -196,4 +196,102 @@
     	<put-attribute name="body" value="/WEB-INF/views/transactions/dataentry/addArrears-success.jsp"/>
     </definition>
     
-</tiles-definitions>
+    <definition name="floorType-main" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/floor/floorType-main.jsp"/>
+    </definition>
+    
+    <definition name="floorType-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/floor/floorType-form.jsp"/>
+    </definition>
+    
+    <definition name="floorType-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/floor/floorType-view.jsp"/>
+    </definition>
+    
+    <definition name="wallType-main" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg1" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/wall/wallType-main.jsp"/>
+    </definition>
+    
+    <definition name="wallType-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg1" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/wall/wallType-form.jsp"/>
+    </definition>
+    
+    <definition name="wallType-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg1" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/wall/wallType-view.jsp"/>
+    </definition>
+    
+    <definition name="roofType-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.roofTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/rooftype/roofType-search.jsp"/>
+    </definition>
+    
+    <definition name="roofType-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.roofTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/rooftype/roofType-form.jsp"/>
+    </definition>
+    
+     <definition name="roofType-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.roofTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/rooftype/roofType-view.jsp"/>
+    </definition>
+    
+    <definition name="woodType-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.woodTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/woodtype/woodType-search.jsp"/>
+    </definition>
+    
+    <definition name="woodType-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.woodTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/woodtype/woodType-form.jsp"/>
+    </definition>
+    
+     <definition name="woodType-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.woodTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/woodtype/woodType-view.jsp"/>
+    </definition>
+    
+    <definition name="taxRates-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.taxRates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/taxrates/taxRates-view.jsp"/>
+    </definition>
+    
+    <definition name="curretInstDCB-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.currInstDCB" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/curretInstDCB-form.jsp"/>
+    </definition>
+         <definition name="bcDailyCollectionReport-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.bcCollectorDaily.report.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/bcDailyCollectionReport-form.jsp"/>
+    </definition>
+
+	<definition name="ulbWiseCollectionReport-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.ulbWiseDailyColl.report.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/ulbWiseCollectionReport-form.jsp"/>
+    </definition>
+    
+    <definition name="writeOff-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.writeOff.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/writeOff/writeOff-form.jsp"/>
+     </definition>
+     
+      <definition name="ownerdetails-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.ownerdetail.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/editOwner/ownerdetails-form.jsp"/>
+    </definition>
+       <definition name="ulbWiseDcbReport-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.uldDCbDaily.report.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/ulbWiseDcbReport-form.jsp"/>
+    </definition>
+    
+      <definition name="ownerdetails-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.ownerdetail.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/editOwner/ownerdetails-success.jsp"/>
+    </definition>
+    
+</tiles-definitions> 

@@ -57,8 +57,11 @@ import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
+import org.egov.wtms.masters.service.PropertyCategoryService;
 import org.egov.wtms.masters.service.PipeSizeService;
+import org.egov.wtms.masters.service.PropertyPipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
+import org.egov.wtms.masters.service.WaterPropertyUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -73,6 +76,9 @@ public class RestWaterConnectionValidationService {
 
     @Autowired
     private UsageTypeService usageTypeService;
+    
+    @Autowired
+    private WaterPropertyUsageService waterPropertyUsageService;
 
     @Autowired
     private ChangeOfUseService changeOfUseService;
@@ -85,16 +91,23 @@ public class RestWaterConnectionValidationService {
 
     @Autowired
     private AdditionalConnectionService additionalConnectionService;
+    
     @Autowired
     private ConnectionCategoryService connectionCategoryService;
-
+    
+    @Autowired
+    private PropertyCategoryService propertyCategoryService;
+ 
     @Autowired
     private NewConnectionService newConnectionService;
+    
+    @Autowired
+    private PropertyPipeSizeService propertyPipeSizeService;
 
     public ErrorDetails validateCreateRequest(final WaterConnectionInfo connectionInfo) {
         ErrorDetails errorDetails = null;
         if (connectionInfo.getPropertyType() != null) {
-            final WaterPropertyUsage usageTypesList = usageTypeService.getAllUsageTypesByPropertyTypeAndUsageType(
+            final WaterPropertyUsage usageTypesList = waterPropertyUsageService.findByPropertyTypecodeAndUsageTypecode(
                     connectionInfo.getPropertyType(), connectionInfo.getUsageType());
 
             if (usageTypesList == null) {
@@ -103,7 +116,7 @@ public class RestWaterConnectionValidationService {
                 errorDetails.setErrorMessage(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID);
                 return errorDetails;
             }
-            final PropertyPipeSize pipeSizeList = pipeSizeService.getAllPipeSizesByPropertyTypeAnPipeSize(
+            final PropertyPipeSize pipeSizeList = propertyPipeSizeService.findByPropertyTypecodeAndPipeSizecode(
                     connectionInfo.getPropertyType(), connectionInfo.getPipeSize());
             if (pipeSizeList == null) {
                 errorDetails = new ErrorDetails();
@@ -112,7 +125,7 @@ public class RestWaterConnectionValidationService {
                 return errorDetails;
             }
 
-            final PropertyCategory categoryTypes = connectionCategoryService
+            final PropertyCategory categoryTypes = propertyCategoryService
                     .getAllCategoryTypesByPropertyTypeAndCategory(connectionInfo.getPropertyType(),
                             connectionInfo.getCategory());
 

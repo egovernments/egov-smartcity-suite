@@ -106,10 +106,12 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
+				<c:if test="${roleName.contains('PROPERTY ADMINISTRATOR')}">
 					<button type="submit" 
 						class="btn btn-primary add-margin">
 						<spring:message code="lbl.button.add" />
-					</button>							
+					</button>	
+				</c:if>	
 					<button type="button" id="btnusagesearch"
 						class="btn btn-primary add-margin">
 						<spring:message code="lbl.button.search" />

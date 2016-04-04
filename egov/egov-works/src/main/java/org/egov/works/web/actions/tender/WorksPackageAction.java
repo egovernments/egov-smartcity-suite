@@ -43,7 +43,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,51 +53,47 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.workflow.service.WorkflowService;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.Money;
-import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.pims.service.PersonalInformationService;
+import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.tender.WorksPackageDetails;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
-import org.egov.works.web.actions.estimate.AjaxEstimateAction;
+import org.egov.works.utils.WorksConstants;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jasperreports.engine.JRException;
 
 @Results({ @Result(name = WorksPackageAction.PRINT, type = "stream", location = "WorkspackagePDF", params = {
-        "inputName", "WorkspackagePDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
-        @Result(name = WorksPackageAction.NEW, location = "worksPackage-new.jsp") })
-public class WorksPackageAction extends BaseFormAction {
+        "inputName", "WorkspackagePDF", "contentType", "application/pdf", "contentDisposition",
+        "no-cache;filename=WorksPackage.pdf" }),
+        @Result(name = WorksPackageAction.NEW, location = "worksPackage-new.jsp"),
+        @Result(name = WorksPackageAction.EDIT, location = "worksPackage-edit.jsp"),
+        @Result(name = WorksPackageAction.SUCCESS, location = "worksPackage-success.jsp") })
+public class WorksPackageAction extends GenericWorkFlowAction {
 
     private static final long serialVersionUID = -6365331777546797839L;
-    private String editableDate = "yes";
-    private String createdBySelection = "no";
     private WorksService worksService;
-    @Autowired
-    private AssignmentService assignmentService;
-    @Autowired
-    private EmployeeServiceOld employeeServiceOld;
-    private DepartmentService departmentService;
     private WorksPackage worksPackage = new WorksPackage();
     private String designation;
     private Integer empId;
@@ -106,32 +101,27 @@ public class WorksPackageAction extends BaseFormAction {
     private String sourcepage;
     private Money worktotalValue;
     @Autowired
-    private UserService userService;
-    private WorkflowService<WorksPackage> workflowService;
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private WorksPackageService workspackageService;
     private AbstractEstimateService abstractEstimateService;
     private List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
     private Long id;
-    private String actionName;
     private String messageKey;
     private String nextEmployeeName;
     private String nextDesignation;
     private String packageNumber;
-    private static final String PREPARED_BY_LIST = "preparedByList";
     private static final String DEPARTMENT_LIST = "departmentList";
-    private static final String SOURCE_INBOX = "inbox";
-    private static final String SAVE_ACTION = "save";
-    private EisUtilService eisService;
-    private String loggedInUserEmployeeCode;
-
-    /**
-     * pdf variable declaration
-     */
+    public static final String WORKSPACKAGE = "WorksPackage";
 
     public static final String PRINT = "print";
     private InputStream WorkspackagePDF;
     private ReportService reportService;
-    private PersonalInformationService personalInformationService;
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private SimpleWorkflowService<AbstractEstimate> worksPackageWorkflowService;
 
     public WorksPackageAction() {
         addRelatedEntity("department", Department.class);
@@ -139,82 +129,49 @@ public class WorksPackageAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
-        ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setAssignmentService(assignmentService);
-        ajaxEstimateAction.setAbstractEstimateService(abstractEstimateService);
-        ajaxEstimateAction.setEisService(eisService);
         super.prepare();
-        if (id != null)
+        if (id != null) {
             worksPackage = workspackageService.findById(id, false);
+            worksPackage = workspackageService.merge(worksPackage);
+        }
         if (id == null && packageNumber != null && StringUtils.isNotBlank(packageNumber))
             worksPackage = workspackageService.find("from WorksPackage where wpNumber=? and egwStatus.code='APPROVED'",
                     packageNumber);
         setupDropdownDataExcluding("department");
 
-        addDropdownData("executingDepartmentList", departmentService.getAllDepartments());
         final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
         if (latestAssignment != null) {
-            worksPackage.setWorkflowDepartmentId(abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
-                    .getDepartment().getId());
-            if (worksPackage.getPreparedBy() == null)
-                loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
-            else
-                loggedInUserEmployeeCode = worksPackage.getPreparedBy().getEmployeeCode();
-            if (worksPackage.getDepartment() == null) {
+            approverDepartment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
+                    .getDepartment().getId().toString();
+            if (worksPackage.getDepartment() == null)
                 worksPackage.setDepartment(latestAssignment.getDepartment());
-                setDesignation(latestAssignment.getDesignation().getName());
-            }
         }
 
-        if (StringUtils.isNotBlank(getCreatedBy()) && "yes".equalsIgnoreCase(getCreatedBy())) {
-            setCreatedBySelection(getCreatedBy());
-            addDropdownData(DEPARTMENT_LIST, departmentService.getAllDepartments());
-            populatePreparedByList(ajaxEstimateAction, worksPackage.getDepartment() != null);
-        } else {
-            if (id == null
-                    || worksPackage.getEgwStatus() != null
-                            && (worksPackage.getEgwStatus().getCode()
-                                    .equals(WorksPackage.WorkPacakgeStatus.REJECTED.toString()) || worksPackage.getEgwStatus()
-                                            .getCode().equals("NEW")))
-                addDropdownData(DEPARTMENT_LIST, worksService.getAllDeptmentsForLoggedInUser());
-            else
-                addDropdownData(DEPARTMENT_LIST, departmentService.getAllDepartments());
-            populatePreparedByList(ajaxEstimateAction, worksPackage.getDepartment() != null);
-            empId = getEmployee().getId();
-        }
-        if (StringUtils.isNotBlank(getPastDate()))
-            setEditableDate(getPastDate());
-
+        addDropdownData(DEPARTMENT_LIST, worksService.getAllDeptmentsForLoggedInUser());
     }
 
     @Action(value = "/tender/worksPackage-newform")
     public String newform() {
-        /*
-         * PersonalInformation pi = getEmployee(); Assignment assignment = getAssignment(pi); if(assignment!=null &&
-         * "no".equalsIgnoreCase(getCreatedBy())){ setDesignation(assignment.getDesigId().getDesignationName());
-         * worksPackage.setUserDepartment(assignment.getDeptId()); setEmpId(pi.getId()); }
-         */
-
         return NEW;
     }
 
+    @Action(value = "/tender/worksPackage-edit")
     public String edit() {
-        if (SOURCE_INBOX.equalsIgnoreCase(sourcepage)) {
-            final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-            final boolean isValidUser = worksService.validateWorkflowForUser(worksPackage, user);
-            if (isValidUser)
-                throw new ApplicationRuntimeException("Error: Invalid Owner - No permission to view this page.");
-        } else if (StringUtils.isEmpty(sourcepage))
+        // TODO:Fixme - commented out for time being since the validation not working properly
+        /*
+         * if (SOURCE_INBOX.equalsIgnoreCase(sourcepage)) { final User user =
+         * userService.getUserById(worksService.getCurrentLoggedInUserId()); final boolean isValidUser =
+         * worksService.validateWorkflowForUser(worksPackage, user); if (isValidUser) throw new ApplicationRuntimeException(
+         * "Error: Invalid Owner - No permission to view this page."); } else
+         */if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 
-        setDesignation(getAssignment(worksPackage.getPreparedBy()).getDesignation().getName());
-        setEmpId(worksPackage.getPreparedBy().getIdPersonalInformation());
         abstractEstimateList = workspackageService.getAbStractEstimateListByWorksPackage(worksPackage);
         setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));
         return EDIT;
     }
 
+    @Action(value = "/tender/worksPackage-save")
     public String save() {
         if (validTenderFileNo())
             throw new ValidationException(Arrays.asList(new ValidationError("wp.tenderfilenumber.isunique",
@@ -230,32 +187,26 @@ public class WorksPackageAction extends BaseFormAction {
                         .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.REJECTED.toString())
                 || worksPackage.getEgwStatus().getCode().equalsIgnoreCase("NEW"))
             populateEstimatesList(estId);
-        if (worksPackage.getId() == null && worksPackage.getEgwStatus() == null) {
+        if (worksPackage.getId() == null && worksPackage.getEgwStatus() == null && abstractEstimateList.size() > 0) {
             validateFinancingSource(abstractEstimateList);
             validateEstimateForUniqueness();
 
         }
-        worksPackage.setPreparedBy(employeeServiceOld.getEmloyeeById(empId));
-        try {
-            workspackageService.setWorksPackageNumber(worksPackage,
-                    abstractEstimateService.getCurrentFinancialYear(worksPackage.getPackageDate()));
-        } catch (final ValidationException sequenceException) {
-            final List<ValidationError> errorList = sequenceException.getErrors();
-            for (final ValidationError error : errorList)
-                if (error.getMessage().contains("DatabaseSequenceFirstTimeException")) {
-                    prepare();
-                    throw new ValidationException(Arrays.asList(new ValidationError("error", error.getMessage())));
-                }
-        }
+        transitionWorkFlow(worksPackage);
+        abstractEstimateService.applyAuditing(worksPackage.getState());
+        workspackageService.setWorksPackageNumber(worksPackage,
+                abstractEstimateService.getCurrentFinancialYear(worksPackage.getWpDate()));
+        if (worksPackage.getEgwStatus() != null
+                && worksPackage.getEgwStatus().getCode()
+                        .equals(WorksPackage.WorkPacakgeStatus.APPROVED.toString()))
+            worksPackage.setApprovedDate(new Date());
         worksPackage = workspackageService.persist(worksPackage);
-        workflowService.transition(actionName, worksPackage, "");
-        messageKey = "worksPackage." + actionName;
+        messageKey = "worksPackage." + workFlowAction;
         addActionMessage(getText(messageKey, "The Works Package was saved successfully"));
-        getDesignation(worksPackage);
-        if (SAVE_ACTION.equals(actionName))
+        if (WorksConstants.SAVE_ACTION.equals(workFlowAction))
             sourcepage = "inbox";
 
-        return SAVE_ACTION.equals(actionName) ? EDIT : SUCCESS;
+        return WorksConstants.SAVE_ACTION.equals(workFlowAction) ? EDIT : SUCCESS;
     }
 
     private void validateFinancingSource(final List<AbstractEstimate> estimateList) {
@@ -305,19 +256,82 @@ public class WorksPackageAction extends BaseFormAction {
         }
     }
 
-    public String cancelWorkflow() {
-        if (worksPackage.getId() != null) {
-            workflowService.transition(WorksPackage.Actions.CANCEL.toString(), worksPackage,
-                    worksPackage.getWorkflowapproverComments());
-            worksPackage = workspackageService.persist(worksPackage);
+    private void transitionWorkFlow(final WorksPackage worksPackage) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position position = null;
+        Assignment wfInitiator = null;
+
+        wfInitiator = getWorkflowInitiator(worksPackage);
+
+        if (WorksConstants.CANCEL_ACTION.equals(workFlowAction)) {
+            if (wfInitiator.equals(userAssignment)) {
+                worksPackage.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(WorksPackage.WorkPacakgeStatus.CANCELLED.toString()).withDateInfo(currentDate.toDate())
+                        .withNextAction("END");
+                worksPackage.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WORKSPACKAGE,
+                        WorksPackage.WorkPacakgeStatus.CANCELLED.toString()));
+            }
+        } else if (WorksConstants.REJECT_ACTION.equals(workFlowAction)) {
+            worksPackage.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                    .withStateValue(WorksPackage.WorkPacakgeStatus.REJECTED.toString()).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition()).withNextAction("");
+            worksPackage.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WORKSPACKAGE,
+                    WorksPackage.WorkPacakgeStatus.REJECTED.toString()));
+
+        } else if (WorksConstants.SAVE_ACTION.equals(workFlowAction)) {
+            if (worksPackage.getState() == null) {
+                final WorkFlowMatrix wfmatrix = worksPackageWorkflowService.getWfMatrix(worksPackage.getStateType(), null,
+                        null, getAdditionalRule(), currentState, null);
+                worksPackage.transition().start().withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getCurrentState()).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition());
+                worksPackage
+                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WORKSPACKAGE, "NEW"));
+            }
+        } else {
+            if (null != approverPositionId && approverPositionId != -1)
+                position = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+            if (worksPackage.getState() == null) {
+                final WorkFlowMatrix wfmatrix = worksPackageWorkflowService.getWfMatrix(worksPackage.getStateType(), null,
+                        null, getAdditionalRule(), currentState, null);
+                worksPackage.transition().start().withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
+                        .withNextAction(wfmatrix.getNextAction());
+                worksPackage
+                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WORKSPACKAGE, wfmatrix.getNextStatus()));
+            } else {
+                final WorkFlowMatrix wfmatrix = worksPackageWorkflowService.getWfMatrix(worksPackage.getStateType(), null,
+                        null, getAdditionalRule(), worksPackage.getCurrentState().getValue(), null);
+                if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
+                    worksPackage.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                            .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                            .withNextAction(wfmatrix.getNextAction());
+                else
+                    worksPackage.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                            .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
+                            .withNextAction(wfmatrix.getNextAction());
+                worksPackage
+                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WORKSPACKAGE, wfmatrix.getNextStatus()));
+            }
+
         }
-        messageKey = "worksPackage.cancel";
-        getDesignation(worksPackage);
-        return SUCCESS;
+        if (!(WorksConstants.CANCEL_ACTION.equals(workFlowAction) || WorksConstants.SAVE_ACTION.equals(workFlowAction)))
+            setApproverAndDesignation(worksPackage);
+    }
+
+    private Assignment getWorkflowInitiator(final WorksPackage worksPackage) {
+        Assignment wfInitiator;
+        if (worksPackage.getCreatedBy() == null)
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(worksService.getCurrentLoggedInUserId());
+        else
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(worksPackage.getCreatedBy().getId());
+        return wfInitiator;
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return worksPackage;
     }
 
@@ -325,33 +339,29 @@ public class WorksPackageAction extends BaseFormAction {
         this.worksPackage = worksPackage;
     }
 
-    protected void populatePreparedByList(final AjaxEstimateAction ajaxEstimateAction,
-            final boolean executingDeptPopulated) {
-        if (executingDeptPopulated) {
-            ajaxEstimateAction.setExecutingDepartment(worksPackage.getDepartment().getId());
-
-            if (StringUtils.isNotBlank(loggedInUserEmployeeCode))
-                ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode);
-            ajaxEstimateAction.usersInExecutingDepartment();
-            addDropdownData(PREPARED_BY_LIST, ajaxEstimateAction.getUsersInExecutingDepartment());
-        } else
-            addDropdownData(PREPARED_BY_LIST, Collections.EMPTY_LIST);
-    }
-
     protected void populateEstimatesList(final Long[] estimateID) {
         if (estimateID != null && estimateID.length > 0) {
             abstractEstimateList = abstractEstimateService.getAbEstimateListById(StringUtils.join(estId, "`~`"));
             setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));
-        }
+        } else
+            throw new ValidationException(Arrays.asList(new ValidationError("estimates.null",
+                    "estimates.null")));
         setWPDetails();
     }
 
-    public void setWPDetails() {
+    private void setWPDetails() {
         if (!abstractEstimateList.isEmpty())
             for (final AbstractEstimate ab : abstractEstimateList) {
                 final WorksPackageDetails wpDetails = new WorksPackageDetails();
                 wpDetails.setEstimate(ab);
                 wpDetails.setWorksPackage(worksPackage);
+                // TODO:Fixme - Manually setting auditable properties by time being since HibernateEventListener is not getting
+                // triggered on update of workspackage for child objects
+                final User user = worksService.getCurrentLoggedInUser();
+                wpDetails.setCreatedBy(user);
+                wpDetails.setCreatedDate(new Date());
+                wpDetails.setModifiedBy(user);
+                wpDetails.setModifiedDate(new Date());
                 worksPackage.addEstimates(wpDetails);
             }
     }
@@ -371,11 +381,11 @@ public class WorksPackageAction extends BaseFormAction {
     }
 
     /**
-     * print pdf
-     *
+     * print pdf *
      * @throws JRException ,Exception
      */
     @SkipValidation
+    @Action(value = "/tender/worksPackage-viewWorksPackagePdf")
     public String viewWorksPackagePdf() throws JRException, Exception {
         final ReportRequest reportRequest = new ReportRequest("Workspackage", worksPackage.getActivitiesForEstimate(),
                 createHeaderParams());
@@ -385,7 +395,7 @@ public class WorksPackageAction extends BaseFormAction {
         return PRINT;
     }
 
-    public Map createHeaderParams() {
+    private Map createHeaderParams() {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final List<WorksPackageDetails> worksPackageDetails = worksPackage.getWorksPackageDetails();
         final AbstractEstimate estimate = worksPackageDetails.get(0).getEstimate();
@@ -418,10 +428,15 @@ public class WorksPackageAction extends BaseFormAction {
         return b;
     }
 
-    public void getDesignation(final WorksPackage wp) {
-        if (wp.getEgwStatus() != null && !"NEW".equalsIgnoreCase(wp.getEgwStatus().getCode())) {
-            final String result = worksService.getEmpNameDesignation(wp.getState().getOwnerPosition(), wp.getState()
-                    .getCreatedDate());
+    private void setApproverAndDesignation(final WorksPackage worksPackage) {
+        /* start for customizing workflow message display */
+        if (worksPackage.getEgwStatus() != null
+                && !"NEW".equalsIgnoreCase(worksPackage.getEgwStatus().getCode())) {
+            Date date = new Date();
+            if (worksPackage.getState().getCreatedDate() != null)
+                date = worksPackage.getState().getCreatedDate();
+            final String result = worksService.getEmpNameDesignation(worksPackage.getState().getOwnerPosition(),
+                    date);
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());
@@ -429,30 +444,11 @@ public class WorksPackageAction extends BaseFormAction {
                 setNextDesignation(designation);
             }
         }
+        /* end */
     }
 
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
-    }
-
-    public String getEditableDate() {
-        return editableDate;
-    }
-
-    public void setEditableDate(final String editableDate) {
-        this.editableDate = editableDate;
-    }
-
-    public String getCreatedBySelection() {
-        return createdBySelection;
-    }
-
-    public void setCreatedBySelection(final String createdBySelection) {
-        this.createdBySelection = createdBySelection;
-    }
-
-    public void setDepartmentService(final DepartmentService departmentService) {
-        this.departmentService = departmentService;
     }
 
     public Integer getEmpId() {
@@ -473,29 +469,6 @@ public class WorksPackageAction extends BaseFormAction {
 
     public void setWorkspackageService(final WorksPackageService workspackageService) {
         this.workspackageService = workspackageService;
-    }
-
-    private PersonalInformation getEmployee() {
-        if (worksPackage.getPreparedBy() == null)
-            return employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
-        else
-            return worksPackage.getPreparedBy();
-    }
-
-    private Assignment getAssignment(final PersonalInformation pi) {
-        if (worksPackage.getPreparedBy() == null)
-            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
-        else
-            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), worksPackage.getPreparedBy()
-                    .getIdPersonalInformation());
-    }
-
-    public String getPastDate() {
-        return worksService.getWorksConfigValue("WORKS_PACKAGE_PASTDATE");
-    }
-
-    public String getCreatedBy() {
-        return worksService.getWorksConfigValue("WORKS_PACKAGE_CREATEDBY");
     }
 
     public Long[] getEstId() {
@@ -562,22 +535,6 @@ public class WorksPackageAction extends BaseFormAction {
         this.reportService = reportService;
     }
 
-    public void setPackageWorkflowService(final WorkflowService<WorksPackage> workflow) {
-        workflowService = workflow;
-    }
-
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
-        return workflowService.getValidActions(worksPackage);
-    }
-
-    public String getActionName() {
-        return actionName;
-    }
-
-    public void setActionName(final String actionName) {
-        this.actionName = actionName;
-    }
-
     public String getMessageKey() {
         return messageKey;
     }
@@ -598,12 +555,7 @@ public class WorksPackageAction extends BaseFormAction {
         this.nextDesignation = nextDesignation;
     }
 
-    public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
-        this.personalInformationService = personalInformationService;
-    }
-
     public void setUserService(final UserService userService) {
-        this.userService = userService;
     }
 
     public String getPackageNumber() {
@@ -612,18 +564,6 @@ public class WorksPackageAction extends BaseFormAction {
 
     public void setPackageNumber(final String packageNumber) {
         this.packageNumber = packageNumber;
-    }
-
-    public void setEisService(final EisUtilService eisService) {
-        this.eisService = eisService;
-    }
-
-    public String getLoggedInUserEmployeeCode() {
-        return loggedInUserEmployeeCode;
-    }
-
-    public void setLoggedInUserEmployeeCode(final String loggedInUserEmployeeCode) {
-        this.loggedInUserEmployeeCode = loggedInUserEmployeeCode;
     }
 
 }

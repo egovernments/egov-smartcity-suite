@@ -83,7 +83,7 @@ public class CollectionApplicationProperties {
     }
 
     public String axisOperator() {
-        return environment.getProperty("axis.operator", String.class);
+        return environment.getProperty("axis.operator.id", String.class);
     }
 
     public String axisPassword() {

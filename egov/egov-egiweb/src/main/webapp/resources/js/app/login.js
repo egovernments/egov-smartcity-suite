@@ -59,4 +59,63 @@ $(document).ready(function()
 			$('.search-error-msg').removeClass('display-hide');
 		}
 	});
+	
+	var checklocation = false;
+	
+	$('#j_username').blur(function(){
+		$('#locationId').empty();
+		//ajax call to load counter
+		$.ajax({
+		      url: "requiredlocations?username="+this.value,
+		      dataType: "json",
+		      success: function(data) { 
+		    	  checklocation = true;
+		    	  //console.log(JSON.stringify(data));
+		    	  if(data.length > 0){
+		    		  $('#locationId').append('<option value="">select location</option>');
+		    		  $.each(data, function (key,value) {
+						  console.log(value.id+"<-->"+value.name);
+						  var opt = "<option value=" + value.id + ">" + value.name + "</option>";
+						  $('#locationId').append(opt);
+						  $("#locationId").attr('required', true);
+					  });	
+		    		  $('#counter-section').removeClass('display-hide');
+		    		  loaddpdown_value();
+		    	  }else{
+		    		  $('#locationId').empty();
+		    		  $('#locationId').attr('required', false);
+		    		  $('#counter-section').addClass('display-hide');
+		    	  }
+	    	  },
+	    	  error: function() {
+    	         console.log('Error method');
+	          }
+		});
+	});
+	
+	function loaddpdown_value(){
+		$("#locationId").each(function() { 
+			console.log($(this).children('option').length);
+			if($(this).children('option').length == 2)
+			{
+			  $(this).find('option').eq(1).prop('selected', true);
+			}
+		});
+	}
+	
+	$("#signin-action").click(function(e){
+		if(!checklocation){
+			$('#j_username').trigger('blur');
+			e.preventDefault();
+		}
+		
+	});
+	
+	if(navigator.cookieEnabled){
+		
+	}else{
+		$('#cookieornoscript').modal('show', {backdrop: 'static'});
+	}
+	
+	
 });

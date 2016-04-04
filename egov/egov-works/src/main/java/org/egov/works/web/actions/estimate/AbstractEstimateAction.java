@@ -66,6 +66,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fundsource;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
@@ -147,14 +148,10 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
      * @Autowired private UserService userService;
      */
 
-    // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
-    // private WorkflowService<AbstractEstimate> workflowService;
     private String messageKey;
     private String sourcepage = "";
     private String assetStatus;
     private Integer approverUserId;
-    @Autowired
-    private CommonsService commonsService;
     private Long departmentId;
     private Integer designationId;
     private String approverComments;
@@ -191,6 +188,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     private AssignmentService assignmentService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
     @Autowired
     private SimpleWorkflowService<AbstractEstimate> abstractEstimateWorkflowService;
     private Long stateId;
@@ -333,7 +332,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                         && abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode().equals("NEW"))
             uomList = abstractEstimateService.prepareUomListByExcludingSpecialUoms(uomList);
         addDropdownData("uomList", uomList);
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1"));
+        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true"));
         addDropdownData("scheduleCategoryList",
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
 
@@ -381,14 +380,6 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         }
 
         try {
-            /*
-             * if (SAVE_ACTION.equals(actionName) && abstractEstimate.getEgwStatus() == null)
-             * abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "NEW")); else if
-             * (actionName.equals("submit_for_approval"))
-             * abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "CREATED"));
-             */
-            // TODO: Fixme - CREATED status setting is for time being. Need to replace with proper status as per the workflow
-            // matrix
             transitionWorkFlow(abstractEstimate);
             abstractEstimateService.applyAuditing(abstractEstimate.getState());
             abstractEstimateService.setEstimateNumber(abstractEstimate);
@@ -408,8 +399,6 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         messageKey = "estimate." + workFlowAction;
         addActionMessage(getText(messageKey, "The estimate was saved successfully"));
 
-        // TODO : Fixme - Commented out for time being. Need to fix after implementing workflow matrix
-        // getDesignation(abstractEstimate);
         if (SAVE_ACTION.equals(workFlowAction))
             sourcepage = "inbox";
         return SAVE_ACTION.equals(workFlowAction) ? EDIT : SUCCESS;
@@ -422,15 +411,10 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         Position position = null;
         Assignment wfInitiator = null;
 
-        // if (abstractEstimate.getId() != null)
         wfInitiator = getWorkflowInitiator(abstractEstimate);
 
         if (CANCEL_ACTION.equals(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
-                /*
-                 * abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                 * .withDateInfo(currentDate.toDate());
-                 */
                 abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
                         .withStateValue(AbstractEstimate.EstimateStatus.CANCELLED.toString()).withDateInfo(currentDate.toDate())
                         .withNextAction("END");
@@ -457,10 +441,6 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         } else {
             if (null != approverPositionId && approverPositionId != -1)
                 position = (Position) persistenceService.find("from Position where id=?", approverPositionId);
-            // position = positionMasterService.getPositionById(approverPositionId);
-            /*
-             * else if (APPROVE_ACTION.equals(workFlowAction)) position = abstractEstimate.getCurrentState().getOwnerPosition();
-             */
             if (abstractEstimate.getState() == null) {
                 final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
@@ -469,14 +449,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                         .withNextAction(wfmatrix.getNextAction());
                 abstractEstimate
                         .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE, wfmatrix.getNextStatus()));
-            } /*
-               * else if (abstractEstimate.getCurrentState().getNextAction() != null &&
-               * abstractEstimate.getCurrentState().getNextAction().equalsIgnoreCase("END")) {
-               * abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-               * .withDateInfo(currentDate.toDate());
-               * abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
-               * abstractEstimate.getCurrentState().getValue())); }
-               */else {
+            } else {
                 final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                         null, getAdditionalRule(), abstractEstimate.getCurrentState().getValue(), null);
                 if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
@@ -654,8 +627,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
             if (activity != null) {
                 activity.setUom(activity.getNonSor().getUom());
                 // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting triggered
-                // on
-                // update of estimate for child objects
+                // on update of estimate for child objects
                 activity.getNonSor().setCreatedBy(worksService.getCurrentLoggedInUser());
                 activity.getNonSor().setCreatedDate(new Date());
                 activity.getNonSor().setModifiedBy(worksService.getCurrentLoggedInUser());
@@ -958,9 +930,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
 
     protected CFinancialYear getCurrentFinancialYear() {
         if (abstractEstimate.getEstimateDate() != null)
-            return commonsService.getFinYearByDate(abstractEstimate.getEstimateDate());
+            return finHibernateDao.getFinYearByDate(abstractEstimate.getEstimateDate());
         else
-            return commonsService.getFinYearByDate(new Date());
+            return finHibernateDao.getFinYearByDate(new Date());
     }
 
     public List<MultiYearEstimate> getActionMultiYearEstimateValues() {
@@ -970,17 +942,6 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     public void setActionMultiYearEstimateValues(final List<MultiYearEstimate> actionMultiYearEstimateValues) {
         this.actionMultiYearEstimateValues = actionMultiYearEstimateValues;
     }
-
-    // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
-    /*
-     * public List<org.egov.infstr.workflow.Action> getValidActions() { return workflowService.getValidActions(abstractEstimate);
-     * }
-     */
-
-    // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
-    /*
-     * public void setEstimateWorkflowService(final WorkflowService<AbstractEstimate> workflow) { workflowService = workflow; }
-     */
 
     public String getSourcepage() {
         return sourcepage;

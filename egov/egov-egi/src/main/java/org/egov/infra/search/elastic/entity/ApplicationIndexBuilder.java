@@ -42,6 +42,8 @@ package org.egov.infra.search.elastic.entity;
 import java.util.Date;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
+import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
 
 /**
  * Builder class for Application Index
@@ -53,7 +55,7 @@ public class ApplicationIndexBuilder {
 
     public ApplicationIndexBuilder(final String moduleName, final String applicationNumber, final Date applicationDate,
             final String applicationType, final String applicantName, final String status, final String url,
-            final String applicantAddress, final String ownername) {
+            final String applicantAddress, final String ownername, final String channel) {
 
         applicationIndex = new ApplicationIndex();
         applicationIndex.setModuleName(moduleName);
@@ -65,6 +67,7 @@ public class ApplicationIndexBuilder {
         applicationIndex.setUrl(url);
         applicationIndex.setApplicantAddress(applicantAddress);
         applicationIndex.setOwnername(ownername);
+        applicationIndex.setChannel(channel);
     }
 
     public ApplicationIndexBuilder applicationAddress(final String applicantAddress) {
@@ -92,6 +95,21 @@ public class ApplicationIndexBuilder {
         return this;
     }
 
+    public ApplicationIndexBuilder elapsedDays(final Integer numberOfDays) {
+        applicationIndex.setElapsedDays(numberOfDays);
+        return this;
+    }
+
+    public ApplicationIndexBuilder closed(final ClosureStatus closed) {
+        applicationIndex.setClosed(closed);
+        return this;
+    }
+
+    public ApplicationIndexBuilder approved(final ApprovalStatus approved) {
+        applicationIndex.setApproved(approved);
+        return this;
+    }
+
     public ApplicationIndex build() throws ApplicationRuntimeException {
         validate();
         return applicationIndex;
@@ -111,6 +129,8 @@ public class ApplicationIndexBuilder {
         if (applicationIndex.getStatus() == null)
             throw new ApplicationRuntimeException("Application Status is mandatory");
         if (applicationIndex.getUrl() == null)
-            throw new ApplicationRuntimeException("URL is required");
+            throw new ApplicationRuntimeException("URL is mandatory");
+        if (applicationIndex.getChannel() == null)
+            throw new ApplicationRuntimeException("Channel is mandatory");
     }
 }

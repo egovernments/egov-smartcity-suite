@@ -53,7 +53,7 @@
 									<spring:message code="lbl.search.employee"/>
 								</div>
 							</div>
-							<div class="panel-body custom-form">
+							<div class="panel-body">
 									<div class="form-group advanced-forms">
 										
 										<div class="col-sm-4 add-margin">

@@ -65,9 +65,12 @@ import org.egov.eis.repository.EmployeeRepository;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Designation;
@@ -106,13 +109,22 @@ public class EmployeeService implements EntityTypeService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private RoleService roleService;
-
-    @Autowired
     private ApplicationProperties applicationProperties;
 
     @Autowired
     private BoundaryService boundaryService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private DesignationService designationService;
+
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
@@ -121,18 +133,18 @@ public class EmployeeService implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<CFunction> getAllFunctions() {
-        return getCurrentSession().createQuery("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)")
+        return getCurrentSession().createQuery("from CFunction where isactive = true AND isnotleaf=false order by upper(name)")
                 .list();
     }
 
     @SuppressWarnings("unchecked")
     public List<Functionary> getAllFunctionaries() {
-        return getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list();
+        return getCurrentSession().createQuery("from Functionary where isactive=true order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
     public List<Fund> getAllFunds() {
-        return getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)")
+        return getCurrentSession().createQuery("from Fund where isactive = true and isNotLeaf!=true order by upper(name)")
                 .list();
     }
 
@@ -159,6 +171,8 @@ public class EmployeeService implements EntityTypeService {
         employee.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
 
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
+
+        List<User> user = new ArrayList<User>();
         // Following is added to prevent null values and empty assignment
         // objects getting persisted
         employee.setAssignments(employee.getAssignments().parallelStream()
@@ -166,6 +180,15 @@ public class EmployeeService implements EntityTypeService {
         for (final Assignment assign : employee.getAssignments()) {
             assign.setEmployee(employee);
             assign.setDepartment(assign.getDepartment());
+
+            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
+            for (final Role role : roles) {
+                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
+                        roleService.getRoleByName(role.getName()).getName());
+                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()))
+                    if (user.isEmpty() || user == null)
+                        employee.addRole(roleService.getRoleByName(role.getName()));
+            }
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
@@ -178,6 +201,7 @@ public class EmployeeService implements EntityTypeService {
             jurisdiction.setBoundary(jurisdiction.getBoundary());
         }
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
+
         employeeRepository.save(employee);
     }
 
@@ -195,9 +219,20 @@ public class EmployeeService implements EntityTypeService {
         // objects getting persisted
         employee.setAssignments(employee.getAssignments().parallelStream()
                 .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
+        List<User> user = new ArrayList<User>();
+
         for (final Assignment assign : employee.getAssignments()) {
             assign.setEmployee(employee);
             assign.setDepartment(assign.getDepartment());
+
+            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
+            for (final Role role : roles) {
+                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
+                        roleService.getRoleByName(role.getName()).getName());
+                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()))
+                    if (user.isEmpty() || user == null)
+                        employee.addRole(roleService.getRoleByName(role.getName()));
+            }
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
@@ -210,6 +245,33 @@ public class EmployeeService implements EntityTypeService {
             jurisdiction.setBoundary(jurisdiction.getBoundary());
         }
         employeeRepository.saveAndFlush(employee);
+    }
+
+    @Transactional
+    public void addOrRemoveUserRole() {
+        final List<Employee> employee = getAllEmployees();
+        
+        for (final Employee emp : employee) {
+          final Set<Role> userRole = userService.getRolesByUsername(emp.getUsername());
+          
+          //List Of Expired Roles
+          final Set<Role> expiredRoleList = assignmentService.getRolesForExpiredAssignmentsByEmpId(emp.getId());
+          //List Of Active Roles
+          final Set<Role> activeRoleList = assignmentService.getRolesForActiveAssignmentsByEmpId(emp.getId());
+         
+          //Remove activeRoles from ExpiredRoles List
+          expiredRoleList.removeAll(activeRoleList);
+          
+          //Remove Expired Roles 
+          userRole.removeAll(expiredRoleList);
+          
+          //Add Roles
+          userRole.addAll(activeRoleList);
+          
+          emp.setRoles(userRole);
+          employeeRepository.save(emp);
+        }
+          
     }
 
     public List<Employee> searchEmployees(final EmployeeSearchDTO searchParams) {
@@ -373,7 +435,7 @@ public class EmployeeService implements EntityTypeService {
     @Override
     public List<? extends EntityType> filterActiveEntities(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
-        return null;
+        return employeeRepository.findByNameLikeOrCodeLike(filterKey + "%", filterKey + "%");
     }
 
     @Override

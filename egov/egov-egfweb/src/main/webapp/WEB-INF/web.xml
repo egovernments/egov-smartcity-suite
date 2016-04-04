@@ -1,25 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-	accountability and the service delivery of the government organizations. 
-	Copyright (C) <2015> eGovernments Foundation The updated version of eGov 
-	suite of products as by eGovernments Foundation is available at http://www.egovernments.org 
-	This program is free software: you can redistribute it and/or modify it under 
-	the terms of the GNU General Public License as published by the Free Software 
-	Foundation, either version 3 of the License, or any later version. This program 
-	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-	PURPOSE. See the GNU General Public License for more details. You should 
-	have received a copy of the GNU General Public License along with this program. 
-	If not, see http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html 
-	. In addition to the terms of the GPL license to be adhered to in using this 
-	program, the following additional terms are to be complied with: 1) All versions 
-	of this program, verbatim or modified must carry this Legal Notice. 2) Any 
-	misrepresentation of the origin of the material is prohibited. It is required 
-	that all modified versions of this material be marked in reasonable ways 
-	as different from the original version. 3) This license does not grant any 
-	rights to any user of the program with regards to rights under trademark 
-	law for use of the trade names or trademarks of eGovernments Foundation. 
-	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org. -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
@@ -27,7 +45,7 @@
 	<!-- Context Params Starts -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath*:config/spring/applicationContext-egfweb.xml</param-value>
+		<param-value>classpath:config/spring/applicationContext-egfweb.xml</param-value>
 	</context-param>
 	<context-param>
 		<param-name>locatorFactorySelector</param-name>
@@ -121,9 +139,7 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>applicationTenantResolverFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-		<url-pattern>*.do</url-pattern>
-		<url-pattern>*.action</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
@@ -158,9 +174,6 @@
 		<url-pattern>*.action</url-pattern>
 		<url-pattern>*.do</url-pattern>
 		<url-pattern>*.jsp</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>struts2Execute</filter-name>
@@ -174,6 +187,22 @@
 		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
 	</listener>
 	<!-- Listeners Ends Servlet Declaration Starts -->
+	<servlet>
+        <servlet-name>egfweb</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring/egfweb-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>egfweb</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    
 	<servlet>
 		<servlet-name>action</servlet-name>
 		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -217,6 +246,19 @@
 	</welcome-file-list>
 	<!-- Servlet Declaration Ends -->
 	<jsp-config>
+		<taglib>
+            <taglib-uri>http://tiles.apache.org/tags-tiles</taglib-uri>
+            <taglib-location>/WEB-INF/tags/tiles-jsp.tld</taglib-location>
+        </taglib>
+        
+        <taglib>
+            <taglib-uri>http://www.springframework.org/tags</taglib-uri>
+            <taglib-location>/WEB-INF/tags/spring.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://www.springframework.org/tags/form</taglib-uri>
+            <taglib-location>/WEB-INF/tags/spring-form.tld</taglib-location>
+        </taglib>
 		<taglib>
 			<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
 			<taglib-location>/WEB-INF/tags/c.tld</taglib-location>

@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
@@ -49,100 +49,45 @@
 	default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.tl" />
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	
-	<bean id="feeService" class="org.egov.tl.domain.service.FeeService"
-		parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.tl.domain.entity.FeeMatrix" />
+
+	<bean id="workflowBean" class="org.egov.tl.entity.WorkflowBean" scope="prototype" />
+
+    <bean id="tradeLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
+        <constructor-arg name="stateAwarePersistenceService" ref="tradeLicensePersistenceService"/>
+    </bean>
+
+    <bean id="transferWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
+        <constructor-arg name="stateAwarePersistenceService" ref="licenseTransferPersistenceService"/>
+    </bean>
+
+	<bean id="baseLicenseService" class="org.egov.tl.service.AbstractLicenseService" scope="prototype" abstract="true"/>
+
+	<bean id="licenseReportService" class="org.egov.tl.service.LicenseReportService" scope="prototype"/>
+
+	<bean id="tradeLicenseService" class="org.egov.tl.service.TradeLicenseService" parent="baseLicenseService">
+		<constructor-arg name="licensePersitenceService" ref="tradeLicensePersistenceService"/>
+        <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>
+        <property name="transferWorkflowService" ref="transferWorkflowService"/>
 	</bean>
 
-	<bean id="workflowBean" class="org.egov.tl.domain.entity.WorkflowBean"
-		scope="prototype" />
-
-	<!-- <bean id="transferLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
-		scope="prototype">
-		<constructor-arg ref="persistenceService" index="0" />
-		<constructor-arg
-			value="org.egov.tl.domain.entity.transfer.LicenseTransfer"
-			index="1" />
-	</bean> -->
-
-	<!-- <bean id="objectionWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
-		scope="prototype">
-		<constructor-arg ref="persistenceService" index="0" />
-		<constructor-arg
-			value="org.egov.tl.domain.entity.objection.LicenseObjection"
-			index="1" />
-	</bean> -->
-
-	<bean id="baseLicenseService" class="org.egov.tl.domain.service.BaseLicenseService"
-		scope="prototype" abstract="true">
-		<!-- <property name="sequenceGenerator" ref="sequenceGenerator" />
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="eisCommonsManager" ref="eisCommonsManager" /> -->
-		<property name="feeService" ref="feeService" />
-		<!-- <property name="installmentDao" ref="installmentDao" /> -->
-	</bean>
-
-	<!-- <bean id="licenseBillService"
-		class="org.egov.tl.domain.service.integration.LicenseBillService"
-		scope="prototype">
-		<property name="billDao" ref="billDao" />
-		<property name="persistenceService" ref="persistenceService" />
-	</bean>
- -->
-	<bean id="licenseReportService"
-		class="org.egov.tl.domain.service.LicenseReportService"
-		scope="prototype">
-		<!-- <property name="persistenceService" ref="persistenceService" />
-		<property name="installmentDao" ref="installmentDao" /> -->
-	</bean>
-
-	<bean id="contractorLicenseReportService"
-		class="org.egov.tl.domain.service.ContractorLicenseReportService"
-		parent="licenseReportService" scope="prototype">
-	</bean>
-
-	<!-- <bean id="tradeLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
-		scope="prototype">
-		<constructor-arg ref="persistenceService" index="0" />
-		<constructor-arg value="org.egov.tl.domain.entity.TradeLicense"
-			index="1" />
-	</bean> -->
-
-	<bean id="tps" parent="persistenceService" scope="prototype">
-		<property name="type"
-			value="org.egov.tl.domain.entity.TradeLicense" />
-	</bean>
-
-	<bean id="ts" class="org.egov.tl.domain.service.TradeService"
-		parent="baseLicenseService" scope="prototype">
-		<property name="tps" ref="tps" />
-		<!-- <property name="eisCommonsManager" ref="eisCommonsManager" /> -->
-		<!-- <property name="tradeLicenseWorkflowService" ref="tradeLicenseWorkflowService" /> -->
-	</bean>
-
-	<!-- <bean id="objectionService"
-		class="org.egov.tl.domain.service.objection.ObjectionService"
-		parent="persistenceService" scope="prototype">
-		<property name="type"
-			value="org.egov.tl.domain.entity.objection.LicenseObjection" />
-		<property name="eisCommonsManager" ref="eisCommonsManager" />
-		<property name="licenseService" ref="ts" />
-		<property name="sequenceGenerator" ref="sequenceGenerator" />
-		<property name="objectionWorkflowService" ref="objectionWorkflowService" />
-	</bean> -->
-
-	<bean id="licenseBill"
-		class="org.egov.tl.domain.service.integration.LicenseBill"
-		scope="prototype">
+	<bean id="licenseBill" class="org.egov.tl.service.integration.LicenseBill" scope="prototype">
 		<property name="moduleName" value="Trade License" />
 		<property name="serviceCode" value="TL" />
-		<!-- <property name="billDao" ref="billDao" /> 
-		<property name="licenseUtils" ref="licenseUtils" />-->
 	</bean>
 
-	<bean id="licenseDocumentTypeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.tl.domain.entity.LicenseDocumentType" />
+	<bean id="licenseDocumentTypeService" class="org.egov.infstr.services.PersistenceService">
+		<constructor-arg name="type" value="org.egov.tl.entity.LicenseDocumentType"/>
 	</bean>
+	  <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="parentMessageSource" ref="parentMessageSource" />
+        <property name="basenames">
+            <list>
+                <value>messages/labels</value>
+                <value>messages/errors</value>
+                <value>messages/message</value>
+            </list>
+        </property>
+        <!-- Disabling caching since on development-->
+        <property name="cacheSeconds" value="0"/>
+    </bean>
 </beans>

@@ -51,11 +51,10 @@
 	<context:component-scan base-package="org.egov.infstr"/>
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	
-	<import resource="applicationContext-messages.xml"/>
-	<!-- <alias name="${filestore.servicebean.name}" alias="fileStoreService" /> -->
-	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
-
+	
+	<bean id="masterDataCache" class="org.egov.infstr.utils.EgovMasterDataCaching" lazy-init="false"/>
+	
 	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory">
 	</bean>
 
@@ -63,8 +62,6 @@
 		<constructor-arg ref="commonsDAOFactory"/>
 		<constructor-arg ref="sessionFactory"/>
 	</bean>
-
-	<bean id="beanProvider" class="org.egov.infstr.beanfactory.ApplicationContextBeanProvider" />
 
 	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />

@@ -1,42 +1,42 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
 
@@ -108,7 +108,7 @@ var currRow=getRow(obj);
 		{
 		if(amt>debitAmt)
 		{
-		alert("Reversal Amount "+amt+" cannot be greater than Debit Amount "+debitAmt);
+			bootbox.alert("Reversal Amount "+amt+" cannot be greater than Debit Amount "+debitAmt);
 		return false;
 		}
 		getControlInBranch(currRow,"debitAmount").value=obj.value;
@@ -119,7 +119,7 @@ var currRow=getRow(obj);
 		var creditAmt=parseFloat(credit.value,2);
 		if(amt>creditAmt)
 		{
-		alert("Reversal Amount "+amt+" cannot be greater than Credit Amount "+creditAmt);
+			bootbox.alert("Reversal Amount "+amt+" cannot be greater than Credit Amount "+creditAmt);
 		return false;
 		}
 		getControlInBranch(currRow,"debitAmount").value="0.0";
@@ -199,19 +199,19 @@ function getAccountNumbers()
 				if(document.DishonoredChequeForm.accId.options[document.DishonoredChequeForm.accId.selectedIndex].value != 0)
 				{
 
-				//alert(document.DishonoredChequeForm.paramTxnDate.value);
+				//bootbox.alert(document.DishonoredChequeForm.paramTxnDate.value);
 					var txdate=document.DishonoredChequeForm.paramTxnDate.value;
 					if(txdate != null && txdate != "" && txdate.length>0)
 					{	
 						var dat=validateDate(document.DishonoredChequeForm.paramTxnDate.value);	
 						if (!dat){
-						alert('Invalid date format : Enter Date as dd/mm/yyyy');
+						bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 						document.DishonoredChequeForm.paramTxnDate.focus();
 						return;
 						}
 					}
 					else
-					{alert("Enter Transaction Date !!!");
+					{bootbox.alert("Enter Transaction Date !!!");
 					return;
 					}
 
@@ -219,10 +219,10 @@ function getAccountNumbers()
 
 				}
 				else
-				alert("Select Account No !!!");
+				bootbox.alert("Select Account No !!!");
 			}
 			else
-			alert("Select Bank And Branch !!!");
+			bootbox.alert("Select Bank And Branch !!!");
 		*/
 			
 			/*
@@ -231,13 +231,13 @@ function getAccountNumbers()
 			{	
 				var dat=validateDate(document.DishonoredChequeForm.paramTxnDate.value);	
 				if (!dat){
-				alert('Invalid date format : Enter Date as dd/mm/yyyy');
+				bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 				document.DishonoredChequeForm.paramTxnDate.focus();
 				return;
 				}
 			}
 			else
-			{alert("Enter Transaction Date !!!");
+			{bootbox.alert("Enter Transaction Date !!!");
 			document.DishonoredChequeForm.paramTxnDate.focus();
 			return;
 			}
@@ -288,10 +288,10 @@ function markForTxn(obj)
 			{
 				chkBox.checked=true;
 				//selectedVhid  voucherId,passRefNo,bankChargeAmt
-				//alert(getControlInBranch(table.rows[rowobj.rowIndex],"voucherId").value);        
-			//	alert(getControlInBranch(table.rows[rowobj.rowIndex],"refNo").value);        
-			//	alert(getControlInBranch(table.rows[rowobj.rowIndex],"bankChargeAmt").value); 
-		//	alert("table.rows[rowobj.rowIndex]"+table.rows[rowobj.rowIndex]);               
+				//bootbox.alert(getControlInBranch(table.rows[rowobj.rowIndex],"voucherId").value);        
+			//	bootbox.alert(getControlInBranch(table.rows[rowobj.rowIndex],"refNo").value);        
+			//	bootbox.alert(getControlInBranch(table.rows[rowobj.rowIndex],"bankChargeAmt").value); 
+		//	bootbox.alert("table.rows[rowobj.rowIndex]"+table.rows[rowobj.rowIndex]);               
 				document.getElementById("selectedIndex").value=i;                                               
 				document.getElementById("selectedVhid").value=getControlInBranch(table.rows[rowobj.rowIndex],"voucherId").value;
 				if(getControlInBranch(table.rows[rowobj.rowIndex],'refNo').value!=""){
@@ -304,7 +304,7 @@ function markForTxn(obj)
 			} // check voucherNo equal or not
 			else 
 			{
-			alert("Please Choose only cheques from the same Voucher Type and Voucher No.");
+				bootbox.alert("Please Choose only cheques from the same Voucher Type and Voucher No.");
 			return false;
 			}
 
@@ -340,7 +340,7 @@ function selUnSelAll()
 			 	} // check voucherNo equal or not
 			 	else
 			 	{
-			 	alert("Please Choose only cheques from the same Receipt Voucher No.");
+			 	bootbox.alert("Please Choose only cheques from the same Receipt Voucher No.");
 			 	chkBox.checked=false;
 			 	return;
 			 	}
@@ -380,11 +380,11 @@ var table=document.getElementById('gridDishonoredCheque');
 		
 	} // for
 	
-	//alert(vType);
+	//bootbox.alert(vType);
 	//if(vType=='Receipt')
 	
 	// Here if chequeType is "0" means Receipt and "1" means Payment
-	//alert("vType"+vType);
+	//bootbox.alert("vType"+vType);
 	if(vType=='Receipt' || vType=='Journal Voucher')
 	{
 		loadChqAccCodes();
@@ -469,7 +469,7 @@ var table=document.getElementById('gridDishonoredCheque');
 		//bankAmount=bankAmount+parseFloat(getControlInBranch(table.rows[i],'bankChargeAmt').innerHTML);
 		
 		bankAmount=bankAmount+parseFloat(getControlInBranch(table.rows[i],'bankChargeAmt').value);
-		//alert(bankAmount);
+		//bootbox.alert(bankAmount);
 		
 		//document.getElementById('totalBkAmount').innerHTML=bankAmount;
 		
@@ -487,7 +487,7 @@ var table=document.getElementById('gridDishonoredCheque');
 	document.getElementById('todayBankDt').innerHTML=transdate;
 	document.getElementById('bankTotalAmt').value=bankAmount;
 	
-	//alert("bankAmount value-"+bankAmount);
+	//bootbox.alert("bankAmount value-"+bankAmount);
 	if(bankAmount!=0 && bankAmount!="")
 	{
 		document.getElementById('gridBankCharges').style.display ='block';
@@ -530,8 +530,8 @@ function checkValidDate()
 			}
 		}
 		
-		//alert("j value is "+j);
-		//alert("first selected row chq date is "+cqdateFirst);
+		//bootbox.alert("j value is "+j);
+		//bootbox.alert("first selected row chq date is "+cqdateFirst);
 		
 	if(j>1)
 	{
@@ -542,7 +542,7 @@ function checkValidDate()
 			if(chkBox.checked)
 			{
 				cqdateNext=getControlInBranch(table.rows[i],"passChqDate").value;
-			  	//alert("Next chq date is "+cqdateNext);
+			  	//bootbox.alert("Next chq date is "+cqdateNext);
 				 if(compareDate(formatDate6(cqdateFirst),formatDate6(cqdateNext)) == 1)
 			 	{
 			 	cqdateFirst=cqdateNext;
@@ -552,14 +552,14 @@ function checkValidDate()
 	} // main if
 	
 	
-	//alert("Final chq date is "+cqdateFirst);
+	//bootbox.alert("Final chq date is "+cqdateFirst);
 	
 	// for receipt reversal
 	var recRevDt=document.getElementById('paramTxnDate').value;
 	
 	if(compareDate(formatDate6(cqdateFirst),formatDate6(recRevDt)) == -1)
 	{
-	alert("Transaction date cannot be prior to the selected cancel Chque date");
+		bootbox.alert("Transaction date cannot be prior to the selected cancel Chque date");
 	return false;
 	}
 	else
@@ -569,9 +569,9 @@ function checkValidDate()
 function ButtonPress(arg)
 {
 
-	//alert(arg);
+	//bootbox.alert(arg);
 	var vType=document.getElementById("voucherTypeParam").value;
-	//alert(" cheque type")
+	//bootbox.alert(" cheque type")
 		if(arg == "process")
 		{
 			
@@ -585,8 +585,8 @@ function ButtonPress(arg)
 				for(var cnt=1; cnt<grid.rows.length; cnt++)
 				{
 					chkBox = getControlInBranch(grid.rows[cnt], 'postTxn');
-				//alert("chkBox"+chkBox); 
-				//alert("chkBox"+chkBox.checked); 
+				//bootbox.alert("chkBox"+chkBox); 
+				//bootbox.alert("chkBox"+chkBox.checked); 
 					if(chkBox.checked){
 						document.getElementById("selectedRefNo").value=getControlInBranch(grid.rows[cnt],'refNo').value;
 						document.getElementById("selectedBankCharges").value=getControlInBranch(grid.rows[cnt],'bankChargeAmt').value;
@@ -598,11 +598,11 @@ function ButtonPress(arg)
 						getControlInBranch(grid.rows[cnt],'refNo').disabled=false;
 						//document.getElementById("refNo").value=getControlInBranch(grid.rows[cnt],'refNo').value;            
 						document.getElementById("passRefNo").value=getControlInBranch(grid.rows[cnt],'refNo').value;
-						//alert(document.getElementById("passRefNo").value);
+						//bootbox.alert(document.getElementById("passRefNo").value);
 					}
 					else
 					{
-						alert("Please Enter Reference No. for selected row !!!");
+						bootbox.alert("Please Enter Reference No. for selected row !!!");
 						return;
 					}
 					i++;}
@@ -611,7 +611,7 @@ function ButtonPress(arg)
 				}// if
 				else
 				{
-				alert("At least one cheque needs to be selected!!!");
+					bootbox.alert("At least one cheque needs to be selected!!!");
 				return;
 				}
 
@@ -627,20 +627,20 @@ function ButtonPress(arg)
 			{	
 				var dat=validateDate(document.DishonoredChequeForm.paramTxnDate.value);	
 				if (!dat){
-				alert('Invalid date format : Enter Date as dd/mm/yyyy');
+					bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 				document.DishonoredChequeForm.paramTxnDate.focus();
 				return;
 				}
 				}
 				else
-				{alert("Enter Transaction Date !!!");
+				{bootbox.alert("Enter Transaction Date !!!");
 				document.DishonoredChequeForm.paramTxnDate.focus();
 				return;
 			}
 			var reason = document.DishonoredChequeForm.dishonorReasons.value;
 			if(reason=="0")
 			{
-				alert("Please Select Reason !!!");
+				bootbox.alert("Please Select Reason !!!");
 				document.DishonoredChequeForm.dishonorReasons.focus();
 				return;
 			}
@@ -649,7 +649,7 @@ function ButtonPress(arg)
 			{
 			if(document.getElementById('reversalVoucherNumber').value=='')
 			{
-			alert("Please provide Reversal Voucher Number");
+				bootbox.alert("Please provide Reversal Voucher Number");
 			return false;
 			}
 			}
@@ -657,7 +657,7 @@ function ButtonPress(arg)
 			{
 			if(document.getElementById('bankChargesVoucherNumber').value=='')
 			{
-			alert("Please provide Voucher Number for Bank Charges");
+				bootbox.alert("Please provide Voucher Number for Bank Charges");
 			return false;
 			}
 			}	
@@ -665,31 +665,31 @@ function ButtonPress(arg)
 			if(!checkValidDate())
 			return;
 			
-			//alert(document.getElementById("voucherTypeParam").value);
+			//bootbox.alert(document.getElementById("voucherTypeParam").value);
 			var vType=document.getElementById("voucherTypeParam").value;
 			if(vType=='Receipt' || vType=='Journal Voucher')
 			{
-				//alert("Inside Receipt Reversal");
+				//bootbox.alert("Inside Receipt Reversal");
 				//if(!checkDuplicatesReceiptRev("gridReceiptReversalCheque","glcodeR","glcodeChList")) return;
 				//no duplicate check required
-				//alert("1");
+				//bootbox.alert("1");
 			//	if(isRowsEmptyReceiptRev())return;  ENABLE THESE TWO WHEN ADDING ADDNEW ROW 
-			//	alert("2");
+			//	bootbox.alert("2");
 			//	if(!checkValidAmountReceiptRev("gridReceiptReversalCheque","userAmount","debitAmount","creditAmount")) return;
-				//alert("3");
+				//bootbox.alert("3");
 				if(!checkTotalNew("gridReceiptReversalCheque","debitAmount","creditAmount","userAmount")) return;
 			}
 			if(vType=='Payment')
 			{
-				//alert("Inside Payment Reversal");
+				//bootbox.alert("Inside Payment Reversal");
 				if(!checkDuplicatesPaymentRev("gridPaymentReversalCheque","glcodeChIdP")) return;
 				if(isRowsEmptyPaymentRev())return;
 				if(!checkValidAmountPaymentRev("gridPaymentReversalCheque","creditAmount")) return;
 				if(!checkTotal("gridPaymentReversalCheque","creditAmount","debitAmount")) return;
 						
 			}
-			//alert("voucherTypeParam value- "+document.getElementById('voucherTypeParam').value);
-			//alert("voucherTxnDate value-"+document.getElementById('voucherTxnDate').value);
+			//bootbox.alert("voucherTypeParam value- "+document.getElementById('voucherTypeParam').value);
+			//bootbox.alert("voucherTxnDate value-"+document.getElementById('voucherTxnDate').value);
 			document.DishonoredChequeForm.action = "../brs/DishonoredChequeEntries.do?submitType=createDishonourCheque";           		
 			document.DishonoredChequeForm.submit();
 		} // savenew
@@ -702,13 +702,13 @@ function ButtonPress(arg)
 			{	
 				var dat=validateDate(document.DishonoredChequeForm.paramTxnDate.value);	
 				if (!dat){
-				alert('Invalid date format : Enter Date as dd/mm/yyyy');
+					bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 				document.DishonoredChequeForm.paramTxnDate.focus();
 				return;
 				}
 				}
 				else
-				{alert("Enter Transaction Date !!!");
+				{bootbox.alert("Enter Transaction Date !!!");
 				document.DishonoredChequeForm.paramTxnDate.focus();
 				return;
 			}
@@ -717,7 +717,7 @@ function ButtonPress(arg)
 			{
 			if(document.getElementById('reversalVoucherNumber').value=='')
 			{
-			alert("Please provide Reversal Voucher Number");
+				bootbox.alert("Please provide Reversal Voucher Number");
 			return false;
 			}
 			}
@@ -725,7 +725,7 @@ function ButtonPress(arg)
 			{
 			if(document.getElementById('bankChargesVoucherNumber').value=='')
 			{
-			alert("Please provide   Voucher Number for Bank Charges");
+				bootbox.alert("Please provide   Voucher Number for Bank Charges");
 			return false;
 			}
 			}	
@@ -733,23 +733,23 @@ function ButtonPress(arg)
 			if(!checkValidDate())
 			return;
 			
-			//alert(document.getElementById("voucherTypeParam").value);
+			//bootbox.alert(document.getElementById("voucherTypeParam").value);
 			var vType=document.getElementById("voucherTypeParam").value;
 			if(vType=='Receipt' || vType=='Journal Voucher')
 			{
-				//alert("Inside Receipt Reversal");
+				//bootbox.alert("Inside Receipt Reversal");
 				//if(!checkDuplicatesReceiptRev("gridReceiptReversalCheque","glcodeR","glcodeChList")) return;
 				//no duplicate check required
-				//alert("1");
+				//bootbox.alert("1");
 			//	if(isRowsEmptyReceiptRev())return;  ENABLE THESE TWO WHEN ADDING ADDNEW ROW 
-			//	alert("2");
+			//	bootbox.alert("2");
 			//	if(!checkValidAmountReceiptRev("gridReceiptReversalCheque","userAmount","debitAmount","creditAmount")) return;
-				//alert("3");
+				//bootbox.alert("3");
 				if(!checkTotalNew("gridReceiptReversalCheque","debitAmount","creditAmount","userAmount")) return;
 			}
 			
-			//alert("voucherTypeParam value- "+document.getElementById('voucherTypeParam').value);
-			//alert("voucherTxnDate value-"+document.getElementById('voucherTxnDate').value);
+			//bootbox.alert("voucherTypeParam value- "+document.getElementById('voucherTypeParam').value);
+			//bootbox.alert("voucherTxnDate value-"+document.getElementById('voucherTxnDate').value);
 			document.DishonoredChequeForm.action = "../brs/DishonoredChequeEntries.do?submitType=createDishonourCheque";		
 			document.DishonoredChequeForm.submit();
 		} // savenew
@@ -762,20 +762,20 @@ function ButtonPress(arg)
 			//var valTo=document.DishonoredChequeForm.bankToDate.value;
 			if(document.getElementById("instrumentMode").value=="0")
 			{
-				alert("Please Select Instrument Mode First!");
+				bootbox.alert("Please Select Instrument Mode First!");
 				document.getElementById("instrumentMode").focus();
 				return false;
 			}
 			
 			if(document.getElementById("chequeNo").value=="")
 			{
-				alert("Please Enter Cheque/DD Number First !!!");
+				bootbox.alert("Please Enter Cheque/DD Number First !!!");
 				document.getElementById("chequeNo").focus();
 				return false;
 			}
 			if(valFrom == "" && valFrom.length==0)
 			{	
-				alert("Please Enter Cheque/DD Date !!!");
+				bootbox.alert("Please Enter Cheque/DD Date !!!");
 				document.DishonoredChequeForm.bankFromDate.focus();
 				return false;
 				
@@ -784,7 +784,7 @@ function ButtonPress(arg)
 			{	
 				var dat=validateDate(document.DishonoredChequeForm.bankFromDate.value);
 				if (!dat){
-				alert('Invalid date format : Enter Date as dd/mm/yyyy');
+					bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 				document.DishonoredChequeForm.bankFromDate.focus();
 				return;
 				}
@@ -798,7 +798,7 @@ function compareDt()
 {
 	if(compareDate(formatDate6(document.DishonoredChequeForm.bankFromDate.value),formatDate6(document.DishonoredChequeForm.bankToDate.value)) == -1 )
 	{
-	alert('Cheque Date To cannot be less than Cheque Date From');
+		bootbox.alert('Cheque Date To cannot be less than Cheque Date From');
 	document.DishonoredChequeForm.bankFromDate.focus();
 	return false;
 	}
@@ -827,35 +827,35 @@ function markForPassVoucher()
 			document.getElementById("passAccId").value=accIdParam;
 			//document.getElementById("passFieldId").value=fieldId;
 			
-			//alert(vHeaderId);
-			//alert(pHeaderId);
-			//alert(fundId);
-			//alert(fundSrcId);
-			//alert(fieldId);
+			//bootbox.alert(vHeaderId);
+			//bootbox.alert(pHeaderId);
+			//bootbox.alert(fundId);
+			//bootbox.alert(fundSrcId);
+			//bootbox.alert(fieldId);
 		}
 		else
 		{
 			getControlInBranch(table.rows[i],'passVoucher').value = "no";
-			//alert("no");
+			//bootbox.alert("no");
 		}
 	} // for
 }
 
 function Test()
 {
-//alert(document.getElementById("passVoucherId").value);
-//alert(document.getElementById("passPayinVHId").value);
-//alert(document.getElementById("passFundId").value);
-//alert(document.getElementById("passFundSrcId").value);
-//alert(document.getElementById("passFieldId").value);
-//alert(document.getElementById("passAccId").value);
+//bootbox.alert(document.getElementById("passVoucherId").value);
+//bootbox.alert(document.getElementById("passPayinVHId").value);
+//bootbox.alert(document.getElementById("passFundId").value);
+//bootbox.alert(document.getElementById("passFundSrcId").value);
+//bootbox.alert(document.getElementById("passFieldId").value);
+//bootbox.alert(document.getElementById("passAccId").value);
 
 }
 
 function clearData()
 	{
 		//document.getElementById('processGrid').style.display ='none';
-		//alert(document.getElementById("gridDishonoredCheque").length);
+		//bootbox.alert(document.getElementById("gridDishonoredCheque").length);
 			
 		// <!--var bankBal="<%=session.getAttribute("accountBalance")%>"; -->           
 		//if(document.DishonoredChequeForm.accId.options[document.DishonoredChequeForm.accId.selectedIndex].value != 0)
@@ -867,10 +867,10 @@ function clearData()
 		//}
 		
 		var target="<%=(request.getAttribute("alertMessage"))%>";
-		//alert(target);          
+		//bootbox.alert(target);          
 		if(target!="null")
 		{
-			 alert("<%=request.getAttribute("alertMessage")%>"); 
+			bootbox.alert("<%=request.getAttribute("alertMessage")%>"); 
 			<%	
 			if(request.getAttribute("alertMessage") != null)
 			{
@@ -916,7 +916,7 @@ function clearData()
 /*
 function fillTodayDate()
 {
-		//alert("<%=session.getAttribute("todayDate")%>");
+		//bootbox.alert("<%=session.getAttribute("todayDate")%>");
 	
 	var transdate=document.getElementById('paramTxnDate').value;
 	document.getElementById('todayDateCh').value=transdate;
@@ -967,14 +967,14 @@ var vType=document.getElementById("voucherTypeParam").value;
 	 //temp = temp.split('-');
 	 temp = temp.split('~');
 	 
-	 //alert(temp.length);
+	 //bootbox.alert(temp.length);
 	 if(temp.length==1)
 	 {
 		var currRow=getRow(obj);
 		neibrObj=getControlInBranch(currRow,neibrObjName);
 		//	neibrObj.value=temp[1].replace("`","d")
 		
-		//alert('table'+table);	
+		//bootbox.alert('table'+table);	
 		var neibrObj1=getControlInBranch(table.rows[currRow.rowIndex],"glcodeChIdP");
 		var neibrObj2=getControlInBranch(table.rows[currRow.rowIndex],"glcodeChId");
 		var neibrObj3=getControlInBranch(table.rows[currRow.rowIndex],"glcodeR");
@@ -1052,7 +1052,7 @@ var vType=document.getElementById("voucherTypeParam").value;
 
 function splitBankCode()
 {
-	//alert(bankGlcodearray);
+	//bootbox.alert(bankGlcodearray);
 
 var arr=new Array();
 arr=bankGlcodearray[0];
@@ -1062,9 +1062,9 @@ arr=bankGlcodearray[0];
  document.getElementById('accCodedescBk').value=arr[1];  // desc
  document.getElementById('glcodeBkId').value=arr[2]; // glcodeId
  
-	//alert(arr[0]);
-	//alert(arr[1]);
-	//alert(arr[2]);
+	//bootbox.alert(arr[0]);
+	//bootbox.alert(arr[1]);
+	//bootbox.alert(arr[2]);
 
 }
 function loadChqAccCodes()
@@ -1090,11 +1090,11 @@ function loadDropDownChqCodes(vouchHeaderId)
 				var codes = a[0];
 				chqGlcodearray=codes.split("+");
 								
-				//alert(chqGlcodearray);
+				//bootbox.alert(chqGlcodearray);
 								
 				for(var i=0;i<chqGlcodearray.length;i++)
 				{
-				//alert("chqGlcodearray[i]"+chqGlcodearray[i]);
+				//bootbox.alert("chqGlcodearray[i]"+chqGlcodearray[i]);
 				var glcodeValue="";
 				glcodeValue=chqGlcodearray[i].replace("`","");
 			//	document.getElementById('glcodeChList').options[i+1]=new Option(glcodeValue,glcodeValue);
@@ -1123,7 +1123,7 @@ function loadDropDownBankCodes()
 					var a = codes2.split("^");
 					var codes = a[0];
 					bankGlcodearray=codes.split("+");
-					//alert("bankGlcodearray"+bankGlcodearray);
+					//bootbox.alert("bankGlcodearray"+bankGlcodearray);
 					splitBankCode();
                    		  }
 			  }
@@ -1134,11 +1134,11 @@ function loadDropDownBankCodes()
 	 
 function getGlcodeDetail(obj)
 {
-	//alert(obj.value);
+	//bootbox.alert(obj.value);
 	if(obj.value !='')
 	{
 	glcodeParam=document.getElementById("chartOfAccounts_glCode").value;
-	//alert("glcodeParam-"+glcodeParam);
+	//bootbox.alert("glcodeParam-"+glcodeParam);
 	loadGlcodeDetail(glcodeParam);
 	}
 }	 
@@ -1157,7 +1157,7 @@ function loadGlcodeDetail(glcodeParam)
 				var a = codes2.split("^");
 				var codes = a[0];
 				glcodearrayForPayRev=codes.split("+");
-				//alert("glcodearrayForPayRev"+glcodearrayForPayRev);
+				//bootbox.alert("glcodearrayForPayRev"+glcodearrayForPayRev);
 				splitGlCodeDetail();
 			  }
 		  }
@@ -1171,9 +1171,9 @@ function splitGlCodeDetail()
  arr=glcodearrayForPayRev[0];
   arr=arr.split("`--`");
   
-	  //alert(arr[0]);
-	 //alert(arr[1]);
-	 //alert(arr[2]);
+	  //bootbox.alert(arr[0]);
+	 //bootbox.alert(arr[1]);
+	 //bootbox.alert(arr[2]);
  
 	  if(arr[1]!=undefined)
 	  { 
@@ -1183,7 +1183,7 @@ function splitGlCodeDetail()
 	  }
 	  else
 	  {
-	  alert("Invalid Account Code!!!!");
+		  bootbox.alert("Invalid Account Code!!!!");
 	  document.getElementById('chartOfAccounts_glCode').value=""; // glcode
 	  document.getElementById('accCodedescChP').value="";  // desc
 	  document.getElementById('glcodeChIdP').value=""; // glcodeId
@@ -1196,13 +1196,13 @@ function splitGlCodeDetail()
 function checkValidAmt()
 {	
 	var table= document.getElementById("gridDishonoredCheque");
-	//alert(table.rows.length);                        
+	//bootbox.alert(table.rows.length);                        
 	for(var i=1;i<=table.rows.length;i++)
 	{
-//alert(getControlInBranch(table.rows[i],"bankChargeAmt").value);
+//bootbox.alert(getControlInBranch(table.rows[i],"bankChargeAmt").value);
 		if(isNaN(getControlInBranch(table.rows[i],"bankChargeAmt").value))
 		{
-		alert("Bank Charge Amount should be in Number");
+			bootbox.alert("Bank Charge Amount should be in Number");
 		return false;
 		}
 		else
@@ -1212,15 +1212,15 @@ function checkValidAmt()
  function imposeMaxLength(Object, MaxLen)
 {
 	if(Object.value.length > MaxLen)
-	alert("Reason should not exceed more than 100 characters !!!");
+		bootbox.alert("Reason should not exceed more than 100 characters !!!");
 	return (Object.value.length <= MaxLen);
 }
 function getDrillDown(obj){
 		var row=getRow(obj);
 		var table=document.getElementById('gridDishonoredCheque');
-//		alert(table.rows[row.rowIndex]);
-	//	alert(getControlInBranch(table.rows[row.rowIndex],"voucherId"));
-	//	alert(getControlInBranch(table.rows[row.rowIndex],"voucherId").value);
+//		bootbox.alert(table.rows[row.rowIndex]);
+	//	bootbox.alert(getControlInBranch(table.rows[row.rowIndex],"voucherId"));
+	//	bootbox.alert(getControlInBranch(table.rows[row.rowIndex],"voucherId").value);
 		var voucherId = getControlInBranch(table.rows[row.rowIndex],"voucherId").value;
 		var voucherNumber = getControlInBranch(table.rows[row.rowIndex],"voucherNo");
 		if(voucherNumber.innerHTML != 'MULTIPLE'){
@@ -1242,7 +1242,7 @@ function addRowForReceipt(tablename)
 		tbl.rows[lastRow-1].cells[i].value="";
 		}
 		
-		//alert(lastRow-1);
+		//bootbox.alert(lastRow-1);
 		
 		document.forms[0].glcodeChId[lastRow-1].value="";
 		document.forms[0].glcodeR[lastRow-1].value="";
@@ -1262,7 +1262,7 @@ function deleteRowForReceipt()
 
 	if(lastRow ==1)
 	{
-	 alert("This row can not be deleted");
+		bootbox.alert("This row can not be deleted");
 	return false;
  	}
 	else
@@ -1301,7 +1301,7 @@ function deleteRowForPayment()
 
 	if(lastRow ==1)
 	{
-	 alert("This row can not be deleted");
+		bootbox.alert("This row can not be deleted");
 	return false;
  	}
 	else
@@ -1347,19 +1347,19 @@ function fillNeibrAfterSplit(obj,neibrObjName)
 			yuiflag[currRow.rowIndex] = undefined;
 			neibrObj=getControlInBranch(currRow,neibrObjName);
 			
-			//alert(temp[0]);
-			//alert(temp[1]);
-			//alert(temp[2]);
+			//bootbox.alert(temp[0]);
+			//bootbox.alert(temp[1]);
+			//bootbox.alert(temp[2]);
 			
 			var table=document.getElementById('gridPaymentReversalCheque');
-			//alert(getControlInBranch(table.rows[currRow.rowIndex],"glcodeChIdP"));
+			//bootbox.alert(getControlInBranch(table.rows[currRow.rowIndex],"glcodeChIdP"));
 			var neibrObj2=getControlInBranch(table.rows[currRow.rowIndex],"glcodeChIdP");
 				
 			
 			if(temp[1]==null) return; else 	neibrObj.value = temp[1];
 			if(temp[2]==null) return; else 	neibrObj2.value = temp[2];
 			
-			//alert("glcode id"+getControlInBranch(table.rows[currRow.rowIndex],"glcodeChIdP").value);
+			//bootbox.alert("glcode id"+getControlInBranch(table.rows[currRow.rowIndex],"glcodeChIdP").value);
 			
 			
  }
@@ -1412,7 +1412,7 @@ function showglEntryForReversal()
 	{
 			var gltable= document.getElementById("gridPaymentReversalCheque");
 			if(document.forms[0].glcodeChIdP[0].value == 0){
-				alert("Enter Account code Details First");
+				bootbox.alert("Enter Account code Details First");
 				tObj.style.display="none";
 				return false;
 			}
@@ -1424,22 +1424,22 @@ function showglEntryForReversal()
 			
 			// debit entry should show first
 			passedAmount = eval(document.getElementById('passedAmount').value);
-			//alert("passedAmount"+passedAmount);
+			//bootbox.alert("passedAmount"+passedAmount);
 			passedAmount = isNaN(passedAmount) ? 0 : passedAmount;
-			//alert("passedAmount"+passedAmount);
+			//bootbox.alert("passedAmount"+passedAmount);
 			if( passedAmount < 0)
 			{
-				alert(' amount can not be nagative');
+				bootbox.alert(' amount can not be nagative');
 				return false;
 			}
 			
 			// For Getting corresponding Bank glcode and name
 			var accountId=document.DishonoredChequeForm.passAccId.value;
-			//alert("accountId"+accountId);
+			//bootbox.alert("accountId"+accountId);
 			var accountGlcode, accountGlname;
 			if(accountId != '')
 			{
-				//alert(" Inside if ");		
+				//bootbox.alert(" Inside if ");		
 				var url = "../commons/Process.jsp?accountId=" +accountId+ "&type=getBankAccountGlcode";
 				var req2 = initiateRequest();  		
 				req2.open("GET", url, false);
@@ -1447,9 +1447,9 @@ function showglEntryForReversal()
 				if (req2.status == 200) 
 				{
 				var result=req2.responseText.split("`-`");
-				//alert("req2.responseText "+req2.responseText);
-				//alert("result[0] "+result[0]);
-				//alert("result[1] "+result[1]);     	            	   	           	         	           		              					              
+				//bootbox.alert("req2.responseText "+req2.responseText);
+				//bootbox.alert("result[0] "+result[0]);
+				//bootbox.alert("result[1] "+result[1]);     	            	   	           	         	           		              					              
 					if(result!= null && result!= "")
 					{							
 						accountGlcode=result[0];
@@ -1593,7 +1593,7 @@ function showglEntryForReversal()
 		
 		if(!(code!="" && code!=0))
 		{
-			alert("Enter Account code Details First");
+			bootbox.alert("Enter Account code Details First");
 			tObj.style.display="none";
 			return false;
 		}
@@ -1624,7 +1624,7 @@ function showglEntryForReversal()
 			cr=cr+credit;
 			usrAmt=getControlInBranch(gltable.rows[i],'userAmount').value;
 
-		//	alert("user amount"+usrAmt);
+		//	bootbox.alert("user amount"+usrAmt);
 
             
 			//narration=getControlInBranch(gltable.rows[i],'voucherDetail_narration').value;
@@ -1673,12 +1673,12 @@ function showglEntryForReversal()
 					{
 							objt3.innerHTML=usrAmt;
 							objt4.innerHTML="0.0";
-						//alert(objt3.name+"setting"+usrAmt);
+						//bootbox.alert(objt3.name+"setting"+usrAmt);
 							}
 					else
 					{       objt3.innerHTML="0.0";    
  							objt4.innerHTML=usrAmt;
-							//alert(objt4.name+"setting"+usrAmt);
+							//bootbox.alert(objt4.name+"setting"+usrAmt);
 							}
 					//objt5.innerHTML=narration;
 			}
@@ -1688,25 +1688,25 @@ function showglEntryForReversal()
 			passedAmount = eval(document.getElementById('passedAmount').value);
 			passedAmount = isNaN(passedAmount) ? 0 : passedAmount;
 			if( passedAmount < 0){
-						alert(' amount can not be nagative');
+				bootbox.alert(' amount can not be nagative');
 						return false;
 					}
 
 
 		// For Getting corresponding Bank glcode and name
 		var accountId=document.DishonoredChequeForm.passAccId.value;
-		//alert("accountId"+accountId);
+		//bootbox.alert("accountId"+accountId);
 		var accountGlcode, accountGlname;
 			if(accountId != '')
 			{
-				//alert("Hi inside if");		
+				//bootbox.alert("Hi inside if");		
 				var url = "../commons/Process.jsp?accountId=" +accountId+ "&type=getBankAccountGlcode";
 				var req2 = initiateRequest();  		
 				req2.open("GET", url, false);
 				req2.send(null);
 				if (req2.status == 200) 
 				{
-					//alert("inside if req2.status == 200");
+					//bootbox.alert("inside if req2.status == 200");
 				var result=req2.responseText.split("`-`");     	            	   	           	         	           		              					              
 					if(result!= null && result!= "")
 					{							
@@ -1803,7 +1803,7 @@ function showglEntryForBankCharges()
 	
 		if(!(code!="" && code!=0))
 		{
-			alert("Bank Charges Account code Details Must");
+			bootbox.alert("Bank Charges Account code Details Must");
 			tObj.style.display="none";
 			return false;
 		}
@@ -1871,13 +1871,13 @@ function showglEntryForBankCharges()
 			bankAmount = eval(document.getElementById('bankTotalAmt').value);
 			bankAmount = isNaN(bankAmount) ? 0 : bankAmount;
 			if( bankAmount < 0){
-						alert(' Bank Charges can not be nagative');
+				bootbox.alert(' Bank Charges can not be nagative');
 						return false;
 					}
 
 		// For Getting corresponding Bank glcode and name
 		var accountId=document.DishonoredChequeForm.passAccId.value;
-		//alert("accountId"+accountId);
+		//bootbox.alert("accountId"+accountId);
 		var accountGlcode, accountGlname;
 			if(accountId != '')
 			{		
@@ -1959,7 +1959,7 @@ function showglEntryForBankCharges()
 
 function checkDuplicatesReceiptRev(tableId,ctlToSearch,ctlToSearch2)
 {
-//alert("checkDuplicatesReceiptRev"+ctlToSearch2);
+//bootbox.alert("checkDuplicatesReceiptRev"+ctlToSearch2);
 	var table=document.getElementById(tableId);
 	var row1Data,rowData;
 	for(var i=1;i<table.rows.length-1;i++){
@@ -1968,12 +1968,12 @@ function checkDuplicatesReceiptRev(tableId,ctlToSearch,ctlToSearch2)
 		rowData=getControlInBranch(table.rows[j],ctlToSearch);
 		rowDataColFirst=getControlInBranch(table.rows[j],ctlToSearch2);
 		if((row1Data.value.toLowerCase()==rowData.value.toLowerCase())&&rowData.value.length>0){
-			alert("Record "+j+" Account Code  Cannot be Same as Record "+i);
+			bootbox.alert("Record "+j+" Account Code  Cannot be Same as Record "+i);
 			rowDataColFirst.focus();
 			return false;
 		}
 	}
-//alert("checkDuplicatesReceiptRev"+ctlToSearch2);
+//bootbox.alert("checkDuplicatesReceiptRev"+ctlToSearch2);
 }
 return true;
 }
@@ -1987,7 +1987,7 @@ function checkDuplicatesPaymentRev(tableId,ctlToSearch)
 			rowData=getControlInBranch(table.rows[j],ctlToSearch);
 			
 			if((row1Data.value.toLowerCase()==rowData.value.toLowerCase())&&rowData.value.length>0){
-				alert("Record "+j+" Account Code  Cannot be Same as Record "+i);
+				bootbox.alert("Record "+j+" Account Code  Cannot be Same as Record "+i);
 				rowData.focus();
 				return false;
 			}
@@ -2007,12 +2007,12 @@ function isRowsEmptyReceiptRev()
 	 		tAmtObj=getControlInBranch(table.rows[i],'debitAmount');
 	 		//tAmtObj=getControlInBranch(table.rows[i],'creditAmount');
 	 		if(tCodeObj.value.length>0 && tAmtObj.value.length==0){
-	 		  alert("Fill the Amount");
+	 			bootbox.alert("Fill the Amount");
 	 		  tAmtObj.focus();
 	 		  return true;
 	 		}
 	 		if(tCodeObj.value.length==0){
-	 		  alert("Select The Account Code");
+	 			bootbox.alert("Select The Account Code");
 	 		  tCodeObjFirstCol.focus();
 	 		  return true;
 	 		}
@@ -2025,15 +2025,15 @@ function isRowsEmptyPaymentRev()
 	 	var tCodeObj , tAmtObj;
 	 	for(var i=0;i<table.rows.length-1;i++)
 	 	{
-	 		//alert(table.rows.length-1);
+	 		//bootbox.alert(table.rows.length-1);
 	 		if(document.forms[0].glcodeChIdP[i].value == 0){
-	 		  alert("Fill The AccountCode");
+	 			bootbox.alert("Fill The AccountCode");
 	 		  document.forms[0].glcodeChIdP[i].focus();
 	 		  return true;
 	 		}
 	 		//tAmtObj=getControlInBranch(table.rows[i],'creditAmount');
 	 		//if(document.forms[0].glcodeChIdP[i].value!=0 && document.getElementById('creditAmount').innerHTML==''){
-	 		  //alert("Fill The Amount");
+	 		  //bootbox.alert("Fill The Amount");
 	 		  //tAmtObj.focus();
 	 		  //return true;
 	 		//}
@@ -2045,7 +2045,7 @@ function checkValidAmountReceiptRev(tableId,ctlToSearch1,ctlToSearch2,ctlToSearc
  {
  	var table=document.getElementById(tableId);
  	var col1,col2,col3;
-	//alert(table.rows.length);
+	//bootbox.alert(table.rows.length);
 		
 	 	for(var i=1;i<table.rows.length;i++)
 		{
@@ -2057,14 +2057,14 @@ function checkValidAmountReceiptRev(tableId,ctlToSearch1,ctlToSearch2,ctlToSearc
 			 {
 			 	if(isNaN(col1))
 			 	{
-				alert("Cheque Amount should be iStringn Number");
+			 		bootbox.alert("Cheque Amount should be iStringn Number");
 				return false;
 				}
 			 			
 				minVal=parseFloat(col1);
 				if(minVal>parseFloat(9999999999999.99))
 				{
-				alert("Cheque Amount cannot be greater than 9999999999999.99");
+					bootbox.alert("Cheque Amount cannot be greater than 9999999999999.99");
 				return false;
 				}
 			 
@@ -2074,26 +2074,26 @@ function checkValidAmountReceiptRev(tableId,ctlToSearch1,ctlToSearch2,ctlToSearc
 			 {
 				if(isNaN(col2))
 				{
-				alert("Amount should be in Number");
+					bootbox.alert("Amount should be in Number");
 				return false;
 				}
 				maxVal=parseFloat(col2);
 				creditVal=parseFloat(col3);
 	/**			if(maxVal==0 && creditVal==0)
 				{
-				alert(" Amount cannot be Zero ");
+				bootbox.alert(" Amount cannot be Zero ");
 				getControlInBranch(table.rows[i],ctlToSearch2).focus();
 				return false;
 				} commenting when dropdown is changed to grid  */
 				if(minVal < maxVal)
 				{
-				alert("In Receipt Reversal Grid"+i+" Row Amount must be Equal Or Less than Cheque Amount");
+					bootbox.alert("In Receipt Reversal Grid"+i+" Row Amount must be Equal Or Less than Cheque Amount");
 				getControlInBranch(table.rows[i],ctlToSearch2).focus();				
 				return false;
 				}
 				if(maxVal>parseFloat(9999999999999.99))
 				{
-				alert("Amount cannot be greater than 9999999999999.99");
+					bootbox.alert("Amount cannot be greater than 9999999999999.99");
 				getControlInBranch(table.rows[i],ctlToSearch2).focus();				
 				return false;
 				}
@@ -2118,7 +2118,7 @@ function checkValidAmountPaymentRev(tableId,ctlToSearch1)
 			 {
 			 	if(isNaN(col1))
 			 	{
-				alert("Amount should be in Number");
+			 		bootbox.alert("Amount should be in Number");
 				getControlInBranch(table.rows[i],ctlToSearch1).focus();
 				return false;
 				}
@@ -2126,7 +2126,7 @@ function checkValidAmountPaymentRev(tableId,ctlToSearch1)
 				minVal=parseFloat(col1);
 				if(minVal>parseFloat(9999999999999.99))
 				{
-				alert("Amount cannot be greater than 9999999999999.99");
+					bootbox.alert("Amount cannot be greater than 9999999999999.99");
 				getControlInBranch(table.rows[i],ctlToSearch1).focus();
 				return false;
 				}
@@ -2145,10 +2145,10 @@ function checkTotal(tableId,ctlToSearch1,ctlToSearch2)
  	var passedAmt = document.getElementById('passedAmount').value
  	var chqAmount=0;
  	var creditAmt=0;
- 	//alert(passedAmt);
- 	//alert("passedAmt"+passedAmt);
- 	//alert("ctl1"+ctlToSearch1.value);
- 	//alert("ctl2"+ctlToSearch2.value);
+ 	//bootbox.alert(passedAmt);
+ 	//bootbox.alert("passedAmt"+passedAmt);
+ 	//bootbox.alert("ctl1"+ctlToSearch1.value);
+ 	//bootbox.alert("ctl2"+ctlToSearch2.value);
   	
  	var table=document.getElementById(tableId);
  	for(var i=1;i<table.rows.length;i++)
@@ -2162,16 +2162,16 @@ function checkTotal(tableId,ctlToSearch1,ctlToSearch2)
 	} // for	
 	passedAmt = Math.round(parseFloat(passedAmt)+parseFloat(creditAmt))*10/10;
 	}
- 	//alert(chqAmount);
-	//alert(creditAmt);
-	//alert(passedAmt);
+ 	//bootbox.alert(chqAmount);
+	//bootbox.alert(creditAmt);
+	//bootbox.alert(passedAmt);
  	if(chqAmount != passedAmt)
 	{
-	alert("The Total Amount should be equal to the Reversal Amount");
+ 		bootbox.alert("The Total Amount should be equal to the Reversal Amount");
 	return false;
 	}
 	if(chqAmount<0)
-	{  alert("Enter the Valid Amount");
+	{  bootbox.alert("Enter the Valid Amount");
 	   return false;
 	}
 	return true;
@@ -2185,7 +2185,7 @@ function checkTotalNew(tableId,debitAmount,creditAmount,userAmount)
  	var reversalAmt=eval(document.getElementById('userReceiptNet').value).toFixed(2);
  	if(reversalAmt != passedAmt)
 	{
-	alert("The Total Amount should be equal to the Reversal Amount");
+ 		bootbox.alert("The Total Amount should be equal to the Reversal Amount");
 	return false;
 	}
 	return true;
@@ -2201,7 +2201,7 @@ function calculateNet(tabId)
 	userCreditTotal=userCreditTotal+parseFloat(getControlInBranch(table.rows[i],"creditAmount").value,2);
 	} 	
 	netAmt = Math.abs(userCreditTotal-userDebitTotal);
-	//alert(">>>>Net amount"+netAmt);
+	//bootbox.alert(">>>>Net amount"+netAmt);
 	document.getElementById("userReceiptNet").value=netAmt.toFixed(2);
 	
  }
@@ -2216,7 +2216,7 @@ function calculateNet(tabId)
  	
  	if(x!=null && x!='' && x!=0)
  		document.getElementById("instrumentMode").value=x;
- 	//alert(buttonType);
+ 	//bootbox.alert(buttonType);
  	if(buttonType == "saveclose")
  	{
  		window.close();
@@ -2224,7 +2224,7 @@ function calculateNet(tabId)
  	if(buttonType == "saveview")
  	{		
  		
- 		//alert("Inside save view");
+ 		//bootbox.alert("Inside save view");
  		var reversalVhId="<%=request.getAttribute("reversalVhId")%>";
  		var bankChargesVhId="<%=request.getAttribute("bankChargesVhId")%>";
  		
@@ -2261,10 +2261,10 @@ function calculateNet(tabId)
 				getControlInBranch(grid.rows[cnt],'refNo').disabled=false;
 				//document.getElementById("refNo").value=getControlInBranch(grid.rows[cnt],'refNo').value;
 				document.getElementById("passRefNo").value=getControlInBranch(grid.rows[cnt],'refNo').value;
-				//alert(document.getElementById("passRefNo").value);
+				//bootbox.alert(document.getElementById("passRefNo").value);
 				}
 				else
-				{alert("Please Enter Reference No. for selected row !!!");
+				{bootbox.alert("Please Enter Reference No. for selected row !!!");
 				return;
 				}
 
@@ -2300,7 +2300,7 @@ function calculateNet(tabId)
 			}// if
 			else
 			{
-			alert("At least one cheque needs to be selected!!!");
+				bootbox.alert("At least one cheque needs to be selected!!!");
 			return;
 			}
 		markForPassVoucher();

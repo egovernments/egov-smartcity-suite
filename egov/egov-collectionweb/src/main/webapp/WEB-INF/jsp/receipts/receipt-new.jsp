@@ -39,15 +39,10 @@
 -->
 
 <%@ include file="/includes/taglibs.jsp" %>
-
 <head>
 <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
-<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
-	rel="stylesheet" type="text/css" />
-<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#bankcodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
@@ -77,12 +72,15 @@ jQuery(document).ready(function() {
     	 format: 'dd/mm/yyyy',
     	 autoclose:true,
          onRender: function(date) {
-             console.log(date);
       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
       	  }
 	  }).on('changeDate', function(ev) {
-		  isDatepickerOpened=false; 
-       	  checkForCurrentDate(this);
+		  var string=jQuery(this).val();
+		  if(!(string.indexOf("_") > -1)){
+			  isDatepickerOpened=false; 
+	       	  checkForCurrentDate(this);
+		  }
+		  
 	  }).data('datepicker');
 
      jQuery( "#manualReceiptDate" ).datepicker({ 
@@ -92,9 +90,12 @@ jQuery(document).ready(function() {
        	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
        	  }
 	  }).on('changeDate', function(ev) {
-		  isDatepickerOpened=false; 
-       	  checkForCurrentDate(this);
-		  validateManualReceiptDate(this);
+		  var string=jQuery(this).val();
+		  if(!(string.indexOf("_") > -1)){
+			  isDatepickerOpened=false; 
+	       	  checkForCurrentDate(this);
+			  validateManualReceiptDate(this);
+		  }
 	  }).data('datepicker');
  });
 
@@ -139,7 +140,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='none';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='table-row';
-		document.getElementById('instrumentTypeCashOrCard').value="bank";
+		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
 		clearCashDetails();
 		clearCardDetails();
 		clearChequeDDDetails();
@@ -882,7 +883,7 @@ function validate()
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingbankaccountname.errormessage" />'+  "<br>";
 			validation=false;
 		}
-	document.getElementById('instrumentTypeCashOrCard').value="bank";
+	document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
 	}
 	//if mode of payment is cheque/DD
 	if(instrTypeCheque){
@@ -1031,9 +1032,10 @@ function verifyChequeDetails(table,len1)
 	    }
 
 	    //validate if bank name has been entered
-	    if(getControlInBranch(table.rows[j],'bankName')!=null){
+	    if(getControlInBranch(table.rows[j],'bankName')!=null && getControlInBranch(table.rows[j],'bankID')!=null){
 	    	var bankName=getControlInBranch(table.rows[j],'bankName').value;
-	    	if(bankName==null || bankName==""){
+	    	var bankId=getControlInBranch(table.rows[j],'bankID').value;
+	    	if(bankName==null || bankName=="" || bankId==null || bankId==""){
 	    		if(bankNameErrMsg==""){
 	    		    bankNameErrMsg='<s:text name="billreceipt.missingbankid.errormessage" />' + '<br>';
 	    			document.getElementById("receipt_error_area").innerHTML+=bankNameErrMsg;
@@ -1266,7 +1268,7 @@ function displayPaytModes(){
        if(bankAllowed=='true'){
             //display bank radio button
        		document.getElementById('bankradiobuttonspan').style.display="block";
-       		document.getElementById('instrumentTypeCashOrCard').value="bank";
+       		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
        }
        else{
        		//do not display card radio button
@@ -1291,7 +1293,7 @@ function displayPaytModes(){
        if(bankAllowed=='true' && cashAllowed=='false' && chequeDDAllowed=='false' && cardAllowed=='false'){
        		document.getElementById('bankradiobutton').checked=true;
        		document.getElementById('bankdetails').style.display='table-row';
-       		document.getElementById('instrumentTypeCashOrCard').value="bank";
+       		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
        }
 }
 
@@ -1309,8 +1311,6 @@ function onBodyLoad()
 	var headertable=document.getElementById('billsheaderinfotable');
 	var headertablelength=headertable.rows.length;
 	var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
-	
-	
 	if(null != document.getElementById('asteriskId')){
 		document.getElementById('asteriskId').style.display="";
 	}
@@ -1391,10 +1391,14 @@ function onBodyLoad()
 }
 
 function displayPaymentDetails(){
-if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!=""){
+	if(document.getElementById("totalamounttobepaid")!=null && document.getElementById("totalamounttobepaid").value!=""){
+	var collectionamount = parseFloat(document.getElementById("totalamounttobepaid").value);
+	document.getElementById("totalamounttobepaid").value=isNaN(collectionamount)?collectionamount:collectionamount.toFixed(2);
+	}
+	if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!=""){
 		document.getElementById('bankradiobutton').checked=true;
 		document.getElementById('bankdetails').style.display='table-row';
-       	document.getElementById('instrumentTypeCashOrCard').value="bank";
+       	document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
        	document.getElementById('cashdetails').style.display="none";
        	// document.getElementById('carddetails').style.display="none";
 	}
@@ -1489,7 +1493,6 @@ function checkandcalculatecredittotal(index,elem){
 function validateChallanDate(obj)
 {
 	if(validateDateFormat(obj)){
-		trim(obj,obj.value);
 		document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   	if(obj.value!="");
@@ -1571,8 +1574,8 @@ function validateManualReceiptDate(obj)
 function checkForCurrentDate(obj)
 {
 	var receiptDate;
-	if(validateDateFormat(obj))
-	   {
+	/* if(validateDateFormat(obj))
+	   { */
 	   document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   //trim(obj,obj.value);
@@ -1628,7 +1631,7 @@ function checkForCurrentDate(obj)
 		   scrolltop();
 	       return false;
 		   }
-	   }
+	   /* } */
 	   }
 }
 
@@ -1689,7 +1692,7 @@ function setCardInstrumentDetails(elem){
 }
 function setBankInstrumentDetails(elem){
      document.getElementById("instrHeaderBank.instrumentAmount").value=elem.value;
-     document.getElementById("instrumentTypeCashOrCard").value="bank";
+     document.getElementById("instrumentTypeCashOrCard").value="bankchallan";
 }
 
 var bankfuncObj;
@@ -1727,7 +1730,7 @@ function autocompletecodeBank(obj,myEvent)
 	var target = document.getElementById('bankcodescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0];	
-	target.style.top=posSrc[1]+22;
+	target.style.top=posSrc[1]-40;
 	target.style.width=450;	
 		
 	var coaCodeObj=obj;
@@ -1745,6 +1748,9 @@ function autocompletecodeBank(obj,myEvent)
 				oAutoComp.useShadow = true;
 				oAutoComp.maxResultsDisplayed = 15;
 				oAutoComp.useIFrame = true;
+				bankfuncObj.applyLocalFilter = true;
+				bankfuncObj.queryMatchContains = true;
+				oAutoComp.minQueryLength = 0;
 				//if(bankfuncObj){
 				//	bankfuncObj.applyLocalFilter = true;
 				//	bankfuncObj.queryMatchContains = true;
@@ -1985,7 +1991,7 @@ function showHideMandataryMark(obj){
 					    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 					    <td class="bluebox" ><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');"  data-inputmask="'mask': 'd/m/y'" /><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');" onblur="checkForCurrentDate(this);"  data-inputmask="'mask': 'd/m/y'" /></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
@@ -2012,12 +2018,12 @@ function showHideMandataryMark(obj){
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="/egi/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="/egi/images/delete.png" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="../../egi/images/delete.png" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -2062,12 +2068,12 @@ function showHideMandataryMark(obj){
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="<egov:url path='/egi/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="<egov:url path='../../../../egi/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="<egov:url id="deletechequeimg" path='/egi/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="<egov:url id="deletechequeimg" path='../../egi/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -2116,7 +2122,7 @@ function showHideMandataryMark(obj){
 							    <td class="bluebox">
 							    	<s:textfield id="bankChallanDate" name="instrHeaderBank.transactionDate"  value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3');waterMarkTextOut('bankChallanDate','DD/MM/YYYY');" onblur="validateChallanDate(this);"/>
 							    	<a  id="calendarLink" href="javascript:show_calendar('forms[0].bankChallanDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
-			      						<img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
+			      						<img src="/../../egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
 			      					</a>
 							    </td>
 						    </tr>
@@ -2126,12 +2132,12 @@ function showHideMandataryMark(obj){
 						       	<td class="bluebox"><s:text name="billreceipt.payment.bankname"/><span class="mandatory1">*</span></td>
 						       	<td class="bluebox">
 						       		<egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
-				                 		url='receipts/ajaxBankRemittance!bankBranchList.action' selectedValue="%{bankbranch.id}"/>
+				                 		url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/>
 							   		<s:select headerValue="--Select--"  headerKey="0" list="dropdownData.bankBranchList" listKey="id" 
 							   		id="bankBranchMaster" listValue="branchname" label="bankBranchMaster" name="bankBranchId" 
 							   		onChange="onChangeBankAccount(this.value)" value="%{bankBranchId}"/>
 									<egov:ajaxdropdown id="accountNumberMasterDropdown" fields="['Text','Value']" dropdownId='accountNumberMaster'
-				         				url='receipts/ajaxBankRemittance!accountList.action' selectedValue="%{bankaccount.id}"/>
+				         				url='receipts/ajaxBankRemittance-accountList.action' selectedValue="%{bankaccount.id}"/>
 				       			</td>
 				       			<td class="bluebox"><s:text name="billreceipt.payment.bankaccountname"/></td>
 				       			<td class="bluebox"><s:select headerValue="--Select--"  headerKey="0"
@@ -2158,7 +2164,7 @@ function showHideMandataryMark(obj){
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
-		
+		<table id="manualreceipt" style="display:none">
 		<s:if test="%{!isBillSourcemisc()}">
 					<tr>
 					<td class="bluebox" width="3%" ></td>
@@ -2176,8 +2182,7 @@ function showHideMandataryMark(obj){
 					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate" cssClass="datepicker"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
 				</tr>
 		 </s:if>
-		
-		
+		</table>
 		</table>
 			
 
@@ -2217,10 +2222,8 @@ function showHideMandataryMark(obj){
          </tr>
          <tr>
            <td class="bluebox">&nbsp;</td>
-           <td class="bluebox"><s:text name="billreceipt.counter.operator"/></td>
-           <td class="bluebox"><b><s:property value="%{receiptCreatedByCounterOperator.userName}"/> </b></td>
-           <td class="bluebox"><s:text name="billreceipt.service"/></td>
-           <td class="bluebox"><b><s:property value="%{serviceName}"/></b></td>
+           <td class="bluebox"><s:text name="billreceipt.counter.operator"/>&nbsp;&nbsp;&nbsp; <b><s:property value="%{receiptCreatedByCounterOperator.name}"/> </b></td>
+           <td class="bluebox"><s:text name="billreceipt.service"/>&nbsp;&nbsp;&nbsp; <b><s:property value="%{serviceName}"/></b></td>
           </tr>
 
           <tr>

@@ -38,25 +38,23 @@
 # In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 
-function validate(name,value)
+function validate()
 {
 
 	
-	document.getElementById("actionName").value= name;
 	if(!validateForm_contingentBill())
 	{
 		document.getElementById("tabber0").tabber.tabShow(0);
 		undoLoadingMask() ;
 		return false;
 	}
-	
-	/*if(document.getElementById("nextLevel").value != "END"){
-		if(!validateUser(name,value)){
-			undoLoadingMask() ;
+	if(document.getElementById("contingentBill_commonBean_billNumber")){
+		var billNumber = document.getElementById("contingentBill_commonBean_billNumber").value;
+		if(billNumber== null || billNumber == ""){
+			bootbox.alert("Please select bill number");
 			return false;
 		}
-	}*/
-
+	}
 	var len=billDetailsTableFinal.getRecordSet().getLength();
 	if( len!=undefined && len>=1)
 	{
@@ -67,20 +65,21 @@ function validate(name,value)
 	}
 	else
 	{
-		alert("No Account code is selected for Save . Please add Account code and click done and then try to save again");	
+		bootbox.alert("No Account code is selected for Save . Please add Account code and click done and then try to save again");	
 		undoLoadingMask() ;
 		return false;
 	}
-	/*if(document.getElementById("billDetailsTableSubledger") && document.getElementById("billDetailsTableSubledger").rows.length>1)
-		return;
-	else
-	{
-		var payto=document.getElementById("commonBean.payto").value;
-		if(payto.trim()=="")
-			alert(enterpayto);
-		else
-			return true;
-	}*/
+	var billDate = document.getElementById("billDate").value;
+    var date = billDate.substring(0, 2);
+    var month = billDate.substring(3, 5);
+    var year = billDate.substring(6, 10);
+    var myDate = new Date(year, month - 1, date);
+    var today = new Date();
+
+    if (myDate > today) {
+        bootbox.alert("Bill date is greater than today's date ");
+        return false
+    }
 	
 return true;
 }
@@ -88,7 +87,7 @@ return true;
 //it takes account detail type id and creates 
 function load_COA_Entities(obj)
 {
-	//alert("load_COA_Entities");
+	//bootbox.alert("load_COA_Entities");
 	detailTypeId=obj.value;
 	loadDropDownCodesForAccountDetailType(obj);
 	if(obj.value!="")
@@ -98,7 +97,7 @@ function load_COA_Entities(obj)
 	//loadDropDownCodesForEntities(obj);   
 }
 function functionFormatter1(tableName,columnName,type){
-  		alert("<input type='"+type+"'  id='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' name='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' onkeyup='autocompletecode(this,event)' autocomplete='off' onblur='fillNeibrAfterSplitGlcode(this)' ");
+	bootbox.alert("<input type='"+type+"'  id='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' name='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' onkeyup='autocompletecode(this,event)' autocomplete='off' onblur='fillNeibrAfterSplitGlcode(this)' ");
 	}
 		
 
@@ -157,7 +156,7 @@ for(var i=0;i<allRecords.getLength();i++){
 
 }
 else{
-alert("This row cannot be deleted");
+bootbox.alert("This row cannot be deleted");
 }
 }	
 
@@ -183,7 +182,7 @@ for(var i=0;i<allRecords.getLength();i++){
 calculatenNetFordelete();
 }
 else{
-alert("This row cannot be deleted");
+bootbox.alert("This row cannot be deleted");
 }
 }	
 
@@ -204,9 +203,9 @@ function validateNetPaySubledgerAndDetailTypes()
 	var netType=document.getElementById("billDetailsTableNet[0].glcodeDetail").options[document.getElementById("billDetailsTableNet[0].glcodeDetail").selectedIndex].text;
 	var a=document.getElementById("billDetailsTableNet[0].detailTypes").value;
 	var isSub=document.getElementById("billDetailsTableNet[0].isSubledger").value;
-	//alert(a);
+	//bootbox.alert(a);
 	var x=a.split("^");
-	//alert(x);
+	//bootbox.alert(x);
 	var found=false;
 	if(isSub=='true')
 	{
@@ -218,7 +217,7 @@ function validateNetPaySubledgerAndDetailTypes()
 				if(each[0]==netType)
 				{
 					var adids=each[1].split("`-`");
-					//alert(adids);
+					//bootbox.alert(adids);
 					for(var t=0;t<adids.length-1;t++)
 					{
 						if(detailType==adids[t])
@@ -233,7 +232,7 @@ function validateNetPaySubledgerAndDetailTypes()
 		}
 		if(found==false)
 		{
-			alert("Selected net payable's detailtypes and selected subledgertype does not match ");
+			bootbox.alert("Selected net payable's detailtypes and selected subledgertype does not match ");
 			return false;
 		}
 	}else
@@ -246,13 +245,13 @@ function updateTabels()
 {
 	if(document.getElementById('billDetailsTableNet[0].debitAmountDetail').value<0)
 	{
-		alert('Negative Net payable is not allowed');
+		bootbox.alert('Negative Net payable is not allowed');
 		return false;
 	}                           
 var netpayablevalue=document.getElementById("billDetailsTableNet[0].glcodeDetail").value
 
 	if(netpayablevalue=="-1"){
-		alert('Please Select a  Net payable Code');
+		bootbox.alert('Please Select a  Net payable Code');
 		return false;
 	}
 var debitTable=document.getElementById('billDetailTable').getElementsByTagName('table')[0];
@@ -267,7 +266,7 @@ if(document.getElementById("billDetailsTableNet[0].isSubledger").value=='true')
 {
 	if(document.getElementById("detailCode").value.trim()=="")
 	{
-		alert("Subledger is not selected for net payable");
+		bootbox.alert("Subledger is not selected for net payable");
 		return false;
 	}
 }
@@ -281,16 +280,16 @@ while(i<dtLen)
 {
 while(j<netbilltableLen)
 {
-//alert("j"+j);
+//bootbox.alert("j"+j);
 if(document.getElementById("billDetailsTable["+j+"].glcodeDetail"))
 {
 i++;
 var k=0;
 var found=false;
-//alert("net row Length"+document.getElementById("billDetailTableFinal").getElementsByTagName('table')[0].rows.length);
+//bootbox.alert("net row Length"+document.getElementById("billDetailTableFinal").getElementsByTagName('table')[0].rows.length);
 while(k<25)
 	{
-//alert("k="+k);
+//bootbox.alert("k="+k);
 	if(document.getElementById("billDetailsTableFinal["+k+"].glcodeDetail")==null)
 	{
 		k++;
@@ -333,7 +332,7 @@ if(document.getElementById("billDetailsTable["+j+"].isSubledger") && document.ge
 var s_table_name=eval("billDetailsTableSubledger");
 var subledgerLen=s_table_name.getRecordSet().getLength()+1;
 s_table_name.addRow({SlNo:subledgerLen})	
-//alert(subledgerLen);
+//bootbox.alert(subledgerLen);
 document.getElementById("billDetailsTableSubledger["+(subledgerLen-1)+"].subledgerCode").value=document.getElementById("billDetailsTable["+j+"].glcodeDetail").value;
 document.getElementById("billDetailsTableSubledger["+(subledgerLen-1)+"].glcodeIdDetail").value=document.getElementById("billDetailsTable["+j+"].glcodeIdDetail").value;
 document.getElementById("billDetailsTableSubledger["+(subledgerLen-1)+"].accounthead").value=document.getElementById("billDetailsTable["+j+"].accounthead").value;
@@ -374,7 +373,7 @@ table_name.addRow({SlNo:billDetailsTable.getRecordSet().getLength()+1})
 //Deductions-------------------------------------------------
 var debitTable=document.getElementById('billDetailTable').getElementsByTagName('table')[0];
 var dtLen=debitTable.rows.length;
-//alert(dtLen);
+//bootbox.alert(dtLen);
 
 var i=0;
 var j=0;
@@ -383,13 +382,13 @@ while(i<dtLen)
 {
 while(j<netbilltableLen)
 {
-//alert("j"+j);
+//bootbox.alert("j"+j);
 if(document.getElementById("billDetailsTableCredit["+j+"].glcodeDetail"))
 {
 i++;
 var k=0;
 var found=false;
-//alert("net row Length"+document.getElementById("billDetailTableFinal").getElementsByTagName('table')[0].rows.length);
+//bootbox.alert("net row Length"+document.getElementById("billDetailTableFinal").getElementsByTagName('table')[0].rows.length);
 while(k<25)
 	{
 	if(document.getElementById("billDetailsTableCreditFinal["+k+"].glcodeDetail")==null)
@@ -430,7 +429,7 @@ if(document.getElementById("billDetailsTableCredit["+j+"].isSubledger") && docum
 var s_table_name=eval("billDetailsTableSubledger");
 var subledgerLen=s_table_name.getRecordSet().getLength()+1;
 s_table_name.addRow({SlNo:subledgerLen});	
-//alert(subledgerLen);
+//bootbox.alert(subledgerLen);
 document.getElementById("billDetailsTableSubledger["+(subledgerLen-1)+"].subledgerCode").value=document.getElementById("billDetailsTableCredit["+j+"].glcodeDetail").value;
 document.getElementById("billDetailsTableSubledger["+(subledgerLen-1)+"].glcodeIdDetail").value=document.getElementById("billDetailsTableCredit["+j+"].glcodeIdDetail").value;
 document.getElementById("billDetailsTableSubledger["+(subledgerLen-1)+"].accounthead").value=document.getElementById("billDetailsTableCredit["+j+"].accounthead").value;
@@ -542,7 +541,7 @@ creditTotal=creditTotal+(parseFloat(eval(document.getElementById("billDetailsTab
 }
 }	
 
-//alert(debitTotal-creditTotal);
+//bootbox.alert(debitTotal-creditTotal);
 
 var resultNumTableNetFinal = debitTotal-creditTotal;
 document.getElementById("billDetailsTableNetFinal[0].creditAmountDetail").value = resultNumTableNetFinal.toFixed(2);
@@ -562,7 +561,7 @@ entityCount=1;
 for(var l=0;l<subledgerLen;l++)
 {
 	
-	//alert(l);
+	//bootbox.alert(l);
 	currentCode=document.getElementById("billDetailsTableSubledger["+l+"].detailCode").value;
 	if(previousCode!="" && previousCode!=currentCode)
 	{
@@ -589,7 +588,7 @@ function calculateNet(obj)
 
 	if(isNaN(obj.value))
 	{
-		alert(amountshouldbenumeric);
+		bootbox.alert(amountshouldbenumeric);
 		obj.value="";
 		return false;
 	}
@@ -639,7 +638,7 @@ else
 
 function splitNetGlCode(obj)
 {
-//alert(obj.value);
+//bootbox.alert(obj.value);
 var acode=obj.value.split("~#");
 if(acode!=null && acode.length==3)
 {
@@ -653,7 +652,7 @@ function loadSubledgerGrids(temp)
 
 if(document.getElementById('detailCode').value.trim()=="")
 {
-alert(entityNotSelected);
+bootbox.alert(entityNotSelected);
 return false;
 }
 else
@@ -667,6 +666,7 @@ function splitEntities(obj)
 {
 	
 var entity=obj.value;
+var detailKey  = document.getElementById("detailKey").value;
 if(entity.trim()!="")
 {
 var entity_array=entity.split("`~`");
@@ -675,13 +675,13 @@ if(entity_array.length==2)
 obj.value=entity_array[0].split("`-`")[0];
 document.getElementById("detailKey").value=entity_array[1];
 document.getElementById("detailName").value=entity_array[0].split("`-`")[1];
-//alert("setting payto");
+//bootbox.alert("setting payto");
 document.getElementById("commonBean.payto").value=entity_array[0].split("`-`")[1];
-//alert(document.getElementById("commonBean.payto").value);
+//bootbox.alert(document.getElementById("commonBean.payto").value);
 }
-else
+else if(detailKey == null || detailKey== "")
 {
-//alert(invalidEntityselected);
+//bootbox.alert(invalidEntityselected);
 obj.value="";
 document.getElementById("commonBean.payto").value="";
 document.getElementById("detailName").value="";
@@ -756,19 +756,19 @@ function disableYUIAddDeleteButtons(value)
 function checkLength(obj){
 	if(obj.value.length>1024)
 	{
-		alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+		bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 		obj.value = obj.value.substring(1,1024);
 	}
 }
 
 function openSearchWindow(obj, type) {
 	var detailType=document.getElementById("commonBean.subledgerType").value;
-	//alert(detailType);
+	//bootbox.alert(detailType);
 	if(detailType != '' && detailType != null) {
 		var	url = "../voucher/common-searchEntites.action?accountDetailType="+detailType;
 		window.open(url, 'Search','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
 	} else {
-		alert("Select the Subledger Type.");
+		bootbox.alert("Select the Subledger Type.");
 	}
 }
 
@@ -782,13 +782,13 @@ function popupCallback(arg0, srchType) {
 			document.getElementById("detailName").value=entity_array[1];
 			document.getElementById("detailKey").value=entity_array[2];
 	
-			//alert("setting payto");
+			//bootbox.alert("setting payto");
 			document.getElementById("commonBean.payto").value=entity_array[1];
-			//alert(document.getElementById("commonBean.payto").value);
+			//bootbox.alert(document.getElementById("commonBean.payto").value);
 		}
 		else
 		{
-			alert(invalidEntityselected);
+			bootbox.alert(invalidEntityselected);
 			document.getElementById("commonBean.payto").value="";
 			document.getElementById("detailName").value="";
 			document.getElementById("detailKey").value="";
@@ -811,7 +811,7 @@ function splitEntitiesForGrid(obj) {
 			document.getElementById(detailname).value = entity_array[0].split("`-`")[1];
 			document.getElementById(detailkey).value = entity_array[1];
 		} else {
-			alert(invalidEntityselected);
+			bootbox.alert(invalidEntityselected);
 			obj.value = "";
 			var detailname = obj.name;
 			var detailkey = obj.name;
@@ -826,7 +826,7 @@ function splitEntitiesForGrid(obj) {
 function calculateNetForGrid(obj) {
 	var amountshouldbenumeric = "Amount should be numeric";
 	if (isNaN(obj.value)) {
-		alert(amountshouldbenumeric);
+		bootbox.alert(amountshouldbenumeric);
 		obj.value = "";
 		return false;
 	}

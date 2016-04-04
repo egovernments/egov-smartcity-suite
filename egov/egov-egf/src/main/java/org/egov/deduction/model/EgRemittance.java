@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.deduction.model;
@@ -57,188 +57,192 @@ import org.egov.model.recoveries.Recovery;
 public class EgRemittance implements java.io.Serializable
 {
 
-	private Integer id;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -2310246578830169762L;
 
-	private CFinancialYear financialyear;
+    private Integer id;
 
-	private CVoucherHeader voucherheader;
+    private CFinancialYear financialyear;
 
-	private Recovery recovery;
+    private CVoucherHeader voucherheader;
 
-	private Fund fund;
+    private Recovery recovery;
 
-	private BigDecimal month;
+    private Fund fund;
 
-	Set <EgRemittanceDetail> egRemittanceDetail =new HashSet<EgRemittanceDetail>();
-	
-	Date asOnDate;
-	
-	private BigDecimal createdby;
+    private BigDecimal month;
 
-	private Date createddate;
+    Set<EgRemittanceDetail> egRemittanceDetail = new HashSet<EgRemittanceDetail>();
 
-	private BigDecimal lastmodifiedby;
+    Date asOnDate;
 
-	private Date lastmodifieddate;
-	
+    private BigDecimal createdby;
 
-	public EgRemittance()
-	{
-	}
+    private Date createddate;
 
-	public EgRemittance(CFinancialYear financialyear,
-			CVoucherHeader voucherheader, Recovery recovery, Fund fund, BigDecimal month,
-			BigDecimal createdby, Date createddate)
-	{
-		this.financialyear = financialyear;
-		this.voucherheader = voucherheader;
-		this.recovery = recovery;
-		this.fund = fund;
-		this.month = month;
-		this.createdby = createdby;
-		this.createddate = createddate;
-	}
+    private BigDecimal lastmodifiedby;
 
-	public EgRemittance(CFinancialYear financialyear,
-			CVoucherHeader voucherheader, Recovery recovery, Fund fund, BigDecimal month,
-			BigDecimal createdby, Date createddate, BigDecimal lastmodifiedby,
-			Date lastmodifieddate)
-	{
-		this.financialyear = financialyear;
-		this.voucherheader = voucherheader;
-		this.recovery = recovery;
-		this.fund = fund;
-		this.month = month;
-		this.createdby = createdby;
-		this.createddate = createddate;
-		this.lastmodifiedby = lastmodifiedby;
-		this.lastmodifieddate = lastmodifieddate;
-	}
+    private Date lastmodifieddate;
 
-	public Integer getId()
-	{
-		return this.id;
-	}
+    public EgRemittance()
+    {
+    }
 
-	public void setId(Integer id)
-	{
-		this.id = id;
-	}
+    public EgRemittance(final CFinancialYear financialyear,
+            final CVoucherHeader voucherheader, final Recovery recovery, final Fund fund, final BigDecimal month,
+            final BigDecimal createdby, final Date createddate)
+    {
+        this.financialyear = financialyear;
+        this.voucherheader = voucherheader;
+        this.recovery = recovery;
+        this.fund = fund;
+        this.month = month;
+        this.createdby = createdby;
+        this.createddate = createddate;
+    }
 
-	public CFinancialYear getFinancialyear()
-	{
-		return this.financialyear;
-	}
+    public EgRemittance(final CFinancialYear financialyear,
+            final CVoucherHeader voucherheader, final Recovery recovery, final Fund fund, final BigDecimal month,
+            final BigDecimal createdby, final Date createddate, final BigDecimal lastmodifiedby,
+            final Date lastmodifieddate)
+    {
+        this.financialyear = financialyear;
+        this.voucherheader = voucherheader;
+        this.recovery = recovery;
+        this.fund = fund;
+        this.month = month;
+        this.createdby = createdby;
+        this.createddate = createddate;
+        this.lastmodifiedby = lastmodifiedby;
+        this.lastmodifieddate = lastmodifieddate;
+    }
 
-	public void setFinancialyear(CFinancialYear financialyear)
-	{
-		this.financialyear = financialyear;
-	}
+    public Integer getId()
+    {
+        return id;
+    }
 
-	/**
-	 * @return the egRemittanceDetail
-	 */
-	public Set<EgRemittanceDetail> getEgRemittanceDetail() {
-		return egRemittanceDetail;
-	}
+    public void setId(final Integer id)
+    {
+        this.id = id;
+    }
 
-	/**
-	 * @param egRemittanceDetail the egRemittanceDetail to set
-	 */
-	public void setEgRemittanceDetail(Set<EgRemittanceDetail> egRemittanceDetail) {
-		this.egRemittanceDetail = egRemittanceDetail;
-	}
+    public CFinancialYear getFinancialyear()
+    {
+        return financialyear;
+    }
 
-	/**
-	 * @return the asOnDate
-	 */
-	public Date getAsOnDate() {
-		return asOnDate;
-	}
+    public void setFinancialyear(final CFinancialYear financialyear)
+    {
+        this.financialyear = financialyear;
+    }
 
-	/**
-	 * @param asOnDate the asOnDate to set
-	 */
-	public void setAsOnDate(Date asOnDate) {
-		this.asOnDate = asOnDate;
-	}
+    /**
+     * @return the egRemittanceDetail
+     */
+    public Set<EgRemittanceDetail> getEgRemittanceDetail() {
+        return egRemittanceDetail;
+    }
 
-	public CVoucherHeader getVoucherheader()
-	{
-		return this.voucherheader;
-	}
+    /**
+     * @param egRemittanceDetail the egRemittanceDetail to set
+     */
+    public void setEgRemittanceDetail(final Set<EgRemittanceDetail> egRemittanceDetail) {
+        this.egRemittanceDetail = egRemittanceDetail;
+    }
 
-	public void setVoucherheader(CVoucherHeader voucherheader)
-	{
-		this.voucherheader = voucherheader;
-	}
+    /**
+     * @return the asOnDate
+     */
+    public Date getAsOnDate() {
+        return asOnDate;
+    }
 
-	public Recovery getRecovery() {
-		return recovery;
-	}
+    /**
+     * @param asOnDate the asOnDate to set
+     */
+    public void setAsOnDate(final Date asOnDate) {
+        this.asOnDate = asOnDate;
+    }
 
-	public void setRecovery(Recovery recovery) {
-		this.recovery = recovery;
-	}
+    public CVoucherHeader getVoucherheader()
+    {
+        return voucherheader;
+    }
 
-	public Fund getFund()
-	{
-		return this.fund;
-	}
+    public void setVoucherheader(final CVoucherHeader voucherheader)
+    {
+        this.voucherheader = voucherheader;
+    }
 
-	public void setFund(Fund fund)
-	{
-		this.fund = fund;
-	}
+    public Recovery getRecovery() {
+        return recovery;
+    }
 
-	public BigDecimal getMonth()
-	{
-		return this.month;
-	}
+    public void setRecovery(final Recovery recovery) {
+        this.recovery = recovery;
+    }
 
-	public void setMonth(BigDecimal month)
-	{
-		this.month = month;
-	}
+    public Fund getFund()
+    {
+        return fund;
+    }
 
-	public BigDecimal getCreatedby()
-	{
-		return this.createdby;
-	}
+    public void setFund(final Fund fund)
+    {
+        this.fund = fund;
+    }
 
-	public void setCreatedby(BigDecimal createdby)
-	{
-		this.createdby = createdby;
-	}
+    public BigDecimal getMonth()
+    {
+        return month;
+    }
 
-	public Date getCreateddate()
-	{
-		return this.createddate;
-	}
+    public void setMonth(final BigDecimal month)
+    {
+        this.month = month;
+    }
 
-	public void setCreateddate(Date createddate)
-	{
-		this.createddate = createddate;
-	}
+    public BigDecimal getCreatedby()
+    {
+        return createdby;
+    }
 
-	public BigDecimal getLastmodifiedby()
-	{
-		return this.lastmodifiedby;
-	}
+    public void setCreatedby(final BigDecimal createdby)
+    {
+        this.createdby = createdby;
+    }
 
-	public void setLastmodifiedby(BigDecimal lastmodifiedby)
-	{
-		this.lastmodifiedby = lastmodifiedby;
-	}
+    public Date getCreateddate()
+    {
+        return createddate;
+    }
 
-	public Date getLastmodifieddate()
-	{
-		return this.lastmodifieddate;
-	}
+    public void setCreateddate(final Date createddate)
+    {
+        this.createddate = createddate;
+    }
 
-	public void setLastmodifieddate(Date lastmodifieddate)
-	{
-		this.lastmodifieddate = lastmodifieddate;
-	}
+    public BigDecimal getLastmodifiedby()
+    {
+        return lastmodifiedby;
+    }
+
+    public void setLastmodifiedby(final BigDecimal lastmodifiedby)
+    {
+        this.lastmodifiedby = lastmodifiedby;
+    }
+
+    public Date getLastmodifieddate()
+    {
+        return lastmodifieddate;
+    }
+
+    public void setLastmodifieddate(final Date lastmodifieddate)
+    {
+        this.lastmodifieddate = lastmodifieddate;
+    }
 
 }

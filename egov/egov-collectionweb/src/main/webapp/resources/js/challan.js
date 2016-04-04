@@ -240,12 +240,11 @@ function validateSubLedgerDetail(){
 						var subledgerid = document.getElementById('subLedgerlist['+j+'].glcode.id');
 						var detailtypeid = document.getElementById('subLedgerlist['+j+'].detailType.id');
 						var detailKeyid = document.getElementById('subLedgerlist['+j+'].detailKeyId').value
-					
-							var subledgerAccCode =0;
+						var subledgerAccCode =0;
 						if(subledgerid!='null')
 							subledgerAccCode= subledgerid.options[subledgerid.selectedIndex].value;
 						
-						if( ( subledgerAccCode !=0) && (detailtypeid.value == "" || detailKeyid ==""))
+						if( ( subledgerAccCode !=0) && (detailtypeid.value == "" || detailtypeid.value == 0 || detailKeyid ==""))
 						{
 								document.getElementById('challan_error_area').innerHTML += "Please enter subledger details correctly<br>";
 								return false;
@@ -310,7 +309,7 @@ function validateSubLedgerDetail(){
 function getAccountDetails(obj){
 	var serviceId=obj.value;
 	
-		var url = path+'/receipts/ajaxReceiptCreate!getAccountForService.action?serviceId='+serviceId;
+		var url = path+'/receipts/ajaxReceiptCreate-getAccountForService.action?serviceId='+serviceId;
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeNew, null);
 	
 }
@@ -365,7 +364,7 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -373,7 +372,7 @@ success: function(o) {
 
 function getServiceMISDetails(obj){
 	var serviceId=obj.value;
-	var newurl = path+'/receipts/ajaxReceiptCreate!getMISdetailsForService.action?serviceId='+serviceId;
+	var newurl = path+'/receipts/ajaxReceiptCreate-getMISdetailsForService.action?serviceId='+serviceId;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', newurl, getMISdetails, null);
 		
 }
@@ -397,7 +396,7 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -458,7 +457,7 @@ function createLongTextFieldFormatter(prefix,suffix,table){
     return function(el, oRecord, oColumn, oData) {
      var rec=billDetailTableIndex;
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"'  style='width:350px;' onfocus='autocompletecode(this,event)' onblur='fillNeibrAfterSplitGlcode(this)' />";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"'  style='width:350px;' onfocus='autocompletecode(this,event)' autocomplete='off'  onblur='fillNeibrAfterSplitGlcode(this)'/>";
 	}
 }
 
@@ -599,7 +598,7 @@ function createDropdownFormatterDetailCode(prefix){
 	var onDropdownDetailCodeChange = function(index,obj) { 
 		var detailtypeid = document.getElementById('subLedgerlist['+obj.value+'].detailType.id').value;
 			var selecteddetailcode1=document.getElementById('subLedgerlist['+obj.value+'].detailCode').value;
-			var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+obj.value;
+			var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+obj.value;
 			var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeDetailCode, null);
 	};
 	var postTypeDetailCode = {
@@ -623,7 +622,7 @@ function createDropdownFormatterDetailCode(prefix){
 		}
 	    },
 	    failure: function(o) {
-	    	alert('failure');
+	    	bootbox.alert('failure');
 	    }
 	}	
 
@@ -764,7 +763,7 @@ var onDropdownChange = function(index,obj) {
 		selecteddetailtype=document.getElementById('subLedgerlist['+obj.value+'].detailType.id').value;
 		document.getElementById('subLedgerlist['+obj.value+'].amount').value="";
 		//document.getElementById('subLedgerlist['+obj.value+'].subledgerCode').value= subledgerid.options[subledgerid.selectedIndex].text;
-		var url = path+'/receipts/ajaxReceiptCreate!getDetailType.action?accountCode='+accountCode+'&index='+obj.value+'&selectedDetailType='+selecteddetailtype+'&onload=false';
+		var url = path+'/receipts/ajaxReceiptCreate-getDetailType.action?accountCode='+accountCode+'&index='+obj.value+'&selectedDetailType='+selecteddetailtype+'&onload=false';
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 };
 var postType = {
@@ -826,7 +825,7 @@ success: function(o) {
 		
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -886,7 +885,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = path+"/commons/Process.jsp?type=getAllFunctionCode";
+	var url = "/EGF/commons/Process.jsp?type=getAllFunctionCode";
 	var req4 = initiateRequest();
 	req4.onreadystatechange = function()
 	{
@@ -915,7 +914,7 @@ function autocompletecodeFunction(obj,myEvent)
 	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]+"px";
 	target.style.width=650;	
 		
 	var fObj=obj;
@@ -959,19 +958,20 @@ function fillNeibrAfterSplitFunction(obj)
 		temp1=temp1.split("`~`");
 		obj.value=temp1[0];
 		document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value=temp[1];
-	}else if(temp == ''){
+	} else if(temp == '') 
+	{
 		obj.value='';
 		document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value='';
 	}
-	
-	
 }
+
 function fillNeibrAfterSplitGlcode(obj)
 {
 
 	var temp = obj.value;
 	temp = temp.split("`-`");
 	var currRow=getRowIndex(obj);
+	var glcodeId = document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value;
 	if(temp.length>1)
 	{ 
 		obj.value=temp[0];
@@ -979,7 +979,8 @@ function fillNeibrAfterSplitGlcode(obj)
 		document.getElementById('billDetailslist['+currRow+'].glcodeDetail').value=temp[1];
 		check();
 	}
-	else{
+	else if(glcodeId==null || glcodeId=="")
+	{
 		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
 		document.getElementById('billDetailslist['+currRow+'].glcodeDetail').value="";
 		document.getElementById('billDetailslist['+currRow+'].accounthead').value="";
@@ -1000,7 +1001,7 @@ function getDetailType(val){
 			var subledgerid=document.getElementById('subLedgerlist['+val+'].glcode.id');
 			var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 			if( subledgerid.options[subledgerid.selectedIndex].value!=0){
-				var url = path+'/receipts/ajaxReceiptCreate!getDetailType.action?accountCode='+accountCode+'&index='+val+'&selectedDetailType='+selecteddetailtype+'&onload=true';
+				var url = path+'/receipts/ajaxReceiptCreate-getDetailType.action?accountCode='+accountCode+'&index='+val+'&selectedDetailType='+selecteddetailtype+'&onload=true';
 				var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 			}
 			else{
@@ -1025,7 +1026,7 @@ function getDetailCode(val){
 	var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 	if( subledgerid.options[subledgerid.selectedIndex].value!=0 & selecteddetailcode1!=0){
 		var detailtypeid = document.getElementById('subLedgerlist['+val+'].detailType.id').value;
-		var url = path+'/receipts/ajaxReceiptCreate!getCodeNew.action?accountCode='+accountCode+'&index='+val+'&detailTypeId='+detailtypeid+'&selectedDetailCode='+selecteddetailcode1;
+		var url = path+'/receipts/ajaxReceiptCreate-getCodeNew.action?accountCode='+accountCode+'&index='+val+'&detailTypeId='+detailtypeid+'&selectedDetailCode='+selecteddetailcode1;
 		//var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeDetail, null);
 	}
 	
@@ -1035,7 +1036,7 @@ function getDetailCodeValue(val){
 	var detailtypeid = document.getElementById('subLedgerlist['+val+'].detailType.id').value;
 	var selecteddetailcode1=document.getElementById('subLedgerlist['+val+'].detailCode').value;
 	if(selecteddetailcode1!=0){
-		var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+val+'&codeorname=code';
+		var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+val+'&codeorname=code';
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeDetailCode, null);
 	}
 
@@ -1051,7 +1052,7 @@ function check(){
 		}
 	}
 	
-		var url =  path+'/receipts/ajaxReceiptCreate!getDetailCode.action?accountCodes='+accountCodes;
+		var url =  path+'/receipts/ajaxReceiptCreate-getDetailCode.action?accountCodes='+accountCodes;
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackJV, null);
 
 	
@@ -1142,7 +1143,7 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function populatesubledgeramount1(){
@@ -1180,7 +1181,7 @@ function validateDetailCode(obj)
 	var index = getRowIndex(obj);
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
-	var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
+	var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackCode, null);
 }
 var callbackCode = {
@@ -1207,7 +1208,7 @@ var callbackCode = {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -1216,7 +1217,7 @@ var codeObj;
 var acccodeArray;
 function loadDropDownCodes()
 {
-	var	url = path+"/commons/Process.jsp?type=getAllCoaNames";
+	var	url = "/EGF/commons/Process.jsp?type=getAllCoaNames";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -1246,7 +1247,7 @@ var src = obj;
 	var posSrc=findPos(src); 
 
 	target.style.left=posSrc[0];	
-	target.style.top=posSrc[1]+22;
+	target.style.top=posSrc[1]-40;
 	target.style.width=450;	
 	codeObj
 	var coaCodeObj=obj;
@@ -1352,7 +1353,7 @@ entevent=myEvent;
 
 			if(onElementFocused(obj)){
 				ShowImage(obj);//To start loading image
-				var url =   path+ "/receipts/ajaxReceiptCreate!getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
+				var url =   path+ "/receipts/ajaxReceiptCreate-getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
 				var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackAutoCompleteEntities, null);
 			}
 		}
@@ -1374,7 +1375,7 @@ var callbackAutoCompleteEntities = {
 	var posSrc=findPos(src); 
 	
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]-40+"px";
 	target.style.width=650;	
 	      		
 	
@@ -1418,7 +1419,7 @@ HideImage(entobj);
 	
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -1468,3 +1469,245 @@ function onElementFocused(e)
     return document.activeElement ==e?true:false;
        
 } 
+
+
+
+
+function  populateService(serviceCategory){
+	dom.get('receiptMisc.fund.id').value="-1";
+	dom.get('functionId').value="-1";
+	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
+}
+
+function loadFinDetails(service){
+
+	var dept = dom.get('deptId').value;
+	var service = dom.get('serviceId').value;
+	
+	var path = '/collection';
+	
+	var url1 = path+"/receipts/ajaxReceiptCreate-ajaxFinMiscDtlsByService.action?serviceId="+service+"&deptId="+dept;
+	var transaction = YAHOO.util.Connect.asyncRequest('POST', url1,loadMiscDetails, null);
+	
+	
+	var url2 = path+"/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService.action";
+	makeJSONCall(["functionIdDetail","glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
+	,url2,{serviceId:service,deptId:dept},loadFinAccSuccessHandler,loadFinAccFailureHandler);
+
+	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
+	makeJSONCall(["subledgerCode","glcodeId","detailTypeId","detailTypeName","detailCode","detailKeyId",
+	"detailKey","amount"],url3,{serviceId:service,deptId:dept},loadFinSubledgerSuccessHandler,loadFinSubledgerFailureHandler);
+	
+}
+
+var miscArray;
+var loadMiscDetails = {
+success: function(o) {
+
+var result = o.responseText;
+
+if(null != result && result.length !=0){
+	 miscArray = result.split('~');
+		if(null != dom.get('receiptMisc.fund.id') ) {	
+				 dom.get('receiptMisc.fund.id').value = parseInt(miscArray[0]);		
+		}
+		if(null != dom.get('schemeId') ){
+				var url= "/EGF/voucher/common-ajaxLoadSchemes.action";
+				var fundId = dom.get('receiptMisc.fund.id').value;
+				makeJSONCall(["Text","Value"],url,{fundId:miscArray[0]},schemeDropDownSuccessHandler,schemeDropDownFailureHandler);
+		}
+		if(null != dom.get('subschemeId')  ){
+
+				var url= "/EGF/voucher/common-ajaxLoadSubSchemes.action";
+				var schemeId = dom.get('schemeId').value;
+				makeJSONCall(["Text","Value"],url,{schemeId:miscArray[1]},subschemeDropDownSuccessHandler,subschemeDropDownFailureHandler);
+				
+		}
+		
+		if(null != dom.get('fundSourceId') ){
+				var url= "/EGF/voucher/common-ajaxLoadFundSource.action";
+				var subschemeId = dom.get('subschemeId').value;
+				makeJSONCall(["Text","Value"],url,{subSchemeId:miscArray[2]},fundsourceDropDownSuccessHandler,fundsourceDropDownFailureHandler);
+
+		}
+		
+		if(null != dom.get('receiptMisc.idFunctionary.id') ){
+				 dom.get('receiptMisc.idFunctionary.id').value = parseInt(miscArray[4]);
+		}
+		
+}
+
+},
+failure: function(o) {
+alert('failure');
+}
+}
+
+schemeDropDownSuccessHandler=function(req,res){
+
+var schemeid = dom.get('schemeId');
+var dropDownLength = schemeid.length;
+var resLength =res.results.length+1;
+for(i=0;i<res.results.length;i++){
+		 schemeid.options[i+1]=new Option(res.results[i].Text,res.results[i].Value);
+}
+while(dropDownLength>resLength)
+{
+	schemeid.options[res.results.length+1] = null;
+	dropDownLength=dropDownLength-1;
+}
+
+schemeid.value = miscArray[1];
+setSchemeId();
+}
+
+schemeDropDownFailureHandler=function(){
+alert('failure while loading scheme drop down');
+}
+
+
+subschemeDropDownSuccessHandler=function(req,res){
+
+var subschemeId = dom.get('subschemeId');
+var dropDownLength = subschemeId.length;
+var resLength =res.results.length+1;
+for(i=0;i<res.results.length;i++){
+		 subschemeId.options[i+1]=new Option(res.results[i].Text,res.results[i].Value);
+}
+while(dropDownLength>resLength)
+{
+	subschemeId.options[res.results.length+1] = null;
+	dropDownLength=dropDownLength-1;
+}
+subschemeId.value = miscArray[2];
+setFundSourceId();
+}
+
+subschemeDropDownFailureHandler=function(){
+alert('failure while loading sub scheme drop down');
+}
+
+
+fundsourceDropDownSuccessHandler=function(req,res){
+
+var fundSourceId = dom.get('fundSourceId');
+var dropDownLength = fundSourceId.length;
+var resLength =res.results.length+1;
+for(i=0;i<res.results.length;i++){
+		 fundSourceId.options[i+1]=new Option(res.results[i].Text,res.results[i].Value);
+}
+while(dropDownLength>resLength)
+{
+	fundSourceId.options[res.results.length+1] = null;
+	dropDownLength=dropDownLength-1;
+}
+fundSourceId.value = miscArray[3];
+setSubSchemeId();
+}
+
+fundsourceDropDownFailureHandler=function(){
+alert('failure while loading fundource drop down');
+}
+
+
+
+loadFinAccSuccessHandler=function(req,res){
+var noOfRows =  billDetailsTable.getRecordSet().getLength();
+billDetailsTable.deleteRows(0,noOfRows); 
+billDetailTableIndex = 0;
+billDetailsTable.addRow({SlNo:billDetailsTable.getRecordSet().getLength()+1,
+     "glcodeid":"",
+     "glcode":"",
+     "accounthead":"",
+     "creditamount":""
+ });      
+updateGrid(VOUCHERDETAILLIST,'creditAmountDetail',0,"0.00");
+totalcramt = "0.00";          
+billDetailTableIndex = 1;
+for(i=0;i<res.results.length-1;i++){
+	dom.get("functionId").value=res.results[i].functionIdDetail;
+	 billDetailsTable.addRow({SlNo:billDetailsTable.getRecordSet().getLength()+1,
+            "glcodeid":res.results[i].glcodeIdDetail,
+            "glcode":res.results[i].glcodeDetail,
+            "accounthead":res.results[i].accounthead,
+            "creditamount":res.results[i].creditAmountDetail
+        });
+        updateAccountTableIndex();  
+}
+
+for(i=0;i<res.results.length;i++){  
+	    dom.get("functionId").value=res.results[i].functionIdDetail;
+        updateGrid(VOUCHERDETAILLIST,'glcodeIdDetail',i,res.results[i].glcodeIdDetail);
+        updateGrid(VOUCHERDETAILLIST,'glcodeDetail',i,res.results[i].glcodeDetail);
+        updateGrid(VOUCHERDETAILLIST,'accounthead',i,res.results[i].accounthead);
+        updateGrid(VOUCHERDETAILLIST,'creditAmountDetail',i,res.results[i].creditAmountDetail);
+        totalcramt = parseFloat(totalcramt)+parseFloat(res.results[i].creditAmountDetail);
+        if(totalcramt>0){
+    		totalcramt=parseInt(totalcramt).toFixed(2);
+		 }
+}
+if(totalcramt>0){
+ document.getElementById('totalcramount').value=totalcramt;
+}
+if(document.getElementById('billDetailslist[0].accounthead').value!="")
+{
+	document.getElementById('billDetailslist[0].accounthead').disabled=true;
+}
+}
+loadFinAccFailureHandler=function(){
+alert('failure');
+}
+
+
+loadFinSubledgerSuccessHandler=function(req,res){
+
+var noOfRows =  subLedgersTable.getRecordSet().getLength();
+subLedgersTable.deleteRows(0,noOfRows); 
+slDetailTableIndex = 0;
+subLedgersTable.addRow({SlNo:subLedgersTable.getRecordSet().getLength()+1,
+ "glcode":"",
+ "glcode.id":"",
+ "detailType.id":"",
+ "detailTypeName":"",
+ "detailCode":"",
+ "detailKeyId":"",
+ "detailKey":"",
+ "amount":""
+
+});
+updateSLGrid('amount',0,"0.00");
+slDetailTableIndex = 1;
+for(i=0;i<res.results.length-1;i++){
+			 subLedgersTable.addRow({SlNo:subLedgersTable.getRecordSet().getLength()+1,
+            "glcode":res.results[i].subledgerCode,
+            "glcode.id":res.results[i].glcodeId,
+            "detailType.id":res.results[i].detailTypeId,
+            "detailTypeName":res.results[i].detailTypeName,
+            "detailCode":res.results[i].detailCode,
+            "detailKeyId":res.results[i].detailKeyId,
+            "detailKey":res.results[i].detailKey,
+            "amount":res.results[i].amount
+          
+        });
+         updateSLTableIndex();
+    }
+for(i=0;i<res.results.length;i++){
+      
+        updateGridSLDropdown('glcode.id',i,res.results[i].glcodeId,res.results[i].subledgerCode);
+        updateGridSLDropdown('detailType.id',i,res.results[i].detailTypeId,res.results[i].detailTypeName);
+        updateSLGrid('detailCode',i,res.results[i].detailCode);
+        updateSLGrid('detailKeyId',i,res.results[i].detailKeyId);
+        updateSLGrid('detailKey',i,res.results[i].detailKey);
+        updateSLGrid('amount',i,res.results[i].amount);
+       
+        
+}
+}
+
+loadFinSubledgerFailureHandler=function(){
+alert('failure');
+}
+
+function updateGrid(prefix,field,index,value){
+	document.getElementById(prefix+'['+index+'].'+field).value=value;
+}

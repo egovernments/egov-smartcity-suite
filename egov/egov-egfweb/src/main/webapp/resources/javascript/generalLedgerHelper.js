@@ -50,7 +50,7 @@
      	/*To check whether Start Date is Greater than End Date*/
      	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
      	{
- 	    	alert('Start Date cannot be greater than End Date');
+     		bootbox.alert('Start Date cannot be greater than End Date');
  	    	document.getElementById('startDate').value='';
  	    	document.getElementById('endDate').value='';
  	    	document.getElementById('startDate').focus();
@@ -59,7 +59,7 @@
      	   /*to check whether the End Date is greater than the Current Date*/
      	if( compareDate(formatDate6(currentDate),formatDate6(endDate)) == 1 )
      	{
-     		alert('End Date cannot be greater than Current Date');
+     		bootbox.alert('End Date cannot be greater than Current Date');
      		document.getElementById('endDate').value='';
      		document.getElementById('endDate').focus();	
      		return false;	
@@ -67,7 +67,7 @@
      	doLoadingMask();
     	document.getElementById("resultDiv").style.display="none";
         var formObj = jQuery(document.getElementById("generalLedgerForm"));
-        var formURL = '/EGF/report/generalLedgerReport!ajaxSearch.action';
+        var formURL = '/EGF/report/generalLedgerReport-ajaxSearch.action';
         var formData = new FormData(document.getElementById("generalLedgerForm"));
         jQuery.ajax({
             url: formURL,
@@ -97,29 +97,33 @@
 	var oAutoCompEntityForJV;
 	function autocompleteAccountCodes(obj)
 	{
-	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common!ajaxLoadGLreportCodes.action", [ "~^"]);
+		
+		console.log("autocompleteAccountCodes");
+	  	   oACDS = new YAHOO.widget.DS_XHR("/EGF/voucher/common-ajaxLoadGLreportCodes.action", [ "~^"]);
+	  	 console.log("outside");
 		   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
-		   oACDS.scriptQueryParam = "startsWith";
 		   oAutoCompEntityForJV = new YAHOO.widget.AutoComplete(obj.name,'codescontainer',oACDS);
 		   oAutoCompEntityForJV.doBeforeSendQuery = function(sQuery){
-			   loadWaitingImage(); 
+			 //  loadWaitingImage(); 
 			   return sQuery+"&glCode="+document.getElementById("glCode1").value;
 		   } 
+
 		   oAutoCompEntityForJV.queryDelay = 0.5;
 		   oAutoCompEntityForJV.minQueryLength = 3;
 		   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 		   oAutoCompEntityForJV.useShadow = true;
 		   oAutoCompEntityForJV.forceSelection = true;
-		   oAutoCompEntityForJV.maxResultsDisplayed = 20;
+		   oAutoCompEntityForJV.maxResultsDisplayed = 10;
 		   oAutoCompEntityForJV.useIFrame = true;
 		   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
-			   clearWaitingImage();
+			   																																																																																																																																																																																																																																																																																																																																								// clearWaitingImage();
 		           var pos = YAHOO.util.Dom.getXY(oTextbox);
 		           pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
 		           oContainer.style.width=300;
 		           YAHOO.util.Dom.setXY(oContainer,pos);
 		           return true;
-		   };
+
+			};  
 	}
 	function splitAccountCodes(obj) 
 	{	
@@ -137,7 +141,7 @@
 	}
 	function autocompleteFunction(obj)
 	{
-	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common!ajaxLoadFunctionCodes.action", [ "~^"]);
+	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common-ajaxLoadFunctionCodes.action", [ "~^"]);
 		   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 		   oACDS.scriptQueryParam = "startsWith";
 		   oAutoCompEntityForJV = new YAHOO.widget.AutoComplete(obj.name,'codescontainer',oACDS);
@@ -179,7 +183,7 @@
 		
 	
 	function viewVoucher(vid){
-		var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+vid;
+		var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+vid;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
 	

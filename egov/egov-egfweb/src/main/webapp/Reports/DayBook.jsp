@@ -1,42 +1,42 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ page buffer = "30kb" %>
@@ -49,16 +49,16 @@
 <meta http-equiv="KEYWORDS" content="">
 <meta http-equiv="DESCRIPTION" content="">
 <!-- Inclusion of the CSS files that contains the styles -->
-<link rel=stylesheet href="../css/egov.css" type="text/css" media="screen" />
-<link rel=stylesheet href="../css/print.css" type="text/css" media="print" />
+<link rel=stylesheet href="../css/egov.css?rnd=${app_release_no}" type="text/css" media="screen" />
+<link rel=stylesheet href="../css/print.css?rnd=${app_release_no}" type="text/css" media="print" />
 <!--
 <link rel=stylesheet href="../exility/global.css" type="text/css" />
 -->
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
-<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js" type="text/javascript" ></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js?rnd=${app_release_no}"></SCRIPT>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js?rnd=${app_release_no}" type="text/javascript" ></SCRIPT>
 <!--
 <link rel="stylesheet" href="../exility/screen.css" type="text/css" media="screen, print" />
 -->
@@ -67,8 +67,8 @@ var flag='0', tbNames, tbIds;
 var rptType;
 var rptTitle='', rptStartDate, rptEndDate, rptGLCode='', rptAccName='', detail='',accCode_1='',accCode_2='',snapShotDateTime,forRevEntry;
 var rptfundId='';
-//onLoad
-/*
+onLoad
+
 function callme(val,val1)
 {
 	var mode="view";
@@ -133,7 +133,7 @@ function callme(val,val1)
 		break;
 	}
 
-}*/
+}
 function onBodyLoad()
 {
 	
@@ -162,7 +162,7 @@ function ButtonPress(){
 	
 	var strtDate = document.getElementById('startDate').value;
 	rptStartDate = strtDate;
-	//alert(rptStartDate);
+	//bootbox.alert(rptStartDate);
 	var endDate = document.getElementById('endDate').value;
 	rptEndDate = endDate;
 	var rptfundId= document.getElementById('fundLst').value;
@@ -174,16 +174,16 @@ function ButtonPress(){
 	
 	 if(strtDate.length==0||endDate.length==0)
 	{
-		alert("please select start dates and end dates");
+		 bootbox.alert("please select start dates and end dates");
 		return;
 	}
 	/*if( compareDate(formatDateToDDMMYYYY(strtDate),formatDateToDDMMYYYY(endDate)) == -1 ){
-		alert('Start Date can not be greater than End Date');
+		bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').focus();
 		return false;
 	}*/
 	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 ){
-		alert('Start Date can not be greater than End Date');
+		bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').focus();
 		return false;
 	}
@@ -300,6 +300,7 @@ function buttonPrint()
 		
 		<tr id="row2" name="row2">
 		<td colspan="6" align="middle"><!-- Buttons Start Here -->
+		<br/><br/>
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td align="right">
@@ -370,7 +371,7 @@ function buttonPrint()
 		LOGGER.error("Exception in Jsp Page:"+e.getMessage());
 		%>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate','');
 		 </script>
 		 <%
@@ -465,7 +466,7 @@ function buttonPrint()
 		LOGGER.error("Exception in Jsp Page:"+e.getMessage());
 		%>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate','');
 		 </script>
 		 <%

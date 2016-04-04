@@ -46,38 +46,53 @@
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
-		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
-		modelAttribute="hoarding" commandName="hoarding" enctype="multipart/form-data">
+		<form:form id="advertisementform" name="advertisementform" method="post" class="form-horizontal form-groups-bordered" 
+		modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail" enctype="multipart/form-data">
+		<form:hidden path="previousapplicationid" value="${previousapplicationid.id}"/>
 	<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<ul class="nav nav-tabs" id="settingstab">
-					<li class="active"><a data-toggle="tab"
-						href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message code="lbl.hoarding.details"/></a></li>
-					<li class=""><a data-toggle="tab" href="#hoardingattachments"
-						data-tabidx="1" aria-expanded="false"><spring:message code="lbl.hoarding.enclosure"/></a></li>
-				</ul>
-			</div>
-			<div class="panel-body custom-form">
-				<div class="tab-content">
-					<div class="tab-pane fade active in" id="hoardingdetails">	
-		<jsp:include page="createHoarding.jsp"></jsp:include>
-			</div>
-			</div>
-
+		<div class="panel-heading">
+			<ul class="nav nav-tabs" id="settingstab">
+				<li class="active"><a data-toggle="tab"
+					href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message code="lbl.advertisement.details"/></a></li>
+			</ul>
 		</div>
-		<div class="text-center">
-			<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+		<div class="panel-body custom-form">
+			<div class="tab-content">
+				<div class="tab-pane fade active in" id="hoardingdetails">	
+					<jsp:include page="createLegacyAdvertisement.jsp"></jsp:include>
+					<jsp:include page="document-create.jsp"></jsp:include>
+				
+				</div>
+			</div>
+		</div>
+		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
+		<div class="buttonbottom" align="center">
+			<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
 		</div>
 	</form:form>
 	</div>
 </div>
 <script>
 //this is to reset the sub combobox upon field error
-var subcategory = '${hoarding.subCategory.id}';
-var adminBoundry = '${hoarding.ward.id}';
-var revenueBoundary = '${hoarding.locality.id}';
+var subcategory = '${advertisementPermitDetail.advertisement.subCategory.id}';
+var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
+var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
+
+$('#Forward').click(function(e){
+	if($('#advertisementform').valid()){
+		console.log('valid');
+		if(DateValidation($('#permissionstartdate').val() , $('#permissionenddate').val())){
+			if($('#measurement').val() <= 0){
+				bootbox.alert('Please enter valid measurement');
+				e.preventDefault();
+			}else 
+				document.forms['advertisementform'].submit();
+		}else{
+			e.preventDefault();
+		}
+	}
+	e.preventDefault();
+});
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>

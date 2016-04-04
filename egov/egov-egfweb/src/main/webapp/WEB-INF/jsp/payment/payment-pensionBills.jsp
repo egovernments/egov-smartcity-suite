@@ -1,51 +1,55 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 <head>
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
+<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}" rel="stylesheet"
+	type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css?rnd=${app_release_no}" rel="stylesheet"
+	type="text/css" />
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
+	TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 </head>
 <script>
 
@@ -125,7 +129,7 @@ function checkMiscAttributes(obj)
 		
 		if(mis!=document.getElementById('miscattributes').value)
 		{
-			alert('Selected bills do not have same attributes. Please select bills with same attributes');
+			bootbox.alert('Selected bills do not have same attributes. Please select bills with same attributes');
 			obj.checked =false;
 			return;
 			
@@ -143,7 +147,7 @@ function check()
 {
 	if(document.getElementById('miscount').value==0)
 	{
-		alert('Please select a bill before making the payment');
+		bootbox.alert('Please select a bill before making the payment');
 		return false;
 	}
 	if(document.getElementById('vouchermis.departmentid'))
@@ -191,7 +195,7 @@ function selectAllPension(element){
 	if(element.checked == true)	{
 		var salcnt=checkpensionForSameMisAttribs('pensionList',length);
 		if(salcnt!=0){
-		 alert("Selected Bills doesnot have same attributes");
+		 bootbox.alert("Selected Bills doesnot have same attributes");
 		  document.getElementById('salSelectAll').checked =false; }
 		else
 		checkAll('pensionList',length);
@@ -276,140 +280,284 @@ function checkpensionForSameMisAttribs(obj,len)
 
 </head>
 <body>
-	<s:form action="payment" theme="simple" >
-	<s:token/>
+	<s:form action="payment" theme="simple">
+		<s:token />
 		<jsp:include page="../budget/budgetHeader.jsp">
-        	<jsp:param name="heading" value="Pension Bill Payment Search" />
+			<jsp:param name="heading" value="Pension Bill Payment Search" />
 		</jsp:include>
-		<span class="mandatory">
-			<s:actionerror/>  
-			<s:fielderror />
-			<s:actionmessage />
+		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
 		</span>
-		
-		<div class="formmainbox"><div class="subheadnew">Pension Bill Payment</div>
-		<div id="budgetSearchGrid" style="display:block;width:100%;border-top:1px solid #ccc;" >
-			<table width="100%" cellpadding="0" cellspacing="0" border="0">
-				<tr>
-				<td>
-				<div align="left"><br/>
-  					<table border="0" cellspacing="0" cellpadding="0" width="100%">
-        			<tr>
-        			<td> 
-		            <div class="tabber">
-		            <div class="tabbertab" id="searchtab">
-               			<h2>Search Bill</h2>
-	                	<span>
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr><td align="center" colspan="6" class="serachbillhead">Pension Bill Payment Search</td></tr>
-							<tr>
-								<td class="bluebox" width="30%"><s:text name="payment.billnumber"/> </td>
-								<td class="bluebox"><s:textfield name="billNumber" id="billNumber" maxlength="25" value="%{billNumber}" /></td>
-							</tr>
-							<tr>
-								<td class="greybox" width="30%"><s:text name="payment.billdatefrom"/> </td>
-								<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{fromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
-								<td class="greybox" width="30%"><s:text name="payment.billdateto"/> </td>
-								<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
-							</tr>
-							<tr>
-								<td class="bluebox" width="30%"><s:text name="payment.expendituretype"/> </td>
-								<td class="bluebox"><s:select name="expType" id="expType" list="#{'Pension':'Pension'}" value="%{expType}"/></td>
-							</tr>
-							<jsp:include page="../voucher/vouchertrans-filter.jsp"/>
-							<tr>
-								<td align="center" colspan="6">
-									<div class="buttonbottom">
-									  <s:submit method="search" value="Search" cssClass="buttonsubmit" onclick="return search()"/>
-									  <input type="submit" value="Close" onclick="javascript:window.close()" class="button"/>
-									  <s:hidden name="miscount" id="miscount"/>
-									  <input type="hidden" name="miscattributes" id="miscattributes" value=""/>
-									</div>
-								</td>
-							</tr>  
-						</table>
-                		</span>                  
-              		</div>
-          			<div class="tabbertab" id="suppliertab">
-           			<h2>Pension Bill</h2>
-                	<span>
-					<table align="center" border="0" cellpadding="0" cellspacing="0" class="newtable">
-					<tr><td colspan="6"><div class="subheadsmallnew">Pension Bill Payment Search</div></td></tr>
-					<tr>
-						<td colspan="6">
-						<div  style="float:left; width:100%;">
-							<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
-							<tr>  
-    								<th class="bluebgheadtdnew">Select<input type="checkbox" name="salSelectAll"  id="salSelectAll" onclick="selectAllPension(this)" /></checkbox></th>
-								<jsp:include page="billdetails-header.jsp"/>
-								<s:iterator var="p" value="pensionList" status="s">  
-					        	<tr>  
-							  	  <td  class="blueborderfortdnew"><s:hidden name="pensionList[%{#s.index}].csBillId" id="csBillId%{#s.index}" value="%{csBillId}"/><s:checkbox name="pensionList[%{#s.index}].isSelected" id="isSelected%{#s.index}" onclick="checkMiscAttributes(this)"></s:checkbox></td>
-							  	  <td class="blueborderfortdnew"><s:property value="#s.index+1" /></td>
-						    	  <td align="left"  class="blueborderfortdnew"><s:hidden name="pensionList[%{#s.index}].expType" id="expType%{#s.index}" value="%{expType}"/><s:hidden name="pensionList[%{#s.index}].billNumber" id="billNumber%{#s.index}" value="%{billNumber}"/><s:property value="%{billNumber}" /></td>
-							      <td class="blueborderfortdnew"><s:hidden name="pensionList[%{#s.index}].billDate" id="billDate%{#s.index}" value="%{billDate}"/><s:date name="%{billDate}" format="dd/MM/yyyy"/></td>
-							      
-							      <td align="left"  class="blueborderfortdnew"><s:hidden name="pensionList[%{#s.index}].billVoucherNumber" id="billVoucherNumber%{#s.index}" value="%{billVoucherNumber}"/><s:property value="%{billVoucherNumber}"/></td>
-							      <td style="text-align:left"  class="blueborderfortdnew"><s:hidden name="pensionList[%{#s.index}].billVoucherDate" id="billVoucherDate%{#s.index}" value="%{billVoucherDate}"/><s:date name="%{billVoucherDate}" format="dd/MM/yyyy"/></td>
 
-							      <td align="left"  class="blueborderfortdnew"><s:hidden name="pensionList[%{#s.index}].payTo" id="payTo%{#s.index}" value="%{payTo}"/><s:property value="%{payTo}"/></td>
-							      <td style="text-align:right"  class="blueborderfortdnew"><s:hidden name="pensionList[%{#s.index}].netAmt" id="netAmt%{#s.index}" value="%{netAmt}"/><s:text name="payment.format.number" ><s:param value="%{netAmt}"/></s:text></td>
-							      <td style="text-align:right"  class="blueborderfortdnew"><s:hidden name="pensionList[%{#s.index}].earlierPaymentAmt" id="earlierPaymentAmt%{#s.index}" value="%{earlierPaymentAmt}"/><s:text name="payment.format.number" ><s:param value="%{earlierPaymentAmt}"/></s:text></td>
-							      <td style="text-align:right"  class="blueborderfortdnew"><s:hidden name="pensionList[%{#s.index}].payableAmt" id="payableAmt%{#s.index}" value="%{payableAmt}"/><s:hidden name="pensionList[%{#s.index}].paymentAmt" id="paymentAmt%{#s.index}" value="%{paymentAmt}"/><s:text name="payment.format.number" ><s:param value="%{payableAmt}"/></s:text></td>
-								  <s:if test="%{!isFieldMandatory('fund')}"><td class="blueborderfortdnew"  id="fund<s:property value="#s.index"/>"><s:hidden name="pensionList[%{#s.index}].fundName" id="fundName%{#s.index}" value="%{fundName}"/><s:property value="%{fundName}" /></td></s:if>
-							      <s:if test="%{shouldShowHeaderField('department')}"><td class="blueborderfortdnew" id="dept<s:property value="#s.index"/>"><s:hidden name="pensionList[%{#s.index}].deptName" id="deptName%{#s.index}" value="%{deptName}"/><s:property value="%{deptName}" /></td></s:if>
-							      <s:if test="%{shouldShowHeaderField('function')}"><td class="blueborderfortdnew" id="function<s:property value="#s.index"/>"><s:hidden   name="pensionList[%{#s.index}].functionName" id="functionName%{#s.index}" value="%{functionName}"/><s:property value="%{functionName}" /></td></s:if>
-							      <s:if test="%{shouldShowHeaderField('functionary')}"><td class="blueborderfortdnew"  id="functionary<s:property value="#s.index"/>"><s:hidden name="pensionList[%{#s.index}].functionaryName" id="functionaryName%{#s.index}" value="%{functionaryName}"/><s:property value="%{functionaryName}" /></td></s:if>
-							      <s:if test="%{shouldShowHeaderField('fundsource')}"><td class="blueborderfortdnew" id="fundsource<s:property value="#s.index"/>"><s:hidden name="pensionList[%{#s.index}].fundsourceName" id="fundsourceName%{#s.index}" value="%{fundsourceName}"/><s:property value="%{fundsourceName}" /></td></s:if>
-							      <s:if test="%{shouldShowHeaderField('scheme')}"><td class="blueborderfortdnew" id="scheme<s:property value="#s.index"/>"><s:hidden name="pensionList[%{#s.index}].schemeName" id="schemeName%{#s.index}" value="%{schemeName}"/><s:property value="%{schemeName}" /></td></s:if>
-							      <s:if test="%{shouldShowHeaderField('subscheme')}"><td class="blueborderfortdnew" id="subscheme<s:property value="#s.index"/>"><s:hidden name="pensionList[%{#s.index}].subschemeName" id="subschemeName%{#s.index}" value="%{subschemeName}"/><s:property value="%{subschemeName}" /></td></s:if>
-							      <s:if test="%{shouldShowHeaderField('field')}"><td class="blueborderfortdnew" id="field<s:property value="#s.index"/>"><s:hidden name="pensionList[%{#s.index}].fieldName" id="fieldName%{#s.index}" value="%{fieldName}"/><s:property value="%{fieldName}" /></td></s:if>
-								</tr>
-								</s:iterator>
-							</table>
-							<s:if test="pensionList == null || pensionList.size==0">
-								<div class="subheadsmallnew">No Records Found</div>
-							</s:if>
-						</div>
+		<div class="formmainbox">
+			<div class="subheadnew">Pension Bill Payment</div>
+			<div id="budgetSearchGrid"
+				style="display: block; width: 100%; border-top: 1px solid #ccc;">
+				<table width="100%" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td>
+							<div align="left">
+								<br />
+								<table border="0" cellspacing="0" cellpadding="0" width="100%">
+									<tr>
+										<td>
+											<div class="tabber">
+												<div class="tabbertab" id="searchtab">
+													<h2>Search Bill</h2>
+													<span>
+														<table width="100%" border="0" cellspacing="0"
+															cellpadding="0">
+															<tr>
+																<td align="center" colspan="6" class="serachbillhead">Pension
+																	Bill Payment Search</td>
+															</tr>
+															<tr>
+																<td class="bluebox" width="30%"><s:text
+																		name="payment.billnumber" /></td>
+																<td class="bluebox"><s:textfield name="billNumber"
+																		id="billNumber" maxlength="25" value="%{billNumber}" /></td>
+															</tr>
+															<tr>
+																<td class="greybox" width="30%"><s:text
+																		name="payment.billdatefrom" /></td>
+																<td class="greybox"><s:textfield name="fromDate"
+																		id="fromDate" maxlength="20" value="%{fromDate}" /><a
+																	href="javascript:show_calendar('forms[0].fromDate');"
+																	style="text-decoration: none">&nbsp;<img
+																		src="/egi/resources/erp2/images/calendaricon.gif"
+																		border="0" /></a><br />(dd/mm/yyyy)</td>
+																<td class="greybox" width="30%"><s:text
+																		name="payment.billdateto" /></td>
+																<td class="greybox"><s:textfield name="toDate"
+																		id="toDate" maxlength="20" value="%{toDate}" /><a
+																	href="javascript:show_calendar('forms[0].toDate');"
+																	style="text-decoration: none">&nbsp;<img
+																		src="/egi/resources/erp2/images/calendaricon.gif"
+																		border="0" /></a>(dd/mm/yyyy)</td>
+															</tr>
+															<tr>
+																<td class="bluebox" width="30%"><s:text
+																		name="payment.expendituretype" /></td>
+																<td class="bluebox"><s:select name="expType"
+																		id="expType" list="#{'Pension':'Pension'}"
+																		value="%{expType}" /></td>
+															</tr>
+															<jsp:include page="../voucher/vouchertrans-filter.jsp" />
+															<tr>
+																<td align="center" colspan="6">
+																	<div class="buttonbottom">
+																		<s:submit method="search" value="Search"
+																			cssClass="buttonsubmit" onclick="return search()" />
+																		<input type="submit" value="Close"
+																			onclick="javascript:window.close()" class="button" />
+																		<s:hidden name="miscount" id="miscount" />
+																		<input type="hidden" name="miscattributes"
+																			id="miscattributes" value="" />
+																	</div>
+																</td>
+															</tr>
+														</table>
+													</span>
+												</div>
+												<div class="tabbertab" id="suppliertab">
+													<h2>Pension Bill</h2>
+													<span>
+														<table align="center" border="0" cellpadding="0"
+															cellspacing="0" class="newtable">
+															<tr>
+																<td colspan="6"><div class="subheadsmallnew">Pension
+																		Bill Payment Search</div></td>
+															</tr>
+															<tr>
+																<td colspan="6">
+																	<div style="float: left; width: 100%;">
+																		<table align="center" border="0" cellpadding="0"
+																			cellspacing="0" width="100%">
+																			<tr>
+																				<th class="bluebgheadtdnew">Select<input
+																					type="checkbox" name="salSelectAll"
+																					id="salSelectAll" onclick="selectAllPension(this)" />
+																				</checkbox></th>
+																				<jsp:include page="billdetails-header.jsp" />
+																				<s:iterator var="p" value="pensionList" status="s">
+																					<tr>
+																						<td class="blueborderfortdnew"><s:hidden
+																								name="pensionList[%{#s.index}].csBillId"
+																								id="csBillId%{#s.index}" value="%{csBillId}" />
+																							<s:checkbox
+																								name="pensionList[%{#s.index}].isSelected"
+																								id="isSelected%{#s.index}"
+																								onclick="checkMiscAttributes(this)"></s:checkbox></td>
+																						<td class="blueborderfortdnew"><s:property
+																								value="#s.index+1" /></td>
+																						<td align="left" class="blueborderfortdnew"><s:hidden
+																								name="pensionList[%{#s.index}].expType"
+																								id="expType%{#s.index}" value="%{expType}" />
+																							<s:hidden
+																								name="pensionList[%{#s.index}].billNumber"
+																								id="billNumber%{#s.index}" value="%{billNumber}" />
+																							<s:property value="%{billNumber}" /></td>
+																						<td class="blueborderfortdnew"><s:hidden
+																								name="pensionList[%{#s.index}].billDate"
+																								id="billDate%{#s.index}" value="%{billDate}" />
+																							<s:date name="%{billDate}" format="dd/MM/yyyy" /></td>
+
+																						<td align="left" class="blueborderfortdnew"><s:hidden
+																								name="pensionList[%{#s.index}].billVoucherNumber"
+																								id="billVoucherNumber%{#s.index}"
+																								value="%{billVoucherNumber}" />
+																							<s:property value="%{billVoucherNumber}" /></td>
+																						<td style="text-align: left"
+																							class="blueborderfortdnew"><s:hidden
+																								name="pensionList[%{#s.index}].billVoucherDate"
+																								id="billVoucherDate%{#s.index}"
+																								value="%{billVoucherDate}" />
+																							<s:date name="%{billVoucherDate}"
+																								format="dd/MM/yyyy" /></td>
+
+																						<td align="left" class="blueborderfortdnew"><s:hidden
+																								name="pensionList[%{#s.index}].payTo"
+																								id="payTo%{#s.index}" value="%{payTo}" />
+																							<s:property value="%{payTo}" /></td>
+																						<td style="text-align: right"
+																							class="blueborderfortdnew"><s:hidden
+																								name="pensionList[%{#s.index}].netAmt"
+																								id="netAmt%{#s.index}" value="%{netAmt}" />
+																							<s:text name="payment.format.number">
+																								<s:param value="%{netAmt}" />
+																							</s:text></td>
+																						<td style="text-align: right"
+																							class="blueborderfortdnew"><s:hidden
+																								name="pensionList[%{#s.index}].earlierPaymentAmt"
+																								id="earlierPaymentAmt%{#s.index}"
+																								value="%{earlierPaymentAmt}" />
+																							<s:text name="payment.format.number">
+																								<s:param value="%{earlierPaymentAmt}" />
+																							</s:text></td>
+																						<td style="text-align: right"
+																							class="blueborderfortdnew"><s:hidden
+																								name="pensionList[%{#s.index}].payableAmt"
+																								id="payableAmt%{#s.index}" value="%{payableAmt}" />
+																							<s:hidden
+																								name="pensionList[%{#s.index}].paymentAmt"
+																								id="paymentAmt%{#s.index}" value="%{paymentAmt}" />
+																							<s:text name="payment.format.number">
+																								<s:param value="%{payableAmt}" />
+																							</s:text></td>
+																						<s:if test="%{!isFieldMandatory('fund')}">
+																							<td class="blueborderfortdnew"
+																								id="fund<s:property value="#s.index"/>"><s:hidden
+																									name="pensionList[%{#s.index}].fundName"
+																									id="fundName%{#s.index}" value="%{fundName}" />
+																								<s:property value="%{fundName}" /></td>
+																						</s:if>
+																						<s:if
+																							test="%{shouldShowHeaderField('department')}">
+																							<td class="blueborderfortdnew"
+																								id="dept<s:property value="#s.index"/>"><s:hidden
+																									name="pensionList[%{#s.index}].deptName"
+																									id="deptName%{#s.index}" value="%{deptName}" />
+																								<s:property value="%{deptName}" /></td>
+																						</s:if>
+																						<s:if test="%{shouldShowHeaderField('function')}">
+																							<td class="blueborderfortdnew"
+																								id="function<s:property value="#s.index"/>"><s:hidden
+																									name="pensionList[%{#s.index}].functionName"
+																									id="functionName%{#s.index}"
+																									value="%{functionName}" />
+																								<s:property value="%{functionName}" /></td>
+																						</s:if>
+																						<s:if
+																							test="%{shouldShowHeaderField('functionary')}">
+																							<td class="blueborderfortdnew"
+																								id="functionary<s:property value="#s.index"/>"><s:hidden
+																									name="pensionList[%{#s.index}].functionaryName"
+																									id="functionaryName%{#s.index}"
+																									value="%{functionaryName}" />
+																								<s:property value="%{functionaryName}" /></td>
+																						</s:if>
+																						<s:if
+																							test="%{shouldShowHeaderField('fundsource')}">
+																							<td class="blueborderfortdnew"
+																								id="fundsource<s:property value="#s.index"/>"><s:hidden
+																									name="pensionList[%{#s.index}].fundsourceName"
+																									id="fundsourceName%{#s.index}"
+																									value="%{fundsourceName}" />
+																								<s:property value="%{fundsourceName}" /></td>
+																						</s:if>
+																						<s:if test="%{shouldShowHeaderField('scheme')}">
+																							<td class="blueborderfortdnew"
+																								id="scheme<s:property value="#s.index"/>"><s:hidden
+																									name="pensionList[%{#s.index}].schemeName"
+																									id="schemeName%{#s.index}"
+																									value="%{schemeName}" />
+																								<s:property value="%{schemeName}" /></td>
+																						</s:if>
+																						<s:if test="%{shouldShowHeaderField('subscheme')}">
+																							<td class="blueborderfortdnew"
+																								id="subscheme<s:property value="#s.index"/>"><s:hidden
+																									name="pensionList[%{#s.index}].subschemeName"
+																									id="subschemeName%{#s.index}"
+																									value="%{subschemeName}" />
+																								<s:property value="%{subschemeName}" /></td>
+																						</s:if>
+																						<s:if test="%{shouldShowHeaderField('field')}">
+																							<td class="blueborderfortdnew"
+																								id="field<s:property value="#s.index"/>"><s:hidden
+																									name="pensionList[%{#s.index}].fieldName"
+																									id="fieldName%{#s.index}" value="%{fieldName}" />
+																								<s:property value="%{fieldName}" /></td>
+																						</s:if>
+																					</tr>
+																				</s:iterator>
+																		</table>
+																		<s:if
+																			test="pensionList == null || pensionList.size==0">
+																			<div class="subheadsmallnew">No Records Found</div>
+																		</s:if>
+																	</div>
+																</td>
+															</tr>
+														</table>
+													</span>
+												</div>
+											</div> <!-- tabber div -->
+										</td>
+									</tr>
+								</table>
+							</div>
 						</td>
 					</tr>
-					</table>                   
-               		</span>
-                </div>
-			</div> <!-- tabber div -->
-			</td>
-       		</tr>
-      		</table>
+				</table>
+			</div>
 		</div>
-		</td>
-		</tr>
-		</table>
-	</div>
-	</div>
-	<div id="paginationdiv" align="center" style="padding-top:10px;">
-		<!-- <a href="#"><<</a> <a href="#">1</a> <a href="#">2</a> <a href="#">3</a> <a href="#">>></a>&nbsp;&nbsp;&nbsp;
+		<div id="paginationdiv" align="center" style="padding-top: 10px;">
+			<!-- <a href="#"><<</a> <a href="#">1</a> <a href="#">2</a> <a href="#">3</a> <a href="#">>></a>&nbsp;&nbsp;&nbsp;
 		<select name="select">
 			<option>Show 50</option>
 			<option>Show 100</option>
 			<option>Show All</option>
 		</select> -->
-	</div>
-	<div id="buttondiv" align="center" style="display:visible">
-	<table align="center" width="100%">
-		<tr>
-			<td class="modeofpayment">
-				<strong><s:text name="payment.mode"/><span class="mandatory">*</span></strong>
-				<input name="paymentMode" id="paymentModecash" checked="checked" value="cash" type="radio"><label for="paymentModecash"><s:text name="cash.consolidated.cheque"/></label>
-				<input name="paymentMode" id="paymentModecash"  value="rtgs" type="radio"><label for="paymentModeRTGS"><s:text name="rtgs"/></label>
-			</td>
-		</tr>
-		<tr>
-			<td  class="buttonbottomnew" align="center"><s:submit method="save" value="Generate Payment" cssClass="buttonsubmit" onclick="return check()" /></td>
-		</tr>
-	</table>
-	</div>
-	<s:if test="%{!validateUser('createpayment')}">
-		<script>
+		</div>
+		<div id="buttondiv" align="center" style="display: visible">
+			<table align="center" width="100%">
+				<tr>
+					<td class="modeofpayment"><strong><s:text
+								name="payment.mode" /><span class="mandatory">*</span></strong> <input
+						name="paymentMode" id="paymentModecash" checked="checked"
+						value="cash" type="radio"><label for="paymentModecash"><s:text
+								name="cash.consolidated.cheque" /></label> <input name="paymentMode"
+						id="paymentModecash" value="rtgs" type="radio"><label
+						for="paymentModeRTGS"><s:text name="rtgs" /></label></td>
+				</tr>
+				<tr>
+					<td class="buttonbottomnew" align="center"><s:submit
+							method="save" value="Generate Payment" cssClass="buttonsubmit"
+							onclick="return check()" /></td>
+				</tr>
+			</table>
+		</div>
+		<s:if test="%{!validateUser('createpayment')}">
+			<script>
 			document.getElementById('searchBtn').disabled=true;
 			document.getElementById('errorSpan').innerHTML='<s:text name="payment.invalid.user"/>';
 			if(document.getElementById('vouchermis.departmentid'))
@@ -430,4 +578,4 @@ function checkpensionForSameMisAttribs(obj,len)
 		</s:if>
 	</s:form>
 </body>
-</html>	
+</html>

@@ -67,6 +67,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemandReasonDetails;
@@ -82,6 +83,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
@@ -96,9 +98,11 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private static final Logger LOGGER = Logger.getLogger(APTaxCalculator.class);
     private static BigDecimal RESD_OWNER_DEPRECIATION = new BigDecimal(40);
     private static BigDecimal SEASHORE_RESD_OWNER_DEPRECIATION = new BigDecimal(45);
-    private static BigDecimal BUIULDING_VALUE = new BigDecimal(0.67);
-    private static BigDecimal SITE_VALUE = new BigDecimal(0.33);
+    // private static BigDecimal BUIULDING_VALUE = new BigDecimal(0.67);
+    // private static BigDecimal SITE_VALUE = new BigDecimal(0.33);
 
+    private BigDecimal BUIULDING_VALUE = new BigDecimal(2).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
+    private BigDecimal SITE_VALUE = new BigDecimal(1).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private BigDecimal totalTaxPayable = BigDecimal.ZERO;
     private Boolean isCorporation = Boolean.FALSE;
     private Boolean isSeaShoreULB = Boolean.FALSE;
@@ -114,10 +118,10 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-    
+
     @Autowired
     private InstallmentDao installmentDAO;
-    
+
     @Autowired
     private ModuleService moduleService;
 
@@ -129,7 +133,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
      * @param occupationDate
      *            Minimum Occupancy Date among all the units
      * @return
-     * @throws TaxCalculatorExeption 
+     * @throws TaxCalculatorExeption
      */
     @Override
     public HashMap<Installment, TaxCalculationInfo> calculatePropertyTax(final Property property,
@@ -163,7 +167,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                     taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
                     totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
                 }
-                unAuthDeviationPerc = getUnAuthDeviationPerc(property);
+
                 for (final Floor floorIF : property.getPropertyDetail().getFloorDetails()) {
                     // TODO think about, these beans to be client
                     // specific
@@ -177,6 +181,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                         totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
                         taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
                     }
+
                 }
                 taxCalculationInfo.setTotalNetARV(totalNetArv);
                 taxCalculationInfo.setTotalTaxPayable(totalTaxPayable);
@@ -221,9 +226,10 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         unitTaxCalculationInfo.setUnitOccupation(floor.getPropertyOccupation().getOccupancyCode());
         unitTaxCalculationInfo.setUnitStructure(floor.getStructureClassification().getConstrTypeCode());
         unitTaxCalculationInfo.setNetARV(floorNetArv.setScale(0, BigDecimal.ROUND_HALF_UP));
-
+        BigDecimal unAuthDeviationPerc = getUnAuthDeviationPerc(floor);
         calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property.getPropertyDetail()
-                .getPropertyTypeMaster().getCode(), floor);
+                .getPropertyTypeMaster().getCode(), floor, unAuthDeviationPerc);
+
         return unitTaxCalculationInfo;
     }
 
@@ -248,7 +254,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     public APUnitTaxCalculationInfo calculateApplicableTaxes(final List<String> applicableTaxes,
             final APUnitTaxCalculationInfo unitTaxCalculationInfo, final Installment installment,
-            final String propTypeCode, final Floor floor) {
+            final String propTypeCode, final Floor floor, final BigDecimal unAuthDeviationPerc) {
 
         BigDecimal totalHalfTaxPayable = BigDecimal.ZERO;
         final BigDecimal alv = unitTaxCalculationInfo.getNetARV();
@@ -264,57 +270,45 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             if (applicableTax.equals(DEMANDRSN_CODE_GENERAL_TAX) || applicableTax.equals(DEMANDRSN_CODE_VACANT_TAX)) {
                 if (applicableTax.equals(DEMANDRSN_CODE_VACANT_TAX)) {
                     taxRatePerc = getTaxRate(DEMANDRSN_CODE_VACANT_TAX);
-                    halfYearHeadTax = getHalfYearTax(alv.multiply(taxRatePerc.divide(new BigDecimal("100"))).setScale(0,
-                            BigDecimal.ROUND_HALF_UP));
+                    halfYearHeadTax = getHalfYearTax(alv.multiply(taxRatePerc.divide(new BigDecimal("100"))).setScale(
+                            2, BigDecimal.ROUND_HALF_UP));
                 } else {
                     if (floor != null && floor.getPropertyUsage().getIsResidential()) {
                         taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_RESD");
                     } else {
                         taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_NR");
                     }
-                    halfYearHeadTax = alv.multiply(taxRatePerc.divide(new BigDecimal("100"))).setScale(0,
+                    halfYearHeadTax = alv.multiply(taxRatePerc.divide(new BigDecimal("100"))).setScale(2,
                             BigDecimal.ROUND_HALF_UP);
                 }
                 halfYearHeadTax = taxIfGovtProperty(propTypeCode, halfYearHeadTax);
                 generalTax = halfYearHeadTax;
             }
             if (applicableTax.equals(DEMANDRSN_CODE_EDUCATIONAL_CESS)) {
-                educationTax = generalTax.multiply(
-                        getTaxRate(DEMANDRSN_CODE_EDUCATIONAL_CESS).divide(new BigDecimal("100"))).setScale(0,
-                        BigDecimal.ROUND_HALF_UP);
+                educationTax = alv.multiply(getTaxRate(DEMANDRSN_CODE_EDUCATIONAL_CESS).divide(new BigDecimal("100")))
+                        .setScale(2, BigDecimal.ROUND_HALF_UP);
                 halfYearHeadTax = educationTax;
             }
             if (applicableTax.equals(DEMANDRSN_CODE_LIBRARY_CESS)) {
                 halfYearHeadTax = generalTax.add(educationTax)
                         .multiply(getTaxRate(DEMANDRSN_CODE_LIBRARY_CESS).divide(new BigDecimal("100")))
-                        .setScale(0, BigDecimal.ROUND_HALF_UP);
+                        .setScale(2, BigDecimal.ROUND_HALF_UP);
             }
-            if (applicableTax.equals(DEMANDRSN_CODE_SEWERAGE_TAX)) {
-                if (floor != null && floor.getDrainage()) {
-                    if (floor.getPropertyUsage().getUsageCode().equals(USAGE_RESIDENTIAL)) {
-                        halfYearHeadTax = new BigDecimal(floor.getNoOfSeats()).multiply(
-                                getTaxRate(DEMANDRSN_CODE_LIBRARY_CESS + "_RESD")
-                                        .setScale(0, BigDecimal.ROUND_HALF_UP));
-                    } else {
-                        halfYearHeadTax = new BigDecimal(floor.getNoOfSeats()).multiply(
-                                getTaxRate(DEMANDRSN_CODE_LIBRARY_CESS + "_NR")).setScale(0, BigDecimal.ROUND_HALF_UP);
-                    }
 
-                }
-            }
             if (halfYearHeadTax.compareTo(BigDecimal.ZERO) > 0) {
-                halfYearHeadTax = roundOffToNearestEven(halfYearHeadTax);
+                //halfYearHeadTax = roundOffToNearestEven(halfYearHeadTax);
                 totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
                 createMiscTax(applicableTax, halfYearHeadTax, unitTaxCalculationInfo);
             }
         }
         // calculating Un Authorized Penalty
-        if (installment.equals(currInstallment)
-                && (unAuthDeviationPerc != null && !unAuthDeviationPerc.isEmpty() && !"0".equals(unAuthDeviationPerc))) {
-            halfYearHeadTax = BigDecimal.ZERO;
-            halfYearHeadTax = roundOffToNearestEven(calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable));
-            totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
-            createMiscTax(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, halfYearHeadTax, unitTaxCalculationInfo);
+        if (!propTypeCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+            if (!(unAuthDeviationPerc == null || "0".equals(unAuthDeviationPerc) || "-1".equals(unAuthDeviationPerc) || (unAuthDeviationPerc != null && unAuthDeviationPerc.intValue() == 0))) {
+                halfYearHeadTax = BigDecimal.ZERO;
+                halfYearHeadTax = calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable);
+                totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
+                createMiscTax(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, halfYearHeadTax, unitTaxCalculationInfo);
+            }
         }
         // calculating Public Service Charges
         if (isPrimaryServiceChrApplicable) {
@@ -340,10 +334,10 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
             applicableTaxes.add(DEMANDRSN_CODE_GENERAL_TAX);
             applicableTaxes.add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
+            applicableTaxes.add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
         } else {
             applicableTaxes.add(DEMANDRSN_CODE_VACANT_TAX);
         }
-        applicableTaxes.add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
         applicableTaxes.add(DEMANDRSN_CODE_LIBRARY_CESS);
         if (isCorporation)
             applicableTaxes.add(DEMANDRSN_CODE_SEWERAGE_TAX);
@@ -367,13 +361,12 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
             final Long usageId, final Date occupancyDate, final Long classification) throws TaxCalculatorExeption {
         List<BoundaryCategory> categories = new ArrayList<BoundaryCategory>();
-
         categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(), usageId,
                 classification, occupancyDate, installment.getToDate());
 
         LOGGER.debug("baseRentOfUnit - Installment : " + installment);
-        
-        if(categories.isEmpty()) {
+
+        if (categories.isEmpty()) {
             throw new TaxCalculatorExeption("There are no Unit rates defined for chosen combinations, zone : "
                     + zone.getName() + " usageId : " + usageId + " classification : " + classification
                     + " occupancyDate : " + occupancyDate);
@@ -398,7 +391,11 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 else
                     taxMap.put(miscTax.getTaxName(),
                             taxMap.get(miscTax.getTaxName()).add(miscTax.getTotalCalculatedTax()));
-
+        
+        
+        for (Map.Entry<String, BigDecimal> entry : taxMap.entrySet()) {
+            entry.setValue(entry.getValue().setScale(0, BigDecimal.ROUND_HALF_UP));
+        }
         return taxMap;
     }
 
@@ -412,7 +409,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         unitTaxCalculationInfo.setNetARV(unitTaxCalculationInfo.getCapitalValue());
 
         calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property.getPropertyDetail()
-                .getPropertyTypeMaster().getCode(), null);
+                .getPropertyTypeMaster().getCode(), null, null);
 
         return unitTaxCalculationInfo;
     }
@@ -456,7 +453,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 depreciationPct = BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct());
             }
         } else {
-            if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER)) {
+            if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER) && floor.getPropertyUsage().getUsageCode().equals(USAGE_RESIDENTIAL)) {
                 depreciationPct = RESD_OWNER_DEPRECIATION;
             } else {
                 depreciationPct = BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct());
@@ -496,23 +493,29 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return tax;
     }
 
-    private String getUnAuthDeviationPerc(Property property) {
-        if (property.getPropertyDetail().getBuildingPermissionNo() == null
-                || property.getPropertyDetail().getBuildingPermissionNo().isEmpty()) {
-            return "100";
-        } else {
-            return property.getPropertyDetail().getDeviationPercentage() != null
-                    && !property.getPropertyDetail().getDeviationPercentage().isEmpty() ? property.getPropertyDetail()
-                    .getDeviationPercentage() : "0";
+    private BigDecimal getUnAuthDeviationPerc(Floor floor) {
+        BigDecimal deviationPerc = null;
+        BigDecimal diffArea = null;
+        BigDecimal plinthArea = new BigDecimal(floor.getBuiltUpArea().getArea()).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal buildingPlanPlinthArea = (floor.getBuildingPlanPlinthArea() != null && floor
+                .getBuildingPlanPlinthArea().getArea() != null) ? new BigDecimal(floor.getBuildingPlanPlinthArea()
+                .getArea()).setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
+        if (buildingPlanPlinthArea.compareTo(BigDecimal.ZERO) == 0) {
+            deviationPerc = new BigDecimal(100);
+        } else if (plinthArea.compareTo(buildingPlanPlinthArea) == 1) {
+            diffArea = plinthArea.subtract(buildingPlanPlinthArea);
+            deviationPerc = diffArea.divide(plinthArea, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
         }
+        return deviationPerc;
     }
 
-    private BigDecimal calculateUnAuthPenalty(String deviationPerc, BigDecimal totalPropertyTax) {
+    private BigDecimal calculateUnAuthPenalty(BigDecimal deviationPerc, BigDecimal totalPropertyTax) {
         BigDecimal unAuthPenalty = BigDecimal.ZERO;
-        if (deviationPerc != null && !deviationPerc.trim().equals("0")) {
-            if (deviationPerc.equals("1-10%")) {
+        if (deviationPerc != null && !deviationPerc.equals("0")) {
+            if (deviationPerc.compareTo(BigDecimal.ZERO) == 1 && deviationPerc.compareTo(BigDecimal.TEN) == -1) {
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_1_10);
-            } else if (deviationPerc.equals("11-25%")) {
+            } else if (deviationPerc.compareTo(new BigDecimal(11)) == 1
+                    && deviationPerc.compareTo(new BigDecimal(25)) == -1) {
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_11_25);
             } else {
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_26_100);
@@ -540,7 +543,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         }
         return taxRate;
     }
-    
+
     private BigDecimal getHalfYearTax(BigDecimal annualTax) {
         return annualTax.divide(new BigDecimal(2)).setScale(2, BigDecimal.ROUND_HALF_UP);
     }

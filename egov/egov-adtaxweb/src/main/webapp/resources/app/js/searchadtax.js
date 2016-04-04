@@ -10,7 +10,7 @@ $(document).ready(function(){
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: '../agency/agencies?name=%QUERY',
+			url: '../agency/active-agencies?name=%QUERY',
 			filter: function (data) {
 				return $.map(data, function (ct) {
 					return {
@@ -40,23 +40,21 @@ $(document).ready(function(){
    });*/
 	
 	
-	
-	var agency_typeahead=$('#agencyTypeAhead').typeahead({
-		hint : true,
-		highlight : true,
-		minLength : 1
-	}, {
-		displayKey : 'name',
-		source : agency.ttAdapter()
-	});
-	typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
-	
-	
-   
 	/*$('#subcategories').change(function(){
 		$("#subCategoryId").val($('#subcategories').val());    
 	});*/
 	
+   var agency_typeahead=$('#agencyTypeAhead').typeahead({
+	   hint:true,
+	   highlight:true,
+	   minLength:1
+   },
+   {
+	   displayKey : 'name',
+	   source: agency.ttAdapter()
+   });
+   typeaheadWithEventsHandling(agency_typeahead,'#agencyId');
+   
 	$('#zoneList').change(function(){
 		$.ajax({
 			type: "GET",
@@ -125,7 +123,7 @@ $(document).ready(function(){
 			$('#adtax_search thead tr').remove();
 		}
 		
-		if(radioBtnVal=='hoarding'){
+		if(radioBtnVal=='Advertisement'){
 		//oTable.fnClearTable();
 			prevdatatable = oTable.dataTable({
 			"sPaginationType": "bootstrap",
@@ -135,7 +133,7 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
 			"columns" : [
-						  { "data" : "hoardingNumber", "title":"Hoarding No."},
+						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
 						  { "data" : "agencyName", "title": "Agency"},
@@ -185,11 +183,12 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
-		      { "data" : "hoardingNumber", "title":"Hoarding No."},
+		      { "data" : "advertisementNumber", "title":"Advertisement No."},
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "applicationFromDate", "title": "Application Date"},
 			  { "data" : "agencyName", "title": "Agency"},
 			  { "data" : "status", "title": "Hoarding Status"},
+			  { "data" : "id", "visible": false},
 			  { "data" : "", "target":-1,"defaultContent": '<span class="add-padding"><i class="fa fa-edit history-size" class="tooltip-secondary" data-toggle="tooltip" title="Edit"></i></span><span class="add-padding"><i class="fa fa-eye history-size" class="tooltip-secondary" data-toggle="tooltip" title="View"></i></span>'},
 			  ]
 		});
@@ -198,7 +197,7 @@ $(document).ready(function(){
 	var datadcbtbl = $('#search-dcbresult-table');
 	$('#search-dcb').click(function(e){
 		datadcbtbl.dataTable({
-			"ajax": {url:"/adtax/hoarding/search-for-update?"+$("#hoardingsearchform").serialize(),
+			"ajax": {url:"/adtax/reports/search-for-dcbreport?"+$("#hoardingsearchform").serialize(),
 				type:"POST"
 			},
 			"sPaginationType": "bootstrap",
@@ -207,11 +206,11 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
-		      { "data" : "hoardingNumber", "title":"Hoarding No."},
+		      { "data" : "advertisementNumber", "title":"Advertisement No."},
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "agencyName", "title": "Agency"},
 			  { "data" : "status", "title": "Hoarding Status"},
-			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View Demand and Collect</button>&nbsp;'},
+			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View Demand and Collect</button>&nbsp;'}			 
 			  ]
 		});
 		e.stopPropagation();
@@ -224,12 +223,13 @@ $(document).ready(function(){
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-edit',function(e) {
 		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		window.open("update/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		window.open("updateLegacy/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {
 		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		window.open("view/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		var permitId = datatbl.fnGetData($(this).parent().parent().parent(),5);
+		window.open("view/"+permitId, ''+permitId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#adtax_search").on('click','tbody tr td .collect-hoardingWiseFee',function(event) {
@@ -245,8 +245,9 @@ $(document).ready(function(){
 
 		window.open("collectTaxByAgency/"+agencyName+"/"+hoardingIds+"/"+pendingAmount ,''+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	
-	  
 	});
 	
+
+		
 });
 

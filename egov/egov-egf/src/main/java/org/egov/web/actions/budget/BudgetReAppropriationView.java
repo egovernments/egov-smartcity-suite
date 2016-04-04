@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.budget;
@@ -45,166 +45,168 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.utils.Constants;
 
-public class BudgetReAppropriationView{
-	Long id;
-	private BudgetDetail budgetDetail = new BudgetDetail();
-	Budget budget;
-	private BigDecimal deltaAmount = new BigDecimal(Constants.ZERO);
-	private BigDecimal approvedDeltaAmount = new BigDecimal(Constants.ZERO);
-	private BigDecimal addedReleased = new BigDecimal(Constants.ZERO);
-	private BigDecimal approvedAmount = new BigDecimal(Constants.ZERO);
-	private BigDecimal appropriatedAmount = new BigDecimal(Constants.ZERO);
-	private BigDecimal actuals = new BigDecimal(Constants.ZERO);
-	private BigDecimal anticipatoryAmount = new BigDecimal(Constants.ZERO);
-	private BigDecimal availableAmount = new BigDecimal(Constants.ZERO);
-	private BigDecimal planningPercent = new BigDecimal(Constants.ZERO);
-	private BigDecimal planningBudgetApproved = new BigDecimal(Constants.ZERO);
-	private BigDecimal planningBudgetUsage = new BigDecimal(Constants.ZERO);
-	private BigDecimal planningBudgetAvailable = new BigDecimal(Constants.ZERO);
-	String changeRequestType;
-	String sequenceNumber;
-	String comments;
-	
-	public String getComments() {
-		return comments;
-	}
+public class BudgetReAppropriationView {
+    Long id;
+    private BudgetDetail budgetDetail = new BudgetDetail();
+    Budget budget;
+    private BigDecimal deltaAmount = new BigDecimal(Constants.ZERO);
+    private BigDecimal approvedDeltaAmount = new BigDecimal(Constants.ZERO);
+    private BigDecimal addedReleased = new BigDecimal(Constants.ZERO);
+    private BigDecimal approvedAmount = new BigDecimal(Constants.ZERO);
+    private BigDecimal appropriatedAmount = new BigDecimal(Constants.ZERO);
+    private BigDecimal actuals = new BigDecimal(Constants.ZERO);
+    private BigDecimal anticipatoryAmount = new BigDecimal(Constants.ZERO);
+    private BigDecimal availableAmount = new BigDecimal(Constants.ZERO);
+    private BigDecimal planningPercent = new BigDecimal(Constants.ZERO);
+    private BigDecimal planningBudgetApproved = new BigDecimal(Constants.ZERO);
+    private BigDecimal planningBudgetUsage = new BigDecimal(Constants.ZERO);
+    private BigDecimal planningBudgetAvailable = new BigDecimal(Constants.ZERO);
+    String changeRequestType;
+    String sequenceNumber;
+    String comments;
 
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setComments(final String comments) {
+        this.comments = comments;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getSequenceNumber() {
-		return sequenceNumber;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setSequenceNumber(String sequenceNumber) {
-		this.sequenceNumber = sequenceNumber;
-	}
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public BigDecimal getAvailableAmount() {
-		return availableAmount;
-	}
+    public String getSequenceNumber() {
+        return sequenceNumber;
+    }
 
-	public void setAvailableAmount(BigDecimal availableAmount) {
-		this.availableAmount = availableAmount;
-	}
+    public void setSequenceNumber(final String sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
+    }
 
-	public void setBudget(Budget budget) {
-		this.budget = budget;
-	}
+    public BigDecimal getAvailableAmount() {
+        return availableAmount;
+    }
 
-	public void setDeltaAmount(BigDecimal deltaAmount) {
-		this.deltaAmount = deltaAmount;
-	}
+    public void setAvailableAmount(final BigDecimal availableAmount) {
+        this.availableAmount = availableAmount;
+    }
 
-	public Budget getBudget() {
-		return budget;
-	}
+    public void setBudget(final Budget budget) {
+        this.budget = budget;
+    }
 
-	public BigDecimal getDeltaAmount() {
-		return deltaAmount;
-	}
+    public void setDeltaAmount(final BigDecimal deltaAmount) {
+        this.deltaAmount = deltaAmount;
+    }
 
-	public BigDecimal getApprovedAmount() {
-		return approvedAmount;
-	}
+    public Budget getBudget() {
+        return budget;
+    }
 
-	public BigDecimal getActuals() {
-		return actuals;
-	}
+    public BigDecimal getDeltaAmount() {
+        return deltaAmount;
+    }
 
-	public String getChangeRequestType() {
-		return changeRequestType;
-	}
+    public BigDecimal getApprovedAmount() {
+        return approvedAmount;
+    }
 
-	public void setApprovedAmount(BigDecimal approvedAmount) {
-		this.approvedAmount = approvedAmount;
-	}
+    public BigDecimal getActuals() {
+        return actuals;
+    }
 
-	public void setActuals(BigDecimal actuals) {
-		this.actuals = actuals;
-	}
+    public String getChangeRequestType() {
+        return changeRequestType;
+    }
 
-	public void setChangeRequestType(String changeRequestType) {
-		this.changeRequestType = changeRequestType;
-	}
+    public void setApprovedAmount(final BigDecimal approvedAmount) {
+        this.approvedAmount = approvedAmount;
+    }
 
-	public BigDecimal getAnticipatoryAmount() {
-		return anticipatoryAmount;
-	}
+    public void setActuals(final BigDecimal actuals) {
+        this.actuals = actuals;
+    }
 
-	public void setAnticipatoryAmount(BigDecimal anticipatoryAmount) {
-		this.anticipatoryAmount = anticipatoryAmount;
-	}
+    public void setChangeRequestType(final String changeRequestType) {
+        this.changeRequestType = changeRequestType;
+    }
 
-	public BudgetDetail getBudgetDetail() {
-		return budgetDetail;
-	}
-	
-	public void setBudgetDetail(BudgetDetail budgetDetail) {
-		this.budgetDetail = budgetDetail;
-	}
+    public BigDecimal getAnticipatoryAmount() {
+        return anticipatoryAmount;
+    }
 
-	public void setAppropriatedAmount(BigDecimal appropriatedAmount) {
-		this.appropriatedAmount = appropriatedAmount;
-	}
+    public void setAnticipatoryAmount(final BigDecimal anticipatoryAmount) {
+        this.anticipatoryAmount = anticipatoryAmount;
+    }
 
-	public BigDecimal getAppropriatedAmount() {
-		return appropriatedAmount;
-	}
+    public BudgetDetail getBudgetDetail() {
+        return budgetDetail;
+    }
 
-	public void setAddedReleased(BigDecimal addedReleased) {
-		this.addedReleased = addedReleased;
-	}
+    public void setBudgetDetail(final BudgetDetail budgetDetail) {
+        this.budgetDetail = budgetDetail;
+    }
 
-	public BigDecimal getAddedReleased() {
-		return addedReleased;
-	}
+    public void setAppropriatedAmount(final BigDecimal appropriatedAmount) {
+        this.appropriatedAmount = appropriatedAmount;
+    }
 
-	public void setApprovedDeltaAmount(BigDecimal approvedDeltaAmount) {
-		this.approvedDeltaAmount = approvedDeltaAmount;
-	}
+    public BigDecimal getAppropriatedAmount() {
+        return appropriatedAmount;
+    }
 
-	public BigDecimal getApprovedDeltaAmount() {
-		return approvedDeltaAmount;
-	}
-	public BigDecimal getPlanningPercent() {
-		return planningPercent;
-	}
+    public void setAddedReleased(final BigDecimal addedReleased) {
+        this.addedReleased = addedReleased;
+    }
 
-	public void setPlanningPercent(BigDecimal planningPercent) {
-		this.planningPercent = planningPercent;
-	}
+    public BigDecimal getAddedReleased() {
+        return addedReleased;
+    }
 
-	public BigDecimal getPlanningBudgetApproved() {
-		return planningBudgetApproved;
-	}
+    public void setApprovedDeltaAmount(final BigDecimal approvedDeltaAmount) {
+        this.approvedDeltaAmount = approvedDeltaAmount;
+    }
 
-	public void setPlanningBudgetApproved(BigDecimal planningBudgetApproved) {
-		this.planningBudgetApproved = planningBudgetApproved;
-	}
-	public BigDecimal getPlanningBudgetUsage() {
-		return planningBudgetUsage;
-	}
+    public BigDecimal getApprovedDeltaAmount() {
+        return approvedDeltaAmount;
+    }
 
-	public void setPlanningBudgetUsage(BigDecimal planningBudgetUsage) {
-		this.planningBudgetUsage = planningBudgetUsage;
-	}
+    public BigDecimal getPlanningPercent() {
+        return planningPercent;
+    }
 
-	public BigDecimal getPlanningBudgetAvailable() {
-		return planningBudgetAvailable;
-	}
+    public void setPlanningPercent(final BigDecimal planningPercent) {
+        this.planningPercent = planningPercent;
+    }
 
-	public void setPlanningBudgetAvailable(BigDecimal planningBudgetAvailable) {
-		this.planningBudgetAvailable = planningBudgetAvailable;
-	}
+    public BigDecimal getPlanningBudgetApproved() {
+        return planningBudgetApproved;
+    }
 
+    public void setPlanningBudgetApproved(final BigDecimal planningBudgetApproved) {
+        this.planningBudgetApproved = planningBudgetApproved;
+    }
+
+    public BigDecimal getPlanningBudgetUsage() {
+        return planningBudgetUsage;
+    }
+
+    public void setPlanningBudgetUsage(final BigDecimal planningBudgetUsage) {
+        this.planningBudgetUsage = planningBudgetUsage;
+    }
+
+    public BigDecimal getPlanningBudgetAvailable() {
+        return planningBudgetAvailable;
+    }
+
+    public void setPlanningBudgetAvailable(final BigDecimal planningBudgetAvailable) {
+        this.planningBudgetAvailable = planningBudgetAvailable;
+    }
 
 }

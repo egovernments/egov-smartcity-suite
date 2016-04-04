@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -42,6 +42,10 @@ package org.egov.ptis.domain.service.property;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_ERR_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_NOT_EXISTS;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 
 import java.io.File;
@@ -50,7 +54,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -146,6 +149,7 @@ import org.egov.ptis.domain.model.PropertyDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,12 +215,13 @@ public class PropertyExternalService {
     @Autowired
     BankHibernateDAO bankHibernateDAO;
 
-    public AssessmentDetails loadAssessmentDetails(final String propertyId, final Integer flag) {
+    public AssessmentDetails loadAssessmentDetails(final String propertyId, final Integer flag,
+            final BasicPropertyStatus status) {
         assessmentDetail = new AssessmentDetails();
         assessmentDetail.setPropertyID(propertyId);
         assessmentDetail.setFlag(flag);
         validate();
-        initiateBasicProperty();
+        initiateBasicProperty(status);
         if (basicProperty != null) {
             property = (PropertyImpl) basicProperty.getProperty();
             if (basicProperty.getLatitude() != null && basicProperty.getLongitude() != null) {
@@ -246,30 +251,46 @@ public class PropertyExternalService {
             throw new ApplicationRuntimeException("Invalid Flag");
     }
 
-    private void initiateBasicProperty() {
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
+    private void initiateBasicProperty(BasicPropertyStatus status) {
+        basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
+        assessmentDetail.setStatus(basicProperty.isActive());
         final ErrorDetails errorDetails = new ErrorDetails();
         if (null != basicProperty) {
-            // Error Code
-            if (!basicProperty.isActive()) {
-                errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_CODE);
-                errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_MSG);
+            if (status.equals(BasicPropertyStatus.ACTIVE)) {
+                if (basicProperty.isActive()) {
+                    checkStatusValues(basicProperty, errorDetails);
+                } else {
+                    errorDetails.setErrorCode(PROPERTY_ACTIVE_ERR_CODE);
+                    errorDetails.setErrorMessage(PROPERTY_ACTIVE_NOT_EXISTS);
+                    assessmentDetail.setErrorDetails(errorDetails);
+                }
+            } else if (status.equals(BasicPropertyStatus.INACTIVE)) {
+                if (!basicProperty.isActive()) {
+                    checkStatusValues(basicProperty, errorDetails);
+                } else {
+                    errorDetails.setErrorCode(PROPERTY_INACTIVE_ERR_CODE);
+                    errorDetails.setErrorMessage(PROPERTY_INACTIVE_ERR_MSG);
+                    assessmentDetail.setErrorDetails(errorDetails);
+                }
             } else {
-                final Set<PropertyStatusValues> statusValues = basicProperty.getPropertyStatusValuesSet();
-                if (null != statusValues && !statusValues.isEmpty())
-                    for (final PropertyStatusValues statusValue : statusValues)
-                        if (statusValue.getPropertyStatus().getStatusCode() == PropertyTaxConstants.MARK_DEACTIVE) {
-                            errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE);
-                            errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG);
-                        }
+                checkStatusValues(basicProperty, errorDetails);
             }
-
         } else {
             errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
             errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_PREFIX
                     + assessmentDetail.getPropertyID() + PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
         }
         assessmentDetail.setErrorDetails(errorDetails);
+    }
+
+    private void checkStatusValues(BasicProperty basicProperty, ErrorDetails errorDetails) {
+        final Set<PropertyStatusValues> statusValues = basicProperty.getPropertyStatusValuesSet();
+        if (null != statusValues && !statusValues.isEmpty())
+            for (final PropertyStatusValues statusValue : statusValues)
+                if (statusValue.getPropertyStatus().getStatusCode() == PropertyTaxConstants.MARK_DEACTIVE) {
+                    errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG);
+                }
     }
 
     private void loadPrimaryMobileAndEmail() {
@@ -478,9 +499,9 @@ public class PropertyExternalService {
                 final String taxType = (String) data[0];
 
                 final String installment = (String) data[1];
-                final BigInteger dmd = (BigInteger) data[2];
+                final Double dmd = (Double) data[2];
                 final Double col = (Double) data[3];
-                final BigDecimal demand = BigDecimal.valueOf(dmd.intValue());
+                final BigDecimal demand = BigDecimal.valueOf(dmd.doubleValue());
                 final BigDecimal collection = BigDecimal.valueOf(col.doubleValue());
                 if (loopInstallment.isEmpty()) {
                     loopInstallment = installment;
@@ -498,9 +519,10 @@ public class PropertyExternalService {
 
                 } else {
                     arrearDetails.setTaxAmount(total);
-                    //penalty calculation is entirely moved to next loop . So no need to add it here 
-                  //  arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(
-                    //        arrearDetails.getChqBouncePenalty()));
+                    // penalty calculation is entirely moved to next loop . So
+                    // no need to add it here
+                    // arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(
+                    // arrearDetails.getChqBouncePenalty()));
                     arrearDetails.setTotalAmount(total.add(arrearDetails.getChqBouncePenalty()));
                     propertyTaxDetails.getTaxDetails().add(arrearDetails);
                     loopInstallment = installment;
@@ -581,7 +603,8 @@ public class PropertyExternalService {
             paymentDetailsMap.put(ChequePayment.BANKID, validatesBankId.toString());
         }
         final Payment payment = Payment.create(payPropertyTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
-        final BillReceiptInfo billReceiptInfo = collectionHelper.executeCollection(payment, payPropertyTaxDetails.getSource());
+        final BillReceiptInfo billReceiptInfo = collectionHelper.executeCollection(payment,
+                payPropertyTaxDetails.getSource());
 
         if (null != billReceiptInfo) {
             receiptDetails = new ReceiptDetails();
@@ -630,7 +653,7 @@ public class PropertyExternalService {
 
     public List<MasterCodeNamePairDetails> getPropertyTypeMasterDetails() {
         final List<MasterCodeNamePairDetails> propTypeMasterDetailsList = new ArrayList<MasterCodeNamePairDetails>(0);
-        final List<PropertyTypeMaster> propertyTypeMasters = propertyTypeMasterDAO.findAll();
+        final List<PropertyTypeMaster> propertyTypeMasters = propertyTypeMasterDAO.findAllExcludeEWSHS();
         for (final PropertyTypeMaster propertyTypeMaster : propertyTypeMasters) {
             final MasterCodeNamePairDetails propTypeMasterDetails = new MasterCodeNamePairDetails();
             propTypeMasterDetails.setCode(propertyTypeMaster.getCode());
@@ -1136,13 +1159,6 @@ public class PropertyExternalService {
         if (isSuperStructure)
             propertyImpl.getPropertyDetail().setSiteOwner(siteOwnerName);
 
-        propertyImpl.getPropertyDetail().setBuildingPlanDetailsChecked(isBuildingPlanDetails);
-        if (isBuildingPlanDetails) {
-            propertyImpl.getPropertyDetail().setBuildingPermissionNo(buildingPermissionNo);
-            propertyImpl.getPropertyDetail().setBuildingPermissionDate(convertStringToDate(buildingPermissionDate));
-            propertyImpl.getPropertyDetail().setDeviationPercentage(percentageDeviation);
-        }
-
         propertyImpl.getPropertyDetail().setLift(lift);
         propertyImpl.getPropertyDetail().setToilets(toilet);
         propertyImpl.getPropertyDetail().setWaterTap(waterTap);
@@ -1310,10 +1326,14 @@ public class PropertyExternalService {
     /**
      * This method is used to validate the payment details to do the payments.
      *
-     * @param assessmentNo - assessment number or property number
-     * @param paymentMode - mode of payment
-     * @param totalAmount - total amount
-     * @param paidBy - name of the payer
+     * @param assessmentNo
+     *            - assessment number or property number
+     * @param paymentMode
+     *            - mode of payment
+     * @param totalAmount
+     *            - total amount
+     * @param paidBy
+     *            - name of the payer
      * @return
      */
     public ErrorDetails validatePaymentDetails(final String assessmentNo, final String paymentMode,
@@ -1396,9 +1416,12 @@ public class PropertyExternalService {
             floor.setCreatedDate(convertStringToDate(floorDetials.getConstructionDate()));
             final Area builtUpArea = new Area();
             builtUpArea.setArea(floorDetials.getPlinthArea());
+            builtUpArea.setBreadth(floorDetials.getPlinthBreadth());
+            builtUpArea.setLength(floorDetials.getPlinthLength());
+            
             floor.setBuiltUpArea(builtUpArea);
-            floor.setDrainage(floorDetials.getDrainageCode());
-            floor.setNoOfSeats(floorDetials.getNoOfSeats());
+            floor.setUnstructuredLand(floorDetials.getUnstructuredLand());
+            
             floorList.add(floor);
         }
         return floorList;
@@ -1449,36 +1472,60 @@ public class PropertyExternalService {
     // TODO: Need to uncomment when it is required to check whether aadhaar
     // number or mobile number is exists or not
     /*
-     * public ErrorDetails isAadhaarNumberExist(List<OwnerDetails> ownerDetailsList) { ErrorDetails errorDetails = null; for
-     * (OwnerDetails ownerDetails : ownerDetailsList) { Query qry =
-     * entityManager.createQuery("from User u where u.aadhaarNumber =:aadhaarNumber" ); qry.setParameter("aadhaarNumber",
-     * ownerDetails.getAadhaarNo()); List list = qry.getResultList(); if (null != list && !list.isEmpty()) { errorDetails = new
-     * ErrorDetails(); errorDetails.setErrorCode(PropertyTaxConstants .THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_EXISTS);
-     * errorDetails.setErrorMessage(MessageFormat.format( PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_EXISTS,
-     * ownerDetails.getAadhaarNo())); } } return errorDetails; } public ErrorDetails isMobileNumberExist(List<OwnerDetails>
-     * ownerDetailsList) { ErrorDetails errorDetails = null; for (OwnerDetails ownerDetails : ownerDetailsList) { Query qry =
-     * entityManager.createQuery("from User u where u.mobileNumber =:mobileNumber" ); qry.setParameter("mobileNumber",
-     * ownerDetails.getMobileNumber()); List list = qry.getResultList(); if (null != list && !list.isEmpty()) { errorDetails = new
-     * ErrorDetails(); errorDetails.setErrorCode(PropertyTaxConstants .THIRD_PARTY_ERR_CODE_MOBILE_NUMBER_EXISTS);
-     * errorDetails.setErrorMessage(MessageFormat.format( PropertyTaxConstants.THIRD_PARTY_ERR_MSG_MOBILE_NUMBER_EXISTS,
+     * public ErrorDetails isAadhaarNumberExist(List<OwnerDetails>
+     * ownerDetailsList) { ErrorDetails errorDetails = null; for (OwnerDetails
+     * ownerDetails : ownerDetailsList) { Query qry =
+     * entityManager.createQuery("from User u where u.aadhaarNumber =:aadhaarNumber"
+     * ); qry.setParameter("aadhaarNumber", ownerDetails.getAadhaarNo()); List
+     * list = qry.getResultList(); if (null != list && !list.isEmpty()) {
+     * errorDetails = new ErrorDetails();
+     * errorDetails.setErrorCode(PropertyTaxConstants
+     * .THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_EXISTS);
+     * errorDetails.setErrorMessage(MessageFormat.format(
+     * PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_EXISTS,
+     * ownerDetails.getAadhaarNo())); } } return errorDetails; } public
+     * ErrorDetails isMobileNumberExist(List<OwnerDetails> ownerDetailsList) {
+     * ErrorDetails errorDetails = null; for (OwnerDetails ownerDetails :
+     * ownerDetailsList) { Query qry =
+     * entityManager.createQuery("from User u where u.mobileNumber =:mobileNumber"
+     * ); qry.setParameter("mobileNumber", ownerDetails.getMobileNumber()); List
+     * list = qry.getResultList(); if (null != list && !list.isEmpty()) {
+     * errorDetails = new ErrorDetails();
+     * errorDetails.setErrorCode(PropertyTaxConstants
+     * .THIRD_PARTY_ERR_CODE_MOBILE_NUMBER_EXISTS);
+     * errorDetails.setErrorMessage(MessageFormat.format(
+     * PropertyTaxConstants.THIRD_PARTY_ERR_MSG_MOBILE_NUMBER_EXISTS,
      * ownerDetails.getMobileNumber())); } } return errorDetails; }
      */
 
     /**
      * This method is used to get document's list to upload the documents.
      *
-     * @param photoAsmntStream - photo of assessment input stream object
-     * @param photoAsmntDisp - photo of assessment content disposition object
-     * @param bldgPermCopyStream - building permission copy input stream object
-     * @param bldgPermCopyDisp - building permission copy content disposition object
-     * @param atstdCopyPropDocStream - attested copy of property document input stream object
-     * @param atstdCopyPropDocDisp - attested copy of property document content disposition object
-     * @param nonJudcStampStream - non judicial stamp input stream object
-     * @param nonJudcStampDisp - non judicial stamp content disposition object
-     * @param afdvtBondStream - affidavit bond paper input stream object
-     * @param afdvtBondDisp - affidavit bond paper content disposition object
-     * @param deathCertCopyStream - death certificate copy input stream object
-     * @param deathCertCopyDisp - death certificate copy content disposition object
+     * @param photoAsmntStream
+     *            - photo of assessment input stream object
+     * @param photoAsmntDisp
+     *            - photo of assessment content disposition object
+     * @param bldgPermCopyStream
+     *            - building permission copy input stream object
+     * @param bldgPermCopyDisp
+     *            - building permission copy content disposition object
+     * @param atstdCopyPropDocStream
+     *            - attested copy of property document input stream object
+     * @param atstdCopyPropDocDisp
+     *            - attested copy of property document content disposition
+     *            object
+     * @param nonJudcStampStream
+     *            - non judicial stamp input stream object
+     * @param nonJudcStampDisp
+     *            - non judicial stamp content disposition object
+     * @param afdvtBondStream
+     *            - affidavit bond paper input stream object
+     * @param afdvtBondDisp
+     *            - affidavit bond paper content disposition object
+     * @param deathCertCopyStream
+     *            - death certificate copy input stream object
+     * @param deathCertCopyDisp
+     *            - death certificate copy content disposition object
      * @return document - list of document
      */
     public List<Document> getDocuments(final InputStream photoAsmntStream,
@@ -1589,8 +1636,10 @@ public class PropertyExternalService {
     /**
      * This method is used to create Document object to upload the files.
      *
-     * @param inputStream - InputStream object coming as request
-     * @param formDataContentDisposition - FormDataContentDisposition object coming as request
+     * @param inputStream
+     *            - InputStream object coming as request
+     * @param formDataContentDisposition
+     *            - FormDataContentDisposition object coming as request
      * @return document - Document object
      */
     private Document createDocument(final InputStream inputStream,
@@ -1639,8 +1688,10 @@ public class PropertyExternalService {
     /**
      * This method is used to convert incoming InputStream object to File object
      *
-     * @param uploadedInputStream - InputStream object
-     * @param fileName - name od the file
+     * @param uploadedInputStream
+     *            - InputStream object
+     * @param fileName
+     *            - name od the file
      * @return file - File object
      */
     private File writeToFile(final InputStream uploadedInputStream, final String fileName) {

@@ -1,42 +1,42 @@
-<!-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#     accountability and the service delivery of the government  organizations.
-#  
-#      Copyright (C) <2015>  eGovernments Foundation
-#  
-#      The updated version of eGov suite of products as by eGovernments Foundation 
-#      is available at http://www.egovernments.org
-#  
-#      This program is free software: you can redistribute it and/or modify
-#      it under the terms of the GNU General Public License as published by
-#      the Free Software Foundation, either version 3 of the License, or
-#      any later version.
-#  
-#      This program is distributed in the hope that it will be useful,
-#      but WITHOUT ANY WARRANTY; without even the implied warranty of
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#      GNU General Public License for more details.
-#  
-#      You should have received a copy of the GNU General Public License
-#      along with this program. If not, see http://www.gnu.org/licenses/ or 
-#      http://www.gnu.org/licenses/gpl.html .
-#  
-#      In addition to the terms of the GPL license to be adhered to in using this
-#      program, the following additional terms are to be complied with:
-#  
-#  	1) All versions of this program, verbatim or modified must carry this 
-#  	   Legal Notice.
-#  
-#  	2) Any misrepresentation of the origin of the material is prohibited. It 
-#  	   is required that all modified versions of this material be marked in 
-#  	   reasonable ways as different from the original version.
-#  
-#  	3) This license does not grant any rights to any user of the program 
-#  	   with regards to rights under trademark law for use of the trade names 
-#  	   or trademarks of eGovernments Foundation.
-#  
-#    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <script>
@@ -54,7 +54,7 @@ jQuery(document).ready(function(){
 
 function getZoneWard(){
 	jQuery.ajax({
-		url: "../domain/commonTradeLicenseAjax-blockByLocality.action",
+		url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
 		type: "GET",
 		data: {
 			locality : jQuery('#boundary').val()
@@ -62,14 +62,20 @@ function getZoneWard(){
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			jQuery('#zoneName').val(response.zoneName);
-			jQuery('#wardName').val(response.wardName);
+			jQuery('#wardName').html("");
+			jQuery('#parentBoundary').html("");
+			jQuery.each(response.results.boundaries, function (j, boundary) {
+				if (boundary.wardId) {
+					jQuery('#wardName').val(boundary.wardName);
+					jQuery('#parentBoundary').val(boundary.wardId);
+				}
+			});
 		}, 
 		error: function (response) {
 			console.log("failed");
-			jQuery('#zoneName').val('');
 			jQuery('#wardName').val('');
-			alert("No boundary details mapped for locality")
+			jQuery('#parentBoundary').val('');
+			bootbox.alert("No boundary details mapped for locality")
 		}
 	});
 }
@@ -81,10 +87,10 @@ function getZoneWard(){
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl' /></label>
     <div class="col-sm-3 add-margin">
-        <div class="input-group">
-         	<s:textfield name="propertyNo" id="propertyNo" value="%{propertyNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15);" onChange="resetOnPropertyNumChange();" class="form-control"/>
-            <span id="searchImg" class="input-group-addon" onclick="callPropertyTaxRest();"> <i class="fa fa-search specific"></i></span>
-        </div>
+        <!-- <div class="input-group"> -->
+         	<s:textfield name="propertyNo" id="propertyNo" value="%{propertyNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15);callPropertyTaxRest();" onChange="resetOnPropertyNumChange();" class="form-control"/>
+            <!-- <span id="searchImg" class="input-group-addon" onclick="callPropertyTaxRest();"> <i class="fa fa-search specific"></i></span> -->
+       <!--  </div> -->
     </div>
   
     <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl' /><span class="mandatory"></span></label>
@@ -94,13 +100,10 @@ function getZoneWard(){
     </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.zone.lbl' /><span class="mandatory"></span></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.ward.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="zoneName" id="zoneName" value="%{zoneName}"  readOnly="true" class="form-control"/>
-    </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='license.ward.lbl' /><span class="mandatory"></span></label>
-    <div class="col-sm-3 add-margin">
-        <s:textfield name="wardName" id="wardName" value="%{wardName}"  readOnly="true" class="form-control"/>
+        <s:textfield name="ward" id="wardName" value="%{parentBoundary.name}"  readOnly="true" class="form-control"/>
+        <s:hidden name="parentBoundary" id="parentBoundary" value="%{parentBoundary.id}"/>
     </div>
 </div>
 <div class="form-group">

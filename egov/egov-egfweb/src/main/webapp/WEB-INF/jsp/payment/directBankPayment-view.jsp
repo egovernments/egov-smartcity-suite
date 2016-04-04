@@ -1,90 +1,138 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <html>
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
+<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}" rel="stylesheet"
+	type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css?rnd=${app_release_no}" rel="stylesheet"
+	type="text/css" />
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
+	TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"> </script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-
-@media print {
-input#printbutton {
-display: none;
-}
-}
-@media print {
-input#closeButton {
-display: none;
-}
-}
-@media print {
-div.commontopyellowbg {
-display: none;
-}
-}
-@media print {
-div.commontopbluebg {
-display: none;
-}
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
 }
 
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+
+@media print {
+	input#printbutton {
+		display: none;
+	}
+}
+
+@media print {
+	input#closeButton {
+		display: none;
+	}
+}
+
+@media print {
+	div.commontopyellowbg {
+		display: none;
+	}
+}
+
+@media print {
+	div.commontopbluebg {
+		display: none;
+	}
+}
 </style>
 <script>
 function showHistory(stateId)
@@ -98,26 +146,26 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 		var makeVoucherDetailTable = function() {  
 		<s:if test='%{isRestrictedtoOneFunctionCenter == true}'>                
 		var voucherDetailColumns = [        
-			{key:"functionid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
-			{key:"function",hidden:true,label:'Function Name',width:90, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","hidden")},
-			{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
-			{key:"glcode",label:'Account Code <span class="mandatory">*</span>',width:100, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
-			{key:"accounthead", label:'Account Head',width:250,formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
-			{key:"debitamount",label:'Debit Amount',width:90, formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
-			{key:"creditamount",label:'Credit Amount',width:90, formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
+			{key:"functionid",hidden:true, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
+			{key:"function",hidden:true,label:'Function Name', formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","hidden")},
+			{key:"glcodeid",hidden:true, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
+			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>', formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
+			{key:"accounthead", label:'Account Head',formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
+			{key:"debitamount",label:'Debit Amount', formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
+			{key:"creditamount",label:'Credit Amount', formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow_billDetailTable(this)")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow(this)")}
 		];	
 		</s:if>
 		<s:else>
 		var voucherDetailColumns = [ 
-   			{key:"functionid",hidden:true,width:90,  formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
-   			{key:"function",label:'Function Name',width:90, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","text")},         
-   			{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
-   			{key:"glcode",label:'Account Code <span class="mandatory">*</span>',width:100,   formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
-   			{key:"accounthead", label:'Account Head',width:250,formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
-   			{key:"debitamount",label:'Debit Amount',width:90, className:'bluebgheadtd' ,formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
-   			{key:"creditamount",label:'Credit Amount',width:90,formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
+   			{key:"functionid",hidden:true,  formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
+   			{key:"function",label:'Function Name', formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","text")},         
+   			{key:"glcodeid",hidden:true, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
+   			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>',   formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
+   			{key:"accounthead", label:'Account Head',formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
+   			{key:"debitamount",label:'Debit Amount', formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
+   			{key:"creditamount",label:'Credit Amount',formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
    			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
    			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
    		];
@@ -179,14 +227,14 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 		
 	var makeSubLedgerTable = function() {
 		var subledgerColumns = [ 
-			{key:"glcode",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".subledgerCode","hidden")},
-			{key:"glcode.id",label:'Account Code <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
-			{key:"detailTypeName",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailTypeName","hidden")},
-			{key:"detailType.id",label:'Type <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
-			{key:"detailCode",label:'Code <span class="mandatory">*</span>',width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","validateDetailCodeForJV(this)")},
-			{key:"detailKeyId",hidden:true,width:100, formatter:createSLHiddenFieldFormatterJV(SUBLEDGERLIST,".detailKeyId")},
-			{key:"detailKey",label:'Name',width:180, formatter:createSLLongTextFieldFormatterJV(SUBLEDGERLIST,".detailKey","")},
-			{key:"amount",label:'Amount',width:90, formatter:createSLAmountFieldFormatterJV(SUBLEDGERLIST,".amount")},
+			{key:"glcode",hidden:true, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".subledgerCode","hidden")},
+			{key:"glcode.id",label:'Account Code <span class="mandatory1">*</span>', formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
+			{key:"detailTypeName",hidden:true, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailTypeName","hidden")},
+			{key:"detailType.id",label:'Type <span class="mandatory1">*</span>', formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+			{key:"detailCode",label:'Code <span class="mandatory1">*</span>', formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","validateDetailCodeForJV(this)")},
+			{key:"detailKeyId",hidden:true, formatter:createSLHiddenFieldFormatterJV(SUBLEDGERLIST,".detailKeyId")},
+			{key:"detailKey",label:'Name', formatter:createSLLongTextFieldFormatterJV(SUBLEDGERLIST,".detailKey","")},
+			{key:"amount",label:'Amount', formatter:createSLAmountFieldFormatterJV(SUBLEDGERLIST,".amount")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow_subLedgersTable(this)")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow(this)")}
 		];
@@ -242,7 +290,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 			}
 		}
 		else{
-			alert("This row can not be deleted");
+			bootbox.alert("This row can not be deleted");
 		}
 		}	
 		
@@ -288,132 +336,165 @@ function printVoucher(){
 
 	</script>
 </head>
-<body >
-<s:form  action="directBankPayment" theme="simple" name="dbpform">
-<s:push value="model">
-		<div align="center">
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" ></p>
-</font>
-</div>
-<span class="mandatory" >
-				<div id="Errors" ><s:actionerror /><s:fielderror /></div>
-				<s:actionmessage />
+<body>
+	<s:form action="directBankPayment" theme="simple" name="dbpform">
+		<s:push value="model">
+			<div align="center">
+				<font style='color: red;'>
+					<p class="error-block" id="lblError"></p>
+				</font>
+			</div>
+			<span class="mandatory1">
+				<div id="Errors">
+					<s:actionerror />
+					<s:fielderror />
+				</div> <s:actionmessage />
 			</span>
-<div align="left">
-<div class="tabber">
-<div class="tabbertab" >
-<h2>Payment Details</h2>
+			<div align="left">
+				<div class="tabber">
+					<div class="tabbertab">
+						<h2>Payment Details</h2>
 
-		<div id="budgetSearchGrid" style="display:block;width:100%;border-top:1px solid #ccc;" >
-		<br/>
-		
-	<table border="0" width="100%" cellspacing="0" cellpadding="0">
-		<tr>
-		<td class="bluebox" width="10%"></td>
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/></td>
-			<td class="bluebox" width="22%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
-			<s:hidden name="id"/>
-			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="38%"><input type="text" name="voucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A></td>
-		</tr>
-				<div class="buttonbottom" ></div>
-	
-	<%@include file="directBankPayment-form.jsp"%>
+						<div id="budgetSearchGrid"
+							style="display: block; width: 100%; border-top: 1px solid #ccc;">
+							<br />
 
-  	
+							<table border="0" width="100%" cellspacing="0" cellpadding="0">
+								<tr>
+									<td class="bluebox" width="10%"></td>
+									<td class="bluebox" width="22%"><s:text
+											name="voucher.number" /></td>
+									<td class="bluebox" width="22%"><s:textfield
+											name="voucherNumber" id="voucherNumber" /></td>
+									<s:hidden name="id" />
+									<td class="bluebox" width="18%"><s:text
+											name="voucher.date" /><span class="mandatory1">*</span></td>
+									<td class="bluebox" width="38%"><input type="text"
+										name="voucherDate"
+										onkeyup="DateFormat(this,this.value,event,false,'3')"
+										value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
+										href="javascript:show_calendar('cbtbform.voucherDate');"
+										style="text-decoration: none">&nbsp;<img tabIndex="-1"
+											src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+								</tr>
+								<div class="buttonbottom"></div>
 
-			
-			
-	</table>
-	</div>
-	</div>
-	
-	<div class="tabbertab" id="chequetab">
-                  	<h2>Cheque Details</h2>
-	                <span>
-                <table align="center" border="0" cellpadding="0" cellspacing="0" class="newtable">
-				<tr><td colspan="6"><div class="subheadsmallnew">Cheque Details</div></td></tr>
-				<tr>
-				<td colspan="4">
-				<div  style="float:left; width:100%;">
-				<table id="chequeTable" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
-					<tr>  
-					    <s:if test="%{paymentheader.type == 'cash' || paymentheader.type == 'Cash' || paymentheader.type == 'Cheque' || paymentheader.type == 'cheque'}">
-								    <th class="bluebgheadtdnew">Cheque Number</td>
-								    <th class="bluebgheadtdnew">Cheque Date</td> 
-						</s:if>
-						<s:else>
-									<th class="bluebgheadtdnew">RTGS Number</td>
-								    <th class="bluebgheadtdnew">RTGS Date</td> 
-						</s:else>
-					    <th class="bluebgheadtdnew">Party Code</td>
-					    <th class="bluebgheadtdnew">Cheque Amount(Rs)</td>
-					    <th class="bluebgheadtdnew">Cheque Status</td>
-					</tr>
-			 <s:if test="%{instrumentHeaderList.size()>0}">
-			  <s:iterator var="p" value="instrumentHeaderList" status="s">  
-				<tr >
-				<s:if test="%{paymentheader.type == 'cash' || paymentheader.type == 'Cash' || paymentheader.type == 'Cheque' || paymentheader.type == 'cheque'}">
-					<td style="text-align:center"  class="blueborderfortdnew"><s:property value="%{instrumentNumber}" /></td>
-					<td style="text-align:center" class="blueborderfortdnew"><s:date name="%{instrumentDate}" format="dd/MM/yyyy"/></td>
-				</s:if>
-				<s:else>
-					<td style="text-align:center"  class="blueborderfortdnew"><s:property value="%{transactionNumber}" /></td>
-					<td style="text-align:center" class="blueborderfortdnew"><s:date name="%{transactionDate}" format="dd/MM/yyyy"/></td>
-				</s:else>
-		 			<td style="text-align:center"  class="blueborderfortdnew"><s:property value="%{payTo}" /></td>
-			     	<td style="text-align:right" class="blueborderfortdnew"><s:text name="format.number" ><s:param value="%{instrumentAmount}" /></s:text></td>
-			     	<td style="text-align:center" class="blueborderfortdnew"><s:property value="%{statusId.description}"/></td>
-				</tr>
-				</s:iterator>
-				</s:if>
-				</table>
-				<s:if test="%{instrumentHeaderList==null || instrumentHeaderList.size==0}">
-					<div  class="bottom" align="center">
-						<s:text name="chq.not.found" ></s:text>
+								<%@include file="directBankPayment-form.jsp"%>
+
+
+
+
+
+							</table>
+						</div>
 					</div>
-				</s:if>
+
+					<div class="tabbertab" id="chequetab">
+						<h2>Cheque Details</h2>
+						<span>
+							<table align="center" border="0" cellpadding="0" cellspacing="0"
+								class="newtable">
+								<tr>
+									<td colspan="6"><div class="subheadsmallnew">Cheque
+											Details</div></td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										<div style="float: left; width: 100%;">
+											<table id="chequeTable" align="center" border="0"
+												cellpadding="0" cellspacing="0" width="100%">
+												<tr>
+													<s:if
+														test="%{paymentheader.type == 'cash' || paymentheader.type == 'Cash' || paymentheader.type == 'Cheque' || paymentheader.type == 'cheque'}">
+														<th class="bluebgheadtdnew">Cheque Number
+														</td>
+														<th class="bluebgheadtdnew">Cheque Date
+														</td>
+													</s:if>
+													<s:else>
+														<th class="bluebgheadtdnew">RTGS Number
+														</td>
+														<th class="bluebgheadtdnew">RTGS Date
+														</td>
+													</s:else>
+													<th class="bluebgheadtdnew">Party Code
+													</td>
+													<th class="bluebgheadtdnew">Cheque Amount(Rs)
+													</td>
+													<th class="bluebgheadtdnew">Cheque Status
+													</td>
+												</tr>
+												<s:if test="%{instrumentHeaderList.size()>0}">
+													<s:iterator var="p" value="instrumentHeaderList" status="s">
+														<tr>
+															<s:if
+																test="%{paymentheader.type == 'cash' || paymentheader.type == 'Cash' || paymentheader.type == 'Cheque' || paymentheader.type == 'cheque'}">
+																<td style="text-align: center"
+																	class="blueborderfortdnew"><s:property
+																		value="%{instrumentNumber}" /></td>
+																<td style="text-align: center"
+																	class="blueborderfortdnew"><s:date
+																		name="%{instrumentDate}" format="dd/MM/yyyy" /></td>
+															</s:if>
+															<s:else>
+																<td style="text-align: center"
+																	class="blueborderfortdnew"><s:property
+																		value="%{transactionNumber}" /></td>
+																<td style="text-align: center"
+																	class="blueborderfortdnew"><s:date
+																		name="%{transactionDate}" format="dd/MM/yyyy" /></td>
+															</s:else>
+															<td style="text-align: center" class="blueborderfortdnew"><s:property
+																	value="%{payTo}" /></td>
+															<td style="text-align: right" class="blueborderfortdnew"><s:text
+																	name="format.number">
+																	<s:param value="%{instrumentAmount}" />
+																</s:text></td>
+															<td style="text-align: center" class="blueborderfortdnew"><s:property
+																	value="%{statusId.description}" /></td>
+														</tr>
+													</s:iterator>
+												</s:if>
+											</table>
+											<s:if
+												test="%{instrumentHeaderList==null || instrumentHeaderList.size==0}">
+												<div class="bottom" align="center">
+													<s:text name="chq.not.found"></s:text>
+												</div>
+											</s:if>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</span>
+					</div>
+
 				</div>
-				</td>
-				</tr>
-				</table>            
-				</span>                  
-			    </div>				
-		  	
-	</div>
 
-	<div class="buttonbottom" id="viewButton" align="center">
-	<input type="button" id="closeButton" value="Close" onclick="javascript:window.close()" class="button"/>
-	<s:submit cssClass="button" id="printPreview2" value="Print Preview"  onclick="printVoucher()"/>
+				<div class="buttonbottom" id="viewButton" align="center">
+					<input type="button" id="closeButton" value="Close"
+						onclick="javascript:window.close()" class="button" />
+					<s:submit cssClass="button" id="printPreview2"
+						value="Print Preview" onclick="printVoucher()" />
 
-</div>
-<s:if test="%{showApprove}">
-	
-	<tr>
-							<td class="bluebox">&nbsp;</td>
-							<td class="bluebox" ><strong>Comments</strong></td>
-							<td class="bluebox" colspan="4"><s:textarea name="comments" id="comments" cols="100" rows="3" onblur="checkLength(this)" value="%{getComments()}"/></td>
-						</tr>
-						<script>
+				</div>
+				<s:if test="%{showApprove}">
+
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox"><strong>Comments</strong></td>
+						<td class="bluebox" colspan="4"><s:textarea name="comments"
+								id="comments" cols="100" rows="3" onblur="checkLength(this)"
+								value="%{getComments()}" /></td>
+					</tr>
+					<script>
 				document.getElementById('viewButton').style.display="none";
 	</script>
-			
-	</s:if>	
-	<div align="center">
-	<tr>
-  		<td  colspan="6"> 
-			<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
-				<%@include file="../voucher/workflowApproval.jsp"%>
-			</s:if>
-		</td>
-  	</tr>
-  	</div>	
-   	      
-	
 
-<SCRIPT type="text/javascript">
+				</s:if>
+
+
+				<script type="text/javascript">
 
 		var frmIndex=0;
 		for(var i=0;i<document.forms[frmIndex].length;i++)
@@ -465,41 +546,34 @@ function printVoucher(){
 				document.forms[0].elements[i].disabled =true;
 				
 			}
-				alert("FundFlow Report not Generated to check Bank Balance. Please generate Report First");
+				bootbox.alert("FundFlow Report not Generated to check Bank Balance. Please generate Report First");
 	
 		</s:if>	
 	</s:if>	
 	
-		
-	
-		
-	
-		
-</SCRIPT>
-	
-<s:if test="%{showApprove}">
+</script>
 
-<s:if test="%{paymentheader.state.value != 'NEW'}">
-	<s:if test="%{paymentheader.state.id!=null}">
-		<div id="labelAD" align="center">
-		<h5>
-		  <a href="#" onclick="showHistory(<s:property value='paymentheader.state.id'/>); ">Show History</a>
-		  </h5>
-	  	</div>
-	</s:if>
-</s:if>
-
-
-<div  class="buttonbottom" id="newbuttondiv" align="center">
-		<s:hidden id="paymentid" name="paymentid" value="%{paymentheader.id}"/>
-		<s:hidden  name="actionname" id="actionName" value="%{action}"/>
-		<s:iterator value="%{getValidActions()}" var="p"  status="s">
-		  <s:submit type="submit"  cssClass="buttonsubmit" value="%{description}" id="wfBtn%{#s.index}" name="%{name}" method="sendForApproval" onclick="return balanceCheck(this, '%{name}','%{description}');return false;"/>
-		</s:iterator>
-		<input type="button" id="closeButtonNew" value="Close" onclick="javascript:window.close()" class="button"/>
-		<s:submit cssClass="button" id="printPreview1" value="Print Preview"  onclick="printVoucher()"/>
-	</div>
-<script>
+				<s:if test="%{showApprove}">
+					<s:if test="%{showMode!='create' && showMode!='view' }">
+						<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
+						<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
+						<div class="buttonbottom" id="newbuttondiv" align="center">
+							<s:submit cssClass="button" id="printPreview1"
+								value="Print Preview" onclick="printVoucher()" />
+						</div>
+					</s:if>
+					<s:else>
+						<div class="buttonbottom" id="newbuttondiv" align="center">
+							<s:submit cssClass="button" id="printPreview1"
+								value="Print Preview" onclick="printVoucher()" />
+							<input type="button" name="button2" id="button2" value="Close"
+								class="button" onclick="window.close();" />
+						</div>
+					</s:else>
+					<s:hidden id="paymentid" name="paymentid"
+						value="%{paymentheader.id}" />
+					<s:hidden name="actionname" id="actionName" value="%{action}" />
+					<script>
 if(document.getElementById('actionName').value!='')
 		{
 			if(document.getElementById('wfBtn0'))
@@ -519,16 +593,21 @@ if(document.getElementById('actionName').value!='')
 				document.getElementById('balanceAvl').style.display='block';
 			}
 	    </s:if>	    
-	
-</script>						  
-</s:if>	
-	
-	<div class="subheadsmallnew"/> </div>
-	<div class="mandatory" align="left">* Mandatory Fields</div>
-	</div>
+	    function onSubmit()
+	    {
+	    	document.forms[0].action='${pageContext.request.contextPath}/payment/directBankPayment-sendForApproval.action';
+    		document.forms[0].submit();
+	    }
+</script>
+				</s:if>
 
-</s:push>
-</s:form>				  
+				<div class="subheadsmallnew" />
+			</div>
+			<div class="mandatory1" align="left">* Mandatory Fields</div>
+			</div>
+
+		</s:push>
+	</s:form>
 </body>
 
 

@@ -60,7 +60,7 @@ public class AadhaarInfoImpl extends AadhaarInfo {
 
     @Override
     public String getPhone() {
-        return phone = returns.phoneNo;
+        return phone = returns.phoneNo.equals("101") ? "" : returns.phoneNo;
     }
 
     @Override

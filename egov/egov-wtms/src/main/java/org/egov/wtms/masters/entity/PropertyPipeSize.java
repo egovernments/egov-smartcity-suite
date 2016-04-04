@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -67,10 +66,22 @@ public class PropertyPipeSize extends AbstractPersistable<Long> {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "pipesize")
-    private PipeSize pipesize;
+    private PipeSize pipeSize;
 
-    @Column(name = "propertytype")
-    private Long propertyType;
+    
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "propertytype")
+    private PropertyType propertyType;
+
+    public PropertyType getPropertyType() {
+        return propertyType;
+    }
+
+    public void setPropertyType(final PropertyType propertyType) {
+        this.propertyType = propertyType;
+    }
 
     @Override
     public Long getId() {
@@ -81,21 +92,14 @@ public class PropertyPipeSize extends AbstractPersistable<Long> {
     protected void setId(final Long id) {
         this.id = id;
     }
-
-    public PipeSize getPipesize() {
-        return pipesize;
+    
+    public PipeSize getPipeSize() {
+        return pipeSize;
     }
 
-    public void setPipesize(final PipeSize pipesize) {
-        this.pipesize = pipesize;
+    public void setPipeSize(PipeSize pipeSize) {
+        this.pipeSize = pipeSize;
     }
-
-    public Long getPropertyType() {
-        return propertyType;
-    }
-
-    public void setPropertyType(final Long propertyType) {
-        this.propertyType = propertyType;
-    }
+    
 
 }

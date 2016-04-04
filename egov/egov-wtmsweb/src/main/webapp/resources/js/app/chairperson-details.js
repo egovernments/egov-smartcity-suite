@@ -101,6 +101,6 @@ function addChairPerson()
             dataType : 'json'
         });
 	 
-	 alert("Chair person name updated in drop down successfully");
+	 bootbox.alert("Chair person name updated in drop down successfully");
    
 	}

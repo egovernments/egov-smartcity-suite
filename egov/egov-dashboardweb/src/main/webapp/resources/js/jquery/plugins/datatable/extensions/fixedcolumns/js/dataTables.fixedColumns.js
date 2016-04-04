@@ -64,7 +64,7 @@ var FixedColumns = function ( dt, init ) {
 	/* Sanity check - you just know it will happen */
 	if ( ! this instanceof FixedColumns )
 	{
-		alert( "FixedColumns warning: FixedColumns must be initialised with the 'new' keyword." );
+		bootbox.alert( "FixedColumns warning: FixedColumns must be initialised with the 'new' keyword." );
 		return;
 	}
 
@@ -439,7 +439,7 @@ FixedColumns.prototype = /** @lends FixedColumns.prototype */{
 		if ( typeof this.s.dt.oInstance.fnVersionCheck != 'function' ||
 		     this.s.dt.oInstance.fnVersionCheck( '1.8.0' ) !== true )
 		{
-			alert( "FixedColumns "+FixedColumns.VERSION+" required DataTables 1.8.0 or later. "+
+			bootbox.alert( "FixedColumns "+FixedColumns.VERSION+" required DataTables 1.8.0 or later. "+
 				"Please upgrade your DataTables installation" );
 			return;
 		}
@@ -1312,7 +1312,7 @@ FixedColumns.defaults = /** @lends FixedColumns.defaults */{
 	 *      } );
 	 *      new $.fn.dataTable.fixedColumns( table, {
 	 *          "drawCallback": function () {
-	 *	            alert( "FixedColumns redraw" );
+	 *	            bootbox.alert( "FixedColumns redraw" );
 	 *	        }
 	 *      } );
 	 */

@@ -55,6 +55,8 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ReceivingCenter;
+import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +68,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/complaint")
-public class GenericComplaintAjaxController extends GenericComplaintController {
+public class GenericComplaintAjaxController  {
 
     @Autowired
     private BoundaryService boundaryService;
@@ -79,6 +81,12 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
 
     @Autowired
     private CrossHierarchyService crossHierarchyService;
+
+    @Autowired
+    private ReceivingCenterService receivingCenterService;
+
+    @Autowired
+    private ComplaintTypeService complaintTypeService;
 
     @RequestMapping(value = { "citizen/complaintTypes", "citizen/anonymous/complaintTypes", "officials/complaintTypes",
             "router/complaintTypes","escalationTime/complaintTypes"}, method = GET, produces = APPLICATION_JSON_VALUE)

@@ -1,76 +1,116 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <html>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <head>
-<title><s:text name="contingent.bill"/></title>
-<sx:head/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
+<title><s:text name="contingent.bill" /></title>
+<sx:head />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}" TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"> </script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 
 
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-	<style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-
-
-
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
+<style type="text/css">
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
 }
 
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+
+}
 .yui-dt7-col-name .yui-dt-liner {
-overflow:hidden;
-width:560px;
+	overflow: hidden;
+	width: 560px;
 }
 </style>
 
@@ -338,7 +378,7 @@ if(button!=undefined && button!="")
 
 if(document.getElementById("Errors").innerHTML=='')  
 {
-alert(succesMessage);
+bootbox.alert(succesMessage);
 
 if(button=="Save_Close")
 {
@@ -414,7 +454,7 @@ var	url = path+"/voucher/common-ajaxLoadCheckList.action?billSubtypeId="+obj.val
 				document.getElementById("checkListsTable["+(Len)+"].val").options[<s:property value="#stat.index"/>]=new Option("<s:property value='value'/>", "<s:property value='key'/>");
 			</s:iterator>
 			document.getElementById("checkListsTable["+(Len)+"].val").value='na';
-			//alert("1");
+			//bootbox.alert("1");
 			}
 			}
 			
@@ -423,7 +463,7 @@ var	url = path+"/voucher/common-ajaxLoadCheckList.action?billSubtypeId="+obj.val
 	  }
  	};
 	req2.open("GET", url, true);
-	//alert(url)
+	//bootbox.alert(url)
 	req2.send(null);
 
 }
@@ -453,124 +493,159 @@ function printPreview(){
 	document.forms[0].action='../bill/expenseBillPrint-print.action?id=<s:property value="billRegisterId"/>';
 	document.forms[0].submit();
 }
-
+function load(){
+	jQuery('.tabber').find('input, textarea, select').attr('readonly', 'readonly');
+	jQuery('.tabbertab').find('input, textarea, select').attr('readonly', 'readonly');
+	jQuery('.commentsTab').find('input, textarea, select').attr('readonly', 'readonly');
+	
+}
+function onSubmit()
+{
+	 var myform = jQuery('#cbill');
+		// re-disabled the set of inputs that you previously
+		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
+	document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-update.action';
+    document.cbill.submit();
+			
+		
+}
 </script>
 </head>
-<body  >
-<s:form action="contingentBill" theme="css_xhtml" name="cbill" >
-<s:token/>     
-<s:push value="model">
-<div class="tabber" id="main" align="left">
-<div class="tabbertab" id=maintab >
-<h2>Header</h2>
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Contingent Bill" name="heading"/>
-</jsp:include>
-<div class="formmaininbox"><div class="formheading"/><div class="subheadnew"><s:text name="contingent.bill"/></div></div>
-<center>
-<span class="mandatory">
-<div id="Errors"><s:actionerror/><s:fielderror/></div>
-<s:actionmessage/>
-</span>
-</center>
-<table border="0" width="100%" cellspacing="0" cellpadding="0">
-<tr> 
-<td class="bluebox"></td>
-<td class="bluebox"><s:text name="bill.Number"/><span class="mandatory1"> *</span></td>
-<td class="bluebox"><s:textfield name="commonBean.billNumber"/></td>
-<td class="bluebox"><s:text name="bill.Date"/><span class="mandatory1"> *</span></td>
-<s:date name='commonBean.billDate' id="commonBean.billDateId" format='dd/MM/yyyy'/>
-<td class="bluebox"><s:textfield name="commonBean.billDate"  id="billDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{commonBean.billDateId}"/>
-	<a tabindex="-1" href="javascript:show_calendar('cbill.billDate');"	style="text-decoration: none">&nbsp;<img 
-										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A></td>
-</tr>
-<%@include file="contingentBill-form.jsp"%>
-</table>
-<br/>
-<div align="center" style="font-family:arial; font-size:12pt;">
-<s:property value="sanctionedMessge" escape="false"/>
-</div>
-<br/>
-</div>
-</div>
-<div class="tabbertab" id="checkList">
-<h2>Check List</h2>
- 				<div class="yui-skin-sam" align="center">
-					<div id="checkListTable"></div>
+<body onload="load();">
+	<s:form action="contingentBill" theme="css_xhtml" name="cbill" id = "cbill">
+		<s:token />
+		<s:push value="model">
+			<div class="formmainbox">
+			<div class="formheading" />
+				<div class="subheadnew">
+					<s:text name="contingent.bill" />
+				</div>
+			</div>
+			<div class="tabber" id="main" align="left">
+				<div class="tabbertab" id=maintab>
+					<h2>Header</h2>
+					<jsp:include page="../budget/budgetHeader.jsp">
+						<jsp:param value="Contingent Bill" name="heading" />
+					</jsp:include>
+					
+					<center>
+						<span class="mandatory1">
+							<div id="Errors">
+								<s:actionerror />
+								<s:fielderror />
+							</div> <s:actionmessage />
+						</span>
+					</center>
+					<table border="0" width="100%" cellspacing="0" cellpadding="0">
+						<tr>
+							<td class="bluebox"></td>
+							<td class="bluebox"><s:text name="bill.Number" /><span
+								class="mandatory1"> *</span></td>
+							<td class="bluebox"><s:textfield
+									name="commonBean.billNumber" /></td>
+							<td class="bluebox"><s:text name="bill.Date" /><span
+								class="mandatory1"> *</span></td>
+							<s:date name='commonBean.billDate' id="commonBean.billDateId"
+								format='dd/MM/yyyy' />
+							<td class="bluebox"><s:textfield name="commonBean.billDate"
+									id="billDate"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									value="%{commonBean.billDateId}" /> <a tabindex="-1"
+								href="javascript:show_calendar('cbill.billDate');"
+								style="text-decoration: none">&nbsp;<img
+									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+						</tr>
+						<%@include file="contingentBill-form.jsp"%>
+					</table>
+					<br />
+					<div align="center" style="font-family: arial; font-size: 12pt;">
+						<s:property value="sanctionedMessge" escape="false" />
 					</div>
-				
+					<br />
+				</div>
+				<div class="tabbertab" id="checkList">
+					<h2>Check List</h2>
+					<div class="yui-skin-sam" align="center">
+						<div id="checkListTable"></div>
+					</div>
+		
 					<script>
-			   	makeCheckListTable();
-			   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
-	</script>
+				   	makeCheckListTable();
+				   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
+		</script>
+		
+		
+				</div>
+			
+			<s:if test="%{mode=='approve'}">
+				<div align='center'>
+					<font style='color: red;'>
+						<p class="error-block" id="lblError" style="font: bold"></p>
+					</font>
+				</div>
+				<div class="commentsTab" align="center">
+					<table border="0" width="100%">
+						<tr>
+							<td class="bluebox">Comments</td>
+							<td class="bluebox"><s:textarea name="comments"
+									id="comments" cols="150" rows="3" onblur="checkLength(this)"
+									value="%{getComments()}" /></td>
+						</tr>
+						<br />
+					</table>
+				</div>
+				</br>
+				<div id="apporoverSelection">
+					<%@ include file='../bill/commonWorkflowMatrix.jsp'%>
+					<%@ include file='../bill/commonWorkflowMatrix-button.jsp'%>
+				</div>
 
 
-</div>
-</div>
-<s:if test="%{mode=='approve'}">
-<div align='center'>
-<font  style='color: red ;align'> 
-<p class="error-block" id="lblError" style="font:bold" ></p>
-</font></div>
+				<%-- <div id="wfHistoryDiv">
+					<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp"
+						context="/egi">
+						<c:param name="stateId" value="${commonBean.stateId}"></c:param>
+					</c:import>
+				</div> --%>
+				<s:hidden name="nextLevel" id="nextLevel"></s:hidden>
+				<s:hidden name="actionName" id="actionName"></s:hidden>
+				<s:hidden name="billRegisterId" id="billRegisterId"></s:hidden>
+				<div class="buttonbottom">
 
-<div id="apporoverSelection"  style="display:none">
-<s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
-	<%@include file="../voucher/workflowApproval-contingent.jsp"%>
-</s:if>
-</div>
-
-<div align="center">
-		<table border="0" width="100%">
-			<tr>
-				<td  class="bluebox">Comments</td> 
-				<td  class="bluebox" ><s:textarea name="comments" id="comments" cols="150" rows="3" onblur="checkLength(this)" value="%{getComments()}"/></td>
-			</tr>
-			<br/>
-		</table>
-</div>
-<div id="wfHistoryDiv">
-	  	<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
-	        <c:param name="stateId" value="${commonBean.stateId}"></c:param>
-        </c:import>
-</div>
-	<s:hidden name="nextLevel" id="nextLevel"></s:hidden>
-	<s:hidden name="actionName" id="actionName"></s:hidden>
-	<s:hidden name="billRegisterId" id="billRegisterId"></s:hidden>
-	<div class="buttonbottom" >
-	
-<table border="0" cellspacing="0" align="center" ><tr></tr>
-	<tr >
-	  	
-			<s:iterator value="%{validButtons}" var="p"><td>
-		  		<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="update" onclick="return validate('%{name}','%{description}');  "/></td>
-			</s:iterator>
-		<td>
-				
-		</td>
-		<td>
-				<input type="button" id="closeButton" value="Close" onclick="javascript:window.close()" class="button"/>
-		</td>
-			</tr>
-</table>
-</div>
-</s:if>
-<s:else>
-	<div id="wfHistoryDiv">
-	  	<%-- <c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
+					<table border="0" cellspacing="0" align="center">
+						<tr></tr>
+						<tr>
+							<td></td>
+							<s:if test="%{!mode=='approve'}">
+								<td><input type="button" name="button2" id="button2"
+									value="Close" class="button" onclick="window.close();" /></td>
+							</s:if>
+						</tr>
+					</table>
+				</div>
+			</s:if>
+			<s:else>
+				<div id="wfHistoryDiv">
+					<%-- <c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
 	        <c:param name="stateId" value="${commonBean.stateId}"></c:param>
         </c:import> --%>
-	</div>
-	<table border="0" cellspacing="0" align="center" ><tr></tr>
-		<tr>
-			<td><input type="button" id="print" value="Print Preview" onclick="printPreview()" class="button"/>
-			<input type="button" id="closeButton" value="Close" onclick="javascript:window.close()" class="button"/></td>
-		</tr>
-	</table>
-</s:else>
-</s:push>
-</s:form>
+				</div>
+				<table border="0" cellspacing="0" align="center">
+					<tr></tr>
+					<tr>
+						<td><input type="button" id="print" value="Print Preview"
+							onclick="printPreview()" class="button" /> <input type="button"
+							name="button2" id="button2" value="Close" class="button"
+							onclick="window.close();" /></td>
+					</tr>
+				</table>
+			</s:else>
+			</div>
+			</div>
+		</s:push>
+	</s:form>
 
-<script>
+	<script>
 document.getElementById("billDetailsTableNet[0].detailTypes").value='<s:property value="%{detailTypeIdandName}"/>';
 var net=document.getElementById('billDetailsTableNet[0].glcodeDetail');
 var i=0;
@@ -608,7 +683,7 @@ document.getElementById("billDetailTableNet").style.display="none";
 if(null != document.getElementById("topTableHeader")){
 	document.getElementById("topTableHeader").style.display="none";
 }
-disableAll();
+//disableAll();
 <s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
 	document.getElementById("departmentid").value= <s:property value="%{voucherHeader.vouchermis.departmentid.id}" /> 
 	<s:if test="%{isFieldMandatory('department')}"> 
@@ -619,26 +694,26 @@ disableAll();
 		document.getElementById("departmentid").disabled=false;
 	</s:else>
 </s:if>
-if(null != document.getElementById("approverUserId")){
+if(document.getElementById("approverUserId")){
 	document.getElementById("approverUserId").disabled=false;
 }
-if(null != document.getElementById("designationId")){
+if(document.getElementById("designationId")){
 	document.getElementById("designationId").disabled=false;
 }
-if(null != document.getElementById("comments")){
+if(document.getElementById("comments")){
 	document.getElementById("comments").disabled=false;
 }
-if(null != document.getElementById("nextLevel")){
+if(document.getElementById("nextLevel")){
 	document.getElementById("nextLevel").disabled=false;
 }
-if(null != document.getElementById("actionName")){
+if( document.getElementById("actionName")){
 	document.getElementById("actionName").disabled=false;
 }
-if(null != document.getElementById("billRegisterId")){
+if(document.getElementById("billRegisterId")){
 	document.getElementById("billRegisterId").disabled=false;
 }
 
-if(null != document.getElementById("print")){
+if(document.getElementById("print")){
 	document.getElementById("print").disabled=false;
 }
 
@@ -650,9 +725,48 @@ if(null != document.getElementById("print")){
 document.getElementById("apporoverSelection").style.display="block";
 
 //set the approver department to primary assignment department
-document.getElementById("departmentid").value=<s:property value="primaryDepartment" />;
+//document.getElementById("departmentid").value=<s:property value="primaryDepartment" />;
+var frmIndex=0;
+for(var i=0;i<document.forms[frmIndex].length;i++)
+document.forms[frmIndex].elements[i].disabled =true;
+disableYUIAddDeleteButtons(true);
 
+if(document.getElementById("approverComments"))
+	document.getElementById("approverComments").disabled=false;	
+if(null != document.getElementById("approverDepartment") ){
+	document.getElementById("approverDepartment").disabled=false;    
+	document.getElementById("approverDesignation").disabled=false;
+	document.getElementById("approverPositionId").disabled=false;
+	
+}
+if(document.getElementById("currentState"))
+	document.getElementById("currentState").disabled=false;		
+if(document.getElementById("currentDesignation"))
+	document.getElementById("currentDesignation").disabled=false;		
+if(document.getElementById("additionalRule"))
+	document.getElementById("additionalRule").disabled=false;		
+if(document.getElementById("amountRule"))
+	document.getElementById("amountRule").disabled=false;		
+if(document.getElementById("workFlowDepartment"))
+	document.getElementById("workFlowDepartment").disabled=false;		
+if(document.getElementById("pendingActions"))
+	document.getElementById("pendingActions").disabled=false;		
+if(document.getElementById("approverName"))
+	document.getElementById("approverName").disabled=false;		
+if(document.getElementById("workFlowAction"))
+	document.getElementById("workFlowAction").disabled=false;		
+if(document.getElementById("Forward"))
+	document.getElementById("Forward").disabled=false;	
+if(document.getElementById("Reject"))
+	document.getElementById("Reject").disabled=false;	
+if(document.getElementById("Cancel"))
+	document.getElementById("Cancel").disabled=false;	
+if(document.getElementById("Approve"))
+	document.getElementById("Approve").disabled=false;	
+if(document.getElementById("button2"))
+	document.getElementById("button2").disabled=false;		
+	  	
 </script>
 
-</body>  
+</body>
 </html>

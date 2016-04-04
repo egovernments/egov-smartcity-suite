@@ -1,42 +1,42 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *     accountability and the service delivery of the government  organizations.
+ *    accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
- *      The updated version of eGov suite of products as by eGovernments Foundation
- *      is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *      This program is free software: you can redistribute it and/or modify
- *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation, either version 3 of the License, or
- *      any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *      This program is distributed in the hope that it will be useful,
- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *      GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with this program. If not, see http://www.gnu.org/licenses/ or
- *      http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *      In addition to the terms of the GPL license to be adhered to in using this
- *      program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *  	1) All versions of this program, verbatim or modified must carry this
- *  	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *  	2) Any misrepresentation of the origin of the material is prohibited. It
- *  	   is required that all modified versions of this material be marked in
- *  	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  	3) This license does not grant any rights to any user of the program
- *  	   with regards to rights under trademark law for use of the trade names
- *  	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.tl.web.actions.objection;
 
 import java.util.ArrayList;
@@ -53,42 +53,53 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.tl.domain.entity.License;
-import org.egov.tl.domain.entity.LicenseStatusValues;
-import org.egov.tl.domain.entity.WorkflowBean;
-import org.egov.tl.domain.entity.objection.LicenseObjection;
-import org.egov.tl.domain.service.objection.ObjectionService;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseStatusValues;
+import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.objection.LicenseObjection;
+import org.egov.tl.service.objection.ObjectionService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @Results({
-@Result(name = Constants.NEW, location = "objection-"+Constants.NEW+".jsp"),
-@Result(name = "message", location = "objection-message.jsp"),
-@Result(name = "approve", location = "objection-approve.jsp"),
-@Result(name = "prenotice", location = "objection-prenotice.jsp"),
-@Result(name = "prenoticeletter", location = "objection-prenoticeletter.jsp"),
-@Result(name = "showcausenotice", location = "objection-showcausenotice.jsp"),
-@Result(name = "scnoticeletter", location = "objection-scnoticeletter.jsp")
+        @Result(name = Constants.NEW, location = "objection-" + Constants.NEW + ".jsp"),
+        @Result(name = "message", location = "objection-message.jsp"),
+        @Result(name = "approve", location = "objection-approve.jsp"),
+        @Result(name = "prenotice", location = "objection-prenotice.jsp"),
+        @Result(name = "prenoticeletter", location = "objection-prenoticeletter.jsp"),
+        @Result(name = "showcausenotice", location = "objection-showcausenotice.jsp"),
+        @Result(name = "scnoticeletter", location = "objection-scnoticeletter.jsp")
 })
 public class ObjectionAction extends GenericWorkFlowAction {
 
     private static final long serialVersionUID = 1L;
+
+    private WorkflowBean workflowBean = new WorkflowBean();
+    private LicenseObjection objection = new LicenseObjection();
+    private List<String> activityTypeList;
     private Long licenseId;
-    protected WorkflowBean workflowBean = new WorkflowBean();
-    protected LicenseUtils licenseUtils;
     private Map<Integer, String> objectionReasons;
     private LicenseStatusValues lsv;
-    private LicenseObjection objection = new LicenseObjection();
-    @Autowired
-    protected ObjectionService objectionService;
     private License license;
     private String roleName;
+
+    @Autowired
+    @Qualifier("objectionService")
+    protected ObjectionService objectionService;
+    @Autowired
+    protected LicenseUtils licenseUtils;
     @Autowired
     private SecurityUtils securityUtils;
+
+
+    public ObjectionAction() {
+        super();
+    }
 
     public LicenseStatusValues getLsv() {
         return lsv;
@@ -101,8 +112,6 @@ public class ObjectionAction extends GenericWorkFlowAction {
     public Map<Integer, String> getObjectionReasons() {
         return licenseUtils.getObjectionReasons();
     }
-
-    private List<String> activityTypeList;
 
     public List<String> getActivityTypeList() {
         return activityTypeList;
@@ -134,10 +143,6 @@ public class ObjectionAction extends GenericWorkFlowAction {
 
     public void setLicenseId(final Long licenseId) {
         this.licenseId = licenseId;
-    }
-
-    public ObjectionAction() {
-        super();
     }
 
     public License getLicense() {
@@ -172,7 +177,7 @@ public class ObjectionAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-@Action(value="/objection/objection-newForm")
+    @Action(value = "/objection/objection-newForm")
     public String newForm() {
         license = (License) persistenceService.find("from License where id=?", licenseId);
         objection.setLicense(license);
@@ -181,13 +186,13 @@ public class ObjectionAction extends GenericWorkFlowAction {
 
     @ValidationErrorPage(Constants.NEW)
     @Validations(
-            requiredFields = { @RequiredFieldValidator(
+            requiredFields = {@RequiredFieldValidator(
                     fieldName = "name", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "address", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "objectionDate", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "details", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
-                    fieldName = "reason", message = "", key = Constants.REQUIRED) })
-    @Action(value="/objection/objection-create")
+                    fieldName = "reason", message = "", key = Constants.REQUIRED)})
+    @Action(value = "/objection/objection-create")
     public String create() {
         objectionService.setContextName(ServletActionContext.getRequest().getContextPath());
         objection = objectionService.recordObjection(objection, licenseId, workflowBean);
@@ -197,21 +202,19 @@ public class ObjectionAction extends GenericWorkFlowAction {
 
     /**
      * this will receive response or inspection details
-     * 
+     *
      * @return
      */
     public void prepareShowForApproval() {
         prepareNewForm();
-        final Long userId = securityUtils.getCurrentUser().getId();
-        if (userId != null)
-            setRoleName(licenseUtils.getRolesForUserId(userId));
+        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
         activityTypeList = new ArrayList<String>();
         activityTypeList.add(Constants.ACTIVITY_INSPECTION);
         activityTypeList.add(Constants.ACTIVITY_RESPONSE);
     }
 
     @SkipValidation
-@Action(value="/objection/objection-showForApproval")
+    @Action(value = "/objection/objection-showForApproval")
     public String showForApproval() {
         objectionService.setContextName(ServletActionContext.getRequest().getContextPath());
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
@@ -255,14 +258,14 @@ public class ObjectionAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-@Action(value="/objection/objection-preNotice")
+    @Action(value = "/objection/objection-preNotice")
     public String preNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         return "prenotice";
     }
 
     @SkipValidation
-@Action(value="/objection/objection-preliminaryNotice")
+    @Action(value = "/objection/objection-preliminaryNotice")
     public String preliminaryNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         generateNotice("_PreNotice");
@@ -270,14 +273,14 @@ public class ObjectionAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-@Action(value="/objection/objection-scNotice")
+    @Action(value = "/objection/objection-scNotice")
     public String scNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         return "showcausenotice";
     }
 
     @SkipValidation
-@Action(value="/objection/objection-showCauseNotice")
+    @Action(value = "/objection/objection-showCauseNotice")
     public String showCauseNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         generateNotice("_SCNotice");

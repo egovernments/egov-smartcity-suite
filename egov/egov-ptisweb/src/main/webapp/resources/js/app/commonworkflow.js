@@ -63,7 +63,7 @@ $(document).ready(function()
 				
 			}, 
 			error: function (response) {
-				alert('json fail');
+				bootbox.alert('json fail');
 				console.log("failed");
 			}
 		});

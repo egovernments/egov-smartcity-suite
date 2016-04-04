@@ -44,7 +44,7 @@ jQuery.noConflict();
 function makePropertyTypeMandatory() {
     var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
     if (propertyType == "select") {
-            alert("Please select category of ownership");
+            bootbox.alert("Please select category of ownership");
             jQuery('#propTypeId').focus();
             return false;
     }
@@ -532,7 +532,7 @@ function toggleFloorDetails() {
 		jQuery('tr.floordetails').show();
 	}
 	if (propType == "Apartments") {
-		alert("Please select Apartment/Complex Name");
+		bootbox.alert("Please select Apartment/Complex Name");
 	}
 }
 
@@ -1147,8 +1147,8 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('tr.extentSite').hide();
 			jQuery('tr.appurtenant').hide();
 			jQuery('tr.superStructureRow').hide();
-			jQuery('tr.bpddetailsheader').hide();
-			jQuery('tr.bpddetails').hide();
+			//jQuery('tr.bpddetailsheader').hide();
+			//jQuery('tr.bpddetails').hide();
 			jQuery("#apartment").prop('selectedIndex', 0);
 			jQuery('td.apartmentRow').hide();
 		} else {
@@ -1160,8 +1160,8 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();
 			jQuery('tr.superStructureRow').show();
-			jQuery('tr.bpddetailsheader').show();
-			jQuery('tr.bpddetails').show();
+			//jQuery('tr.bpddetailsheader').show();
+			//jQuery('tr.bpddetails').show();
 			jQuery('td.apartmentRow').show();
 			if (appurtenantLandChecked == 'true') {
 				jQuery('tr.vacantlanddetaills').show();

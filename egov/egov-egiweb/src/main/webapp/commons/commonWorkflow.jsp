@@ -57,7 +57,7 @@ function callAlertForDepartment()
     var value=document.getElementById("approverDepartment").value;
 	if(value=="-1")
 	{
-		alert("Please select the Approver Department");
+		bootbox.alert("Please select the Approver Department");
 		document.getElementById("approverDepartment").focus();
 		return false;
 	}
@@ -68,7 +68,7 @@ function callAlertForDesignation()
 	var value=document.getElementById("approverDesignation").value;
 	if(value=="-1")
 	{
-		alert("Please select the approver designation");
+		bootbox.alert("Please select the approver designation");
 		document.getElementById("approverDesignation").focus();
 		return false;
 	}
@@ -108,7 +108,7 @@ function validateWorkFlowApprover(name)
 	<s:if test="%{getNextAction()!='END'}">
     if((name=="Forward" || name=="Approve" || name=="approve" || name=="forward") && document.getElementById('approverPositionId').value=="-1")
     {
-        alert("Please Select the Approver ");
+    	bootbox.alert("Please Select the Approver ");
 		return false;
     }
     </s:if>

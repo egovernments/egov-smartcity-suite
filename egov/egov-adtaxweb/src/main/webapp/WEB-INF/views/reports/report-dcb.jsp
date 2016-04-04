@@ -50,7 +50,17 @@
 	                <div class="panel-title"></div>
 	            </div>
 	            	<jsp:include page="../hoarding/commonSearchPage.jsp"></jsp:include>
-	 
+	 			 <div class="form-group">
+                    	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.hoarding.status"/></label>
+                        <div class="col-sm-3 add-margin">
+                   			<form:select path="status" id="hoardingstatus" cssClass="form-control" 
+							cssErrorClass="form-control error">
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<form:options items="${status}" />
+							</form:select>
+							<form:errors path="status" cssClass="error-msg"/>
+                        </div>
+                      </div>
 	            </div>
 	        </div>
 	        <div class="col-md-12">

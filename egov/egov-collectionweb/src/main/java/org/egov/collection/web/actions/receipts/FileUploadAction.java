@@ -87,7 +87,9 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
-import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.admin.master.entity.Department;
@@ -130,8 +132,10 @@ public class FileUploadAction extends BaseFormAction {
     private CollectionsUtil collectionsUtil;
 
     private FinancialsUtil financialsUtil;
-
-    private CommonsServiceImpl commonsServiceImpl;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    @Autowired
+    private FinancialYearHibernateDAO financialYearDAO;
 
     private ReceiptHeaderService receiptHeaderService;
 
@@ -180,9 +184,6 @@ public class FileUploadAction extends BaseFormAction {
         this.challanService = challanService;
     }
 
-    public void setCommonsManager(final CommonsServiceImpl commonsServiceImpl) {
-        this.commonsServiceImpl = commonsServiceImpl;
-    }
 
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -519,7 +520,7 @@ public class FileUploadAction extends BaseFormAction {
         }
         else {
             final CChartOfAccounts account = (CChartOfAccounts) persistenceService.find(
-                    "from CChartOfAccounts  where glcode=? and isActiveForPosting=1", inputArray[8]);
+                    "from CChartOfAccounts  where glcode=? and isActiveForPosting=true", inputArray[8]);
             if (account == null) {
                 errorMsgs += getErrorMsg(errorMsgs, "Incorrect value for Account Code ", inputArray[8]);
                 LOGGER.debug("Incorrect value for Account Code ");
@@ -528,7 +529,7 @@ public class FileUploadAction extends BaseFormAction {
             else {
                 final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) persistenceService.find(
                         " from CChartOfAccountDetail" +
-                                " where glCodeId=(select id from CChartOfAccounts where glcode=? and isActiveForPosting=1)",
+                                " where glCodeId=(select id from CChartOfAccounts where glcode=? and isActiveForPosting=true)",
                         inputArray[8]);
                 if (null != chartOfAccountDetail && (inputArray[10] == null || CollectionConstants.BLANK.equals(inputArray[10]))) {
                     errorMsgs += getErrorMsg(errorMsgs, "No Subledger Data provided for account Code", inputArray[8]);
@@ -771,7 +772,7 @@ public class FileUploadAction extends BaseFormAction {
         BigDecimal totalAmt = BigDecimal.ZERO;
 
         for (final ReceiptDetailInfo rDetails : billCreditDetailslist) {
-            final CChartOfAccounts account = commonsServiceImpl.getCChartOfAccountsByGlCode(
+            final CChartOfAccounts account = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(
                     rDetails.getGlcodeDetail());
             final CFunction function = (CFunction) persistenceService.find("from CFunction  where code=? ", functionName);
             ReceiptDetail receiptDetail = new ReceiptDetail(
@@ -784,7 +785,7 @@ public class FileUploadAction extends BaseFormAction {
                     receiptDetail.getCramount()).subtract(
                     receiptDetail.getDramount());
 
-            final CFinancialYear financialYear = commonsServiceImpl.getFinancialYearById(rDetails.getFinancialYearId());
+            final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(rDetails.getFinancialYearId());
             receiptDetail.setFinancialYear(financialYear);
 
             if (rDetails.getCreditAmountDetail() == null)
@@ -823,7 +824,7 @@ public class FileUploadAction extends BaseFormAction {
          * ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
          * receiptPayee.addReceiptHeader(receiptHeader); receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);
          */
-        receiptHeaderService.persistChallan(receiptHeader);
+        //receiptHeaderService.persistChallan(receiptHeader);
         receiptHeaderService.getSession().flush();
         LOGGER.info("Persisted Challan and Created Receipt In Pending State For the Challan");
 
@@ -904,7 +905,7 @@ public class FileUploadAction extends BaseFormAction {
         // Start work flow for all newly created receipts This might internally
         // create vouchers also based on configuration
 
-        receiptHeaderService.startWorkflow(receiptHeader, Boolean.TRUE);
+        receiptHeaderService.startWorkflow(receiptHeader);
         LOGGER.info("Workflow started for newly created receipts");
 
         // transition the receipt header workflow to Approved state
@@ -916,7 +917,7 @@ public class FileUploadAction extends BaseFormAction {
         // .getPositionOfUser(receiptHeader.getCreatedBy()),
         // "Manually Created Challan Receipt Approved - Workflow ends");
 
-        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
+        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
 
         // If vouchers are created during work flow step, add them to the list
         final Set<ReceiptVoucher> receiptVouchers = receiptHeader.getReceiptVoucher();
@@ -929,8 +930,7 @@ public class FileUploadAction extends BaseFormAction {
             }
 
         if (voucherHeaderList != null && receiptInstrList != null)
-            receiptHeaderService.updateInstrument(voucherHeaderList,
-                    receiptInstrList);
+            receiptHeaderService.updateInstrument(receiptHeader);
 
     }
 
@@ -1222,7 +1222,7 @@ public class FileUploadAction extends BaseFormAction {
     public void createCreditDetailslist(final String[] inputArray) {
         final ReceiptDetailInfo vd = new ReceiptDetailInfo();
         final CChartOfAccounts account = (CChartOfAccounts) persistenceService.find(
-                "from CChartOfAccounts  where glcode=? and isActiveForPosting=1", inputArray[8]);
+                "from CChartOfAccounts  where glcode=? and isActiveForPosting=true", inputArray[8]);
         if (account != null) {
             vd.setAccounthead(account.getName());
             vd.setCreditAmountDetail(new BigDecimal(inputArray[9]));
@@ -1256,7 +1256,7 @@ public class FileUploadAction extends BaseFormAction {
         final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
                 "from Accountdetailtype  where upper(name)=? ", inputArray[10].toUpperCase());
         final CChartOfAccounts account = (CChartOfAccounts) persistenceService.find(
-                "from CChartOfAccounts  where glcode=? and isActiveForPosting=1", inputArray[8]);
+                "from CChartOfAccounts  where glcode=? and isActiveForPosting=true", inputArray[8]);
         if (accountdetailtype != null && account != null) {
             final String table = accountdetailtype.getFullQualifiedName();
             final Class<?> service = Class.forName(table);
@@ -1298,8 +1298,8 @@ public class FileUploadAction extends BaseFormAction {
                 "from org.egov.collection.entity.ReceiptHeader where status.code=?",
                 CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
 
-        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
-        Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>();
+        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
+        Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>(0);
 
         for (final ReceiptHeader receiptHeader : approvedReceipts) {
             voucherHeaderList.clear();
@@ -1307,7 +1307,7 @@ public class FileUploadAction extends BaseFormAction {
             if (receiptHeader.getReceiptVoucher().isEmpty()) {
 
                 try {
-                    receiptHeaderService.createVoucherForReceipt(receiptHeader, Boolean.TRUE);
+                    receiptHeaderService.createVoucherForReceipt(receiptHeader);
                     // If vouchers are created during work flow step, add them to
                     // the list
 
@@ -1317,8 +1317,7 @@ public class FileUploadAction extends BaseFormAction {
                     final List<InstrumentHeader> receiptInstrList = new ArrayList<InstrumentHeader>();
                     receiptInstrList.addAll(receiptHeader.getReceiptInstrument());
                     if (voucherHeaderList != null && !receiptInstrList.isEmpty())
-                        receiptHeaderService.updateInstrument(voucherHeaderList,
-                                receiptInstrList);
+                        receiptHeaderService.updateInstrument(receiptHeader);
 
                 } catch (final Exception e) {
                     errorReceiptList.add(receiptHeader.getId());

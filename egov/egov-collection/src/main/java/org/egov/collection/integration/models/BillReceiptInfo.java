@@ -44,8 +44,8 @@ import java.util.Date;
 import java.util.Set;
 
 import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.security.terminal.model.Location;
 
 public interface BillReceiptInfo {
 
@@ -143,19 +143,25 @@ public interface BillReceiptInfo {
      * @return the collectiontype
      */
     public abstract String getCollectionType();
-    
+
     /**
      * @return manual receipt number for back dated receipt
      */
     public abstract String getManualReceiptNumber();
-    
+
     /**
      * @return manual receipt date for back dated receipt
      */
     public abstract Date getManualReceiptDate();
-    
+
     /**
      * @return legacy check for billing system
      */
     public abstract Boolean getLegacy();
+
+    /**
+     *
+     * @return Any additional information to be printed in receipt
+     */
+    public abstract String getAdditionalInfo();
 }

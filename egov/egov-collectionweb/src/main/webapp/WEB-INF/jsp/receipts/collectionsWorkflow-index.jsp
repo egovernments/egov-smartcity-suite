@@ -268,48 +268,17 @@ function readOnlyCheckBox() {
 		<s:text name="collectionsWorkflow.approveTitle" />
 	</s:else></div>
 	<br />
-
-	<s:if test="%{isSubmitAction == false}">
-		<table width="80%" border="0" align="center" cellpadding="0"
-			cellspacing="0" class="tablebottom" style="border-width: 0px">
-			<tr>
-				<td class="blueborderfortd" width="20%" style="border-width: 0px"
-					align="right"><s:text name="collectionsWorkflow.serviceName" /></td>
-
-				<td width="15%" class="blueborderfortd" align="left"
-					style="border-width: 0px"><s:select
-					headerKey="%{getText('collectionsWorkflow.serviceNames.all')}"
-					headerValue="%{getText('collectionsWorkflow.serviceNames.all')}"
-					name="serviceCode" id="serviceCode" cssClass="selectwk"
-					list="dropdownData.serviceList" listKey="code"
-					listValue="name"
-					onchange="return changeServiceCode(this.value)" /></td>
-
-				<td class="blueborderfortd" width="15%" style="border-width: 0px"
-					align="right"><s:text name="collectionsWorkflow.counterId" /></td>
-
-				<td width="15%" class="blueborderfortd" align="left"
-					style="border-width: 0px"><s:select headerKey="-1"
-					headerValue="%{getText('collectionsWorkflow.counters.all')}"
-					name="counterId" id="counterId" cssClass="selectwk"
-					list="dropdownData.counterList" listKey="id" listValue="name"
-					onchange="return changeCounterId(this.value)" /></td>
-
-				<td class="blueborderfortd" width="20%" style="border-width: 0px"
-					align="right"><s:text name="collectionsWorkflow.user" /></td>
-
-				<td width="15%" class="blueborderfortd" align="left"
-					style="border-width: 0px"><s:select
-					headerKey="%{getText('collectionsWorkflow.users.all')}"
-					headerValue="%{getText('collectionsWorkflow.users.all')}"
-					name="userName" id="userName" cssClass="selectwk"
-					list="dropdownData.receiptCreatorList" listKey="name"
-					listValue="name" onchange="return changeUserName(this.value)" /></td>
-			</tr>
-		</table>
-		<br />
+	<s:if test="%{hasErrors()}">
+	    <div id="actionErrorMessages" class="errorstyle">
+	      <s:actionerror/>
+	      <s:fielderror/>
+	    </div>
 	</s:if>
-
+	<s:if test="%{hasActionMessages()}">
+	    <div id="actionMessages" class="messagestyle">
+	    	<s:actionmessage theme="simple"/>
+	    </div>
+	</s:if>
 	<logic:notEmpty name="receiptHeaders">
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">
@@ -325,7 +294,7 @@ function readOnlyCheckBox() {
 						style="width:5%; text-align: center">
 						<input name="receiptIds" type="checkbox" id="receiptIds"
 							value="${currentRow.id}"
-							onClick="handleReceiptSelectionEvent(${currentRow.amount}, '${currentRow.instrumentType}', this.checked)"
+							onClick="handleReceiptSelectionEvent(${currentRow.totalAmount}, '${currentRow.instrumentType}', this.checked)"
 							checked />
 					</display:column>
 				</s:if>
@@ -349,25 +318,25 @@ function readOnlyCheckBox() {
 				
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					property="service.name" title="Service" style="width:10%" />
+					property="service.name" title="Service" style="width:10%; text-align: center;" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					title="Bill Number" style="width:10%">&nbsp;${currentRow.referencenumber}</display:column>
+					title="Bill Number" style="width:10% text-align: right;">&nbsp;${currentRow.referencenumber}</display:column>
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					property="amount" title="Receipt Amount"
+					property="totalAmount" title="Receipt Amount"
 					format="{0, number, #,##0.00}" style="width:10%; text-align: right" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 					property="instrumentsAsString" title="Instrument(s)"
-					style="width:15%" />
+					style="width:15%; text-align: right;" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 					property="payeeName" title="Payee Name"
-					style="width:15%" />
+					style="width:15%; text-align: center;" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					title="Bill Description" style="width:15%">&nbsp;${currentRow.referenceDesc}</display:column>
+					title="Bill Description" style="width:15%;">&nbsp;${currentRow.referenceDesc}</display:column>
 
 			</display:table>
 			
@@ -488,6 +457,6 @@ function readOnlyCheckBox() {
 			</logic:notEmpty>
 			</s:form>
 			</div>
-			<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+			<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 			</body>
 </html>

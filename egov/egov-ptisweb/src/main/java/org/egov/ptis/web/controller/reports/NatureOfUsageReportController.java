@@ -135,9 +135,9 @@ public class NatureOfUsageReportController {
     @SuppressWarnings("unchecked")
     private List<NatureOfUsageResult> getReportResults(final HttpServletRequest request) {
         final StringBuffer query = new StringBuffer(
-                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", pi.aggregate_current_demand \"halfYearTax\" "
+                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.aggregate_current_demand as numeric) \"halfYearTax\" "
                         + "from egpt_mv_propertyInfo pi ");
-        final StringBuffer whereQuery = new StringBuffer(" where pi.upicno is not null");
+        final StringBuffer whereQuery = new StringBuffer(" where pi.upicno is not null and pi.isactive = true ");
         
         final String natureOfUsage = request.getParameter("natureOfUsage");
         final String ward = request.getParameter("ward");

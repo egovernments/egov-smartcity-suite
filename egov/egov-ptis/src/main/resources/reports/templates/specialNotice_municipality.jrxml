@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 5.2.0  -->
+<!-- 2016-03-29T13:30:10 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_municipality" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="10"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="283"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/manasa/CHECKOUTS/Phoenix/GitHub/eGov/egov/egov-ptis/src/main/java/reports/templates/"]]></defaultValueExpression>
 	</parameter>
@@ -26,7 +29,7 @@
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["To\nSri/Smt: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getOwnerName()+"</style>\nAddress: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getOwnerAddress()+"</style>\n\n\tTake Notice that by virtue of the power vested with Commissioner as per Rule10/11 of Schedule-II, Taxation and Finance Rules of A.P.Municipalites Act, 1965, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> in this Municipality, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st October "+$P{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n\tIn case you are dissatisfied with the assessment now fixed, you can present a Revision to the Commissioner or to any Officer authorized by the Commissioner within 30 days from the date of service of this notice. If no revision against the assessment is presented within the above mentioned period of 30 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["To\nSri/Smt: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerName())+"</style>\nAddress: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getOwnerAddress()+"</style>\n\n\tTake Notice that by virtue of the power vested with Commissioner as per Rule10/11 of Schedule-II, Taxation and Finance Rules of A.P.Municipalites Act, 1965, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> in this Municipality, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st "+$P{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n\tIn case you are dissatisfied with the assessment now fixed, you can present a Revision to the Commissioner or to any Officer authorized by the Commissioner within 30 days from the date of service of this notice. If no revision against the assessment is presented within the above mentioned period of 30 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="36" y="104" width="478" height="10" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
@@ -243,7 +246,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isItalic="true" isUnderline="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">PARTY COPY</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">OFFICIAL COPY</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">ORIGINAL COPY</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">OFFICE COPY</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
 				<reportElement x="37" y="305" width="245" height="15" uuid="79a902fe-2e91-42fa-a896-bb9df4cb3b23"/>
@@ -257,7 +260,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getNew_rev_ARV()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingARV()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="37" y="290" width="245" height="15" uuid="2f6fbf3d-e0bc-41b8-a183-b2dd1b8e7c64"/>
@@ -271,7 +274,7 @@
 				<textElement textAlignment="Center">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Revision or New Assessment ARV (Rs.)]]></text>
+				<text><![CDATA[Existing Assessment ARV (Rs.)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="37" y="330" width="245" height="25" uuid="35763ea7-8cbe-41c9-86fc-42a93a8da1ad"/>
@@ -400,7 +403,7 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement x="36" y="407" width="477" height="50" uuid="72cf4591-462a-4395-b8ab-1af77038034b"/>
+				<reportElement x="36" y="407" width="477" height="51" uuid="72cf4591-462a-4395-b8ab-1af77038034b"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
@@ -411,7 +414,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Reasons for increase if any:	The MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building.\n\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Reasons for increase if any:	The MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building.\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="83" y="45" width="373" height="15" uuid="2a902623-599d-467f-81c1-7a8427b308a9"/>
@@ -423,10 +426,10 @@
 		</band>
 	</title>
 	<columnHeader>
-		<band height="20">
+		<band height="35">
 			<printWhenExpression><![CDATA[$F{bldngFloorNo}!=null && $F{bldngFloorNo}!=""]]></printWhenExpression>
 			<staticText>
-				<reportElement x="194" y="0" width="89" height="20" uuid="a48fb1e2-f09d-4aa8-86d9-680e259a447a"/>
+				<reportElement x="194" y="15" width="89" height="20" uuid="a48fb1e2-f09d-4aa8-86d9-680e259a447a"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -440,7 +443,7 @@
 				<text><![CDATA[Plinth Area (in sq.mt)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="109" y="0" width="85" height="20" uuid="a6ebdcd7-7c0b-46e3-b9f8-761cb798670a"/>
+				<reportElement x="109" y="15" width="85" height="20" uuid="a6ebdcd7-7c0b-46e3-b9f8-761cb798670a"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -454,7 +457,7 @@
 				<text><![CDATA[Nature of Construction]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="43" y="0" width="66" height="20" uuid="b5f01b8f-58ea-4b55-b34e-c2372fd450c3"/>
+				<reportElement x="43" y="15" width="66" height="20" uuid="b5f01b8f-58ea-4b55-b34e-c2372fd450c3"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -468,7 +471,7 @@
 				<text><![CDATA[Building Floor No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="283" y="0" width="85" height="20" uuid="d3a4a10e-5dea-49ee-b4a4-6e688e5209ff"/>
+				<reportElement x="283" y="15" width="85" height="20" uuid="d3a4a10e-5dea-49ee-b4a4-6e688e5209ff"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -482,7 +485,7 @@
 				<text><![CDATA[Usage of Building]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="368" y="0" width="133" height="20" uuid="91d9aec6-6bdd-43e4-99a7-7e761a71fbe5"/>
+				<reportElement x="368" y="15" width="133" height="20" uuid="91d9aec6-6bdd-43e4-99a7-7e761a71fbe5"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -494,6 +497,20 @@
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Monthly Rental Value]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="1" width="194" height="12" uuid="9a0693fc-ee57-4618-abce-5c468e12d7d1"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Details of Assessment/Revision]]></text>
 			</staticText>
 		</band>
 	</columnHeader>

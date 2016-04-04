@@ -164,8 +164,6 @@ body
 								<td></td>
 								<td></td>
 								<td></td>
-								<td></td>
-								<td></td>
 								<td>Total</td>  
 								<td></td>
 								<td></td>
@@ -189,4 +187,4 @@ body
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>" ></script>
-<script	src="<c:url value='/resources/js/app/dailyWTCollectionReport.js'/>"></script>
+<script	src="<c:url value='/resources/js/app/dailyWTCollectionReport.js?rnd=${app_release_no}'/>"></script>

@@ -79,7 +79,6 @@
 				dataType: "json",
 				success: function (response) {
 					jQuery('#zoneId').val(response.zoneId);
-					populateWard();
 					setTimeout(function(){
   					//your code to be executed after 1 seconds
 						jQuery('#wardId').val(response.wardId);
@@ -95,7 +94,7 @@
 					jQuery('#zoneId').val('-1');
 					jQuery('#wardId').val('-1');
 					jQuery('#areaId').val('-1');
-					alert("No boundary details mapped for locality")
+					bootbox.alert("No boundary details mapped for locality")
 				}
 			});
 		});

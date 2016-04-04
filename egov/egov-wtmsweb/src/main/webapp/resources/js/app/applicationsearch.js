@@ -56,7 +56,6 @@ jQuery(document).ready(function ($) {
 		}
 		 }
 	    $('#searchapplication').click(function () {
-	    	
 	    	submitForm();
 	    });
 		
@@ -70,7 +69,7 @@ jQuery(document).ready(function ($) {
 	        // Check the date range, 86400000 is the number of milliseconds in one day
 	        var difference = (endDate - startDate) / (86400000 * 7);
 	        if (difference < 0) {
-				alert("The start date must come before the end date.");
+	        	bootbox.alert("The start date must come before the end date.");
 				$('#end_date').val('');
 				return false;
 				} else {
@@ -156,10 +155,10 @@ jQuery(document).ready(function ($) {
 });
 
 function submitForm(){
-
+	$('.loader-class').modal('show', {backdrop: 'static'});
 	$.post("/wtms/elastic/appSearch/", $('#applicationSearchRequestForm').serialize())
 	.done(function (searchResult) {
-		console.log(JSON.stringify(searchResult));
+		//console.log(JSON.stringify(searchResult));
 		
 		tableContainer.dataTable({
 			destroy:true,
@@ -190,6 +189,7 @@ function submitForm(){
 			],
 			"aaSorting": [[3, 'desc']]
 		});
-	})
-
+		
+	});
+	$('.loader-class').modal('hide');
 }

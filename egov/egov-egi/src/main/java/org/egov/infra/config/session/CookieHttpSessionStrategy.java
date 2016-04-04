@@ -41,217 +41,211 @@ package org.egov.infra.config.session;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.session.Session;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.CookieSerializer.CookieValue;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.session.web.http.HttpSessionManager;
 import org.springframework.session.web.http.MultiHttpSessionStrategy;
+import org.springframework.util.Assert;
 
 /**
- * This is a copy of {@link org.springframework.session.web.http.CookieHttpSessionStrategy} from spring security
- * This is a patch since {@link org.springframework.session.web.http.CookieHttpSessionStrategy} Cookie Path setting 
- * is handled improperly by spring-session.
- * This class should be removed once spring-session released with proper patch, hopefully in version 1.1
- * */
+ * This is a copy of {@link org.springframework.session.web.http.CookieHttpSessionStrategy} from spring security This is a patch
+ * since {@link org.springframework.session.web.http.CookieHttpSessionStrategy} Cookie Path setting is handled improperly by
+ * spring-session. This class should be removed once spring-session released with proper patch, hopefully in version 1.1
+ */
 public final class CookieHttpSessionStrategy implements MultiHttpSessionStrategy, HttpSessionManager {
+    private static final String SESSION_IDS_WRITTEN_ATTR = CookieHttpSessionStrategy.class.getName()
+            .concat(".SESSIONS_WRITTEN_ATTR");
+
     static final String DEFAULT_ALIAS = "0";
 
     static final String DEFAULT_SESSION_ALIAS_PARAM_NAME = "_s";
 
-    private Pattern ALIAS_PATTERN = Pattern.compile("^[\\w-]{1,50}$");
-
-    private String cookieName = "SESSION";
+    private final Pattern ALIAS_PATTERN = Pattern.compile("^[\\w-]{1,50}$");
 
     private String sessionParam = DEFAULT_SESSION_ALIAS_PARAM_NAME;
 
-    public String getRequestedSessionId(HttpServletRequest request) {
-        Map<String,String> sessionIds = getSessionIds(request);
-        String sessionAlias = getCurrentSessionAlias(request);
+    private CookieSerializer cookieSerializer = new DefaultCookieSerializer();
+
+    @Override
+    public String getRequestedSessionId(final HttpServletRequest request) {
+        final Map<String, String> sessionIds = getSessionIds(request);
+        final String sessionAlias = getCurrentSessionAlias(request);
         return sessionIds.get(sessionAlias);
     }
 
-    public String getCurrentSessionAlias(HttpServletRequest request) {
-        if(sessionParam == null) {
+    @Override
+    public String getCurrentSessionAlias(final HttpServletRequest request) {
+        if (sessionParam == null)
             return DEFAULT_ALIAS;
-        }
-        String u = request.getParameter(sessionParam);
-        if(u == null) {
+        final String u = request.getParameter(sessionParam);
+        if (u == null)
             return DEFAULT_ALIAS;
-        }
-        if(!ALIAS_PATTERN.matcher(u).matches()) {
+        if (!ALIAS_PATTERN.matcher(u).matches())
             return DEFAULT_ALIAS;
-        }
         return u;
     }
 
-    public String getNewSessionAlias(HttpServletRequest request) {
-        Set<String> sessionAliases = getSessionIds(request).keySet();
-        if(sessionAliases.isEmpty()) {
+    @Override
+    public String getNewSessionAlias(final HttpServletRequest request) {
+        final Set<String> sessionAliases = getSessionIds(request).keySet();
+        if (sessionAliases.isEmpty())
             return DEFAULT_ALIAS;
-        }
         long lastAlias = Long.decode(DEFAULT_ALIAS);
-        for(String alias : sessionAliases) {
-            long selectedAlias = safeParse(alias);
-            if(selectedAlias > lastAlias) {
+        for (final String alias : sessionAliases) {
+            final long selectedAlias = safeParse(alias);
+            if (selectedAlias > lastAlias)
                 lastAlias = selectedAlias;
-            }
         }
         return Long.toHexString(lastAlias + 1);
     }
 
-    private long safeParse(String hex) {
+    private long safeParse(final String hex) {
         try {
             return Long.decode("0x" + hex);
-        } catch(NumberFormatException notNumber) {
+        } catch (final NumberFormatException notNumber) {
             return 0;
         }
     }
 
-    public void onNewSession(Session session, HttpServletRequest request, HttpServletResponse response) {
-        Map<String,String> sessionIds = getSessionIds(request);
-        String sessionAlias = getCurrentSessionAlias(request);
+    @Override
+    public void onNewSession(final Session session, final HttpServletRequest request, final HttpServletResponse response) {
+        final Set<String> sessionIdsWritten = getSessionIdsWritten(request);
+        if (sessionIdsWritten.contains(session.getId()))
+            return;
+        sessionIdsWritten.add(session.getId());
+
+        final Map<String, String> sessionIds = getSessionIds(request);
+        final String sessionAlias = getCurrentSessionAlias(request);
         sessionIds.put(sessionAlias, session.getId());
-        Cookie sessionCookie = createSessionCookie(request, sessionIds);
-        response.addCookie(sessionCookie);
+
+        final String cookieValue = createSessionCookieValue(sessionIds);
+        cookieSerializer.writeCookieValue(new CookieValue(request, response, cookieValue));
     }
 
-    private Cookie createSessionCookie(HttpServletRequest request,
-            Map<String, String> sessionIds) {
-        Cookie sessionCookie = new Cookie(cookieName,"");
-        sessionCookie.setHttpOnly(true);
-        sessionCookie.setSecure(request.isSecure());
-        sessionCookie.setPath(cookiePath(request));
-        // TODO set domain?
-
-        if(sessionIds.isEmpty()) {
-            sessionCookie.setMaxAge(0);
-            return sessionCookie;
+    @SuppressWarnings("unchecked")
+    private Set<String> getSessionIdsWritten(final HttpServletRequest request) {
+        Set<String> sessionsWritten = (Set<String>) request.getAttribute(SESSION_IDS_WRITTEN_ATTR);
+        if (sessionsWritten == null) {
+            sessionsWritten = new HashSet<String>();
+            request.setAttribute(SESSION_IDS_WRITTEN_ATTR, sessionsWritten);
         }
+        return sessionsWritten;
+    }
 
-        if(sessionIds.size() == 1) {
-            String cookieValue = sessionIds.values().iterator().next();
-            sessionCookie.setValue(cookieValue);
-            return sessionCookie;
-        }
-        StringBuffer buffer = new StringBuffer();
-        for(Map.Entry<String,String> entry : sessionIds.entrySet()) {
-            String alias = entry.getKey();
-            String id = entry.getValue();
+    private String createSessionCookieValue(final Map<String, String> sessionIds) {
+        if (sessionIds.isEmpty())
+            return "";
+        if (sessionIds.size() == 1 && sessionIds.keySet().contains(DEFAULT_ALIAS))
+            return sessionIds.values().iterator().next();
+
+        final StringBuffer buffer = new StringBuffer();
+        for (final Map.Entry<String, String> entry : sessionIds.entrySet()) {
+            final String alias = entry.getKey();
+            final String id = entry.getValue();
 
             buffer.append(alias);
             buffer.append(" ");
             buffer.append(id);
             buffer.append(" ");
         }
-        buffer.deleteCharAt(buffer.length()-1);
-
-        sessionCookie.setValue(buffer.toString());
-        return sessionCookie;
+        buffer.deleteCharAt(buffer.length() - 1);
+        return buffer.toString();
     }
 
-    public void onInvalidateSession(HttpServletRequest request, HttpServletResponse response) {
-        Map<String,String> sessionIds = getSessionIds(request);
-        String requestedAlias = getCurrentSessionAlias(request);
+    @Override
+    public void onInvalidateSession(final HttpServletRequest request, final HttpServletResponse response) {
+        final Map<String, String> sessionIds = getSessionIds(request);
+        final String requestedAlias = getCurrentSessionAlias(request);
         sessionIds.remove(requestedAlias);
 
-        Cookie sessionCookie = createSessionCookie(request, sessionIds);
-        response.addCookie(sessionCookie);
+        final String cookieValue = createSessionCookieValue(sessionIds);
+        cookieSerializer.writeCookieValue(new CookieValue(request, response, cookieValue));
     }
 
     /**
-     * Sets the name of the HTTP parameter that is used to specify the session
-     * alias. If the value is null, then only a single session is supported per
-     * browser.
+     * Sets the name of the HTTP parameter that is used to specify the session alias. If the value is null, then only a single
+     * session is supported per browser.
      *
-     * @param sessionAliasParamName
-     *            the name of the HTTP parameter used to specify the session
-     *            alias. If null, then ony a single session is supported per
-     *            browser.
+     * @param sessionAliasParamName the name of the HTTP parameter used to specify the session alias. If null, then ony a single
+     * session is supported per browser.
      */
-    public void setSessionAliasParamName(String sessionAliasParamName) {
-        this.sessionParam = sessionAliasParamName;
+    public void setSessionAliasParamName(final String sessionAliasParamName) {
+        sessionParam = sessionAliasParamName;
+    }
+
+    /**
+     * Sets the {@link CookieSerializer} to be used.
+     *
+     * @param cookieSerializer the cookieSerializer to set. Cannot be null.
+     */
+    public void setCookieSerializer(final CookieSerializer cookieSerializer) {
+        Assert.notNull(cookieSerializer, "cookieSerializer cannot be null");
+        this.cookieSerializer = cookieSerializer;
     }
 
     /**
      * Sets the name of the cookie to be used
      * @param cookieName the name of the cookie to be used
+     * @deprecated use {@link #setCookieSerializer(CookieSerializer)}
      */
-    public void setCookieName(String cookieName) {
-        if(cookieName == null) {
-            throw new IllegalArgumentException("cookieName cannot be null");
-        }
-        this.cookieName = cookieName;
+    @Deprecated
+    public void setCookieName(final String cookieName) {
+        final DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        serializer.setCookieName(cookieName);
+        cookieSerializer = serializer;
     }
 
-    /**
-     * Retrieve the first cookie with the given name. Note that multiple
-     * cookies can have the same name but different paths or domains.
-     * @param request current servlet request
-     * @param name cookie name
-     * @return the first cookie with the given name, or {@code null} if none is found
-     */
-    private static Cookie getCookie(HttpServletRequest request, String name) {
-        if(request == null) {
-            throw new IllegalArgumentException("request cannot be null");
-        }
-        Cookie cookies[] = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (name.equals(cookie.getName())) {
-                    return cookie;
-                }
-            }
-        }
-        return null;
-    }
-
-    private static String cookiePath(HttpServletRequest request) {
-        return "/";
-    }
-
-    public Map<String,String> getSessionIds(HttpServletRequest request) {
-        Cookie session = getCookie(request, cookieName);
-        String sessionCookieValue = session == null ? "" : StringUtils.defaultIfBlank(session.getValue(), "");
-        Map<String,String> result = new LinkedHashMap<String,String>();
-        StringTokenizer tokens = new StringTokenizer(sessionCookieValue, " ");
-        if(tokens.countTokens() == 1) {
+    @Override
+    public Map<String, String> getSessionIds(final HttpServletRequest request) {
+        final List<String> cookieValues = cookieSerializer.readCookieValues(request);
+        final String sessionCookieValue = StringUtils.defaultIfBlank(cookieValues.isEmpty() ? "" : cookieValues.iterator().next(),
+                "");
+        final Map<String, String> result = new LinkedHashMap<String, String>();
+        final StringTokenizer tokens = new StringTokenizer(sessionCookieValue, " ");
+        if (tokens.countTokens() == 1) {
             result.put(DEFAULT_ALIAS, tokens.nextToken());
             return result;
         }
-        while(tokens.hasMoreTokens()) {
-            String alias = tokens.nextToken();
-            if(!tokens.hasMoreTokens()) {
+        while (tokens.hasMoreTokens()) {
+            final String alias = tokens.nextToken();
+            if (!tokens.hasMoreTokens())
                 break;
-            }
-            String id = tokens.nextToken();
+            final String id = tokens.nextToken();
             result.put(alias, id);
         }
         return result;
     }
 
-    public HttpServletRequest wrapRequest(HttpServletRequest request, HttpServletResponse response) {
+    @Override
+    public HttpServletRequest wrapRequest(final HttpServletRequest request, final HttpServletResponse response) {
         request.setAttribute(HttpSessionManager.class.getName(), this);
         return request;
     }
 
-    public HttpServletResponse wrapResponse(HttpServletRequest request, HttpServletResponse response) {
+    @Override
+    public HttpServletResponse wrapResponse(final HttpServletRequest request, final HttpServletResponse response) {
         return new MultiSessionHttpServletResponse(response, request);
     }
 
     class MultiSessionHttpServletResponse extends HttpServletResponseWrapper {
         private final HttpServletRequest request;
 
-        public MultiSessionHttpServletResponse(HttpServletResponse response, HttpServletRequest request) {
+        public MultiSessionHttpServletResponse(final HttpServletResponse response, final HttpServletRequest request) {
             super(response);
             this.request = request;
         }
@@ -266,37 +260,36 @@ public final class CookieHttpSessionStrategy implements MultiHttpSessionStrategy
         public String encodeURL(String url) {
             url = super.encodeURL(url);
 
-            String alias = getCurrentSessionAlias(request);
+            final String alias = getCurrentSessionAlias(request);
             return CookieHttpSessionStrategy.this.encodeURL(url, alias);
         }
     }
 
-    public String encodeURL(String url, String sessionAlias) {
-        String encodedSessionAlias = urlEncode(sessionAlias);
-        int queryStart = url.indexOf("?");
-        boolean isDefaultAlias = DEFAULT_ALIAS.equals(encodedSessionAlias);
-        if(queryStart < 0) {
+    @Override
+    public String encodeURL(final String url, final String sessionAlias) {
+        final String encodedSessionAlias = urlEncode(sessionAlias);
+        final int queryStart = url.indexOf("?");
+        final boolean isDefaultAlias = DEFAULT_ALIAS.equals(encodedSessionAlias);
+        if (queryStart < 0)
             return isDefaultAlias ? url : url + "?" + sessionParam + "=" + encodedSessionAlias;
-        }
-        String path = url.substring(0, queryStart);
+        final String path = url.substring(0, queryStart);
         String query = url.substring(queryStart + 1, url.length());
-        String replacement = isDefaultAlias ? "" : "$1"+encodedSessionAlias;
-        query = query.replaceFirst( "((^|&)" + sessionParam + "=)([^&]+)?", replacement);
-        if(!isDefaultAlias && url.endsWith(query)) {
+        final String replacement = isDefaultAlias ? "" : "$1" + encodedSessionAlias;
+        query = query.replaceFirst("((^|&)" + sessionParam + "=)([^&]+)?", replacement);
+        if (!isDefaultAlias && url.endsWith(query)) {
             // no existing alias
-            if(!(query.endsWith("&") || query.length() == 0)) {
+            if (!(query.endsWith("&") || query.length() == 0))
                 query += "&";
-            }
             query += sessionParam + "=" + encodedSessionAlias;
         }
 
         return path + "?" + query;
     }
 
-    private String urlEncode(String value) {
+    private String urlEncode(final String value) {
         try {
             return URLEncoder.encode(value, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }

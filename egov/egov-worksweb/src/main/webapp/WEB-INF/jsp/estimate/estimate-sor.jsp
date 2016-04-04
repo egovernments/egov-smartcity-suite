@@ -65,6 +65,7 @@
 
 function afterSORResults(sType,results){
     clearMessage('sor_error');
+    document.getElementById("loadImage").style.display='none';
     if(document.abstractEstimateForm.isRateContract.checked==true){
 	    if(dom.get('workDetailType').value=="sor")
 	    	document.getElementById("loadImageforSor").style.display='none';
@@ -223,6 +224,9 @@ var searchSelectionHandler = function(sType, arguments) {
             	{
             		dom.get('errorstyle').style.display='none';
             	}
+
+                
+            	
             };
             
 	        var myFailureHandler = function() {
@@ -247,7 +251,7 @@ var makeSORDataTable = function() {
             {key:"UOM", sortable:false, resizeable:false},
             {key:"sorrate", label:'Rate', formatter:sorRateHiddenFormatter,sortable:false, resizeable:false},
             {key:"rate",label:'Unit Rate',hidden:true,  formatter:readOnlyTextboxFormatter, sortable:false, resizeable:false},
-            {key:"quantity",label:'Estimated Quantity<span class="mandatory">*</span>', formatter:textboxFormatter,sortable:false, resizeable:false},
+            {key:"quantity",label:'Estimated Quantity<span class="mandatory"></span>', formatter:textboxFormatter,sortable:false, resizeable:false},
             {key:"EstdAmt",label:'Estimated  Amount', sortable:false, resizeable:false},
             {key:"serviceTaxPerc",label:'Service VAT%', formatter:stFormatter,sortable:false, resizeable:false},
             {key:"TaxAmt",label:'Service/ VAT Amount',sortable:false, resizeable:false},
@@ -313,6 +317,7 @@ function getUOMFactor(sorUomId,record) {
 	
 	var ajaxcall = new Ajax.Request(url2, {
 		method:'get',parameters:params,onSuccess:function(transport){
+			console.log('received!');
 			$(estimaterateVal).value = transport.responseText;
 			
 		}
@@ -349,7 +354,61 @@ function showProcessImage(event) {
 }
 
 </script>
-<div class="errorstyle" id="sor_error" style="display:none;"></div>
+
+<div id="baseSORTable" class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   SOR
+		   <div class="pull-right mb-5 small-note-title"><s:text name="estimate.rate.disclaimer"/></div>
+		</div>
+	</div>
+	<div class="panel-body">
+	    <div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.scheduleCategory.name" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select onchange="clearCategoryMessage();" headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description"/>
+			</div>
+			<!-- <label class="col-sm-5 control-label add-margin">
+			</label> -->
+
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    Add SOR
+			</label>
+			<div class="col-sm-8 add-margin">
+				<div id="sorSearch_autocomplete">
+				   <div class="right-inner-addon">
+					    <input id="search" type="text" name="item" class="form-control" onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);">
+					    <i id="loadImage" style="display:none" class="fa fa-circle-o-notch fa-spin"></i>
+	    			</div>    
+			    	<span id="searchResults"></span>
+			    	<egov:autocomplete name="sorSearch" width="70" field="search" url="../masters/scheduleOfRateSearch-searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />
+			    </div> 
+			</div>
+		</div>
+		
+		<div class="form-group no-margin-bottom">
+			<div class="col-sm-offset-2 col-sm-8">
+				<div class="alert alert-danger no-margin mt-5" id="sor_error" style="display:none;"></div>
+			</div>
+		</div>	
+		
+		<div class="form-group" id="sorHeaderTable">
+			<hr/>
+			<div class="yui-skin-sam">
+		         <div id="sorTable"></div>
+		         <div id="sorTotals"></div>                                
+		     </div>
+				
+		</div>	
+		
+	</div>
+</div>
+<!-- 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
          <td colspan="3" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">SOR</div></td>
@@ -370,24 +429,21 @@ function showProcessImage(event) {
 		    	<span id="searchResults"></span>
 		    </div>
 	    </div>    
-		<egov:autocomplete name="sorSearch" width="70" field="search" url="../masters/scheduleOfRateSearch-searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />          
-		<td width="20%" class="whitebox2wk"><div id="loadImage" style="display:none"><img src="/egi/resources/erp2/images/loading.gif" />Loading SOR's. Please wait..</div></td>
+		          
+		<td width="20%" class="whitebox2wk"><div><img src="/egi/resources/erp2/images/loading.gif" />Loading SOR's. Please wait..</div></td>
       </tr>
 </table>
 <table id="sorHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">              
   <tr>
     <td>
-     <div class="yui-skin-sam">
-         <div id="sorTable"></div>
-         <div id="sorTotals"></div>                                
-     </div>
+     
     </td>
   </tr>
   <tr>
   	<td colspan="11" class="shadowwk"></td>
   </tr>
   <tr><td>&nbsp;</td></tr>
-</table> 
+</table>  -->
 <script>
 makeSORDataTable();
 <s:iterator id="soriterator" value="SORActivities" status="row_status">

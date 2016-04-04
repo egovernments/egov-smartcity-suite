@@ -1,49 +1,32 @@
 <?xml version="1.0"?>
-<!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
--->
+<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
+	accountability and the service delivery of the government organizations. 
+	Copyright (C) <2015> eGovernments Foundation The updated version of eGov 
+	suite of products as by eGovernments Foundation is available at http://www.egovernments.org 
+	This program is free software: you can redistribute it and/or modify it under 
+	the terms of the GNU General Public License as published by the Free Software 
+	Foundation, either version 3 of the License, or any later version. This program 
+	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU General Public License for more details. You should 
+	have received a copy of the GNU General Public License along with this program. 
+	If not, see http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html 
+	. In addition to the terms of the GPL license to be adhered to in using this 
+	program, the following additional terms are to be complied with: 1) All versions 
+	of this program, verbatim or modified must carry this Legal Notice. 2) Any 
+	misrepresentation of the origin of the material is prohibited. It is required 
+	that all modified versions of this material be marked in reasonable ways 
+	as different from the original version. 3) This license does not grant any 
+	rights to any user of the program with regards to rights under trademark 
+	law for use of the trade names or trademarks of eGovernments Foundation. 
+	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org -->
 <!DOCTYPE hibernate-mapping PUBLIC
        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.Category" table="EGPT_MSTR_CATEGORY">
+	<class name="org.egov.ptis.domain.entity.property.Category"
+		table="EGPT_MSTR_CATEGORY">
 		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
 				<param name="sequence">SEQ_EGPT_MSTR_CATEGORY</param>
@@ -55,51 +38,45 @@
 		<property name="modifiedDate" type="java.util.Date">
 			<column name="MODIFIED_DATE" />
 		</property>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
+		<many-to-one name="createdBy"
+			class="org.egov.infra.admin.master.entity.User" cascade="all">
 			<column name="CREATED_BY" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
+		<many-to-one name="modifiedBy"
+			class="org.egov.infra.admin.master.entity.User" cascade="all">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 		<property name="categoryAmount" column="CATEGORY_AMNT" type="double" />
 		<property name="categoryName" column="CATEGORY_NAME" type="string" />
-
 		<property name="IsHistory" column="IS_HISTORY" />
-
 		<property name="fromDate" column="FROM_DATE" />
-
 		<property name="toDate" column="TO_DATE" />
+		<property name="isActive" column="ISACTIVE" type="boolean" />
 
 		<many-to-one name="propUsage"
 			class="org.egov.ptis.domain.entity.property.PropertyUsage" column="ID_USAGE" />
-
-		<!--
-			<many-to-one name="startInstallment"
-			class="org.egov.commons.Installment" column="ID_INSTALLMENT"/>
-		-->
-
 		<set name="catBoundaries" lazy="true" fetch="join" cascade=" save-update"
 			inverse="true" table="EGPT_BNDRY_CATEGORY">
 			<key column="ID_CATEGORY" />
 			<one-to-many class="org.egov.ptis.domain.entity.property.BoundaryCategory" />
 		</set>
 
-	    <many-to-one name="structureClass" class="org.egov.ptis.domain.entity.property.StructureClassification" cascade="none" column="ID_STRUCT_CL"/>
+		<many-to-one name="structureClass"
+			class="org.egov.ptis.domain.entity.property.StructureClassification"
+			cascade="none" column="ID_STRUCT_CL" />
 
 	</class>
 
 	<query name="BASERATE_BY_OCCUPANCY_ZONE">
-        <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and ((? between bc.fromDate and bc.toDate) or (? between bc.fromDate and bc.toDate)) order by bc.fromDate]]></query>
+        <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.IsHistory = 'N' and bc.category.isActive = true and ((? between bc.fromDate and bc.toDate) or (? between bc.fromDate and bc.toDate)) order by bc.fromDate]]></query>
 
 	<query name="BASERENT_BY_OCCUPANCY_AREA_STRUCTURE">
         <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and ((? between bc.fromDate and bc.toDate) or (? between bc.fromDate and bc.toDate)) order by bc.fromDate]]></query>
-	
-    <query name="QUERY_BASERENT_BY_BOUNDARY_FOR_OPENPLOT">
+
+	<query name="QUERY_BASERENT_BY_BOUNDARY_FOR_OPENPLOT">
         <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass is null and ((? between bc.fromDate and bc.toDate) or (? between bc.fromDate and bc.toDate)) order by bc.fromDate]]></query>
-        
-    <query name="BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY">
+
+	<query name="BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY">
         <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and (? between bc.fromDate and bc.toDate) order by bc.fromDate]]></query>
 
 </hibernate-mapping>

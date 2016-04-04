@@ -145,11 +145,11 @@ var makeNonSORDataTable = function() {
 	var nonSorColumnDefs = [ 
 		{key:"NonSorId", hidden:true,sortable:false, resizeable:false} ,
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false},
-		{key:"nonSordescription", label:'Description<span class="mandatory">*</span>', formatter:textboxDescFormatter, sortable:false, resizeable:true},		
-		{key:"Uom", label:'UOM<span class="mandatory">*</span>', formatter:"dropdown", dropdownOptions:uomDropdownOptions},
+		{key:"nonSordescription", label:'Description<span class="mandatory"></span>', formatter:textboxDescFormatter, sortable:false, resizeable:true},		
+		{key:"Uom", label:'UOM<span class="mandatory"></span>', formatter:"dropdown", dropdownOptions:uomDropdownOptions},
 		{key:"nonSorUom", hidden:true, formatter:nonSorHiddenFormatter, sortable:false, resizeable:false},
-		{key:"rate",label:'Unit Rate<span class="mandatory">*</span>', formatter:textboxFormatter,sortable:false, resizeable:false},
-		{key:"quantity",label:'Estimated Quantity<span class="mandatory">*</span>', formatter:textboxFormatter,sortable:false, resizeable:false},
+		{key:"rate",label:'Unit Rate<span class="mandatory"></span>', formatter:textboxFormatter,sortable:false, resizeable:false},
+		{key:"quantity",label:'Estimated Quantity<span class="mandatory"></span>', formatter:textboxFormatter,sortable:false, resizeable:false},
 		{key:"NonSorEstdAmt",label:'Estimated  Amount', sortable:false, resizeable:false},
 		{key:"serviceTaxPerc",label:'Service VAT%', formatter:stFormatter,sortable:false, resizeable:false},
 		{key:"NonSorTaxAmt",label:'Service/ VAT Amount',sortable:false, resizeable:false},
@@ -260,30 +260,33 @@ function validateNonSorUomDropDown() {
 }
 </script>		
       
-        <div class="errorstyle" id="nonsor_error" style="display:none;"></div>
-		<table id="nonSorHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">              	
-              	<tr>
-                	<td colspan="9" class="headingwk" style="border-right-width: 0px">
-                		<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-                		<div class="headplacer" >Non-SOR</div>
-                	</td>
-                	<td  align="right" class="headingwk" style="border-left-width: 0px">
-                	<a id="addnonSorRow" href="#" onclick="nonSorDataTable.addRow({SlNo:nonSorDataTable.getRecordSet().getLength()+1});return false;"><img height="16" border="0" width="16" alt="Add Non-SOR" src="/egi/resources/erp2/images/add.png" /></a>
-                	
-                	</td>
-              	</tr>
-              	<tr>
-                	<td colspan="10">
-                	<div class="yui-skin-sam">
-                	    <div id="nonSorTable"></div>                    	
-                    	<div id="nonSorTotals"></div>  
-                	</div>
-                	</td>
-                </tr>
-                <tr>
-                	<td colspan="10" class="shadowwk"></td>
-                </tr>
-		</table> 
+
+<div id="nonSorHeaderTable" class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   Non-SOR
+		   <div class="pull-right">
+		   
+		      <a id="addnonSorRow" href="javascript:void(0);" class="btn btn-primary" 
+	   	       onclick="nonSorDataTable.addRow({SlNo:nonSorDataTable.getRecordSet().getLength()+1});return false;">
+	   	       <i class="fa fa-plus"></i> Add Non-SOR
+	   	    </a>
+		   
+		   </div>
+		</div>
+	</div>
+	<div class="panel-body">		
+		<div class="alert alert-danger" id="nonsor_error" style="display:none;"></div>
+		
+	    <div class="form-group">
+	      <div class="yui-skin-sam">
+                <div id="nonSorTable"></div>                    	
+               <div id="nonSorTotals"></div>  
+          </div>
+	    </div>
+	</div>
+</div>
+
 	<script>
 		makeNonSORDataTable();
 		<s:iterator id="nonsoriterator" value="NonSORActivities" status="row_status">

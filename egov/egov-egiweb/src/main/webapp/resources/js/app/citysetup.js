@@ -84,7 +84,7 @@ $(document).ready(function(){
 					var acceptedext = $(this).data('accept');
 					if (acceptedext.split(',').indexOf(
 							fileext[fileext.length - 1]) < 0) {
-						alert($(this).data('errormsg'));
+						bootbox.alert($(this).data('errormsg'));
 						$(this).val('');
 					}
 					else if($(this).attr('id')== 'logo')

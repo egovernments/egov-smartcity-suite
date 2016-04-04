@@ -82,7 +82,6 @@ public class SearchEstimateForREAction extends SearchFormAction {
     private String searchType = "searchType";
     private Date fromDate;
     private Date toDate;
-    private PersonalInformationService personalInformationService;
     public static final Locale LOCALE = new Locale("en", "IN");
     public static final String SEARCH_WO = "searchWO";
     public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
@@ -262,7 +261,7 @@ public class SearchEstimateForREAction extends SearchFormAction {
     }
 
     public String getApprovedValue() {
-        return worksService.getWorksConfigValue("WORKS_PACKAGE_STATUS");
+        return WorksConstants.APPROVED;
     }
 
     public AbstractEstimate getEstimates() {
@@ -298,7 +297,6 @@ public class SearchEstimateForREAction extends SearchFormAction {
     }
 
     public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
-        this.personalInformationService = personalInformationService;
     }
 
     public WorkOrder getWorkOrder() {

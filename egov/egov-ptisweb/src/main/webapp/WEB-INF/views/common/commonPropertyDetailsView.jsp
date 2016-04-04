@@ -152,7 +152,7 @@
 									<fmt:formatDate pattern="dd/MM/yyyy" value="${property.basicProperty.regdDocDate}" />
 								</div>
 							</div>
-							<div class="row add-border">
+							<%-- <div class="row add-border">
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.bpno" />
 								</div>
@@ -165,14 +165,14 @@
 								<div class="col-xs-3 add-margin view-content">
 									<fmt:formatDate pattern="dd/MM/yyyy" value="${property.propertyDetail.buildingPermissionDate}" />
 								</div>
-							</div>
+							</div> --%>
 							<div class="row add-border">
-								<div class="col-xs-3 add-margin">
+								<%-- <div class="col-xs-3 add-margin">
 									<spring:message code="lbl.percentagedeviation" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
 									<c:out value="${property.propertyDetail.deviationPercentage}" default="N/A"></c:out>
-								</div>
+								</div> --%>
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.reason.creation" />
 								</div>
@@ -185,15 +185,7 @@
 						</div>
 					</div>
 				</div>
-				
 				<div class="row">
-				<%-- <c:choose>
-				<c:when test="${property.isExemptedFromTax == 'true'}">
-				<div class="panel-heading">
-	               This property tax is exempted with reason <span class="bold"><c:out default="N/A" value="${property.taxExemptedReason.name}" /></span>
-                 </div>
-				</c:when>
-				<c:otherwise> --%>
 				<c:if test="${property.isExemptedFromTax == 'false'}">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0"
@@ -209,12 +201,23 @@
 								<div class="col-xs-3 add-margin view-content">
 									Rs. <fmt:formatNumber value="${currTax}" pattern="#,##0" />
 								</div>
+								<c:choose>
+								<c:when test="${property.propertyDetail.propertyTypeMaster.code != 'VAC_LAND'}">
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.edutax" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
 									Rs. <fmt:formatNumber value="${eduCess}" pattern="#,##0" /> 
 								</div>
+								</c:when>
+								<c:otherwise><div class="col-xs-3 add-margin">
+									<spring:message code="lbl.librarycess" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									Rs. <fmt:formatNumber value="${libraryCess}" pattern="#,##0" />  
+								</div></c:otherwise>
+								</c:choose>
+								
 							</div>
 							<div class="row add-border">
 								<div class="col-xs-3 add-margin">
@@ -223,12 +226,24 @@
 								<div class="col-xs-3 add-margin view-content">
 									Rs. <fmt:formatNumber value="${currTaxDue}" pattern="#,##0" /> 
 								</div>
+								<c:choose>
+								<c:when test="${property.propertyDetail.propertyTypeMaster.code != 'VAC_LAND'}">
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.librarycess" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
 									Rs. <fmt:formatNumber value="${libraryCess}" pattern="#,##0" />  
 								</div>
+								</c:when>
+								<c:otherwise>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.propertytax" />
+								</div>
+								 <div class="col-xs-3 add-margin view-content">
+									Rs. <fmt:formatNumber value="${propertyTax}" pattern="#,##0" /> 
+								</div>
+								</c:otherwise>
+								</c:choose>
 							</div>
 							<div class="row add-border">
 								<div class="col-xs-3 add-margin">
@@ -237,12 +252,24 @@
 								<div class="col-xs-3 add-margin view-content">
 									Rs. <fmt:formatNumber value="${totalArrDue}" pattern="#,##0" />   
 								</div>
+								<c:choose>
+								<c:when test="${property.propertyDetail.propertyTypeMaster.code != 'VAC_LAND'}">
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.propertytax" />
 								</div>
 								 <div class="col-xs-3 add-margin view-content">
 									Rs. <fmt:formatNumber value="${propertyTax}" pattern="#,##0" /> 
 								</div>
+								</c:when>
+								<c:otherwise>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.total.propertytax" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									Rs. <fmt:formatNumber value="${totalTax}" pattern="#,##0" /> 
+								</div>
+								</c:otherwise>
+								</c:choose>
 							</div>
 							<c:choose>
 								<c:when test="${showUnauthorisedPenalty == 'yes'}">
@@ -261,12 +288,14 @@
 							<div class="row add-border">
 								<div class="col-xs-6 add-margin">
 								</div>
+								<c:if test="${property.propertyDetail.propertyTypeMaster.code != 'VAC_LAND'}">
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.total.propertytax" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
 									Rs. <fmt:formatNumber value="${totalTax}" pattern="#,##0" /> 
 								</div>
+								</c:if>
 							</div>
 						</div>
 					</div>

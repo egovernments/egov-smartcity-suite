@@ -1,42 +1,42 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@page  import="com.exilant.eGov.src.reports.*,java.io.*,java.util.*,org.egov.infstr.utils.EGovConfig,java.io.*,java.sql.*,javax.sql.*,javax.naming.InitialContext,com.exilant.GLEngine.*"%>
 <%@page import="org.apache.log4j.Logger"%>
@@ -53,15 +53,15 @@
 <!-- <META http-equiv=pragma content=no-cache> -->
 <!-- Inclusion of the CSS files that contains the styles -->
 
-<link rel=stylesheet href="../css/egov.css" type="text/css" media="screen" />
-<link rel=stylesheet href="../css/print.css" type="text/css" media="print" />
+<link rel=stylesheet href="../css/egov.css?rnd=${app_release_no}" type="text/css" media="screen" />
+<link rel=stylesheet href="../css/print.css?rnd=${app_release_no}" type="text/css" media="print" />
 
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
-<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js" type="text/javascript" ></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js?rnd=${app_release_no}"></SCRIPT>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js?rnd=${app_release_no}" type="text/javascript" ></SCRIPT>
 <script type="text/javascript" src="../commonyui/build/yahoo/yahoo.js"></script>
 <script type="text/javascript" src="../commonyui/build/dom/dom.js" ></script>
 <script type="text/javascript" src="../commonyui/build/autocomplete/autocomplete-debug.js"></script>
@@ -149,7 +149,7 @@ function onBodyLoad()
 	}*/
 	if(PageManager.DataService.getQueryField('fundName') != null)
 	{
-		//alert(PageManager.DataService.getQueryField('fundName'));
+		//bootbox.alert(PageManager.DataService.getQueryField('fundName'));
 }
 	if(document.getElementById('startDate').value && document.getElementById('endDate').value && document.getElementById('glCode1').value)
 	{
@@ -172,7 +172,7 @@ function onBodyLoad()
                   {
                   	var codes2=req2.responseText;
                   	var a = codes2.split("^");
-					var codes = a[0]; //alert(acccodeArray);
+					var codes = a[0]; //bootbox.alert(acccodeArray);
 					acccodeArray=codes.split("+");
 					codeObj = new YAHOO.widget.DS_JSArray(acccodeArray);
                   }
@@ -269,10 +269,10 @@ function openSearch(obj,index){
 		var type = document.getElementById('glCode1');
 		type.value = a[0];
 		rptGLCode = a[0];
-		//alert(rptGLCode+" code");
+		//bootbox.alert(rptGLCode+" code");
 		rptAccName = a[1];
-		//alert(rptAccName);
-		//alert("value "+a[2]);
+		//bootbox.alert(rptAccName);
+		//bootbox.alert("value "+a[2]);
 		document.getElementById('chartOfAccounts_id1').value = a[2];
 		//document.getElementById('glCode1').value=a[0]+","+a[1];
 		document.getElementById('glCode1').value=a[0];
@@ -284,7 +284,7 @@ function openSearch(obj,index){
 
 function ButtonPress()
 {
-	//alert("search");
+	//bootbox.alert("search");
 	if (!PageValidator.validateForm())
 	{
 		//document.getElementById('startDate').value='';
@@ -299,24 +299,24 @@ function ButtonPress()
 	accCode_1=aCode1;
 	if(aCode1.length==0)
 	{
-		alert("please select  Account Code");
+		bootbox.alert("please select  Account Code");
 		return;
 	}
 	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 		{
-			alert('Start Date cannot be greater than End Date');
+		bootbox.alert('Start Date cannot be greater than End Date');
 			document.getElementById('startDate').value='';
 			document.getElementById('endDate').value='';
 			document.getElementById('startDate').focus();
 			return false;
 		}
-	//alert("acc code "+accCode_1);
+	//bootbox.alert("acc code "+accCode_1);
 	PageManager.DataService.setQueryField('glCode1',accCode_1);
 	 document.getElementById('fromBean').value = 1;
 
 	 fObj = document.getElementById('fund_id');
 	 fObj=fObj.options[fObj.selectedIndex].value;
-	// alert("fobj "+fObj);
+	// bootbox.alert("fobj "+fObj);
 	 var fsObj = document.getElementById('fundSource_id');
 	 if(fsObj.value!='')
 		fsObj=fsObj.options[fsObj.selectedIndex].value;
@@ -324,7 +324,7 @@ function ButtonPress()
 	 deptObj=document.getElementById('departmentId');
 	 if(deptObj.value!='' && deptObj.selectedIndex!=-1){
 			//deptName=deptObj.options[deptObj.selectedIndex].text;
-			//alert("DepartmentName="+deptName);
+			//bootbox.alert("DepartmentName="+deptName);
 			 document.getElementById('dept_name_for').value=' under '+deptObj.options[deptObj.selectedIndex].text+ ' Department';
 			deptObj=deptObj.options[deptObj.selectedIndex].value;
 		}else{
@@ -334,7 +334,7 @@ function ButtonPress()
 		functionaryObj=document.getElementById('functionaryId');
 		if(functionaryObj.value!='' && functionaryObj.selectedIndex!=-1){
 			//functionaryName=functionaryObj.options[functionaryObj.selectedIndex].text;
-			//alert("functionaryName="+functionaryName);
+			//bootbox.alert("functionaryName="+functionaryName);
 			//subtitle=" in "+functionaryName+" Functionary";
 			document.getElementById('functionary_name_in').value=' in '+functionaryObj.options[functionaryObj.selectedIndex].text+' functionary';
 			functionaryObj=functionaryObj.options[functionaryObj.selectedIndex].value;
@@ -346,7 +346,7 @@ function ButtonPress()
 			//fieldObj=fieldObj.options[fieldObj.selectedIndex].value;
 			document.getElementById('field_name_in').value=' in '+fieldObj.options[fieldObj.selectedIndex].text+' field';
 			//fieldName=fieldObj.options[fieldObj.selectedIndex].text;
-			//alert("fieldName="+fieldName);
+			//bootbox.alert("fieldName="+fieldName);
 			//subtitle=" under "+fieldName+" Field";
 		}else{
 		document.getElementById('field_name_in').value='';
@@ -359,12 +359,12 @@ function ButtonPress()
 		}else{
 			document.getElementById('functionCode_name').value='';
 		}
-		//alert("Subtitle"+subtitle);
+		//bootbox.alert("Subtitle"+subtitle);
 		//return subtitle;
 	// cgn=document.getElementById("cgn").value;
 		//gl1=document.getElementById("glCode1").value;
 	//forRE=document.getElementById("forRevEntry").value;
-	//alert(document.getElementById("functionCodeId").value);
+	//bootbox.alert(document.getElementById("functionCodeId").value);
 	
 	       
 	 document.GeneralLedger.submit();
@@ -553,7 +553,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%
@@ -673,7 +673,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

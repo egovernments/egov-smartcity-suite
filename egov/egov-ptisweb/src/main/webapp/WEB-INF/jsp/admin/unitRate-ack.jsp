@@ -45,7 +45,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <title><s:text name='unit.rate.master.title'/></title>
+    <title><s:text name='unit.rate.hdr'/></title>
   <script type="text/javascript">
   </script>
   </head>
@@ -55,7 +55,7 @@
   <s:push value="model">
   <s:token />
   <div class="formmainbox">
-		<div class="headingbg"><s:text name="unit.rate.master.title"/></div>
+		<div class="headingbg"><s:text name="unit.rate.hdr"/></div>
 		<br/>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>

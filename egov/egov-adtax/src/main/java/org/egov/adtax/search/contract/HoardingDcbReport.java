@@ -48,7 +48,15 @@ public class HoardingDcbReport {
     private BigDecimal collectedAmount;
     private String  payeeName;
     private String  receiptNumber;
-    
+    private BigDecimal pendingAmount;
+    private String applicationNumber;
+    private String permissionNumber;
+    private String category;
+    private String subcategory;
+    private String locality;
+    private String ward;
+    private String agencyName;
+    private BigDecimal totalDemandAmount;
     
     public String getDemandReason() {
         return demandReason;
@@ -91,6 +99,60 @@ public class HoardingDcbReport {
     }
     public void setReceiptNumber(String receiptNumber) {
         this.receiptNumber = receiptNumber;
+    }
+    public BigDecimal getPendingAmount() {
+        return pendingAmount;
+    }
+    public void setPendingAmount(BigDecimal pendingAmount) {
+        this.pendingAmount = pendingAmount;
+    }
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+    public String getAgencyName() {
+        return agencyName;
+    }
+    public void setAgencyName(String agencyName) {
+        this.agencyName = agencyName;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    public String getSubcategory() {
+        return subcategory;
+    }
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
+    }
+    public String getLocality() {
+        return locality;
+    }
+    public void setLocality(String locality) {
+        this.locality = locality;
+    }
+    public String getWard() {
+        return ward;
+    }
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
+    public String getPermissionNumber() {
+        return permissionNumber;
+    }
+    public void setPermissionNumber(String permissionNumber) {
+        this.permissionNumber = permissionNumber;
+    }
+    public BigDecimal getTotalDemandAmount() {
+        return totalDemandAmount;
+    }
+    public void setTotalDemandAmount(BigDecimal totalDemandAmount) {
+        this.totalDemandAmount = totalDemandAmount;
     }
     
     

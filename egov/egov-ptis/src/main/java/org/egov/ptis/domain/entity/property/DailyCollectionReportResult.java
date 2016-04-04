@@ -54,6 +54,7 @@ public class DailyCollectionReportResult {
     private String status;
     private String fromInstallment;
     private String toInstallment;
+    private String ward;
     private BigDecimal arrearAmount;
     private BigDecimal currentAmount;
     private BigDecimal totalPenalty;
@@ -196,6 +197,14 @@ public class DailyCollectionReportResult {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getWard() {
+        return ward;
+    }
+
+    public void setWard(String ward) {
+        this.ward = ward;
     }
 
 }

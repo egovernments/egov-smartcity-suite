@@ -104,7 +104,7 @@
 			</c:otherwise>		
 		</c:choose> 
 		<form:errors path="applicationDocs[${status.index}].files" cssClass="add-margin error-msg" />
-		<div class="add-margin error-msg" ><font size="2">
+		<div class="add-margin error-msg text-left" ><font size="2">
 								<spring:message code="lbl.mesg.document"/>	
 								</font></div>
 	</div> 
@@ -114,4 +114,4 @@
 </c:when>
 </c:choose>
 
-<script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>
+<script src="<c:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>

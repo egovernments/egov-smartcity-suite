@@ -67,41 +67,54 @@ jQuery(function ($) {
 
 var validationMessage = '';
 var showMessage = false;
-function validateData(){
+function validateData(name){
 	var zoneId = document.getElementById("zoneId").value;
 	var usageId = document.getElementById("usageId").value;
 	var structureClassId = document.getElementById("structureClassId").value;
 	var taxAmount = document.getElementById("categoryAmount").value;
 	var fromDate = document.getElementById("fromDate").value;
 
-	if(zoneId == -1){
-		alert('Please select the Zone');
-		return false;
-	}
-	if(usageId == -1){
-		alert('Please select the Nature of Building Use');
-		return false;
-	} 
-	if(structureClassId == -1){
-		alert('Please select the Classification of Building');
-		return false;
-	}
-	if(taxAmount =='' || eval(taxAmount)==0){
-		alert('Please enter the Unit Rate');
-		return false;
-	}
-	if(fromDate == ''){
-		alert('Please enter the Effect From Date');
-		return false;
-	}
-
-	if(validationMessage != ''){
-	 	if(!confirmSubmit(validationMessage)) {
+	if(name == 'add') {
+		if(zoneId == -1){
+			alert('Please select the Zone');
 			return false;
 		}
-	}
-	
+		if(usageId == -1){
+			alert('Please select the Nature of Building Use');
+			return false;
+		} 
+		if(structureClassId == -1){
+			alert('Please select the Classification of Building');
+			return false;
+		}
+		if(taxAmount =='' || eval(taxAmount)==0){
+			alert('Please enter the Unit Rate');
+			return false;
+		}
+		if(fromDate == ''){
+			alert('Please enter the Effect From Date');
+			return false;
+		}
+
+		if(validationMessage != ''){
+		 	if(!confirmSubmit(validationMessage)) {
+				return false;
+			}
+		}
  	document.forms[0].action = 'unitRate-create.action';
+	} else if(name == 'update') {
+		if(taxAmount =='' || eval(taxAmount)==0){
+			alert('Please enter the Unit Rate');
+			return false;
+		}
+		jQuery("#zoneId").removeAttr('disabled');
+		jQuery("#usageId").removeAttr('disabled');
+		jQuery("#structureClassId").removeAttr('disabled');
+		jQuery("#fromDate").removeAttr('disabled');
+		document.forms[0].action = 'unitRate-update.action';
+	 }  else {
+		 document.forms[0].action = 'unitRate-searchForm.action?mode='+name;
+		 }
 	document.forms[0].submit;
 	return true;
 }
@@ -133,18 +146,49 @@ categoryCheckFailure= function(){
 	alert('Unable to check for existing category');
 }
 
+function makeReadyOnly() {
+	var mode = '<s:property value="%{mode}"/>';
+	if(mode == 'edit') {
+		jQuery("#zoneId").attr('disabled', 'disabled');
+		jQuery("#usageId").attr('disabled', 'disabled');
+		jQuery("#structureClassId").attr('disabled', 'disabled');
+		jQuery("#fromDate").attr('disabled', 'disabled');
+	} 
+	if(mode == 'view') {
+		jQuery("#zoneId").attr('disabled', 'disabled');
+		jQuery("#usageId").attr('disabled', 'disabled');
+		jQuery("#structureClassId").attr('disabled', 'disabled');
+		jQuery("#fromDate").attr('disabled', 'disabled');
+		jQuery("#categoryAmount").attr('disabled', 'disabled');
+		jQuery("")
+	} 
+}
 </script>
 </head> 
 
-<body>
-  <div align="left">
-  	<s:actionerror/>
-  </div>
+<body onload="makeReadyOnly();">
+  <s:if test="%{hasErrors()}">
+		<div class="errorstyle" id="unitrate_error_area">
+			<div class="errortext">
+				<s:actionerror />
+			</div>
+		</div>
+	  </s:if>
   <s:form name="unitRateForm" action="unitRate" theme="simple" >
   <s:push value="model">
+  <s:hidden name="id" value="%{id}"></s:hidden>
+  <s:hidden name="categoryName" value="%{categoryName}"></s:hidden>
   <s:token />
  	<div class="formmainbox">
+ 	<s:if test="%{mode == 'new'}">
 	<div class="headingbg"><s:text name="unit.rate.master.title"/></div>
+	</s:if>
+	<s:if test="%{mode == 'edit'}">
+	<div class="headingbg"><s:text name="unit.rate.master.update.title"/></div>
+	</s:if>
+	<s:if test="%{mode == 'view'}">
+	<div class="headingbg"><s:text name="unit.rate.master.view.title"/></div>
+	</s:if>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" >
 			<tr>
 				<td class="greybox" width="20%">&nbsp;</td>
@@ -160,7 +204,7 @@ categoryCheckFailure= function(){
 			</tr>
 			<tr>
 				<td class="greybox" width="20%">&nbsp;</td>
-				<td class="greybox" width="30%"><s:text name="unit.rate.usage"/><span class="mandatory1">*</span> :</td>
+				<td class="greybox" width="30%"><s:text name="unit.rate.usage"/><span id="spanMandatory" class="mandatory1">*</span> :</td>
 				<td class="greybox" width="30%">
 			   	<s:select headerKey="-1"
 					headerValue="%{getText('default.select')}" name="usageId"
@@ -193,7 +237,8 @@ categoryCheckFailure= function(){
 				<td class="greybox" width="20%">&nbsp;</td>
 				<td class="greybox" width="30%"><s:text name="unit.rate.fromDate"/> <span class="mandatory1">*</span> :</td>
 				<td class="greybox" width="30%">
-					<s:textfield name="fromDate"  cssClass="form-control datepicker" id="fromDate" size="12" maxlength="12" onchange="checkIfCategoryExists();"></s:textfield>
+				    <s:date name="fromDate" var="efffromDate" format="dd/MM/yyyy" /> 
+					<s:textfield name="fromDate"  cssClass="form-control datepicker" id="fromDate" size="12" autocomplete="off" maxlength="12" value="%{#efffromDate}"></s:textfield>
 				<td class="greybox" width="20%">&nbsp;</td>
 			</tr>
 			
@@ -201,10 +246,16 @@ categoryCheckFailure= function(){
         	
         	<br />
         	<font size="2"><div align="right" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
-        
 		    <div class="buttonbottom" align="center">	
-		    	<s:submit value="Add" name="add"
-						id='add' cssClass="buttonsubmit" method="create" onclick="return validateData();" />  
+		    <s:if test="%{mode =='new'}">
+		    	<s:submit value="Add" name="Add"
+						id='Add' cssClass="buttonsubmit"  onclick="return validateData('add');" />  
+			
+			</s:if>
+		    <s:elseif test="%{mode == 'edit'}">
+						<s:submit value="Update" name="Update" id='Update' cssClass="buttonsubmit" onclick="return validateData('update');" /> 
+		     </s:elseif> 
+				<input type="button" name="button2" id="button2" value="Close"  class="button" onclick="window.close();" />
 			</div>
 	</div>
 	</s:push>

@@ -78,8 +78,11 @@
 		enableFieldsForPropTypeView(propType, appurtenantLandChecked);
 		enableAppartnaumtLandDetailsView();
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="property.propertyDetail.structure"]'));
-		enableOrDisableBPADetails(jQuery('input[name="property.propertyDetail.buildingPlanDetailsChecked"]'));
 		//toggleFloorDetailsView();
+		<s:if test="(objection.egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED))" >
+			showHideFirmName();
+			showHideLengthBreadth();
+		</s:if>
 		loadDesignationFromMatrix();
 	}
 	function enableAppartnaumtLandDetailsView() {
@@ -101,7 +104,7 @@
 			jQuery('tr.floordetails').show();
 		}
 		if (propType == "Apartments") {
-			alert("Please select Apartment/Complex Name");
+			bootbox.alert("Please select Apartment/Complex Name");
 		}
 	}
 
@@ -192,7 +195,7 @@
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
 				//if (validateObjectionOutcome()) {
 					/*  if(document.getElementById('approverPositionId').value=="-1") {
-					        alert("Please Select the Approver ");
+					        bootbox.alert("Please Select the Approver ");
 							return false;
 					    } */
 					action = 'revPetition-recordObjectionOutcome.action?objectionId='
@@ -209,9 +212,116 @@
 
 		return true;
 	}
+
+	function showHideFirmName(){
+		var tbl=document.getElementById("floorDetails");
+        var tabLength = (tbl.rows.length)-1;
+        var usageId ;
+        if(tabLength==1){
+        	enableDisableFirmName(getControlInBranch(tbl.rows[1],'floorUsage'));
+        }else{
+        	for(var i=0;i<tabLength;i++){
+            	if(i==0){
+            		enableDisableFirmName(getControlInBranch(tbl.rows[1],'floorUsage'));
+                }else{
+                	usageId = 'floorUsage'+(i-1);
+                	enableDisableFirmName(getControlInBranch(tbl.rows[i+1],usageId));
+                }
+            }
+        }
+        
+	}
+
+	function enableDisableFirmName(obj){ 
+		var selIndex = obj.selectedIndex;
+		if(selIndex != undefined){
+			var selText = obj.options[selIndex].text; 
+			var rIndex = getRow(obj).rowIndex;
+			var tbl = document.getElementById('floorDetails');
+			var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
+			if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
+				if(firmval.value!=null && firmval.value!="") 
+					firmval.value="";
+				firmval.readOnly = true;      
+			} else{
+				firmval.readOnly = false; 
+			}
+		}
+	} 
+
+
+	function showHideLengthBreadth(){
+		var tbl=document.getElementById("floorDetails");
+        var tabLength = (tbl.rows.length)-1;
+        if(tabLength==1){
+            enableDisableLengthBreadth(getControlInBranch(tbl.rows[1],'unstructuredLand'));
+        }else{
+        	for(var i=0;i<tabLength;i++){
+                	enableDisableLengthBreadth(getControlInBranch(tbl.rows[i+1],'unstructuredLand'));
+                } 
+            }
+	} 
+
+	function calculatePlintArea(obj){ 
+		var rIndex = getRow(obj).rowIndex;
+		var tbl = document.getElementById('floorDetails');
+		var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+		if(getControlInBranch(tbl.rows[rIndex],'unstructuredLand').value=='true'){
+			if(obj.value!=null && obj.value!=""){
+				var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+				var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
+				  
+				if(buildLength.value!=null && buildLength.value!="" && buildbreadth.value!=null && buildbreadth.value!=""){
+					builtUpArea.value= roundoff(eval(buildLength.value * buildbreadth.value));
+					trim(builtUpArea,builtUpArea.value);
+					checkForTwoDecimals(builtUpArea,'Assessable Area');
+					checkZero(builtUpArea,'Assessable Area');
+				}
+				else
+					builtUpArea.value="";
+			}else
+				builtUpArea.value="";
+		}
+	}
+	
+	function enableDisableLengthBreadth(obj){ 
+		var selIndex = obj.selectedIndex;
+		if(obj.value=='true'){
+				obj.value='true';
+				obj.options[selIndex].selected = true;
+		}
+		else{
+			obj.value='false';
+			obj.options[selIndex].selected = true;
+		}
+		
+		if(selIndex != undefined){
+			var selText = obj.options[selIndex].text; 
+			var rIndex = getRow(obj).rowIndex;
+			var tbl = document.getElementById('floorDetails');
+			var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+			var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');  
+			var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+			if(selText!=null && selText=='No'){
+				buildLength.value="";
+				buildLength.readOnly = true;      
+				buildbreadth.value="";
+				buildbreadth.readOnly = true;
+				builtUpArea.readOnly = false;
+			} else{
+				buildLength.readOnly = false; 
+				buildbreadth.readOnly = false;
+				builtUpArea.readOnly = true;
+			}
+		}
+	}
+
+
+		
 </script>
 <script
 	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 <link href="<c:url value='/resources/css/headertab.css'/>"
 	rel="stylesheet" type="text/css" />
 </head>
@@ -299,7 +409,9 @@
 								test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
 							">
+							    <div class="formmainbox" style="box-shadow:none;">
 								<jsp:include page="recordInspecationDetails.jsp" />
+								</div>
 							</s:elseif>
 							<s:elseif
 								test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
@@ -318,7 +430,7 @@
 				</s:if>
 				<tr>
 					<td>
-						<div id="approval_header">
+						<div id="approval_header" class="formmainbox" style="box-shadow:none;">
 							<div id="wfHistoryDiv">
 								<%--    <jsp:include page="../workflow/workflowHistory.jsp"/>
 	  		 --%>
@@ -362,12 +474,7 @@
 					</td>
 				</tr>
 			</table>
-			<div id="loadingMask" style="display: none">
-				<p align="center">
-					<img src="/egi/images/bar_loader.gif"> <span id="message"><p
-							style="color: red">Please wait....</p></span>
-				</p>
-			</div>
+		
 			<div class="buttonbottom" align="center">
 
 				<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>

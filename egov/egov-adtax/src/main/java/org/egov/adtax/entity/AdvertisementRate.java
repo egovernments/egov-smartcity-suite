@@ -59,6 +59,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -93,6 +94,14 @@ public class AdvertisementRate extends AbstractAuditable {
     private RatesClass classtype;
 
     private boolean active = Boolean.TRUE;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "financialyear")
+    private CFinancialYear financialyear;
+
+    @NotNull
+    private Double unitrate;
 
     @Temporal(value = TemporalType.DATE)
     private Date validFromDate;
@@ -176,6 +185,22 @@ public class AdvertisementRate extends AbstractAuditable {
 
     public void setClasstype(final RatesClass classtype) {
         this.classtype = classtype;
+    }
+
+    public CFinancialYear getFinancialyear() {
+        return financialyear;
+    }
+
+    public void setFinancialyear(final CFinancialYear financialyear) {
+        this.financialyear = financialyear;
+    }
+
+    public Double getUnitrate() {
+        return unitrate;
+    }
+
+    public void setUnitrate(final Double unitrate) {
+        this.unitrate = unitrate;
     }
 
 }

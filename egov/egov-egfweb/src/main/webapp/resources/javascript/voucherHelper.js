@@ -64,9 +64,9 @@ function updateGridPayInSlip(field,index,value){
 }
 
 function updateGrid(tableName,field,index,value){
-	//alert(index);   
+	//bootbox.alert(index);   
 	document.getElementById(tableName+'['+index+'].'+field).value=value;
-	//alert(document.getElementById(tableName+'['+index+'].'+field).value);
+	//bootbox.alert(document.getElementById(tableName+'['+index+'].'+field).value);
 }
 
 function updateSLGridPJV(field,index,value){
@@ -419,7 +419,7 @@ function loadCoa(id){
 
 function loadDropDownCodes()
 {
-	var	url = path+"/commons/Process.jsp?type=getAllCoaCodes";
+	var	url = "/EGF/commons/Process.jsp?type=getAllCoaCodes";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -489,7 +489,7 @@ function resetonChangeofSubledger()
 	
 	if(document.getElementById("billDetailsTableNet[0].isSubledger").value=='true')
 	{
-	//	alert("hii");      
+	//	bootbox.alert("hii");      
 		document.getElementById("billDetailsTableNet[0].glcodeDetail").value="-1";
 		document.getElementById("billDetailsTableNet[0].glcodeDetail").disabled=true;
 		document.getElementById("billDetailsTableNet[0].glcodeDetail").tabIndex="-1";
@@ -501,7 +501,7 @@ function resetonChangeofSubledger()
 	}
 	var debitTable=document.getElementById('billDetailTable').getElementsByTagName('table')[0];
 	var dtLen=debitTable.rows.length;
-	 // alert("Length of debit table is "+dtLen);
+	 // bootbox.alert("Length of debit table is "+dtLen);
 	// debit code table
 	var i=0;
 	var j=0;
@@ -522,7 +522,7 @@ function resetonChangeofSubledger()
 	//var creditTable=document.getElementById('billDetailsTableCredit').getElementsByTagName('table')[0];
 	//var creditTableLen=creditTable.rows.length;
 	var creditTableLen=billDetailsTableCredit.getRecordSet().getLength();
-	//alert("Length of credit table is "+creditTableLen);
+	//bootbox.alert("Length of credit table is "+creditTableLen);
 	while(i<creditTableLen)    
 	{
 		if(document.getElementById("billDetailsTableCredit["+i+"].isSubledger").value=='true')
@@ -538,7 +538,7 @@ function resetonChangeofSubledger()
 function loadDropDownCodesForAccountDetailType(obj)
 {
      
-//	alert("Hiii  inside loadDropDownCodesForAccountDetailType");
+//	bootbox.alert("Hiii  inside loadDropDownCodesForAccountDetailType");
 	// reset deatiltable when subledger=true. 
 	resetonChangeofSubledger();
 	var val=0;
@@ -596,7 +596,7 @@ function loadDropDownCodesForEntities(obj)
 			var a = entity.split("^");
 			var eachEntity = a[0];
 			entitiesArray=eachEntity.split("+");
-			//alert(":"+entitiesArray[0]+":");
+			//bootbox.alert(":"+entitiesArray[0]+":");
 			entities = new YAHOO.widget.DS_JSArray(entitiesArray);
 		  }
 	  }
@@ -617,10 +617,10 @@ function autocompleteEntitiesBy20()
 		   return sQuery+"&accountDetailType="+document.getElementById("commonBean.subledgerType").value;
 	   } 
 	   oAutoComp1.queryDelay = 0.5;
-	   oAutoComp1.minQueryLength = 3;
+	   oAutoComp1.minQueryLength = 1;
 	   oAutoComp1.prehighlightClassName = "yui-ac-prehighlight";
 	   oAutoComp1.useShadow = true;
-	   oAutoComp1.forceSelection = true;
+	   //oAutoComp1.forceSelection = true;
 	   oAutoComp1.maxResultsDisplayed = 20;
 	   oAutoComp1.useIFrame = true;
 	   oAutoComp1.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
@@ -638,14 +638,14 @@ function autocompleteEntitiesBy20()
 
 function getDetailType()
 {
-	alert("hello");
+	bootbox.alert("hello");
 	return 
 }
 
 
 function autocompleteEntities1(obj,myEvent)
 {
-	//alert('autocomplete');
+	//bootbox.alert('autocomplete');
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
@@ -703,10 +703,10 @@ var oAutoCompEntityForJV;
 function autocompleteEntities1By20(obj)
 {
   
-	   oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common-ajaxLoadEntitesBy20.action", [ "~^"]);
+	 oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common-ajaxLoadEntitesBy20.action", [ "~^"]);
 	   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 	   oACDS.scriptQueryParam = "startsWith";
-	 //alert(obj.name);
+	 //bootbox.alert(obj.name);
 	   if (oAutoCompEntityForJV!= undefined) {
 		   oAutoCompEntityForJV.destroy();
 		   oAutoCompEntityForJV = null;
@@ -719,14 +719,13 @@ function autocompleteEntities1By20(obj)
 		   return sQuery+"&accountDetailType="+document.getElementById(detailTypeName).value;
 	   } 
 	   oAutoCompEntityForJV.queryDelay = 0.5;
-	   oAutoCompEntityForJV.minQueryLength = 3;
+	   oAutoCompEntityForJV.minQueryLength = 1;
 	   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 	   oAutoCompEntityForJV.useShadow = true;
-	   oAutoCompEntityForJV.forceSelection = true;
-	   oAutoCompEntityForJV.maxResultsDisplayed = 20;
+	   //oAutoCompEntityForJV.forceSelection = true;
+	   oAutoCompEntityForJV.maxResultsDisplayed = 10;
 	   oAutoCompEntityForJV.useIFrame = true;
 	   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
-		   clearWaitingImage();
 	           var pos = YAHOO.util.Dom.getXY(oTextbox);
 	           pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
 	           oContainer.style.width=300;
@@ -743,19 +742,13 @@ function autocompleteEntities1By20(obj)
 var yuiflag = new Array();
 function autocompletecode(obj,myEvent)
 {
-	//Fix-Me
-	var funObj = document.getElementById('billDetailslist[0].functionDetail');
-	jQuery(funObj).trigger('focus');
-	jQuery(obj).trigger('focus');
-	
-	//alert('autocomplete');
+	//bootbox.alert('autocomplete');
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
-	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px"; 
-	target.style.width="650px";	
-	      		
+	target.style.left=posSrc[0];	
+	target.style.top=posSrc[1]-40;
+	target.style.width=450;	
 	
 	var coaCodeObj=obj;
 	var  currRow=getRowIndex(obj);
@@ -776,10 +769,14 @@ function autocompletecode(obj,myEvent)
 				codeObj.applyLocalFilter = true;
 				codeObj.queryMatchContains = true;
 				oAutoComp.minQueryLength = 0;
-				oAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
-					var data = oResultData.toString();
-				    return data.split("`~`")[0];
-				};
+				/*oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
+					 var pos = YAHOO.util.Dom.getXY(oTextbox);
+					 pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
+					 oContainer.style.width=300;
+					 YAHOO.util.Dom.setXY(oContainer,pos);
+					 return true;
+
+				 };*/  
 			}
 		}
 		yuiflag[currRow] = 1;
@@ -788,13 +785,9 @@ function autocompletecode(obj,myEvent)
 
 function autocompletecodeCommon(obj,myEvent)
 {
-	//Fix-Me
-	var accCodeObj = document.getElementById('billDetailsTable[0].debitAmountDetail');
-	jQuery(accCodeObj).trigger('focus');
-	jQuery(obj).trigger('focus');
 	
 	var src = obj;	
-	//alert(obj.scrollHeight);
+	//bootbox.alert(obj.scrollHeight);
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
@@ -835,7 +828,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = path+"/commons/Process.jsp?type=getAllFunctionName";
+	var url = "/EGF/commons/Process.jsp?type=getAllFunctionName";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -859,26 +852,20 @@ var yuiflagFunc = new Array();
 function autocompletecodeFunction(obj,myEvent)
 {
 	
-	//Fix-Me
-	var accCodeObj = document.getElementById('billDetailslist[0].glcodeDetail');
-	jQuery(accCodeObj).trigger('focus');
-	jQuery(obj).trigger('focus');
-	
-	
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	
 	var posSrc=findPos(src); 
-	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
-	target.style.width=650;	
+	target.style.left=posSrc[0];	
+	target.style.top=posSrc[1]-40;
+	target.style.width=450;	
 		
 	var coaCodeObj=obj;
-	//var  currRow=getRowIndex(obj);
+	var  currRow=getRowIndex(obj);
 
 	//40 --> Down arrow, 38 --> Up arrow
-	//if(yuiflagFunc[currRow] == undefined)
-	//{
+	if(yuiflagFunc[currRow] == undefined)
+	{
 		var key = window.event ? window.event.keyCode : myEvent.charCode;  
 		if(key != 40 )
 		{
@@ -890,24 +877,27 @@ function autocompletecodeFunction(obj,myEvent)
 				oAutoComp.useShadow = true;
 				oAutoComp.maxResultsDisplayed = 15;
 				oAutoComp.useIFrame = true;
-				oAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
-					var data = oResultData.toString();
-				    return data.split("`~`")[0];
-				};
+				funcObj.applyLocalFilter = true;
+				funcObj.queryMatchContains = true;
+				oAutoComp.minQueryLength = 0;
+				/*oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
+					 var pos = YAHOO.util.Dom.getXY(oTextbox);
+					 pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
+					 oContainer.style.width=300;
+					 YAHOO.util.Dom.setXY(oContainer,pos);
+					 return true;
+
+				 };  */
 			}
 		}
-		//yuiflagFunc[currRow] = 1;
-	//}	
+		yuiflagFunc[currRow] = 1;
+	}	
 }
 
 
 
 function autocompletecodeFunctionHeader(obj,myEvent)
 {
-	//Fix-Me
-	var accCodeObj = document.getElementById('description');
-	jQuery(accCodeObj).trigger('focus');
-	jQuery(obj).trigger('focus');
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
@@ -951,16 +941,17 @@ function getRowIndex(obj)
 }
 
 function fillNeibrAfterSplitGlcode(obj)
-{
+{ 
 	var key = obj.value;
 	var temp = obj.value;
 	temp = temp.split("`-`");
 	var currRow=getRowIndex(obj);
-	var acchead= document.getElementById('billDetailslist['+currRow+'].accounthead').value;
+	/*var acchead= document.getElementById('billDetailslist['+currRow+'].accounthead').value;
+	console.log(acchead);
 	if(acchead !=null && acchead !=""){
 		key = key+"`-`";
 		key = key+acchead;
-	}
+	}*/
 	var accCodeid = allGlcodes[key];
 	if(temp.length>1)
 	{ 
@@ -1020,9 +1011,9 @@ function fillNeibrAfterSplitGlcode(obj)
 		}
 		check();
 	}else if (temp!="" &&(accCodeid==null || accCodeid=="")){
-		//alert("Invalid Account Code selected .Please select code from auto complete.");
-		//obj.value="";
-		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
+		/*bootbox.alert("Invalid Account Code selected .Please select code from auto complete.");
+		obj.value="";*/
+		//document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
 	}
 	var currRow=getRowIndex(obj);
 	var funcObj = document.getElementById('billDetailslist['+currRow+'].functionDetail');
@@ -1046,11 +1037,11 @@ function fillNeibrAfterSplitFunction(obj)
 		var functionId1 = document.getElementById('functionId').value;
 		var functionId2 = document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value;
 		if(functionValue=="" && functionId1==""){
-			//alert("Invalid function selected .Please select code from auto complete.");
+			//bootbox.alert("Invalid function selected .Please select code from auto complete.");
 			//obj.value="";
 			document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value="";
 		}else if(functionValue!="" && functionId1!="" && functionId2!="" && functionValue != temp[0] && functionId1==functionId2){
-			alert("Invalid function selected .Please select code from auto complete.");
+			bootbox.alert("Invalid function selected .Please select code from auto complete.");
 			obj.value="";
 			document.getElementById("billDetailslist['+currRow+'].functionIdDetail").value="";
 		}
@@ -1086,7 +1077,7 @@ function loadSlFunction(){
 			 accountCodeId = document.getElementById('billDetailslist['+i+'].glcodeIdDetail').value;
 			 accountCode = document.getElementById('billDetailslist['+i+'].glcodeDetail').value;
 		}
-		
+		console.log(slAccountCodes);
 		if(accGridFunc !=''  && slAccountCodes.indexOf(accountCodeId) !=-1){
 			if(functionArray.indexOf(accGridFunc) == -1){
 				functionArray.push(accGridFunc);
@@ -1129,7 +1120,9 @@ function getSlAccountCodes(){
 	var obj = document.getElementById('subLedgerlist[0].glcode.id');
 	for (var j=0; j< obj.options.length;j++ )
 	{
-		slAccountCodeArray.push(obj.options[j].value);
+		console.log("---"+obj.options[j].value+"---");
+		console.log("---"+(obj.options[j].value).trim()+"---");
+		slAccountCodeArray.push((obj.options[j].value).trim());
 		
 	}
 	return slAccountCodeArray;
@@ -1242,6 +1235,7 @@ var onDropdownChange = function(index,obj) {
 		// loadSLFunc(obj,document.getElementById('subLedgerlist['+obj.value+'].functionDetail').value);
 		var subledgerid=document.getElementById('subLedgerlist['+obj.value+'].glcode.id');
 		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
+		console.log("---"+accountCode+"-------");
 		document.getElementById('subLedgerlist['+obj.value+'].subledgerCode').value =accountCode;
 		if(accountCode != '---Select---'){
 			var url = path+'/voucher/common-getDetailType.action?accountCode='+accountCode+'&index='+obj.value;
@@ -1285,7 +1279,7 @@ success: function(o) {
 		} 
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function check(){
@@ -1330,12 +1324,12 @@ success: function(o) {
 			
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
 function loaddropdown(){
-//alert(coming);
+//bootbox.alert(coming);
 	
 }
 function updateDebitAmountJV()
@@ -1497,7 +1491,7 @@ function openSearchWindowFromJV(obj) {
 		var	url = "../voucher/common-searchEntites.action?accountDetailType="+detailtypeid;
 		window.open(url, 'EntitySearch','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
 	} else {
-		alert("Select the Type.");
+		bootbox.alert("Select the Type.");
 	}
 }
 
@@ -1512,7 +1506,7 @@ function popupCallback(arg0, srchType) {
 		}
 		else
 		{
-			alert("Invalid entity selected.");
+			bootbox.alert("Invalid entity selected.");
 			document.getElementById(SUBLEDGERLIST+'['+acctTypeCurrRow+']'+'.detailCode').value="";
 			document.getElementById(SUBLEDGERLIST+'['+acctTypeCurrRow+']'+'.detailKeyId').value="";
 			document.getElementById(SUBLEDGERLIST+'['+acctTypeCurrRow+']'+'.detailKey').value="";
@@ -1545,7 +1539,7 @@ var callbackPJV = {
 			}
 	    },
 	    failure: function(o) {
-	    	alert('failure');
+	    	bootbox.alert('failure');
 	    }
 	}
 
@@ -1569,14 +1563,14 @@ var callbackCommon = {
 		}
 		else
 		{
-			alert('Enter valid Code');
+			bootbox.alert('Enter valid Code');
 			document.getElementById('detailKey').value='';
 			document.getElementById('detailName').value='';
 			return;
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -1607,17 +1601,17 @@ function validate()
 	var crtotal=document.getElementById('totalcramount').value;
 	if(dbtotal=='' || dbtotal==0)
 	{
-		alert('Total Debit Amount can not be zero.');
+		bootbox.alert('Total Debit Amount can not be zero.');
 		return false;
 	}
 	if(crtotal=='' || crtotal==0)
 	{
-		alert('Total Credit Amount can not be zero.');
+		bootbox.alert('Total Credit Amount can not be zero.');
 		return false;
 	}
 	if(dbtotal!=crtotal)
 	{
-		alert('Total Debit & Credit amount should be same.');
+		bootbox.alert('Total Debit & Credit amount should be same.');
 		return false;
 	}
 	return true;
@@ -1631,7 +1625,7 @@ function checkLength(obj)
 {
 	if(obj.value.length>1024)
 	{
-		alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+		bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 		obj.value = obj.value.substring(1,1024);
 	}
 }
@@ -1640,7 +1634,7 @@ function checkVoucherNarrationLen(obj)
 {
 	if(obj.value.length>250)
 	{
-		alert('Max 250 characters are allowed for Narration. Remaining characters are truncated.')
+		bootbox.alert('Max 250 characters are allowed for Narration. Remaining characters are truncated.')
 		obj.value = obj.value.substring(0,250);
 	}
 }
@@ -1663,13 +1657,13 @@ function findPos(ob)
 		curleft = obj.offsetLeft;
 		curtop = obj.offsetTop;
 		while (obj = obj.offsetParent) 
-		{	//alert(obj.nodeName+"---"+obj.offsetTop+"--"+obj.offsetLeft+"-----"+curtop);
+		{	//bootbox.alert(obj.nodeName+"---"+obj.offsetTop+"--"+obj.offsetLeft+"-----"+curtop);
 			curleft =curleft + obj.offsetLeft;
 			curtop =curtop + obj.offsetTop; 
-			//alert(curtop);
+			//bootbox.alert(curtop);
 		}
 	}
-	//alert(curleft+"             "+curtop);
+	//bootbox.alert(curleft+"             "+curtop);
 	return [curleft,curtop];
 		
 }
@@ -1681,7 +1675,7 @@ function findPos(ob)
 		      posX += oElement.offsetLeft;
 		      posY += oElement.offsetTop;
 		      if( oElement != originalElement && oElement != document.body && oElement != document.documentElement ) {
-		     //  alert(oElement.scrollTop+""+oElement.nodeName)
+		     //  bootbox.alert(oElement.scrollTop+""+oElement.nodeName)
 		    	  posX -= oElement.scrollLeft;
 		        posY -= oElement.scrollTop;
 		      }
@@ -1741,7 +1735,7 @@ function glcodeFormatterCbillModify(tableName,columnName,type){
     	 var table_name=eval(tableName);  var index=table_name.getRecordIndex(oRecord);  	 
     	 var fieldName=tableName+"["+index+"]"+columnName;  	 
     	 while(document.getElementById(fieldName)) 
-    	 {    		 index++;  //alert(index) ;
+    	 {    		 index++;  //bootbox.alert(index) ;
     	 fieldName=tableName+"["+index+"]"+columnName; 
     	 }
     	
@@ -1841,7 +1835,7 @@ function fillNeibrAfterSplitFunctionHeader(obj)
 	temp = temp.split("`~`");
 	if(temp.length>1)
 	{ 
-		obj.value=temp[0];
+		obj.value=temp[0].split("`-`")[0]+'-'+temp[0].split("`-`")[1];
 		document.getElementById("commonBean.functionId").value=temp[1];
 	}
 }
@@ -1873,8 +1867,8 @@ if(temp.trim()!="")
 			hiddenfieldname=hiddenfieldname.replace("glcodeDetail","glcodeIdDetail");
 			accountHeadeName=accountHeadeName.replace("glcodeDetail","accounthead");
 			isSubledger=isSubledger.replace("glcodeDetail","isSubledger");
-//			alert(codesForAccountDetailType[key]);
-	//		alert(key);			
+//			bootbox.alert(codesForAccountDetailType[key]);
+	//		bootbox.alert(key);			
 			document.getElementById(hiddenfieldname).value=codesForAccountDetailType[key].split("`-`")[0];
 			
 			document.getElementById(accountHeadeName).value=key.split("`-`")[1];
@@ -1905,8 +1899,8 @@ if(temp.trim()!="")
 	}else
 	{
 	
-		//alert(obj.value+":"+invalidAccountCode); this line will cause problem for mouse selection
-	//	obj.value="";
+		//bootbox.alert(obj.value+":"+invalidAccountCode); this line will cause problem for mouse selection
+		obj.value="";
 		var hiddenfieldname=obj.name;
 		var accountHeadeName=obj.name;
 		var isSubledger=obj.name;
@@ -2036,7 +2030,7 @@ function validateDigits(obj)
 {
 	if(isNaN(obj.value.trim()))
 	{
-		alert("Invalid Amount")
+		bootbox.alert("Invalid Amount")
 		obj.value=0;
 		obj.focus();
 	}
@@ -2044,7 +2038,7 @@ function validateDigits(obj)
 	{
 		if(parseFloat(obj.value.trim())<0)
 		{
-			alert("Negetive Amount is not allowed");
+			bootbox.alert("Negetive Amount is not allowed");
 			obj.value=0;
 			obj.focus();
 		}
@@ -2068,7 +2062,7 @@ function validateDigitsAndDecimal(obj)
 {
 	if(isNaN(obj.value.trim()))
 	{
-		alert("Invalid Amount")
+		bootbox.alert("Invalid Amount")
 		obj.value=0;
 		obj.focus();
 	}
@@ -2076,7 +2070,7 @@ function validateDigitsAndDecimal(obj)
 	{
 		if(parseFloat(obj.value.trim())<0)
 		{
-			alert("Negetive Amount is not allowed");
+			bootbox.alert("Negetive Amount is not allowed");
 			obj.value=0;
 			obj.focus();
 		}
@@ -2223,7 +2217,7 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -2233,7 +2227,7 @@ function autocompleteSchemeBy20()
 {
 		path="../..";
 	     oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common-ajaxLoadSchemeBy20.action", [ "~^"]);
-	    // alert("helllpo");
+	    // bootbox.alert("helllpo");
 	   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 	   oACDS.scriptQueryParam = "startsWith";
 	  
@@ -2307,7 +2301,7 @@ var callbackProjectCodes = {
 	document.getElementById('projectCodes').innerHTML=o.responseText;
     },
     failure: function(o) {
-    	alert('Failed to Load Project Codes');
+    	bootbox.alert('Failed to Load Project Codes');
     }
 }
 

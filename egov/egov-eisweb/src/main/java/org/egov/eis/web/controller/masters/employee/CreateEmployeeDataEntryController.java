@@ -46,10 +46,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.commons.service.AccountDetailKeyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeType;
@@ -62,9 +67,13 @@ import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -89,6 +98,10 @@ public class CreateEmployeeDataEntryController {
 
     @Autowired
     private DepartmentService departmentService;
+    
+
+    @Autowired
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
 
     @Autowired
     private EmployeeTypeRepository employeeTypeRepository;
@@ -110,6 +123,17 @@ public class CreateEmployeeDataEntryController {
 
     @Autowired
     private PositionMasterService positionMasterService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private AccountDetailKeyService accountDetailKeyService;
+
+   
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String createForm(final Model model) {
@@ -173,6 +197,17 @@ public class CreateEmployeeDataEntryController {
             LOGGER.error("Error in getting fromDate and toDate" + e.getMessage(), e);
         }
 
+        List<User> user = new ArrayList<User>();
+
+        final Set<Role> roles = designationService.getRolesByDesignation(designation.getName());
+        for (final Role role : roles) {
+            user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
+                    roleService.getRoleByName(role.getName()).getName());
+            if (fromDate.before(new Date()) && toDate.after(new Date()))
+                if (user.isEmpty() || null == user)
+                    employee.addRole(roleService.getRoleByName(role.getName()));
+        }
+
         final List<Assignment> assignment = new ArrayList<Assignment>();
         final Assignment assign = new Assignment();
         assign.setDepartment(department);
@@ -196,6 +231,15 @@ public class CreateEmployeeDataEntryController {
         employee.setAssignments(assignment);
         employee.setJurisdictions(jurisdictions);
         employeeService.createEmployeeData(employee);
+
+        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO.getAccountdetailtypeByName(EisConstants.ROLE_EMPLOYEE);
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setAccountdetailtype(accountdetailtype);
+        adk.setGroupid(1);
+        adk.setDetailkey(employee.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        accountDetailKeyService.createAccountDetailKey(adk);
+
         String image = null;
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
@@ -208,4 +252,5 @@ public class CreateEmployeeDataEntryController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("department", departmentService.getAllDepartments());
     }
+
 }

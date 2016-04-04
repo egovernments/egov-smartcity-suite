@@ -55,16 +55,16 @@
 		      	<tr>
 			        <td class="greybox">&nbsp;</td>
 			        <td class="greybox"><s:text name="challan.payeename"/></td>
-			        <td class="greybox"><s:textfield name="receiptPayeeDetails.payeename" id="receiptPayeeDetails.payeeName" value="%{receiptPayeeDetails.payeename}" readonly="true" /></td>
+			        <td class="greybox"><s:textfield name="payeeName" id="payeeName" value="%{payeeName}" readonly="true" /></td>
 			        <td class="greybox">&nbsp;</td>
 			        <td class="greybox">&nbsp;</td>
 			        <!-- <td class="greybox"><s:text name="challan.payeeAddress"/></td>
-			        <td class="greybox"><s:textarea name="receiptPayeeDetails.payeeAddress" id="receiptPayeeDetails.payeeAddress" value="%{receiptPayeeDetails.payeeAddress}" cols="30" rows="2" readonly="true"/></td> -->
+			        <td class="greybox"><s:textarea name="payeeAddress" id="payeeAddress" value="%{payeeAddress}" cols="30" rows="2" readonly="true"/></td> -->
 		      	</tr>
 		      	<tr>
 			        <td class="bluebox">&nbsp;</td>
 			        <td class="bluebox"><s:text name="challan.payeeAddress"/></td>
-			        <td class="bluebox"><s:textarea name="receiptPayeeDetails.payeeAddress" id="receiptPayeeDetails.payeeAddress" value="%{receiptPayeeDetails.payeeAddress}" cols="18" rows="2" readonly="true"/></td>
+			        <td class="bluebox"><s:textarea name="payeeAddress" id="payeeAddress" value="%{payeeAddress}" cols="18" rows="2" readonly="true"/></td>
 			        <td class="bluebox"><span class="bluebox"><s:text name="challan.narration"/></span></td>
 			        <td class="bluebox"><s:textarea name="referenceDesc" id="referenceDesc"  value="%{referenceDesc}" cols="18" rows="2" readonly="true"/></td>
 		      	</tr>
@@ -97,7 +97,7 @@
   					</s:else>
   					<s:if test="%{shouldShowHeaderField('department')}">
 				        <td class="bluebox"><s:text name="challan.department"/></td>
-				        <td class="bluebox"><s:textfield name="receiptMisc.department.deptName" id="receiptMisc.department.deptName" value="%{receiptMisc.department.deptName}" readonly="true"/></td>
+				        <td class="bluebox"><s:textfield name="receiptMisc.department.name" id="receiptMisc.department.name" value="%{receiptMisc.department.name}" readonly="true"/></td>
 			        </s:if>
 		   			<s:else>
   						<td class="bluebox" colspan="2"></td>
@@ -108,7 +108,7 @@
 		      	<tr>
                         <td class="greybox">&nbsp;</td>
 			        	<td class="greybox"><s:text name="challan.field"/></td>
-			       		<td class="greybox"><span class="bluebox"><s:textfield name="receiptMisc.boundary.name" id="boundaryId" value="%{receiptMisc.boundary.bndryNameLocal}" readonly="true"/> 
+			       		<td class="greybox"><span class="bluebox"><s:textfield name="receiptMisc.boundary.name" id="boundaryId" value="%{receiptMisc.boundary.localName}" readonly="true"/> 
 			          </span></td>
 			            <td class="greybox" colspan="2"></td>
   				</tr>
@@ -117,7 +117,7 @@
 		      	<tr>
 			        <td class="bluebox">&nbsp;</td>
 			        <td class="bluebox"><span class="bluebox"><s:text name="challan.service"/></span></td>
-			        <td class="bluebox"><s:textfield name="serviceName" id="serviceName"  value="%{challan.service.serviceName}" readonly="true"/></td>
+			        <td class="bluebox"><s:textfield name="serviceName" id="serviceName"  value="%{challan.service.name}" readonly="true"/></td>
 			        <td class="bluebox">&nbsp;</td>
 			        <td class="bluebox">&nbsp;</td>
 			    </tr>
@@ -126,9 +126,9 @@
 			        <td class="bluebox">&nbsp;</td>
 			        <td class="bluebox">&nbsp;</td>
 			        <td class="bluebox">
-			        	<input type="button" name="Show Account Details" id="ssd" value="Account Details"  onclick="displaydiv('capsearch');" class="buttongeneral" /></td> 
+			        	<input type="button" name="Show Account Details" id="ssd" value="Account Details"  onclick="displaydiv('capsearch');" class="button" /></td> 
 			        		<td class="bluebox">
-							<input type="button" name="Show Subledger Details" id="ssd" value="Subledger Details"  onclick="displaydiv('capsearch2');" class="buttongeneral" /></td>
+							<input type="button" name="Show Subledger Details" id="ssd" value="Subledger Details"  onclick="displaydiv('capsearch2');" class="button" /></td>
 			        		<td class="bluebox">&nbsp;</td>
 		      	</tr>
 	    	</table> <hr /> <!-- End of table with challan header details -->

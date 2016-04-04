@@ -1,0 +1,3 @@
+INSERT INTO egeis_deptdesig (id,designation,department,outsourcedposts,sanctionedposts,version,createddate,lastmodifieddate,createdby,lastmodifiedby) VALUES(nextval('SEQ_egeis_deptdesig'),(select id from eg_designation where name='Section manager'),(select id from eg_department where name='Revenue'), 0,1,0,'2015-01-01 00:00:00','2015-01-01 00:00:00',1,1);
+
+UPDATE eg_position SET deptdesig = (select id from egeis_deptdesig where designation in (select id from eg_designation where name='Section manager') and department in (select id from eg_department where name='Revenue')) WHERE name='R-SECTION MANAGER-1';

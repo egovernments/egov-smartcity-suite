@@ -137,7 +137,7 @@
 
 				<div class="row">
 					<div class="text-center">
-						<button type="button" id="btnsearch" class="btn btn-success">
+						<button type="button" id="btnsearch" class="btn btn-primary">
 							Search</button>
 						<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 							Close</button>

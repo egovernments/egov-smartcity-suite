@@ -39,20 +39,19 @@
  */
 package org.egov.infra.persistence.validator;
 
-import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.hibernate.Query;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
 public class CompositeUniqueCheckValidator implements ConstraintValidator<CompositeUnique, Object> {
 
@@ -68,128 +67,36 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
 
     @Override
     public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
-        if (unique.compositefields() == null || unique.compositefields().length == 0)
-            return true;
-
-        String fieldStr = "";
-        String columnNameStr = "";
-        /*
-         * combine all Column names and Fileds and convert into String and Pass
-         * to Query for Unique Check validation....
-         */
-        for (int i = 0; i < unique.compositefields().length; i++) {
-            if (fieldStr.isEmpty())
-                fieldStr = unique.compositefields()[i];
-            else
-                fieldStr = fieldStr + "," + unique.compositefields()[i];
-            if (columnNameStr.isEmpty())
-                columnNameStr = unique.compositecolumnName()[i];
-            else
-                columnNameStr = columnNameStr + "||''||" + unique.compositecolumnName()[i];
-        }
-        if (!isCompositeUnique(arg0, fieldStr, columnNameStr)) {
-            final List<String> items = Arrays.asList(fieldStr.split(","));
-            String concatenatedFieldValuesForErrorMesssages = new String();
-            if (unique.enableDfltMsg())
-                /*
-                 * this Loop for passing all fields which n all allowed for
-                 * Composite Unique Check validation and Show Error Messages for
-                 * all fields in UI.
-                 */
-                for (final String asStringObj : items) {
-                    constraintValidatorContext.buildConstraintViolationWithTemplate(unique.message()).addPropertyNode(asStringObj)
+        try {
+            final Number id = (Number) FieldUtils.readField(arg0, unique.id(), true);
+            final boolean isValid = checkCompositeUniqueKey(arg0, id);
+            if (!isValid && unique.enableDfltMsg())
+                for (final String fieldName : unique.fields())
+                    constraintValidatorContext.buildConstraintViolationWithTemplate(unique.message()).addPropertyNode(fieldName)
                             .addConstraintViolation();
-                    concatenatedFieldValuesForErrorMesssages = concatenatedFieldValuesForErrorMesssages
-                            .concat(constraintValidatorContext.getDefaultConstraintMessageTemplate());
-
-                }
-            return false;
+            return isValid;
+        } catch (final IllegalAccessException e) {
+            throw new ApplicationRuntimeException("Error while validating composite unique key", e);
         }
-        return true;
 
     }
 
-    private boolean isCompositeUnique(final Object arg0, final String field, final String columnName) {
-        final Object value = getValue(arg0, field);
-        if (value == null)
-            return true;
-        final Long id = getId(arg0);
-        final Session currentSession = entityManager.unwrap(Session.class);
-        boolean isValid = true;
-        if (id == null) {
-            final Query q = currentSession
-                    .createSQLQuery("select * from " + unique.tableName() + " where upper(" + columnName + ")=:value");
-            q.setString("value", value.toString().toUpperCase());
-            if (!q.list().isEmpty())
-                isValid = false;
-        } else {
-            final Query q = currentSession.createSQLQuery(
-                    "select * from " + unique.tableName() + " where upper(" + columnName + ")=:value and id!=:id");
-            q.setString("value", value.toString().toUpperCase());
-            q.setLong("id", id);
-            if (!q.list().isEmpty())
-                isValid = false;
+    private boolean checkCompositeUniqueKey(final Object arg0, final Number id) throws IllegalAccessException {
+        final Criteria criteria = entityManager.unwrap(Session.class)
+                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass());
+        final Conjunction conjunction = Restrictions.conjunction();
+        for (final String fieldName : unique.fields()) {
+            final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
+            if (unique.checkForNull() && fieldValue == null)
+                conjunction.add(Restrictions.isNull(fieldName));
+            else if (fieldValue instanceof String)
+                conjunction.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
+            else
+                conjunction.add(Restrictions.eq(fieldName, fieldValue));
         }
-        return isValid;
-    }
-
-    private Long getId(final Object arg0) {
-        return (Long) getIdValue(arg0, unique.id());
-    }
-
-    private Object getValue(final Object target, final String field) {
-        String concatenatedFieldValues = new String();
-        try {
-            final List<String> items = Arrays.asList(field.split(","));
-            final BeanInfo info = java.beans.Introspector.getBeanInfo(target.getClass());
-            final PropertyDescriptor[] props = info.getPropertyDescriptors();
-            for (final String strlist : items)
-                for (final PropertyDescriptor propertyDescriptor : props)
-                    if (!propertyDescriptor.getName().equals("new"))
-                        if (Class.forName(propertyDescriptor.getPropertyType().getName()).getName().equals("java.lang.String")) {
-                            /*
-                             * this If for Only String Fields
-                             */
-                            if (propertyDescriptor.getName().equals(strlist))
-
-                                concatenatedFieldValues = concatenatedFieldValues
-                                        .concat(propertyDescriptor.getReadMethod().invoke(target).toString());
-                        } else /*
-                                * This Loop will enter only Field is not String
-                                * Type.ex:class,List ex: In AppConfig have
-                                * requirement like Unique Combination of
-                                * (key_Name and module_id From(id of Eg_module))
-                                * so here in Else part Module composite Object
-                                * to getId() method and returns id value..
-                                */
-                            if (propertyDescriptor.getName().equals(strlist)) {
-                            /*
-                             * if this
-                             * "propertyDescriptor.getReadMethod().invoke(target)"
-                             * returns any composite Object which is der in Ur
-                             * Object then Pass That composite Object to getId()
-                             * methos and Get just id of thet Composite Object.
-                             */
-                            final Long id = getId(propertyDescriptor.getReadMethod().invoke(target));
-                            concatenatedFieldValues = concatenatedFieldValues.concat(id.toString());
-                        }
-            return concatenatedFieldValues;
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException(e.getMessage(), e);
-        }
-    }
-
-    private Object getIdValue(final Object target, final String field) {
-        try {
-            final BeanInfo info = java.beans.Introspector.getBeanInfo(target.getClass());
-            final PropertyDescriptor[] props = info.getPropertyDescriptors();
-            for (final PropertyDescriptor propertyDescriptor : props)
-                if (propertyDescriptor.getName().equals(field))
-                    return propertyDescriptor.getReadMethod().invoke(target);
-            return null;
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException(e.getMessage(), e);
-        }
+        if (id != null)
+            conjunction.add(Restrictions.ne(unique.id(), id));
+        return criteria.add(conjunction).setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
     }
 
 }

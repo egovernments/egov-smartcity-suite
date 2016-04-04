@@ -66,13 +66,13 @@ function newComputeAvailable(prefix,index){
 	if(delta == undefined)
 		delta = "0.00";
 	else if(isNaN(delta)){
-		alert("Please enter a valid number");
+		bootbox.alert("Please enter a valid number");
 		return;
 	}
 	if(planning == undefined)
 		planning = "0.00";
 	else if(isNaN(planning)){
-		alert("Please enter a valid number");
+		bootbox.alert("Please enter a valid number");
 		return;
 	}
 	newelement = document.getElementById(prefix+'['+index+'].planningBudgetApproved');
@@ -98,13 +98,13 @@ function computeAvailable(prefix,index){
 	if(newavailable == undefined)
 		newavailable = "0.00";
 	else if(isNaN(available)){
-		alert("Please enter a valid number");
+		bootbox.alert("Please enter a valid number");
 		return;
 	}
 	if(delta == undefined)
 		delta = "0.00";
 	else if(isNaN(delta)){
-		alert("Please enter a valid number");
+		bootbox.alert("Please enter a valid number");
 		return;
 	}
 	element = document.getElementById(prefix+'['+index+'].remainingAmount');
@@ -407,7 +407,7 @@ function docManager(docNumber){
     if(docNumber==null||docNumber==''||docNumber=='To be assigned'||docNumber==0){
       url="/egi/docmgmt/basicDocumentManager.action?moduleName=EGF";
     }else{
-      url = "/egi/docmgmt/basicDocumentManager!editDocument.action?docNumber="+docNumber+"&moduleName=EGF";
+      url = "/egi/docmgmt/basicDocumentManager-editDocument.action?docNumber="+docNumber+"&moduleName=EGF";
     }
     var wdth = 1000;
     var hght = 400;
@@ -416,14 +416,14 @@ function docManager(docNumber){
 
 function viewDocumentManager(){
    var v= dom.get("docNumber").value;
-   var url= "/egi/docmgmt/basicDocumentManager!viewDocument.action?docNumber="+v+"&moduleName=EGF";
+   var url= "/egi/docmgmt/basicDocumentManager-viewDocument.action?docNumber="+v+"&moduleName=EGF";
    var wdth = 1000;
     var hght = 400;
     window.open(url,'docupload','width='+wdth+',height='+hght);
 }
 
 function viewDocumentManager(docNumber){
-   var url= "/egi/docmgmt/basicDocumentManager!viewDocument.action?docNumber="+docNumber+"&moduleName=EGF";
+   var url= "/egi/docmgmt/basicDocumentManager-viewDocument.action?docNumber="+docNumber+"&moduleName=EGF";
    var wdth = 1000;
    var hght = 400;
    window.open(url,'docupload','width='+wdth+',height='+hght);

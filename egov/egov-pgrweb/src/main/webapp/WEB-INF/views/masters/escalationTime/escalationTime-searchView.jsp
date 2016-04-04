@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 
-<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script>
@@ -54,7 +54,7 @@
 
 		var curRow = getRow(obj).rowIndex;
 		if (lastRow == 1) {
-			alert('you cannot delete this row ');
+			bootbox.alert('you cannot delete this row ');
 			return false;
 		} else {
 			tb1.deleteRow(curRow);
@@ -240,4 +240,4 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="<c:url value='/resources/js/app/escalationTimeviewsearch.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/escalationTimeviewsearch.js?rnd=${app_release_no}'/>"></script>

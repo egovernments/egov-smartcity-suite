@@ -81,7 +81,7 @@
 function chkReceivedByLen(obj){
 	if(obj.value.length>256)
 	{
-		alert('Max 256 characters are allowed for received by text. Remaining characters are truncated.')
+		bootbox.alert('Max 256 characters are allowed for received by text. Remaining characters are truncated.')
 		obj.value = obj.value.substring(1,256);
 	}
 }

@@ -54,11 +54,10 @@
 		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+	    <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-		<link rel="stylesheet" href="<c:url value='/css/commonegovNew.css' context='/egi'/>" />
 				
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
@@ -113,6 +112,20 @@
 	                            e.preventDefault();
 	    	};
 	    	jQuery(document).on("keydown", disableRefresh);
+
+	    	function reCalculateTotalFooterWhenExport(tableIdWithOutPrefix)
+	    	{
+	    		$("#"+tableIdWithOutPrefix+" tfoot td").each(function( index ) {
+	    	   		 if(index!==0)
+	    	   		 {
+	    	   			 var totals=$(this).html().split("(");
+	    		    		 var str=""+totals[1];
+	    		    		 str=str.slice(0,-1);
+	    		    		 $(this).html(str);
+	    	   		 }
+	    	   	 });
+	    	     setTimeout(function(){ $('select[name="'+ tableIdWithOutPrefix +'_length"]').trigger('change'); }, 10);
+	    	}
 		</script>
     </body>
 </html>

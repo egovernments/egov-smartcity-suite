@@ -162,7 +162,7 @@ public class SearchReceiptAction extends SearchFormAction {
         setupDropdownDataExcluding();
         addDropdownData("counterList", getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_COUNTERS));
         addDropdownData("instrumentTypeList",
-                getPersistenceService().findAllBy("from InstrumentType i where i.isActive = '1' order by type"));
+                getPersistenceService().findAllBy("from InstrumentType i where i.isActive = true order by type"));
         addDropdownData("userList",
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPTS));
     }
@@ -262,7 +262,7 @@ public class SearchReceiptAction extends SearchFormAction {
         }
         if (getCounterId() != -1) {
             criteriaString.append(" and receipt.location.id = ? ");
-            params.add(getCounterId());
+            params.add(Long.valueOf(getCounterId()));
         }
 
         if (getUserId() != -1) {

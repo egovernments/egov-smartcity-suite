@@ -300,8 +300,8 @@
 <link rel="stylesheet"	href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
 <script	src="<c:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/app/complaintview.js'/>"></script>
-<script src="<c:url value='/resources/js/app/complaintviewmap.js'/>"></script>
+<script src="<c:url value='/resources/js/app/complaintview.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/app/complaintviewmap.js?rnd=${app_release_no}'/>"></script>
 <script>
 var lat = '${complaint.lat}';
 var lng = '${complaint.lng}';

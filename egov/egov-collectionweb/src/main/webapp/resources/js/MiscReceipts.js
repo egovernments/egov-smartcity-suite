@@ -153,7 +153,7 @@ rec=billDetailTableIndex;
 else 
 rec=rebateDetailTableIndex;
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='width:90px;' onfocus='autocompletecodeFunctionCredit(this,event)' autocomplete='off' onblur='fillNeibrAfterSplitFunctionCredit(this)' />";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='width:90px;' onfocus='autocompletecodeFunctionCredit(this,event)' onblur='fillNeibrAfterSplitFunctionCredit(this)' />";
 	}
 }
 
@@ -167,7 +167,7 @@ rec=billDetailTableIndex;
 else 
 rec=rebateDetailTableIndex;
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='width:90px;' onfocus='autocompletecodeFunctionRebate(this,event)' autocomplete='off' onblur='fillNeibrAfterSplitFunctionRebate(this)' />";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='width:90px;' onfocus='autocompletecodeFunctionRebate(this,event)' onblur='fillNeibrAfterSplitFunctionRebate(this)' />";
 	
 	}
 }
@@ -281,7 +281,7 @@ var codeObj;
 var acccodeArray;
 function loadDropDownCodes()
 {
-	var	url = path+"/commons/Process.jsp?type=getAllCoaNames";
+	var	url = "/EGF/commons/Process.jsp?type=getAllCoaNames";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -305,7 +305,7 @@ var rebatecodeObj;
 var rebacccodeArray;
 function loadDropDownRebateCodes()
 {
-	var	url = path+"/commons/Process.jsp?type=getAllCoaNames";
+	var	url = "/EGF/commons/Process.jsp?type=getAllCoaNames";
 	var req3 = initiateRequest();
 	req3.onreadystatechange = function()
 	{
@@ -329,7 +329,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = path+"/commons/Process.jsp?type=getAllFunctionCode";
+	var url = "/EGF/commons/Process.jsp?type=getAllFunctionCode";
 	var req4 = initiateRequest();
 	req4.onreadystatechange = function()
 	{
@@ -358,7 +358,7 @@ function autocompletecodeFunctionCredit(obj,myEvent)
 	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]-40+"px";
 	target.style.width=650;	
 		
 	var fObj=obj;
@@ -398,7 +398,7 @@ function autocompletecodeFunctionRebate(obj,myEvent)
 	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]-40+"px";
 	target.style.width=650;	
 		
 	var fObj=obj;
@@ -474,7 +474,7 @@ function autocompletecode(obj,myEvent)
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0];	
-	target.style.top=posSrc[1]+22;
+	target.style.top=posSrc[1]-40;
 	target.style.width=450;	
 	codeObj
 	var coaCodeObj=obj;
@@ -519,7 +519,7 @@ function autocompletecodeRebate(obj,myEvent)
 	var target = document.getElementById('rebatecodescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0];	
-	target.style.top=posSrc[1]+22;
+	target.style.top=posSrc[1]-40;
 	target.style.width=450;	
 		
 	
@@ -558,10 +558,10 @@ function getRowIndex(obj)
 }
 function fillNeibrAfterSplitGlcodeCredit(obj)
 {
-
 	var temp = obj.value;
 	temp = temp.split("`-`");
 	var currRow=getRowIndex(obj);
+	var glcodeId = document.getElementById('billCreditDetailslist['+currRow+'].glcodeIdDetail').value;
 	if(temp.length>1)
 	{ 
 		obj.value=temp[0];
@@ -569,13 +569,14 @@ function fillNeibrAfterSplitGlcodeCredit(obj)
 		document.getElementById('billCreditDetailslist['+currRow+'].glcodeDetail').value=temp[1];
 		check();
 	}
-	else{
+	else if(glcodeId==null || glcodeId==""){
 		document.getElementById('billCreditDetailslist['+currRow+'].glcodeIdDetail').value="";
 		document.getElementById('billCreditDetailslist['+currRow+'].glcodeDetail').value="";
 		document.getElementById('billCreditDetailslist['+currRow+'].accounthead').value="";
 	}
 	
 }
+
 function fillNeibrAfterSplitGlcodeRebate(obj)
 {
 
@@ -695,7 +696,7 @@ function createDropdownFormatterDetailCode(prefix){
 	var onDropdownDetailCodeChange = function(index,obj) { 
 		var detailtypeid = document.getElementById('subLedgerlist['+obj.value+'].detailType.id').value;
 			var selecteddetailcode1=document.getElementById('subLedgerlist['+obj.value+'].detailCode').value;
-			var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+obj.value;
+			var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+obj.value;
 			var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeDetailCode, null);
 	};
 	var postTypeDetailCode = {
@@ -715,7 +716,7 @@ function createDropdownFormatterDetailCode(prefix){
 		}
 	    },
 	    failure: function(o) {
-	    	alert('failure');
+	    	bootbox.alert('unable to load subledger details');
 	    }
 	}	
 
@@ -856,7 +857,7 @@ var onDropdownChange = function(index,obj) {
 		}
 		selecteddetailtype=document.getElementById('subLedgerlist['+obj.value+'].detailType.id').value;
 		//document.getElementById('subLedgerlist['+obj.value+'].subledgerCode').value= subledgerid.options[subledgerid.selectedIndex].text;
-		var url = path+'/receipts/ajaxReceiptCreate!getDetailType.action?accountCode='+accountCode+'&index='+obj.value+'&selectedDetailType='+selecteddetailtype+'&onload=false';
+		var url = path+'/receipts/ajaxReceiptCreate-getDetailType.action?accountCode='+accountCode+'&index='+obj.value+'&selectedDetailType='+selecteddetailtype+'&onload=false';
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 };
 var postType = {
@@ -917,7 +918,7 @@ success: function(o) {
 	}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('unable to load subledger details');
     }
 }
 function getDetailType(val){
@@ -931,7 +932,7 @@ function getDetailType(val){
 	var subledgerid=document.getElementById('subLedgerlist['+val+'].glcode.id');
 	var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 	if( subledgerid.options[subledgerid.selectedIndex].value!=0){
-		var url = path+'/receipts/ajaxReceiptCreate!getDetailType.action?accountCode='+accountCode+'&index='+val+'&selectedDetailType='+selecteddetailtype+'&onload=true';
+		var url = path+'/receipts/ajaxReceiptCreate-getDetailType.action?accountCode='+accountCode+'&index='+val+'&selectedDetailType='+selecteddetailtype+'&onload=true';
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 	}
 	else{
@@ -962,7 +963,7 @@ function getDetailCodeValue(val){
 	var detailtypeid = document.getElementById('subLedgerlist['+val+'].detailType.id').value;
 	var selecteddetailcode1=document.getElementById('subLedgerlist['+val+'].detailCode').value;
 	if(selecteddetailcode1!=0){
-		var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+val+'&codeorname=code';
+		var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+val+'&codeorname=code';
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeDetailCode, null);
 	}
 
@@ -983,7 +984,7 @@ function check(){
 			count++;
 		}
 	}
-	var url =  path+'/receipts/ajaxReceiptCreate!getDetailCode.action?accountCodes='+accountCodes;
+	var url =  path+'/receipts/ajaxReceiptCreate-getDetailCode.action?accountCodes='+accountCodes;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackJV, null);
 	
 }
@@ -1042,11 +1043,11 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('unable to load subledger details');
     }
 }
 function loaddropdown(){
-alert(coming);
+bootbox.alert(coming);
 	
 }
 function updateDebitAmount()
@@ -1084,7 +1085,13 @@ function updateCreditAmount()
 }
 
 function updatetotalAmount(){
-	var totalamount=parseFloat(document.getElementById('totalcramount').value)-parseFloat(document.getElementById('totaldbamount').value);
+	var totalamount;
+	if(document.getElementById('totaldbamount') !=null){
+		totalamount=parseFloat(document.getElementById('totalcramount').value)-parseFloat(document.getElementById('totaldbamount').value);
+	}
+	else {
+		totalamount=parseFloat(document.getElementById('totalcramount').value);
+	}
 	document.getElementById('misctotalAmount').value=totalamount.toFixed(2);
 	document.getElementById('totalamountdisplay').value=document.getElementById('misctotalAmount').value;
 }
@@ -1094,7 +1101,7 @@ function validateDetailCode(obj)
 	var index = getRowIndex(obj);
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
-	var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
+	var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackCode, null);
 }
 var callbackCode = {
@@ -1121,7 +1128,7 @@ var callbackCode = {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('unable to load subledger details');
     }
 }
 
@@ -1431,7 +1438,7 @@ function checkLength(obj)
 {
 	if(obj.value.length>1024)
 	{
-		alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+		bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 		obj.value = obj.value.substring(1,1024);
 	}
 }
@@ -1494,7 +1501,7 @@ var  currRow=getRowIndex(obj);
 
 			if(onElementFocused(obj)){
 				ShowImage(obj);//To start loading image
-				var url =   path+ "/receipts/ajaxReceiptCreate!getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
+				var url =   path+ "/receipts/ajaxReceiptCreate-getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
 				var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackAutoCompleteEntities, null);
 			}
 		}
@@ -1516,7 +1523,7 @@ var callbackAutoCompleteEntities = {
 	var posSrc=findPos(src); 
 	
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]+22+"px";
+	target.style.top=posSrc[1]-40+"px";
 	target.style.width=650;	
 	      		
 	
@@ -1560,7 +1567,7 @@ HideImage(entobj);
 	
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function splitEntitiesDetailCode(obj)

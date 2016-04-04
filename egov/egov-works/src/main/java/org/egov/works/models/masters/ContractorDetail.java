@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -132,10 +132,10 @@ public class ContractorDetail extends BaseModel {
         if (status == null || status.getId() == null)
             validationErrors.add(new ValidationError("status", "contractorDetails.status.required"));
         if (validity == null || validity != null && validity.getStartDate() == null)
-            validationErrors.add(new ValidationError("validity", "contractorDetails.startDate_empty"));
+            validationErrors.add(new ValidationError("validity", "contractorDetails.fromDate_empty"));
         else if (validity == null
                 || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
-            validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_date_range"));
+            validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_fromdate_range"));
         if (validationErrors.isEmpty())
             return null;
         else

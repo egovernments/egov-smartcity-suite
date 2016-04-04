@@ -38,7 +38,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-/ Author: RG Bhandi, Exilant Consulting
+/* Author: RG Bhandi, Exilant Consulting
 /  Ver 1.0 Oct - 2004
 /
 ******************************************/
@@ -305,7 +305,7 @@ this.search = function (strin){
 	else strin = this.searchString;
 	
 	if (strin == ''){
-		alert('No search string specified');
+		bootbox.alert('No search string specified');
 		return(false);
 	}
 	
@@ -327,7 +327,7 @@ this.search = function (strin){
 		}
 		//if we reach here, we have reached the end
 		if (restarted){
-			alert('No match found');
+			bootbox.alert('No match found');
 			return(false);
 		}
 		alert ('Reached end of tree. Going to start from beginning of tree');

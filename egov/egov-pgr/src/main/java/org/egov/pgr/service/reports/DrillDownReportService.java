@@ -41,25 +41,28 @@ package org.egov.pgr.service.reports;
 
 import java.util.Date;
 
-import org.egov.infstr.utils.HibernateUtil;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class DrillDownReportService {
-    private static final Logger LOG = LoggerFactory.getLogger(DrillDownReportService.class);
 
+    @PersistenceContext
+    private EntityManager entityManager;
+    
     public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
             final String complaintDateType, final String groupBy, final String department, final String boundary,
             final String complainttype, final String selecteduser) {
 
-        final StringBuffer query = new StringBuffer();
+        final StringBuilder query = new StringBuilder();
 
         if (boundary != null && !"".equals(boundary)) {
             if (department != null && !"".equals(department)) {
@@ -111,7 +114,7 @@ public class DrillDownReportService {
     }
 
     private void buildGroupByClause(final String groupBy, final String department, final String boundary,
-            final String complainttype, final String selecteduser, final StringBuffer query) {
+            final String complainttype, final String selecteduser, final StringBuilder query) {
         if (boundary != null && !"".equals(boundary)) {
             if (department != null && !"".equals(department)) {
                 if (complainttype != null && !"".equals(complainttype))
@@ -137,7 +140,7 @@ public class DrillDownReportService {
     }
 
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String complaintDateType,
-            final StringBuffer query, final String department, final String boundary, final String complainttype,
+            final StringBuilder query, final String department, final String boundary, final String complainttype,
             final String selecteduser) {
 
         query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id ");
@@ -178,7 +181,7 @@ public class DrillDownReportService {
 
     private SQLQuery setParameterForDrillDownReportQuery(final String querykey, final DateTime fromDate,
             final DateTime toDate, final String complaintDateType) {
-        final SQLQuery qry = HibernateUtil.getCurrentSession().createSQLQuery(querykey);
+        final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
             qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(7).toDate());
@@ -213,7 +216,7 @@ public class DrillDownReportService {
     public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
             final String complaintDateType, final String department, final String boundary, final String complainttype,
             final String selecteduser) {
-        final StringBuffer query = new StringBuffer();
+        final StringBuilder query = new StringBuilder();
 
         query.append(
                 "SELECT distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name || ' - ' || childlocation.name AS boundaryname , cd.citizenfeedback as feedback ,");

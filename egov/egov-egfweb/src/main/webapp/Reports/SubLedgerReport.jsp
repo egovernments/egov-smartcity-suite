@@ -1,42 +1,42 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@page  import="java.util.Date,java.text.SimpleDateFormat,org.egov.infstr.utils.EGovConfig,java.io.*,com.exilant.eGov.src.reports.GeneralLedgerReport,com.exilant.eGov.src.reports.*,com.exilant.eGov.src.transactions.*,java.io.*,java.util.*,java.sql.*,javax.sql.*,javax.naming.InitialContext,com.exilant.GLEngine.*"%>
 <%@ page import="org.apache.log4j.Logger"%>
@@ -58,12 +58,12 @@
 <!--
 <link rel=stylesheet href="../exility/global.css" type="text/css">
 -->
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
-<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js" type="text/javascript" ></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js?rnd=${app_release_no}"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js?rnd=${app_release_no}"></SCRIPT>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js?rnd=${app_release_no}" type="text/javascript" ></SCRIPT>
  <script type="text/javascript" src="../commonyui/build/yahoo/yahoo.js"></script>
 <script type="text/javascript" src="../commonyui/build/dom/dom.js" ></script>
 <script type="text/javascript" src="../commonyui/build/autocomplete/autocomplete-debug.js"></script>
@@ -71,9 +71,9 @@
 <script type="text/javascript" src="../commonyui/build/animation/animation.js"></script>
 <link type="text/css" rel="stylesheet" href="../commonyui/build/reset/reset.css">
 <link type="text/css" rel="stylesheet" href="../commonyui/build/fonts/fonts.css">
-<script type="text/javascript" src="../resources/javascript/contra.js"></script>
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../resources/javascript/contra.js?rnd=${app_release_no}"></script>
+<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}" rel="stylesheet" type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css?rnd=${app_release_no}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
 <link href="/EGF/resources/css/error.css" rel="stylesheet" type="text/css"></link>
@@ -84,15 +84,15 @@
 <script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
 <script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
 <script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-debug.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calenderNew.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calenderNew.js?rnd=${app_release_no}"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/helper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>  
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajax-script.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/ajax-script.js?rnd=${app_release_no}"></script>
 <link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
-<script type="text/javascript" src="/EGF/resources/javascript/tdsReportHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/subLedgerReportHelper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/tdsReportHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/subLedgerReportHelper.js?rnd=${app_release_no}"></script>
 
 
 <style type="text/css">
@@ -188,17 +188,17 @@ function ButtonPress()
 	} 	
 	if(accCode.value.length==0)
 	{
-		alert("please select Account Code");
+		bootbox.alert("please select Account Code");
 		return;
 	}
 	if(sDate.length==0||eDate.length==0)
 	{
-		alert("please select start dates and end dates");
+		bootbox.alert("please select start dates and end dates");
 		return;
 	}
 	if(document.getElementById('accEntityKey').value=='')
 	{
-		alert('please select a valid Accounting Entity');
+		bootbox.alert('please select a valid Accounting Entity');
 		return;
 	}  	
 		document.getElementById('fromBean').value = 1;
@@ -206,7 +206,7 @@ function ButtonPress()
 		var fuObj=document.getElementById('fund_id');
 		if(fuObj.value!='' && fuObj.selectedIndex!=-1){
 			//fuId=fuObj.options[fuObj.selectedIndex].value;
-			//alert(fuObj.value);       
+			//bootbox.alert(fuObj.value);       
 			document.getElementById("fundName").value=" under "+fuObj.options[fuObj.selectedIndex].text;
 		}else{
 			document.getElementById("fundName").value='';
@@ -223,7 +223,7 @@ function ButtonPress()
 		/*to check whether start date is greater than the end date*/
 		if( compareDate(formatDate6(sDate),formatDate6(eDate)) == -1 )
 		{
-			alert('Start Date cannot be greater than End Date');
+			bootbox.alert('Start Date cannot be greater than End Date');
 			document.getElementById('startDate').value='';
 			document.getElementById('endDate').value='';
 			document.getElementById('startDate').focus();
@@ -248,14 +248,14 @@ function ButtonPress()
 		var fiscalYearStartDate="01/04/"+eDate.substr(eDate.length-4,4);
 		if(compareDate(fiscalYearStartDate,sDate) == -1 )
 		{ 
-		   alert("Start Date and End Date should be in same financial year");
+			bootbox.alert("Start Date and End Date should be in same financial year");
 		   document.getElementById('startDate').focus();
 		   return;
 		}
 		 /*to check whether the End Date is greater than the Current Date*/
 		if( compareDate(formatDate6("<%=currDate%>"),formatDate6(eDate)) == 1 )
 		{
-			alert('End Date cannot be greater than Current Date');
+			bootbox.alert('End Date cannot be greater than Current Date');
 			document.getElementById('endDate').value='';
 			document.getElementById('endDate').value='';
 			return;
@@ -422,7 +422,7 @@ function ButtonPress()
 		 LOGGER.info("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

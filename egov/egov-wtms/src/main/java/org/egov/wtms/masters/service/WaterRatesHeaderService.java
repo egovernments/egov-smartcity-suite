@@ -78,7 +78,7 @@ public class WaterRatesHeaderService {
     }
 
     public List<WaterRatesHeader> findAll() {
-        return waterRatesHeaderRepository.findAll(new Sort(Sort.Direction.ASC, ""));
+        return waterRatesHeaderRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
     }
 
     public List<WaterRatesHeader> findAllByConnectionType(final ConnectionType connectionType) {

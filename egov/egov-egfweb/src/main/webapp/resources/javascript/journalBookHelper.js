@@ -50,7 +50,7 @@
      	/*To check whether Start Date is Greater than End Date*/
      	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
      	{
- 	    	alert('Start Date cannot be greater than End Date');
+     		bootbox.alert('Start Date cannot be greater than End Date');
  	    	document.getElementById('startDate').value='';
  	    	document.getElementById('endDate').value='';
  	    	document.getElementById('startDate').focus();
@@ -59,7 +59,7 @@
      	   /*to check whether the End Date is greater than the Current Date*/
      	if( compareDate(formatDate6(currentDate),formatDate6(endDate)) == 1 )
      	{
-     		alert('End Date cannot be greater than Current Date');
+     		bootbox.alert('End Date cannot be greater than Current Date');
      		document.getElementById('endDate').value='';
      		document.getElementById('endDate').focus();	
      		return false;	
@@ -67,7 +67,7 @@
         doLoadingMask();
     	document.getElementById("resultDiv").style.display="none";
         var formObj = jQuery(document.getElementById("journalBookForm"));
-        var formURL = '/EGF/report/journalBookReport!ajaxSearch.action';
+        var formURL = '/EGF/report/journalBookReport-ajaxSearch.action';
         var formData = new FormData(document.getElementById("journalBookForm"));
         jQuery.ajax({
             url: formURL,
@@ -96,7 +96,7 @@
     }
 	
 	function viewVoucher(vid){
-		var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+vid;
+		var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+vid;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
 	

@@ -186,9 +186,9 @@ function performanceGIS() {
 	        			  'Pending as on '+data.dateAsOn+' :<b> '+data.noOfCompPenAsonDate+'</b><br/>'+
 	        			  'Disposal Percentage : <b>'+data.disposalPerc+'% </b><br/>'+
 	        			  'Rank : <b>'+data.rank+'</b><br/>'+
-	        			  '<a href="#" id="performpgraph'+data.zoneId+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
+	        			  '<!--<a href="#" id="performpgraph'+data.zoneId+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
 	        			  '<a href="#" id="openbrkup'+data.zoneId+'"><i class="fa fa-pie-chart fa-fw"></i>Open Breakup</a><br/>'+
-	        			  '<a href="#" id="regbrkup'+data.zoneId+'"><i class="fa fa-pie-chart fa-fw"></i>Filed Breakup</a>'+
+	        			  '<a href="#" id="regbrkup'+data.zoneId+'"><i class="fa fa-pie-chart fa-fw"></i>Filed Breakup</a>-->'+
 	        			  '</div><div style="padding:5px;background-color:silver;color:white;font-size:11px;font-weight:bold">Till '+
 	        			  data.dateAsOn+'</div></div>');
 	        	  infoWin.open(map, marker);
@@ -982,8 +982,8 @@ function slaGIS() {
 	        	  infoWin.setContent('<div class="panel '+infoClass+'"><div class="panel-heading" style="font-weight:bold">Ward : '+
 	        			  data.zone+'</div><div class="panel-body" style="white-space:nowrap;color:#000;text-align:left;line-height:2;">Total Complaints : '+
 	        			  data.regComp+'<br/>Total Open : '+data.openComp+'<br/>Open From 90 Days: '+data.open90Comp+'<br/>Open : '+data.pecentage+'%<br/>'+
-	        			  '<a href="#" id="slapgraph'+data.zoneID+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
-	        			  '<a href="#" id="slapbrkup'+data.zoneID+'"><i class="fa fa-pie-chart fa-fw"></i>Open Breakup</a><br/>'+
+	        			  '<!--<a href="#" id="slapgraph'+data.zoneID+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
+	        			  '<a href="#" id="slapbrkup'+data.zoneID+'"><i class="fa fa-pie-chart fa-fw"></i>Open Breakup</a><br/>-->'+
 	        			  '</div><div style="padding:5px;background-color:silver;color:white;font-size:11px;font-weight:bold">Since '+
 	        			  data.startDt+' - '+data.endDt+'</div></div>');
 	        	  infoWin.open(map, marker);
@@ -1188,7 +1188,7 @@ function overviewPie() {
 		lastSelSlice = piedata[0].name;
 		$.ajax({url:"wardwise-complaint-by-type/"+piedata[0].ctId,
 			cache:true,
-			data: {color: "#5B94CB" }
+			data: {color: "#5B94CB"}
 		}).done(function(gisData) {
 			overviewGis(gisData);
 		});
@@ -1346,9 +1346,9 @@ function createPieInGmap() {
 		            				var name = this.name;
 		            				var color = this.color.stops[0][1];
 		            				lastSelSlice = name;
-			            			$.ajax({url:"overviewGis.do",
+			            			$.ajax({url:"wardwise-complaint-by-type/"+this.ctId,
 			            				cache:true,
-			            				data: { ctId: this.ctId, color: color }
+			            				data: { color: color }
 			            			}).done(function(gisData) {
 			            				overviewGis(gisData);
 			            			});
@@ -1471,9 +1471,9 @@ $(".ovrviewBkBtn").on("click",function(){
 
 
 function topFiveCompType() {
-		$.ajax({url:"top-complaints",
-			cache:false
-		}).done(function(piedata) {
+	$.ajax({url:"top-complaints",
+		cache:false
+	}).done(function(piedata) {
 	$("#page-top").mask('');
 	if($("#topFiveCompTypeGraph").highcharts()) {
 		$("#topFiveCompTypeGraph").highcharts().destroy();
@@ -1562,21 +1562,25 @@ function wardwiseAnalysis() {
 				style: google.maps.ZoomControlStyle.SMALL
 			}
 	 };
-	$.ajax({url:"gisWardWiseAnalysis.do",
+	
+	$.ajax({url:"gis-analysis",
 		cache:false
 	}).done(function(analysisData) {
-		drawGisAnalysis("wardwiseAnalysis1",analysisData.registered,gisOption);
-		drawGisAnalysis("wardwiseAnalysis2",analysisData.redressed,gisOption);
-		drawGisAnalysis("wardwiseAnalysis3",analysisData.complaintPerProperty,gisOption);
 		
-		$("#top1").text(analysisData.top1[0].compType);
+		console.log(JSON.stringify(analysisData));
+		
+		drawGisAnalysis("wardwiseAnalysis1",analysisData.registered,gisOption);
+		//drawGisAnalysis("wardwiseAnalysis2",analysisData.redressed,gisOption);
+		//drawGisAnalysis("wardwiseAnalysis3",analysisData.complaintPerProperty,gisOption);
+		
+		/*$("#top1").text(analysisData.top1[0].compType);
 		drawGisAnalysis("topGis1",analysisData.top1,gisOption);
 		
 		$("#top2").text(analysisData.top2[0].compType);
 		drawGisAnalysis("topGis2",analysisData.top2,gisOption);
 		
 		$("#top3").text(analysisData.top3[0].compType);
-		drawGisAnalysis("topGis3",analysisData.top3,gisOption);
+		drawGisAnalysis("topGis3",analysisData.top3,gisOption);*/
 		$("#page-top").unmask();
 	});
 	

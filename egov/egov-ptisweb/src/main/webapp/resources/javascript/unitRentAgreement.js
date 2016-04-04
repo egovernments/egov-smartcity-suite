@@ -100,7 +100,7 @@ function setFloorEffectiveDate(obj) {
 	}
 	
 	if (floorEffectiveDate == undefined || floorEffectiveDate == null || floorEffectiveDate == "" || floorEffectiveDate == "DD/MM/YYYY") {
-		alert("Please enter floor occupation date before proceeding...!");
+		bootbox.alert("Please enter floor occupation date before proceeding...!");
 		return false;
 	}
 }

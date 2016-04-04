@@ -103,4 +103,4 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/js/app/complaintrouterviewsearch.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/complaintrouterviewsearch.js?rnd=${app_release_no}'/>"></script>

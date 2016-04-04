@@ -78,7 +78,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.FinancialYear;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.feature.FeatureCollection;
@@ -107,7 +106,7 @@ public class CommonsServiceImpl implements CommonsService {
     public BoundaryTypeService boundaryTypeService;
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
-
+    
     public CommonsServiceImpl(final CommonsDAOFactory commonsDAOFactory, final SessionFactory sessionFactory) {
         this.commonsDAOFactory = commonsDAOFactory;
         this.sessionFactory = sessionFactory;
@@ -178,8 +177,8 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getInstallmentDao().getInsatllmentByModule(module, year, installmentNumber);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new ApplicationRuntimeException("Exception in searching Installment by module,year and installment number.",
-                    e);
+            throw new ApplicationRuntimeException(
+                    "Exception in searching Installment by module,year and installment number.", e);
         }
     }
 
@@ -219,8 +218,8 @@ public class CommonsServiceImpl implements CommonsService {
             final Module module = null;// TODO migrate mdouleDao
                                        // genericHibernateDaoFactory.getModuleDao().getModuleByName(EGovConfig.getProperty("MODULE_NAME",
                                        // "", "PT"));
-            final Installment instCurr = commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(
-                    module, DateUtils.getFinancialYear().getStartOnDate());
+            final Installment instCurr = commonsDAOFactory.getInstallmentDao()
+                    .getInsatllmentByModuleForGivenDate(module, DateUtils.getFinancialYear().getStartOnDate());
             final Date insYear = instCurr.getInstallmentYear();
             return new SimpleDateFormat("yyyy", Locale.ENGLISH).format(insYear);
         } catch (final Exception e) {
@@ -260,7 +259,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public Fund fundById(final Integer fundId) {
-        return commonsDAOFactory.getFundDAO().fundById(fundId);
+        return commonsDAOFactory.getFundDAO().fundById(fundId,false);
     }
 
     @Override
@@ -374,18 +373,14 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public Fund getFundById(final Integer fundId) {
-        return (Fund) commonsDAOFactory.getFundDAO().findById(fundId, false);
-    }
+        return (Fund) commonsDAOFactory.getFundDAO().fundById(fundId, false);
+    }   
 
     /*
      * @Override public List<EgUom> findAllUom() { return commonsDAOFactory.getEgUomDAO().findAllUom(); }
      */
 
-    @Override
-    public Relation getRelationById(final Integer relationId) {
-        return (Relation) commonsDAOFactory.getRelationDAO().findById(relationId, false);
-    }
-
+  
     /*
      * @Override public EgUom getUomById(final Integer uomId) { return (EgUom) commonsDAOFactory.getEgUomDAO().findById(uomId,
      * false); }
@@ -406,7 +401,8 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     @Override
-    public List<EgActiondetails> getEgActiondetailsFilterBy(final ArrayList<String> actionType, final String moduleType) {
+    public List<EgActiondetails> getEgActiondetailsFilterBy(final ArrayList<String> actionType,
+            final String moduleType) {
         return commonsDAOFactory.getEgActiondetailsDAO().getEgActiondetailsFilterBy(actionType, moduleType);
     }
 
@@ -457,7 +453,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public CChartOfAccounts findGlCodeById(final String glcodeid) {
-        return (CChartOfAccounts) commonsDAOFactory.getChartOfAccountsDAO().findById(glcodeid, false);
+        return null;
     }
 
     @Override
@@ -467,7 +463,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public CFinancialYear getFinancialYearByDate(final Date date) {
-        final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
+       final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
         return finYearDAO.getFinancialYearByDate(date);
     }
 
@@ -502,7 +498,7 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     @Override
-    public Collection<FinancialYear> getFinancialYearList() {
+    public Collection<CFinancialYear> getFinancialYearList() {
         return commonsDAOFactory.getFinancialYearDAO().findAll();
     }
 
@@ -511,13 +507,12 @@ public class CommonsServiceImpl implements CommonsService {
      * :Transaction number in the format txnType+number+/+month+/+year
      */
     @Override
-    public String getTxnNumber(final String txnType, final String vDate, final Connection con) throws ParseException,
-            SQLException {
-        final String txndate = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).format(new SimpleDateFormat(
-                "dd/MM/yyyy", Locale.ENGLISH).parse(vDate));
-        final Query query = getSession()
-                .createSQLQuery(
-                        "select a.FINANCIALYEAR,b.id from FINANCIALYEAR a,fiscalperiod b  where a.id=b.financialyearid AND ? between b.startingdate and b.endingdate");
+    public String getTxnNumber(final String txnType, final String vDate, final Connection con)
+            throws ParseException, SQLException {
+        final String txndate = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH)
+                .format(new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).parse(vDate));
+        final Query query = getSession().createSQLQuery(
+                "select a.FINANCIALYEAR,b.id from FINANCIALYEAR a,fiscalperiod b  where a.id=b.financialyearid AND ? between b.startingdate and b.endingdate");
         query.setString(0, txndate);
         final Object[] result = (Object[]) query.uniqueResult();
         String finYear = "";
@@ -528,8 +523,8 @@ public class CommonsServiceImpl implements CommonsService {
             finYear = result[0].toString();
             fiscalPeriod = result[1].toString();
         }
-        EgNumbers egnum = commonsDAOFactory.getEgNumbersHibernateDAO().getEgNumberByFiscalPeriodAndVouchertype(
-                fiscalPeriod, txnType);
+        EgNumbers egnum = commonsDAOFactory.getEgNumbersHibernateDAO()
+                .getEgNumberByFiscalPeriodAndVouchertype(fiscalPeriod, txnType);
         String runningNumber = "";
         if (egnum == null) {
             egnum = new EgNumbers();
@@ -738,32 +733,24 @@ public class CommonsServiceImpl implements CommonsService {
 
     /*
      * @Override public EgUom getUomByUom(final String uom) { EgUom egUom = null; if (uom != null) { final Query qry =
-     * getSession().createQuery("from EgUom uom where uom.uom=:uom"); qry.setString("uom", uom); egUom = (EgUom)
+     * getSession().createQuery( "from EgUom uom where uom.uom=:uom"); qry.setString("uom", uom); egUom = (EgUom)
      * qry.uniqueResult(); } return egUom; }
      */
 
-    @Override
-    public Bankaccount getBankaccountById(final Integer id) {
-        return (Bankaccount) commonsDAOFactory.getBankaccountDAO().findById(id, false);
+    
+    public Bankaccount getBankaccountById(final Long id) {
+        return null;
     }
 
-    @Override
-    public void createEgSurrenderedCheques(final EgSurrenderedCheques egSurrendrdChqs) {
-        commonsDAOFactory.getEgSurrenderedChequesDAO().create(egSurrendrdChqs);
-    }
-
-    @Override
-    public void updateEgSurrenderedCheques(final EgSurrenderedCheques egSurrendrdChqs) {
-        commonsDAOFactory.getEgSurrenderedChequesDAO().update(egSurrendrdChqs);
-    }
-
+    
     @Override
     public EgPartytype getPartytypeByCode(final String code) {
         return commonsDAOFactory.getEgPartytypeDAO().getPartytypeByCode(code);
     }
 
     @Override
-    public String getAccountdetailtypeAttributename(final Connection connection, final String name) throws SQLException {
+    public String getAccountdetailtypeAttributename(final Connection connection, final String name)
+            throws SQLException {
         final Query query = getSession().createSQLQuery("select id,attributename from accountdetailtype where name=?");
         query.setString(0, name);
         final Object[] result = (Object[]) query.uniqueResult();
@@ -928,8 +915,8 @@ public class CommonsServiceImpl implements CommonsService {
     @Override
     public Bankaccount getBankAccountByAccBranchBank(final String bankAccNum, final String bankBranchCode,
             final String bankCode) {
-        return commonsDAOFactory.getBankaccountDAO()
-                .getBankAccountByAccBranchBank(bankAccNum, bankBranchCode, bankCode);
+        return commonsDAOFactory.getBankaccountDAO().getBankAccountByAccBranchBank(bankAccNum, bankBranchCode,
+                bankCode);
     }
 
     @Override
@@ -948,7 +935,8 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     @Override
-    public List<CChartOfAccounts> getAccountCodeByListOfPurposeId(final Integer[] purposeId) throws ValidationException {
+    public List<CChartOfAccounts> getAccountCodeByListOfPurposeId(final Integer[] purposeId)
+            throws ValidationException {
         return commonsDAOFactory.getChartOfAccountsDAO().getAccountCodeByListOfPurposeId(purposeId);
     }
 
@@ -963,7 +951,7 @@ public class CommonsServiceImpl implements CommonsService {
      * @Override public BigDecimal getConversionFactorByUom(final Integer uomId) throws ValidationException { return
      * commonsDAOFactory.getEgUomDAO().getConversionFactorByUom(uomId); }
      * @Override public BigDecimal getConversionFactorByFromUomToUom(final Integer fromuomId, final Integer touomId) throws
-     * ValidationException { return commonsDAOFactory.getEgUomDAO().getConversionFactorByFromUomToUom(fromuomId , touomId); }
+     * ValidationException { return commonsDAOFactory.getEgUomDAO().getConversionFactorByFromUomToUom( fromuomId , touomId); }
      */
     @Override
     public List<EgPartytype> getSubPartyTypes(final String code) {
@@ -984,11 +972,11 @@ public class CommonsServiceImpl implements CommonsService {
                 map.put("url", Thread.currentThread().getContextClassLoader()
                         .getResource("gis/" + EgovThreadLocals.getTenantID() + "/wards.shp"));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
-                final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore.getFeatureSource(
-                        dataStore.getTypeNames()[0])
-                        .getFeatures();
+                final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore
+                        .getFeatureSource(dataStore.getTypeNames()[0]).getFeatures();
                 final Iterator<SimpleFeature> iterator = collection.iterator();
-                final Point point = JTSFactoryFinder.getGeometryFactory(null).createPoint(new Coordinate(longitude, latitude));
+                final Point point = JTSFactoryFinder.getGeometryFactory(null)
+                        .createPoint(new Coordinate(longitude, latitude));
                 LOG.debug("Fetching boundary data for coordinates lng {}, lat {}", longitude, latitude);
                 try {
                     while (iterator.hasNext()) {
@@ -1002,9 +990,18 @@ public class CommonsServiceImpl implements CommonsService {
                             if (boundaryNum != null && StringUtils.isNotBlank(bndryType)) {
                                 final BoundaryType boundaryType = boundaryTypeService
                                         .getBoundaryTypeByNameAndHierarchyTypeName(bndryType, "ADMINISTRATION");
-                                final Boundary boundary = boundaryService.getBoundaryByTypeAndNo(boundaryType, boundaryNum);
+                                final Boundary boundary = boundaryService.getBoundaryByTypeAndNo(boundaryType,
+                                        boundaryNum);
                                 if (boundary != null && true)
                                     boundaryId = boundary.getId();
+                                else {
+                                    final BoundaryType cityBoundaryType = boundaryTypeService
+                                            .getBoundaryTypeByNameAndHierarchyTypeName("City", "ADMINISTRATION");
+                                    final Boundary cityBoundary = boundaryService
+                                            .getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0);
+                                    boundaryId = cityBoundary.getId();
+                                }
+
                             }
                             break;
                         }
@@ -1024,6 +1021,35 @@ public class CommonsServiceImpl implements CommonsService {
     public CFinancialYear getFinYearByDate(final Date date) {
         final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
         return finYearDAO.getFinYearByDate(date);
+    }
+
+    @Override
+    public Accountdetailtype getAccountDetailTypeByName(final String name) {
+        return commonsDAOFactory.getaccountdetailtypeHibernateDAO().getAccountdetailtypeByName(name);
+    }
+
+    @Override
+    public Relation getRelationById(Integer relationId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Bankaccount getBankaccountById(Integer id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void createEgSurrenderedCheques(EgSurrenderedCheques egSurrenderedCheques) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void updateEgSurrenderedCheques(EgSurrenderedCheques egSurrenderedCheques) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

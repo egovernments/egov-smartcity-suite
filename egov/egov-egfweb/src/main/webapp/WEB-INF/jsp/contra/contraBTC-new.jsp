@@ -1,94 +1,108 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css"/>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-	<title>Cash Withdrawal</title>
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contra.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
+<title>Cash Withdrawal</title>
 </head>
 
-	
+
 <body onload="onloadtask();">
-<s:form action="contraBTC" theme="simple" name="cashWithDrawalForm" >
-	<jsp:include page="../budget/budgetHeader.jsp">
-      	<jsp:param name="heading" value="Cash Withdrawal" />
-	</jsp:include>
-	<div align="center">
-		<font  style='color: red ;'> 
-			<p class="error-block" id="lblError" ></p>
-		</font>
-		<span class="mandatory" id="errors">
-			<s:actionerror/>  
-			<s:fielderror />
-			<s:actionmessage />
-		</span>
-	</div>
-			
-	<div class="formmainbox">
-		<div class="formheading"/>
+	<s:form action="contraBTC" theme="simple" name="cashWithDrawalForm">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="Cash Withdrawal" />
+		</jsp:include>
+		<div align="center">
+			<font style='color: red;'>
+				<p class="error-block" id="lblError"></p>
+			</font> <span class="mandatory" id="errors"> <s:actionerror /> <s:fielderror />
+				<s:actionmessage />
+			</span>
+		</div>
+
+		<div class="formmainbox">
+			<div class="formheading" />
 			<div class="subheadnew">Cash Withdrawal</div>
 		</div>
 		<%@include file="contraBTC-form.jsp"%>
-		<div class="buttonbottom" style="padding-bottom:10px;"> 
-			<s:submit type="submit" cssClass="buttonsubmit" value="Save & Close" id="save&close" method="create" onclick="return validateInput('saveAndClose')"/>
-			<s:submit type="submit" cssClass="buttonsubmit" value="Save & New" id="save&new" method="create" onclick="return validateInput('saveAndNew')"/>
-			<s:submit type="submit" cssClass="buttonsubmit" value="Save & VIew" id="save&View" method="create" onclick="return validateInput('saveAndView')"/>
-			<s:reset name="button" type="submit" cssClass="button" id="button" value="Cancel"/>
-			<s:submit value="Close" onclick="javascript: self.close()" cssClass="button"/>
+		<div class="buttonbottom" style="padding-bottom: 10px;">
+			<s:submit type="submit" cssClass="buttonsubmit" value="Save & Close"
+				id="save&close" method="create"
+				onclick="return validateInput('saveAndClose')" />
+			<s:submit type="submit" cssClass="buttonsubmit" value="Save & New"
+				id="save&new" method="create"
+				onclick="return validateInput('saveAndNew')" />
+			<s:submit type="submit" cssClass="buttonsubmit" value="Save & VIew"
+				id="save&View" method="create"
+				onclick="return validateInput('saveAndView')" />
+			<s:reset name="button" type="submit" cssClass="button" id="button"
+				value="Cancel" />
+			<s:submit value="Close" onclick="javascript: self.close()"
+				cssClass="button" />
 		</div>
-	</div>
-	<input type="hidden" id="voucherHeader.name" name="voucherHeader.name" value="BankToCash"/>
-	<input type="hidden" id="saveType" name="saveType" value="%{saveType}"/>
-	<input type="hidden" id="voucherHeader.type" name="voucherHeader.type" value="Contra"/>
-	<input type="hidden" id="voucherHeader.cgvn" name="voucherHeader.cgvn" value="BTC"/>
-	<s:hidden id="bankBalanceMandatory" name="bankBalanceMandatory" value="%{isBankBalanceMandatory()}"/>
-<s:token/>
-</s:form>
-<div id="resultGrid"></div>
+		</div>
+		<input type="hidden" id="voucherHeader.name" name="voucherHeader.name"
+			value="BankToCash" />
+		<input type="hidden" id="saveType" name="saveType" value="%{saveType}" />
+		<input type="hidden" id="voucherHeader.type" name="voucherHeader.type"
+			value="Contra" />
+		<input type="hidden" id="voucherHeader.cgvn" name="voucherHeader.cgvn"
+			value="BTC" />
+		<s:hidden id="bankBalanceMandatory" name="bankBalanceMandatory"
+			value="%{isBankBalanceMandatory()}" />
+		<s:token />
+	</s:form>
+	<div id="resultGrid"></div>
 
-<script>
+	<script>
 	String.prototype.trim = function () {
 	    return this.replace(/^\s*/, "").replace(/\s*$/, "");
 	}
@@ -166,7 +180,7 @@
 			{
 				if(document.getElementById('bankBalanceMandatory').value=='true')
 				{
-					alert(insuffientAlert);
+					bootbox.alert(insuffientAlert);
 					return false;
 				}
 				else

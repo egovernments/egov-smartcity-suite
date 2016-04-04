@@ -65,6 +65,7 @@ public class AssessmentDetails implements Serializable {
     private Integer flag;
     private double latitude;
     private double longitude;
+    private boolean status;
 
     public String getPropertyID() {
         return propertyID;
@@ -167,6 +168,14 @@ public class AssessmentDetails implements Serializable {
 
     public void setLongitude(final double longitude) {
         this.longitude = longitude;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
 }

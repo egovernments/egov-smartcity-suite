@@ -85,7 +85,7 @@
 				error: function (response) {
 					console.log("failed");
 					jQuery('#blockId').html("");
-					alert("No block details mapped for ward")
+					bootbox.alert("No block details mapped for ward")
 				}
 			});
 		}
@@ -277,7 +277,7 @@
 
 				<div class="row">
 					<div class="text-center">
-						<button type="button" id="btnsearch" class="btn btn-success">
+						<button type="button" id="btnsearch" class="btn btn-primary">
 							Search</button>
 						<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 							Close</button>
@@ -367,5 +367,5 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/javascript/collectionSummaryReport.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/collectionSummaryReport.js?rnd=${app_release_no}'/>"></script>
 </html>

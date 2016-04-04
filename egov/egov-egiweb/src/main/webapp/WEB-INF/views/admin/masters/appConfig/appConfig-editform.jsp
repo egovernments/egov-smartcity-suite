@@ -159,7 +159,7 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+<script src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
 
 <script src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
@@ -267,7 +267,7 @@
 		        var counts = lastRow - 1;
 		         if(lastRow ==1)
 		      	{
-		     		 alert('you canont delete this row ');
+		        	 bootbox.alert('you canont delete this row ');
 		   			
 		      	     return false;
 		        }

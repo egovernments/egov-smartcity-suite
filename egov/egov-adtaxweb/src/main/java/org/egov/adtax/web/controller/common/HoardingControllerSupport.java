@@ -38,10 +38,11 @@
  */
 package org.egov.adtax.web.controller.common;
 
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.HoardingDocument;
 import org.egov.adtax.entity.HoardingDocumentType;
@@ -49,15 +50,21 @@ import org.egov.adtax.entity.RatesClass;
 import org.egov.adtax.entity.RevenueInspector;
 import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.service.AdvertisementDemandService;
+import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.AdvertisementRateService;
+import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.HoardingDocumentTypeService;
-import org.egov.adtax.service.HoardingService;
 import org.egov.adtax.service.RatesClassService;
 import org.egov.adtax.service.RevenueInspectorService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.service.UnitOfMeasureService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgdmCollectedReceipt;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -67,9 +74,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-public class HoardingControllerSupport {
-     protected SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    protected @Autowired HoardingService hoardingService;
+public class HoardingControllerSupport extends GenericWorkFlowController {
+    protected @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;
+    protected @Autowired AdvertisementService advertisementService;
     protected @Autowired SubCategoryService subCategoryService;
     protected @Autowired FileStoreUtils fileStoreUtils;
     protected @Autowired BoundaryService boundaryService;
@@ -81,6 +88,12 @@ public class HoardingControllerSupport {
     protected @Autowired HoardingDocumentTypeService hoardingDocumentTypeService;
     protected @Autowired ApplicationProperties applicationProperties;
     protected @Autowired AdvertisementDemandService advertisementDemandService;
+    protected @Autowired FinancialYearDAO financialYearDAO;
+
+    @ModelAttribute("previousFinancialYear")
+    public CFinancialYear previousFinancialYear() {
+        return financialYearDAO.getPreviousFinancialYearByDate(new Date());
+    }
 
     @ModelAttribute("hoardingCategories")
     public List<HoardingCategory> hoardingCategories() {
@@ -106,7 +119,7 @@ public class HoardingControllerSupport {
     public List<RatesClass> getAllRatesClass() {
         return ratesClassService.getAllRatesClass();
     }
-       
+
     @ModelAttribute("hoardingDocumentTypes")
     public List<HoardingDocumentType> hoardingDocumentTypes() {
         return hoardingDocumentTypeService.getAllDocumentTypes();
@@ -114,58 +127,95 @@ public class HoardingControllerSupport {
 
     @ModelAttribute("revenueZones")
     public List<Boundary> revenueZones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE,AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE,
+                AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE, AdvertisementTaxConstants.ADMINISTRATION_HIERARCHY_TYPE );
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE,
+                AdvertisementTaxConstants.ADMINISTRATION_HIERARCHY_TYPE);
     }
+
     @ModelAttribute("localities")
     public List<Boundary> localities() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_LOCALITY, AdvertisementTaxConstants.LOCATION_HIERARCHY_TYPE );
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                AdvertisementTaxConstants.BOUNDARYTYPE_LOCALITY, AdvertisementTaxConstants.LOCATION_HIERARCHY_TYPE);
     }
+
     @ModelAttribute("revenueWards")
     public List<Boundary> revenueWards() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ELECTIONWARD, AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE );
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                AdvertisementTaxConstants.BOUNDARYTYPE_ELECTIONWARD, AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
     }
-    
-    protected void storeHoardingDocuments(final Hoarding hoarding) {
-        hoarding.getDocuments().forEach(document -> {
+
+    protected void storeHoardingDocuments(final AdvertisementPermitDetail advertisementPermitDetail) {
+        advertisementPermitDetail.getAdvertisement().getDocuments().forEach(document -> {
             document.setFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
         });
     }
-    protected void updateHoardingDocuments(final Hoarding hoarding) {
-        hoarding.getDocuments().forEach(document -> {
-            document.addFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
+
+    protected void updateHoardingDocuments(final AdvertisementPermitDetail advertisementPermitDetail) {
+        advertisementPermitDetail.getAdvertisement().getDocuments().forEach(document -> {
+            if(document.getAttachments() != null)
+                document.addFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
         });
     }
-    
-    protected void validateHoardingDocs(final Hoarding hoarding, final BindingResult resultBinder) {
+
+    protected void validateHoardingDocs(final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder) {
         int index = 0;
-        for (final HoardingDocument document : hoarding.getDocuments()) {
+        for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.mandatory");
+                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.mandatory");
             else if (document.isEnclosed() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
+                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
             index++;
         }
     }
-    protected void validateHoardingDocsOnUpdate(final Hoarding hoarding, final BindingResult resultBinder, RedirectAttributes redirAttrib) {
+
+    protected void validateHoardingDocsOnUpdate(final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         int index = 0;
-        for (final HoardingDocument document : hoarding.getDocuments()) {
-            if (document.getDoctype().isMandatory() && document.getFiles().size()==0 && document.getAttachments()[0].getSize() == 0){
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.mandatory");
+        for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
+            if (document.getDoctype().isMandatory() && document.getFiles().size() == 0
+                    && document.getAttachments()[0].getSize() == 0) {
+                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.mandatory");
+                redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
+            } else if (document.isEnclosed() && document.getFiles().size() == 0 && document.getAttachments()[0].getSize() == 0) {
+                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
                 redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
             }
-            else if (document.isEnclosed() && document.getFiles().size()==0 && document.getAttachments()[0].getSize() == 0)
-            {
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
-                redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
-            }
-                index++;
+            index++;
         }
-       
-        
+
+    }
+
+    protected Boolean checkTaxAlreadyCollectedForAdvertisement(final Advertisement advertisement) {
+        Boolean taxAlreadyCollectedForDemandInAnyYear = false;
+        if (advertisement != null && advertisement.getDemandId() != null
+                && advertisement.getDemandId().getEgDemandDetails() != null)
+            for (final EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails())
+                for (final EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts())
+                    if (!collRecpt.isCancelled()) {
+                        taxAlreadyCollectedForDemandInAnyYear = true;
+                        break;
+                    }
+        return taxAlreadyCollectedForDemandInAnyYear;
+    }
+
+    protected void validateAdvertisementDetails(final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder) {
+
+        if (advertisementPermitDetail.getAgency() == null && advertisementPermitDetail.getOwnerDetail() == null)
+            resultBinder.rejectValue("agency", "invalid.eitherAgencyOrOwnerDetailRequired");
+
+        if (advertisementPermitDetail.getAdvertisement() != null &&
+                advertisementPermitDetail.getAdvertisement().getPropertyNumber() == null
+                && advertisementPermitDetail.getAdvertisement().getCategory() != null
+                && advertisementPermitDetail.getAdvertisement().getCategory().isPropertyMandatory())
+            resultBinder.rejectValue("advertisement.propertyNumber", "invalid.propertyIdIsMandatoryForCategory");
+        // TODO: SAVE AUTOCALCULATED AMOUNT IN BACKEND.
+
     }
 }

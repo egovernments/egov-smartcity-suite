@@ -58,15 +58,17 @@
    }
  </script>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
- <tr>
-    <td width="11%" class="whiteboxwk">Select Estimate:</td>
-	<td width="21%" class="whitebox2wk">
-	   <input name="tenderForEst" type="radio" id="tenderForEst" onClick="viewSearchPage('estimate');"/>
-	</td>
-	<td width="11%" class="whiteboxwk">Select  Works package:</td>
-	<td width="21%" class="whitebox2wk">
-	  <input name="tenderForWp" type="radio" id="tenderForWp" onClick="viewSearchPage('wp');"/>
-	</td>  
- </tr>	
-</table>
+ <div class="form-group">
+	<label class="col-sm-2 control-label text-right">
+	    Select Estimate
+	</label>
+	<div class="col-sm-3 add-margin">
+		<input name="tenderForEst" type="radio" id="tenderForEst" onClick="viewSearchPage('estimate');"/> 
+	</div>
+	<label class="col-sm-2 control-label text-right">
+	    Select  Works Package
+	</label>
+	<div class="col-sm-3 add-margin">
+		<input name="tenderForWp" type="radio" id="tenderForWp" onClick="viewSearchPage('wp');"/>
+	</div>
+</div>

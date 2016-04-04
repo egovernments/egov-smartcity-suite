@@ -63,6 +63,7 @@
 		
 		<intercept-url pattern="/v*/complaint/**" access="hasAnyRole('ROLE_CITIZEN','ROLE_EMPLOYEE')" />
 		<intercept-url pattern="/v*/citizen/**" access="hasAnyRole('ROLE_CITIZEN','ROLE_EMPLOYEE')" />
+		<intercept-url pattern="/v*/employee/**" access="hasAnyRole('ROLE_EMPLOYEE')" />
 		<intercept-url pattern="/v*/admin/**" access="hasRole('ROLE_ADMIN')" />
 		<custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
 		<access-denied-handler ref="oauthAccessDeniedHandler" />	
@@ -171,7 +172,7 @@
 	<oauth:client-details-service id="clientDetails">
 		<oauth:client client-id="egov-api"
 			authorized-grant-types="password,authorization_code,refresh_token,implicit,client_credentials"
-			secret="egov-api" authorities="ROLE_APP,ROLE_CITIZEN,ROLE_ADMIN" />
+			secret="egov-api" authorities="ROLE_APP,ROLE_CITIZEN,ROLE_ADMIN,ROLE_EMPLOYEE" />
 
 	</oauth:client-details-service>
 

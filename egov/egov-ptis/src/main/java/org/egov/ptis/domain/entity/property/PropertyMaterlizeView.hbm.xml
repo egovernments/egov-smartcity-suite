@@ -67,11 +67,16 @@
 		<property name="aggrArrDmd" column="AGGREGATE_ARREAR_DEMAND" />
 		<property name="aggrCurrColl" column="CURRENT_COLLECTION" />
 		<property name="aggrArrColl" column="ARREARCOLLECTION" />
+		<property name="aggrArrearPenaly" column="pen_aggr_arrear_demand" />
+		<property name="aggrArrearPenalyColl" column="pen_aggr_arr_coll" />
+		<property name="aggrCurrPenaly" column="pen_aggr_current_demand" />
+		<property name="aggrCurrPenalyColl" column="pen_aggr_current_coll" />
 		<property name="gisRefNo" column="GISREFNO" />
 		<property name="isExempted" column="ISEXEMPTED" />
 		<property name="source" column="SOURCE" />
 		<property name="alv" column="ALV"/>
 		<property name="mobileNumber" column="mobileno"/>
+		<property name="isActive" column="isactive"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>

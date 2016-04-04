@@ -1,0 +1,1 @@
+Insert into EGPT_PROPERTY_TYPE_MASTER (id,property_type,modified_date,type_factor,property_type_local,code,created_by,modified_by,created_date,orderno) values (nextval('seq_egpt_property_type_master'),'EWSHS',now(),1,null,'EWSHS',1,1,now(),7);

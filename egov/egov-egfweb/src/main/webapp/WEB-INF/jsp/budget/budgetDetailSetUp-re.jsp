@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <SCRIPT type="text/javascript">
 var defaultDept = '<s:property value="executingDepartment.id"/>'
@@ -264,7 +264,7 @@ function createAmountFieldFormatter(values,prefix,suffix){
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});
@@ -379,4 +379,4 @@ function createAmountFieldFormatter(values,prefix,suffix){
 	}
 		
 		
-</SCRIPT>      
+</SCRIPT>

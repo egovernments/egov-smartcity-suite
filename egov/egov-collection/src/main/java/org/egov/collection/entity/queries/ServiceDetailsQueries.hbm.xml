@@ -24,8 +24,8 @@
 	<query name="getChartofAccountByInstrumentType">
     <![CDATA[select c from CChartOfAccounts c,InstrumentAccountCodes iac,InstrumentType it where iac.accountCode.id=c.id and iac.instrumentType.id=it.id and it.type=?]]></query>
 
-	<query name="getLocationByUser">
-    <![CDATA[select l from Location l,UserCounterMap ucm,User uim where uim.id=ucm.userId.id and ucm.counterId.id=l.id and uim.username=?]]></query>
+	<!-- query name="getLocationByUser"-->
+    <!-- [CDATA[select l from Location l,UserCounterMap ucm,User uim where uim.id=ucm.userId.id and ucm.counterId.id=l.id and uim.username=?]]></query-->
 
 	<query name="getReceiptHeaderById">
 	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id=?]]></query>
@@ -37,11 +37,11 @@
 	<![CDATA[select f from Functionary f where f.code=?]]></query>
 
 	<query name="getAllActiveCounters">
-	<![CDATA[from org.egov.lib.security.terminal.model.Location loc where loc.isActive = 1 and loc.isLocation = 0 order by loc.name]]></query>
-	
+	<![CDATA[from org.egov.infra.admin.master.entity.Location loc where loc.active = true order by loc.name]]></query>
+
 	<query name="getAllCounters">
-	<![CDATA[from org.egov.lib.security.terminal.model.Location loc where loc.isLocation = 0 order by loc.name]]></query>
-	
+	<![CDATA[from org.egov.infra.admin.master.entity.Location loc order by loc.name]]></query>
+
 	<query name="getSchemeByCode">
 	<![CDATA[select s from Scheme s where s.code=?]]></query>
 	
@@ -61,16 +61,16 @@
 	<![CDATA[select d from  Department d order by name]]></query>
 	
 	<query name="getAllFunction">
-	<![CDATA[select f from  CFunction f where f.isActive=1 and f.isNotLeaf=0  order by f.name]]></query>
+	<![CDATA[select f from  CFunction f where f.isActive=true and f.isNotLeaf=0  order by f.name]]></query>
 	
 	<query name="getAllFunctionary">
-	<![CDATA[select f from Functionary f where f.isactive=1 order by f.name]]></query>
+	<![CDATA[select f from Functionary f where f.isactive=true order by f.name]]></query>
 	
 	<query name="getAllFund">
-	<![CDATA[select f from Fund f where f.isactive=1 and f.isnotleaf=0 order by f.name]]></query>
+	<![CDATA[select f from Fund f where f.isactive=true and f.isnotleaf=false order by f.name]]></query>
 	
 	<query name="getAllFundsource">
-	<![CDATA[select f  from Fundsource f where f.isactive=1 and f.isnotleaf=0 order by name]]></query>
+	<![CDATA[select f  from Fundsource f where f.isactive=true and f.isnotleaf=false order by name]]></query>
 	
 	<query name="getAllField">
 	<![CDATA[select b  from Boundary b where lower(b.boundaryType.name)='zone']]></query>
@@ -79,16 +79,16 @@
     <![CDATA[select s from ServiceDetails s where s.id = ?]]></query>
 
 	<query name="getAllSchemeByFundId">
-    <![CDATA[from Scheme where fund.id=? and isActive=1 order by name]]></query>
+    <![CDATA[from Scheme where fund.id=? and isActive=true order by name]]></query>
     
     <query name="getAllSubSchemeBySchemeId">
-    <![CDATA[from SubScheme where scheme.id=? and isActive=1 order by name]]></query>
+    <![CDATA[from SubScheme where scheme.id=? and isActive=true order by name]]></query>
     
     <query name="getServicesforChallan">
     <![CDATA[from ServiceDetails s where s.serviceType=? order by name]]></query>
     
     <query name="getActiveFinancialYear">
-    <![CDATA[from CFinancialYear f where f.isActive=1 order by finYearRange]]></query>
+    <![CDATA[from CFinancialYear f where f.isActive=true order by finYearRange]]></query>
     
     <!-- query name="getAllDesignationByDepartment"-->
     <!-- [CDATA[select distinct(dm) from DesignationMaster dm,Assignment a,AssignmentPrd ap 
@@ -99,7 +99,7 @@
     <![CDATA[from CVoucherHeader cv where cv.voucherNumber=?]]></query>
     
      <query name="getFinancialYearByDate">
-    <![CDATA[from CFinancialYear cfinancialyear where ? between cfinancialyear.startingDate and cfinancialyear.endingDate]]></query>
+    <![CDATA[from CFinancialYear cfinancialyear where ? between date(cfinancialyear.startingDate) and date(cfinancialyear.endingDate)]]></query>
     
     <query name="getAllStatusesForModule">
 	<![CDATA[from EgwStatus s where moduletype=? order by orderId]]></query>
@@ -119,16 +119,16 @@
     <![CDATA[from ContraJournalVoucher cjv where cjv.voucherHeaderId.id=? and cjv.instrumentHeaderId.id=?]]></query>
     
     <query name="getActiveServiceByType">
-	<![CDATA[select s from ServiceDetails s where s.serviceCategory.isActive = '1' and s.serviceType = ? order by s.orderNumber]]>
+	<![CDATA[select s from ServiceDetails s where s.serviceCategory.isActive = true and s.serviceType = ? order by s.orderNumber]]>
 	</query>
 	
     <query name="getActiveServiceByCodes">
-	<![CDATA[select s from ServiceDetails s where s.serviceCategory.isActive = '1' and s.serviceType = ? and s.code in(:param_1) order by s.orderNumber]]>
+	<![CDATA[select s from ServiceDetails s where s.serviceCategory.isActive = true and s.serviceType = ? and s.code in(:param_1) order by s.orderNumber]]>
 	</query>
-	
+
 	<query name="getAllLocations">
-    <![CDATA[from Location loc where loc.isLocation = 1 order by loc.name]]></query>
-    
+    <![CDATA[from Location loc order by loc.name]]></query>
+
     <query name="getServiceCategoryForType">
 	<![CDATA[
 	select distinct c from org.egov.infstr.models.ServiceDetails s join s.serviceCategory c where s.serviceType=? and s.isEnabled=?

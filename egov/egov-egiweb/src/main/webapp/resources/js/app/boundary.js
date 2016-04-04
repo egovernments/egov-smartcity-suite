@@ -70,7 +70,7 @@ $('#buttonUpdate').click(function() {
 function checkForChild(){
 	var id = $("#boundaryTypeSelect").val();
 	if(id ==''){
-		alert('Please select the Boundary Type !');
+		bootbox.alert('Please select the Boundary Type !');
 		return false;
 	}
 	else{
@@ -81,7 +81,7 @@ function checkForChild(){
 			dataType: "json",
 			success: function (response) {
 				if(response == true){
-					alert('Child already exists!');
+					bootbox.alert('Child already exists!');
 					return false;
 				}
 				else{
@@ -136,7 +136,7 @@ function checkForRootNode() {
 		dataType: "json",
 		success: function (response) {
 			if(response == false){
-				alert('Sorry! You can\'t create root for the Child Boundary!');
+				bootbox.alert('Sorry! You can\'t create root for the Child Boundary!');
 				return false;
 			}
 			return true;
@@ -151,7 +151,7 @@ function validateName(){
 	var childName = $("#name").val();
 	var parentName = $("#parent").val();
 	if(childName == parentName){
-		alert('Child and parent boundary types cannot have the same name!');
+		bootbox.alert('Child and parent boundary types cannot have the same name!');
 		return false;
 	}
 	else{

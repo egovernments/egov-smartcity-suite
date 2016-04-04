@@ -50,12 +50,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -63,10 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -79,7 +77,6 @@ import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -90,8 +87,11 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = "view", location = "viewProperty-view.jsp") })
@@ -122,9 +122,12 @@ public class ViewPropertyAction extends BaseFormAction {
     private PersistenceService<Property, Long> propertyImplService;
     @Autowired
     private PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
+    @Autowired
+    @Qualifier("transferOwnerService")
+    private PropertyTransferService transferOwnerService;
 
     private boolean isNagarPanchayat = false;
-    
+
     @Override
     public StateAware getModel() {
         return property;
@@ -138,8 +141,8 @@ public class ViewPropertyAction extends BaseFormAction {
             viewMap = new HashMap<String, Object>();
             if (propertyId != null && !propertyId.isEmpty())
                 setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-            else if (applicationNo != null && !applicationNo.isEmpty()){
-                getBasicPropForAppNo(applicationNo, applicationType); 
+            else if (applicationNo != null && !applicationNo.isEmpty()) {
+                getBasicPropForAppNo(applicationNo, applicationType);
                 setPropertyId(basicProperty.getUpicNo());
             }
             if (LOGGER.isDebugEnabled())
@@ -162,7 +165,8 @@ public class ViewPropertyAction extends BaseFormAction {
                     final List<Address> addrSet = propOwner.getOwner().getAddress();
                     for (final Address address : addrSet) {
                         ownerAddress = address.toString();
-                        viewMap.put("doorNo", address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
+                        viewMap.put("doorNo",
+                                address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
                         break;
                     }
                 }
@@ -177,35 +181,42 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
                 viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
 
-                viewMap.put("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
-                viewMap.put("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
+                viewMap.put("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
+                        : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
+                viewMap.put("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
+                        : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
                 BigDecimal totalTax = BigDecimal.ZERO;
                 if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
                         .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-                	viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-                	viewMap.put("propertyType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
-                	totalTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
-	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-	                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                	if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
-                		viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-                		viewMap.put("totalTax",totalTax
-                                        .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
-                	}else{
-                		viewMap.put("totalTax",totalTax);
-                	}
-                    
+                    viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+                    viewMap.put("propertyType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
+                    totalTax = demandCollMap
+                            .get(DEMANDRSN_STR_GENERAL_TAX)
+                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
+                                    : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
+                                    : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                    if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
+                        viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                        viewMap.put("totalTax", totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+                    } else {
+                        viewMap.put("totalTax", totalTax);
+                    }
+
                 } else {
                     viewMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                    totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
-	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-	                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                    if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
-                    	viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-                		viewMap.put("totalTax",totalTax
-                                        .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
-                    }else{
-                    	viewMap.put("totalTax",totalTax);
+                    totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap
+                            .get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap
+                            .get(DEMANDRSN_STR_GENERAL_TAX))
+                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
+                                    : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
+                                    : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                    if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
+                        viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                        viewMap.put("totalTax", totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+                    } else {
+                        viewMap.put("totalTax", totalTax);
                     }
                 }
 
@@ -224,10 +235,12 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
             else
                 viewMap.put("ARV", BigDecimal.ZERO);
-            
+
             propertyTaxUtil.setPersistenceService(persistenceService);
-            viewMap.put("enableVacancyRemission", propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo()));
-            viewMap.put("enableMonthlyUpdate", propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo()));
+            if (null != basicProperty.getUpicNo()) {
+                viewMap.put("enableVacancyRemission", propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo()));
+                viewMap.put("enableMonthlyUpdate", propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo()));
+            }
             final Long userId = (Long) session().get(SESSIONLOGINID);
             if (userId != null)
                 setRoleName(getRolesForUserId(userId));
@@ -235,7 +248,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 LOGGER.debug("viewForm : viewMap : " + viewMap);
                 LOGGER.debug("Exit from method viewForm");
             }
-            return "view"; 
+            return "view";
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
             throw new ApplicationRuntimeException("Exception in View Property : " + e);
@@ -284,6 +297,10 @@ public class ViewPropertyAction extends BaseFormAction {
                 final RevisionPetition rp = revisionPetitionPersistenceService.find(
                         "from RevisionPetition where objectionNumber=?", appNo);
                 setBasicProperty(rp.getBasicProperty());
+            } else if (appType.equals(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+                final PropertyMutation propertyMutation = transferOwnerService
+                        .getPropertyMutationByApplicationNo(appNo);
+                setBasicProperty(propertyMutation.getBasicProperty());
             }
     }
 
@@ -301,7 +318,7 @@ public class ViewPropertyAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exiting from setFloorDetails: ");
     }
-    
+
     public String getFloorNoStr(final Integer floorNo) {
         return FLOOR_MAP.get(floorNo);
     }
@@ -403,10 +420,10 @@ public class ViewPropertyAction extends BaseFormAction {
     }
 
     public boolean getIsNagarPanchayat() {
-    	return propertyTaxUtil.checkIsNagarPanchayat();
-	}
+        return propertyTaxUtil.checkIsNagarPanchayat();
+    }
 
-	public void setIsNagarPanchayat(boolean isNagarPanchayat) {
-		this.isNagarPanchayat = isNagarPanchayat;
-	}
+    public void setIsNagarPanchayat(boolean isNagarPanchayat) {
+        this.isNagarPanchayat = isNagarPanchayat;
+    }
 }

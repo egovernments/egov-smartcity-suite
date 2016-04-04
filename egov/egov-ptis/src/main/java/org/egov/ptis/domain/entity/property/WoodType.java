@@ -55,7 +55,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class WoodType extends AbstractAuditable {
 
     private static final long serialVersionUID = 1L;
-    public static final String SEQ_WOODTYPE = "SEQ_EGPT_WALL_TYPE";
+    public static final String SEQ_WOODTYPE = "SEQ_EGPT_WOOD_TYPE";
 
     @Id
     @GeneratedValue(generator = SEQ_WOODTYPE, strategy = GenerationType.SEQUENCE)

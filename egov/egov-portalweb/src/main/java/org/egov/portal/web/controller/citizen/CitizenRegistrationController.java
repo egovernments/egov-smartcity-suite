@@ -60,6 +60,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CitizenRegistrationController {
 
     private final CitizenService citizenService;
+    @Autowired
+    private ValidatorUtils validatorUtils;
 
     @Autowired
     public CitizenRegistrationController(final CitizenService citizenService) {
@@ -75,7 +77,7 @@ public class CitizenRegistrationController {
     public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors,
             final HttpServletRequest request,
             final RedirectAttributes redirectAttrib) {
-        if (!ValidatorUtils.isValidPassword(citizen.getPassword()))
+        if (!validatorUtils.isValidPassword(citizen.getPassword()))
             errors.rejectValue("password", "error.pwd.invalid");
         else if (!StringUtils.equals(citizen.getPassword(), request.getParameter("con-password")))
             errors.rejectValue("password", "error.pwd.mismatch");

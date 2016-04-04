@@ -1,46 +1,47 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
+
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -55,6 +56,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Fund;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -73,25 +76,25 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Transactional(readOnly = true)
+
+
 @Results({
-        @Result(name = FundFlowAction.NEW, location = "fundFlow-" + FundFlowAction.NEW + ".jsp"),
-        @Result(name = "report", location = "fundFlow-report.jsp"),
-        @Result(name = FundFlowAction.EDIT, location = "fundFlow-" + FundFlowAction.EDIT + ".jsp"),
-        @Result(name = "PDF", type = "stream", location = "inputStream", params = {
-                "inputName", "inputStream", "contentType", "application/pdf",
-                "contentDisposition", "no-cache;filename=FundFlowReport.pdf" }),
-        @Result(name = "XLS", type = "stream", location = "inputStream", params = {
-                "inputName", "inputStream", "contentType", "application/xls",
-                "contentDisposition", "no-cache;filename=FundFlowReport.xls" })
+    @Result(name = FundFlowAction.NEW, location = "fundFlow-" + FundFlowAction.NEW + ".jsp"),
+    @Result(name = "report", location = "fundFlow-report.jsp"),
+    @Result(name = FundFlowAction.EDIT, location = "fundFlow-" + FundFlowAction.EDIT + ".jsp"),
+    @Result(name = "PDF", type = "stream", location = "inputStream", params = {
+            "inputName", "inputStream", "contentType", "application/pdf",
+            "contentDisposition", "no-cache;filename=FundFlowReport.pdf" }),
+            @Result(name = "XLS", type = "stream", location = "inputStream", params = {
+                    "inputName", "inputStream", "contentType", "application/xls",
+                    "contentDisposition", "no-cache;filename=FundFlowReport.xls" })
 
 })
 public class FundFlowAction extends BaseFormAction {
     private static Logger LOGGER = Logger.getLogger(FundFlowAction.class);
     private static final long serialVersionUID = 1L;
-    EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
     private List<FundFlowBean> receiptList;
     private List<FundFlowBean> concurrancePaymentList;
     private List<FundFlowBean> outStandingPaymentList;
@@ -101,21 +104,28 @@ public class FundFlowAction extends BaseFormAction {
     private List<FundFlowBean> total;
     private List<FundFlowBean> totalrepList = new ArrayList<FundFlowBean>();
     private List<FundFlowBean> totalpayList = new ArrayList<FundFlowBean>();
-    private String jasperpath = "FundFlowReport";
+    private final String jasperpath = "FundFlowReport";
     private InputStream inputStream;
     private ReportService reportService;
     SimpleDateFormat sqlformat = new SimpleDateFormat("dd-MMM-yyyy");
     Date openignBalanceCalculatedDate;
     private FundFlowService fundFlowService;
     private String mode;
-
+   
+ @Autowired
+ @Qualifier("persistenceService")
+ private PersistenceService persistenceService;
+ @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    
     @Override
     public Object getModel() {
         return null;
     }
 
+    @Override
     public void prepare() {
-        addDropdownData("fundList", masterCache.get("egi-fund"));
+        addDropdownData("fundList", masterDataCache.get("egi-fund"));
     }
 
     @Action(value = "/report/fundFlow-beforeSearch")
@@ -138,118 +148,85 @@ public class FundFlowAction extends BaseFormAction {
      */
     @Action(value = "/report/fundFlow-search")
     public String search() {
-        StringBuffer alreadyExistsQryStr = new StringBuffer(100);
+        final StringBuffer alreadyExistsQryStr = new StringBuffer(100);
         alreadyExistsQryStr
-                .append("select openingBalance From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
-                        + sqlformat.format(asOnDate) + "' ");
-        if (fund != null && fund != -1) {
+        .append("select openingBalance From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
+                + sqlformat.format(asOnDate) + "' ");
+        if (fund != null && fund != -1)
             alreadyExistsQryStr.append(" and ba.fundId=" + fund + " ");
-        }
-        Query alreadyExistsQry = HibernateUtil.getCurrentSession()
+        final Query alreadyExistsQry = persistenceService.getSession()
                 .createSQLQuery(alreadyExistsQryStr.toString());
-        List existsList = alreadyExistsQry.list();
+        final List existsList = alreadyExistsQry.list();
         if (existsList.size() > 0) {
             paymentList = null;
             receiptList = null;
             throw new ValidationException(
                     Arrays
-                            .asList(new ValidationError(
-                                    "fundflow.report.already.generated",
-                                    "Fund Flow report is already Generated for the Date and Fund. Open in modify Mode")));
+                    .asList(new ValidationError(
+                            "fundflow.report.already.generated",
+                            "Fund Flow report is already Generated for the Date and Fund. Open in modify Mode")));
         }
 
-        @SuppressWarnings("unused")
-        List<FundFlowBean> openingBalnaceAllList = new ArrayList<FundFlowBean>();
+        new ArrayList<FundFlowBean>();
 
         receiptList = fundFlowService.getAllReceiptAccounts(fund);
-        List<FundFlowBean> btbPaymentList = fundFlowService
+        final List<FundFlowBean> btbPaymentList = fundFlowService
                 .getContraPaymentsForTheDay(asOnDate, fund);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("all Bank accounts ------" + receiptList.size());
-        for (FundFlowBean fall : receiptList) {
-            for (FundFlowBean ftemp : btbPaymentList) {
-                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber())) {
+        for (final FundFlowBean fall : receiptList)
+            for (final FundFlowBean ftemp : btbPaymentList)
+                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber()))
                     fall.setBtbPayment(ftemp.getBtbPayment());
-                }
-            }
 
-        }
-
-        List<FundFlowBean> btbReceiptList = fundFlowService.getContraReceiptsForTheDay(asOnDate, fund);
-        for (FundFlowBean fall : receiptList) {
-            for (FundFlowBean ftemp : btbReceiptList) {
-                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber())) {
+        final List<FundFlowBean> btbReceiptList = fundFlowService.getContraReceiptsForTheDay(asOnDate, fund);
+        for (final FundFlowBean fall : receiptList)
+            for (final FundFlowBean ftemp : btbReceiptList)
+                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber()))
                     fall.setBtbReceipt(ftemp.getBtbReceipt());
-                }
-            }
-
-        }
 
         paymentList = fundFlowService.getAllpaymentAccounts(fund);
-        for (FundFlowBean fall : paymentList) {
-            for (FundFlowBean ftemp : btbReceiptList) {
-                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber())) {
+        for (final FundFlowBean fall : paymentList)
+            for (final FundFlowBean ftemp : btbReceiptList)
+                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber()))
                     fall.setBtbReceipt(ftemp.getBtbReceipt());
-                }
-            }
 
-        }
-
-        List<FundFlowBean> btbRceipt_PaymentList = fundFlowService.getContraPaymentsForTheDayFromPaymentBanks(asOnDate, fund);
+        final List<FundFlowBean> btbRceipt_PaymentList = fundFlowService.getContraPaymentsForTheDayFromPaymentBanks(asOnDate,
+                fund);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("all Bank accounts ------" + btbRceipt_PaymentList.size());
-        for (FundFlowBean fall : paymentList) {
-            for (FundFlowBean ftemp : btbRceipt_PaymentList) {
-                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber())) {
+        for (final FundFlowBean fall : paymentList)
+            for (final FundFlowBean ftemp : btbRceipt_PaymentList)
+                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber()))
                     fall.setBtbPayment(ftemp.getBtbPayment());
-                }
-            }
-
-        }
 
         getPreviousDayClosingBalance();
         concurrancePaymentList = fundFlowService.getConcurrancePayments(
                 asOnDate, fund);
 
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : concurrancePaymentList) {
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : concurrancePaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setConcurranceBPV(fop.getConcurranceBPV());
-
-                }
-            }
-        }
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : concurrancePaymentList) {
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : concurrancePaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setConcurranceBPV(fop.getConcurranceBPV());
-
-                }
-            }
-        }
         outStandingPaymentList = fundFlowService.getOutStandingPayments(
                 asOnDate, fund);
 
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : outStandingPaymentList) {
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : outStandingPaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOutStandingBPV(fop.getOutStandingBPV());
-
-                }
-            }
-        }
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : outStandingPaymentList) {
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : outStandingPaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOutStandingBPV(fop.getOutStandingBPV());
-
-                }
-            }
-        }
         setFundsAvailableTotalPay();
         setFundsAvailableTotalRep();
         return NEW;
@@ -265,8 +242,9 @@ public class FundFlowAction extends BaseFormAction {
             BigDecimal btbrep = new BigDecimal("0");
             BigDecimal curReceipt = new BigDecimal("0");
             String fundNam = receiptList.get(0).getFundName();
-            int lastIndr = 0, sizer = receiptList.size() - 1;
-            for (FundFlowBean fBean : receiptList) {
+            int lastIndr = 0;
+            final int sizer = receiptList.size() - 1;
+            for (final FundFlowBean fBean : receiptList) {
                 if (fBean.getFundName().equalsIgnoreCase(fundNam)) {
                     totalrepList.add(fBean);
                     btbpay = btbpay.add(fBean.getBtbPayment());
@@ -290,10 +268,9 @@ public class FundFlowAction extends BaseFormAction {
                     btbrep = btbrep.add(fBean.getBtbReceipt());
                 }
                 lastIndr = receiptList.indexOf(fBean);
-                if (lastIndr == sizer) {
+                if (lastIndr == sizer)
                     totalrepList.add(new FundFlowBean(fundNam, "Total",
                             openingBal, curReceipt, btbpay, btbrep));
-                }
             }
             receiptList = totalrepList;
         }
@@ -311,9 +288,10 @@ public class FundFlowAction extends BaseFormAction {
             BigDecimal btbReceiptp = new BigDecimal("0");
             BigDecimal conBpvp = new BigDecimal("0");
             BigDecimal outBpvp = new BigDecimal("0");
-            int lastIndex = 0, sizep = paymentList.size() - 1, lastInd = 0;
+            final int sizep = paymentList.size() - 1;
+            int lastInd = 0;
             String fndNamp = paymentList.get(0).getFundName();
-            for (FundFlowBean fBean : paymentList) {
+            for (final FundFlowBean fBean : paymentList) {
                 if (fBean.getFundName().equalsIgnoreCase(fndNamp)) {
                     totalpayList.add(fBean);
                     openingBalp = openingBalp.add(fBean.getOpeningBalance());
@@ -322,8 +300,6 @@ public class FundFlowAction extends BaseFormAction {
                     btbReceiptp = btbReceiptp.add(fBean.getBtbReceipt());
                     conBpvp = conBpvp.add(fBean.getConcurranceBPV());
                     outBpvp = outBpvp.add(fBean.getOutStandingBPV());
-
-                    lastIndex++;
                 } else {
                     totalpayList.add(new FundFlowBean(fndNamp, "Total",
                             openingBalp, curReceiptp, btbpayp, btbReceiptp,
@@ -344,11 +320,10 @@ public class FundFlowAction extends BaseFormAction {
                     fndNamp = fBean.getFundName();
                 }
                 lastInd = paymentList.indexOf(fBean);
-                if (lastInd == sizep) {
+                if (lastInd == sizep)
                     totalpayList.add(new FundFlowBean(fndNamp, "Total",
                             openingBalp, curReceiptp, btbpayp, btbReceiptp,
                             conBpvp, outBpvp));
-                }
             }
             paymentList = totalpayList;
         }
@@ -357,12 +332,12 @@ public class FundFlowAction extends BaseFormAction {
 
     /**
      * get Prevous Day closing Balance As current day Opening Balance
-     * 
+     *
      * Opening balance for Receipt bank = Opening balance for the previous day + Current Receipts (for the previous day) - CSL
      * Transfer to Payment Banks (on the previous day) Opening balance for Payment bank = Opening balance for the previous day +
      * Current Receipts (for the previous day) + CSL Transfer from Receipt Banks (on the previous day) - Concurrence for BPVs (for
      * which concurrence has been done on the previous day)
-     * 
+     *
      */
 
     public String recalculateOpeningBalance() {
@@ -374,147 +349,102 @@ public class FundFlowAction extends BaseFormAction {
         List<FundFlowBean> openingBalnaceAllList;
         openingBalnaceAllList = getOpeningBalance(asOnDate, fund);
 
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : openingBalnaceAllList) {
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : openingBalnaceAllList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
-                    fBean.setOpeningBalance(fop.getOpeningBalance());
-                }
-            }
-        }
-
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : openingBalnaceAllList) {
-                if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOpeningBalance(fop.getOpeningBalance());
 
-                }
-            }
-        }
-        List<FundFlowBean> previousDaybtbPaymentList = fundFlowService
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : openingBalnaceAllList)
+                if (fBean.getAccountNumber().equalsIgnoreCase(
+                        fop.getAccountNumber()))
+                    fBean.setOpeningBalance(fop.getOpeningBalance());
+        final List<FundFlowBean> previousDaybtbPaymentList = fundFlowService
                 .getContraPaymentsForTheDay(openignBalanceCalculatedDate, fund);
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : previousDaybtbPaymentList) {
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : previousDaybtbPaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOpeningBalance(fBean.getOpeningBalance().subtract(
                             fop.getBtbPayment()));
-                }
-            }
-        }
 
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : previousDaybtbPaymentList) {
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : previousDaybtbPaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOpeningBalance(fBean.getOpeningBalance().subtract(
                             fop.getBtbPayment()));
-                }
-            }
-        }
-        // this portion is not required since we are fetching for all type of bankaccounts at the same time
-        /*
-         * List<FundFlowBean> previousDaybtbPaymentFromPaymentBankList = fundFlowService
-         * .getContraPaymentsForTheDayFromPaymentBanks( openignBalanceCalculatedDate, fund); for (FundFlowBean fBean :
-         * paymentList) { for (FundFlowBean fop : previousDaybtbPaymentFromPaymentBankList) { if
-         * (fBean.getAccountNumber().equalsIgnoreCase( fop.getAccountNumber())) {
-         * fBean.setOpeningBalance(fBean.getOpeningBalance().subtract( fop.getBtbPayment())); } } } for (FundFlowBean fBean :
-         * paymentList) { for (FundFlowBean fop : previousDaybtbPaymentList) { if (fBean.getAccountNumber().equalsIgnoreCase(
-         * fop.getAccountNumber())) { fBean.setOpeningBalance(fBean.getOpeningBalance().subtract( fop.getBtbPayment())); } } }
-         */
 
-        List<FundFlowBean> previousDaybtbReceiptList = fundFlowService
+        final List<FundFlowBean> previousDaybtbReceiptList = fundFlowService
                 .getContraReceiptsForTheDay(openignBalanceCalculatedDate, fund);
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : previousDaybtbReceiptList) {
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : previousDaybtbReceiptList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOpeningBalance(fBean.getOpeningBalance().add(
                             fop.getBtbReceipt()));
-                }
-            }
-        }
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : previousDaybtbReceiptList) {
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : previousDaybtbReceiptList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOpeningBalance(fBean.getOpeningBalance().add(
                             fop.getBtbReceipt()));
-                }
-            }
-        }
 
         concurrancePaymentList = fundFlowService.getConcurrancePayments(
                 openignBalanceCalculatedDate, fund);
 
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : concurrancePaymentList) {
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : concurrancePaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     // fBean.setConcurranceBPV(fop.getConcurranceBPV());
                     fBean.setOpeningBalance(fBean.getOpeningBalance().subtract(
                             fop.getConcurranceBPV()));
-                }
-            }
-        }
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : concurrancePaymentList) {
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : concurrancePaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     // fBean.setConcurranceBPV(fop.getConcurranceBPV());
                     fBean.setOpeningBalance(fBean.getOpeningBalance().subtract(
                             fop.getConcurranceBPV()));
-                }
-            }
-        }
         outStandingPaymentList = fundFlowService.getOutStandingPayments(
                 asOnDate, fund);
 
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : outStandingPaymentList) {
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : outStandingPaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOutStandingBPV(fop.getOutStandingBPV());
-
-                }
-            }
-        }
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : outStandingPaymentList) {
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : outStandingPaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOutStandingBPV(fop.getOutStandingBPV());
-
-                }
-            }
-        }
     }
 
     @SuppressWarnings("unchecked")
     @Action(value = "/report/fundFlow-create")
     public String create() {
         // merge two list to get sigle without duplicates
-        StringBuffer alreadyExistsQryStr = new StringBuffer(100);
+        final StringBuffer alreadyExistsQryStr = new StringBuffer(100);
         alreadyExistsQryStr
-                .append("select openingBalance From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
-                        + sqlformat.format(asOnDate) + "' ");
-        if (fund != null && fund != -1) {
+        .append("select openingBalance From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
+                + sqlformat.format(asOnDate) + "' ");
+        if (fund != null && fund != -1)
             alreadyExistsQryStr.append("and ba.fundId=" + fund + " ");
-        }
-        Query alreadyExistsQry = HibernateUtil.getCurrentSession()
+        final Query alreadyExistsQry = persistenceService.getSession()
                 .createSQLQuery(alreadyExistsQryStr.toString());
-        List existsList = alreadyExistsQry.list();
-        if (existsList.size() > 0) {
+        final List existsList = alreadyExistsQry.list();
+        if (existsList.size() > 0)
             throw new ValidationException(
                     Arrays
-                            .asList(new ValidationError(
-                                    "fundflow.report.already.generated",
-                                    "Fund Flow report is already Generated for the Date and Fund. Open in modify Mode")));
-        }
-        List<FundFlowBean> finalList = merge(receiptList, paymentList);
-        persistenceService.setType(FundFlowBean.class);
-        for (FundFlowBean fbean : finalList) {
+                    .asList(new ValidationError(
+                            "fundflow.report.already.generated",
+                            "Fund Flow report is already Generated for the Date and Fund. Open in modify Mode")));
+        final List<FundFlowBean> finalList = merge(receiptList, paymentList);
+        //persistenceService.setType(FundFlowBean.class);
+        for (final FundFlowBean fbean : finalList) {
             fbean.setReportDate(asOnDate);
             persistenceService.persist(fbean);
         }
@@ -532,7 +462,7 @@ public class FundFlowAction extends BaseFormAction {
     /**
      * get Opening Balance,currentReceipt and id from egf_Fundflow get Contra Receipts and Contra Payments get ConcurranceBPV for
      * the date
-     * 
+     *
      * @return
      */
     public String beforeEdit() {
@@ -540,58 +470,42 @@ public class FundFlowAction extends BaseFormAction {
         List<FundFlowBean> openingBalnaceAllList = new ArrayList<FundFlowBean>();
 
         openingBalnaceAllList = getCurrentDayOpeningBalance(asOnDate, fund);
-        if (openingBalnaceAllList == null || openingBalnaceAllList.size() == 0) {
+        if (openingBalnaceAllList == null || openingBalnaceAllList.size() == 0)
             throw new ValidationException(Arrays
                     .asList(new ValidationError(
                             "fundflow.report.not.generated",
                             "Fund Flow report is not Generated for the Date and Fund. open in create Mode")));
-        }
         receiptList = fundFlowService.getAllReceiptAccounts(fund);
-        List<FundFlowBean> btbPaymentList = fundFlowService.getContraPaymentsForTheDay(asOnDate, fund);
+        final List<FundFlowBean> btbPaymentList = fundFlowService.getContraPaymentsForTheDay(asOnDate, fund);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("all Bank accounts ------" + receiptList.size());
-        for (FundFlowBean fall : receiptList) {
-            for (FundFlowBean ftemp : btbPaymentList) {
-                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber())) {
+        for (final FundFlowBean fall : receiptList)
+            for (final FundFlowBean ftemp : btbPaymentList)
+                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber()))
                     fall.setBtbPayment(ftemp.getBtbPayment());
-                }
-            }
-
-        }
-        List<FundFlowBean> btbReceiptList = fundFlowService.getContraReceiptsForTheDay(asOnDate, fund);
-        for (FundFlowBean fall : receiptList) {
-            for (FundFlowBean ftemp : btbReceiptList) {
-                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber())) {
+        final List<FundFlowBean> btbReceiptList = fundFlowService.getContraReceiptsForTheDay(asOnDate, fund);
+        for (final FundFlowBean fall : receiptList)
+            for (final FundFlowBean ftemp : btbReceiptList)
+                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber()))
                     fall.setBtbReceipt(ftemp.getBtbReceipt());
-                }
-            }
-
-        }
         paymentList = fundFlowService.getAllpaymentAccounts(fund);
-        for (FundFlowBean fall : paymentList) {
-            for (FundFlowBean ftemp : btbReceiptList) {
-                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber())) {
+        for (final FundFlowBean fall : paymentList)
+            for (final FundFlowBean ftemp : btbReceiptList)
+                if (fall.getAccountNumber().equalsIgnoreCase(ftemp.getAccountNumber()))
                     fall.setBtbReceipt(ftemp.getBtbReceipt());
-                }
-            }
 
-        }
-
-        List<FundFlowBean> btbReceipt_PaymentList = fundFlowService.getContraPaymentsForTheDayFromPaymentBanks(asOnDate, fund);
+        final List<FundFlowBean> btbReceipt_PaymentList = fundFlowService.getContraPaymentsForTheDayFromPaymentBanks(asOnDate,
+                fund);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("all Bank accounts ------" + receiptList.size());
-        for (FundFlowBean fall : paymentList) {
-            for (FundFlowBean ftemp : btbReceipt_PaymentList) {
+        for (final FundFlowBean fall : paymentList)
+            for (final FundFlowBean ftemp : btbReceipt_PaymentList)
                 if (fall.getAccountNumber().equalsIgnoreCase(
-                        ftemp.getAccountNumber())) {
+                        ftemp.getAccountNumber()))
                     fall.setBtbPayment(ftemp.getBtbPayment());
-                }
-            }
 
-        }
-
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : openingBalnaceAllList) {
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : openingBalnaceAllList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
                         fop.getAccountNumber())) {
                     fBean.setOpeningBalance(fop.getOpeningBalance());
@@ -599,11 +513,9 @@ public class FundFlowAction extends BaseFormAction {
                     fBean.setBankAccountId(fop.getBankAccountId());
                     fBean.setId(fop.getId());
                 }
-            }
-        }
 
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : openingBalnaceAllList) {
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : openingBalnaceAllList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
                         fop.getAccountNumber())) {
                     fBean.setOpeningBalance(fop.getOpeningBalance());
@@ -611,52 +523,35 @@ public class FundFlowAction extends BaseFormAction {
                     fBean.setBankAccountId(fop.getBankAccountId());
                     fBean.setId(fop.getId());
                 }
-            }
-        }
 
         concurrancePaymentList = fundFlowService.getConcurrancePayments(
                 asOnDate, fund);
 
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : concurrancePaymentList) {
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : concurrancePaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setConcurranceBPV(fop.getConcurranceBPV());
-                    // fBean.setOpeningBalance(fBean.getOpeningBalance().subtract(fop.getConcurranceBPV()));
-                }
-            }
-        }
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : concurrancePaymentList) {
+        // fBean.setOpeningBalance(fBean.getOpeningBalance().subtract(fop.getConcurranceBPV()));
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : concurrancePaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setConcurranceBPV(fop.getConcurranceBPV());
-                    // fBean.setOpeningBalance(fBean.getOpeningBalance().subtract(fop.getConcurranceBPV()));
-                }
-            }
-
-        }
+        // fBean.setOpeningBalance(fBean.getOpeningBalance().subtract(fop.getConcurranceBPV()));
         outStandingPaymentList = fundFlowService.getOutStandingPayments(
                 asOnDate, fund);
 
-        for (FundFlowBean fBean : paymentList) {
-            for (FundFlowBean fop : outStandingPaymentList) {
+        for (final FundFlowBean fBean : paymentList)
+            for (final FundFlowBean fop : outStandingPaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOutStandingBPV(fop.getOutStandingBPV());
-
-                }
-            }
-        }
-        for (FundFlowBean fBean : receiptList) {
-            for (FundFlowBean fop : outStandingPaymentList) {
+        for (final FundFlowBean fBean : receiptList)
+            for (final FundFlowBean fop : outStandingPaymentList)
                 if (fBean.getAccountNumber().equalsIgnoreCase(
-                        fop.getAccountNumber())) {
+                        fop.getAccountNumber()))
                     fBean.setOutStandingBPV(fop.getOutStandingBPV());
-
-                }
-            }
-        }
         setFundsAvailableTotalPay();
         setFundsAvailableTotalRep();
         return EDIT;
@@ -666,12 +561,12 @@ public class FundFlowAction extends BaseFormAction {
     @Action(value = "/report/fundFlow-edit")
     public String edit() {
         // Connection conn = null;
-        List<FundFlowBean> finalList = merge(receiptList, paymentList);
-        persistenceService.setType(FundFlowBean.class);
-        for (FundFlowBean fbean : finalList) {
+        final List<FundFlowBean> finalList = merge(receiptList, paymentList);
+        //persistenceService.setType(FundFlowBean.class);
+        for (final FundFlowBean fbean : finalList) {
 
             fbean.setReportDate(asOnDate);
-            // HibernateUtil.getCurrentSession().evict(fbean);
+            // persistenceService.getSession().evict(fbean);
             persistenceService.persist(fbean);
         }
         addActionMessage(getText("fundflowreport.update.succesful"));
@@ -684,27 +579,26 @@ public class FundFlowAction extends BaseFormAction {
      * @return previous day opening balance+receipt add or subtracting csl is in the main code
      */
     @SuppressWarnings("unchecked")
-    private List<FundFlowBean> getOpeningBalance(Date asPerDate, Long fundId) {
+    private List<FundFlowBean> getOpeningBalance(final Date asPerDate, final Long fundId) {
         Date reportDate = asPerDate;
         int i = 0;
         List<FundFlowBean> openingBalnaceList = new ArrayList<FundFlowBean>();
         while (openingBalnaceList.size() == 0) {
             try {
                 // get previous day
-                reportDate = sqlformat.parse(sqlformat.format((reportDate
-                        .getTime() - (1000 * 24 * 60 * 60))));
-            } catch (ParseException e) {
+                reportDate = sqlformat.parse(sqlformat.format(reportDate
+                        .getTime() - 1000 * 24 * 60 * 60));
+            } catch (final ParseException e) {
                 throw new ValidationException(Arrays
                         .asList(new ValidationError("parserExeception",
                                 "parser exception")));
             }
-            StringBuffer openingBalanceQryStr = new StringBuffer(100);
+            final StringBuffer openingBalanceQryStr = new StringBuffer(100);
             openingBalanceQryStr
-                    .append("select ba.id as bankAccountId,ba.accountnumber as accountNumber,ff.openingBalance+ff.currentReceipt as openingBalance from egf_fundflow ff,bankaccount ba   "
-                            + "   where ff.bankaccountid=ba.id ");
-            if (fundId != null && fundId != -1) {
+            .append("select ba.id as bankAccountId,ba.accountnumber as accountNumber,ff.openingBalance+ff.currentReceipt as openingBalance from egf_fundflow ff,bankaccount ba   "
+                    + "   where ff.bankaccountid=ba.id ");
+            if (fundId != null && fundId != -1)
                 openingBalanceQryStr.append("and ba.fundid=" + fundId);
-            }
             openingBalanceQryStr.append(" and to_date(reportdate)='"
                     + sqlformat.format(reportDate) + "'");
             if (LOGGER.isDebugEnabled())
@@ -715,11 +609,11 @@ public class FundFlowAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Opening Balance Qry "
                         + openingBalanceQryStr.toString());
-            Query openingBalanceQry = HibernateUtil.getCurrentSession()
+            final Query openingBalanceQry = persistenceService.getSession()
                     .createSQLQuery(openingBalanceQryStr.toString()).addScalar(
                             "bankAccountId").addScalar("accountNumber")
-                    .addScalar("openingBalance").setResultTransformer(
-                            Transformers.aliasToBean(FundFlowBean.class));
+                            .addScalar("openingBalance").setResultTransformer(
+                                    Transformers.aliasToBean(FundFlowBean.class));
             openingBalnaceList = openingBalanceQry.list();
             i++;
             if (i >= 100) {
@@ -727,9 +621,9 @@ public class FundFlowAction extends BaseFormAction {
                 paymentList = null;
                 throw new ValidationException(
                         Arrays
-                                .asList(new ValidationError(
-                                        "fundflow.not.done.for.more.than.100",
-                                        "fundflow  not done for more than 100 Days please start from last date")));
+                        .asList(new ValidationError(
+                                "fundflow.not.done.for.more.than.100",
+                                "fundflow  not done for more than 100 Days please start from last date")));
 
             }
 
@@ -737,8 +631,8 @@ public class FundFlowAction extends BaseFormAction {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("////////////////////////////////////////");
         LOGGER
-                .info("--------------------------Last Entry for Fund Flow Data is on "
-                        + reportDate + "and this report is for " + asPerDate);
+        .info("--------------------------Last Entry for Fund Flow Data is on "
+                + reportDate + "and this report is for " + asPerDate);
         if (LOGGER.isInfoEnabled())
             LOGGER.info("///////////////////////////////////////");
         setOpenignBalanceCalculatedDate(reportDate);
@@ -747,28 +641,27 @@ public class FundFlowAction extends BaseFormAction {
 
     /**
      * get openingbalance,currentreceipt,bankaccountid from egf_fundflow table for modify
-     * 
+     *
      * @param asOnDate2
      * @param fund2
      * @return
      */
     @SuppressWarnings("unchecked")
-    private List<FundFlowBean> getCurrentDayOpeningBalance(Date asOnDate2, Long fund2) {
+    private List<FundFlowBean> getCurrentDayOpeningBalance(final Date asOnDate2, final Long fund2) {
 
-        StringBuffer currentOpbAndRcptQryStr = new StringBuffer(100);
+        final StringBuffer currentOpbAndRcptQryStr = new StringBuffer(100);
         currentOpbAndRcptQryStr
-                .append("select ff.openingBalance as openingBalance,ff.currentreceipt as currentReceipt,ff.id as id ,ba.accountNumber as accountNumber,ff.bankAccountId as bankAccountId From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
-                        + sqlformat.format(asOnDate2) + "' ");
-        if (fund2 != null && fund2 != -1) {
+        .append("select ff.openingBalance as openingBalance,ff.currentreceipt as currentReceipt,ff.id as id ,ba.accountNumber as accountNumber,ff.bankAccountId as bankAccountId From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
+                + sqlformat.format(asOnDate2) + "' ");
+        if (fund2 != null && fund2 != -1)
             currentOpbAndRcptQryStr.append(" and ba.fundId=" + fund2 + " ");
-        }
 
-        Query currentOpbAndRcptQry = HibernateUtil.getCurrentSession()
+        final Query currentOpbAndRcptQry = persistenceService.getSession()
                 .createSQLQuery(currentOpbAndRcptQryStr.toString()).addScalar(
                         "openingBalance").addScalar("currentReceipt")
-                .addScalar("id", LongType.INSTANCE).addScalar("accountNumber")
-                .addScalar("bankAccountId").setResultTransformer(
-                        Transformers.aliasToBean(FundFlowBean.class));
+                        .addScalar("id", LongType.INSTANCE).addScalar("accountNumber")
+                        .addScalar("bankAccountId").setResultTransformer(
+                                Transformers.aliasToBean(FundFlowBean.class));
         return currentOpbAndRcptQry.list();
 
     }
@@ -780,45 +673,40 @@ public class FundFlowAction extends BaseFormAction {
      */
 
     private List<FundFlowBean> merge(List<FundFlowBean> receiptList2,
-            List<FundFlowBean> paymentList2) {
+            final List<FundFlowBean> paymentList2) {
 
-        List<FundFlowBean> finalList = new ArrayList<FundFlowBean>();
-        if (receiptList2 == null) {
+        final List<FundFlowBean> finalList = new ArrayList<FundFlowBean>();
+        if (receiptList2 == null)
             receiptList2 = new ArrayList<FundFlowBean>();
-        }
-        for (FundFlowBean fBean : receiptList2) {
+        for (final FundFlowBean fBean : receiptList2) {
             boolean insert = true;
             if (fBean.getAccountNumber().contains("Total")) {
                 insert = false;
                 continue;
             }
-            if (insert == true) {
+            if (insert == true)
                 finalList.add(fBean);
-            }
         }
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting Merging..................................... ");
-        for (FundFlowBean fBean : paymentList2) {
+        for (final FundFlowBean fBean : paymentList2) {
             // if(LOGGER.isInfoEnabled()) LOGGER.info("Payment Bean is :" + fBean.toString());
             boolean insert = true;
-            if (fBean.getAccountNumber().contains("Total")) {
+            if (fBean.getAccountNumber().contains("Total"))
                 continue;
-            }
-            inner: for (FundFlowBean fop : receiptList2) {
+            inner: for (final FundFlowBean fop : receiptList2) {
                 // if(LOGGER.isInfoEnabled()) LOGGER.info("Receipt Bean is :" + fop.toString());
-                if (fop.getAccountNumber().contains("Total")) {
+                if (fop.getAccountNumber().contains("Total"))
                     continue;
-                }
                 if (fBean.getAccountNumber().equalsIgnoreCase(
                         fop.getAccountNumber())) {
                     insert = false;
                     break inner;
                 }
             }
-            if (insert == true) {
+            if (insert == true)
                 // if(LOGGER.isInfoEnabled()) LOGGER.info("inserting " + fBean.toString());
                 finalList.add(fBean);
-            }
 
         }
         if (LOGGER.isInfoEnabled())
@@ -833,10 +721,10 @@ public class FundFlowAction extends BaseFormAction {
 
     public String exportXls() {
         updateListsForTotals();
-        ReportRequest reportInput = new ReportRequest(jasperpath, receiptList,
+        final ReportRequest reportInput = new ReportRequest(jasperpath, receiptList,
                 getParamMap());
         reportInput.setReportFormat(FileFormat.XLS);
-        ReportOutput reportOutput = reportService.createReport(reportInput);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
         inputStream = new ByteArrayInputStream(reportOutput
                 .getReportOutputData());
         return "XLS";
@@ -845,9 +733,9 @@ public class FundFlowAction extends BaseFormAction {
     private void generateReport() {
 
         updateListsForTotals();
-        ReportRequest reportInput = new ReportRequest(jasperpath, receiptList,
+        final ReportRequest reportInput = new ReportRequest(jasperpath, receiptList,
                 getParamMap());
-        ReportOutput reportOutput = reportService.createReport(reportInput);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
         inputStream = new ByteArrayInputStream(reportOutput
                 .getReportOutputData());
     }
@@ -886,7 +774,7 @@ public class FundFlowAction extends BaseFormAction {
      * @return
      */
     private Map<String, Object> getParamMap() {
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        final Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("FundFlowReport_paymentDetailsJasper", ReportUtil
                 .getTemplateAsStream("FundFlowReport_paymentDetails.jasper"));
         // paramMap.put("FundFlowReport_paymentDetailsJasper",
@@ -895,13 +783,12 @@ public class FundFlowAction extends BaseFormAction {
         paramMap.put("receiptList", receiptList);
         paramMap.put("paymentList", paymentList);
         if (fund != null && fund != -1) {
-            Fund fundObj = (Fund) persistenceService.find("from Fund where id="
+            final Fund fundObj = (Fund) persistenceService.find("from Fund where id="
                     + fund);
             paramMap.put("fundName", fundObj.getName());
-        } else {
+        } else
             paramMap.put("fundName", "");
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         paramMap.put("asOnDate", sdf.format(asOnDate));
 
         paramMap.put("ulbName", getUlbName());
@@ -927,7 +814,7 @@ public class FundFlowAction extends BaseFormAction {
     }
 
     public void setOutStandingPaymentList(
-            List<FundFlowBean> outStandingPaymentList) {
+            final List<FundFlowBean> outStandingPaymentList) {
         this.outStandingPaymentList = outStandingPaymentList;
     }
 
@@ -935,7 +822,7 @@ public class FundFlowAction extends BaseFormAction {
         return paymentList;
     }
 
-    public void setPaymentList(List<FundFlowBean> paymentList) {
+    public void setPaymentList(final List<FundFlowBean> paymentList) {
         this.paymentList = paymentList;
     }
 
@@ -947,11 +834,11 @@ public class FundFlowAction extends BaseFormAction {
         return receiptList;
     }
 
-    public void setReceiptList(List<FundFlowBean> receiptList) {
+    public void setReceiptList(final List<FundFlowBean> receiptList) {
         this.receiptList = receiptList;
     }
 
-    public void setFund(Long fund) {
+    public void setFund(final Long fund) {
         this.fund = fund;
     }
 
@@ -959,7 +846,7 @@ public class FundFlowAction extends BaseFormAction {
         return asOnDate;
     }
 
-    public void setAsOnDate(Date asOnDate) {
+    public void setAsOnDate(final Date asOnDate) {
         this.asOnDate = asOnDate;
     }
 
@@ -967,7 +854,7 @@ public class FundFlowAction extends BaseFormAction {
         return total;
     }
 
-    public void setTotal(List<FundFlowBean> total) {
+    public void setTotal(final List<FundFlowBean> total) {
         this.total = total;
     }
 
@@ -975,7 +862,7 @@ public class FundFlowAction extends BaseFormAction {
         return inputStream;
     }
 
-    public void setInputStream(InputStream inputStream) {
+    public void setInputStream(final InputStream inputStream) {
         this.inputStream = inputStream;
     }
 
@@ -983,7 +870,7 @@ public class FundFlowAction extends BaseFormAction {
         return reportService;
     }
 
-    public void setReportService(ReportService reportService) {
+    public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
     }
 
@@ -991,7 +878,7 @@ public class FundFlowAction extends BaseFormAction {
         return fundFlowService;
     }
 
-    public void setFundFlowService(FundFlowService fundFlowService) {
+    public void setFundFlowService(final FundFlowService fundFlowService) {
         this.fundFlowService = fundFlowService;
     }
 
@@ -999,7 +886,7 @@ public class FundFlowAction extends BaseFormAction {
         return totalrepList;
     }
 
-    public void setTotalrepList(List<FundFlowBean> totalrepList) {
+    public void setTotalrepList(final List<FundFlowBean> totalrepList) {
         this.totalrepList = totalrepList;
     }
 
@@ -1007,7 +894,7 @@ public class FundFlowAction extends BaseFormAction {
         return totalpayList;
     }
 
-    public void setTotalpayList(List<FundFlowBean> totalpayList) {
+    public void setTotalpayList(final List<FundFlowBean> totalpayList) {
         this.totalpayList = totalpayList;
     }
 
@@ -1016,7 +903,7 @@ public class FundFlowAction extends BaseFormAction {
     }
 
     public void setOpenignBalanceCalculatedDate(
-            Date openignBalanceCalculatedDate) {
+            final Date openignBalanceCalculatedDate) {
         this.openignBalanceCalculatedDate = openignBalanceCalculatedDate;
     }
 
@@ -1025,15 +912,15 @@ public class FundFlowAction extends BaseFormAction {
     }
 
     public void setConcurrancePaymentList(
-            List<FundFlowBean> concurrancePaymentList) {
+            final List<FundFlowBean> concurrancePaymentList) {
         this.concurrancePaymentList = concurrancePaymentList;
     }
 
     @SuppressWarnings("unchecked")
     private String getUlbName() {
-        SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(
                 "select name from companydetail");
-        List<String> result = query.list();
+        final List<String> result = query.list();
         if (result != null)
             return result.get(0);
         return "";
@@ -1043,7 +930,7 @@ public class FundFlowAction extends BaseFormAction {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(final String mode) {
         this.mode = mode;
     }
 }

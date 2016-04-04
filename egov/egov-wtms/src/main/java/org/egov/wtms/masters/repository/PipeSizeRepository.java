@@ -42,7 +42,6 @@ package org.egov.wtms.masters.repository;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.PipeSize;
-import org.egov.wtms.masters.entity.PropertyPipeSize;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -52,13 +51,14 @@ import org.springframework.stereotype.Repository;
 public interface PipeSizeRepository extends JpaRepository<PipeSize, Long> {
 
     PipeSize findByCode(String code);
+    
+    PipeSize findBySizeInInch(double sizeInInch);
+    
+    PipeSize findBySizeInMilimeter(double sizeInMilimeter);
 
     List<PipeSize> findByActiveTrueOrderBySizeInInchAsc();
 
-    @Query("select PS.pipesize from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType=:propertyType ")
+    @Query("select PS.pipeSize from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType.id=:propertyType ")
     List<PipeSize> getAllPipeSizesByPropertyType(@Param("propertyType") Long propertyType);
-    
-    @Query("select PS from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType in(select PT.id from PropertyType PT where PT.code =:propertyType) and PS.pipesize.code=:pipesizecode")
-    PropertyPipeSize getAllPipeSizesByPropertyTypeAndPipesize(@Param("propertyType") String propertyType,@Param("pipesizecode") String pipesizecode);
 
 }

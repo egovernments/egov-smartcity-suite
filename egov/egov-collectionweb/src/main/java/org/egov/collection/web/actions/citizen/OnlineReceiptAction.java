@@ -39,7 +39,6 @@
  */
 package org.egov.collection.web.actions.citizen;
 
-import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -49,7 +48,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -64,7 +62,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
@@ -72,8 +69,6 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillInfoImpl;
-import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.service.ReceiptHeaderService;
@@ -81,6 +76,7 @@ import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.entity.Source;
@@ -182,68 +178,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return REDIRECT;
     }
 
-    public StreamResult processResponseMessage() {
-
-        try {
-            final long startTimeInMilis = System.currentTimeMillis();
-
-            LOGGER.info("Response Msg :  " + responseMsg);
-
-            /**
-             * TO DO : The below 'if loop' Is To be removed once the test URL is UP
-             */
-            if (getTestReceiptId() != null) {
-                responseMsg = "MerchantID|CustomerID|TxnReferenceNo|BankReferenceNo|1000.0|BankID|"
-                        + "BankMerchantID|TxnType|CurrencyName|ItemCode|SecurityType|SecurityID|SecurityPassword|"
-                        + "10-05-2010 15:39:09|" + getTestAuthStatusCode() + "|SettlementType|" + getTestReceiptId()
-                        + "|AdditionalInfo2|AdditionalInfo3|AdditionalInfo4|"
-                        + "AdditionalInfo5|AdditionalInfo6|AdditionalInfo7|ErrorStatus|ErrorDescription";
-                /*
-                 * String checksum = PGIUtil.doDigest(responseMsg, CollectionConstants.UNIQUE_CHECKSUM_KEY); responseMsg += "|" +
-                 * checksum;
-                 */
-                serviceCode = "BDPGI";
-            }
-            final ServiceDetails paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
-                    CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_PGI_BILLDESK);
-
-            setPaymentResponse(collectionCommon.createPaymentResponse(paymentService, getMsg()));
-
-            onlinePaymentReceiptHeader = receiptHeaderService.findByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPT_BY_RECEIPTID_AND_REFERENCENUMBER,
-                    Long.valueOf(paymentResponse.getReceiptId()), paymentResponse.getCustomerId());
-            if (onlinePaymentReceiptHeader != null) {
-                // if status code is 0002, ie Bill desk waiting for response
-                // from
-                // payment gateway then make transaction in pending state.
-                if (CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse
-                        .getAuthStatus())) {
-                    final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
-                            CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-                            CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
-                    onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
-                    onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
-                            paymentResponse.getAuthStatus());
-                } else if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
-                    processSuccessMsg();
-                else
-                    processFailureMsg();
-
-                final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
-                LOGGER.info("Online Receipt is persisted with receipt number :"
-                        + onlinePaymentReceiptHeader.getReceiptnumber() + "; Time taken (millis)" + elapsedTimeInMillis);
-            } else {
-                LOGGER.info("Error in processResponseMessage :::::: onlinePaymentReceiptHeader object is null");
-                receiptResponse = "FAILURE|NA";
-            }
-
-        } catch (final Exception exp) {
-            LOGGER.error("Error in processResponseMessage", exp);
-            receiptResponse = "FAILURE|NA";
-        }
-        return new StreamResult(new ByteArrayInputStream(receiptResponse.getBytes()));
-    }
-
     /**
      * @return
      */
@@ -268,10 +202,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
         LOGGER.info("responseMsg:	" + responseMsg);
 
-        /*
-         * ServiceDetails paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
-         * CollectionConstants.QUERY_SERVICE_BY_CODE, getServiceCode());
-         */
         ServiceDetails paymentService;
         if (null != paymentServiceId && paymentServiceId > 0)
             paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
@@ -315,6 +245,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private Long testReceiptId;
     // TO BE REMOVED ONCE THE TEST URL IS UP
     private String testAuthStatusCode;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     // TO BE REMOVED ONCE THE TEST URL IS UP
     public Long getTestReceiptId() {
@@ -344,7 +276,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private void processFailureMsg() {
 
         final EgwStatus receiptStatus = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
+                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
         onlinePaymentReceiptHeader.setStatus(receiptStatus);
 
         final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
@@ -382,86 +314,11 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             receiptResponse = "SUCCESS|" + onlinePaymentReceiptHeader.getReceiptnumber();
         else {
 
-            createSuccessPayment(onlinePaymentReceiptHeader, paymentResponse.getTxnDate(),
-                    paymentResponse.getTxnReferenceNo(), paymentResponse.getTxnAmount(),
-                    paymentResponse.getAuthStatus(), null);
-
-            LOGGER.debug("Persisted receipt after receiving success message from the payment gateway");
-
-            boolean updateToSystems = true;
-
-            /*
-             * TODO: Commented for Phoenix implementation uncomment once egf is enabled try {
-             * receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader, Boolean.FALSE);
-             * LOGGER.debug("Updated financial systems and created voucher."); } catch (final ApplicationRuntimeException ex) {
-             * updateToSystems = false; errors.add(new ValidationError(
-             * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state.",
-             * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state."));
-             * LOGGER.error("Update to financial systems failed"); }
-             */
-
-            try {
-                final HashSet<BillReceiptInfo> billReceipt = new HashSet<BillReceiptInfo>();
-                billReceipt.add(new BillReceiptInfoImpl(onlinePaymentReceiptHeader));
-
-                if (!receiptHeaderService.updateBillingSystem(
-                        onlinePaymentReceiptHeader.getService().getCode(),
-                        billReceipt))
-                    updateToSystems = false;
-
-            } catch (final ApplicationRuntimeException ex) {
-                // Receipt creation is rolled back, and payment continues to be
-                // in
-                // PENDING state.
-                errors.add(new ValidationError(getText(onlinePaymentReceiptHeader.getOnlinePayment().getService()
-                        .getCode().toLowerCase()
-                        + ".pgi."
-                        + onlinePaymentReceiptHeader.getService().getCode().toLowerCase()
-                        + ".billingsystemupdate.error"),
-                        "Receipt creation transaction rolled back as update to billing system failed. "
-                                + "Payment is in PENDING state. "
-                                + "Please do not attempt another Online Credit Card transaction. "
-                                + "Request to contact " + getText("reports.title.corporation_name")
-                                + " for collection of receipt."));
-                LOGGER.debug("Receipt creation rolled back as update to billing system failed. Payment is in PENDING state.");
-
-                throw new ValidationException(errors);
-            }
-
-            if (updateToSystems) {
-                onlinePaymentReceiptHeader.setIsReconciled(true);
-                receiptHeaderService.persist(onlinePaymentReceiptHeader);
-                LOGGER.debug("Updated billing system : " + onlinePaymentReceiptHeader.getService().getName());
-            } else
-                LOGGER.debug("Rolling back receipt creation transaction as update to billing system/financials failed.");
+            onlinePaymentReceiptHeader = receiptHeaderService.createOnlineSuccessPayment(onlinePaymentReceiptHeader,
+                    paymentResponse.getTxnDate(), paymentResponse.getTxnReferenceNo(), paymentResponse.getTxnAmount(),
+                    paymentResponse.getAuthStatus(), null, null);
             receiptResponse = "SUCCESS|" + onlinePaymentReceiptHeader.getReceiptnumber();
         }
-    }
-
-    /**
-     * @param receipts - list of receipts which have to be processed as successful payments. For payments created as a response
-     * from bill desk, size of the array will be 1.
-     */
-    private void createSuccessPayment(final ReceiptHeader receipt, final Date transactionDate,
-            final String transactionId, final BigDecimal transactionAmt, final String authStatusCode,
-            final String remarks) {
-        final EgwStatus receiptStatus = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
-        receipt.setStatus(receiptStatus);
-
-        receipt.setReceiptInstrument(receiptHeaderService.createOnlineInstrument(transactionDate, transactionId, transactionAmt));
-        receipt.setIsReconciled(Boolean.FALSE);
-        receipt.getOnlinePayment().setAuthorisationStatusCode(authStatusCode);
-        receipt.getOnlinePayment().setTransactionNumber(transactionId);
-        receipt.getOnlinePayment().setTransactionAmount(transactionAmt);
-        receipt.getOnlinePayment().setTransactionDate(transactionDate);
-        receipt.getOnlinePayment().setRemarks(remarks);
-
-        // set online payment status as SUCCESS
-        receipt.getOnlinePayment().setStatus(
-                collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-                        CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
-        receiptHeaderService.persist(receipt);
     }
 
     /**
@@ -474,10 +331,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * @return
      */
     @ValidationErrorPage(value = "reconresult")
-    @Action(value = "/citizen/onlineReceipt-reconcileOnlinePayment")  
+    @Action(value = "/citizen/onlineReceipt-reconcileOnlinePayment")
     public String reconcileOnlinePayment() {
-   
-        final HashSet<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
 
         final ReceiptHeader[] receipts = new ReceiptHeader[selectedReceipts.length];
 
@@ -498,26 +353,11 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 }
             }
 
-            if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS)) {   
-                createSuccessPayment(receipts[i], transDate, getTransactionId()[i], receipts[i].getTotalAmount(), null,
-                        getRemarks()[i]);
-
+            if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS)) {
+                receiptHeaderService.createOnlineSuccessPayment(receipts[i], transDate, getTransactionId()[i],
+                        receipts[i].getTotalAmount(), null,
+                        getRemarks()[i], null);
                 LOGGER.debug("Manually reconciled a success online payment");
-
-                try {
-                   // receiptHeaderService.createVoucherForReceipt(receipts[i], Boolean.FALSE);
-                    LOGGER.debug("Updated financial systems and created voucher.");
-                } catch (final ApplicationRuntimeException ex) {
-                    errors.add(new ValidationError(
-                            "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
-                                    + receipts[i].getId(),
-                                    "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
-                                            + receipts[i].getId()));
-                    LOGGER.error("Update to financial systems failed");
-                    throw new ValidationException(errors);
-                }
-
-                billReceipts.add(new BillReceiptInfoImpl(receipts[i]));
             }
 
             if (CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED.equals(getStatusCode()[i])
@@ -546,29 +386,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 LOGGER.debug("Manually reconciled an online payment to " + getStatusCode()[i] + " state.");
             }
         }
-
-        // update billing system about successfully created online receipt
-        // payments.
-        try {
-            if (!billReceipts.isEmpty())
-                // Update IS_RECONCILED to true in EGCL_COLLECTIONHEADER
-                for (final ReceiptHeader receiptHeader : receipts) {
-                    receiptHeader.setIsReconciled(true);
-                    receiptHeaderService.persist(receiptHeader);
-
-                }
-        } catch (final ApplicationRuntimeException ex) {
-            errors.add(new ValidationError("Manual Reconciliation of Online Payments Rolled back as "
-                    + "update to billing system failed.", "Manual Reconciliation of Online Payments Rolled back as "
-                            + "update to billing system failed."));
-            LOGGER.error("Update to billing systems failed");
-
-            throw new ValidationException(errors);
-        }
-
-        /*
-         * if(!errors.isEmpty()){ throw new ValidationException(errors); }
-         */
         return RECONRESULT;
     }
 
@@ -643,12 +460,10 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
                 setRefNumber(receiptHeader.getReferencenumber());
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
-                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails()) {
+                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
                     rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
                             BigDecimal.ROUND_UP);
-                }
                 setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
-                
 
                 if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
                     addActionError(getText("billreceipt.totalamountlessthanzero.error"));
@@ -666,13 +481,12 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
-     // Fetching Last three online transaction for the Consumer Code
-        if (null != consumerCode && !("".equals(consumerCode)))
-                lastThreeOnlinePayments = collectionsUtil.getOnlineTransactionHistory(consumerCode);
-        for (OnlinePayment onlinePay : lastThreeOnlinePayments) {
-                if (onlinePay.getStatus().getCode().equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING))
-                        onlinePayPending = Boolean.TRUE;
-        }
+        // Fetching Last three online transaction for the Consumer Code
+        if (null != consumerCode && !"".equals(consumerCode))
+            lastThreeOnlinePayments = collectionsUtil.getOnlineTransactionHistory(consumerCode);
+        for (final OnlinePayment onlinePay : lastThreeOnlinePayments)
+            if (onlinePay.getStatus().getCode().equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING))
+                onlinePayPending = Boolean.TRUE;
     }
 
     private String decodeBillXML() {
@@ -768,20 +582,10 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             receiptHeader.setOnlinePayment(onlinePayment);
         }
-        // }
-        // }// end of looping through receipt headers
+        receiptHeaderService.persistReceiptsObject(receiptHeader);
 
         /**
-         * Persist the receipt payee details which will internally persist all the receipt headers
-         */
-
-        receiptHeaderService.persistPendingReceipts(receiptHeader);
-
-        receiptHeaderService.persist(receiptHeader);
-        receiptHeaderService.getSession().flush();
-
-        /**
-         * Construct Request Object For Bill Desk Payment Gateway
+         * Construct Request Object For The Payment Gateway
          */
 
         setPaymentRequest(collectionCommon.createPaymentRequest(paymentService, receiptHeader));
@@ -1163,23 +967,23 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return refNumber;
     }
 
-    public void setRefNumber(String refNumber) {
+    public void setRefNumber(final String refNumber) {
         this.refNumber = refNumber;
     }
-    
+
     public List<OnlinePayment> getLastThreeOnlinePayments() {
         return lastThreeOnlinePayments;
     }
-    
-    public void setLastThreeOnlinePayments(List<OnlinePayment> lastThreeOnlinePayments) {
-            this.lastThreeOnlinePayments = lastThreeOnlinePayments;
+
+    public void setLastThreeOnlinePayments(final List<OnlinePayment> lastThreeOnlinePayments) {
+        this.lastThreeOnlinePayments = lastThreeOnlinePayments;
     }
-    
+
     public Boolean getOnlinePayPending() {
-            return onlinePayPending;
+        return onlinePayPending;
     }
-    
-    public void setOnlinePayPending(Boolean onlinePayPending) {
-            this.onlinePayPending = onlinePayPending;
+
+    public void setOnlinePayPending(final Boolean onlinePayPending) {
+        this.onlinePayPending = onlinePayPending;
     }
 }

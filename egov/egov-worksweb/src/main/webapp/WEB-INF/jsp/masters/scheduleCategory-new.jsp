@@ -43,18 +43,25 @@
 		<title><s:text name="scheduleCategory.add.title"/></title>
 	</head>
 	<body id="home">
+		<div class="new-page-header">
+			Create Schedule Of Category
+		</div>
+		
 		<s:if test="%{hasErrors()}">
-			<div class="errorstyle">
+			<div class="alert alert-danger">
 				<s:actionerror />
 				<s:fielderror />
 			</div>
 		</s:if>
 		<s:if test="%{hasActionMessages()}">
-			<div class="messagestyle">
+			<div class="alert alert-success">
+				 <a href="#" style="font-size:21px;" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 				<s:actionmessage theme="simple" />
 			</div>
 		</s:if>
-		<s:form action="scheduleCategory-save" theme="simple" name="scheduleCategory">
+		
+		<s:form action="scheduleCategory-save" theme="simple" name="scheduleCategory"
+		cssClass="form-horizontal form-groups-bordered">
 			<s:token />
 			<%@ include file='scheduleCategory-form.jsp'%>
 		</s:form>

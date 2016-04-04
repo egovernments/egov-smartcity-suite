@@ -1,0 +1,1 @@
+﻿alter table egtl_validity add column basedonfinancialyear boolean default false;

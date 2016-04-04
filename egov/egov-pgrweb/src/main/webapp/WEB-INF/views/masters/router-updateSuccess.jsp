@@ -108,4 +108,4 @@
 	</div>
 </div>
 
-<script src="<c:url value='/resources/js/app/complaintroutingsuccess.js'/>"></script>
+<script src="<c:url value='/resources/js/app/complaintroutingsuccess.js?rnd=${app_release_no}'/>"></script>

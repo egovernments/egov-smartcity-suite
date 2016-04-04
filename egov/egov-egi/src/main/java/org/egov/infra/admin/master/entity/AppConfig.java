@@ -67,12 +67,10 @@ import org.hibernate.validator.constraints.SafeHtml;
 import com.google.gson.annotations.Expose;
 
 @Entity
-@CompositeUnique(id = "id", tableName = "eg_appconfig", compositefields = { "keyName", "module" }, compositecolumnName = {
-        "key_name", "module" }, enableDfltMsg = true, message = "KeyName and Module combination already exists")
-
 @Table(name = "eg_appconfig")
-@Searchable
 @SequenceGenerator(name = AppConfig.SEQ_APPCONFIG, sequenceName = AppConfig.SEQ_APPCONFIG, allocationSize = 1)
+@CompositeUnique(fields = { "keyName", "module" }, enableDfltMsg = true, message = "Key Name and Module combination already exists")
+@Searchable
 public class AppConfig extends AbstractAuditable {
 
     private static final long serialVersionUID = 8904645810221559541L;

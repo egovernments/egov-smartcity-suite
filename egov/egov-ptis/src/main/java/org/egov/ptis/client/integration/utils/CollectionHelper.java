@@ -60,14 +60,12 @@ import org.egov.collection.integration.models.PaymentInfo.TYPE;
 import org.egov.collection.integration.models.PaymentInfoCard;
 import org.egov.collection.integration.models.PaymentInfoCash;
 import org.egov.collection.integration.models.PaymentInfoChequeDD;
-import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.dcb.bean.CashPayment;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.dcb.bean.CreditCardPayment;
 import org.egov.dcb.bean.DDPayment;
 import org.egov.dcb.bean.Payment;
-import org.egov.dcb.service.EgovSpringBeanDefinition;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -84,8 +82,7 @@ import org.hibernate.FlushMode;
 public class CollectionHelper {
 	private static final Logger LOG = Logger.getLogger(CollectionHelper.class);
 	private EgBill bill;
-	private CollectionIntegrationService collectionService = EgovSpringBeanDefinition.getCollectionIntegrationService();
-
+	
 	/**
 	 * Use this constructor when you're only interested in getting the details
 	 * of a receipt.
@@ -119,17 +116,17 @@ public class CollectionHelper {
 		LOG.debug("CollectionHelper.executeCollection(): collection is from the field...");
 		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.F, source);
 
-		return collectionService.createReceipt(billInfo, paymentInfoList);
+		return SpringBeanUtil.getCollectionIntegrationService().createReceipt(billInfo, paymentInfoList);
 	}
 
 	public BillReceiptInfo generateMiscReceipt(Payment payment) {
 		if (!isCollectionPermitted()) {
 			throw new ApplicationRuntimeException(
-					"Collection is not allowed - current balance is zero and advance coll exists.");
+					"Collection is not allowed - Fully paid or excess Paid.");
 		}
 		List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
 		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.C, null);
-		return collectionService.createMiscellaneousReceipt(billInfo, paymentInfoList);
+		return SpringBeanUtil.getCollectionIntegrationService().createMiscellaneousReceipt(billInfo, paymentInfoList);
 	}
 	
 	/**
@@ -140,7 +137,7 @@ public class CollectionHelper {
 	 */
 	public BillReceiptInfo getReceiptInfo(String receiptNumber) {
 		preventSessionSaveOrUpdate();
-		return collectionService.getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, receiptNumber);
+		return SpringBeanUtil.getCollectionIntegrationService().getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, receiptNumber);
 	}
 
 	private List<PaymentInfo> preparePaymentInfo(Payment payment) {
@@ -269,10 +266,23 @@ public class CollectionHelper {
 	}
 
 	private boolean isCollectionPermitted() {
-		boolean allowed = thereIsCurrentBalanceToBePaid();
+		boolean allowed = thereIsBalanceToBePaid();
 		LOG.debug("isCollectionPermitted() returned: " + allowed);
 		return allowed;
 	}
+
+        private boolean thereIsBalanceToBePaid() {
+            boolean result = false;
+            BigDecimal balance = BigDecimal.ZERO;
+            for (EgBillDetails bd : bill.getEgBillDetails()) {
+                balance = balance.add(bd.balance());
+                if(balance.compareTo(BigDecimal.ZERO)>0){
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
 
 	private boolean thereIsCurrentBalanceToBePaid() {
 		boolean result = false;

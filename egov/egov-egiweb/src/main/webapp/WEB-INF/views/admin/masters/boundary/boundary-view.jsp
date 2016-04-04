@@ -149,4 +149,4 @@
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
 
-<script src="<c:url value='/resources/js/app/boundary.js'/>"></script>
+<script src="<c:url value='/resources/js/app/boundary.js?rnd=${app_release_no}'/>"></script>

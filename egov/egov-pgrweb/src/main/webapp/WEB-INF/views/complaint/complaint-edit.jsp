@@ -190,5 +190,5 @@
 		</form:form>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

@@ -1,42 +1,42 @@
-<!--
-	eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-    Copyright (C) <2015>  eGovernments Foundation
- 
-	The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
- 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
- 
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -59,37 +59,37 @@
 	<script>
 
 	function bodyOnLoad(){
-		if(dom.get("userMode").value=='view' || dom.get("userMode").value=='success'){
-			 dom.get("code").readOnly=true;
-			 dom.get("name").readOnly=true;
-			 dom.get("active").disabled=true;
+		if(document.getElementById("userMode").value=='view' || document.getElementById("userMode").value=='success'){
+			 document.getElementById("code").readOnly=true;
+			 document.getElementById("name").readOnly=true;
+			 document.getElementById("active").disabled=true;
 			 jQuery("span").remove(".mandatory");
 		}
-		if(dom.get("userMode").value=='new'){
-			 dom.get("active").checked=true;
+		if(document.getElementById("userMode").value=='new'){
+			 document.getElementById("active").checked=true;
 		}
 	}
 
 	function reload(){
-		dom.get("code").value="";
-		dom.get("name").value="";
+		document.getElementById("code").value="";
+		document.getElementById("name").value="";
 		document.uomForm.action='${pageContext.request.contextPath}/masters/unitOfMeasurement-newform.action';
     	document.uomForm.submit();
 	}
 
 	function checkOrUncheck(){
-		if(dom.get('active').checked==true){
-			dom.get('uomActive').value=true;
-			dom.get('uomActive').checked=true;
+		if(document.getElementById('active').checked==true){
+			document.getElementById('uomActive').value=true;
+			document.getElementById('uomActive').checked=true;
 		} else {
-			dom.get('uomActive').value=false;
-			dom.get('uomActive').checked=false;
+			document.getElementById('uomActive').value=false;
+			document.getElementById('uomActive').checked=false;
 		}
 	}
 	
 	function validateFormAndSubmit(){
-		var code= dom.get("code").value;
-		var name= dom.get("name").value;
+		var code= document.getElementById("code").value;
+		var name= document.getElementById("name").value;
 		if (name == '' || name == null){
 			showMessage('uom_error', '<s:text name="tradelic.uommaster.name.null" />');
 			return false;
@@ -128,9 +128,9 @@
 		    if(!(results[0].errorMsg=="" || results[0].errorMsg==null)){
 		    	showMessage('uom_error',results[0].errorMsg);
 		    	if(results[0].paramType=="name")
-			    	dom.get("name").value="";
+			    	document.getElementById("name").value="";
 		    	else if(results[0].paramType=="code")
-			    	dom.get("code").value="";
+			    	document.getElementById("code").value="";
 	 			return false;
 	     	} 
 	    }

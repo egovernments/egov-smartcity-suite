@@ -1,46 +1,46 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-		<SCRIPT type="text/javascript">
+<SCRIPT type="text/javascript">
 		var selectedname;
 		var childName;
 		//var extendCount=0;
@@ -94,18 +94,18 @@
 			updateFDTableIndex();
 		}
 		if (column.key == 'Delete') { 	
-		//alert(this);
+		//bootbox.alert(this);
 			if(this.getRecordSet().getLength()>1){			
 				this.deleteRow(record);
-				//alert(record);
+				//bootbox.alert(record);
 				allRecords=this.getRecordSet();
-				//alert(allRecord);
+				//bootbox.alert(allRecord);
 				for(var i=0;i<allRecords.getLength();i++){
 					this.updateCell(this.getRecord(i),this.getColumn('SlNo'),""+(i+1));
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -236,7 +236,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -386,7 +386,7 @@ function createCheckboxFieldFormatterNew(tableType,prefix,suffix,type){
 	return function(el, oRecord, oColumn, oData) {
 		var tableIndex=getIndexForTableType(tableType);
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-	//salert(value);
+	//sbootbox.alert(value);
 		el.innerHTML = " <input type='"+type+"' id='"+prefix+"["+tableIndex+"]"+suffix+"' name='"+prefix+"["+tableIndex+"]"+suffix+"' style='width:90px'  onclick='extendFixedDeposit(this);'/>";
 	}                          
 }    
@@ -395,7 +395,7 @@ function checkDate(obj)
 		var dat=validateDate(obj.value);
 		if (!dat && dat!=null) 
 		{
-			alert('Invalid date format : Enter Date as dd/mm/yyyy');
+			bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 			obj.value="";
 			return;
 		}
@@ -462,7 +462,7 @@ function checkDate(obj)
 			}                   
 		},
 		failure: function(o) {
-			alert('Cannot fetch Funding Agency Grant Amount');
+			bootbox.alert('Cannot fetch Funding Agency Grant Amount');
 		}
 	}
  
@@ -484,7 +484,7 @@ function checkDate(obj)
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}                 
 	}
 	function getbranchAccountId(obj){
@@ -502,9 +502,9 @@ function checkDate(obj)
 				var docs=o.responseText;               
 				res=docs.split("$");
 				var accNumid=selectedname;
-				//alert(docs);
+				//bootbox.alert(docs);
 				accNumid=accNumid.replace('Branch','Account');
-				//alert(accNumid.value);
+				//bootbox.alert(accNumid.value);
 				var x=document.getElementById(accNumid);
 				x.length=0;
 				x.options[0]=new Option("----Choose----","-1");  
@@ -520,7 +520,7 @@ function checkDate(obj)
 			}
 		},                                         
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	}
 	            
@@ -532,7 +532,7 @@ function getIndexForTableType(tableType)
 		}
 		
 		else if(tableType=='Childtable'){
-		//alert("hi");
+		//bootbox.alert("hi");
 			return childTableIndex;
 		}
 		
@@ -562,7 +562,7 @@ function updateYUIChildGrid(fdlist, field,index,value){
 }	 
 function updateFDTableIndex()
 {
-	//alert("fdTableIndex >> "+fdTableIndex);
+	//bootbox.alert("fdTableIndex >> "+fdTableIndex);
 	fdTableIndex++;
 }
 
@@ -612,15 +612,15 @@ if(obj.checked){
      		document.getElementById(childBankAccount).options[0]=new Option(selAccount[i].text,selAccount[i].value);
      		}  		
      	}
-     	//alert("PARENT ACCOUNT iD>>"+parentaccId);
-     	//alert("child table value"+document.getElementById(childBankAccount).value);
+     	//bootbox.alert("PARENT ACCOUNT iD>>"+parentaccId);
+     	//bootbox.alert("child table value"+document.getElementById(childBankAccount).value);
      		document.getElementById(childBankAccount).options[0].value=parentaccId; 
      		document.getElementById(childBankAccount).options[0].text=parentText;
-     		//alert("afetr reassigning"+document.getElementById(childBankAccount).value)
+     		//bootbox.alert("afetr reassigning"+document.getElementById(childBankAccount).value)
      		 
      		                                 
 	}else{
-			//alert(abc);
+			//bootbox.alert(abc);
 		childTableDT.addRow({SlNo:childTableDT.getRecordSet().getLength()+1});
 		document.getElementById(childDepositAmount).value=document.getElementById(parentmaturityAmount).value;
 		document.getElementById(childBankBranch).value=document.getElementById(parentBankBranch).value;
@@ -648,40 +648,40 @@ if(obj.checked){
  }
 }
 </SCRIPT>
-		<div id="labelAD" align="center">
-			<h1>
-				<s:text name="fixeddeposit.heading.create" />
-			</h1>
-		</div>
-		<br></br>
+<div id="labelAD" align="center">
+	<h1>
+		<s:text name="fixeddeposit.heading.create" />
+	</h1>
+</div>
+<br></br>
 
-		<div class="formmainbox">
-			<div class="formheading" />
-				<div class="subheadnew">
-					<s:text name="fixeddeposit.heading.detail" />
-				</div>
-			</div>
-		</div>
-		<div style="color: red">
-			<s:actionerror/>  
-			<s:fielderror />
-		</div>
-		<div style="color: green">
-			<s:actionmessage theme="simple"/>
-		</div>
-		
-		<br></br>
-		<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
-			<div id="fdTablediv"></div>
-		</div>
-		<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
-			<div id="childTablediv"></div>
-		</div>
+<div class="formmainbox">
+	<div class="formheading" />
+	<div class="subheadnew">
+		<s:text name="fixeddeposit.heading.detail" />
+	</div>
+</div>
+</div>
+<div style="color: red">
+	<s:actionerror />
+	<s:fielderror />
+</div>
+<div style="color: green">
+	<s:actionmessage theme="simple" />
+</div>
 
-		<script type="text/javascript">
+<br></br>
+<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
+	<div id="fdTablediv"></div>
+</div>
+<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
+	<div id="childTablediv"></div>
+</div>
+
+<script type="text/javascript">
      		makeFDTable('fdTablediv');
      		document.getElementById('fdTablediv').getElementsByTagName('table')[0].width="80%";
      		 
      	</script>
-			
+
 

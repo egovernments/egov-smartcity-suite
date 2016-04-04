@@ -56,18 +56,24 @@ import org.egov.infra.persistence.validator.CompositeUniqueCheckValidator;
 @Documented
 @Constraint(validatedBy = CompositeUniqueCheckValidator.class)
 public @interface CompositeUnique {
-    String[] fields() default {};
-    String[] compositefields() default {};
-    String id();
+    /** Entity id field name */
+    String id() default "id";
 
-    String tableName();
+    /** Fields to be used to check composite unique check */
+    String[] fields();
 
-    String[] columnName() default {};
-    String[] compositecolumnName() default{};
+    /** Message to be displayed */
     String message() default "{validator.unique}";
 
+    /** To override default validation message or not */
     boolean enableDfltMsg() default false;
-    
+
+    /** Fields to be done based current entity's super class or not */
+    boolean isSuperclass() default false;
+
+    /** Add null field value with IS NULL check or = NULL, useful when composite check required with NULL can be accepted */
+    boolean checkForNull() default false;
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

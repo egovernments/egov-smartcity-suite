@@ -41,7 +41,7 @@
             <column name="MIN_AMT_PAYABLE"   />
         </property>
      
-        <set name="egDemandDetails" cascade="all-delete-orphan" table="EG_DEMAND_DETAILS">
+        <set name="egDemandDetails" cascade="all-delete-orphan" table="EG_DEMAND_DETAILS" fetch="subselect">
             <key column="ID_DEMAND" not-null="true"/>
             <one-to-many class="org.egov.demand.model.EgDemandDetails" />
         </set>

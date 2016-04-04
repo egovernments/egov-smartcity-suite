@@ -58,7 +58,7 @@ function MultiGeometry(multiGeometryOptions) {
 }
 MultiGeometry.prototype = new google.maps.MVCObject();
 MultiGeometry.prototype.changed = function(key) {
-    // alert(key+" changed");
+    // bootbox.alert(key+" changed");
     if (this.polylines) {
 	for (var i=0; i<this.polylines.length; i++) {
 	    this.polylines[i].set(key,this.get(key));
@@ -1072,7 +1072,7 @@ geoXML3.getOpacity = function (kmlColor) {
 geoXML3.log = function(msg) {
   if (!!window.console) {
     console.log(msg);
-  } else { alert("log:"+msg); }
+  } else { bootbox.alert("log:"+msg); }
 };
 
 // Combine two options objects: a set of default values and a set of override values 

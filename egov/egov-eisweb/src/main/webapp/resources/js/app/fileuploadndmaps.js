@@ -42,7 +42,7 @@ $(document).ready(function(){
 	var fileformats = ['jpg', 'jpeg', 'gif', 'png' ];
 	var myCenter;
 	
-	var fileinputid = ['file1','file2','file3'];//assigning file id
+	var fileinputid = ['file1'];//assigning file id
 	var filefilled = {};//image fullfilled array
 	var removedarray = [];
 	var fileid;
@@ -83,16 +83,6 @@ $(document).ready(function(){
 			$('#file1block, .preview-cross1, #preview1').hide();
 			$('#preview1').removeAttr("src");
 			$('#filename1').html('');
-		}else if($(this).attr('data-file-id') == 'file2')
-		{
-			$('#file2block, .preview-cross2, #preview2').hide();
-			$('#preview2').removeAttr("src");
-			$('#filename2').html('');
-		}else if($(this).attr('data-file-id') == 'file3')
-		{
-			$('#file3block, .preview-cross3, #preview3').hide();
-			$('#preview3').removeAttr("src");
-			$('#filename3').html('');
 		}
 		
 	});
@@ -105,51 +95,19 @@ $(document).ready(function(){
 		if($.inArray(ext, fileformats) > -1){
 			//do something    
 			}else{
-			alert(ext+" file format is not allowed");
+				bootbox.alert(ext+" file format is not allowed");
 			return;
 		}
 		
-		//alert('ext'+ext);
+		//bootbox.alert('ext'+ext);
 		
 		if(e.target.files.length>0)
 		{
-			filefilled[$(this).attr('id')]=this.files[0].name;
-			console.log("File filled array:"+JSON.stringify(filefilled));
+			//filefilled[$(this).attr('id')]=this.files[0].name;
+			//console.log("File filled array:"+JSON.stringify(filefilled));
 			readURL(this, this.files[0].name);
-			var index = removedarray.indexOf(fileid);
-			if (index > -1) {
-				removedarray.splice(index, 1);
-			}
-			if(fileid == 'file1')
-			{
-				EXIF.getData(e.target.files[0], function() {
-					var imagelat = EXIF.getTag(this, "GPSLatitude"),
-					imagelongt = EXIF.getTag(this, "GPSLongitude");
-					var formatted_lat = format_lat_long(imagelat.toString());
-					var formatted_long = format_lat_long(imagelongt.toString());
-					$.ajax({
-						type: "POST",
-						url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+formatted_lat+','+formatted_long+'&sensor=true',
-						dataType: 'json',
-						success : function(data){
-							$('#location').typeahead('val', data.results[0].formatted_address);
-							myCenter=new google.maps.LatLng(formatted_lat, formatted_long);
-							$('#lat').val(formatted_lat);
-							$('#lng').val(formatted_long);
-							lat = formatted_lat;
-							lng = formatted_long;
-							//setmarkerfromimage();
-						    	map.setCenter(myCenter);
-						}
-					});
-					//console.log(EXIF.pretty(this));
-				});
-			}
-			
-			if(Object.keys(filefilled).length == 3)
-			{
-				$('#triggerFile').attr('disabled','disabled');
-			}
+			$('#triggerFile').attr('disabled','disabled');
+			//var index = removedarray.indexOf(fileid);
 		}
 	});
 	
@@ -166,206 +124,11 @@ $(document).ready(function(){
 					$('.preview-cross1').attr('data-file-id',fileid);
 					$('#preview1').attr('src', e.target.result).width(100);
 					$('#filename1').html(filename);
-				}else if(fileid == 'file2')
-				{
-					$('#file2block, .preview-cross2, #preview2').show();
-					$('.preview-cross2').attr('data-file-id',fileid);
-					$('#preview2').attr('src', e.target.result).width(100);
-					$('#filename2').html(filename);
-				}else if(fileid == 'file3')
-				{
-					$('#file3block, .preview-cross3, #preview3').show();
-					$('.preview-cross3').attr('data-file-id',fileid);
-					$('#preview3').attr('src', e.target.result).width(100);
-					$('#filename3').html(filename);
 				}
 			}
 			
 			reader.readAsDataURL(input.files[0]);
 		}
 	}
-	
-	function format_lat_long(latorlong)
-	{
-		var loc_arry = latorlong.split(",");
-		var degree= parseFloat(loc_arry[0]);
-		var minutes= parseFloat(loc_arry[1]);
-		var seconds= parseFloat(loc_arry[2]);
-		
-		//formula is degree+((minutes*60)+seconds/3600)
-		var formatted = degree+((minutes*60)+seconds)/3600;
-		
-		return formatted;
-	}
-	
-	
-	var map, geocoder, geolocate, marker, mapProp;    
-        var lat, lng, address;
-	myCenter=new google.maps.LatLng(13.081604, 80.275183);
-	
-	function initialize() {
-		
-		//marker=new google.maps.Marker();
-		
-		//mapprop();
-		var mapOptions = {
-			zoom: 10,
-			mapTypeControl: false,
-			navigationControl: false,
-		};
-		
-		geocoder = new google.maps.Geocoder();
-		map=new google.maps.Map(document.getElementById("normal"),mapOptions);
-		
-		var GeoMarker = new GeolocationMarker(map);
-		$('<div/>').addClass('centerMarker').appendTo(map.getDiv());
-		//marker.setMap(map);
-		
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function (position) {
-				
-				/*var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-				lat = position.coords.latitude;
-				lng = position.coords.longitude;
-				$.ajax({
-						type: "POST",
-						url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
-						dataType: 'json',
-						success : function(data){
-							 address = data.results[0].formatted_address;
-						}
-				});
-				
-				marker = new google.maps.Marker({
-					position: userLatLng,
-					draggable:true,
-					map: map
-				});
-				
-				map.setCenter(userLatLng);
-				
-				dragendmarker();*/
-
-				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-				lat = position.coords.latitude;
-				lng = position.coords.longitude;
-				
-				getAddress(lat, lng);
-
-				map.setCenter(userLatLng);
-				
-				}, function error(err) {
-				console.log('error: ' + err.message);        
-			});
-		}
-
-		google.maps.event.addListener(map, 'center_changed', function() {
-			var location = map.getCenter();
-			//console.log(location.lat()+"<=======>"+location.lng());
-			getAddress(location.lat(), location.lng());
-		});
-		
-	};
-	
-	function getAddress(lat, lng){
-		$.ajax({
-			type: "POST",
-			url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
-			dataType: 'json',
-			success : function(data){
-				 address = data.results[0].formatted_address;
-			}
-		});	
-	}
-
-	/*function setmarkerfromimage()
-	{
-		marker.setMap(null);
-
-		marker = new google.maps.Marker({
-			position: myCenter,
-			draggable:true,
-			map: map
-		});
-		
-		mapprop();
-		
-		geocoder = new google.maps.Geocoder();
-		
-		marker.setMap(map);
-		
-		dragendmarker();
-		
-	}
-	
-	function mapprop(){
-	
-		mapProp = {
-			center:myCenter,
-			mapTypeControl: true,
-			zoom:12,
-			mapTypeId:google.maps.MapTypeId.ROADMAP
-		};
-		
-	}
-	
-	function dragendmarker(){
-		google.maps.event.addListener(marker, "dragend", function (e) {
-			geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					console.log("drag end!!!");
-					lat = marker.getPosition().lat();
-					lng = marker.getPosition().lng();
-					address = results[0].formatted_address;
-				}
-			});
-		});
-	}*/
-	
-	google.maps.event.addDomListener(window, 'load', initialize);
-	
-	google.maps.event.addDomListener(window, "resize", resizingMap());
-	
-	$('#modal-6').on('show.bs.modal', function() {
-		//Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
-		
-		//complaint registration map
-		resizeMap();
-	});
-	
-	function resizeMap() {
-		if(typeof map =="undefined") return;
-		setTimeout( function(){resizingMap();} , 400);
-	}
-	
-	function resizingMap() {
-		if(typeof map =="undefined") return;
-		var center = map.getCenter();
-		google.maps.event.trigger(map, "resize");
-		map.setCenter(center); 
-	}
-	
-	$('.btn-save-location').click(function(){
-		var location = map.getCenter();
-		console.log(location.lat()+"<=======>"+location.lng());
-		lat = location.lat();
-		lng = location.lng();
-		$.ajax({
-			type: "POST",
-			url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
-			dataType: 'json',
-			success : function(data){
-				 address = data.results[0].formatted_address;
-				 $('#location').typeahead('val', address);
-			}
-		});	
-		$('#lat').val(lat);
-		$('#lng').val(lng);
-	});
-
-	$('#modal-6').on('hidden.bs.modal', function () {
-	    var userLatLng = new google.maps.LatLng(lat, lng);
-	    map.setCenter(userLatLng);
-	});
 	
 });

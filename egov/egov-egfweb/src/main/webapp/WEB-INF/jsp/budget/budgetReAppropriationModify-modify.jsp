@@ -1,62 +1,65 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <%@ page import="org.egov.budget.model.*"%>
-<html>  
-<head>  
-    <title> <s:text name="budgetReAppropriation.modify"/></title>
-    <link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-    <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
-	<STYLE type="text/css">
-	.yui-dt-liner { 
-	    text-align: right; 
-	} 
-	</STYLE>
-</head>  
-<body>  
- 		<%@ include file='common-includes.jsp'%>
- 		<jsp:include page="budgetHeader.jsp"/>
-		<script>
+<html>
+<head>
+<title><s:text name="budgetReAppropriation.modify" /></title>
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
+	TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js?rnd=${app_release_no}"></script>
+<STYLE type="text/css">
+.yui-dt-liner {
+	text-align: right;
+}
+</STYLE>
+</head>
+<body>
+	<%@ include file='common-includes.jsp'%>
+	<jsp:include page="budgetHeader.jsp" />
+	<script>
 		function validateAmount(){
 				invalidAmount = false;
 				for(i=0;i<budgetDetailsTable.getRecordSet().getLength();i++){
@@ -70,7 +73,7 @@
 					}
 				}				
 				if(invalidAmount == true){
-					alert(invalidMessage);
+					bootbox.alert(invalidMessage);
 					return false;	
 				}
 				return true;
@@ -92,9 +95,9 @@
 					document.getElementById('deleted').innerHTML = o.responseText;
 					element = document.getElementById('deleted');
 					if(document.getElementById('deleteGrid').value == 'true')
-						alert("Re Appropriation deleted successfully");
+						bootbox.alert("Re Appropriation deleted successfully");
 					else
-						alert("Re Appropriation could not be deleted");
+						bootbox.alert("Re Appropriation could not be deleted");
 			        },
 			     failure: function(o) {
 			     }
@@ -123,104 +126,146 @@
 		    }
 			function validateMandatoryFields(){
 				if(document.getElementById('financialYear').value==0){
-					alert('Please select a Financial year');
+					bootbox.alert('Please select a Financial year');
 					return false;
 				}
 				return true;
 			}
 			function validateForApproval(){
 				if(null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-					alert("Please select User");
+					bootbox.alert("Please select User");
 					return false;
 				}
 				return validateAmount();
 			}
 		</script>
-		<div class="formmainbox"><div class="subheadnew"><s:text name="budgetReAppropriation.modify"/></div>
-		<s:actionmessage theme="simple"/>
-		<s:actionerror/>  
-		<s:fielderror />  
-		
-<s:form name="budgetReAppropriationForm" action="budgetReAppropriationModify" theme="simple" >
-<div class="formmainbox"><div class="formheading"></div> 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-	    <td width="10%" class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="budget.financialYear"/><span class="mandatory">*</span></td>
-	    <td class="bluebox"><s:select list="dropdownData.finYearList"  listKey="id" listValue="finYearRange" name="financialYear.id" value="financialYear.id" id="financialYear" headerKey="0" headerValue="--- Select ---" ></s:select></td>
-		<td class="bluebox"><s:text name="budget.bere"/></td>
-	    <td class="bluebox"><s:select name="isBeRe" id="isBeRe" list="#{'BE':'BE','RE':'RE'}" value="beRe"/></td>
-	</tr>
-	<tr>
-		<s:if test="%{shouldShowHeaderField('fund')}">
-			<td class="greybox">&nbsp;</td>
-			<td  class="greybox">
-				<s:text name="budgetdetail.fund"/>
-				<s:if test="%{isFieldMandatory('fund')}"><span class="mandatory">*</span></s:if>
-			</td>
-		    <td  class="greybox"><s:select list="dropdownData.fundList"  listKey="id" listValue="name" name="budgetDetail.fund.id" headerKey="0" headerValue="--- Select ---"  value="fund.id" id="budgetReAppropriation_fund"></s:select></td>
-		</s:if>
-		<s:if test="%{shouldShowHeaderField('executingDepartment')}">
-			<td class="greybox">&nbsp;</td>
-			<td  class="greybox">
-				<s:text name="budgetdetail.executingDepartment"/>
-				<s:if test="%{isFieldMandatory('executingDepartment')}"><span class="mandatory">*</span></s:if>
-			</td>
-		    <td width="22%" class="greybox"><s:select list="dropdownData.executingDepartmentList"  listKey="id" listValue="deptName" name="budgetDetail.executingDepartment.id" headerKey="0" headerValue="--- Select ---"  value="budgetDetail.executingDepartment.id" id="budgetReAppropriation_executingDepartment"></s:select></td>
-		</s:if>
-	</tr>
-	<tr>
-		<s:if test="%{shouldShowField('function')}">
-		    <td class="bluebox">&nbsp;</td>
-			<td  class="bluebox">
-				<s:text name="budgetdetail.function"/>
-				<s:if test="%{isFieldMandatory('function')}"><span class="mandatory">*</span></s:if>
-			</td>
-		    <td  class="bluebox"><s:select list="dropdownData.functionList"  listKey="id" listValue="name" name="budgetDetail.function.id" headerKey="0" headerValue="--- Select ---"  value="function.id" id="budgetReAppropriation_function"></s:select></td>
-		</s:if>
-		<s:if test="%{shouldShowHeaderField('functionary')}">
-				<td class="bluebox">
-					<s:text name="budgetdetail.functionary"/>
-					<s:if test="%{isFieldMandatory('functionary')}"><span class="mandatory">*</span></s:if>
-				</td>
-			    <td class="bluebox"><s:select list="dropdownData.functionaryList"  listKey="id" listValue="name" headerKey="0" headerValue="--- Select ---" name="budgetDetail.functionary.id"  value="functionary.id" id="budgetReAppropriation_functionary"></s:select></td>
-		</s:if>
-	</tr>
-	<tr>
-		<s:if test="%{shouldShowHeaderField('scheme')}">
-				<td width="10%" class="bluebox">&nbsp;</td>
-				<td class="greybox">
-					<s:text name="budgetdetail.scheme"/>
-					<s:if test="%{isFieldMandatory('scheme')}"><span class="mandatory">*</span></s:if>
-				</td>
-			    <td class="greybox"><s:select list="dropdownData.schemeList"  listKey="id" listValue="name" headerKey="0" headerValue="--- Select ---" name="budgetDetail.scheme.id" onchange="populateSubSchemes(this);" value="scheme.id" id="budgetReAppropriation_scheme"></s:select></td>
-		</s:if>
-		<s:if test="%{shouldShowHeaderField('subScheme')}">
-				<egov:ajaxdropdown id="subScheme" fields="['Text','Value']" dropdownId="budgetReAppropriation_subScheme" url="budget/budgetDetail!ajaxLoadSubSchemes.action" afterSuccess="onHeaderSubSchemePopulation"/>
-				<td class="greybox">
-					<s:text name="budgetdetail.subScheme"/>
-					<s:if test="%{isFieldMandatory('subScheme')}"><span class="mandatory">*</span></s:if>
-				</td>
-			    <td class="greybox"><s:select list="dropdownData.subSchemeList"  listKey="id" listValue="name" headerKey="0" headerValue="--- Select ---" name="budgetDetail.subScheme"  value="subScheme.id" id="budgetReAppropriation_subScheme"></s:select></td>
-		</s:if>
-		
-	</tr>
-	<tr>
-		<s:if test="%{shouldShowHeaderField('boundary')}">
-				<td class="bluebox">
-					<s:text name="budgetdetail.field"/>
-					<s:if test="%{isFieldMandatory('boundary')}"><span class="mandatory">*</span></s:if>
-				</td>
-			    <td class="bluebox"><s:select list="dropdownData.boundaryList"  listKey="id" listValue="name" headerKey="0" headerValue="--- Select ---" name="budgetDetail.boundary.id"  value="boundary.id" id="budgetReAppropriation_boundary"></s:select></td>
-		</s:if>
-		<s:else>
-		    <td class="bluebox">&nbsp;</td>
-		    <td class="bluebox">&nbsp;</td>
-		</s:else>
-	</tr>
-</table>
-</div>
-<script>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="budgetReAppropriation.modify" />
+		</div>
+		<s:actionmessage theme="simple" />
+		<s:actionerror />
+		<s:fielderror />
+
+		<s:form name="budgetReAppropriationForm"
+			action="budgetReAppropriationModify" theme="simple">
+			<div class="formmainbox">
+				<div class="formheading"></div>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="10%" class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text name="budget.financialYear" /><span
+							class="mandatory">*</span></td>
+						<td class="bluebox"><s:select list="dropdownData.finYearList"
+								listKey="id" listValue="finYearRange" name="financialYear.id"
+								value="financialYear.id" id="financialYear" headerKey="0"
+								headerValue="--- Select ---"></s:select></td>
+						<td class="bluebox"><s:text name="budget.bere" /></td>
+						<td class="bluebox"><s:select name="isBeRe" id="isBeRe"
+								list="#{'BE':'BE','RE':'RE'}" value="beRe" /></td>
+					</tr>
+					<tr>
+						<s:if test="%{shouldShowHeaderField('fund')}">
+							<td class="greybox">&nbsp;</td>
+							<td class="greybox"><s:text name="budgetdetail.fund" /> <s:if
+									test="%{isFieldMandatory('fund')}">
+									<span class="mandatory">*</span>
+								</s:if></td>
+							<td class="greybox"><s:select list="dropdownData.fundList"
+									listKey="id" listValue="name" name="budgetDetail.fund.id"
+									headerKey="0" headerValue="--- Select ---" value="fund.id"
+									id="budgetReAppropriation_fund"></s:select></td>
+						</s:if>
+						<s:if test="%{shouldShowHeaderField('executingDepartment')}">
+							<td class="greybox">&nbsp;</td>
+							<td class="greybox"><s:text
+									name="budgetdetail.executingDepartment" /> <s:if
+									test="%{isFieldMandatory('executingDepartment')}">
+									<span class="mandatory">*</span>
+								</s:if></td>
+							<td width="22%" class="greybox"><s:select
+									list="dropdownData.executingDepartmentList" listKey="id"
+									listValue="deptName" name="budgetDetail.executingDepartment.id"
+									headerKey="0" headerValue="--- Select ---"
+									value="budgetDetail.executingDepartment.id"
+									id="budgetReAppropriation_executingDepartment"></s:select></td>
+						</s:if>
+					</tr>
+					<tr>
+						<s:if test="%{shouldShowField('function')}">
+							<td class="bluebox">&nbsp;</td>
+							<td class="bluebox"><s:text name="budgetdetail.function" />
+								<s:if test="%{isFieldMandatory('function')}">
+									<span class="mandatory">*</span>
+								</s:if></td>
+							<td class="bluebox"><s:select
+									list="dropdownData.functionList" listKey="id" listValue="name"
+									name="budgetDetail.function.id" headerKey="0"
+									headerValue="--- Select ---" value="function.id"
+									id="budgetReAppropriation_function"></s:select></td>
+						</s:if>
+						<s:if test="%{shouldShowHeaderField('functionary')}">
+							<td class="bluebox"><s:text name="budgetdetail.functionary" />
+								<s:if test="%{isFieldMandatory('functionary')}">
+									<span class="mandatory">*</span>
+								</s:if></td>
+							<td class="bluebox"><s:select
+									list="dropdownData.functionaryList" listKey="id"
+									listValue="name" headerKey="0" headerValue="--- Select ---"
+									name="budgetDetail.functionary.id" value="functionary.id"
+									id="budgetReAppropriation_functionary"></s:select></td>
+						</s:if>
+					</tr>
+					<tr>
+						<s:if test="%{shouldShowHeaderField('scheme')}">
+							<td width="10%" class="bluebox">&nbsp;</td>
+							<td class="greybox"><s:text name="budgetdetail.scheme" /> <s:if
+									test="%{isFieldMandatory('scheme')}">
+									<span class="mandatory">*</span>
+								</s:if></td>
+							<td class="greybox"><s:select list="dropdownData.schemeList"
+									listKey="id" listValue="name" headerKey="0"
+									headerValue="--- Select ---" name="budgetDetail.scheme.id"
+									onchange="populateSubSchemes(this);" value="scheme.id"
+									id="budgetReAppropriation_scheme"></s:select></td>
+						</s:if>
+						<s:if test="%{shouldShowHeaderField('subScheme')}">
+							<egov:ajaxdropdown id="subScheme" fields="['Text','Value']"
+								dropdownId="budgetReAppropriation_subScheme"
+								url="budget/budgetDetail!ajaxLoadSubSchemes.action"
+								afterSuccess="onHeaderSubSchemePopulation" />
+							<td class="greybox"><s:text name="budgetdetail.subScheme" />
+								<s:if test="%{isFieldMandatory('subScheme')}">
+									<span class="mandatory">*</span>
+								</s:if></td>
+							<td class="greybox"><s:select
+									list="dropdownData.subSchemeList" listKey="id" listValue="name"
+									headerKey="0" headerValue="--- Select ---"
+									name="budgetDetail.subScheme" value="subScheme.id"
+									id="budgetReAppropriation_subScheme"></s:select></td>
+						</s:if>
+
+					</tr>
+					<tr>
+						<s:if test="%{shouldShowHeaderField('boundary')}">
+							<td class="bluebox"><s:text name="budgetdetail.field" /> <s:if
+									test="%{isFieldMandatory('boundary')}">
+									<span class="mandatory">*</span>
+								</s:if></td>
+							<td class="bluebox"><s:select
+									list="dropdownData.boundaryList" listKey="id" listValue="name"
+									headerKey="0" headerValue="--- Select ---"
+									name="budgetDetail.boundary.id" value="boundary.id"
+									id="budgetReAppropriation_boundary"></s:select></td>
+						</s:if>
+						<s:else>
+							<td class="bluebox">&nbsp;</td>
+							<td class="bluebox">&nbsp;</td>
+						</s:else>
+					</tr>
+				</table>
+			</div>
+			<script>
 <s:if test="%{shouldShowField('scheme') and shouldShowField('subScheme')}">
 populateSubSchemes(document.getElementById('budgetReAppropriation_scheme'))
 function preselectSubScheme(){
@@ -236,22 +281,28 @@ function preselectSubScheme(){
 }
 </s:if>
 </script>
-<div class="buttonbottom" style="padding-bottom:10px;">
-	<input type="submit" value="Search" id="budgetReAppropriationModify__list" name="method:list" onClick="javascript: return validateMandatoryFields();" class="buttonsubmit"/>
-	<s:submit value="Close" onclick="javascript: self.close()" cssClass="button"/>
-</div>
-<br/><br/>
-<s:if test="%{not savedBudgetReAppropriationList.empty}">
-	<div align="left"><br/>
-         	<div class="tabber">
-           		<div class="tabbertab" >
-					<h2>Budget Details</h2>
-					<span>
-						<div class="yui-skin-sam" style="width:100%;overflow-x:auto; overflow-y:hidden;">
-							<div id="budgetDetailTable"></div>
-							<br/>
-						</div>
-						<script>
+			<div class="buttonbottom" style="padding-bottom: 10px;">
+				<input type="submit" value="Search"
+					id="budgetReAppropriationModify__list" name="method:list"
+					onClick="javascript: return validateMandatoryFields();"
+					class="buttonsubmit" />
+				<s:submit value="Close" onclick="javascript: self.close()"
+					cssClass="button" />
+			</div>
+			<br />
+			<br />
+			<s:if test="%{not savedBudgetReAppropriationList.empty}">
+				<div align="left">
+					<br />
+					<div class="tabber">
+						<div class="tabbertab">
+							<h2>Budget Details</h2>
+							<span>
+								<div class="yui-skin-sam"
+									style="width: 100%; overflow-x: auto; overflow-y: hidden;">
+									<div id="budgetDetailTable"></div>
+									<br />
+								</div> <script>
 							var BUDGETDETAILLIST='savedBudgetReAppropriationList';
 							function addGridRows(){
 								<s:iterator value="savedBudgetReAppropriationList" status="stat">
@@ -353,29 +404,39 @@ function preselectSubScheme(){
 							makeBudgetDetailTable();
 							addGridRows();
 						</script>
-					</span>
-				</div> <!-- Individual tab -->
-				<div class="tabbertab">
-		               <h2>Approval Details</h2>
-		               <span>
-		               	<input type="hidden" name="scriptName" id="scriptName" value="BudgetDetail.nextDesg"/>
-		              		<%@include file="../voucher/workflowApproval.jsp"%>
-		               </span>
-				</div> <!-- Individual tab -->
-			</div>
-		</div>
-	<div class="buttonbottom" style="padding-bottom:10px">
-		<s:hidden  name="actionName" value="forward"/>
-		<input type="submit" value="Update" id="budgetReAppropriationModify__update" name="method:update" onClick="javascript: return validateAmount();" class="buttonsubmit"/>
-		<input type="submit" value="Forward" id="budgetReAppropriationModify__forward" name="method:forward" onClick="javascript: return validateForApproval();" class="buttonsubmit"/>
-		<s:submit value="Close" onclick="javascript: self.close()" cssClass="button"/>
-	</div>
-</s:if>
+							</span>
+						</div>
+						<!-- Individual tab -->
+						<div class="tabbertab">
+							<h2>Approval Details</h2>
+							<span> <input type="hidden" name="scriptName"
+								id="scriptName" value="BudgetDetail.nextDesg" /> <%@include
+									file="../voucher/workflowApproval.jsp"%>
+							</span>
+						</div>
+						<!-- Individual tab -->
+					</div>
+				</div>
+				<div class="buttonbottom" style="padding-bottom: 10px">
+					<s:hidden name="actionName" value="forward" />
+					<input type="submit" value="Update"
+						id="budgetReAppropriationModify__update" name="method:update"
+						onClick="javascript: return validateAmount();"
+						class="buttonsubmit" /> <input type="submit" value="Forward"
+						id="budgetReAppropriationModify__forward" name="method:forward"
+						onClick="javascript: return validateForApproval();"
+						class="buttonsubmit" />
+					<s:submit value="Close" onclick="javascript: self.close()"
+						cssClass="button" />
+				</div>
+			</s:if>
 
-<s:if test='%{message != ""}'>
-	<div class="error"><s:property value="message"/></div>
-</s:if>
-<div id="beReGrid"></div>
-</s:form>
+			<s:if test='%{message != ""}'>
+				<div class="error">
+					<s:property value="message" />
+				</div>
+			</s:if>
+			<div id="beReGrid"></div>
+		</s:form>
 </body>
 </html>

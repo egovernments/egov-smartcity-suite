@@ -45,12 +45,17 @@
 		<th class="bluebgheadtd"><s:text name="FloorNo" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="ConstructionType" /><span class="mandatory1" id="constTypeMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Usage" /><span class="mandatory1" id="usageMdtry">*</span></th>
+		<th class="bluebgheadtd"><s:text name="firmName" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="unstructuredLand" /><span class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="plinthLength" /></th>
+		<th class="bluebgheadtd"><s:text name="plinthBreadth" /></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="drainage" /></th>
-		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
+		<th class="bluebgheadtd"><s:text name="building.permNo" />
+		<th class="bluebgheadtd"><s:text name="buildingpermdate" />
+		<th class="bluebgheadtd"><s:text name="buildingpermplintharea" />
 		<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
 	</tr>
 	<s:if test="property.propertyDetail.floorDetailsProxy.size()==0">
@@ -82,10 +87,18 @@
 						name="property.propertyDetail.floorDetailsProxy[0].propertyUsage.id"
 						listKey="id" id="floorUsage"
 						value="%{property.propertyDetail.floorDetailsProxy[0].propertyUsage.id}"
-						listValue="usageName" list="dropdownData.UsageList"
+						listValue="usageName" list="dropdownData.UsageList" onchange="enableDisableFirmName(this);"
 						cssClass="selectnew"
 						cssStyle="width:100%" 
 						data-optional="0" data-errormsg="Nature of usage is required!"/>
+				</div>
+			</td>
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].firmName"
+						id="firmName" size="20"
+						value="%{property.propertyDetail.floorDetailsProxy[0].firmName}"
+						maxlength="32" cssStyle="width:100%"/>
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
@@ -118,6 +131,30 @@
 						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 				</div>
 			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:select name="property.propertyDetail.floorDetailsProxy[0].unstructuredLand" id="unstructuredLand"  list="#{'false':'No','true':'Yes' }" value="%{property.propertyDetail.floorDetailsProxy[0].unstructuredLand}"
+						onchange="enableDisableLengthBreadth(this);" cssClass="selectnew" data-optional="0" title="Unstructured Land">
+					</s:select>
+				</div>
+			</td>
+		<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].builtUpArea.length" 
+						maxlength="10" size="10" id="builtUpArealength" value="%{property.propertyDetail.floorDetailsProxy[0].builtUpArea.length}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length'); calculatePlintArea(this);"
+						  cssStyle="width:100%" data-optional="1" data-errormsg="Length is mandatory!" title="Length"/>
+				</div>
+			</td>
+		<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].builtUpArea.breadth" 
+						maxlength="10" size="10" id="builtUpAreabreadth" value="%{property.propertyDetail.floorDetailsProxy[0].builtUpArea.breadth}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Breadth');checkZero(this,'Breadth'); calculatePlintArea(this);"
+						 cssStyle="width:100%" data-optional="1" data-errormsg="Breadth is mandatory!" title="Breadth"/>
+				</div>
+			</td>
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
@@ -130,25 +167,37 @@
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:select name="property.propertyDetail.floorDetailsProxy[0].drainage" id="property.propertyDetail.floorDetailsProxy[0].drainage" headerValue="select"
-							headerKey="" list="#{'true':'Yes','false':'No' }" value="%{property.propertyDetail.floorDetailsProxy[0].drainage}"
-							cssClass="selectnew" data-optional="1">
-					</s:select>
+
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].buildingPermissionNo" 
+						maxlength="16" size="16" id="property.propertyDetail.floorDetailsProxy[0].buildingPermissionNo" value="%{property.propertyDetail.floorDetailsProxy[0].buildingPermissionNo}"
+						onblur="checkZero(this);" onchange="trim(this,this.value);"
+						cssStyle="width:100%" title="Building Permission Number"/>
 				</div>
 			</td>
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield autocomplete="off" name="property.propertyDetail.floorDetailsProxy[0].noOfSeats" 
-						id="property.propertyDetail.floorDetailsProxy[0].noOfSeats" value="%{property.propertyDetail.floorDetailsProxy[0].noOfSeats}" size="10"
-						maxlength="10" cssStyle="width:100%"></s:textfield>
+
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].buildingPermissionDate" 
+						maxlength="16" size="16" id="property.propertyDetail.floorDetailsProxy[0].buildingPermissionDate" value="%{property.propertyDetail.floorDetailsProxy[0].buildingPermissionDate}"
+						cssClass="datepicker" autocomplete="off"
+						cssStyle="width:100%" title="Building Permission Date"/>
+				</div>
+			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area" 
+						maxlength="10" size="10" id="property.propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area" value="%{property.propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Building paln plinth Area');checkZero(this,'Building paln plinth Area');"
+						cssStyle="width:100%" title="Plinth area in building plan"/>
 				</div>
 			</td>
 
 			<td class="blueborderfortd" id="AddRemoveFloor">
 			
 			   <span id="addF" alt="AddF" class="tblactionicon add" 
-			        onclick="javascript:addFloor(); return false;">
+			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 			  </span>
 			  &nbsp;
@@ -201,7 +250,7 @@
 							<s:select headerKey=""
 								headerValue="%{getText('default.select')}"
 								name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
-								listKey="id" id="floorUsage" listValue="usageName"
+								listKey="id" id="floorUsage" listValue="usageName" onchange="enableDisableFirmName(this);"
 								list="dropdownData.UsageList" cssClass="selectnew"
 								value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
 								cssStyle="width:100%" />
@@ -211,14 +260,21 @@
 								headerValue="%{getText('default.select')}"
 								name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
 								listKey="id" id="floorUsage%{#floorsstatus.index-1}"
-								listValue="usageName" list="dropdownData.UsageList"
+								listValue="usageName" list="dropdownData.UsageList" onchange="enableDisableFirmName(this);"
 								cssClass="selectnew"
 								value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
 								cssStyle="width:100%" />
 						</s:else>
 					</div>
 				</td>
-
+				<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].firmName"
+						id="firmName" size="25" maxlength="32"
+						value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].firmName}"
+						cssStyle="width:100%" />
+				</div>
+				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:select headerKey=""
@@ -250,38 +306,77 @@
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>
 				</td>
+				
+				
+				<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:select name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].unstructuredLand" id="unstructuredLand"  list="#{'false':'No','true':'Yes' }" value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].unstructuredLand}"
+						onchange="enableDisableLengthBreadth(this);" cssClass="selectnew" data-optional="0" title="Unstructured Land">
+					</s:select>
+				</div>
+			</td>
+		<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.length" 
+						maxlength="10" size="10" id="builtUpArealength" value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.length}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length'); calculatePlintArea(this);"
+						  cssStyle="width:100%" data-optional="1" data-errormsg="Length is mandatory!" title="Length"/>
+				</div>
+			</td>
+		<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.breadth" 
+						maxlength="10" size="10" id="builtUpAreabreadth" value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.breadth}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Breadth');checkZero(this,'Breadth'); calculatePlintArea(this);"
+						 cssStyle="width:100%" data-optional="1" data-errormsg="Breadth is mandatory!" title="Breadth"/>
+				</div>
+			</td>
+				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
 							name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
-							maxlength="15" size="10" id="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
+							maxlength="15" size="10" id="builtUpArea"
 							value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.area}"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
-							cssStyle="width:100%" />
+							/>
 					</div>
 				</td>
-				
 				<td class="blueborderfortd" style="padding: 2px 2px">
-					<div align="center">
-						<s:select name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].drainage" id="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].drainage" headerValue="select"
-								headerKey="" list="#{'true':'Yes','false':'No' }" value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].drainage}"
-								cssClass="selectnew" data-optional="1">
-						</s:select>
-					</div>
-				</td>
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionNo" 
+						maxlength="16" size="16" id="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionNo" value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].buildingPermissionNo}"
+						onblur="checkZero(this);" onchange="trim(this,this.value);"
+						cssStyle="width:100%" title="Building Permission Number"/>
+				</div>
+			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+				<s:date name="property.propertyDetail.floorDetailsProxy[#floorsstatus.index].buildingPermissionDate" var="blngPlinthArea" format="dd/MM/yyyy"/>
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionDate" 
+						maxlength="16" size="16" id="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPermissionDate" 
+						value="%{blngPlinthArea}"
+						cssClass="datepicker" autocomplete="off"
+						cssStyle="width:100%" title="Building Permission Date"/>
+				</div>
+			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPlanPlinthArea.area" 
+						maxlength="10" size="10" id="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].buildingPlanPlinthArea.area"
+						value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].buildingPlanPlinthArea.area}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Building paln plinth Area');checkZero(this,'Building paln plinth Area');"
+						cssStyle="width:100%" title="Plinth area in building plan"/>
+				</div>
+			</td>
 				
-				<td class="blueborderfortd" style="padding: 2px 2px">
-					<div align="center">
-						<s:textfield autocomplete="off" name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].noOfSeats" 
-							id="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].noOfSeats" value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].noOfSeats}" size="10"
-							maxlength="10" cssStyle="width:100%"></s:textfield>
-					</div>
-				</td>
 				
 				<td class="blueborderfortd" id="AddRemoveFloor">
 				
 				  <span id="addF" alt="AddF" class="tblactionicon add" 
-			        onclick="javascript:addFloor(); return false;">
+			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 				  </span>
 				  &nbsp;

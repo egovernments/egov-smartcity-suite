@@ -99,7 +99,6 @@ jQuery(document).ready(function() {
 	
 });
 
-
 function callAjaxForCollectionSummary() {
 	var modeval = jQuery('#mode').val();
 	var fromDate=jQuery('#fromDate').val();
@@ -146,7 +145,19 @@ function callAjaxForCollectionSummary() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : [ 
+					               {
+						             "sExtends": "pdf"
+					                },
+					                {
+							             "sExtends": "xls",
+		                                 "fnClick": function ( nButton, oConfig, oFlash ) {
+	                            	    	 reCalculateTotalFooterWhenExport('tblCollectionSummary');
+	                            		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
+	                            		 }
+						             },{
+							             "sExtends": "print"
+						               }]
 				},
 				aaSorting: [],				
 				columns : [ {						

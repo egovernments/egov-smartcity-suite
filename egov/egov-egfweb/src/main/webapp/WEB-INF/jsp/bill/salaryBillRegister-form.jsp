@@ -1,43 +1,43 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <script>
 var path="${pageContext.request.contextPath}";
@@ -66,14 +66,14 @@ var validationCallback = {
 		}
 		else
 		{
-			alert('Enter valid Code');
+			bootbox.alert('Enter valid Code');
 			document.getElementById('subledgerList['+parseInt(res[0])+']'+'.detailKeyId').value='';
 			document.getElementById('subledgerList['+parseInt(res[0])+']'+'.detailKey').value='';
 			return;
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function validateDetailCode(obj){
@@ -106,7 +106,7 @@ success: function(o) {
 		} 
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -127,12 +127,12 @@ success: function(o) {
 		codeObject = new YAHOO.widget.DS_JSArray(r);
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
 	function autoCompleteSubledgerCode(element,myEvent){
-		//alert(codeObject)
+		//bootbox.alert(codeObject)
 		var yuiflag = new Array();
 		var src = element;	
 		var target = document.getElementById('detailcodescontainer');	
@@ -224,7 +224,7 @@ function createDropdownFormatterForAccountCode(prefix){
 
 		function computeSubledgersTotalCrAmount(target){
 			if(isNaN(parseInt(target.value))){
-				alert("Please enter a valid amount")
+				bootbox.alert("Please enter a valid amount")
 				target.value = 0;
 			}
 			element = document.getElementById('totalSubLedgerCreditamount');
@@ -236,7 +236,7 @@ function createDropdownFormatterForAccountCode(prefix){
 		
 		function computeSubledgersTotalDrAmount(target){
 			if(isNaN(parseInt(target.value))){
-				alert("Please enter a valid amount")
+				bootbox.alert("Please enter a valid amount")
 				target.value = 0;
 			}
 			element = document.getElementById('totalSubLedgerDebitamount');
@@ -247,7 +247,7 @@ function createDropdownFormatterForAccountCode(prefix){
 		}
 		function computeEarningsTotalAmount(target){
 			if(isNaN(parseInt(target.value))){
-				alert("Please enter a valid amount")
+				bootbox.alert("Please enter a valid amount")
 				target.value = 0;
 			}
 			element = document.getElementById('netPayList[0].creditamount');
@@ -261,7 +261,7 @@ function createDropdownFormatterForAccountCode(prefix){
 		
 		function computeDeductionsTotalAmount(target){
 			if(isNaN(parseInt(target.value))){
-				alert("Please enter a valid amount")
+				bootbox.alert("Please enter a valid amount")
 				target.value = 0;
 			}
 			element = document.getElementById('netPayList[0].creditamount');
@@ -346,7 +346,7 @@ function createDropdownFormatterForAccountCode(prefix){
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 		});
@@ -381,212 +381,322 @@ function createDropdownFormatterForAccountCode(prefix){
 	
 </script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-  <td width="9%" class="bluebox">&nbsp;</td>
-    <td width="18%" class="bluebox"><s:text name="billDate"/></>:<span class="mandatory">*</span></td>
-    <td width="23%" class="bluebox">
-    	<input type="text" name="model.billdate" value='<s:property value="model.billdate"/>'  id="billdate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('salaryBill.billdate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
-    </td>
-    <td width="17%" class="bluebox">&nbsp;</td>
-    <td width="33%" class="bluebox"></td>
-  </tr>
-  <tr>
-    <td class="greybox">&nbsp;</td>
-    <td class="greybox">For the Month of:<span class="mandatory">*</span></td>
-    <td class="greybox"><select name="billregistermis.month" id="month" value='<s:property value="billregistermis.month"/>'>
-      <option value="-1" selected="selected">------Choose-----</option>
-      <option value="1"> January</option> 
-      <option value="2">February</option> 
-      <option value="3">March</option> 
-      <option value="4">April</option> 
-      <option value="5">May</option> 
-      <option value="6">June</option> 
-      <option value="7">July</option> 
-      <option value="8">August</option> 
-      <option value="9">September</option> 
-      <option value="10">October</option> 
-      <option value="11">November</option> 
-      <option value="12">December</option>
-      </select></td>
-    <td class="greybox"> <s:text name="financialyear"/>:<span class="mandatory">*</span></td>
-    <td class="greybox"><s:select name="billregistermis.financialyear.id" id="financialyear" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" headerKey="-1" headerValue="----Choose----" value="%{billregistermis.financialyear.id}"/></td>
-  </tr>
-  <tr>
-    <td class="bluebox">&nbsp;</td>
-	<td class="bluebox"><s:text name="department"/>:<span class="mandatory">*</span></td>
-	<td class="bluebox"><s:select name="billregistermis.egDepartment.id" id="department" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----" value="billregistermis.egDepartment.id"/></td>
-  	<td class="bluebox"><s:text name="field"/>:</td>
-	<td class="bluebox"><s:select name="billregistermis.fieldid.id" id="fieldid" list="dropdownData.fieldList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" value="billregistermis.fieldid.id"/></td>
-  </tr>
-  <tr>
-    <td class="greybox">&nbsp;</td>
-    <td class="greybox"> <s:text name="functionary"/>:</td>
-    <td class="greybox"><s:select name="billregistermis.functionaryid.id" id="functionaryid" list="dropdownData.functionaryList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" value="billregistermis.functionaryid.id"/></td>
-    <td class="greybox">&nbsp;</td>
-    <td class="greybox">&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="bluebox">&nbsp;</td>
-    <td class="bluebox">&nbsp;</td>
-    <td class="bluebox"></td>
-    <td class="bluebox">&nbsp;</td>
-    <td class="bluebox">&nbsp;</td>
-  </tr>
+	<tr>
+		<td width="9%" class="bluebox">&nbsp;</td>
+		<td width="18%" class="bluebox"><s:text name="billDate" /></>:<span
+			class="mandatory">*</span></td>
+		<td width="23%" class="bluebox"><input type="text"
+			name="model.billdate" value='<s:property value="model.billdate"/>'
+			id="billdate" onkeyup="DateFormat(this,this.value,event,false,'3')" />
+			<a href="javascript:show_calendar('salaryBill.billdate');"
+			style="text-decoration: none">&nbsp;<img tabIndex="-1"
+				src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+		</td>
+		<td width="17%" class="bluebox">&nbsp;</td>
+		<td width="33%" class="bluebox"></td>
+	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox">For the Month of:<span class="mandatory">*</span></td>
+		<td class="greybox"><select name="billregistermis.month"
+			id="month" value='<s:property value="billregistermis.month"/>'>
+				<option value="-1" selected="selected">------Choose-----</option>
+				<option value="1">January</option>
+				<option value="2">February</option>
+				<option value="3">March</option>
+				<option value="4">April</option>
+				<option value="5">May</option>
+				<option value="6">June</option>
+				<option value="7">July</option>
+				<option value="8">August</option>
+				<option value="9">September</option>
+				<option value="10">October</option>
+				<option value="11">November</option>
+				<option value="12">December</option>
+		</select></td>
+		<td class="greybox"><s:text name="financialyear" />:<span
+			class="mandatory">*</span></td>
+		<td class="greybox"><s:select
+				name="billregistermis.financialyear.id" id="financialyear"
+				list="dropdownData.financialYearList" listKey="id"
+				listValue="finYearRange" headerKey="-1" headerValue="----Choose----"
+				value="%{billregistermis.financialyear.id}" /></td>
+	</tr>
+	<tr>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="department" />:<span
+			class="mandatory">*</span></td>
+		<td class="bluebox"><s:select
+				name="billregistermis.egDepartment.id" id="department"
+				list="dropdownData.departmentList" listKey="id" listValue="deptName"
+				headerKey="-1" headerValue="----Choose----"
+				value="billregistermis.egDepartment.id" /></td>
+		<td class="bluebox"><s:text name="field" />:</td>
+		<td class="bluebox"><s:select name="billregistermis.fieldid.id"
+				id="fieldid" list="dropdownData.fieldList" listKey="id"
+				listValue="name" headerKey="-1" headerValue="----Choose----"
+				value="billregistermis.fieldid.id" /></td>
+	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="functionary" />:</td>
+		<td class="greybox"><s:select
+				name="billregistermis.functionaryid.id" id="functionaryid"
+				list="dropdownData.functionaryList" listKey="id" listValue="name"
+				headerKey="-1" headerValue="----Choose----"
+				value="billregistermis.functionaryid.id" /></td>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"></td>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox">&nbsp;</td>
+	</tr>
 </table>
 
-</table><table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
-        <tr>
-          <th colspan="8"><div class="subheadsmallnew"><s:text name="bill.earnings"/></div></th>
-        </tr>
-        <tr>
-          <th class="bluebgheadtd" width="7%" >SL No</th>
-          <th class="bluebgheadtd" width="20%" > Function</th>
-          <th class="bluebgheadtd" width="15%" > Head</th>
-          <th class="bluebgheadtd" width="15%" >Account Code</th>
-          <th class="bluebgheadtd" width="50%"> Account Description</th>
-          <th class="bluebgheadtd" width="50%" >Debit Amount</th>
-          </tr>
-          <s:iterator value="earningsList" status="stat" var="a">
-        <tr>
-          <td class="blueborderfortd"><div align="center">
-            <input name="textfield" type="text" value='<s:property value="#stat.index+1"/>' size="3"/>
-          </div></td>
-          <td class="blueborderfortd"><div align="center">
-          	<input value='<s:property value="#a.functionid"/>' name='earningsList[<s:property value="#stat.index"/>].functionid' type="hidden" size="1" id='earningsList[<s:property value="#stat.index"/>].functionid' />
-            <input type="text" size="28" name='earningsList[<s:property value="#stat.index"/>].functionDetail' id='earningsList[<s:property value="#stat.index"/>].functionDetail' class="yui-ac-input" onkeyup='autocompletecodeFunction(this,event)' autocomplete='off' onblur='fillNeighbourAfterSplitFunction(this,"earningsList")'/>
-            </div></td>
-          <td class="blueborderfortd"><div align="center">
-            <input value='<s:property value="coaIdAndHead[#a.glcodeid]"/>' type="text" size="28" id='earningsList[<s:property value="#stat.index"/>].narration' readonly="readonly"/>
-            </div></td>
-          <td class="blueborderfortd">
-          	<input name='earningsList[<s:property value="#stat.index"/>].glcodeid' type="hidden" size="1" id='earningsList[<s:property value="#stat.index"/>].glcodeid' value='<s:property value="#a.glcodeid"/>'/>
-            <input type="text" size="20" id='earningsList[<s:property value="#stat.index"/>].glcode' value='<s:property value="coaAndIds[#a.glcodeid].glcode"/>' readonly="readonly"/>
-          </td>
-          <td class="blueborderfortd">
-          	<input value='<s:property value="coaAndIds[#a.glcodeid].name"/>' name='earningsList[<s:property value="#stat.index"/>].narration' type="text" id='earningsList[<s:property value="#stat.index"/>].narration' size="25" readonly="readonly"/>
-          </td>
-          <td class="blueborderfortd"><div align="center">
-            <input name='earningsList[<s:property value="#stat.index"/>].debitamount' type="text" class="amount" size="25" id='earningsList[<s:property value="#stat.index"/>].debitamount' onblur="computeEarningsTotalAmount(this)" value='<s:property value="earningsList[#stat.index].debitamount"/>'/>
-          </div></td>
-        </tr>
-        </s:iterator>
-        <tr>
-          <td colspan="5" class="blueborderfortd1"><div align="right" class="bold">Total Earnings:</div></td>
-          <td class="blueborderfortd1"><div align="center">
-            <input name="textfield8" type="text" class="amount" size="25" id='totaldramount' name='totaldramount' value='0' readonly="readonly"/>
-          </div></td>
-          </tr>
-        </table><br />
-		<div id="codescontainer"></div>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
+	class="tablebottom">
+	<tr>
+		<th colspan="8"><div class="subheadsmallnew">
+				<s:text name="bill.earnings" />
+			</div></th>
+	</tr>
+	<tr>
+		<th class="bluebgheadtd" width="7%">SL No</th>
+		<th class="bluebgheadtd" width="20%">Function</th>
+		<th class="bluebgheadtd" width="15%">Head</th>
+		<th class="bluebgheadtd" width="15%">Account Code</th>
+		<th class="bluebgheadtd" width="50%">Account Description</th>
+		<th class="bluebgheadtd" width="50%">Debit Amount</th>
+	</tr>
+	<s:iterator value="earningsList" status="stat" var="a">
+		<tr>
+			<td class="blueborderfortd"><div align="center">
+					<input name="textfield" type="text"
+						value='<s:property value="#stat.index+1"/>' size="3" />
+				</div></td>
+			<td class="blueborderfortd"><div align="center">
+					<input value='<s:property value="#a.functionid"/>'
+						name='earningsList[<s:property value="#stat.index"/>].functionid'
+						type="hidden" size="1"
+						id='earningsList[<s:property value="#stat.index"/>].functionid' />
+					<input type="text" size="28"
+						name='earningsList[<s:property value="#stat.index"/>].functionDetail'
+						id='earningsList[<s:property value="#stat.index"/>].functionDetail'
+						class="yui-ac-input"
+						onkeyup='autocompletecodeFunction(this,event)' autocomplete='off'
+						onblur='fillNeighbourAfterSplitFunction(this,"earningsList")' />
+				</div></td>
+			<td class="blueborderfortd"><div align="center">
+					<input value='<s:property value="coaIdAndHead[#a.glcodeid]"/>'
+						type="text" size="28"
+						id='earningsList[<s:property value="#stat.index"/>].narration'
+						readonly="readonly" />
+				</div></td>
+			<td class="blueborderfortd"><input
+				name='earningsList[<s:property value="#stat.index"/>].glcodeid'
+				type="hidden" size="1"
+				id='earningsList[<s:property value="#stat.index"/>].glcodeid'
+				value='<s:property value="#a.glcodeid"/>' /> <input type="text"
+				size="20"
+				id='earningsList[<s:property value="#stat.index"/>].glcode'
+				value='<s:property value="coaAndIds[#a.glcodeid].glcode"/>'
+				readonly="readonly" /></td>
+			<td class="blueborderfortd"><input
+				value='<s:property value="coaAndIds[#a.glcodeid].name"/>'
+				name='earningsList[<s:property value="#stat.index"/>].narration'
+				type="text"
+				id='earningsList[<s:property value="#stat.index"/>].narration'
+				size="25" readonly="readonly" /></td>
+			<td class="blueborderfortd"><div align="center">
+					<input
+						name='earningsList[<s:property value="#stat.index"/>].debitamount'
+						type="text" class="amount" size="25"
+						id='earningsList[<s:property value="#stat.index"/>].debitamount'
+						onblur="computeEarningsTotalAmount(this)"
+						value='<s:property value="earningsList[#stat.index].debitamount"/>' />
+				</div></td>
+		</tr>
+	</s:iterator>
+	<tr>
+		<td colspan="5" class="blueborderfortd1"><div align="right"
+				class="bold">Total Earnings:</div></td>
+		<td class="blueborderfortd1"><div align="center">
+				<input name="textfield8" type="text" class="amount" size="25"
+					id='totaldramount' name='totaldramount' value='0'
+					readonly="readonly" />
+			</div></td>
+	</tr>
+</table>
+<br />
+<div id="codescontainer"></div>
 
-</table><table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
-        <tr>
-          <th colspan="8"><div class="subheadsmallnew"><s:text name="bill.deductions"/></div></th>
-        </tr>
-        <tr>
-          <th class="bluebgheadtd" width="7%" >SL No</th>
-          <th class="bluebgheadtd" width="20%" > Function</th>
-          <th class="bluebgheadtd" width="15%" > Head</th>
-          <th class="bluebgheadtd" width="15%" >Account Code</th>
-          <th class="bluebgheadtd" width="50%"> Account Description</th>
-          <th class="bluebgheadtd" width="50%" >Credit Amount</th>
-          </tr>
-          <s:iterator value="deductionsList" status="stat" var="a">
-        <tr>
-          <td class="blueborderfortd"><div align="center">
-            <input name="textfield" type="text" value='<s:property value="#stat.index+1"/>' size="3"/>
-          </div></td>
-          <td class="blueborderfortd"><div align="center">
-          	<input value='<s:property value="functionid"/>' name='deductionsList[<s:property value="#stat.index"/>].functionid' type="hidden" size="1" id='deductionsList[<s:property value="#stat.index"/>].functionid'/>
-            <input type="text" size="28" name='deductionsList[<s:property value="#stat.index"/>].functionDetail' id='deductionsList[<s:property value="#stat.index"/>].functionDetail' class="yui-ac-input" onkeyup='autocompletecodeFunction(this,event)' autocomplete='off' onblur='fillNeighbourAfterSplitFunction(this,"deductionsList")'/>
-            </div></td>
-          <td class="blueborderfortd"><div align="center">
-            <input value='<s:property value="coaIdAndHead[#a.glcodeid]"/>' type="text" size="28" id='deductionsList[<s:property value="#stat.index"/>].narration' readonly="readonly"/>
-            </div></td>
-          <td class="blueborderfortd">
-          	<input name='deductionsList[<s:property value="#stat.index"/>].glcodeid' type="hidden" size="1" id='deductionsList[<s:property value="#stat.index"/>].glcodeid' value='<s:property value="#a.glcodeid"/>'/>
-            <input type="text" size="20" id='deductionsList[<s:property value="#stat.index"/>].glcode' value='<s:property value="coaAndIds[#a.glcodeid].glcode"/>' readonly="readonly"/>
-          </td>
-          <td class="blueborderfortd">
-          	<input value='<s:property value="coaAndIds[#a.glcodeid].name"/>' name='deductionsList[<s:property value="#stat.index"/>].narration' type="text" id='deductionsList[<s:property value="#stat.index"/>].narration' size="25" readonly="readonly"/>
-          </td>
-          <td class="blueborderfortd"><div align="center">
-            <input name='deductionsList[<s:property value="#stat.index"/>].creditamount' type="text" class="amount" size="25" id='deductionsList[<s:property value="#stat.index"/>].creditamount' onblur="computeDeductionsTotalAmount(this)" value='<s:property value="deductionsList[#stat.index].creditamount"/>'/>
-          </div></td>
-        </tr>
-        </s:iterator>
-        <tr>
-          <td colspan="5" class="blueborderfortd1"><div align="right" class="bold">Total Deductions:</div></td>
-          <td class="blueborderfortd1"><div align="center">
-            <input name="textfield8" type="text" class="amount" size="25" id='totalcramount' name='totalcramount' value='0' readonly="readonly"/>
-          </div></td>
-          </tr>
-        </table><br />
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
+	class="tablebottom">
+	<tr>
+		<th colspan="8"><div class="subheadsmallnew">
+				<s:text name="bill.deductions" />
+			</div></th>
+	</tr>
+	<tr>
+		<th class="bluebgheadtd" width="7%">SL No</th>
+		<th class="bluebgheadtd" width="20%">Function</th>
+		<th class="bluebgheadtd" width="15%">Head</th>
+		<th class="bluebgheadtd" width="15%">Account Code</th>
+		<th class="bluebgheadtd" width="50%">Account Description</th>
+		<th class="bluebgheadtd" width="50%">Credit Amount</th>
+	</tr>
+	<s:iterator value="deductionsList" status="stat" var="a">
+		<tr>
+			<td class="blueborderfortd"><div align="center">
+					<input name="textfield" type="text"
+						value='<s:property value="#stat.index+1"/>' size="3" />
+				</div></td>
+			<td class="blueborderfortd"><div align="center">
+					<input value='<s:property value="functionid"/>'
+						name='deductionsList[<s:property value="#stat.index"/>].functionid'
+						type="hidden" size="1"
+						id='deductionsList[<s:property value="#stat.index"/>].functionid' />
+					<input type="text" size="28"
+						name='deductionsList[<s:property value="#stat.index"/>].functionDetail'
+						id='deductionsList[<s:property value="#stat.index"/>].functionDetail'
+						class="yui-ac-input"
+						onkeyup='autocompletecodeFunction(this,event)' autocomplete='off'
+						onblur='fillNeighbourAfterSplitFunction(this,"deductionsList")' />
+				</div></td>
+			<td class="blueborderfortd"><div align="center">
+					<input value='<s:property value="coaIdAndHead[#a.glcodeid]"/>'
+						type="text" size="28"
+						id='deductionsList[<s:property value="#stat.index"/>].narration'
+						readonly="readonly" />
+				</div></td>
+			<td class="blueborderfortd"><input
+				name='deductionsList[<s:property value="#stat.index"/>].glcodeid'
+				type="hidden" size="1"
+				id='deductionsList[<s:property value="#stat.index"/>].glcodeid'
+				value='<s:property value="#a.glcodeid"/>' /> <input type="text"
+				size="20"
+				id='deductionsList[<s:property value="#stat.index"/>].glcode'
+				value='<s:property value="coaAndIds[#a.glcodeid].glcode"/>'
+				readonly="readonly" /></td>
+			<td class="blueborderfortd"><input
+				value='<s:property value="coaAndIds[#a.glcodeid].name"/>'
+				name='deductionsList[<s:property value="#stat.index"/>].narration'
+				type="text"
+				id='deductionsList[<s:property value="#stat.index"/>].narration'
+				size="25" readonly="readonly" /></td>
+			<td class="blueborderfortd"><div align="center">
+					<input
+						name='deductionsList[<s:property value="#stat.index"/>].creditamount'
+						type="text" class="amount" size="25"
+						id='deductionsList[<s:property value="#stat.index"/>].creditamount'
+						onblur="computeDeductionsTotalAmount(this)"
+						value='<s:property value="deductionsList[#stat.index].creditamount"/>' />
+				</div></td>
+		</tr>
+	</s:iterator>
+	<tr>
+		<td colspan="5" class="blueborderfortd1"><div align="right"
+				class="bold">Total Deductions:</div></td>
+		<td class="blueborderfortd1"><div align="center">
+				<input name="textfield8" type="text" class="amount" size="25"
+					id='totalcramount' name='totalcramount' value='0'
+					readonly="readonly" />
+			</div></td>
+	</tr>
+</table>
+<br />
 
 
-		<div class="subheadsmallnew" align="center"><s:text name="bill.subledger"/></div>
-        <div class="yui-skin-sam" align="center">
-	       <div id="subledgerTable"></div>
-	     </div>
-        <script>
+<div class="subheadsmallnew" align="center">
+	<s:text name="bill.subledger" />
+</div>
+<div class="yui-skin-sam" align="center">
+	<div id="subledgerTable"></div>
+</div>
+<script>
 			makeSubledgerTable();
 			<s:if test="%{subledgerList.size() == 0 && getActionErrors().size()==0 && getFieldErrors().size()==0}">
 				subledgerTable.addRow({SlNo:subledgerTable.getRecordSet().getLength()+1});
 			</s:if>
 		</script>
-		<div id="detailcodescontainer"></div>
-		<br/><br/>
+<div id="detailcodescontainer"></div>
+<br />
+<br />
 
-	</table><table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
-        <tr>
-          <th colspan="8"><div class="subheadsmallnew"><s:text name="bill.netpay"/></div></th>
-        </tr>
-        <tr>
-          <th class="bluebgheadtd" width="15%" > Head</th>
-          <th class="bluebgheadtd" width="15%" >Account Code</th>
-          <th class="bluebgheadtd" width="50%"> Account Description</th>
-          <th class="bluebgheadtd" width="50%" >Total Amount</th>
-          </tr>
-          <s:iterator value="netPayList" status="stat" var="a">
-        <tr>
-          <td class="blueborderfortd"><div align="center">
-            <input value='<s:property value="coaIdAndHead[#a.glcodeid]"/>' type="text" size="28" id='netPayList[<s:property value="#stat.index"/>].narration' readonly="readonly"/>
-            </div></td>
-          <td class="blueborderfortd">
-          	<input name='netPayList[<s:property value="#stat.index"/>].glcodeid' type="hidden" size="1" id='netPayList[<s:property value="#stat.index"/>].glcodeid' value='<s:property value="#a.glcodeid"/>'/>
-            <input type="text" size="30" id='netPayList[<s:property value="#stat.index"/>].glcode' value='<s:property value="coaAndIds[#a.glcodeid].glcode"/>' readonly="readonly"/>
-          </td>
-          <td class="blueborderfortd">
-          	<input value='<s:property value="coaAndIds[#a.glcodeid].name"/>' name='netPayList[<s:property value="#stat.index"/>].narration' type="text" id='netPayList[<s:property value="#stat.index"/>].narration' size="35" readonly="readonly"/>
-          </td>
-          <td class="blueborderfortd"><div align="center">
-            <input name='netPayList[<s:property value="#stat.index"/>].creditamount' type="text" class="amount" size="25" id='netPayList[<s:property value="#stat.index"/>].creditamount' readonly="readonly" value="0"/>
-          </div></td>
-        </tr>
-        </s:iterator>
-        </table><br />
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
+	class="tablebottom">
+	<tr>
+		<th colspan="8"><div class="subheadsmallnew">
+				<s:text name="bill.netpay" />
+			</div></th>
+	</tr>
+	<tr>
+		<th class="bluebgheadtd" width="15%">Head</th>
+		<th class="bluebgheadtd" width="15%">Account Code</th>
+		<th class="bluebgheadtd" width="50%">Account Description</th>
+		<th class="bluebgheadtd" width="50%">Total Amount</th>
+	</tr>
+	<s:iterator value="netPayList" status="stat" var="a">
+		<tr>
+			<td class="blueborderfortd"><div align="center">
+					<input value='<s:property value="coaIdAndHead[#a.glcodeid]"/>'
+						type="text" size="28"
+						id='netPayList[<s:property value="#stat.index"/>].narration'
+						readonly="readonly" />
+				</div></td>
+			<td class="blueborderfortd"><input
+				name='netPayList[<s:property value="#stat.index"/>].glcodeid'
+				type="hidden" size="1"
+				id='netPayList[<s:property value="#stat.index"/>].glcodeid'
+				value='<s:property value="#a.glcodeid"/>' /> <input type="text"
+				size="30" id='netPayList[<s:property value="#stat.index"/>].glcode'
+				value='<s:property value="coaAndIds[#a.glcodeid].glcode"/>'
+				readonly="readonly" /></td>
+			<td class="blueborderfortd"><input
+				value='<s:property value="coaAndIds[#a.glcodeid].name"/>'
+				name='netPayList[<s:property value="#stat.index"/>].narration'
+				type="text"
+				id='netPayList[<s:property value="#stat.index"/>].narration'
+				size="35" readonly="readonly" /></td>
+			<td class="blueborderfortd"><div align="center">
+					<input
+						name='netPayList[<s:property value="#stat.index"/>].creditamount'
+						type="text" class="amount" size="25"
+						id='netPayList[<s:property value="#stat.index"/>].creditamount'
+						readonly="readonly" value="0" />
+				</div></td>
+		</tr>
+	</s:iterator>
+</table>
+<br />
 
-        <div class="subheadsmallnew"></div>
+<div class="subheadsmallnew"></div>
 <div align="left" class="mandatory">* Mandatory Fields</div>
 </div>
 
 <script>
 function validate(){
 	if(document.getElementById('billdate').value == ""){
-		alert("Please enter Bill Date")
+		bootbox.alert("Please enter Bill Date")
 		return false;
 	}
 	if(document.getElementById('month').value == -1){
-		alert("Please select Month")
+		bootbox.alert("Please select Month")
 		return false;
 	}
 	if(document.getElementById('financialyear').value == -1){
-		alert("Please select Financial Year")
+		bootbox.alert("Please select Financial Year")
 		return false;
 	}
 	if(document.getElementById('department').value == -1){
-		alert("Please select Department")
+		bootbox.alert("Please select Department")
 		return false;
 	}
 	var isSubLederAmountValid = validateSubledgerAmounts();
@@ -618,7 +728,7 @@ function validateSubledgerAmounts(){
 		if(value==0){
 			return true;
 		}else{
-			alert("The sum of the subledger amount and the account code amount should match");
+			bootbox.alert("The sum of the subledger amount and the account code amount should match");
 			return false;
 		}
 	}

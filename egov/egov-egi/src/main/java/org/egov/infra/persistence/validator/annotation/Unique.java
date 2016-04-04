@@ -58,15 +58,17 @@ import org.egov.infra.persistence.validator.UniqueCheckValidator;
 public @interface Unique {
     String[] fields() default {};
 
-    String id();
+    String id() default "id";
 
-    String tableName();
+    String tableName() default "";
 
     String[] columnName() default {};
 
     String message() default "{validator.unique}";
 
     boolean enableDfltMsg() default false;
+
+    boolean isSuperclass() default false;
     
     Class<?>[] groups() default {};
 

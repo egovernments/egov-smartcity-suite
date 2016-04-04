@@ -50,41 +50,46 @@
 					<spring:message code="${message}" />
 				</div>
 			</c:if>
+			<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading ">
-				<div class="panel-title">
+				<div class="panel-title" >
 					<strong><spring:message code="title.scheduleofrates" /></strong>
 				</div>
 			</div>
-			<div class="panel-body custom-form">
-				<div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin"> <spring:message
-							code="lbl.category.name" /></div>
-					<div class="col-md-3 col-xs-6 add-margin">
-						<input type=hidden id="mode" value="${mode}">
-						<c:out value="${rate.category.name}"></c:out>
-					</div>
-
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message
-							code="lbl.subcategory.name" /></div>
-					<div class="col-md-3 col-xs-6 add-margin">
-						<c:out value="${rate.subCategory.description}"></c:out>
-
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="field-1" class="col-sm-3 control-label"> <spring:message
-							code="lbl.unitofmeasure.name" /></label>
-					<div class="col-sm-3 add-margin">
-
-						<c:out value="${rate.unitofmeasure.description}"></c:out>
-					</div>
-
-					<label for="field-1" class="col-sm-2 control-label"> <spring:message
-							code="lbl.rateClass.name" /></label>
-					<div class="col-sm-3 add-margin">
-						<c:out value="${rate.classtype.description}"></c:out>
-
-					</div>
+				<div class="form-group row add-border">
+						<div class="col-md-3 col-xs-6 add-margin"> <spring:message
+								code="lbl.category.name" /></div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							<input type=hidden id="mode" value="${mode}">
+							<c:out value="${rate.category.name}"></c:out>
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message
+										code="lbl.subcategory.name" /></div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							<c:out value="${rate.subCategory.description}"></c:out>
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin"> <spring:message
+								code="lbl.unitofmeasure.name" /></div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							  <form:hidden path="id" id="id" value="${rate.id}"/>
+							<c:out value="${rate.unitofmeasure.description}"></c:out>
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message
+								code="lbl.rateClass.name" /></div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+									<c:out value="${rate.classtype.description}"></c:out>
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message
+								code="lbl.financial.year" /></div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+									<c:out value="${rate.financialyear.finYearRange}"></c:out>
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message
+								code="lbl.per.unit" /></div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+									<c:out value="${rate.unitrate}"></c:out>
+						</div>
+						</div>
 				</div>
 				<table id="schedleOfrateTable" table width="80%" border="0"
 					cellpadding="0" cellspacing="0" class="table table-bordered">
@@ -99,7 +104,6 @@
 						<c:forEach var="contact" items="${rate.advertisementRatesDetails}"
 							varStatus="status">
 							<tr>
-
 								<td><input type="text" class="form-control is_valid_number"
 									id="advertisementRatesDetailsUnitFrom${status.index}"
 									value="${contact.unitFrom}" maxlength="10"
@@ -118,7 +122,6 @@
 									name="advertisementRatesDetails[${status.index}].amount"
 									autocomplete="off" required="required" readonly="readonly">
 								</td>
-
 							</tr>
 						</c:forEach>
 					</tbody>

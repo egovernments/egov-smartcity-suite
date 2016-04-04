@@ -194,9 +194,9 @@ public class EditDemandForDataEntryController {
     public String updateMeterEntry(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
-
+        String sourceChannel = request.getParameter("Source");
         waterConnectionDetails = connectionDemandService
-                .updateDemandForNonMeteredConnectionDataEntry(waterConnectionDetails);
+                .updateDemandForNonMeteredConnectionDataEntry(waterConnectionDetails,sourceChannel);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);

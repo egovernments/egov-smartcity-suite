@@ -40,25 +40,24 @@
 package org.egov.collection.integration.services;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ReconciliationService {
     private static final Logger LOGGER = Logger.getLogger(ReconciliationService.class);
@@ -66,6 +65,10 @@ public class ReconciliationService {
     private CollectionsUtil collectionsUtil;
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
+    @Autowired
+    private ApplicationContext beanProvider;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private CollectionCommon collectionCommon;
 
     /**
@@ -79,87 +82,48 @@ public class ReconciliationService {
      * @param onlinePaymentReceiptHeader
      * @param paymentResponse
      */
+    @Transactional
     public void processSuccessMsg(final ReceiptHeader onlinePaymentReceiptHeader, final PaymentResponse paymentResponse) {
 
-        final BillingIntegrationService billingService = collectionsUtil.getBillingService(onlinePaymentReceiptHeader
-                .getService().getCode());
+        final BillingIntegrationService billingService = (BillingIntegrationService) beanProvider
+                .getBean(onlinePaymentReceiptHeader.getService().getCode()
+                        + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
 
-        onlinePaymentReceiptHeader.getReceiptDetails().clear();
-        receiptHeaderService.persist(onlinePaymentReceiptHeader);
-        receiptHeaderService.getSession().flush();
+        final List<ReceiptDetail> existingReceiptDetails = new ArrayList<ReceiptDetail>(0);
 
-        final List<ReceiptDetail> receiptDetailList = billingService.reconstructReceiptDetail(
-                onlinePaymentReceiptHeader.getReferencenumber(), onlinePaymentReceiptHeader.getTotalAmount());
-        if (receiptDetailList != null) {
-            LOGGER.debug("Reconstructed receiptDetailList : " + receiptDetailList.toString());
-            for (final ReceiptDetail receiptDetail : receiptDetailList) {
-                receiptDetail.setReceiptHeader(onlinePaymentReceiptHeader);
-                onlinePaymentReceiptHeader.addReceiptDetail(receiptDetail);
+        for (final ReceiptDetail receiptDetail : onlinePaymentReceiptHeader.getReceiptDetails())
+            if (!FinancialsUtil.isRevenueAccountHead(receiptDetail.getAccounthead(),
+                    chartOfAccountsHibernateDAO.getBankChartofAccountCodeList())) {
+                final ReceiptDetail newReceiptDetail = new ReceiptDetail();
+                if (receiptDetail.getOrdernumber() != null)
+                    newReceiptDetail.setOrdernumber(receiptDetail.getOrdernumber());
+                if (receiptDetail.getDescription() != null)
+                    newReceiptDetail.setDescription(receiptDetail.getDescription());
+                if (receiptDetail.getIsActualDemand() != null)
+                    newReceiptDetail.setIsActualDemand(receiptDetail.getIsActualDemand());
+                if (receiptDetail.getFunction() != null)
+                    newReceiptDetail.setFunction(receiptDetail.getFunction());
+                if (receiptDetail.getCramountToBePaid() != null)
+                    newReceiptDetail.setCramountToBePaid(receiptDetail.getCramountToBePaid());
+                newReceiptDetail.setCramount(receiptDetail.getCramount());
+                newReceiptDetail.setAccounthead(receiptDetail.getAccounthead());
+                newReceiptDetail.setDramount(receiptDetail.getDramount());
+                existingReceiptDetails.add(newReceiptDetail);
             }
-        }
-        // Add debit account head
-        onlinePaymentReceiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(
-                onlinePaymentReceiptHeader.getTotalAmount(), onlinePaymentReceiptHeader, BigDecimal.ZERO,
-                onlinePaymentReceiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE));
 
-        createSuccessPayment(onlinePaymentReceiptHeader, paymentResponse.getTxnDate(),
-                paymentResponse.getTxnReferenceNo(), paymentResponse.getAuthStatus(), null);
+        final List<ReceiptDetail> reconstructedList = billingService.reconstructReceiptDetail(
+                onlinePaymentReceiptHeader.getReferencenumber(), onlinePaymentReceiptHeader.getTotalAmount(),
+                existingReceiptDetails);
+        ReceiptDetail debitAccountDetail = null;
+        if (reconstructedList != null)
+            debitAccountDetail = collectionCommon.addDebitAccountHeadDetails(
+                    onlinePaymentReceiptHeader.getTotalAmount(), onlinePaymentReceiptHeader, BigDecimal.ZERO,
+                    onlinePaymentReceiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE);
 
+        receiptHeaderService.reconcileOnlineSuccessPayment(onlinePaymentReceiptHeader, paymentResponse, billingService,
+                reconstructedList, debitAccountDetail);
         LOGGER.debug("Persisted receipt after receiving success message from the payment gateway");
 
-        boolean updateToSystems = true;
-
-        try {
-            receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader, Boolean.FALSE);
-            LOGGER.debug("Updated financial systems and created voucher.");
-        } catch (final ApplicationRuntimeException ex) {
-            updateToSystems = false;
-            onlinePaymentReceiptHeader.getOnlinePayment().setRemarks("Update to financial systems failed");
-            LOGGER.error("Update to financial systems failed");
-        }
-
-        try {
-            if (!updateBillingSystem(onlinePaymentReceiptHeader.getService().getCode(), new BillReceiptInfoImpl(
-                    onlinePaymentReceiptHeader), billingService))
-                updateToSystems = false;
-        } catch (final ApplicationRuntimeException ex) {
-            onlinePaymentReceiptHeader.getOnlinePayment().setRemarks("update to billing system failed.");
-        }
-        if (updateToSystems) {
-            onlinePaymentReceiptHeader.setIsReconciled(true);
-            receiptHeaderService.persist(onlinePaymentReceiptHeader);
-            receiptHeaderService.getSession().flush();
-            LOGGER.debug("Updated billing system : " + onlinePaymentReceiptHeader.getService().getName());
-        } else
-            LOGGER.debug("Rolling back receipt creation transaction as update to billing system/financials failed.");
-    }
-
-    /**
-     * @param receipts - list of receipts which have to be processed as successful payments. For payments created as a response
-     * from TECHPRO, size of the array will be 1.
-     */
-    private void createSuccessPayment(final ReceiptHeader receipt, final Date transactionDate,
-            final String transactionId, final String authStatusCode, final String remarks) {
-        final EgwStatus receiptStatus = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
-        receipt.setStatus(receiptStatus);
-
-        receipt.setReceiptInstrument(receiptHeaderService.createOnlineInstrument(transactionDate, transactionId,
-                receipt.getTotalAmount()));
-
-        receiptHeaderService.setReceiptNumber(receipt);
-        receipt.setIsReconciled(Boolean.FALSE);
-        receipt.getOnlinePayment().setAuthorisationStatusCode(authStatusCode);
-        receipt.getOnlinePayment().setTransactionNumber(transactionId);
-        receipt.getOnlinePayment().setTransactionDate(transactionDate);
-        receipt.getOnlinePayment().setRemarks(remarks);
-
-        // set online payment status as SUCCESS
-        receipt.getOnlinePayment().setStatus(
-                collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-                        CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
-
-        receiptHeaderService.persist(receipt);
     }
 
     /**
@@ -170,11 +134,12 @@ public class ReconciliationService {
      * @param onlinePaymentReceiptHeader
      * @param paymentResponse
      */
-    public void processFailureMsg(final ReceiptHeader onlinePaymentReceiptHeader, final PaymentResponse paymentResponse) {
+    @Transactional
+    public void processFailureMsg(final ReceiptHeader receiptHeader, final PaymentResponse paymentResponse) {
 
         final EgwStatus receiptStatus = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
-        onlinePaymentReceiptHeader.setStatus(receiptStatus);
+                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
+        receiptHeader.setStatus(receiptStatus);
         EgwStatus paymentStatus;
         if (CollectionConstants.AXIS_ABORTED_STATUS_CODE.equals(paymentResponse.getAuthStatus()))
             paymentStatus = egwStatusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
@@ -182,48 +147,24 @@ public class ReconciliationService {
         else
             paymentStatus = egwStatusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
-
-        onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
-        onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(paymentResponse.getAuthStatus());
-
-        receiptHeaderService.persist(onlinePaymentReceiptHeader);
+        receiptHeader.getOnlinePayment().setStatus(paymentStatus);
+        receiptHeader.getOnlinePayment().setAuthorisationStatusCode(paymentResponse.getAuthStatus());
+        receiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+        receiptHeaderService.persist(receiptHeader);
 
         LOGGER.debug("Cancelled receipt after receiving failure message from the payment gateway");
-    }
-
-    /**
-     * This method looks up the bean to communicate with the billing system and updates the billing system.
-     */
-    public Boolean updateBillingSystem(final String serviceCode, final BillReceiptInfo billReceipt,
-            final BillingIntegrationService billingService) {
-        if (billingService == null)
-            return false;
-        else
-            try {
-                final Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>();
-                billReceipts.add(billReceipt);
-                LOGGER.info("$$$$$$ Update Billing System for BillReceiptInfo:" + billReceipt.toString());
-                billingService.updateReceiptDetails(billReceipts);
-                return true;
-            } catch (final Exception e) {
-                final String errMsg = "Exception while updating billing system [" + serviceCode
-                        + "] with receipt details!";
-                LOGGER.debug(errMsg);
-                LOGGER.error(errMsg, e);
-                throw new ApplicationRuntimeException(errMsg, e);
-            }
     }
 
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
     }
 
-    public void setCollectionCommon(final CollectionCommon collectionCommon) {
-        this.collectionCommon = collectionCommon;
-    }
-
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
+    }
+
+    public void setCollectionCommon(final CollectionCommon collectionCommon) {
+        this.collectionCommon = collectionCommon;
     }
 
 }

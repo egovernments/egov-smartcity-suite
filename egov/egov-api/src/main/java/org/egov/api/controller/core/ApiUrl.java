@@ -93,5 +93,14 @@ public class ApiUrl {
 	public final static String CITIZEN_GET_MY_COMPLAINT = "/citizen/getMyComplaint/{page}/{pageSize}";
 	
 	public final static String CITIZEN_SEND_OTP = "/sendOTP";
-
+	
+	/*
+	 * Employee
+	 */
+	public final static String EMPLOYEE_INBOX_LIST_WFT_COUNT = "/employee/inbox";
+	
+	public final static String EMPLOYEE_INBOX_LIST_FILTER_BY_WFT = "/employee/inbox/{workFlowType}/{resultsFrom}/{resultsTo}";
+	
+	public final static String EMPLOYEE_LOGOUT = "/employee/logout";
+	
 }
