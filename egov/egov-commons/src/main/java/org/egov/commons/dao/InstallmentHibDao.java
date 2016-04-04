@@ -147,7 +147,7 @@ public class InstallmentHibDao<T, id extends Serializable> extends GenericHibern
     @Override
     public List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallmentToFetch) {
         final Query qry = getCurrentSession()
-                .createQuery("from Installment I where I.module=:module and I.installmentYear<=:installmentYear order by installmentNumber desc");
+                .createQuery("from Installment I where I.module=:module and I.installmentYear<=:installmentYear order by installmentYear desc");
         qry.setEntity("module", module);
         qry.setDate("installmentYear", toInstallmentDate);
         qry.setMaxResults(noOfInstallmentToFetch);
