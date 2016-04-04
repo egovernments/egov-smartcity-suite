@@ -57,37 +57,6 @@ $(document).ready(function(){
 
 
 	return showSlumFieldsValue();
-	
-	var ward = new Bloodhound({
-        datumTokenizer: function (datum) {
-            return Bloodhound.tokenizers.whitespace(datum.value);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '/egworks/lineestimate/ajax-getward?name=%QUERY',
-            filter: function (data) {
-                return $.map(data, function (ct) {
-                    return {
-                        name: ct.name,
-                        value: ct.id
-                    };
-                });
-            }
-        }
-    });
-    
-    ward.initialize();
-	var ward_typeahead = $('#wardInput').typeahead({
-		hint : false,
-		highlight : false,
-		minLength : 3
-	}, {
-		displayKey : 'name',
-		source : ward.ttAdapter(),
-	});
-	
-	typeaheadWithEventsHandling(ward_typeahead,
-	'#ward');
 });
 
 function renderPdf() {
@@ -191,7 +160,7 @@ function addLineEstimate() {
 			var isValid = 1;// for default have success value 0
 
 			// validate existing rows in table
-			$("#tblestimate tbody tr").find('input, select').each(
+			$("#tblestimate tbody tr").find('input, select, textarea').each(
 					function() {
 						if (($(this).data('optional') === 0)
 								&& (!$(this).val())) {
@@ -461,6 +430,39 @@ $('#typeofwork').blur(function(){
 			});
 		}
 	});
+
+$(document).ready(function(){
+    var ward = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/egworks/lineestimate/ajax-getward?name=%QUERY',
+            filter: function (data) {
+                return $.map(data, function (ct) {
+                    return {
+                        name: ct.name,
+                        value: ct.id
+                    };
+                });
+            }
+        }
+    });
+    
+    ward.initialize();
+	var ward_typeahead = $('#wardInput').typeahead({
+		hint : false,
+		highlight : false,
+		minLength : 3
+	}, {
+		displayKey : 'name',
+		source : ward.ttAdapter(),
+	});
+	
+	typeaheadWithEventsHandling(ward_typeahead,
+	'#ward');
+});
 
 function validateQuantity() {
 	$( "input[name$='quantity']" ).on("keyup", function(){
