@@ -140,7 +140,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='none';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='table-row';
-		document.getElementById('instrumentTypeCashOrCard').value="bank";
+		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
 		clearCashDetails();
 		clearCardDetails();
 		clearChequeDDDetails();
@@ -883,7 +883,7 @@ function validate()
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingbankaccountname.errormessage" />'+  "<br>";
 			validation=false;
 		}
-	document.getElementById('instrumentTypeCashOrCard').value="bank";
+	document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
 	}
 	//if mode of payment is cheque/DD
 	if(instrTypeCheque){
@@ -1268,7 +1268,7 @@ function displayPaytModes(){
        if(bankAllowed=='true'){
             //display bank radio button
        		document.getElementById('bankradiobuttonspan').style.display="block";
-       		document.getElementById('instrumentTypeCashOrCard').value="bank";
+       		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
        }
        else{
        		//do not display card radio button
@@ -1293,7 +1293,7 @@ function displayPaytModes(){
        if(bankAllowed=='true' && cashAllowed=='false' && chequeDDAllowed=='false' && cardAllowed=='false'){
        		document.getElementById('bankradiobutton').checked=true;
        		document.getElementById('bankdetails').style.display='table-row';
-       		document.getElementById('instrumentTypeCashOrCard').value="bank";
+       		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
        }
 }
 
@@ -1398,7 +1398,7 @@ function displayPaymentDetails(){
 	if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!=""){
 		document.getElementById('bankradiobutton').checked=true;
 		document.getElementById('bankdetails').style.display='table-row';
-       	document.getElementById('instrumentTypeCashOrCard').value="bank";
+       	document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
        	document.getElementById('cashdetails').style.display="none";
        	// document.getElementById('carddetails').style.display="none";
 	}
@@ -1692,7 +1692,7 @@ function setCardInstrumentDetails(elem){
 }
 function setBankInstrumentDetails(elem){
      document.getElementById("instrHeaderBank.instrumentAmount").value=elem.value;
-     document.getElementById("instrumentTypeCashOrCard").value="bank";
+     document.getElementById("instrumentTypeCashOrCard").value="bankchallan";
 }
 
 var bankfuncObj;

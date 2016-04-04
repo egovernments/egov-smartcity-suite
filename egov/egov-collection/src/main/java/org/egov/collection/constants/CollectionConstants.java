@@ -528,5 +528,6 @@ public final class CollectionConstants {
     
     
     public static final String USER_TYPE_FOR_CITIZEN = "CITIZEN";
+    public static final String DEPT_CODE_FOR_ACCOUNTS = "ACC";
 
 }

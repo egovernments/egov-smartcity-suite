@@ -1,12 +1,21 @@
 package org.egov.commons.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Bank;
+import org.egov.commons.Fund;
 import org.egov.commons.Relation;
 import org.egov.commons.repository.RelationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,14 +89,46 @@ public class RelationJpaService {
 	}
 
 	public List<Relation> search(Relation relation) {
-		if(relation.getName()!=null ||relation.getCode()!=null || relation.getPanno()!=null |relation.getMobile()!=null)
-			return relationRepository.findByNameOrCodeOrPannoOrMobile(relation.getName(), relation.getCode(),relation.getPanno(), relation.getMobile());
-		else
-			return relationRepository.findAll();
+		
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Relation> createQuery = cb.createQuery(Relation.class);
+		Root<Relation> relations = createQuery.from(Relation.class);
+		createQuery.select(relations);
+		Metamodel m = entityManager.getMetamodel();
+		EntityType<Relation> Relation_ = m.entity(Relation.class);
+    
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		if(relation.getName()!=null)
+		{
+		String name="%"+relation.getName().toLowerCase()+"%";
+		predicates.add(cb.isNotNull(relations.get("name")));
+		predicates.add(cb.like(cb.lower(relations.get(Relation_.getDeclaredSingularAttribute("name", String.class))),name));
+		}
+		if(relation.getCode()!=null)
+		{
+		String code="%"+relation.getCode().toLowerCase()+"%";
+		predicates.add(cb.isNotNull(relations.get("code")));
+		predicates.add(cb.like(cb.lower(relations.get(Relation_.getDeclaredSingularAttribute("code", String.class))),code));
+		}
+		if(relation.getMobile()!=null )
+		{
+			String mobile=relation.getMobile();
+			predicates.add(cb.isNotNull(relations.get("mobile")));
+			predicates.add(cb.like(cb.lower(relations.get(Relation_.getDeclaredSingularAttribute("mobile", String.class))),mobile));
+		}
+		
+		if(relation.getPanno()!=null )
+		{
+			String panno=relation.getPanno();
+			predicates.add(cb.isNotNull(relations.get("panno")));
+			predicates.add(cb.like(cb.lower(relations.get(Relation_.getDeclaredSingularAttribute("panno", String.class))),panno));
+		}
+		
+		createQuery.where(predicates.toArray(new Predicate[]{}));
+		TypedQuery<Relation> query=entityManager.createQuery(createQuery);
+		List<Relation> resultList = query.getResultList();
+		return resultList;
+		
 	} 
-	
-	
-	
-	
 	
 }

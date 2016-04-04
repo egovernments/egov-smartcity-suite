@@ -45,7 +45,6 @@
     <bean name="erpApplicationContext" class="org.springframework.context.support.ClassPathXmlApplicationContext">
         <constructor-arg>
             <list>
-                <value>classpath*:config/spring/applicationContext-jms.xml</value>
                 <value>classpath*:config/spring/applicationContext-egi.xml</value>
                 <value>classpath*:config/spring/applicationContext-eis.xml</value>
                 <value>classpath*:config/spring/applicationContext-search-all.xml</value>

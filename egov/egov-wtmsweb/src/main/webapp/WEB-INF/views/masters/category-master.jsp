@@ -43,48 +43,46 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%--  <form role="form" class="form-horizontal form-groups-bordered"> --%>
-<form:form method="post" action=""
-	class="form-horizontal form-groups-bordered"
-	modelAttribute="propertyCategory" id="categoryMasterform"
-	cssClass="form-horizontal form-groups-bordered"
-	enctype="multipart/form-data">
+<form:form method="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="propertyCategory" id="categoryMasterform"
+	cssClass="form-horizontal form-groups-bordered" nctype="multipart/form-data">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading"></div>
 		<div class="panel-body custom-form">
+		<c:if test="${not empty message}">
+                    <div class="alert alert-success" role="alert">${message}</div>
+                </c:if>
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.propertytype" /><span class="mandatory"></span></label>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.propertytype" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
-					<form:select path="propertyType"
-						data-first-option="false" id="propertyType"
-						cssClass="form-control" required="required">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${propertyType}" itemValue="id"
-							itemLabel="name" />
+					<form:select path="propertyType" data-first-option="false" id="propertyType" cssClass="form-control" required="required">
+						<form:option value=""><spring:message code="lbl.select" /></form:option>
+						<form:options items="${propertyType}" itemValue="id" itemLabel="name" />
 					</form:select>
-					<form:errors path="propertyType"
-						cssClass="add-margin error-msg" />
+					<form:errors path="propertyType" cssClass="add-margin error-msg" />
 				</div>
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.category.type" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin"  id="categorydiv">
-					<form:input class="form-control patternvalidation"   data-pattern="alphabetwithspace"  maxlength="24" id="categoryName"
-						path="connectionCategory.name" required="required" />
-					<form:errors path="connectionCategory.name"
-						cssClass="add-margin error-msg" />
+					<form:input class="form-control patternvalidation"   data-pattern="alphabetwithspace"  maxlength="24" id="categoryName" path="connectionCategory.name" required="required" />
+					<form:errors path="connectionCategory.name" cssClass="add-margin error-msg" />
 				</div>
 
 			</div>
+			<div class="form-group" id="statusdiv">
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
+				<div class="col-sm-3 add-margin" >
+					<form:checkbox id="activeid" path="connectionCategory.active" value ="active" />
+					<form:errors path="connectionCategory.active" />
+				</div>
+				</div>	
+				<input type="hidden" name="propertyCategory" value="${propertyCategory.id}" />
+				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>	
 
 			<div class="form-group text-center">
-			<button type="submit" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></button>
-				<%-- <form:button type="submit" class="btn btn-primary" id="buttonid">
-					<spring:message code="lbl.submit" />
-				</form:button> --%>
-				<a onclick="self.close()" class="btn btn-default"
-					href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+				<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
+				<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
+				<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
+				<button type="button" class="btn btn-default" id="resetid"><spring:message code="lbl.reset"/></button>
+				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>
 		</div>
 	</div>
@@ -97,4 +95,3 @@
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	            type="text/javascript"></script>
 	            <script src="<c:url value='/resources/js/app/category-master.js?rnd=${app_release_no}'/>"></script>
-

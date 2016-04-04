@@ -87,6 +87,10 @@ public class FundService {
 		{
 			predicates.add(cb.equal(funds.get("isactive"), true));
 		}
+		if(fund.getParentId()!=null)
+		{
+			predicates.add(cb.equal(funds.get("parentId"), fund.getParentId()));
+		}
 		
 		createQuery.where(predicates.toArray(new Predicate[]{}));
 		TypedQuery<Fund> query=entityManager.createQuery(createQuery);

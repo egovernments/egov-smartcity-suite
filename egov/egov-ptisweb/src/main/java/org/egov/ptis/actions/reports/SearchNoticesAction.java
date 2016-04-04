@@ -118,7 +118,7 @@ public class SearchNoticesAction extends SearchFormAction {
     protected static final String SUCCESS = "success";
     private static final String ERROR = "error";
     private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp";
-    private static final String BILL_FROM_CLAUSE = " from EgBill bill, PtNotice notice left join notice.basicProperty bp";
+    private static final String BILL_FROM_CLAUSE = " from DemandBill bill, PtNotice notice left join notice.basicProperty bp";
     private static final String ORDER_BY = " order by notice.noticeDate desc";
     private static final String BILL_ORDER_BY = " order by notice.basicProperty.address.houseNoBldgApt asc";
     private String ownerName;
@@ -546,7 +546,7 @@ public class SearchNoticesAction extends SearchFormAction {
 
         // To show only the active Demand Bill
         if (NOTICE_TYPE_BILL.equalsIgnoreCase(noticeType))
-            criteriaString = criteriaString.append(" and bill.is_History = 'N' and bill.billNo = notice.noticeNo");
+            criteriaString = criteriaString.append(" and bill.isactive = true and bill.billnumber = notice.noticeNo ");
 
         if (zoneId != null && !zoneId.equals(-1l)) {
             criteriaString.append(" and bp.propertyID.zone.id = ?");

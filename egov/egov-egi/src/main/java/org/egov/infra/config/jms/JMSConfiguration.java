@@ -37,34 +37,49 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.messaging.sms;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+package org.egov.infra.config.jms;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.support.JmsUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.connection.CachingConnectionFactory;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.destination.JndiDestinationResolver;
+import org.springframework.jndi.JndiObjectFactoryBean;
 
-@Component("smsQueueListener")
-public class SMSQueueListener implements MessageListener {
-    private final SMSService smsService;
+import javax.jms.ConnectionFactory;
 
-    @Autowired
-    public SMSQueueListener(final SMSService smsService) {
-        this.smsService = smsService;
+@Configuration("jmsConfiguration")
+@EnableJms
+public class JMSConfiguration {
+
+    @Bean(name = "jmsDestinationResolver")
+    public JndiDestinationResolver jmsDestinationResolver() {
+        JndiDestinationResolver jndiDestinationResolver = new JndiDestinationResolver();
+        jndiDestinationResolver.setResourceRef(true);
+        return jndiDestinationResolver;
     }
 
-    @Override
-    public void onMessage(final Message message) {
-        try {
-            final MapMessage emailMessage = (MapMessage) message;
-            smsService.sendSMS(emailMessage.getString("mobile"), emailMessage.getString("message"));
-        } catch (final JMSException e) {
-            throw JmsUtils.convertJmsAccessException(e);
-        }
+    @Bean(name="jmsConnectionFactory")
+    public JndiObjectFactoryBean jmsConnectionFactory() {
+        JndiObjectFactoryBean jmsConnectionFactory = new JndiObjectFactoryBean();
+        jmsConnectionFactory.setExpectedType(ConnectionFactory.class);
+        jmsConnectionFactory.setJndiName("java:/ConnectionFactory");
+        return jmsConnectionFactory;
     }
 
+    @Bean(name = "cacheConnectionFactory")
+    public CachingConnectionFactory cacheConnectionFactory(ConnectionFactory jmsConnectionFactory) {
+        CachingConnectionFactory cacheConnectionFactory = new CachingConnectionFactory();
+        cacheConnectionFactory.setTargetConnectionFactory(jmsConnectionFactory);
+        cacheConnectionFactory.setSessionCacheSize(10);
+        cacheConnectionFactory.setCacheProducers(false);
+        return cacheConnectionFactory;
+    }
+
+    @Bean
+    public JmsTemplate jmsTemplate(CachingConnectionFactory cacheConnectionFactory) {
+        return new JmsTemplate(cacheConnectionFactory);
+    }
 }

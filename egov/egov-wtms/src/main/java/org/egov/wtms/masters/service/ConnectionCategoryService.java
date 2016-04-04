@@ -86,6 +86,10 @@ public class ConnectionCategoryService {
         return connectionCategoryRepository.findByNameIgnoreCase(name);
     }
 
+    public ConnectionCategory findByNameIgnoreCaseAndActive(final String name, final Boolean status) {
+        return connectionCategoryRepository.findByNameIgnoreCaseAndActive(name, status);
+    }
+
     public List<ConnectionCategory> findAllByNameLike(final String name) {
         return connectionCategoryRepository.findByNameContainingIgnoreCase(name);
     }
@@ -111,12 +115,12 @@ public class ConnectionCategoryService {
         return connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
     }
 
-    public List<ConnectionCategory> getAllCategoryTypesByPropertyType(final Long propertyType,
+    public List<ConnectionCategory> getAllActiveCategoryTypesByPropertyType(final Long propertyType,
             final String connectionType) {
         if (connectionType.equals(WaterTaxConstants.ADDNLCONNECTION))
             return connectionCategoryRepository.getAllCategoryTypesByPropertyTypeNotInBPL(propertyType);
         else
-            return connectionCategoryRepository.getAllCategoryTypesByPropertyType(propertyType);
+            return connectionCategoryRepository.getAllActiveCategoryTypesByPropertyType(propertyType);
     }
 
     public List<ConnectionCategory> getConnectionCategoryListForRest() {

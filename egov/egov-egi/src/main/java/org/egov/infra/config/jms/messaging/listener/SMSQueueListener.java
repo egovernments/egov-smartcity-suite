@@ -37,32 +37,30 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.messaging.email;
+
+package org.egov.infra.config.jms.messaging.listener;
+
+import org.egov.infra.messaging.sms.SMSService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.support.JmsUtils;
+import org.springframework.stereotype.Component;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
-import javax.jms.MessageListener;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.support.JmsUtils;
-import org.springframework.stereotype.Component;
-
-@Component("emailQueueListener")
-public class EmailQueueListener implements MessageListener {
-    private final EmailService emailService;
+@Component
+public class SMSQueueListener {
 
     @Autowired
-    public EmailQueueListener(final EmailService emailService) {
-        this.emailService = emailService;
-    }
+    private SMSService smsService;
 
-    @Override
-    public void onMessage(final Message message) {
+    @JmsListener(destination = "java:/jms/queue/sms")
+    public void processMessage(Message message) {
         try {
             final MapMessage emailMessage = (MapMessage) message;
-            emailService.sendMail(emailMessage.getString("email"), emailMessage.getString("subject"),
-                    emailMessage.getString("message"));
+            smsService.sendSMS(emailMessage.getString("mobile"), emailMessage.getString("message"));
         } catch (final JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }

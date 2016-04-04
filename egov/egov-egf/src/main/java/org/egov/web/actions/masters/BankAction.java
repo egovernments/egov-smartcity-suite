@@ -58,7 +58,9 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Bank;
+import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.utils.BankAccountType;
+import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -67,6 +69,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.services.masters.BankService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
@@ -80,6 +83,7 @@ public class BankAction extends BaseFormAction {
     public static final String MODIFY = "modify";
     public static final String SEARCH = "search";
     private String mode;
+   
     // For jquery BankName auto complete
     private String term;
 
@@ -92,9 +96,13 @@ public class BankAction extends BaseFormAction {
         @Action(value = "/masters/bank-execute")
     })
     public String execute() {
+    	
         if ("MODIFY".equals(mode)) {
             if (StringUtils.isBlank(bank.getName()))
+            {
+            	addDropdownData("bankList",bankService.findAll("name"));
                 return "search";
+            }
             else {
                 bank = bankService.find("FROM Bank WHERE name = ?", bank.getName());
                 if (bank == null)

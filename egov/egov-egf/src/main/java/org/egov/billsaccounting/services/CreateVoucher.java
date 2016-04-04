@@ -228,8 +228,8 @@ public class CreateVoucher {
 
 	@Autowired
 	@Qualifier("voucherService")
-	private VoucherService voucherService;
-
+	private VoucherService voucherService; 
+ 
 	@Autowired
 	private BoundaryService boundaryService;
 
@@ -2858,23 +2858,22 @@ public class CreateVoucher {
 	 * @param paramList
 	 * @return
 	 */
-
+	@Transactional
 	public CVoucherHeader reverseVoucher(
 			final List<HashMap<String, Object>> paramList)
 					throws ApplicationRuntimeException, ParseException {
 		// -- Reversal Voucher date check ----
-		 CVoucherHeader reversalVoucherObj = new CVoucherHeader();
-		CVoucherHeader originalVocher;
+		CVoucherHeader reversalVoucherObj = new CVoucherHeader();
+		CVoucherHeader originalVocher=null;
 		for (final HashMap<String, Object> paramMap : paramList) {
 
 			if (paramMap.get(VOUCHER_HEADER_ID) == null)
 				throw new IllegalArgumentException(VOUCHER_HEADER_ID
 						+ IS_MISSING);
 			else {
-				try {
-					originalVocher = (CVoucherHeader) voucherHeaderDAO
-							.findById((Long) paramMap.get(VOUCHER_HEADER_ID),
-									false);
+				try {  
+					originalVocher = voucherService.find("from CVoucherHeader where id=?",(Long) paramMap.get(VOUCHER_HEADER_ID));
+								 
 				} catch (final Exception e) {
 					throw new ApplicationRuntimeException("cannot find "
 							+ VOUCHER_HEADER_ID + "in the system");
@@ -2994,9 +2993,18 @@ public class CreateVoucher {
 			throw new ValidationException(Arrays.asList(new ValidationError(e
 					.getMessage(), e.getMessage())));
 		}
-
+		   
+			originalVocher.setStatus(1);
+			originalVocher.setEffectiveDate(new Date());
+			voucherService.applyAuditing(originalVocher);
+			voucherService.update(originalVocher);
+		
 			reversalVoucherObj.setOriginalvcId(originalVocher.getId());
+			reversalVoucherObj.setStatus(2);
+			voucherService.applyAuditing(reversalVoucherObj);
 			voucherService.persist(reversalVoucherObj);
+			
+			
 
 			return reversalVoucherObj;
 		}

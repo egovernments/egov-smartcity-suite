@@ -54,9 +54,11 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
+@Transactional(readOnly = true)
 public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyCalculator {
 
     @Autowired
@@ -115,8 +117,9 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
             if (advPermitDetail.getAdvertisement().getPenaltyCalculationDate() != null
                     && demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()
                             .before(advPermitDetail.getAdvertisement().getPenaltyCalculationDate())
-                    && demandDtl.getEgDemandReason().getEgInstallmentMaster().getToDate()
-                            .after(advPermitDetail.getAdvertisement().getPenaltyCalculationDate())) {
+                    && (demandDtl.getEgDemandReason().getEgInstallmentMaster().getToDate()
+                            .equals(advPermitDetail.getAdvertisement().getPenaltyCalculationDate()) || demandDtl.getEgDemandReason().getEgInstallmentMaster().getToDate()
+                            .after(advPermitDetail.getAdvertisement().getPenaltyCalculationDate()) ) ) {
                 days = Days.daysBetween(new DateTime(advPermitDetail.getAdvertisement().getPenaltyCalculationDate()),
                         new DateTime(new Date())).getDays();
 

@@ -51,4 +51,6 @@ public interface DemandBillService {
     public ReportOutput generateDemandBill(String assessmentNo);
     
     public void printDemandBill(String assessmentNo);
+    
+    public void bulkBillGeneration(Integer modulo, Integer billsCount);
 }

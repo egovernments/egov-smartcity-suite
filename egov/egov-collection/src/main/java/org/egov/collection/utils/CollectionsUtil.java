@@ -325,11 +325,11 @@ public class CollectionsUtil {
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
         } else if (!isEmp || isDeptAllowed) {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+           // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         } else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+           // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         }
         return collectionsModeNotAllowed;
     }
