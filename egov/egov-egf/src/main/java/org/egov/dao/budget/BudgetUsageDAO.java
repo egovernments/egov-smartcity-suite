@@ -39,11 +39,9 @@
  ******************************************************************************/
 package org.egov.dao.budget;
 
-import java.util.List;
-
-import org.egov.infstr.dao.GenericDAO;
-import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetUsage;
+
+import java.util.List;
 
 public interface BudgetUsageDAO {
     BudgetUsage  findById(Number  id, boolean lock);

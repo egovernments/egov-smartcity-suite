@@ -39,11 +39,12 @@
  */
 
 package org.egov.pims.dao;
-import java.util.Date;
-import java.util.List;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
+
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -54,12 +55,15 @@ import org.egov.eis.entity.EmployeeView;
  * @author deepak
  * @version 2.00
  */
-public interface AssignmentDAO extends org.egov.infstr.dao.GenericDAO
+public interface AssignmentDAO
 {
 	public Assignment getAssignmentById(Integer id);
 	public List getListOfEmployeeWithoutAssignment(Date fromdate);
 	public Assignment getLatestAssignmentForEmployeeByToDate(Integer empId,Date todate) throws Exception;
 	public abstract List<EmployeeView> getEmployeeWithTempAssignment(Date givenDate,Integer posId);
 	public List<EmployeeView> getEmployeeWithTempAssignment(String code,Date givenDate,Integer posId);
-	
+
+	void create(Assignment egEmpAssignment);
+
+	void update(Assignment assignment);
 }

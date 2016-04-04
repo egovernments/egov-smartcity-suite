@@ -41,26 +41,18 @@
 package org.egov.pims.dao;
 
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.exception.TooManyValuesException;
 import org.egov.pims.model.PersonalInformation;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
-/**
- * <p>This is an interface which would be implemented by the
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data
- * access operations for Property
- *
- * @author deepak
- * @version 2.00
- */
+
 @Deprecated
-public interface PersonalInformationDAO extends org.egov.infstr.dao.GenericDAO
+public interface PersonalInformationDAO
 {
 	public PersonalInformation getPersonalInformationByID(Integer ID) ;
 	public Map getAllPIMap();
@@ -85,4 +77,8 @@ public interface PersonalInformationDAO extends org.egov.infstr.dao.GenericDAO
 	 public abstract List getAllActiveUsersByGivenDesg(Integer DesgId)throws Exception;
 	 public List<PersonalInformation> getAllEmpByGrade(Integer gradeId) throws Exception;
 	 public List getListOfUsersNotMappedToEmp() throws Exception;
+
+	void create(PersonalInformation egpimsPersonalInformation);
+
+	void update(PersonalInformation egpimsPersonalInformation);
 }

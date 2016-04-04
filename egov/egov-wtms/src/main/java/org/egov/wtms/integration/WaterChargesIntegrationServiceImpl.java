@@ -49,6 +49,7 @@ import java.util.Map;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
@@ -78,7 +79,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
     @Autowired
     private ConnectionDemandService connectionDemandService;
     @Autowired
-    private InstallmentDao installmentDao;
+    private InstallmentHibDao installmentDao;
     @Autowired
     private ConsumerIndexService consumerIndexService;
 

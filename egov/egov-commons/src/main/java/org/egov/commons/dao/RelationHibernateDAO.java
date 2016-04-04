@@ -39,16 +39,13 @@
  */
 package org.egov.commons.dao;
 
-import java.io.Serializable;
-import java.util.List;
+import org.egov.commons.Relation;
+import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.egov.commons.Relation;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Session;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 public class RelationHibernateDAO {
     @Transactional

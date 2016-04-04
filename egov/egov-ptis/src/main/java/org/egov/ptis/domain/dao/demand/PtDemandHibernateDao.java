@@ -54,6 +54,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemandDetails;
@@ -79,7 +80,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
     @Autowired
     private ModuleService moduleDao;
     @Autowired
-    private InstallmentDao installmentDao;
+    private InstallmentHibDao installmentDao;
     @Autowired
     @Qualifier(value = "demandGenericDAO")
     private DemandGenericDao demandGenericDAO;

@@ -40,18 +40,19 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.EgNumbers;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-public class EgNumbersHibernateDAO extends GenericHibernateDAO {
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+public class EgNumbersHibernateDAO  {
 	
-	public EgNumbersHibernateDAO() {
-		super(EgNumbers.class,null);
-	}
-	
-	public EgNumbersHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	public EgNumbers getEgNumberByFiscalPeriodAndVouchertype(final String fiscialperiodid, final String vouchertype) {

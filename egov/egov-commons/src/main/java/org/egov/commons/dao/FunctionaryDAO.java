@@ -39,18 +39,14 @@
  */
 package org.egov.commons.dao;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.egov.commons. Functionary ;
 import org.egov.commons.Functionary;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 public class FunctionaryDAO  {

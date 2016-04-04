@@ -70,6 +70,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -120,7 +121,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private PropertyTaxUtil propertyTaxUtil;
 
     @Autowired
-    private InstallmentDao installmentDAO;
+    private InstallmentHibDao installmentDAO;
 
     @Autowired
     private ModuleService moduleService;

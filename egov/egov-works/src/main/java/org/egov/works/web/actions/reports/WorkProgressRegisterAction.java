@@ -39,20 +39,6 @@
  */
 package org.egov.works.web.actions.reports;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -65,12 +51,10 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
-import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
-import org.egov.commons.dao.FundSourceHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -112,6 +96,20 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 @ParentPackage("egov")
 @Results({
         @Result(name = WorkProgressRegisterAction.PRINT_PDF, type = "stream", location = "workProgressRegisterStream", params = {
@@ -127,7 +125,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
     private static final String ASSIGNED_USER_LIST1 = "assignedUserList1";
     private static final String ASSIGNED_USER_LIST2 = "assignedUserList2";
     @Autowired
-    private CommonsService commonsService;
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private DepartmentService departmentService;
     @Autowired
@@ -243,15 +241,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
             addDropdownData("subSchemeList", Collections.emptyList());
     }
 
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
-    public List getMilestoneStatuses() {
+     public List getMilestoneStatuses() {
         return new LinkedList<String>(milestoneStatuses.keySet());
     }
 
@@ -262,7 +252,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
     }
 
     public List<EgwStatus> getWorkOrderStatuses() {
-        return commonsService.getStatusByModule(WorkOrder.class.getSimpleName());
+        return egwStatusHibernateDAO.getStatusByModule(WorkOrder.class.getSimpleName());
     }
 
     @SkipValidation

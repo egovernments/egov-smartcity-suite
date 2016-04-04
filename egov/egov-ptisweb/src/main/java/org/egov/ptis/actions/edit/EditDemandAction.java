@@ -81,6 +81,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -166,7 +167,7 @@ public class EditDemandAction extends BaseFormAction {
     private DCBDisplayInfo dcbDispInfo;
 
     @Autowired
-    private InstallmentDao installmentDAO;
+    private InstallmentHibDao installmentDAO;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
