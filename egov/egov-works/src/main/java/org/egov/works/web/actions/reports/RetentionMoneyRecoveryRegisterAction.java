@@ -65,7 +65,7 @@ import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.utils.WorksConstants;

@@ -89,7 +89,7 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="workOrderNumber" value="${workOrder.workOrderNumber}" disabled> 
+		<input type="text" class="form-control" id="loaNumber" name="loaNumber" value="${workOrder.workOrderNumber}" readonly="true"> 
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.agreement.amount" /></label>
 	<div class="col-sm-3 add-margin">

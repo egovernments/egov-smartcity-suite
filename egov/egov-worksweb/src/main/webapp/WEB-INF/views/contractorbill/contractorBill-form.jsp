@@ -46,6 +46,7 @@
    <div class="main-content">			
 		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="contractorbill-save" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="workOrderDate" id="workOrderDate" value="${workOrder.workOrderDate}"> 
+			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" /> 
 			<div class="row">
 				<div class="col-md-12"> 
 					<div class="panel panel-primary" data-collapsed="0">

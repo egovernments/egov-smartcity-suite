@@ -62,8 +62,8 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.contractorBill.AssetForBill;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
@@ -771,8 +771,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
             billGenNumber = egBillRegister.getBillnumber();
 
         // partbillNo
-        if (egBillRegister.getBillnumber() != null && egBillRegister.getPartbillNo() != null)
-            billNumber = egBillRegister.getPartbillNo().toString();
+        if (egBillRegister.getBillnumber() != null && egBillRegister.getBillSequenceNumber() != null)
+            billNumber = egBillRegister.getBillSequenceNumber().toString();
 
         if (egBillRegister.getBilldate() != null)
             billDate = sdf.format(egBillRegister.getBilldate());

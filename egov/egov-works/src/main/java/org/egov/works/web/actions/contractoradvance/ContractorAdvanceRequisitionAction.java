@@ -64,7 +64,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrderEstimate;

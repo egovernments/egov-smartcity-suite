@@ -574,7 +574,7 @@ public class LineEstimateService {
     }
 
     public LineEstimateDetails findByEstimateNumber(final String estimateNumber) {
-        return lineEstimateDetailsRepository.findByEstimateNumber(estimateNumber);
+        return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeEquals(estimateNumber, LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
     }
 
     public void createLineEstimateWorkflowTransition(final LineEstimate lineEstimate,

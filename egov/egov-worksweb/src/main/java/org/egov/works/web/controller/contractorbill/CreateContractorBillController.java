@@ -39,22 +39,30 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
+import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
+import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrder;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
@@ -66,8 +74,15 @@ public class CreateContractorBillController {
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
 
+    @Autowired
+    private ContractorBillRegisterService contractorBillRegisterService;
+
+    @Autowired
+    private ContractorBillNumberGenerator contractorBillNumberGenerator;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
-    public String showNewForm(@ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister,
+    public String showNewForm(
+            @ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister,
             final Model model, final HttpServletRequest request) {
         final String loaNumber = request.getParameter("loaNumber");
         final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
@@ -82,6 +97,58 @@ public class CreateContractorBillController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("billTypes", BillTypes.values());
+    }
+
+    @RequestMapping(value = "/contractorbill-save", method = RequestMethod.POST)
+    public String create(@ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister,
+            final Model model, final BindingResult resultBinder, final HttpServletRequest request,
+            @RequestParam("file") final MultipartFile[] files) throws IOException {
+        final String loaNumber = request.getParameter("loaNumber");
+        final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
+        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
+        contractorBillRegister.setWorkOrder(workOrder);
+
+        validateInput(contractorBillRegister, resultBinder);
+
+        if (resultBinder.hasErrors()) {
+            setDropDownValues(model);
+            model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+            model.addAttribute("workOrder", workOrder);
+            return "contractorBill-form";
+        } else {
+
+            Integer partBillCount = contractorBillRegisterService
+                    .getMaxSequenceNumberByWorkOrder(workOrder);
+            if (partBillCount == null || partBillCount == 0)
+                partBillCount = 1;
+            else
+                partBillCount++;
+            contractorBillRegister.setBillSequenceNumber(partBillCount);
+            contractorBillRegister.setBillnumber(
+                    contractorBillNumberGenerator.generateContractorBillNumber(contractorBillRegister));
+
+            // TODO:Fixme Replace with proper bill value from UI
+            contractorBillRegister.setBillamount(new BigDecimal(workOrder.getWorkOrderAmount()));
+            contractorBillRegister.setBillamount(contractorBillRegister.getBillamount());
+
+            final ContractorBillRegister savedContractorBillRegister = contractorBillRegisterService
+                    .create(contractorBillRegister, lineEstimateDetails, files);
+            return "redirect:/contractorbill/contractorbill-success?billNumber=" + savedContractorBillRegister.getBillnumber();
+        }
+    }
+
+    @RequestMapping(value = "/contractorbill-success", method = RequestMethod.GET)
+    public String showLetterOfAcceptanceSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model) {
+        final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
+                .getContractorBillByBillNumber(billNumber);
+        model.addAttribute("contractorBillRegister", contractorBillRegister);
+        return "contractorBill-success";
+    }
+
+    private void validateInput(final ContractorBillRegister contractorBillRegister, final BindingResult resultBinder) {
+        if (StringUtils.isBlank(contractorBillRegister.getBilltype()))
+            resultBinder.rejectValue("billtype", "error.billtype.required");
+
     }
 
 }

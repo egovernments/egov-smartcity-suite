@@ -37,15 +37,11 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.services;
+package org.egov.works.contractorbill.service;
 
-import org.egov.infstr.services.PersistenceService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 
-public class ContractorBillWFService extends PersistenceService<ContractorBillRegister, Long> {
+public interface ContractorBillNumberGenerator {
 
-    public ContractorBillWFService() {
-        setType(ContractorBillRegister.class);
-    }
-
+    public String generateContractorBillNumber(final ContractorBillRegister contractorBillRegister);
 }

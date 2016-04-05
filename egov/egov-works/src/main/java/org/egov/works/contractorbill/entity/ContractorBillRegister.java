@@ -37,41 +37,67 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.contractorBill;
+package org.egov.works.contractorbill.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
 import org.egov.model.bills.EgBillregister;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.models.contractorBill.AssetForBill;
+import org.egov.works.models.contractorBill.DeductionTypeForBill;
+import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
+import org.egov.works.models.workorder.WorkOrder;
 
+@Entity
+@Table(name = "EGW_CONTRACTORBILL")
 public class ContractorBillRegister extends EgBillregister {
 
-    private static final long serialVersionUID = 2425646766274071912L;
+    private static final long serialVersionUID = -6056638534067396998L;
 
     public enum BillStatus {
         CREATED, APPROVED, REJECTED, CANCELLED
     }
 
-    private Integer partbillNo;
-    private List<AssetForBill> assetDetailsList = new LinkedList<AssetForBill>();
-    private List<DeductionTypeForBill> deductionTypeList = new LinkedList<DeductionTypeForBill>();
-    private Long documentNumber;
-    private String owner;
-    private List<String> billActions = new ArrayList<String>();
-    private long workOrderId;
-    private Long workflowDepartmentId;
-    private Integer workflowDesignationId;
-    private Integer workflowApproverUserId;
-    private Integer workflowWardId;
-    private String workflowapproverComments;
+    private Integer billSequenceNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workOrder", nullable = false)
+    private WorkOrder workOrder;
+
+    @Temporal(TemporalType.DATE)
     private Date approvedDate;
 
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egbill", targetEntity = AssetForBill.class)
+    private List<AssetForBill> assetDetailsList = new LinkedList<AssetForBill>();
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egbill", targetEntity = DeductionTypeForBill.class)
+    private List<DeductionTypeForBill> deductionTypeList = new LinkedList<DeductionTypeForBill>();
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillReg", targetEntity = StatutoryDeductionsForBill.class)
     private List<StatutoryDeductionsForBill> statutoryDeductionsList = new LinkedList<StatutoryDeductionsForBill>();
 
-    private transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+    @Transient
+    private String owner;
+
+    @Transient
+    private List<String> billActions = new ArrayList<String>();
+
+    @Transient
+    private List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @Override
     public String getStateDetails() {
@@ -102,20 +128,12 @@ public class ContractorBillRegister extends EgBillregister {
         this.deductionTypeList = deductionTypeList;
     }
 
-    public Integer getPartbillNo() {
-        return partbillNo;
+    public Integer getBillSequenceNumber() {
+        return billSequenceNumber;
     }
 
-    public void setPartbillNo(final Integer partbillNo) {
-        this.partbillNo = partbillNo;
-    }
-
-    public Long getDocumentNumber() {
-        return documentNumber;
-    }
-
-    public void setDocumentNumber(final Long documentNumber) {
-        this.documentNumber = documentNumber;
+    public void setBillSequenceNumber(final Integer billSequenceNumber) {
+        this.billSequenceNumber = billSequenceNumber;
     }
 
     public String getOwner() {
@@ -134,52 +152,12 @@ public class ContractorBillRegister extends EgBillregister {
         this.billActions = billActions;
     }
 
-    public long getWorkOrderId() {
-        return workOrderId;
+    public WorkOrder getWorkOrder() {
+        return workOrder;
     }
 
-    public void setWorkOrderId(final long workOrderId) {
-        this.workOrderId = workOrderId;
-    }
-
-    public Long getWorkflowDepartmentId() {
-        return workflowDepartmentId;
-    }
-
-    public void setWorkflowDepartmentId(final Long workflowDepartmentId) {
-        this.workflowDepartmentId = workflowDepartmentId;
-    }
-
-    public Integer getWorkflowDesignationId() {
-        return workflowDesignationId;
-    }
-
-    public void setWorkflowDesignationId(final Integer workflowDesignationId) {
-        this.workflowDesignationId = workflowDesignationId;
-    }
-
-    public Integer getWorkflowApproverUserId() {
-        return workflowApproverUserId;
-    }
-
-    public void setWorkflowApproverUserId(final Integer workflowApproverUserId) {
-        this.workflowApproverUserId = workflowApproverUserId;
-    }
-
-    public Integer getWorkflowWardId() {
-        return workflowWardId;
-    }
-
-    public void setWorkflowWardId(final Integer workflowWardId) {
-        this.workflowWardId = workflowWardId;
-    }
-
-    public String getWorkflowapproverComments() {
-        return workflowapproverComments;
-    }
-
-    public void setWorkflowapproverComments(final String workflowapproverComments) {
-        this.workflowapproverComments = workflowapproverComments;
+    public void setWorkOrder(final WorkOrder workOrder) {
+        this.workOrder = workOrder;
     }
 
     public List<StatutoryDeductionsForBill> getStatutoryDeductionsList() {

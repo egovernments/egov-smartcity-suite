@@ -79,7 +79,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.measurementbook.MBHeader;

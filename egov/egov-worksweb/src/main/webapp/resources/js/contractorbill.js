@@ -40,14 +40,16 @@
 $(document).ready(function(){
 	replaceBillTypeChar();
 		
-	function replaceBillTypeChar() {
+	function replaceBillTypeChar() { 
 		$('#billtype option').each(function() {
 		   var $this = $(this);
-		   $this.text($this.text().replace(/_/g, ' '));
+		   var billType = $this.text().replace(/_/g, ' ');
+		   $this.text(billType);
+		   $this.val(billType);
 		});
 	}
 	
-	$("form").submit(function() {
+/*	$("form").submit(function() {
 		if($('form').valid())	{
 			$('.loader-class').modal('show', {backdrop: 'static'});
 		}
@@ -71,6 +73,6 @@ $(document).ready(function(){
 				 document.forms[0].submit();	
 			}
 		}
-	});
+	});*/
 	
 });

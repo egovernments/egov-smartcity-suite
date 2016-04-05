@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.models.BaseModel;
 import org.egov.model.bills.EgBillregister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 
@@ -53,7 +54,7 @@ public class DeductionTypeForBill extends BaseModel {
     private String deductionType;
     private WorkOrder workOrder;
     private WorkOrderEstimate workOrderEstimate;
-    private EgBillregister egbill;
+    private ContractorBillRegister egbill;
     private BigDecimal glcodeid;
     private BigDecimal creditamount;
     private String narration;
@@ -99,11 +100,11 @@ public class DeductionTypeForBill extends BaseModel {
         this.narration = narration;
     }
 
-    public EgBillregister getEgbill() {
+    public ContractorBillRegister getEgbill() {
         return egbill;
     }
 
-    public void setEgbill(final EgBillregister egbill) {
+    public void setEgbill(final ContractorBillRegister egbill) {
         this.egbill = egbill;
     }
 

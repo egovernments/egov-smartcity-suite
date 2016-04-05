@@ -37,37 +37,26 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.contractorBill;
+package org.egov.works.contractorbill.service;
 
-import javax.script.ScriptContext;
-
-import org.egov.commons.CFinancialYear;
-import org.egov.infra.script.service.ScriptService;
-import org.egov.infstr.utils.SequenceGenerator;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public class ContractorBillNumberGenerator {
-    public static final String SEQUENCE_TYPE = "CONTRACTORBILL";
+@Service
+public class ContractorBillNumberGeneratorImpl implements ContractorBillNumberGenerator {
+
     @Autowired
-    private SequenceGenerator sequenceGenerator;
-    // private PersistenceService<Script, Long> scriptService;
-    @Autowired
-    private ScriptService scriptService;
+    private LineEstimateService lineEstimateService;
 
-    public String getBillNumber(final WorkOrder workOrder, final CFinancialYear financialYear,
-            final WorkOrderEstimate workOrderEstimate) {
-        // List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
-        // "works.contractorBillNumber.generator");
-        // return
-        // scripts.get(0).eval(Script.createContext("workOrder",workOrder,"workOrderEstimate",
-        // workOrderEstimate,
-        // "finYear",financialYear,"sequenceGenerator",sequenceGenerator)).toString();
-        final ScriptContext scriptContext = ScriptService.createContext("workOrder", workOrder, "workOrderEstimate",
-                workOrderEstimate, "finYear", financialYear, "sequenceGenerator", sequenceGenerator);
-        return scriptService.executeScript("works.contractorBillNumber.generator", scriptContext).toString();
-
+    @Override
+    public String generateContractorBillNumber(final ContractorBillRegister contractorBillRegister) {
+        final LineEstimateDetails lineEstimateDetails = lineEstimateService
+                .findByEstimateNumber(contractorBillRegister.getWorkOrder().getEstimateNumber());
+        return String.format("%s%02d/%s", "BILL", contractorBillRegister.getBillSequenceNumber(),
+                lineEstimateDetails.getProjectCode().getCode());
     }
 
 }

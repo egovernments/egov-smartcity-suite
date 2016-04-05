@@ -257,6 +257,7 @@ public class WorksConstants {
     public static final String FILESTORE_MODULECODE = "WMS";
 
     public static final String WORKORDER = "WorkOrder";
+    public static final String CONTRACTORBILL = "CONTRACTORBILL";
 
     public static final String BOUNDARY_TYPE_WARD = "Ward";
     public static final String HIERARCHY_TYPE_ADMINISTRATION = "ADMINISTRATION";
@@ -265,4 +266,6 @@ public class WorksConstants {
 
     
     public static final String WORKFLOWTYPE_DISPLAYNAME = "Line Estimate";
+    
+    public static final String BILL_EXPENDITURE_TYPE = "Works";
 }

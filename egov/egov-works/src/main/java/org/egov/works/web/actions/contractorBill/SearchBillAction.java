@@ -59,7 +59,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
 import org.egov.works.models.measurementbook.MBHeader;
@@ -349,7 +349,7 @@ public class SearchBillAction extends BaseFormAction {
             // To get workorder ID by passing work order number.
             final WorkOrder workOrderObj = (WorkOrder) getPersistenceService().find(
                     "from WorkOrder where workOrderNumber = ?", br.getWorkordernumber());
-            br.setWorkOrderId(workOrderObj.getId());
+            br.setWorkOrder(workOrderObj);
         }
         return billList;
     }

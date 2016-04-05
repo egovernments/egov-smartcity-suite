@@ -134,13 +134,6 @@
 			ref="sequenceGenerator"/> -->
 	</bean>
 
-	<bean
-		class="org.egov.works.models.contractorBill.ContractorBillNumberGenerator"
-		id="contractorBillNumberGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
-	</bean>
-
 	<bean class="org.egov.works.models.estimate.ProjectCodeGenerator"
 		id="projectcodeGenerator">
 		<!--  <property name="sequenceGenerator" 
@@ -296,12 +289,6 @@
 		</constructor-arg>
 		<property name="genericService" ref="persistenceService" />
 		<property name="worksService" ref="worksService" />
-		<property name="contractorBillNumberGenerator" ref="contractorBillNumberGenerator" />
-		<property name="egovCommon" ref="egovCommon" />
-		<property name="commonsService" ref="commonsService" />
-		<property name="checklistService" ref="checklistService" />
-		<property name="commonAssetsService" ref="commonAssetsService" />
-		<property name="assetService" ref="assetService" />
 		<property name="tenderResponseService" ref="tenderResponseService" />
 		<property name="contractorAdvanceService" ref="contractorAdvanceService" />
 	</bean>

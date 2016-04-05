@@ -78,7 +78,7 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.budget.BudgetService;
 import org.egov.services.recoveries.RecoveryService;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.models.contractorBill.WorkCompletionInfo;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;

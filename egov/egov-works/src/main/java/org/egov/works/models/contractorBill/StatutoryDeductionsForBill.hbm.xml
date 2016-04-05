@@ -50,7 +50,7 @@
 		</id>
 	<many-to-one name="subPartyType" class="org.egov.commons.EgPartytype" column="SUBPARTYTYPE_ID" fetch="select" />
 	<many-to-one name="typeOfWork" class="org.egov.commons.EgwTypeOfWork" column="TYPEOFWORK_ID" fetch="select" />
-	<many-to-one name="egBillReg" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" insert="false" update="false"/>
+	<many-to-one name="egBillReg" column="BILLREGISTER_ID" insert="false" update="false"/>
 	<many-to-one name="egBillPayeeDtls" class="org.egov.model.bills.EgBillPayeedetails" column="BILLPAYEEDETAILS_ID" fetch="select"/>
 	
 	<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />

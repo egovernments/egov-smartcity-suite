@@ -49,7 +49,7 @@
 				<param name="sequence">SEQ_EGW_STANDARD_DEDUCTIONS_BILL</param>
 			</generator>
 		</id>
-		<many-to-one name="egbill" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" not-null="true" insert="false" update="false"/>
+		<many-to-one name="egbill" column="BILLREGISTER_ID" not-null="true" insert="false" update="false"/>
 		<many-to-one name="workOrder"
 			class="org.egov.works.models.workorder.WorkOrder" column="WORKORDER_ID"
 			not-null="true" fetch="select" />

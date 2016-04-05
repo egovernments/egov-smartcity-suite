@@ -56,13 +56,9 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.asset.service.AssetService;
-import org.egov.asset.service.CommonAssetsService;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.commons.service.CommonsService;
-import org.egov.dao.bills.EgBilldetailsDAO;
 import org.egov.dao.bills.EgBilldetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -74,9 +70,9 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
 import org.egov.works.models.contractorBill.AssetForBill;
-import org.egov.works.models.contractorBill.ContractorBillNumberGenerator;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
@@ -104,13 +100,14 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     private static final Logger logger = Logger.getLogger(ContractorBillServiceImpl.class);
 
     private WorksService worksService;
+    @Autowired
     private PersistenceService<EgChecklists, Long> checklistService;
+    @Autowired
     private ContractorBillNumberGenerator contractorBillNumberGenerator;
+    @Autowired
     private EgovCommon egovCommon;
     @Autowired
-    private CommonsService commonsService;
-    @Autowired
-    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO; 
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private static final String WORKS_NETPAYABLE_CODE = "WORKS_NETPAYABLE_CODE";
     private static final String RETENTION_MONEY_PURPOSE = "RETENTION_MONEY_PURPOSE";
     public static final String WORKORDER_NO = "WORKORDER_NO";
@@ -128,9 +125,9 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public static final String EXEC_DEPT_ID = "EXEC_DEPT_ID";
     public static final String EST_NO = "EST_NO";
     private ContractorAdvanceService contractorAdvanceService;
-   
+
     @Autowired
-    private  EgBilldetailsHibernateDAO egBilldetailsHibernateDAO; 
+    private EgBilldetailsHibernateDAO egBilldetailsHibernateDAO;
 
     public ContractorBillServiceImpl(final PersistenceService<ContractorBillRegister, Long> persistenceService) {
         super(persistenceService);
@@ -188,14 +185,8 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * @return a boolean value indicating if the bill number change is required.
      */
     @Override
-    public String generateContractorBillNumber(final EgBillregister bill, final WorkOrder workOrder,
-            final WorkOrderEstimate workOrderEstimate) {
-        final CFinancialYear financialYear = getCurrentFinancialYear(bill.getBilldate());
-        return contractorBillNumberGenerator.getBillNumber(workOrder, financialYear, workOrderEstimate);
-    }
-
-    public void setContractorBillNumberGenerator(final ContractorBillNumberGenerator contractorBillNumberGenerator) {
-        this.contractorBillNumberGenerator = contractorBillNumberGenerator;
+    public String generateContractorBillNumber(final ContractorBillRegister ContractorBillRegister) {
+        return contractorBillNumberGenerator.generateContractorBillNumber(ContractorBillRegister);
     }
 
     /**
@@ -1073,7 +1064,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
             for (final CChartOfAccounts coa : coaPayableList)
                 if (coa.getId() != null)
                     glcodeIdList.add(new BigDecimal(coa.getId()));
-       
+
         final EgBilldetails egbillDetails = egBilldetailsHibernateDAO.getBillDetails(billId, glcodeIdList);
         netpaybleCode = egbillDetails.getGlcodeid();
         return netpaybleCode;
@@ -1120,7 +1111,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         if (accountDetailsForBill.isEmpty())
             for (final EgBilldetails egBilldetails : accountDetailsForassetandbill) {
                 final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid()
-                        .longValue(),false);
+                        .longValue(), false);
                 if (coa != null) {
                     coa.setId(egBilldetails.getGlcodeid().longValue());
                     final AssetForBill assetforBill = new AssetForBill();
@@ -1380,22 +1371,12 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         this.egovCommon = egovCommon;
     }
 
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
     public void setChecklistService(final PersistenceService<EgChecklists, Long> checklistService) {
         this.checklistService = checklistService;
     }
 
-    public void setCommonAssetsService(final CommonAssetsService commonAssetsService) {
-    }
-
     public String getFinalBillTypeConfigValue() {
         return worksService.getWorksConfigValue("FinalBillType");
-    }
-
-    public void setAssetService(final AssetService assetService) {
     }
 
     public void setTenderResponseService(final TenderResponseService tenderResponseService) {
@@ -1642,7 +1623,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
             for (final EgBilldetails details : billDetails)
                 if (details.getDebitamount() != null && details.getDebitamount().compareTo(BigDecimal.ZERO) == 1) {
                     final CChartOfAccounts coaObj = chartOfAccountsHibernateDAO.findById(details
-                            .getGlcodeid(),false);
+                            .getGlcodeid(), false);
                     if (coaObj != null && StringUtils.isNotBlank(coaObj.getGlcode()))
                         if (!mappingBudgetHead.equalsIgnoreCase(coaObj.getGlcode())) {
                             allowForward = WorksConstants.NO;

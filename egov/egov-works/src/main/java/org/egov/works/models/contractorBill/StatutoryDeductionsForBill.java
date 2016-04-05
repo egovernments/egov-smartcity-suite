@@ -44,13 +44,14 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.infstr.models.BaseModel;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillregister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 
 public class StatutoryDeductionsForBill extends BaseModel {
 
     private static final long serialVersionUID = 8699958489217979541L;
     private EgPartytype subPartyType;
     private EgwTypeOfWork typeOfWork;
-    private EgBillregister egBillReg;
+    private ContractorBillRegister egBillReg;
     private EgBillPayeedetails egBillPayeeDtls;
 
     public EgPartytype getSubPartyType() {
@@ -69,11 +70,11 @@ public class StatutoryDeductionsForBill extends BaseModel {
         this.typeOfWork = typeOfWork;
     }
 
-    public EgBillregister getEgBillReg() {
+    public ContractorBillRegister getEgBillReg() {
         return egBillReg;
     }
 
-    public void setEgBillReg(final EgBillregister egBillReg) {
+    public void setEgBillReg(final ContractorBillRegister egBillReg) {
         this.egBillReg = egBillReg;
     }
 
