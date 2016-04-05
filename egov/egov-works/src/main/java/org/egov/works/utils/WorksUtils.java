@@ -209,9 +209,9 @@ public class WorksUtils {
         return pathVars;
     }
 
-    public String getUserDesignation(User adminSanctionBy) {
+    public String getUserDesignation(User user) {
         List<Assignment> assignmentList = new ArrayList<Assignment>();
-        assignmentList = assignmentService.findByEmployeeAndGivenDate(adminSanctionBy != null ? adminSanctionBy.getId() : null, new Date());
+        assignmentList = assignmentService.findByEmployeeAndGivenDate(user != null ? user.getId() : null, new Date());
         if(!assignmentList.isEmpty())
             return assignmentList.get(0).getDesignation().getName();
         return null;

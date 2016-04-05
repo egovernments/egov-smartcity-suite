@@ -66,6 +66,8 @@ function renderAction(id, value) {
 	if (value == 1)
 		window.open("/egworks/letterofacceptance/view/" + id, '',
 				'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	if(value == 2)
+		window.open("/egworks/letterofacceptance/letterOfAcceptancePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 function callAjaxSearch() {
