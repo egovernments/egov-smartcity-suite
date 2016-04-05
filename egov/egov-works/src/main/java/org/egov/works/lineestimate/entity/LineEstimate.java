@@ -55,12 +55,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CFunction;
@@ -86,7 +86,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGW_LINEESTIMATE")
 @Unique(id = "id", tableName = "EGW_LINEESTIMATE", columnName = { "lineestimatenumber" }, fields = {
-        "lineEstimateNumber" }, enableDfltMsg = true)
+"lineEstimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimate.SEQ_EGW_LINEESTIMATE, sequenceName = LineEstimate.SEQ_EGW_LINEESTIMATE, allocationSize = 1)
 public class LineEstimate extends StateAware {
 
@@ -158,6 +158,7 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "adminSanctionBy")
     private User adminSanctionBy;
 
+    @OrderBy("id")
     @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateDetails.class)
     private final List<LineEstimateDetails> lineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
 
@@ -209,6 +210,10 @@ public class LineEstimate extends StateAware {
     @Temporal(TemporalType.DATE)
     private Date technicalSanctionDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "technicalSanctionBy")
+    private User technicalSanctionBy;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location", nullable = false)
@@ -222,6 +227,10 @@ public class LineEstimate extends StateAware {
 
     @Temporal(TemporalType.DATE)
     private Date councilResolutionDate;
+
+    private boolean isWorkOrderCreated;
+
+    private boolean isBillsCreated;
 
     @Override
     public Long getId() {
@@ -482,6 +491,14 @@ public class LineEstimate extends StateAware {
         this.technicalSanctionDate = technicalSanctionDate;
     }
 
+    public User getTechnicalSanctionBy() {
+        return technicalSanctionBy;
+    }
+
+    public void setTechnicalSanctionBy(final User technicalSanctionBy) {
+        this.technicalSanctionBy = technicalSanctionBy;
+    }
+
     public String getCouncilResolutionNumber() {
         return councilResolutionNumber;
     }
@@ -496,5 +513,21 @@ public class LineEstimate extends StateAware {
 
     public void setCouncilResolutionDate(final Date councilResolutionDate) {
         this.councilResolutionDate = councilResolutionDate;
+    }
+
+    public boolean getIsWorkOrderCreated() {
+        return isWorkOrderCreated;
+    }
+
+    public void setIsWorkOrderCreated(final boolean isWorkOrderCreated) {
+        this.isWorkOrderCreated = isWorkOrderCreated;
+    }
+
+    public boolean getIsBillsCreated() {
+        return isBillsCreated;
+    }
+
+    public void setIsBillsCreated(final boolean isBillsCreated) {
+        this.isBillsCreated = isBillsCreated;
     }
 }
