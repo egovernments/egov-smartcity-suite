@@ -102,6 +102,7 @@ public class EditOwnerDetailsController {
     public String updateOwnerDetails(@ModelAttribute final Property property, final RedirectAttributes redirectAttrs,
             final BindingResult errors, final Model model, final HttpServletRequest request,
             @RequestParam String doorNumber) {
+        model.addAttribute("guardianRelationMap", PropertyTaxConstants.GUARDIAN_RELATION);
         String errMsg = basicPropertyService.updateOwners(property, property.getBasicProperty(), doorNumber, errors);
         if (!errMsg.isEmpty()) {
             model.addAttribute("errorMsg", errMsg);
