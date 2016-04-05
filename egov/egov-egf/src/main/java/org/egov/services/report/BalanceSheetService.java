@@ -108,7 +108,7 @@ public class BalanceSheetService extends ReportService {
         final List<Object[]> openingBalanceAmountList = query.list();
         for (final Object[] obj : openingBalanceAmountList)
             if (obj[0] != null && obj[1] != null) {
-                BigDecimal total = BigDecimal.valueOf((double) obj[0]);
+                BigDecimal total = (BigDecimal)obj[0];
                 if (L.equals(obj[3].toString()))
                     total = total.multiply(NEGATIVE);
                 for (final StatementEntry entry : balanceSheet.getEntries())
@@ -143,8 +143,7 @@ public class BalanceSheetService extends ReportService {
             final List<Object[]> openingBalanceAmountList = query.list();
             for (final Object[] obj : openingBalanceAmountList)
                 if (obj[0] != null && obj[1] != null) {
-                  //  BigDecimal total = BigDecimal.valueOf((double) obj[0]);
-                    BigDecimal total =(BigDecimal) obj[0];
+                  BigDecimal total =(BigDecimal) obj[0];
                     if (L.equals(obj[2].toString()))
                         total = total.multiply(NEGATIVE);
                     for (final StatementEntry entry : balanceSheet.getEntries())
@@ -190,9 +189,9 @@ public class BalanceSheetService extends ReportService {
                             entry.getFundWiseAmount().put(
                                     fundNameForId,
                                     entry.getFundWiseAmount().get(fundNameForId)
-                                    .add(divideAndRound(BigDecimal.valueOf((double)obj[0]), divisor)));
+                                    .add(divideAndRound((BigDecimal)obj[0], divisor)));
                         else
-                            entry.getFundWiseAmount().put(fundNameForId, divideAndRound(BigDecimal.valueOf((double)obj[0]), divisor));
+                            entry.getFundWiseAmount().put(fundNameForId, divideAndRound((BigDecimal)obj[0], divisor));
                     }}
     }
 
