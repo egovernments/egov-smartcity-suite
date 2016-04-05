@@ -228,9 +228,9 @@ public class LineEstimate extends StateAware {
     @Temporal(TemporalType.DATE)
     private Date councilResolutionDate;
 
-    private boolean isWorkOrderCreated;
+//    private boolean isWorkOrderCreated;
 
-    private boolean isBillsCreated;
+//    private boolean isBillsCreated;
 
     @Override
     public Long getId() {
@@ -515,19 +515,19 @@ public class LineEstimate extends StateAware {
         this.councilResolutionDate = councilResolutionDate;
     }
 
-    public boolean getIsWorkOrderCreated() {
-        return isWorkOrderCreated;
-    }
-
-    public void setIsWorkOrderCreated(final boolean isWorkOrderCreated) {
-        this.isWorkOrderCreated = isWorkOrderCreated;
-    }
-
-    public boolean getIsBillsCreated() {
-        return isBillsCreated;
-    }
-
-    public void setIsBillsCreated(final boolean isBillsCreated) {
-        this.isBillsCreated = isBillsCreated;
-    }
+//    public boolean getIsWorkOrderCreated() {
+//        return isWorkOrderCreated;
+//    }
+//
+//    public void setIsWorkOrderCreated(final boolean isWorkOrderCreated) {
+//        this.isWorkOrderCreated = isWorkOrderCreated;
+//    }
+//
+//    public boolean getIsBillsCreated() {
+//        return isBillsCreated;
+//    }
+//
+//    public void setIsBillsCreated(final boolean isBillsCreated) {
+//        this.isBillsCreated = isBillsCreated;
+//    }
 }
