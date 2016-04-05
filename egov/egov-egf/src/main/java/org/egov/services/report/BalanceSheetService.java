@@ -143,7 +143,8 @@ public class BalanceSheetService extends ReportService {
             final List<Object[]> openingBalanceAmountList = query.list();
             for (final Object[] obj : openingBalanceAmountList)
                 if (obj[0] != null && obj[1] != null) {
-                    BigDecimal total = BigDecimal.valueOf((double) obj[0]);
+                  //  BigDecimal total = BigDecimal.valueOf((double) obj[0]);
+                    BigDecimal total =(BigDecimal) obj[0];
                     if (L.equals(obj[2].toString()))
                         total = total.multiply(NEGATIVE);
                     for (final StatementEntry entry : balanceSheet.getEntries())
@@ -226,7 +227,7 @@ public class BalanceSheetService extends ReportService {
         final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
         final List<Object[]> excessieAmountList = query.list();
         for (final Object[] obj : excessieAmountList)
-            sum = sum.add(BigDecimal.valueOf((double) obj[0]));
+            sum = sum.add((BigDecimal) obj[0]);
         for (int index = 0; index < balanceSheet.size(); index++)
             if (balanceSheet.get(index).getGlCode() != null && glCodeForExcessIE.equals(balanceSheet.get(index).getGlCode())) {
                 BigDecimal prevYrTotal = balanceSheet.get(index).getPreviousYearTotal();
