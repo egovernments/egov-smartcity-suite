@@ -202,7 +202,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         if (cur[0].toString().equals(row[0].toString())) {
                             addrow = true;
                             if (I.equalsIgnoreCase(cur[4].toString()))
-                                amount = (BigDecimal.valueOf((double) cur[2])).multiply(NEGATIVE);
+                                amount = ((BigDecimal)cur[2]).multiply(NEGATIVE);
                             /*
                              * if(currentYearTotalIncome.containsKey(fundnm) && currentYearTotalIncome.get(fundnm)!=null)
                              * currentYearTotalIncome .put(fundnm,currentYearTotalIncome.get(fundnm).add(incomeExpenditureService
@@ -210,7 +210,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                              * currentYearTotalIncome.put(fundnm,incomeExpenditureService.divideAndRound(amount, divisor));
                              */
                             else
-                                amount = (BigDecimal.valueOf((double) cur[2]) ) ;
+                                amount = (BigDecimal)cur[2] ;
                             /*
                              * if(currentYearTotalExpense.containsKey(fundnm))
                              * currentYearTotalExpense.put(fundnm,currentYearTotalExpense
@@ -234,7 +234,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                                     Integer.valueOf(pre[3].toString()));
                             addrow = true;
                             if (I.equalsIgnoreCase(pre[4].toString()))
-                                preAmount = (BigDecimal.valueOf((double) pre[2]) ).multiply(NEGATIVE);
+                                preAmount = ((BigDecimal)pre[2]).multiply(NEGATIVE);
                             /*
                              * if(previousYearTotalIncome.containsKey(fundnm))
                              * previousYearTotalIncome.put(fundnm,previousYearTotalIncome
@@ -366,9 +366,9 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         if (cur[0].toString().equals(row[0].toString())) {
                             addrow = true;
                             if (I.equalsIgnoreCase(type.toString()))
-                                amount = (BigDecimal.valueOf((double) cur[2])).multiply(NEGATIVE);
+                                amount = ((BigDecimal)cur[2]).multiply(NEGATIVE);
                             else
-                                amount = BigDecimal.valueOf((double) cur[2]);
+                                amount =(BigDecimal)cur[2];
                             ieEntry.getNetAmount()
                             .put(incomeExpenditureService.getFundNameForId(statement.getFunds(),
                                     Integer.valueOf(cur[3].toString())),
@@ -413,7 +413,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                     if (!statement.containsBalanceSheetEntry(glCode)) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = BigDecimal.valueOf((double) row[0]);
+                            BigDecimal total = (BigDecimal)row[0];
                             if (I.equalsIgnoreCase(type))
                                 total = total.multiply(NEGATIVE);
                             balanceSheetEntry.getFundWiseAmount().put(
@@ -425,7 +425,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         statement.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < statement.size(); index++) {
-                            BigDecimal amount = incomeExpenditureService.divideAndRound(BigDecimal.valueOf((double) row[0]), divisor);
+                            BigDecimal amount = incomeExpenditureService.divideAndRound((BigDecimal)row[0], divisor);
                             if (I.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (statement.get(index).getGlCode() != null
