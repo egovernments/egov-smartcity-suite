@@ -110,6 +110,10 @@ public interface PropertyTaxConstants {
     public static final String ARR_PENALTY_COLL_STR = "ARR_PENALTY_COLL";
     public static final String CURRENT_REBATE_STR = "CURRENT_REBATE";
     public static final String ARREAR_REBATE_STR = "ARREAR_REBATE";
+    public static final String CURR_FIRSTHALF_DMD_STR = "CURR_FIRSTHALF_DMD";
+    public static final String CURR_FIRSTHALF_COLL_STR = "CURR_FIRSTHALF_COLL";
+    public static final String CURR_SECONDHALF_DMD_STR = "CURR_SECONDHALF_DMD";
+    public static final String CURR_SECONDHALF_COLL_STR = "CURR_SECONDHALF_COLL";
 
     public static final String BUILT_UP_PROPERTY = "BuiltUpProperty";
     public static final String VACANT_PROPERTY = "VacantProperty";

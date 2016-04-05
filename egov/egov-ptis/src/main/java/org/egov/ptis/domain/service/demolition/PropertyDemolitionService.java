@@ -279,8 +279,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         else
             model.addAttribute("ARV", BigDecimal.ZERO);
         if (!basicProperty.getActiveProperty().getIsExemptedFromTax()) {
-            final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-                    PropertyTaxUtil.getCurrentInstallment());
+            final Map<String, BigDecimal> demandCollMap = null;
             model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
             model.addAttribute("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
             model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
@@ -326,8 +325,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             Date effectiveDate = DateUtils.addDays(installment.getToDate(), 1);
             Module module = moduleDao.getModuleByName(PTMODULENAME);
             Installment nextInstallment = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
-            final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,nextInstallment);
-            BigDecimal totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
+            final Map<String, BigDecimal> demandCollMap = null;
+            BigDecimal totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
                     .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                             : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             smsMsg = messageSource.getMessage("demolition.approval.sms", new String[] { applicantName, assessmentNo,

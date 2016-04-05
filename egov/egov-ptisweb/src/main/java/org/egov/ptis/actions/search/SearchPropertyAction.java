@@ -53,8 +53,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRAN
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
@@ -570,7 +572,7 @@ public class SearchPropertyAction extends BaseFormAction {
             setRoleName(propertyTaxUtil.getRolesForUserId(userId));
 
         if (StringUtils.isNotBlank(assessmentNum)) {
-            basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(assessmentNum, null);
+            basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
         }
     }
 
@@ -659,11 +661,14 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (!property.getIsExemptedFromTax()) {
-                    searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
+                    searchResultMap.put("currFirstHalfDemand", demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
+                    searchResultMap.put("currSecondHalfDemand", demandCollMap.get(CURR_SECONDHALF_DMD_STR).toString());
                     searchResultMap.put("arrDemandDue",
                             demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
-                    searchResultMap.put("currDemandDue",
-                            demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
+                    searchResultMap.put("currFirstHalfDemandDue",
+                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR).subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
+                    searchResultMap.put("currSecondHalfDemandDue",
+                            demandCollMap.get(CURR_SECONDHALF_DMD_STR).subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
                 } else {
                     searchResultMap.put("currDemand", "0");
                     searchResultMap.put("arrDemandDue", "0");

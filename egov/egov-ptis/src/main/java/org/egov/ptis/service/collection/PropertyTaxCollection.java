@@ -482,11 +482,8 @@ public class PropertyTaxCollection extends TaxCollection {
         boolean isActive = false;
         final Date today = new Date();
         final Calendar dateWithRbtDays = Calendar.getInstance();
-        final int currMonth = dateWithRbtDays.get(Calendar.MONTH);
-        if (currMonth <= 2)
-            dateWithRbtDays.set(Calendar.YEAR, dateWithRbtDays.get(Calendar.YEAR) - 1);
         dateWithRbtDays.set(Calendar.DAY_OF_MONTH, 30);
-        dateWithRbtDays.set(Calendar.MONTH, Calendar.NOVEMBER);
+        dateWithRbtDays.set(Calendar.MONTH, Calendar.APRIL);
         dateWithRbtDays.set(Calendar.HOUR_OF_DAY, 23);
         dateWithRbtDays.set(Calendar.MINUTE, 59);
         dateWithRbtDays.set(Calendar.SECOND, 59);

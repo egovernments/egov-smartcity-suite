@@ -148,6 +148,7 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.elasticSearch.PropertyTaxIndexService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -253,6 +254,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private BoundaryService boundaryService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private PropertyTaxIndexService propertyTaxIndexService;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
 
     public CreatePropertyAction() {
@@ -595,6 +598,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setWardId(basicProp.getPropertyID().getWard().getId());
         basicPropertyService.applyAuditing(property.getState());
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        propertyTaxIndexService.createPropertyTaxIndex(basicProp, property);
         basicPropertyService.update(basicProp);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
@@ -807,8 +811,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                             : "List is NULL"));
 
         if (null != property && null != property.getId()) {
-            final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-                    propertyTaxUtil.getCurrentInstallment());
+            final Map<String, BigDecimal> demandCollMap = null;
         }
 
         LOGGER.debug("Exiting from prepare");

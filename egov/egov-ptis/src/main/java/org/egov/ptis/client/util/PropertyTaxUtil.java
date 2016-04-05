@@ -52,6 +52,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DMD;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_REBATE_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
@@ -63,6 +65,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_COURT_CASE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE;
@@ -86,7 +90,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIF
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CHANGEADDRESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;  
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS; 
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -252,6 +259,8 @@ public class PropertyTaxUtil {
     private WaterChargesIntegrationService waterChargesIntegrationService;
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private ModuleService moduleDao;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public void setPersistenceService(final PersistenceService persistenceService) {
@@ -1552,16 +1561,22 @@ public class PropertyTaxUtil {
      * view page.
      */
     @SuppressWarnings("unchecked")
-    public Map<String, BigDecimal> prepareDemandDetForView(final Property property, final Installment currentInstallment) {
+    public Map<String, Map<String,BigDecimal>> prepareDemandDetForView(final Property property, final Installment currentInstallment) throws ParseException {
         LOGGER.debug("Entered into prepareDemandDetForView, property=" + property);
 
-        Map<String, BigDecimal> DCBDetails = new HashMap<String, BigDecimal>();
+        Map<String, Map<String,BigDecimal>> DCBDetails = new TreeMap<String,Map<String, BigDecimal>>();
+        Map<String,BigDecimal> firstHalfReasonDemandDetails = new HashMap<String,BigDecimal>();
+        Map<String,BigDecimal> secondHalfReasonDemandDetails = new HashMap<String,BigDecimal>();
+        Map<String,BigDecimal> arrearDemandDetails = new HashMap<String,BigDecimal>();
         String demandReason = "";
         Installment installment = null;
         BigDecimal totalArrearDemand = BigDecimal.ZERO;
         BigDecimal totalCurrentDemand = BigDecimal.ZERO;
         BigDecimal totalArrearCollection = BigDecimal.ZERO;
         BigDecimal totalCurrentCollection = BigDecimal.ZERO;
+        BigDecimal totalNextInstCollection = BigDecimal.ZERO;
+        BigDecimal totalNextInstDemand = BigDecimal.ZERO;
+        Map<String,Object> currYearInstMap = getInstallmentsForCurrYear(new Date());
 
         final List<String> demandReasonExcludeList = Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
                 PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE);
@@ -1581,10 +1596,15 @@ public class PropertyTaxUtil {
 
             if (!demandReasonExcludeList.contains(demandReason)) {
                 installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
-                if (installment.equals(currentInstallment)) {
+                if (installment.equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))) {
                     totalCurrentDemand = totalCurrentDemand.add(dmdDet.getAmount());
                     totalCurrentCollection = totalCurrentCollection.add(dmdDet.getAmtCollected());
-                    DCBDetails.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
+                    firstHalfReasonDemandDetails.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 
+                            dmdDet.getAmount());
+                } else if(installment.equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))){
+                    totalNextInstDemand = totalNextInstDemand.add(dmdDet.getAmount());
+                    totalNextInstCollection= totalNextInstCollection.add(dmdDet.getAmtCollected());
+                    secondHalfReasonDemandDetails.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
                             dmdDet.getAmount());
                 } else {
                     totalArrearDemand = totalArrearDemand.add(dmdDet.getAmount());
@@ -1592,10 +1612,17 @@ public class PropertyTaxUtil {
                 }
             }
         }
-        DCBDetails.put(CURR_DMD_STR, totalCurrentDemand);
-        DCBDetails.put(ARR_DMD_STR, totalArrearDemand);
-        DCBDetails.put(CURR_COLL_STR, totalCurrentCollection);
-        DCBDetails.put(ARR_COLL_STR, totalArrearCollection);
+        arrearDemandDetails.put(ARR_DMD_STR, totalArrearDemand);
+        arrearDemandDetails.put(ARR_COLL_STR, totalArrearCollection);
+        firstHalfReasonDemandDetails.put(CURR_FIRSTHALF_DMD_STR, totalCurrentDemand);
+        firstHalfReasonDemandDetails.put(CURR_FIRSTHALF_COLL_STR, totalCurrentCollection);
+        secondHalfReasonDemandDetails.put(CURR_SECONDHALF_DMD_STR, totalCurrentDemand);
+        secondHalfReasonDemandDetails.put(CURR_SECONDHALF_COLL_STR, totalCurrentCollection);
+        
+        DCBDetails.put(CURRENTYEAR_FIRST_HALF, firstHalfReasonDemandDetails);
+        DCBDetails.put(CURRENTYEAR_SECOND_HALF, secondHalfReasonDemandDetails);
+        DCBDetails.put(ARREARS, arrearDemandDetails);
+  
         LOGGER.debug("prepareDemandDetForView - demands=" + DCBDetails);
         LOGGER.debug("Exiting from prepareDemandDetForView");
         return DCBDetails;
@@ -2503,4 +2530,20 @@ public class PropertyTaxUtil {
                         egDemand);
         return installments;
     }
+    
+    public Map<String,Object> getInstallmentsForCurrYear(Date currDate) {
+        Map<String,Object> currYearInstMap = new HashMap<String,Object>();
+        Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final String query = "select installment from Installment installment,CFinancialYear finYear where installment.module =:module  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
+                + " and installment.fromDate >= finYear.startingDate and cast(installment.toDate as date) <= finYear.endingDate order by installment.id ";
+        final Query qry = persistenceService.getSession().createQuery(query.toString());
+        qry.setLong("module", module.getId());
+        qry.setDate("currDate", currDate);
+        List<Installment> installments = qry.list();
+        currYearInstMap.put(CURRENTYEAR_FIRST_HALF, installments.get(0));
+        currYearInstMap.put(CURRENTYEAR_SECOND_HALF, installments.get(1));
+        return currYearInstMap;
+    }
+    
+    
 }
