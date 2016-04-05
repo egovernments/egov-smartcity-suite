@@ -137,7 +137,7 @@
 
 	<!-- This defined token store, we have used inmemory tokenstore for now 
 		but this can be changed to a user defined one -->
-	<bean id="tokenStore" class="org.egov.infra.config.security.oauth2.provider.token.store.redis.RedisTokenStore" lazy-init="false">
+	<bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore" lazy-init="false">
 		<constructor-arg ref="redisConnectionFactory"/>
 	</bean>
 

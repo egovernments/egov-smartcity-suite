@@ -53,7 +53,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
              */
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
-            user.setLastModifiedDate(new Date());
             Authentication auth = new UsernamePasswordAuthenticationToken(new SecureUser(user), password, grantedAuths);
             return auth;
         } else {

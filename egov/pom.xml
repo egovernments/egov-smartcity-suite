@@ -137,7 +137,7 @@
 		<spring-data-jpa-version>1.9.4.RELEASE</spring-data-jpa-version>
 		<spring-data-jpa-envers-version>0.3.0.RELEASE</spring-data-jpa-envers-version>
 		<spring-security-version>4.0.3.RELEASE</spring-security-version>
-		<spring-security-oauth2-version>2.0.7.RELEASE</spring-security-oauth2-version>
+		<spring-security-oauth2-version>2.0.9.RELEASE</spring-security-oauth2-version>
 		<apache-tiles-version>3.0.5</apache-tiles-version>
 		<embedded-redis-version>0.6</embedded-redis-version>
 		<quartz-version>2.2.2</quartz-version>
