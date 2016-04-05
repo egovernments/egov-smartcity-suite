@@ -37,53 +37,36 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
-<div id="main">
-<div class="row">
-	<div class="col-md-12">
-		<form:form  id="waterConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title text-center">
-					<c:out value="${message }" />
+<div class="page-container" id="page-container">
+	<div class="main-content">
+		<form:form name="lineEstimateForm" action="create-spillover" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST" enctype="multipart/form-data">
+			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
+			<form:hidden path="" name="lineEstimateId" id="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
+			<div class="row">
+				<div class="col-md-12">
+					<jsp:include page="lineEstimateHeader.jsp"/>
+					<jsp:include page="lineEstimateDetails.jsp"/>
+					<jsp:include page="uploadDocuments.jsp"/>
 				</div>
 			</div>
-		</div>
-		</form:form>
-	</div>					
-</div>					
-</div>
-<div class="row text-center">
-	<div class="add-margin">
-		<%-- <button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button> --%>
-		<%-- <c:choose>
-			<c:when test="${lineEstimate.status == 'ACTIVE' }"> --%>
-		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
-			<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPdf()" ><spring:message code="lbl.view.proceedings" /></a>
-		</c:if>
-		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
-			<%-- </c:when>
-			<c:otherwise>
-				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
-			</c:otherwise>
-		</c:choose> --%>
+			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
+			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
+			<div class="buttonbottom" align="center">
+				<table>
+					<tr>
+						<td id="actionButtons">
+							<input type="submit" id="<spring:message code="lbl.save" />" class="btn btn-primary"  value="<spring:message code="lbl.save" />" />
+							<input type="button" value="<spring:message code="lbl.close" />"
+							class="btn btn-default" onclick="window.close();" /></td>
+					</tr>
+				</table>
+			</div>
+		</form:form>  
 	</div>
 </div>
-
-<script type="text/javascript">
-function printDiv(divName) {
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-}
-function renderPdf() {
-	window.open("/egworks/lineestimate/lineEstimatePDF/" + ${lineEstimate.id}, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
-}
-</script>
+<script src="<c:url value='/resources/js/lineestimate/spillover/spillover.js?rnd=${app_release_no}'/>"></script

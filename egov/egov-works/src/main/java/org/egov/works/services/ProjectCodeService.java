@@ -53,7 +53,9 @@ import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.AssetsForEstimate;
 import org.egov.works.models.estimate.ProjectCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ProjectCodeService extends PersistenceService<ProjectCode, Long>implements EntityTypeService {
 
     @Autowired
@@ -177,4 +179,8 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long>imp
 
     }
 
+    public ProjectCode findByCode(String code) {
+        String query = "from ProjectCode as p where upper(p.code) = '" + code.toUpperCase() + "'";
+        return find(query);
+    }
 }

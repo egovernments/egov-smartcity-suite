@@ -240,20 +240,20 @@ public class WorksConstants {
 
     // Module types
     public static final String MODULE_NAME_LINEESTIMATE = "LineEstimate";
-    
+
     public static final String NEWLINEESTIMATE = "NEWLINEESTIMATE";
-    
+
     // User roles
     public static final String ROLE_SUPERUSER = "Super User";
 
     public static final String LINEESTIMATE_CREATE = "create";
     public static final String LINEESTIMATE_UPDATE = "update";
-    
+
     public static final String WF_STATE_CREATED = "Created";
     public static final String WF_STATE_CHECKED = "Checked";
     public static final String WF_STATE_REJECTED = "Rejected";
     public static final String WF_STATE_CANCELLED = "Cancelled";
-    
+
     public static final String FILESTORE_MODULECODE = "WMS";
 
     public static final String WORKORDER = "WorkOrder";
@@ -264,8 +264,11 @@ public class WorksConstants {
 
     public static final String APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION = "ENGINEERINCHARGE_DESIGNATION";
 
-    
     public static final String WORKFLOWTYPE_DISPLAYNAME = "Line Estimate";
     
     public static final String BILL_EXPENDITURE_TYPE = "Works";
+
+    public static final String DESIGNATION_EXE_ENGINEER = "Executive engineer";
+    public static final String DESIGNATION_SUPERINTENDING_ENGINEER = "Superintending engineer";
+    public static final String DESIGNATION_CHIEF_ENGINEER = "Chief Engineer";
 }

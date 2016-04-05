@@ -55,14 +55,11 @@ import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
-import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -126,15 +123,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
     @Autowired
-    private BoundaryService boundaryService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    protected AssignmentService assignmentService;
-
-    @Autowired
     private ResourceBundleMessageSource messageSource;
 
     @Autowired
@@ -159,11 +147,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
-
             final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
             @RequestParam String workFlowAction, final BindingResult resultBinder)
-            throws ApplicationException, IOException {
+                    throws ApplicationException, IOException {
         setDropDownValues(model);
 
         if (errors.hasErrors()) {
@@ -295,7 +282,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
         if (id != null)
             lineEstimate = lineEstimateService
-            .getLineEstimateById(id);
+                    .getLineEstimateById(id);
         model.addAttribute("approverName", approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);

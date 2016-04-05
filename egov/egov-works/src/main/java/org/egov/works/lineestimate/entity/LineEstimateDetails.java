@@ -67,7 +67,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGW_LINEESTIMATE_DETAILS")
 @Unique(id = "id", tableName = "EGW_LINEESTIMATE_DETAILS", columnName = { "estimatenumber" }, fields = {
-        "estimateNumber" }, enableDfltMsg = true)
+"estimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, sequenceName = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, allocationSize = 1)
 public class LineEstimateDetails extends AbstractAuditable {
 
@@ -112,10 +112,12 @@ public class LineEstimateDetails extends AbstractAuditable {
 
     private BigDecimal actualEstimateAmount;
 
+    private BigDecimal grossAmountBilled;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projectCode")
     private ProjectCode projectCode;
-    
+
     @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateAppropriation.class)
     private List<LineEstimateAppropriation> lineEstimateAppropriations = new ArrayList<LineEstimateAppropriation>(0);
 
@@ -205,7 +207,15 @@ public class LineEstimateDetails extends AbstractAuditable {
         return lineEstimateAppropriations;
     }
 
-    public void setLineEstimateAppropriations(List<LineEstimateAppropriation> lineEstimateAppropriations) {
+    public void setLineEstimateAppropriations(final List<LineEstimateAppropriation> lineEstimateAppropriations) {
         this.lineEstimateAppropriations = lineEstimateAppropriations;
+    }
+
+    public BigDecimal getGrossAmountBilled() {
+        return grossAmountBilled;
+    }
+
+    public void setGrossAmountBilled(final BigDecimal grossAmountBilled) {
+        this.grossAmountBilled = grossAmountBilled;
     }
 }

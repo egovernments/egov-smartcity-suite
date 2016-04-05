@@ -95,7 +95,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     @Autowired
     private FinancialYearHibernateDAO finHibernateDao;
     @Autowired
-    private PersistenceService<ProjectCode, Long> projectCodeService;
+    private ProjectCodeService projectCodeService;
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
     private DepositWorksUsageService depositWorksUsageService;
 

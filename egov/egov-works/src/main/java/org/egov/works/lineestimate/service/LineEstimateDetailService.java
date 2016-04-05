@@ -41,18 +41,50 @@ package org.egov.works.lineestimate.service;
 
 import java.util.List;
 
-import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.model.budget.BudgetUsage;
+import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.repository.LineEstimateAppropriationRepository;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.models.estimate.ProjectCode;
+import org.egov.works.services.ProjectCodeService;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class LineEstimateDetailService {
 
     private final LineEstimateDetailsRepository lineEstimateDetailsRepository;
+
+    @Autowired
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+
+    @Autowired
+    private ProjectCodeService projectCodeService;
+
+    @Autowired
+    private LineEstimateAppropriationRepository lineEstimateAppropriationRepository;
+
+    @Autowired
+    private BudgetDetailsDAO budgetDetailsDAO;
+
+    @Autowired
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
+
+    @Autowired
+    private WorkOrderIdentificationNumberGenerator workOrderIdentificationNumberGenerator;
 
     @Autowired
     public LineEstimateDetailService(final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
@@ -83,14 +115,85 @@ public class LineEstimateDetailService {
         return lineEstimateDetailsRepository.findOne(id);
     }
 
-    @Transactional
-    public LineEstimate removeDeletedLineEstimateDetails(final LineEstimate lineEstimate,
-            final String removedLineEstimateDetailsIds) {
-        if (null != removedLineEstimateDetailsIds)
-            for (final String id : removedLineEstimateDetailsIds.split(","))
-                lineEstimate.getLineEstimateDetails().remove(lineEstimateDetailsRepository.findOne(Long.valueOf(id)));
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void setProjectCode(final LineEstimateDetails lineEstimateDetails) {
+        ProjectCode projectCode = null;
+        if (lineEstimateDetails.getProjectCode() != null && lineEstimateDetails.getProjectCode().getCode() != null) {
+            projectCode = lineEstimateDetails.getProjectCode();
+            projectCode.setCode(lineEstimateDetails.getProjectCode().getCode());
+        } else {
+            projectCode = new ProjectCode();
+            projectCode
+                    .setCode(workOrderIdentificationNumberGenerator.generateWorkOrderIdentificationNumber(lineEstimateDetails));
+            lineEstimateDetails.setProjectCode(projectCode);
+        }
+        projectCode.setCodeName(lineEstimateDetails.getNameOfWork());
+        projectCode.setDescription(lineEstimateDetails.getNameOfWork());
+        projectCode.setActive(true);
+        projectCode.setEgwStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(
+                ProjectCode.class.getSimpleName(), WorksConstants.DEFAULT_PROJECTCODE_STATUS));
+        projectCodeService.persist(projectCode);
+        createAccountDetailKey(projectCode);
+    }
 
-        return lineEstimate;
+    protected void createAccountDetailKey(final ProjectCode proj) {
+        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO.getAccountdetailtypeByName("PROJECTCODE");
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setGroupid(1);
+        adk.setDetailkey(proj.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        adk.setAccountdetailtype(accountdetailtype);
+        accountdetailkeyHibernateDAO.create(adk);
+
+    }
+
+    @Transactional
+    public void persistBudgetAppropriationDetails(final LineEstimateDetails lineEstimateDetails,
+            final BudgetUsage budgetUsage) {
+        LineEstimateAppropriation lineEstimateAppropriation = null;
+        lineEstimateAppropriation = lineEstimateAppropriationService
+                .findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+
+        if (lineEstimateAppropriation != null)
+            lineEstimateAppropriation.setBudgetUsage(budgetUsage);
+        else {
+            lineEstimateAppropriation = new LineEstimateAppropriation();
+            lineEstimateAppropriation.setLineEstimateDetails(lineEstimateDetails);
+            lineEstimateAppropriation.setBudgetUsage(budgetUsage);
+        }
+        lineEstimateAppropriationRepository.save(lineEstimateAppropriation);
+    }
+
+    @Transactional
+    public boolean checkConsumeEncumbranceBudget(final LineEstimateDetails lineEstimateDetails, final Long finyrId,
+            final double budgApprAmnt, final List<Long> budgetheadid) {
+        final boolean flag = true;
+        final BudgetUsage budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
+                lineEstimateAppropriationService.generateBudgetAppropriationNumber(lineEstimateDetails),
+                finyrId,
+                Integer.valueOf(11),
+                lineEstimateDetails.getEstimateNumber(),
+                Integer.parseInt(lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId().toString()),
+                lineEstimateDetails.getLineEstimate().getFunction() == null ? null : lineEstimateDetails.getLineEstimate()
+                        .getFunction().getId(),
+                null,
+                lineEstimateDetails.getLineEstimate().getScheme() == null ? null : lineEstimateDetails.getLineEstimate()
+                        .getScheme().getId(),
+                lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null : lineEstimateDetails.getLineEstimate()
+                        .getSubScheme().getId(),
+                lineEstimateDetails.getLineEstimate().getWard() == null ? null : Integer.parseInt(lineEstimateDetails
+                        .getLineEstimate().getWard().getId().toString()),
+                budgetheadid,
+                lineEstimateDetails.getLineEstimate().getFund() == null ? null : lineEstimateDetails.getLineEstimate().getFund()
+                        .getId(),
+                budgApprAmnt);
+
+        if (budgetUsage != null)
+            persistBudgetAppropriationDetails(lineEstimateDetails, budgetUsage);
+        else
+            return false;
+
+        return flag;
     }
 
 }

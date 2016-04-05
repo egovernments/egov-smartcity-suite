@@ -86,7 +86,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGW_LINEESTIMATE")
 @Unique(id = "id", tableName = "EGW_LINEESTIMATE", columnName = { "lineestimatenumber" }, fields = {
-"lineEstimateNumber" }, enableDfltMsg = true)
+        "lineEstimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimate.SEQ_EGW_LINEESTIMATE, sequenceName = LineEstimate.SEQ_EGW_LINEESTIMATE, allocationSize = 1)
 public class LineEstimate extends StateAware {
 
@@ -228,9 +228,9 @@ public class LineEstimate extends StateAware {
     @Temporal(TemporalType.DATE)
     private Date councilResolutionDate;
 
-//    private boolean isWorkOrderCreated;
+    private boolean workOrderCreated;
 
-//    private boolean isBillsCreated;
+    private boolean billsCreated;
 
     @Override
     public Long getId() {
@@ -515,19 +515,19 @@ public class LineEstimate extends StateAware {
         this.councilResolutionDate = councilResolutionDate;
     }
 
-//    public boolean getIsWorkOrderCreated() {
-//        return isWorkOrderCreated;
-//    }
-//
-//    public void setIsWorkOrderCreated(final boolean isWorkOrderCreated) {
-//        this.isWorkOrderCreated = isWorkOrderCreated;
-//    }
-//
-//    public boolean getIsBillsCreated() {
-//        return isBillsCreated;
-//    }
-//
-//    public void setIsBillsCreated(final boolean isBillsCreated) {
-//        this.isBillsCreated = isBillsCreated;
-//    }
+    public boolean isWorkOrderCreated() {
+        return workOrderCreated;
+    }
+
+    public void setWorkOrderCreated(final boolean workOrderCreated) {
+        this.workOrderCreated = workOrderCreated;
+    }
+
+    public boolean isBillsCreated() {
+        return billsCreated;
+    }
+
+    public void setBillsCreated(final boolean billsCreated) {
+        this.billsCreated = billsCreated;
+    }
 }

@@ -51,6 +51,8 @@ import org.springframework.stereotype.Repository;
 public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimateDetails, Long> {
 
     List<LineEstimateDetails> findByEstimateNumberContainingIgnoreCase(String name);
+    
+    LineEstimateDetails findByEstimateNumber(String estimateNumber);
 
     LineEstimateDetails findByEstimateNumberAndLineEstimate_Status_CodeEquals(String estimateNumber, String status);
 

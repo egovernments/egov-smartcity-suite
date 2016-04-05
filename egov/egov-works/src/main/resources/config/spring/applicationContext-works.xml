@@ -148,10 +148,6 @@
 		<property name="type" value="org.egov.works.models.masters.Overhead" />
 	</bean>
 
-	<bean id="projectCodeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.estimate.ProjectCode" />
-	</bean>
-
 	<bean id="assetsForEstimateService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"

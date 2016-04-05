@@ -49,7 +49,7 @@
 		<input type="hidden" id="errorTechDate" value="<spring:message code='error.technicalsanctiondate' />" />
 		<input type="hidden" id="errorActualAmount" value="<spring:message code='error.actualamount' />" />
 		<input type="hidden" id="errorActualAmountContinued" value="<spring:message code='error.actualamount.continued' />" />
-		<input type="hidden" id="adminSanctionDate" value='<fmt:formatDate value="${lineEstimate.adminSanctionDate }" pattern="dd/MM/yyyy"/>' />
+		<input type="hidden" id="adminSanctionDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${lineEstimate.adminSanctionDate }" pattern="dd/MM/yyyy"/>' />
 		<div class="panel-body">
 			<table class="table table-bordered" id="tblestimate">
 				<thead>

@@ -120,4 +120,9 @@
 		<put-attribute name="page-title" value="hdr.letterofacceptance" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-view.jsp"/>
 	</definition>
+	
+	<definition name="spillOverLineEstimate-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.spillover.lineestimate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/spillover/spillOverLineEstimate-form.jsp"/>
+    </definition>
 </tiles-definitions>
