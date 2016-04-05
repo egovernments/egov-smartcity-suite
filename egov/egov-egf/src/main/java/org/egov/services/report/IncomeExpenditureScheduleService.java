@@ -242,7 +242,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                              * previousYearTotalIncome.put(fundnm,incomeExpenditureService.divideAndRound(preAmount, divisor));
                              */
                             else
-                                preAmount = (BigDecimal.valueOf((double) pre[2]) );
+                                preAmount = (BigDecimal)pre[2] ;
                             /*
                              * if(previousYearTotalExpense.containsKey(fundnm))
                              * previousYearTotalExpense.get(fundnm).add(incomeExpenditureService.divideAndRound(preAmount,
@@ -380,9 +380,9 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         if (pre[0].toString().equals(row[0].toString())) {
                             addrow = true;
                             if (I.equalsIgnoreCase(type.toString()))
-                                preAmount = (BigDecimal.valueOf((double) pre[2]) ).multiply(NEGATIVE);
+                                preAmount = ((BigDecimal)pre[2]) .multiply(NEGATIVE);
                             else
-                                preAmount = BigDecimal.valueOf((double) pre[2]);
+                                preAmount = (BigDecimal) pre[2];
                             ieEntry.getPreviousYearAmount().put(incomeExpenditureService.getFundNameForId(statement.getFunds(),
                                     Integer.valueOf(pre[3].toString())),
                                     incomeExpenditureService.divideAndRound(preAmount, divisor));
@@ -489,7 +489,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         addRowToStatement(statement, row, glCode);
                     else
                         for (int index = 0; index < statement.size(); index++) {
-                            BigDecimal amount = incomeExpenditureService.divideAndRound((BigDecimal.valueOf((double) row[0]) ) , divisor);
+                            BigDecimal amount = incomeExpenditureService.divideAndRound(((BigDecimal)row[0] ) , divisor);
                             if (I.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (statement.get(index).getGlCode() != null
