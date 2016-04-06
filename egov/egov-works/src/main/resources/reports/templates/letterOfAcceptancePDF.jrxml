@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-05T19:12:05 -->
+<!-- 2016-04-06T11:39:14 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.util.*"/>
-	<parameter name="technicalSanctionByDesidnation" class="java.lang.String"/>
+	<parameter name="technicalSanctionByDesignation" class="java.lang.String"/>
 	<parameter name="present" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="cityLogo" class="java.lang.String"/>
@@ -129,7 +129,7 @@
 			</textField>
 			<textField>
 				<reportElement x="400" y="90" width="137" height="30" uuid="474a0f50-4a25-4dad-b14d-e3a24d42669b"/>
-				<textFieldExpression><![CDATA["Office of the " + $P{technicalSanctionBy}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Office of the " + $P{technicalSanctionByDesignation}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -267,7 +267,7 @@
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="403" y="105" width="137" height="30" uuid="b3a0845c-626b-49bd-b3a2-6e99b82110ae"/>
-				<textFieldExpression><![CDATA[$P{technicalSanctionBy}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{technicalSanctionByDesignation}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="3" y="6" width="567" height="27" uuid="5c5ca914-fc32-43cb-9e2f-bb33085d65e4"/>

@@ -182,7 +182,7 @@ public class LetterOfAcceptanceService {
         return letterOfAcceptanceRepository.findByWorkOrderNumberAndEgwStatus_codeEquals(workOrderNumber,
                 WorksConstants.APPROVED);
     }
-
+    
     public List<WorkOrder> searchLetterOfAcceptance(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         // TODO Need TO handle in single query
         final List<String> estimateNumbers = lineEstimateDetailsRepository
@@ -211,6 +211,32 @@ public class LetterOfAcceptanceService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
+    
+    public List<WorkOrder> searchLetterOfAcceptanceForContractorBill(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final List<String> estimateNumbers = lineEstimateDetailsRepository
+                .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
+                .createAlias("wo.contractor", "woc")
+                .createAlias("egwStatus", "status");
+        if (searchRequestLetterOfAcceptance != null) {
+            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
+                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()));
+            if (searchRequestLetterOfAcceptance.getFromDate() != null)
+                criteria.add(Restrictions.ge("workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
+            if (searchRequestLetterOfAcceptance.getToDate() != null)
+                criteria.add(Restrictions.le("workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
+            if (searchRequestLetterOfAcceptance.getName() != null)
+                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()));
+            if (searchRequestLetterOfAcceptance.getFileNumber() != null)
+                criteria.add(Restrictions.eq("fileNumber", searchRequestLetterOfAcceptance.getFileNumber()));
+            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
+                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()));
+            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
+                criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
 
     public List<String> findLoaEstimateNumbers(final String name) {
         final List<WorkOrder> workorders = letterOfAcceptanceRepository.findByEstimateNumberContainingIgnoreCase(name);
@@ -225,4 +251,29 @@ public class LetterOfAcceptanceService {
         return results;
     }
     
+    public List<String> findLoaEstimateNumbersForContractorBill(final String estimateNumber) {
+        final List<WorkOrder> workorders = letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeEquals(estimateNumber,WorksConstants.APPROVED);
+        final List<String> results = new ArrayList<String>();
+        for (final WorkOrder details : workorders)
+            results.add(details.getEstimateNumber());
+        return results;
+    }
+
+    public List<WorkOrder> getApprovedWorkOrders(final String workOrderNumber) {
+        return letterOfAcceptanceRepository.findByWorkOrderNumberContainingIgnoreCaseAndEgwStatus_codeEquals(workOrderNumber,
+                WorksConstants.APPROVED);
+    }
+    
+    public List<WorkOrder> getApprovedEstimateNumbers(final String estimateNumber) {
+        return letterOfAcceptanceRepository.findByWorkOrderNumberContainingIgnoreCaseAndEgwStatus_codeEquals(estimateNumber,
+                WorksConstants.APPROVED);
+    }
+    /*public List<String> getWorkOrderByNumberForContractorBill(final String name) {
+        final WorkOrder newworkorders = letterOfAcceptanceRepository
+                .findByWorkOrderNumberAndEgwStatus_codeEquals(name,WorksConstants.APPROVED);
+        final List<String> results = new ArrayList<String>();
+        for (final WorkOrder details : newworkorders)
+            results.add(details.getWorkOrderNumber());
+        return results;
+    }*/
 }

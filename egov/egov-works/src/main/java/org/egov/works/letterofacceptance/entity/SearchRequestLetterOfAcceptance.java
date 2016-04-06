@@ -12,6 +12,7 @@ public class SearchRequestLetterOfAcceptance {
     private Long departmentName;
     private String estimateNumber;
     private String egwStatus;
+    private String workIdentificationNumber;
     
     public SearchRequestLetterOfAcceptance() {
     }
@@ -78,6 +79,14 @@ public class SearchRequestLetterOfAcceptance {
 
     public void setFileNumber(String fileNumber) {
         this.fileNumber = fileNumber;
+    }
+
+    public String getWorkIdentificationNumber() {
+        return workIdentificationNumber;
+    }
+
+    public void setWorkIdentificationNumber(String workIdentificationNumber) {
+        this.workIdentificationNumber = workIdentificationNumber;
     }
 
 }

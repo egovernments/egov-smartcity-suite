@@ -2,23 +2,26 @@ package org.egov.works.web.controller.letterofacceptance;
 
 import java.lang.reflect.Type;
 
-import org.egov.works.entity.letterofacceptance.SearchLetterOfAcceptanceRequest;
+import org.egov.works.models.milestone.Milestone;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<SearchLetterOfAcceptanceRequest>
+public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<Milestone>
 {
     @Override
-    public JsonElement serialize(final SearchLetterOfAcceptanceRequest milestoneSearchRequest, final Type type,
-            final JsonSerializationContext jsc)
+    public JsonElement serialize(final Milestone milestone, final Type type, final JsonSerializationContext jsc)
     {
+        
         final JsonObject jsonObject = new JsonObject();
-        if (milestoneSearchRequest != null)
-        {
-            if (milestoneSearchRequest.getEstimateNumber() != null)
+     /*   if (milestone != null)
+            if (milestone.get() != null)
+                jsonObject.addProperty("workOrderNumber", workOrder.getWorkOrderNumber());
+            else
+                jsonObject.addProperty("workOrderNumber", "");
+            if (mil.getEstimateNumber() != null)
                 jsonObject.addProperty("estimateNumber", milestoneSearchRequest.getEstimateNumber());
             else
                 jsonObject.addProperty("estimateNumber", "");
@@ -53,6 +56,6 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<Searc
          // TODO: check  id thing need need to change JSONSerilizer object
             // jsonObject.addProperty("id", Milestone.getId()); 
         }
-        return jsonObject;
+ */       return jsonObject;
     }
 }

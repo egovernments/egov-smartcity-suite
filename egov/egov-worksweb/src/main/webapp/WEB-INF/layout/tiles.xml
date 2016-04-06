@@ -86,7 +86,7 @@
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-success.jsp"/>
     </definition>
     
-    <definition name="search-searchloa" extends="base_layout">
+    <definition name="search-searchmilestone" extends="base_layout">
         <put-attribute name="page-title" value="title.loa.seachloa" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptance-search.jsp"/>
     </definition>
@@ -125,4 +125,10 @@
         <put-attribute name="page-title" value="title.spillover.lineestimate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/spillover/spillOverLineEstimate-form.jsp"/>
     </definition>
+
+	<definition name="searchloatocreatecontractorbill-search" extends="base_layout">
+		<put-attribute name="page-title" value="hdr.letterofacceptance" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/contractorbill/searchLOAToCreateContractorBill-header.jsp"/>
+	</definition>
+	
 </tiles-definitions>

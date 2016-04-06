@@ -152,9 +152,9 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("headOfAccount", lineEstimateDetails.getLineEstimate().getBudgetHead().getName());
             reportParams.put("ward", lineEstimateDetails.getLineEstimate().getWard().getName());
 
-            final String technicalSanctionByDesidnation = worksUtils.getUserDesignation(lineEstimateDetails.getLineEstimate()
+            final String technicalSanctionByDesignation = worksUtils.getUserDesignation(lineEstimateDetails.getLineEstimate()
                     .getTechnicalSanctionBy());
-            reportParams.put("technicalSanctionByDesidnation", technicalSanctionByDesidnation);
+            reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
 
             reportInput = new ReportRequest(LETTEROFACCEPTANCEPDF, workOrder.getContractor(), reportParams);
 

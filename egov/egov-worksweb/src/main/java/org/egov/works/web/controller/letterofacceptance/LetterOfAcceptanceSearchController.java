@@ -54,6 +54,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 @Controller
 @RequestMapping(value = "/searchletterofacceptance")
 public class LetterOfAcceptanceSearchController {
@@ -87,5 +90,31 @@ public class LetterOfAcceptanceSearchController {
         model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.WORKORDER));
         
     }
+    
+    @RequestMapping(value = "/searchloa-milestone", method = RequestMethod.GET)
+    public String searchMilestone(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final Model model) throws ApplicationException {
+        setDropDownValues(model);
+        model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
+        return "search-searchmilestone";
+    }
 
+    public Object toSearchResultJson(final Object object)
+    {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(SearchRequestLetterOfAcceptance.class, new SearchLetterOfAcceptanceJsonAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    @RequestMapping(value = "/searchformloa-contractorbill", method = RequestMethod.GET)
+    public String showSearchLOAForContractorBill(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final Model model) throws ApplicationException {
+        setDropDownValues(model);
+        model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
+        return "searchloatocreatecontractorbill-search";
+    }
+    
 }

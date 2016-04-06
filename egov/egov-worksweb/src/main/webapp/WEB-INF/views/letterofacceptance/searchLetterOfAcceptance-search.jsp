@@ -44,18 +44,20 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <!-- Need to change title for search criteria and result, add auto populate for the fields -->
-<form:form action="search" modelAttribute="milestoneResult"	class="form-horizontal">
+<form:form name="SearchRequest" role="form" action="" modelAttribute="searchLetterOfAcceptanceRequest" id="SearchLetterOfAcceptanceRequest" class="form-horizontal form-groups-bordered">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title" style="text-align: center;">
-				<spring:message code="milestone.search.estimate" />
+				<spring:message code="hdr.estimate" />
 			</div>
 		</div>
-		<div class="panel-body">
+ 		<div class="panel-body">
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right" for="tags"><spring:message code="lbl.search.estimate" /></label>
+				<label class="col-sm-3 control-label text-right" for="tags"><spring:message code="lbl.workidentificationnumber" /></label>
 				<div class="col-sm-3 add-margin">
-					<input type="workIdentificationNumber" class="form-control" id="tags">
+					<!-- <input type="workIdentificationNumber" class="form-control" id="tags"> -->
+					<form:input path="workIdentificationNumber" id="workIdentificationNumber" class="form-control" placeholder="Type first 3 letters of Work Identification Number"/>
+				<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /> <span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
@@ -63,14 +65,14 @@
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<form:options items="${executingDepartments}" itemValue="id" itemLabel="name" />
+						<form:options items="${departments}" itemValue="name" itemLabel="name" />
 					</form:select>
 					<form:errors path="department" cssClass="add-margin error-msg" />
 				</div>
 			</div>
 			<input type="hidden" id="mode" name="mode" value="${mode}" />
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimateNumber" /></label>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimateno" /></label>
 				<div class="col-sm-3 add-margin">
 					<form:input path="estimateNumber" class="form-control" />
 				</div>
@@ -106,12 +108,12 @@
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.estimateNumber" /></th>
-					<th><spring:message code="lbl.estimate.date" /></th>
+					<th><spring:message code="lbl.estimateno" /></th>
+					<th><spring:message code="lbl.lineestimatedate" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.workidentificationnumber" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
-					<th><spring:message code="lbl.LOADate" /></th>
+					<th><spring:message code="lbl.loadate" /></th>
 					<th><spring:message code="lbl.workvalue" /></th>
 				</tr>
 			</thead>
@@ -120,4 +122,3 @@
 		</div>
 		
 <script type="text/javascript" src="<c:url value='/resources/js/searchletterofacceptance.js'/>"></script>
-  
