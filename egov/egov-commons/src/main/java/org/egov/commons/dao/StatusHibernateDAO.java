@@ -39,20 +39,22 @@
  */
 package org.egov.commons.dao;
 
-import java.util.List;
-
-import org.egov.commons.Status;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
-public class StatusHibernateDAO extends GenericHibernateDAO {
-	public StatusHibernateDAO() {
-		super(Status.class, null);
-	}
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
-	public StatusHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
+@Repository
+public class StatusHibernateDAO  {
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	public  Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	public List getStatusByModuleType(final String moduleType) {

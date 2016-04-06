@@ -37,36 +37,33 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.dao;
 
-import java.io.Serializable;
-import java.util.List;
+package org.egov.infra.config.jms.messaging.listener;
 
-/**
- * An interface shared by all business data access objects.
- * <p>
- * All CRUD (create, read, update, delete) basic data access operations are
- * isolated in this interface and shared accross all DAO implementations.
- * The current design is for a state-management oriented persistence layer
- * (for example, there is no UDPATE statement function) that provides
- * automatic transactional dirty checking of business objects in persistent
- * state.
- *
- * @author christian.bauer@jboss.com
- */
-@Deprecated
-public interface GenericDAO<T, ID extends Serializable> {
+import org.egov.infra.messaging.sms.SMSService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.support.JmsUtils;
+import org.springframework.stereotype.Component;
 
-    T findById(ID id, boolean lock);
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
 
-    List<T> findAll();
+@Component
+public class SMSQueueListener {
 
-    List<T> findByExample(T exampleT);
+    @Autowired
+    private SMSService smsService;
 
-    T create(T entity);
+    @JmsListener(destination = "java:/jms/queue/sms")
+    public void processMessage(Message message) {
+        try {
+            final MapMessage emailMessage = (MapMessage) message;
+            smsService.sendSMS(emailMessage.getString("mobile"), emailMessage.getString("message"));
+        } catch (final JMSException e) {
+            throw JmsUtils.convertJmsAccessException(e);
+        }
+    }
 
-    void delete(T entity);
-    
-    T update(T entity);
-    
 }

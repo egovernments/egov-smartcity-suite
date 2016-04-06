@@ -522,13 +522,12 @@ public class AdvertisementPermitDetailService {
 
         return agencyWiseFinalHoardingList;
     }
-    public List<AdvertisementPermitDetail> getAdvertisementPermitDetailBySearchParam(final Long id, final Long category,
+    public List<AdvertisementPermitDetail> getAdvertisementPermitDetailBySearchParam(final Long agencyId, final Long category,
             final Long subcategory, final Long zone, final Long ward) {
 
         StringBuilder queryString = new StringBuilder();
         queryString
-                .append(" Select B From Advertisement A , AdvertisementPermitDetail B where B.agency.id=:id  and B.id=A.id and B.isActive=true and A.status="
-                        + AdvertisementStatus.ACTIVE.ordinal() + "");
+                .append(" from AdvertisementPermitDetail B where B.agency.id=:agencyId  and B.isActive=true and B.advertisement.status=:advertismentStatus");
         if (category != null) {
             queryString.append(" and B.advertisement.category.id =:category");
         }
@@ -542,7 +541,9 @@ public class AdvertisementPermitDetailService {
             queryString.append("and B.advertisement.ward.id =:ward");
         }
         Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
-        query.setParameter("id", id);
+        query.setParameter("agencyId", agencyId);
+        
+        query.setParameter("advertismentStatus", AdvertisementStatus.ACTIVE);
         if (category != null) {
             query.setParameter("category", category);
         }
@@ -555,9 +556,7 @@ public class AdvertisementPermitDetailService {
         if (ward != null) {
             query.setParameter("ward", ward);
         }
-        List<AdvertisementPermitDetail> advertisements = query.list();
-        return advertisements;
+        return query.list();
     }
-   
 }
 

@@ -62,7 +62,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
@@ -89,7 +89,7 @@ public class WorksService {
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
-    private CommonsService commonsService;
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private PersistenceService persistenceService;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
     @Autowired
@@ -208,7 +208,7 @@ public class WorksService {
                 } else
                     statList.add(stat);
         }
-        return commonsService.getStatusListByModuleAndCodeList(objType, statList);
+        return egwStatusHibernateDAO.getStatusListByModuleAndCodeList(objType, statList);
     }
 
     public void createAccountDetailKey(final Long id, final String type) {
@@ -219,10 +219,6 @@ public class WorksService {
         adk.setDetailname(accountdetailtype.getAttributename());
         adk.setAccountdetailtype(accountdetailtype);
         accountdetailkeyHibernateDAO.create(adk);
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public List getWorksRoles() {

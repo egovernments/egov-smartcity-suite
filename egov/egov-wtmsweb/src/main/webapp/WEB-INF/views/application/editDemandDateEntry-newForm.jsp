@@ -94,7 +94,7 @@
 														class="form-control low-width" value="${var1.installment}"
 														name="demandDetailBeanList[${counter.index}].installment"
 														id="demandDetailBeanList[${counter.index}].installment"
-														required="required"readonly="readonly"
+														required="required" readonly="readonly"
 														/>
 													</td>
 											<td class="blueborderfortd">

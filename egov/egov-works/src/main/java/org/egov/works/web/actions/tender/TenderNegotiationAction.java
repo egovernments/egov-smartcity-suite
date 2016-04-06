@@ -60,7 +60,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
@@ -124,6 +124,8 @@ public class TenderNegotiationAction extends SearchFormAction {
     private Long worksPackageId;
     private String tenderType;
     @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
     private UserService userService;
     private static final String PREPARED_BY_LIST = "preparedByList";
     private static final String DEPARTMENT_LIST = "departmentList";
@@ -132,8 +134,6 @@ public class TenderNegotiationAction extends SearchFormAction {
     @Autowired
     private DepartmentService departmentService;
     private static final String OBJECT_TYPE = "TenderResponseContractors";
-    @Autowired
-    private CommonsService commonsService;
     private PersonalInformationService personalInformationService;
     private Long contractorId;
 
@@ -563,7 +563,7 @@ public class TenderNegotiationAction extends SearchFormAction {
             setNegotiationNumber(tenderResponse, financialYear);
             tenderHeaderService.persist(tenderHeader);
             if (SAVE_ACTION.equals(parameters.get(ACTION_NAME)[0]) && tenderResponse.getEgwStatus() == null)
-                tenderResponse.setEgwStatus(commonsService.getStatusByModuleAndCode("TenderResponse", "NEW"));
+                tenderResponse.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("TenderResponse", "NEW"));
             tenderResponse = tenderResponseService.persist(tenderResponse);
         }
 
@@ -979,8 +979,8 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     public List<EgwStatus> getEstimateStatuses() {
-        final List<EgwStatus> tnStatusList = commonsService.getStatusByModule(TenderResponse.class.getSimpleName());
-        tnStatusList.remove(commonsService.getStatusByModuleAndCode(TenderResponse.class.getSimpleName(), "NEW"));
+        final List<EgwStatus> tnStatusList = egwStatusHibernateDAO.getStatusByModule(TenderResponse.class.getSimpleName());
+        tnStatusList.remove(egwStatusHibernateDAO.getStatusByModuleAndCode(TenderResponse.class.getSimpleName(), "NEW"));
         return tnStatusList;
     }
 
@@ -1002,8 +1002,8 @@ public class TenderNegotiationAction extends SearchFormAction {
                     statList.add(stat);
         }
         if ("cancelTN".equals(sourcepage))
-            tnStatusList.add(commonsService.getStatusByModuleAndCode(TenderResponse.class.getSimpleName(), "APPROVED"));
-        tnStatusList.addAll(commonsService.getStatusListByModuleAndCodeList(TenderResponse.class.getSimpleName(),
+            tnStatusList.add(egwStatusHibernateDAO.getStatusByModuleAndCode(TenderResponse.class.getSimpleName(), "APPROVED"));
+        tnStatusList.addAll(egwStatusHibernateDAO.getStatusListByModuleAndCodeList(TenderResponse.class.getSimpleName(),
                 statList));
 
         return tnStatusList;
@@ -1506,10 +1506,6 @@ public class TenderNegotiationAction extends SearchFormAction {
         this.tenderFileNumber = tenderFileNumber;
     }
 
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
     public List<Contractor> getContractorForApprovedNegotiation() {
         return getPersistenceService().findAllByNamedQuery("getApprovedNegotiationContractors");
     }
@@ -1616,7 +1612,7 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     public String cancelApprovedTN() {
         final TenderResponse tenderResponse = tenderResponseService.findById(tenderRespId, false);
-        tenderResponse.setEgwStatus(commonsService.getStatusByModuleAndCode("TenderResponse",
+        tenderResponse.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("TenderResponse",
                 WorksConstants.CANCELLED_STATUS));
 
         final PersonalInformation prsnlInfo = employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());

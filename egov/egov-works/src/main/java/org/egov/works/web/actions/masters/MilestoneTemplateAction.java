@@ -53,7 +53,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
-import org.egov.commons.service.CommonsService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -86,8 +85,6 @@ public class MilestoneTemplateAction extends SearchFormAction {
     private static final String SAVE_ACTION = "save";
     private String messageKey;
     private static final String MILESTONE_TEMPLATE_MODULE_KEY = "MilestoneTemplate";
-    @Autowired
-    private CommonsService commonsService;
     private String actionName;
     private String sourcepage;
     private String nextEmployeeName;
@@ -328,10 +325,6 @@ public class MilestoneTemplateAction extends SearchFormAction {
 
     public void setMilestoneTemplateWorkflowService(final WorkflowService<MilestoneTemplate> milestoneTemplateWorkflowService) {
         this.milestoneTemplateWorkflowService = milestoneTemplateWorkflowService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public void setWorksService(final WorksService worksService) {

@@ -39,18 +39,10 @@
  */
 package org.egov.commons.dao;
 
-import org.egov.commons.EgSurrenderedCheques;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
-public class EgSurrenderedChequesHibernateDAO extends GenericHibernateDAO {
+@Repository
+public class EgSurrenderedChequesHibernateDAO {
 	
-	public EgSurrenderedChequesHibernateDAO() {
-		super(EgSurrenderedCheques.class,null);
-	}
-	
-	public EgSurrenderedChequesHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
 
 }

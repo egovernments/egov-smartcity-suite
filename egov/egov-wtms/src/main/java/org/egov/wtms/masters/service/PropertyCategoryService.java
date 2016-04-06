@@ -39,11 +39,14 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.List;
+
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.repository.PropertyCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +60,10 @@ public class PropertyCategoryService {
     public PropertyCategoryService(final PropertyCategoryRepository propertyCategoryRepository) {
         this.propertyCategoryRepository = propertyCategoryRepository;
 
+    }
+    
+    public PropertyCategory findOne(final Long PropertyCategoryId) {
+        return propertyCategoryRepository.findOne(PropertyCategoryId);
     }
 
     @Transactional
@@ -80,5 +87,14 @@ public class PropertyCategoryService {
 
         return propertyCategoryRepository.findByPropertyTypeAndConnectionCategory(propertyType, connectionCategory);
     }
-
+  
+    public List<PropertyCategory> findAll(){
+        return propertyCategoryRepository.findAll(new Sort(Sort.Direction.DESC,"id"));
+    }
+   
+    public List<PropertyCategory> findAllByPropertyTypeAndConnectionCategory(final  PropertyType propertyType,
+            final ConnectionCategory connectionCategory){
+        return propertyCategoryRepository.findAllByPropertyTypeAndConnectionCategory(propertyType, connectionCategory);
+    }
+    
 }

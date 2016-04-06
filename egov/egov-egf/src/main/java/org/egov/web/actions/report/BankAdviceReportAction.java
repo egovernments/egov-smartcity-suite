@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -75,34 +72,31 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
-
 @Results({
-    @Result(name = BankAdviceReportAction.NEW, location = "bankAdviceReport-" + BankAdviceReportAction.NEW + ".jsp"),
-    @Result(name = "downloadText", location = "bankAdviceReport-downloadText.jsp"),
-    @Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}",
-            "contentDisposition", "attachment; filename=${fileName}" }),
-            @Result(name = "txtresult", type = "stream", location = "inStream", params = { "contentType", "${contentType}",
-                    "contentDisposition", "attachment; filename=${textFileName}" })
+        @Result(name = BankAdviceReportAction.NEW, location = "bankAdviceReport-" + BankAdviceReportAction.NEW + ".jsp"),
+        @Result(name = "downloadText", location = "bankAdviceReport-downloadText.jsp"),
+        @Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}",
+                "contentDisposition", "attachment; filename=${fileName}" }),
+        @Result(name = "txtresult", type = "stream", location = "inStream", params = { "contentType", "${contentType}",
+                "contentDisposition", "attachment; filename=${textFileName}" })
 })
 public class BankAdviceReportAction extends BaseFormAction {
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
 
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BankAdviceReportAction.class);
     private Bank bank;
@@ -146,20 +140,19 @@ public class BankAdviceReportAction extends BaseFormAction {
         persistenceService.getSession().setDefaultReadOnly(true);
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
-        //persistenceService.setType(Bank.class);
         addDropdownData(
                 "bankList",
                 persistenceService
-                .findAllBy("select distinct b from Bank b , Bankbranch bb , Bankaccount ba WHERE bb.bank=b and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and b.isactive=true order by b.name"));
+                        .findAllBy("select distinct b from Bank b , Bankbranch bb , Bankaccount ba WHERE bb.bank=b and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and b.isactive=true order by b.name"));
         if (bankbranch == null)
             addDropdownData("bankBranchList", Collections.EMPTY_LIST);
         else
             addDropdownData(
                     "bankBranchList",
                     persistenceService
-                    .findAllBy(
-                            "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.isactive=true",
-                            bank.getId()));
+                            .findAllBy(
+                                    "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.isactive=true",
+                                    bank.getId()));
         if (bankaccount == null)
             addDropdownData("bankAccountList", Collections.EMPTY_LIST);
         else
@@ -258,7 +251,8 @@ public class BankAdviceReportAction extends BaseFormAction {
                     tempMap = detailTypeMap.get(obj[0]);
                     // detailKey=tempMap.get((Integer)obj[1]);
                     if (null != tempMap && tempMap.containsKey(obj[1])) {
-                        detailKeyAmt = tempMap.get(obj[1]).add((BigDecimal.valueOf((Double) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
+                        detailKeyAmt = tempMap.get(obj[1]).add(
+                                (BigDecimal.valueOf((Double) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
                         tempMap.put(obj[1], detailKeyAmt);
                     } else
                         tempMap.put(obj[1], (BigDecimal.valueOf((Double) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
@@ -370,10 +364,10 @@ public class BankAdviceReportAction extends BaseFormAction {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final StringBuffer letterContext = new StringBuffer();
         letterContext
-        .append("             I request you to transfer the amount indicated below through RTGS duly debiting from the")
-        .append("  Current Account No: ")
-        .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : "")
-        .append("  under your bank to the following bank accounts:");
+                .append("             I request you to transfer the amount indicated below through RTGS duly debiting from the")
+                .append("  Current Account No: ")
+                .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : "")
+                .append("  under your bank to the following bank accounts:");
         reportParams.put("bankName", getBankName(bank.getId()));
         reportParams.put("letterContext", letterContext.toString());
         reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
@@ -398,10 +392,10 @@ public class BankAdviceReportAction extends BaseFormAction {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final StringBuffer letterContext = new StringBuffer();
         letterContext
-        .append("             I request you to transfer the amount indicated below through RTGS duly debiting from the")
-        .append("  Current Account No: ")
-        .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : "")
-        .append("  under your bank to the following bank accounts:");
+                .append("             I request you to transfer the amount indicated below through RTGS duly debiting from the")
+                .append("  Current Account No: ")
+                .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : "")
+                .append("  under your bank to the following bank accounts:");
         reportParams.put("bankName", getBankName(bank.getId()));
         reportParams.put("letterContext", letterContext.toString());
         reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
@@ -453,10 +447,10 @@ public class BankAdviceReportAction extends BaseFormAction {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final StringBuffer letterContext = new StringBuffer();
         letterContext
-        .append("             I request you to transfer the amount indicated below through RTGS duly debiting from the")
-        .append("  Current Account No: ")
-        .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : " ")
-        .append("  under your bank to the following bank accounts:");
+                .append("             I request you to transfer the amount indicated below through RTGS duly debiting from the")
+                .append("  Current Account No: ")
+                .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : " ")
+                .append("  under your bank to the following bank accounts:");
         reportParams.put("bankName", getBankName(bank.getId()));
         reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
         reportParams.put("letterContext", letterContext.toString());

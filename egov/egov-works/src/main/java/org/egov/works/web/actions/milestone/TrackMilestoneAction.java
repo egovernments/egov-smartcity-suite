@@ -39,17 +39,12 @@
  */
 package org.egov.works.web.actions.milestone;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -64,6 +59,11 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 @ParentPackage("egov")
 @Result(name = TrackMilestoneAction.NEW, location = "trackMilestone-new.jsp")
@@ -81,9 +81,9 @@ public class TrackMilestoneAction extends BaseFormAction {
     private String messageKey;
     private static final String TRACK_MILESTONE_MODULE_KEY = "TrackMilestone";
     @Autowired
-    private CommonsService commonsService;
-    @Autowired
     private UserService userService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private String actionName;
     private String sourcepage;
     private String nextEmployeeName;
@@ -187,10 +187,10 @@ public class TrackMilestoneAction extends BaseFormAction {
         final String actionName = parameters.get("actionName")[0];
 
         if (id == null)
-            trackMilestone.setEgwStatus(commonsService.getStatusByModuleAndCode(TRACK_MILESTONE_MODULE_KEY, "NEW"));
+            trackMilestone.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRACK_MILESTONE_MODULE_KEY, "NEW"));
 
         if (mode.equalsIgnoreCase("modify") && trackMilestone.getEgwStatus().getCode().equalsIgnoreCase("APPROVED"))
-            trackMilestone.setEgwStatus(commonsService.getStatusByModuleAndCode(TRACK_MILESTONE_MODULE_KEY, "NEW"));
+            trackMilestone.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRACK_MILESTONE_MODULE_KEY, "NEW"));
         /*
          * TODO - check for application for commenting out this line for any issues
          */
@@ -405,10 +405,6 @@ public class TrackMilestoneAction extends BaseFormAction {
 
     public void setTrackMilestoneWorkflowService(final WorkflowService<TrackMilestone> trackMilestoneWorkflowService) {
         this.trackMilestoneWorkflowService = trackMilestoneWorkflowService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public void setWorksService(final WorksService worksService) {

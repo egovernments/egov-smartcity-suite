@@ -39,18 +39,9 @@
  */
 package org.egov.commons.dao;
 
-import org.egov.commons.ObjectHistory;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
-public class ObjectHistoryHibernateDAO extends GenericHibernateDAO implements ObjectHistoryDAO {
-
-	public ObjectHistoryHibernateDAO() {
-		super(ObjectHistory.class,null);
-	}
-	
-	public ObjectHistoryHibernateDAO(Class persistentClass, Session session) {
-		super(persistentClass, session);
-	}
+@Repository
+public class ObjectHistoryHibernateDAO implements ObjectHistoryDAO {
 
 }

@@ -210,6 +210,10 @@
         <put-attribute name="page-title" value="title.category.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/category-master-success.jsp"/>
     </definition>
+    <definition name="category-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-list.jsp"/>
+    </definition>
     <definition name="application-process-time-master" extends="base_layout">
         <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master.jsp"/>

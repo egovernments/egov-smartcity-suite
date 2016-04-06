@@ -113,6 +113,7 @@ import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -222,7 +223,7 @@ public class PropertyService {
     @Autowired
     private ModuleService moduleDao;
     @Autowired
-    private InstallmentDao installmentDao;
+    private InstallmentHibDao installmentDao;
     @Autowired
     private UserService userService;
 

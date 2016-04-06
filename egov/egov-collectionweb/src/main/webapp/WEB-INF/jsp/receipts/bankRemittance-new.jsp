@@ -172,21 +172,22 @@
 	}
 
 	function onChangeBankAccount(branchId) {
-		populateaccountNumberMaster({
+		populateaccountNumberId({
 			branchId : branchId,
 		});
 	}
 
 	function searchDataToRemit() {
-		if (dom.get("bankBranchMaster").value == 0) {
+		if (dom.get("bankBranchMaster").value!=null && dom.get("bankBranchMaster").value == -1) {
 			dom.get("bankselectionerror").style.display = "block";
 			return false;
 		}
-		if (dom.get("accountNumberMaster").value == 0) {
+		if (dom.get("accountNumberId").value!=null && dom.get("accountNumberId").value == -1) {
+			dom.get("bankselectionerror").innerHTML="";
 			dom.get("accountselectionerror").style.display = "block";
 			return false;
 		}
-		document.bankRemittanceForm.action = "bankRemittance-listData.action?bankAccountId="+dom.get("accountNumberMaster").value;
+		document.bankRemittanceForm.action = "bankRemittance-listData.action?bankAccountId="+dom.get("accountNumberId").value;
 		document.bankRemittanceForm.submit();
 		}
 
@@ -290,7 +291,18 @@
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
 	<s:form theme="simple" name="bankRemittanceForm">
-		<s:token />
+			<s:token />
+		<s:if test="%{hasErrors()}">
+	    <div id="actionErrorMessages" class="errorstyle">
+	      <s:actionerror/>
+	      <s:fielderror/>
+	    </div>
+		</s:if>
+		<s:if test="%{hasActionMessages()}">
+		    <div id="actionMessages" class="messagestyle">
+		    	<s:actionmessage theme="simple"/>
+		    </div>
+		</s:if>
 		<div class="formmainbox">
 			<div class="subheadnew">
 				<s:text name="bankRemittance.title" />
@@ -303,24 +315,24 @@
 						<td width="15%" class="bluebox"><s:text
 								name="bankremittance.bank" />:</td>
 						<td width="36%" class="bluebox"><s:select
-								headerValue="--Select--" headerKey="0"
+								headerValue="--Select--" headerKey="-1"
 								list="dropdownData.bankBranchList" listKey="id"
 								id="bankBranchMaster" listValue="branchname"
 								label="bankBranchMaster" name="branchId"
 								value="%{branchId}"
 								onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
-								id="accountNumberMasterDropdown" fields="['Text','Value']"
-								dropdownId='accountNumberMaster'
+								id="accountNumberIdDropdown" fields="['Text','Value']"
+								dropdownId='accountNumberId'
 								url='receipts/ajaxBankRemittance-accountListOfService.action'
-								selectedValue="%{accountNumberMaster}" /></td>
+								selectedValue="%{accountNumberId}" /></td>
 						<td width="15%" class="bluebox"><s:text
 								name="bankremittance.accountnumber" />:</td>
 						<td width="30%" class="bluebox"><s:select
-								headerValue="--Select--" headerKey="0"
+								headerValue="--Select--" headerKey="-1"
 								list="dropdownData.accountNumberList" listKey="id"
-								id="accountNumberMaster" listValue="accountnumber"
-								label="accountNumberMaster" name="accountNumberMaster"
-								value="%{accountNumberMaster}" /></td>
+								id="accountNumberId" listValue="accountnumber"
+								label="accountNumberMaster" name="accountNumberId"
+								value="%{accountNumberId}" /></td>
 								</tr>
 						<tr>
 					</table>

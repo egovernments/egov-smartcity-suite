@@ -37,35 +37,20 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.messaging.email;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+package org.egov.infra.config.jms.messaging.errorhandler;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.support.JmsUtils;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ErrorHandler;
 
-@Component("emailQueueListener")
-public class EmailQueueListener implements MessageListener {
-    private final EmailService emailService;
+public class MessagingErrorHandler implements ErrorHandler {
 
-    @Autowired
-    public EmailQueueListener(final EmailService emailService) {
-        this.emailService = emailService;
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessagingErrorHandler.class);
 
     @Override
-    public void onMessage(final Message message) {
-        try {
-            final MapMessage emailMessage = (MapMessage) message;
-            emailService.sendMail(emailMessage.getString("email"), emailMessage.getString("subject"),
-                    emailMessage.getString("message"));
-        } catch (final JMSException e) {
-            throw JmsUtils.convertJmsAccessException(e);
-        }
+    public void handleError(final Throwable t) {
+        LOGGER.warn("Messaging Service returns with error : {}", t.getMessage());
     }
 
 }

@@ -39,20 +39,6 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -63,8 +49,9 @@ import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.EgPartytypeHibernateDAO;
+import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -96,6 +83,19 @@ import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class AjaxContractorBillAction extends BaseFormAction {
     /**
@@ -151,7 +151,11 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private WorksService worksService;
     private MeasurementBookServiceImpl measurementBookService;
     @Autowired
-    private CommonsService commonsService;
+    private EgPartytypeHibernateDAO egPartytypeHibernateDAO;
+
+    @Autowired
+    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+
     private BigDecimal totalPendingBalance = new BigDecimal("0.00");
     private BigDecimal totalAdvancePaid = new BigDecimal("0.00");
     private String source;
@@ -652,12 +656,12 @@ public class AjaxContractorBillAction extends BaseFormAction {
             try {
                 if (!"0".equals(subPartyType)) {
                     EgPartytype egPartyType = new EgPartytype();
-                    egPartyType = commonsService.getPartytypeById(Integer.valueOf(subPartyType));
+                    egPartyType = egPartytypeHibernateDAO.findById(Integer.valueOf(subPartyType));
                     subPartyTypeCode = egPartyType.getCode();
                 }
                 if (!"0".equals(typeOfWork)) {
                     EgwTypeOfWork egwTOW = new EgwTypeOfWork();
-                    egwTOW = commonsService.getTypeOfWorkById(Long.valueOf(typeOfWork));
+                    egwTOW = egwTypeOfWorkHibernateDAO.getTypeOfWorkById(Long.valueOf(typeOfWork));
                     typeOfWorkCode = egwTOW.getCode();
                 }
                 statutoryAmount = recoveryService.getDeductionAmount(recoveryType, PARTY_TYPE_CONTRACTOR, subPartyTypeCode,
@@ -781,10 +785,6 @@ public class AjaxContractorBillAction extends BaseFormAction {
 
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public BigDecimal getTotalPendingBalance() {

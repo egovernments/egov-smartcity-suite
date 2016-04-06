@@ -71,11 +71,11 @@
 					<td class="greybox" width="20%"></td>
 					<td class="greybox" style="text-align: center;"><s:text
 							name="bank.create.name" /></td>
-					<td class="greybox">
-						<div class="ui-widget">
-							<input name="model.name" id="bankName" type="text" size="50" />
-						</div>
-					</td>
+					
+					<td class="bluebox"><s:select name="name" id="bankName"
+							list="dropdownData.bankList" listKey="name"
+							listValue="name" headerKey="-1"
+							headerValue="----Choose----" /></td>
 				</tr>
 			</table>
 			<br />
@@ -89,13 +89,13 @@
 	</div>
 	</s:form>
 	<script type="text/javascript">
-    jQuery( "#bankName" ).autocomplete({
+     /* jQuery( "#bankName" ).autocomplete({
         source: "bank.action?mode=AUTO_COMP_BANK_NAME",
         minLength: 2
-      });
+      });  */
 
   function validateAndSubmit(){
-	document.bankForm.action='${pageContext.request.contextPath}/masters/bank-execute.action';
+	document.bankForm.action='/EGF/masters/bank-execute.action';
 	document.bankForm.submit();
 }
 

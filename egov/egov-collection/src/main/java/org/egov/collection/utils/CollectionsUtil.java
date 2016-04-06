@@ -40,14 +40,6 @@
 
 package org.egov.collection.utils;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
@@ -61,13 +53,12 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -101,25 +92,35 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class CollectionsUtil {
+    private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
     private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>(0);
     public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     private PersistenceService persistenceService;
     @Autowired
     private UserService userService;
-    private CommonsService commonsService;
     @Autowired
     private ModuleService moduleService;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private EisCommonService eisCommonService;
-    private EISServeable eisService;
     @Autowired
     private SearchPositionService searchPositionService;
     @Autowired
     private ApplicationContext context;
-    private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
+
+    @Autowired
+    private EISServeable eisService;
+
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -129,7 +130,7 @@ public class CollectionsUtil {
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
-    private EmployeeService employeeService;
+    private InstallmentHibDao installmentHibDao;
     @Autowired
     private DesignationService designationService;
     @Autowired
@@ -325,11 +326,11 @@ public class CollectionsUtil {
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
         } else if (!isEmp || isDeptAllowed) {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+           // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         } else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+           // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         }
         return collectionsModeNotAllowed;
     }
@@ -705,7 +706,7 @@ public class CollectionsUtil {
         LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
         if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
             final Module module = moduleService.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
-            final String currInst = commonsService.getInsatllmentByModuleForGivenDate(module, new Date())
+            final String currInst = installmentHibDao.getInsatllmentByModuleForGivenDate(module, new Date())
                     .getDescription();
             if (currInst.equals(description.substring(16, description.length())))
                 retValue = false;
@@ -765,10 +766,6 @@ public class CollectionsUtil {
 
     public void setUserService(final UserService userService) {
         this.userService = userService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public void setPersistenceService(final PersistenceService persistenceService) {

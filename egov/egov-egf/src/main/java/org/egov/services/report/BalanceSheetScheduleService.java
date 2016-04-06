@@ -124,7 +124,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         final List<Object[]> openingBalanceAmountList = query.list();
         for (final Object[] obj : openingBalanceAmountList)
             if (obj[0] != null && obj[1] != null) {
-                BigDecimal total = BigDecimal.valueOf((double) obj[0]);
+                BigDecimal total = (BigDecimal)obj[0];
                 if (L.equals(obj[3].toString()))
                     total = total.multiply(NEGATIVE);
                 for (final StatementEntry entry : balanceSheet.getEntries())
@@ -167,7 +167,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         for (final Object[] obj : openingBalanceAmountList)
             if (obj[0] != null && obj[1] != null) {
 
-                BigDecimal total = BigDecimal.valueOf((double) obj[0]);
+                BigDecimal total = (BigDecimal)obj[0];
 
                 if (L.equals(obj[2].toString()))
                     total = total.multiply(NEGATIVE);
@@ -273,7 +273,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     if (!balanceSheet.containsBalanceSheetEntry(row[2].toString())) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = BigDecimal.valueOf((double) row[0]);
+                            BigDecimal total = (BigDecimal)row[0];
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(row[0] + "-----" + row[1] + "------------------------------" + total);
                             if (L.equalsIgnoreCase(type.toString()))
@@ -288,7 +288,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         balanceSheet.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double) row[0]), divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(row[0] + "-----" + row[1] + "------------------------------" + amount);
                             if (L.equalsIgnoreCase(type.toString()))
@@ -397,7 +397,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         addRowToStatement(balanceSheet, row, glCode);
                     else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double)row[0]), divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -438,7 +438,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         addRowToStatement(balanceSheet, row, glCode);
                     else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double) row[0]), divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -468,7 +468,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     if (!balanceSheet.containsBalanceSheetEntry(glCode)) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = BigDecimal.valueOf((double) row[0]);
+                            BigDecimal total = (BigDecimal)row[0];
                             if (L.equalsIgnoreCase(type))
                                 total = total.multiply(NEGATIVE);
                             balanceSheetEntry.getFundWiseAmount().put(
@@ -480,7 +480,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         balanceSheet.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double) row[0]), divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -525,7 +525,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     if (!balanceSheet.containsBalanceSheetEntry(glCode)) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = BigDecimal.valueOf((double) row[0]);
+                            BigDecimal total = (BigDecimal)row[0];
                             if (L.equalsIgnoreCase(type))
                                 total = total.multiply(NEGATIVE);
                             balanceSheetEntry.getFundWiseAmount().put(
@@ -537,7 +537,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         balanceSheet.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound(BigDecimal.valueOf((double) row[0]), divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null

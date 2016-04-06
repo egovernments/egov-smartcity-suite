@@ -47,6 +47,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.service.bill.BillService;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.quartz.DisallowConcurrentExecution;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -72,8 +73,15 @@ public class BulkBillGenerationJob extends AbstractQuartzJob  {
     @Override
     public void executeJob() {
         LOGGER.debug("Entered into executeJob" + modulo);
-        DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
-        demandBillService.bulkBillGeneration(modulo, billsCount);
+        super.prepareCityThreadLocal();
+        DemandBillService demandBillService = null;
+        try {
+            demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
+        } catch (NoSuchBeanDefinitionException e) {
+            LOGGER.warn("DemandBillService implementation not found");
+        }
+        if (demandBillService != null)
+            demandBillService.bulkBillGeneration(modulo, billsCount);
     }
             
     public Integer getBillsCount() { 

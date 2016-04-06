@@ -39,7 +39,9 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -58,12 +60,15 @@ import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-    @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -82,7 +87,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private String[] totalOnlineAmountArray;
     private String[] fundCodeArray;
     private String[] departmentCodeArray;
-    private Integer accountNumberMaster;
+    private Integer accountNumberId;
     private CollectionsUtil collectionsUtil;
     private Integer branchId;
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
@@ -162,7 +167,7 @@ public class BankRemittanceAction extends BaseFormAction {
         populateBankAccountList();
         final String serviceFundQueryStr = "select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,"
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
-                + "ba.id=" + accountNumberMaster;
+                + "ba.id=" + accountNumberId;
 
         final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(serviceFundQueryStr);
         final List<Object[]> queryResults = serviceFundQuery.list();
@@ -195,12 +200,36 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     @Action(value = "/receipts/bankRemittance-create")
+    @ValidationErrorPage(value = NEW)
     public String create() {
         final long startTimeMillis = System.currentTimeMillis();
+        BigInteger accountNumber = null;
+            String serviceName = "";
+            String fundCode = "";
+
+            for (int i = 0; i < getServiceNameArray().length; i++)
+                if (getServiceNameArray() != null && !getServiceNameArray()[i].isEmpty()) {
+                    serviceName = getServiceNameArray()[i];
+                    fundCode = getFundCodeArray()[i];
+                    break;
+                }
+            final String bankAccountStr = "select asm.BANKACCOUNT from BANKACCOUNT ba,"
+                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
+                    + "sd.name= '" + serviceName + "'  and fd.code='" + fundCode + "'";
+
+            final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
+            final Object queryResults = bankAccountQry.uniqueResult();
+            accountNumber = (BigInteger) queryResults;
+            accountNumberId = accountNumber != null ? accountNumber.intValue() : accountNumberId;
+        if (accountNumber == null || accountNumber.equals(-1)  || (accountNumber!=null && accountNumber.intValue()!=accountNumberId)){
+            list();
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
+        }
         voucherHeaderValues = receiptHeaderService.createBankRemittance(getServiceNameArray(),
                 getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
                 getTotalOnlineAmountArray(), getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(),
-                accountNumberMaster, positionUser, getReceiptNumberArray());
+                accountNumberId, positionUser, getReceiptNumberArray());
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         return INDEX;
@@ -306,21 +335,6 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @return the accountNumberMaster
-     */
-    public Integer getAccountNumberMaster() {
-        return accountNumberMaster;
-    }
-
-    /**
-     * @param accountNumberMaster
-     *            the accountNumberMaster to set
-     */
-    public void setAccountNumberMaster(final Integer accountNumberMaster) {
-        this.accountNumberMaster = accountNumberMaster;
-    }
-
-    /**
      * @return the totalOnlineAmountArray
      */
     public String[] getTotalOnlineAmountArray() {
@@ -418,13 +432,20 @@ public class BankRemittanceAction extends BaseFormAction {
         this.receiptNumberArray = receiptNumberArray;
     }
 
-
     public Integer getBranchId() {
         return branchId;
     }
 
     public void setBranchId(final Integer branchId) {
         this.branchId = branchId;
+    }
+
+    public Integer getAccountNumberId() {
+        return accountNumberId;
+    }
+
+    public void setAccountNumberId(final Integer accountNumberId) {
+        this.accountNumberId = accountNumberId;
     }
 
 }

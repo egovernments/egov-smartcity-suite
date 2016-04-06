@@ -343,7 +343,7 @@ public class AdvertisementDemandService {
                    pendingAmount = pendingAmount.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
                  }
             }
-            penaltyAmt= advertisementPenaltyCalculator.calculatePenaltyByAdvertisementPermit(advPermitDetail);
+            penaltyAmt= advertisementPenaltyCalculator.calculatePenalty(advPermitDetail);
         }
         demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmt);
         demandFeeType.put(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT, pendingAmount);
@@ -868,7 +868,7 @@ public int generateDemandForNextInstallment(final List<Advertisement> advertisem
                 totalCollection = totalCollection.add(demandDtl.getAmtCollected());
                 totalPending= totalPending.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
               }
-            penaltyAmount= advertisementPenaltyCalculator.calculatePenaltyByAdvertisementPermit(advPermitDetail);
+            penaltyAmount= advertisementPenaltyCalculator.calculatePenalty(advPermitDetail);
         }
         totalDemand = totalDemand.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         totalCollection = totalCollection.setScale(2, BigDecimal.ROUND_HALF_EVEN);

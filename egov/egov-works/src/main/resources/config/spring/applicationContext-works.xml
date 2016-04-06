@@ -301,7 +301,6 @@
 		<property name="worksService" ref="worksService" />
 		<property name="egovCommon" ref="egovCommon" />
 		<property name="depositWorksUsageService" ref="depositWorksUsageService" />
-		<property name="commonsService" ref="commonsService" />
 		<property name="estimateAppropriationService" ref="estimateAppropriationService" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 	</bean>
@@ -380,7 +379,6 @@
 		</constructor-arg>
 		<property name="genericService" ref="persistenceService" />
 		<property name="egovCommon" ref="egovCommon" />
-		<property name="commonsService" ref="commonsService" />
 		<property name="contractorBillService" ref="contractorBillService" />
 	</bean>
 
@@ -500,7 +498,6 @@
 	<bean class="org.egov.works.services.WorkProgressAbstractReportService"
 		id="workProgressAbstractReportService" scope="prototype">
 		<property name="worksService" ref="worksService" />
-		<property name="commonsService" ref="commonsService" />
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 		<property name="worksStatusService" ref="worksStatusService" />
@@ -522,7 +519,6 @@
 		<property name="worksService" ref="worksService" />
 		<property name="contractorAdvanceRequisitionNumberGenerator"
 			ref="contractorAdvanceRequisitionNumberGenerator" />
-		<property name="commonsService" ref="commonsService" />
 		<property name="revisionAbstractEstimateService" ref="revisionAbstractEstimateService" />
 		<!-- <property name="contractorAdvanceWorkflowService" ref="contractorAdvanceWorkflowService" /> -->
 	</bean>
@@ -538,8 +534,7 @@
 		<constructor-arg
 			value="org.egov.works.models.contractoradvance.ContractorAdvanceRequisition" />
 	</bean> -->
-	<!-- <bean id="billsDaoFactory" class="org.egov.dao.bills.BillsHibernateDaoFactory"/> -->
-	<bean id="genericDao" class="org.egov.infstr.dao.GenericHibernateDAO"/>
+
 	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
 	<bean id="contractorGradeService" class="org.egov.works.master.services.ContractorGradeService">
 		<property name="type" value="org.egov.commons.ContractorGrade"/>

@@ -303,5 +303,18 @@ public class EgDemandDetails implements Serializable, Cloneable {
 	public void setEgDemand(EgDemand egDemand) {
 		this.egDemand = egDemand;
 	}
-    
+
+    public BigDecimal getBalance() {
+        return getAmount().subtract(getAmtCollected() != null ? getAmtCollected() : BigDecimal.ZERO);
+
+    }
+
+    public Date getInstallmentStartDate() {
+        return getEgDemandReason().getEgInstallmentMaster().getFromDate();
+
+    }
+
+    public Date getInstallmentEndDate() {
+        return getEgDemandReason().getEgInstallmentMaster().getToDate();
+    }
 }

@@ -39,22 +39,24 @@
  */
 package org.egov.commons.dao;
 
+import org.egov.commons.EgActiondetails;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.commons.EgActiondetails;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Query;
-import org.hibernate.Session;
+@Repository
+public class EgActiondetailsHibernateDAO  {
+	
+	@PersistenceContext
+	private EntityManager entityManager;
 
-public class EgActiondetailsHibernateDAO extends GenericHibernateDAO {
-	
-	public EgActiondetailsHibernateDAO(){
-		super(EgActiondetails.class, null);
-	}
-	
-	public EgActiondetailsHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	public List<EgActiondetails> getEgActiondetailsFilterBy(final String moduleId, final ArrayList<String> actionType, final String moduleType) {

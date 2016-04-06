@@ -65,7 +65,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
@@ -141,6 +141,8 @@ public class WorkOrderAction extends BaseFormAction {
     private AbstractEstimateService abstractEstimateService;
     private PersistenceService<OfflineStatus, Long> worksStatusService;
     @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
     private AssignmentService assignmentService;
     @Autowired
     private EmployeeServiceOld employeeServiceOld;
@@ -185,8 +187,6 @@ public class WorkOrderAction extends BaseFormAction {
     private List<WorkOrder> workOrderList = null;
     // private List<String> workOrderActions;
     private Long workOrderId;
-    @Autowired
-    private CommonsService commonsService;
     private String sourcepage = "";
     private String percTenderType = "";
     private String tenderResponseType = null;
@@ -399,7 +399,7 @@ public class WorkOrderAction extends BaseFormAction {
             validateWorkOrderDate();
 
         if (SAVE_ACTION.equals(actionName) && workOrder.getEgwStatus() == null)
-            workOrder.setEgwStatus(commonsService.getStatusByModuleAndCode("WorkOrder", "NEW"));
+            workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("WorkOrder", "NEW"));
 
         workOrder = workOrderService.persist(workOrder);
         workOrder = workOrderWorkflowService.transition(actionName, workOrder, "");
@@ -628,13 +628,13 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     public List<EgwStatus> getWorkOrderStatuses() {
-        final List<EgwStatus> woStatusList = commonsService.getStatusByModule(WorkOrder.class.getSimpleName());
-        woStatusList.remove(commonsService.getStatusByModuleAndCode(WorkOrder.class.getSimpleName(), "NEW"));
+        final List<EgwStatus> woStatusList = egwStatusHibernateDAO.getStatusByModule(WorkOrder.class.getSimpleName());
+        woStatusList.remove(egwStatusHibernateDAO.getStatusByModuleAndCode(WorkOrder.class.getSimpleName(), "NEW"));
         return woStatusList;
     }
 
     public List<EgwStatus> getWorkOrderStatusesForMBCreation() {
-        return commonsService.getStatusListByModuleAndCodeList(WorkOrder.class.getSimpleName(),
+        return egwStatusHibernateDAO.getStatusListByModuleAndCodeList(WorkOrder.class.getSimpleName(),
                 worksService.getNatureOfWorkAppConfigValues("Works", "WORKORDER_STATUS"));
     }
 
@@ -1164,10 +1164,6 @@ public class WorkOrderAction extends BaseFormAction {
         this.workOrderId = workOrderId;
     }
 
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
     public Long getId() {
         return id;
     }
@@ -1470,7 +1466,7 @@ public class WorkOrderAction extends BaseFormAction {
         final WorkOrder workOrder = workOrderService.findById(workOrderId, false);
         validateARFForWO(workOrder);
         workOrder
-                .setEgwStatus(commonsService.getStatusByModuleAndCode(WO_OBJECT_TYPE, WorksConstants.CANCELLED_STATUS));
+                .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WO_OBJECT_TYPE, WorksConstants.CANCELLED_STATUS));
 
         if (workOrder.getCurrentState() != null) {
             final PersonalInformation prsnlInfo = employeeServiceOld.getEmpForUserId(worksService

@@ -1,7 +1,8 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
 
     The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
@@ -36,19 +37,10 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.messaging;
+package org.egov.adtax.service.penalty;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.ErrorHandler;
+public interface AdvertisementTaxCalculator {
 
-public class MessagingErrorHandler implements ErrorHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessagingErrorHandler.class);
-
-    @Override
-    public void handleError(final Throwable t) {
-        LOGGER.warn("Messaging Service returns with error : {}", t.getMessage());
-    }
+    Double calculateTaxAmount(Long unitOfMeasureId, Double measurement, Long subCategoryId, Long rateClassId);
 
 }

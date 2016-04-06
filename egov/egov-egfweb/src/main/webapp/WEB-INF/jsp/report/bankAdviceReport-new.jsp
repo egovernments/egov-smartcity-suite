@@ -55,26 +55,32 @@ table.its th {
 
 </head>
 <script>
-	function doAfterSubmit(){
-		document.getElementById('loading').style.display ='block';
+	function doAfterSubmit() {
+		document.getElementById('loading').style.display = 'block';
 	}
-	function populateBankBranch(bank){
-		var bankId= bank.options[bank.selectedIndex].value;
-		populatebankbranch({bankId:bankId})
+	function populateBankBranch(bank) {
+		var bankId = bank.options[bank.selectedIndex].value;
+		populatebankbranch({
+			bankId : bankId
+		})
 	}
-	function populateBankAccount(branch){
-		var branchId= branch.options[branch.selectedIndex].value;
-		populatebankaccount({branchId:branchId})
+	function populateBankAccount(branch) {
+		var branchId = branch.options[branch.selectedIndex].value;
+		populatebankaccount({
+			branchId : branchId
+		})
 	}
-	function populateInstrumentNumber(instrument){
-		var bankaccountId= instrument.options[instrument.selectedIndex].value;
-		populateinstrumentnumber({bankaccountId:bankaccountId})
+	function populateInstrumentNumber(instrument) {
+		var bankaccountId = instrument.options[instrument.selectedIndex].value;
+		populateinstrumentnumber({
+			bankaccountId : bankaccountId
+		})
 	}
 </script>
 <body>
 	<s:form action="bankAdviceReport" name="bankAdviceReport"
 		theme="simple" method="post" onsubmit="javascript:doAfterSubmit()">
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
 		</span>
 		<font style='color: red; font-weight: bold'>
 			<p class="error-block" id="lblError"></p>
@@ -83,155 +89,178 @@ table.its th {
 			<div class="subheadnew">
 				<s:text name="bank.advice.report" />
 			</div>
-		</div>
-		<table align="center" width="100%" cellpadding="0" cellspacing="0">
-			<tr>
-				<td class="bluebox" width="10%">Bank Name:<span class="bluebox"><span
-						class="mandatory">*</span></span></td>
-				<td class="bluebox"><s:select name="bank.id" id="bank.id"
-						list="dropdownData.bankList" listKey="id" listValue="name"
-						headerKey="-1" headerValue="----Choose----"
-						onChange="populateBankBranch(this);" /></td>
-				<egov:ajaxdropdown id="bankbranch" fields="['Text','Value']"
-					dropdownId="bankbranch"
-					url="voucher/common!ajaxLoadBankBranchFromBank.action" />
-				<td class="bluebox" width="10%">Bank Branch:<span
-					class="bluebox"><span class="mandatory">*</span></span></td>
-				<td class="bluebox"><s:select name="bankbranch.id"
-						id="bankbranch" list="dropdownData.bankBranchList" listKey="id"
-						listValue="branchname" headerKey="-1" headerValue="----Choose----"
-						onChange="populateBankAccount(this);" /></td>
-				<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
-					dropdownId="bankaccount"
-					url="voucher/common!ajaxLoadBankAccFromBranch.action" />
-			</tr>
-			<tr>
-				<td class="bluebox" width="10%">Account Number:<span
-					class="bluebox"><span class="mandatory">*</span></span></td>
-				<td class="bluebox"><s:select name="bankaccount.id"
-						id="bankaccount" list="dropdownData.bankAccountList" listKey="id"
-						listValue="accountnumber" headerKey="-1"
-						headerValue="----Choose----"
-						onChange="populateInstrumentNumber(this);" /></td>
-				<egov:ajaxdropdown id="instrumentnumber" fields="['Text','Value']"
-					dropdownId="instrumentnumber"
-					url="voucher/common!ajaxLoadRTGSChequeFromBankAcc.action" />
-				<td class="bluebox" width="10%">RTGS Number:<span
-					class="bluebox"><span class="mandatory">*</span></span></td>
-				<td class="bluebox"><s:select name="instrumentnumber.id"
-						id="instrumentnumber" list="dropdownData.chequeNumberList"
-						listKey="id" listValue="transactionNumber" headerKey="-1"
-						headerValue="----Choose----" /></td>
-			</tr>
-			<tr>
 
-			</tr>
-		</table>
-		<div class="buttonbottom">
-			<s:submit method="search" value="Search" cssClass="buttonsubmit"
-				onclick="return validate();" />
-			<input type="button" value="Close"
-				onclick="javascript:window.close()" class="button" />
-
-		</div>
-		<div id="loading" class="loading"
-			style="width: 700; height: 700; display: none" align="center">
-			<blink style="color: red">Searching processing, Please
-				wait...</blink>
-		</div>
-		<br>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-
-			<s:if test="%{bankAdviseResultList.size>0}">
-				<tr align="center">
-
-					<th class="bluebgheadtd" width="30%">Party Name</th>
-					<th class="bluebgheadtd" width="20%">Bank Name</th>
-					<th class="bluebgheadtd" width="10%">Account Number</th>
-					<th class="bluebgheadtd" width="10%">IFSC Code</th>
-					<th class="bluebgheadtd" width="10%">Amount(Rs.)</th>
+			<table align="center" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="bluebox" width="10%">Bank Name:<span
+						class="bluebox"><span class="mandatory"></span></span></td>
+					<td class="bluebox"><s:select name="bank.id" id="bank.id"
+							list="dropdownData.bankList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="----Choose----"
+							onChange="populateBankBranch(this);" /></td>
+					<egov:ajaxdropdown id="bankbranch" fields="['Text','Value']"
+						dropdownId="bankbranch"
+						url="voucher/common-ajaxLoadBankBranchFromBank.action" />
+					<td class="bluebox" width="10%">Bank Branch:<span
+						class="bluebox"><span class="mandatory"></span></span></td>
+					<td class="bluebox"><s:select name="bankbranch.id"
+							id="bankbranch" list="dropdownData.bankBranchList" listKey="id"
+							listValue="branchname" headerKey="-1"
+							headerValue="----Choose----"
+							onChange="populateBankAccount(this);" /></td>
+					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
+						dropdownId="bankaccount"
+						url="voucher/common-ajaxLoadBankAccFromBranch.action" />
 				</tr>
-				<s:iterator value="bankAdviseResultList" status="stat" var="p">
-					<tr>
-						<td class="blueborderfortd"><s:property value="partyName" /></td>
-						<td class="blueborderfortd"><s:property value="bank" /></td>
-						<td class="blueborderfortd"><s:property value="accountNumber" /></td>
-						<td class="blueborderfortd"><s:property value="ifscCode" /></td>
-						<td class="blueborderfortd" style="text-align: right"><s:property
-								value="amount" /></td>
+				<tr>
+					<td class="bluebox" width="10%">Account Number:<span
+						class="bluebox"><span class="mandatory"></span></span></td>
+					<td class="bluebox"><s:select name="bankaccount.id"
+							id="bankaccount" list="dropdownData.bankAccountList" listKey="id"
+							listValue="accountnumber" headerKey="-1"
+							headerValue="----Choose----"
+							onChange="populateInstrumentNumber(this);" /></td>
+					<egov:ajaxdropdown id="instrumentnumber" fields="['Text','Value']"
+						dropdownId="instrumentnumber"
+						url="voucher/common-ajaxLoadRTGSChequeFromBankAcc.action" />
+					<td class="bluebox" width="10%">RTGS Number:<span
+						class="bluebox"><span class="mandatory"></span></span></td>
+					<td class="bluebox"><s:select name="instrumentnumber.id"
+							id="instrumentnumber" list="dropdownData.chequeNumberList"
+							listKey="id" listValue="transactionNumber" headerKey="-1"
+							headerValue="----Choose----" /></td>
+				</tr>
+				<tr>
+
+				</tr>
+			</table>
+			<div class="buttonbottom">
+				<s:submit method="search" value="Search" cssClass="buttonsubmit"
+					onclick="return validate();" />
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
+
+			</div>
+			<br>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+				<s:if test="%{bankAdviseResultList.size>0}">
+					<tr align="center">
+
+						<th class="bluebgheadtd" width="30%">Party Name</th>
+						<th class="bluebgheadtd" width="20%">Bank Name</th>
+						<th class="bluebgheadtd" width="10%">Account Number</th>
+						<th class="bluebgheadtd" width="10%">IFSC Code</th>
+						<th class="bluebgheadtd" width="10%">Amount(Rs.)</th>
 					</tr>
-				</s:iterator>
-				<tr>
-					<td class="blueborderfortd" colspan="5">
-				</tr>
-				<tr>
-					<td class="blueborderfortd" width="10%" colspan="4"
-						style="text-align: right">Total
-					</th>
-					<td class="blueborderfortd" style="text-align: right"><s:property
-							value="totalAmount" /></td>
-				</tr>
-
-
-
-				<div>
-					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+					<s:iterator value="bankAdviseResultList" status="stat" var="p">
 						<tr>
-							<td>&nbsp;</td>
+							<td class="blueborderfortd" style="text-align: center"><s:property value="partyName" /></td>
+							<td class="blueborderfortd" style="text-align: center"><s:property value="bank" /></td>
+							<td class="blueborderfortd" style="text-align: center"><s:property
+									value="accountNumber" /></td>
+							<td class="blueborderfortd" style="text-align: center"><s:property value="ifscCode" /></td>
+							<td class="blueborderfortd" style="text-align: right"><s:property
+									value="amount" /></td>
 						</tr>
-						<tr>
-							<td align="center"><input type="button" class="buttonsubmit"
-								value="EXPORT PDF" id="exportpdf" name="exportpdf"
-								onclick="exportPDF();" /> <!-- 	<input type="button" class="buttonsubmit" value="EXPORT EXCEL" id="exportpdf" name="exportpdf" onclick="exportExcel();"/>-->
-								<!-- 	<input type="button" class="buttonsubmit" value="EXPORT HTM" id="exporthtml" name="exportpdf" onclick="exportHtml();"/>-->
-							</td>
-						</tr>
-					</table>
-				</div>
-				</td>
-				</tr>
+					</s:iterator>
+					<tr>
+						<td class="blueborderfortd" colspan="5">
+					</tr>
+					<tr>
+						<td class="blueborderfortd" width="10%" colspan="4"
+							style="text-align: right">Total
+						</th>
+						<td class="blueborderfortd" style="text-align: right"><s:property
+								value="totalAmount" /></td>
+					</tr>
 
-			</s:if>
-			<s:else>
-				<tr>
-					<td colspan="7" align="center"><font color="red">No
-							record Found.</font></td>
 
-				</tr>
-			</s:else>
-		</table>
+
+					<div>
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td align="center"><input type="button"
+									class="buttonsubmit" value="EXPORT PDF" id="exportpdf"
+									name="exportpdf" onclick="exportPDF();" /> <!-- 	<input type="button" class="buttonsubmit" value="EXPORT EXCEL" id="exportpdf" name="exportpdf" onclick="exportExcel();"/>-->
+									<!-- 	<input type="button" class="buttonsubmit" value="EXPORT HTM" id="exporthtml" name="exportpdf" onclick="exportHtml();"/>-->
+								</td>
+							</tr>
+						</table>
+					</div>
+					</td>
+					</tr>
+
+				</s:if>
+				<s:else>
+					<!-- <tr>
+						<td colspan="7" align="center"><font color="red">No
+								record Found.</font></td>
+
+					</tr> -->
+				</s:else>
+			</table>
+		</div>
 	</s:form>
 
 	<script>
-	function validate(){
-		return true; 
-	}
-	
- function exportPDF() {
- 	 var bank=document.getElementById("bank.id").value;
- 	 var bankbranch=document.getElementById("bankbranch").value;
- 	 var bankaccount=document.getElementById("bankaccount").value;
- 	 var instrumentnumber=document.getElementById("instrumentnumber").value;
-	 var url="${pageContext.request.contextPath}/report/bankAdviceReport!exportPDF.action?bank.id="+bank+"&bankbranch.id="+bankbranch+"&bankaccount.id="+bankaccount+"&instrumentnumber.id="+instrumentnumber;
-	 window.open(url,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
-	 }
- function exportExcel() {
- 	 var bank=document.getElementById("bank.id").value;
- 	 var bankbranch=document.getElementById("bankbranch").value;
- 	 var bankaccount=document.getElementById("bankaccount").value;
- 	 var instrumentnumber=document.getElementById("instrumentnumber").value;
-	 var url="${pageContext.request.contextPath}/report/bankAdviceReport!exportExcel.action?bank.id="+bank+"&bankbranch.id="+bankbranch+"&bankaccount.id="+bankaccount+"&instrumentnumber.id="+instrumentnumber;
-	 window.open(url,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
-}
- function exportHtml() {
- 	 var bank=document.getElementById("bank.id").value;
- 	 var bankbranch=document.getElementById("bankbranch").value;
- 	 var bankaccount=document.getElementById("bankaccount").value;
- 	 var instrumentnumber=document.getElementById("instrumentnumber").value;
-	 var url="${pageContext.request.contextPath}/report/bankAdviceReport!exportHtml.action?bank.id="+bank+"&bankbranch.id="+bankbranch+"&bankaccount.id="+bankaccount+"&instrumentnumber.id="+instrumentnumber;
-	 window.open(url,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
-}
+		function validate() {
+			document.bankAdviceReport.action = '/EGF/report/bankAdviceReport-search.action';
+			document.bankAdviceReport.submit();
+			return true;
+		}
 
-</script>
+		function exportPDF() {
+			var bank = document.getElementById("bank.id").value;
+			var bankbranch = document.getElementById("bankbranch").value;
+			var bankaccount = document.getElementById("bankaccount").value;
+			var instrumentnumber = document.getElementById("instrumentnumber").value;
+			var url = "${pageContext.request.contextPath}/report/bankAdviceReport-exportPDF.action?bank.id="
+					+ bank
+					+ "&bankbranch.id="
+					+ bankbranch
+					+ "&bankaccount.id="
+					+ bankaccount
+					+ "&instrumentnumber.id=" + instrumentnumber;
+			window
+					.open(url, '',
+							'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+		}
+		function exportExcel() {
+			var bank = document.getElementById("bank.id").value;
+			var bankbranch = document.getElementById("bankbranch").value;
+			var bankaccount = document.getElementById("bankaccount").value;
+			var instrumentnumber = document.getElementById("instrumentnumber").value;
+			var url = "${pageContext.request.contextPath}/report/bankAdviceReport-exportExcel.action?bank.id="
+					+ bank
+					+ "&bankbranch.id="
+					+ bankbranch
+					+ "&bankaccount.id="
+					+ bankaccount
+					+ "&instrumentnumber.id=" + instrumentnumber;
+			window
+					.open(url, '',
+							'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+		}
+		function exportHtml() {
+			var bank = document.getElementById("bank.id").value;
+			var bankbranch = document.getElementById("bankbranch").value;
+			var bankaccount = document.getElementById("bankaccount").value;
+			var instrumentnumber = document.getElementById("instrumentnumber").value;
+			var url = "${pageContext.request.contextPath}/report/bankAdviceReport-exportHtml.action?bank.id="
+					+ bank
+					+ "&bankbranch.id="
+					+ bankbranch
+					+ "&bankaccount.id="
+					+ bankaccount
+					+ "&instrumentnumber.id=" + instrumentnumber;
+			window
+					.open(url, '',
+							'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+		}
+	</script>
 </body>
 </html>

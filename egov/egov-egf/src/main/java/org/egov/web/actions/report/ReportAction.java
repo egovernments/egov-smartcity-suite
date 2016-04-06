@@ -105,7 +105,7 @@ public class ReportAction extends BaseFormAction
         super.prepare();
         getHeaderFields();
         if (headerFields.contains(Constants.DEPARTMENT))
-            addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+            addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         if (headerFields.contains(Constants.FUNCTION))
             addDropdownData("functionList",
                     persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false  order by name"));
