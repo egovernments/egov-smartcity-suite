@@ -81,6 +81,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -468,7 +469,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
                 if (thereIsBalance) {
                     penaltyAndRebate = new PenaltyAndRebate();
-                    penaltyAndRebate.setRebate(calculateEarlyPayRebate(tax));
                     Date penaltyEffectiveDate = null;
                     if (existingPenaltyDemandDetail == null) {
                         if (isNagarPanchayat && installment.compareTo(nagarPanchayatPenEndInstallment) <= 0) {

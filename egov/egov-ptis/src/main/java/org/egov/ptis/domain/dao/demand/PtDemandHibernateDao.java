@@ -352,7 +352,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
         currInst = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 
-        Map<String, Object> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
 
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
