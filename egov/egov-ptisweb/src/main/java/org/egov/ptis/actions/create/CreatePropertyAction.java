@@ -254,8 +254,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private BoundaryService boundaryService;
     @Autowired
     private SecurityUtils securityUtils;
-    @Autowired
-    private PropertyTaxIndexService propertyTaxIndexService;
+   
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
 
     public CreatePropertyAction() {
@@ -598,7 +597,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setWardId(basicProp.getPropertyID().getWard().getId());
         basicPropertyService.applyAuditing(property.getState());
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        propertyTaxIndexService.createPropertyTaxIndex(basicProp, property);
         basicPropertyService.update(basicProp);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
@@ -812,6 +810,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         if (null != property && null != property.getId()) {
             final Map<String, BigDecimal> demandCollMap = null;
+            /*final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+                    propertyTaxUtil.getCurrentInstallment());*/
         }
 
         LOGGER.debug("Exiting from prepare");
