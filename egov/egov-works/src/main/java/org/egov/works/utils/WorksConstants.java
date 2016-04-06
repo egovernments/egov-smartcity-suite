@@ -268,7 +268,7 @@ public class WorksConstants {
     
     public static final String BILL_EXPENDITURE_TYPE = "Works";
 
-    public static final String DESIGNATION_EXE_ENGINEER = "Executive engineer";
-    public static final String DESIGNATION_SUPERINTENDING_ENGINEER = "Superintending engineer";
-    public static final String DESIGNATION_CHIEF_ENGINEER = "Chief Engineer";
+    public static final String APPCONFIG_KEY_DESIGNATION_EXE_ENGINEER = "DESIGNATION_EXE_ENGINEER";
+    public static final String APPCONFIG_KEY_DESIGNATION_SUPERINTENDING_ENGINEER = "DESIGNATION_SUPERINTENDING_ENGINEER";
+    public static final String APPCONFIG_KEY_DESIGNATION_CHIEF_ENGINEER = "DESIGNATION_CHIEF_ENGINEER";
 }

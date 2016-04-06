@@ -177,6 +177,7 @@ public class LineEstimateService {
             final String workFlowAction) throws IOException {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.CREATED.toString()));
+        lineEstimate.setSpillOverFlag(false);
         final CFinancialYear financialYear = getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
         for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails()) {
             final String estimateNumber = estimateNumberGenerator.generateEstimateNumber(lineEstimate, financialYear);
@@ -712,6 +713,7 @@ public class LineEstimateService {
     public LineEstimate createSpillOver(final LineEstimate lineEstimate, final MultipartFile[] files) throws IOException {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
+        lineEstimate.setSpillOverFlag(true);
 
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
             final String lineEstimateNumber = lineEstimateNumberGenerator.generateLineEstimateNumber(lineEstimate);

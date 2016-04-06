@@ -107,6 +107,10 @@ public class CreateLetterOfAcceptanceController {
                     "error.loa.exists.for.estimate");
 
         validateInput(workOrder, resultBinder);
+        
+        if(lineEstimateDetails.getLineEstimate().isSpillOverFlag()) {
+            validateWorkOrderNuumber(workOrder, resultBinder);
+        }
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model, lineEstimateDetails);
@@ -117,9 +121,10 @@ public class CreateLetterOfAcceptanceController {
             model.addAttribute("engineerIncharge", request.getParameter("engineerIncharge"));
             return "createLetterOfAcceptance-form";
         } else {
-            workOrder.setWorkOrderNumber(
-                    letterOfAcceptanceNumberGenerator
-                            .generateLetterOfAcceptanceNumber(lineEstimateDetails.getProjectCode().getCode()));
+            if(!lineEstimateDetails.getLineEstimate().isSpillOverFlag())
+                workOrder.setWorkOrderNumber(
+                        letterOfAcceptanceNumberGenerator
+                                .generateLetterOfAcceptanceNumber(lineEstimateDetails.getProjectCode().getCode()));
             final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder, files);
             return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber();
         }
@@ -148,6 +153,16 @@ public class CreateLetterOfAcceptanceController {
         if (workOrder.getEngineerIncharge() == null || workOrder.getEngineerIncharge().getId() == null)
             resultBinder.rejectValue("engineerIncharge", "error.engineerincharge.required");
 
+    }
+    
+    private void validateWorkOrderNuumber(WorkOrder workOrder, BindingResult resultBinder) {
+        if (StringUtils.isBlank(workOrder.getWorkOrderNumber())) {
+            resultBinder.rejectValue("workOrderNumber", "error.workordernumber.required");
+        }
+        final WorkOrder wo = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(workOrder.getWorkOrderNumber());
+        if(wo != null) {
+            resultBinder.rejectValue("workOrderNumber", "error.workordernumber.unique");
+        }
     }
 
 }

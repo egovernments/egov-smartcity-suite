@@ -54,10 +54,12 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.DesignationService;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Designation;
@@ -73,6 +75,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.services.NatureOfWorkService;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
+import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,11 +140,22 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    private WorksService worksService;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
+        
+        List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        if(departments != null && !departments.isEmpty())
+            lineEstimate.setExecutingDepartment(departments.get(0));
+        
         model.addAttribute("lineEstimate", lineEstimate);
 
         model.addAttribute("mode", null);
@@ -169,16 +183,14 @@ public class CreateSpillOverLineEstimateController {
         }
         else {
             final LineEstimate newLineEstimate = lineEstimateService.createSpillOver(lineEstimate, files);
-            model.addAttribute("lineEstimate", newLineEstimate);
-
-            return "redirect:/lineestimate/spillover-lineestimate-success";
+            return "redirect:/lineestimate/spillover-lineestimate-success?lineEstimateNumber=" + newLineEstimate.getLineEstimateNumber();
         }
     }
 
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            final LineEstimateDetails details = lineEstimateDetailsRepository.findByEstimateNumber(led.getEstimateNumber());
+            final LineEstimateDetails details = lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeNot(led.getEstimateNumber(), WorksConstants.CANCELLED_STATUS);
             final ProjectCode projectCode = projectCodeService.findByCode(led.getProjectCode().getCode().toUpperCase());
             if (details != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
@@ -237,18 +249,22 @@ public class CreateSpillOverLineEstimateController {
 
         final List<Designation> designations = new ArrayList<Designation>();
 
-        designations.add(designationService.getDesignationByName(WorksConstants.DESIGNATION_EXE_ENGINEER));
-        designations.add(designationService.getDesignationByName(WorksConstants.DESIGNATION_SUPERINTENDING_ENGINEER));
-        designations.add(designationService.getDesignationByName(WorksConstants.DESIGNATION_CHIEF_ENGINEER));
+        designations.add(designationService.getDesignationByName(worksService
+                .getWorksConfigValue(WorksConstants.APPCONFIG_KEY_DESIGNATION_EXE_ENGINEER)));
+        designations.add(designationService.getDesignationByName(worksService
+                .getWorksConfigValue(WorksConstants.APPCONFIG_KEY_DESIGNATION_SUPERINTENDING_ENGINEER)));
+        designations.add(designationService.getDesignationByName(worksService
+                .getWorksConfigValue(WorksConstants.APPCONFIG_KEY_DESIGNATION_CHIEF_ENGINEER)));
 
         model.addAttribute("designations", designations);
     }
 
     @RequestMapping(value = "/spillover-lineestimate-success", method = RequestMethod.GET)
-    public ModelAndView successView(@ModelAttribute final LineEstimate lineEstimate,
-            final HttpServletRequest request, final Model model, final ModelMap modelMap) {
-
-        model.addAttribute("message", messageSource.getMessage("msg.spillover.lineestimate.success", null, null));
+    public ModelAndView successView(@RequestParam("lineEstimateNumber") final String lineEstimateNumber, final Model model) {
+        LineEstimate lineEstimate = lineEstimateService.getLineEstimateByLineEstimateNumber(lineEstimateNumber);
+        
+        model.addAttribute("message", messageSource.getMessage("msg.spillover.lineestimate.success",
+                new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getAdminSanctionNumber(), lineEstimate.getTechnicalSanctionNumber() }, null));
 
         return new ModelAndView("lineestimate-success");
     }

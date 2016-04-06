@@ -42,6 +42,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<input type="hidden" id="technicalSanctionDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${lineEstimateDetails.lineEstimate.technicalSanctionDate }" pattern="dd/MM/yyyy"/>' />
+<input type="hidden" id="errorFileDate" value="<spring:message code='error.loa.filedate'/>">
+<input type="hidden" id="errorWorkOrderDate" value="<spring:message code='error.loa.workorderdate'/>">
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.file.no" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
@@ -85,7 +88,14 @@
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.dateofagreement" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="workOrderDate" name="workOrderDate" type="text" class="form-control" value="${workOrderDate}" readonly="true" />
+		<c:choose>
+			<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag }">
+				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" value="${workOrderDate}" />
+			</c:when>
+			<c:otherwise>
+				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" value="${workOrderDate}" readonly="true" />
+			</c:otherwise>
+		</c:choose>
 		<form:errors path="workOrderDate" cssClass="add-margin error-msg" />
 	</div>
 </div>

@@ -57,9 +57,11 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -127,12 +129,19 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("lineEstimate", lineEstimate);
+        
+        List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        if(departments != null && !departments.isEmpty())
+            lineEstimate.setExecutingDepartment(departments.get(0));
 
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 

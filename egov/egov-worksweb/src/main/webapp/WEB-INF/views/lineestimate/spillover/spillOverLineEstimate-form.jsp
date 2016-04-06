@@ -51,7 +51,7 @@
 				<div class="col-md-12">
 					<jsp:include page="lineEstimateHeader.jsp"/>
 					<jsp:include page="lineEstimateDetails.jsp"/>
-					<jsp:include page="uploadDocuments.jsp"/>
+					<jsp:include page="../uploadDocuments.jsp"/>
 				</div>
 			</div>
 			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>

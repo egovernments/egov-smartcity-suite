@@ -89,6 +89,29 @@ $(document).ready(function(){
 		if($('#defectLiabilityPeriod').val() <= 0) 
 			$('#defectLiabilityPeriod').val('');
 		$('#estimateAmount').val(roundTo($('#estimateAmount').val()));
+		
+		$('#save').click(function() {
+			var flag = false;
+			$("#createLetterOfAcceptanceForm").find('input, select, textarea').each(function() {
+				if($(this).attr('required') == 'required' && $(this).val() == '') {
+					flag = true;
+				}
+			});
+			if(!flag) {
+				var technicalSanctionDate = $('#technicalSanctionDate').data('datepicker').date;
+				var fileDate = $('#fileDate').data('datepicker').date;
+				var workOrderDate = $('#workOrderDate').data('datepicker').date;
+				
+				if(fileDate < technicalSanctionDate) {
+					bootbox.alert($('#errorFileDate').val());
+					return false;
+				}
+				if(workOrderDate < fileDate) {
+					bootbox.alert($('#errorWorkOrderDate').val());
+					return false;
+				}
+			}
+		});
 	
 		$("form").submit(function() {
 			if($('form').valid())	{

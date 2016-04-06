@@ -37,6 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%> 
 <div class="form-group">
@@ -60,3 +61,12 @@
 		<input type="text" class="form-control" id="department" value="${lineEstimateDetails.lineEstimate.executingDepartment.name}" disabled>
 	</div>
 </div>
+<c:if test="${lineEstimateDetails.lineEstimate.spillOverFlag }">
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /><span class="mandatory"></span></label>
+		<div class="col-sm-3 add-margin">
+			 <form:input path="workOrderNumber" name="workOrderNumber" id="workOrderNumber" type="text" onkeyup="alphanumerichyphenbackslash(this);" class="form-control" maxlength="12" required="required"/>
+			 <form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
+		</div>
+	</div>
+</c:if>

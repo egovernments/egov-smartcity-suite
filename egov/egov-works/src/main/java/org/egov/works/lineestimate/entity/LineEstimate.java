@@ -231,6 +231,8 @@ public class LineEstimate extends StateAware {
     private boolean workOrderCreated;
 
     private boolean billsCreated;
+    
+    private boolean spillOverFlag;
 
     @Override
     public Long getId() {
@@ -529,5 +531,13 @@ public class LineEstimate extends StateAware {
 
     public void setBillsCreated(final boolean billsCreated) {
         this.billsCreated = billsCreated;
+    }
+
+    public boolean isSpillOverFlag() {
+        return spillOverFlag;
+    }
+
+    public void setSpillOverFlag(boolean spillOverFlag) {
+        this.spillOverFlag = spillOverFlag;
     }
 }
