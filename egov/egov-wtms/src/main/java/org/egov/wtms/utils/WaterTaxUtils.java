@@ -336,7 +336,7 @@ public class WaterTaxUtils {
 
     public Long getApproverPosition(final String designationName, final WaterConnectionDetails waterConnectionDetails) {
 
-        final List<StateHistory> stateHistoryList = waterConnectionDetails.getState().getHistory();
+        final List<StateHistory> stateHistoryList = waterConnectionDetails.getStateHistory();
         Long approverPosition = 0l;
         final String[] desgnArray = designationName.split(",");
         User currentUser = null;

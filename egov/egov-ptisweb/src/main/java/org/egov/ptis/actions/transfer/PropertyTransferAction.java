@@ -514,7 +514,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
                         mutationId);
                 basicproperty = propertyMutation.getBasicProperty();
-                historyMap = propertyService.populateHistory(propertyMutation.getState());
+                historyMap = propertyService.populateHistory(propertyMutation);
             }
 
             final Map<String, BigDecimal> propertyTaxDetails = propertyService

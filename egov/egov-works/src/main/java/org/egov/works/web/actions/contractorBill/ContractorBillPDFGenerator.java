@@ -888,7 +888,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
             List<StateHistory> history = null;
             if (egBillRegister != null && egBillRegister.getCurrentState() != null
                     && egBillRegister.getCurrentState().getHistory() != null)
-                history = egBillRegister.getCurrentState().getHistory();
+                history = egBillRegister.getStateHistory();
 
             if (history != null) {
                 Collections.reverse(history);
