@@ -138,7 +138,7 @@ public class CreateContractorBillController {
     }
 
     @RequestMapping(value = "/contractorbill-success", method = RequestMethod.GET)
-    public String showLetterOfAcceptanceSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model) {
+    public String showContractorBillSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model) {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
                 .getContractorBillByBillNumber(billNumber);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
@@ -148,6 +148,11 @@ public class CreateContractorBillController {
     private void validateInput(final ContractorBillRegister contractorBillRegister, final BindingResult resultBinder) {
         if (StringUtils.isBlank(contractorBillRegister.getBilltype()))
             resultBinder.rejectValue("billtype", "error.billtype.required");
+        if (contractorBillRegister.getEgBillregistermis() != null
+                && contractorBillRegister.getEgBillregistermis().getPartyBillDate() != null
+                && contractorBillRegister.getEgBillregistermis().getPartyBillDate()
+                        .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
+            resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.validate.partybilldate.lessthan.loadate");
 
     }
 
