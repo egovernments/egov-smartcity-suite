@@ -39,12 +39,6 @@
  */
 package org.egov.works.web.actions.masters;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -52,7 +46,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -68,6 +62,12 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({
@@ -85,8 +85,6 @@ public class MilestoneTemplateAction extends SearchFormAction {
     private static final String SAVE_ACTION = "save";
     private String messageKey;
     private static final String MILESTONE_TEMPLATE_MODULE_KEY = "MilestoneTemplate";
-    @Autowired
-    private CommonsService commonsService;
     private String actionName;
     private String sourcepage;
     private String nextEmployeeName;
@@ -95,6 +93,8 @@ public class MilestoneTemplateAction extends SearchFormAction {
     private WorksService worksService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private List<MilestoneTemplateActivity> templateActivities = new LinkedList<MilestoneTemplateActivity>();
     private static final String SOURCE_INBOX = "inbox";
     private static final String MODE_MODIFY = "modify";
@@ -141,10 +141,10 @@ public class MilestoneTemplateAction extends SearchFormAction {
         final String actionName = parameters.get("actionName")[0];
 
         if (id == null)
-            template.setEgwStatus(commonsService.getStatusByModuleAndCode(MILESTONE_TEMPLATE_MODULE_KEY, "NEW"));
+            template.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MILESTONE_TEMPLATE_MODULE_KEY, "NEW"));
 
         if (mode.equalsIgnoreCase("modify") && template.getEgwStatus().getCode().equalsIgnoreCase("APPROVED"))
-            template.setEgwStatus(commonsService.getStatusByModuleAndCode(MILESTONE_TEMPLATE_MODULE_KEY, "NEW"));
+            template.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MILESTONE_TEMPLATE_MODULE_KEY, "NEW"));
         // TODO - check for application for commenting out this line for any issues
         // **template.setState(null);
 
@@ -385,10 +385,6 @@ public class MilestoneTemplateAction extends SearchFormAction {
 
     public void setMilestoneTemplateWorkflowService(final WorkflowService<MilestoneTemplate> milestoneTemplateWorkflowService) {
         this.milestoneTemplateWorkflowService = milestoneTemplateWorkflowService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public void setWorksService(final WorksService worksService) {

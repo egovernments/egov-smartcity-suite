@@ -39,23 +39,11 @@
  */
 package org.egov.pims.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
@@ -75,6 +63,16 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 
  * @author DivyaShree
@@ -90,14 +88,16 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	private final String EMPVIEWDEPTIDSLOGGEDINUSER="EMPVIEW-DEPTIDS-LOGGEDINUSER";
 	private static final String EMPVIEWACTIVEEMPS="EMPVIEW-ACTIVE-EMPS"; 
 	private static final String EMPVIEWEMPSLASTASSPRD="EMPVIEW-EMPS-LASTASSPRD";
-	private CommonsService commonsService;
 	private SequenceGenerator sequenceGenerator;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
 	
 	@Autowired
-	private AppConfigValueService appConfigValuesService;	
+	private AppConfigValueService appConfigValuesService;
+
+	@Autowired
+	private EgwStatusHibernateDAO egwStatusHibernateDAO;
     
 	public Session  getCurrentSession() {
 		return entityManager.unwrap(Session.class);
@@ -119,15 +119,6 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 		this.scriptService = scriptService;
 	}
 
-
-	
-	public CommonsService getCommonsService() {
-		return commonsService;
-	}
-
-	public void setCommonsService(CommonsService commonsService) {
-		this.commonsService = commonsService;
-	}
 
 	/**
 	 * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
@@ -324,7 +315,7 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 
 	private Criteria getCriteriaForEmpSearchByStatus(Integer statusid ,Date fromDate,Date toDate)
 	{
-		EgwStatus egwStatus=commonsService.getEgwStatusById(statusid);
+		EgwStatus egwStatus=egwStatusHibernateDAO.findById(statusid,false);
 		DetachedCriteria detachCriteriaPersonalInfo=DetachedCriteria.forClass(PersonalInformation.class,"emp");
 		if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Employed"))
 		{

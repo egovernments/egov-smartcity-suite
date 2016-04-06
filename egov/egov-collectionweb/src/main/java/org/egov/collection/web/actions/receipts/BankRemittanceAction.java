@@ -203,7 +203,7 @@ public class BankRemittanceAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     public String create() {
         final long startTimeMillis = System.currentTimeMillis();
-        if (accountNumberId != null && accountNumberId == -1) {
+        BigInteger accountNumber = null;
             String serviceName = "";
             String fundCode = "";
 
@@ -219,10 +219,9 @@ public class BankRemittanceAction extends BaseFormAction {
 
             final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
             final Object queryResults = bankAccountQry.uniqueResult();
-            final BigInteger accountNumber = (BigInteger) queryResults;
-            accountNumberId = accountNumber != null ? accountNumber.intValue() : null;
-        }
-        if (accountNumberId == null || accountNumberId == -1) {
+            accountNumber = (BigInteger) queryResults;
+            accountNumberId = accountNumber != null ? accountNumber.intValue() : accountNumberId;
+        if (accountNumber == null || accountNumber.equals(-1)  || (accountNumber!=null && accountNumber.intValue()!=accountNumberId)){
             list();
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));

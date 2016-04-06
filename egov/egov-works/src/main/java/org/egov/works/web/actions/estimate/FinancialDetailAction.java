@@ -39,23 +39,7 @@
  */
 package org.egov.works.web.actions.estimate;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import net.sf.jasperreports.engine.JRException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -76,7 +60,6 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -107,6 +90,21 @@ import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 @Results({ @Result(name = FinancialDetailAction.PRINT, type = "stream", location = "budgetFolioPDF", params = {
         "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
         @Result(name = AbstractEstimateAction.NEW, location = "financialDetail-add.jsp")
@@ -131,8 +129,6 @@ public class FinancialDetailAction extends BaseFormAction {
     private List<Fundsource> fundSourceList;
     private Long estimateId;
     private Long id;
-    @Autowired
-    private CommonsService commonsService;
     @Autowired
     private FinancialYearHibernateDAO finHibernateDao;
     private String status = "TECH_SANCTIONED";
@@ -618,10 +614,6 @@ public class FinancialDetailAction extends BaseFormAction {
 
     public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
         this.abstractEstimate = abstractEstimate;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {

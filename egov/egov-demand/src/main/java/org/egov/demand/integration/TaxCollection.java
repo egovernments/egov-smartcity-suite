@@ -39,13 +39,6 @@
  ******************************************************************************/
 package org.egov.demand.integration;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.InvalidAccountHeadException;
 import org.egov.collection.entity.ReceiptDetail;
@@ -54,7 +47,7 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.CommonsDAOFactory;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgBillDetailsDao;
@@ -73,6 +66,13 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class is used to persist Bills with Collection Details(i.e received from ErpCollection) .This is used for the integration
@@ -96,8 +96,9 @@ public abstract class TaxCollection implements BillingIntegrationService {
     private EgdmCollectedReceiptDao egdmCollectedReceiptDAO;
     @Autowired
     private DemandGenericDao demandGenericDAO;
-
-    private CommonsDAOFactory commonsDAOFactory;
+    
+    @Autowired
+    private InstallmentHibDao installmentHibDao;
 
     public TaxCollection() {
 
@@ -486,7 +487,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
      * @return
      */
     protected Installment getInstallmentForDate(final Date date) {
-        return commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(module(),
+        return installmentHibDao.getInsatllmentByModuleForGivenDate(module(),
                 date);
     }
 
@@ -505,7 +506,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
      * @return
      */
     protected List<Installment> getAllInstallments() {
-        return commonsDAOFactory.getInstallmentDao().getInsatllmentByModule(module());
+        return installmentHibDao.getInsatllmentByModule(module());
     }
 
     /**
@@ -603,14 +604,6 @@ public abstract class TaxCollection implements BillingIntegrationService {
     public void apportionCollection(final String billRefNo, final BigDecimal amtPaid,
             final List<ReceiptDetail> receiptDetails) {
         return;
-    }
-
-    public CommonsDAOFactory getCommonsDAOFactory() {
-        return commonsDAOFactory;
-    }
-
-    public void setCommonsDAOFactory(final CommonsDAOFactory commonsDAOFactory) {
-        this.commonsDAOFactory = commonsDAOFactory;
     }
 
 }

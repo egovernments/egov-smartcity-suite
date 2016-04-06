@@ -39,26 +39,14 @@
  */
 package org.egov.pims.service;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -93,10 +81,19 @@ import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * @author deepak TODO To change the template for this generated type comment go
- *         to Window - Preferences - Java - Code Style - Code Templates
- */
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class EmployeeServiceImpl implements EmployeeServiceOld {
 
@@ -109,7 +106,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     private static final Logger logger = Logger.getLogger(EmployeeServiceImpl.class);
     private EisUtilService eisService;
     private PersistenceService persistenceService;
-    private CommonsService commonsService;
     private SessionFactory sessionFactory;
     private PersonalInformationDAO personalInformationDAO;
     private AssignmentDAO assignmentDAO;
@@ -120,6 +116,15 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
     
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -1096,29 +1101,23 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     }
 
     public PersonalInformation createEmloyee(PersonalInformation egpimsPersonalInformation) {
-        PersonalInformation personalInformation = null;
-        try {
+       try {
             if (egpimsPersonalInformation != null) {
-                personalInformation = (PersonalInformation) personalInformationDAO.create(egpimsPersonalInformation);
-                CommonsService cm = EisManagersUtill.getCommonsService();
-                String[] attrName = (cm.getAccountdetailtypeAttributename(null, "Employee")).split("#");
+                personalInformationDAO.create(egpimsPersonalInformation);
+                Accountdetailtype accountdetailtype = (accountdetailtypeHibernateDAO.getAccountdetailtypeByName("Employee"));
                 Accountdetailkey adk = new Accountdetailkey();
-                Query qry = getCurrentSession().createQuery(" from Accountdetailtype where id=:id ");
-                qry.setInteger("id", Integer.parseInt(attrName[0]));
-                adk.setAccountdetailtype((Accountdetailtype) qry.uniqueResult());
+                adk.setAccountdetailtype(accountdetailtype);
                 adk.setGroupid(1);
-                adk.setDetailkey(personalInformation.getIdPersonalInformation());
-                adk.setDetailname(attrName[1]);
-                // adk.setAccountdetailtype(Integer.parseInt(attrName[0]));
-                cm.createAccountdetailkey(adk);
+                adk.setDetailkey(egpimsPersonalInformation.getIdPersonalInformation());
+                adk.setDetailname(accountdetailtype.getAttributename());
+                accountdetailkeyHibernateDAO.create(adk);
             }
         } catch (Exception e) {
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
 
-        return personalInformation;
+        return egpimsPersonalInformation;
     }
 
     public void updateEmloyee(PersonalInformation egpimsPersonalInformation) {
@@ -2046,7 +2045,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         List<Assignment> employeeList = new ArrayList<Assignment>();
         String mainStr = "";
         try {
-            EgwStatus statusType = EisManagersUtill.getCommonsService().getEgwStatusById(status);
+            EgwStatus statusType = egwStatusHibernateDAO.findById(status, false);
 
             if (statusType.getModuletype().equals("Employee") && statusType.getDescription().equals("Employed")) {
 
@@ -2280,14 +2279,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     public Designation getPresentDesignation(Integer idPersonalInformation) {
         Assignment assignment = getLatestAssignmentForEmployee(idPersonalInformation);
         return assignment.getDesignation();
-    }
-
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public EisUtilService getEisService() {

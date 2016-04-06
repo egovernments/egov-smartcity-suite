@@ -39,25 +39,6 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.script.ScriptContext;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -77,13 +58,14 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.EgPartytypeHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
@@ -133,6 +115,24 @@ import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.script.ScriptContext;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 @ParentPackage("egov")
 @Results({ @Result(name = ContractorBillAction.PRINT, type = "stream", location = "CompletionCertificatePDF", params = {
         "inputName", "CompletionCertificatePDF", "contentType", "application/pdf", "contentDisposition",
@@ -150,7 +150,9 @@ public class ContractorBillAction extends BaseFormAction {
     private Long id;
     private Long workOrderId;
     @Autowired
-    private CommonsService commonsService;
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private EgPartytypeHibernateDAO egPartytypeHibernateDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private CommonAssetsService commonAssetsService;
@@ -449,7 +451,7 @@ public class ContractorBillAction extends BaseFormAction {
         List<EgPartytype> subPartyTypeList = new ArrayList<EgPartytype>();
         List<EgwTypeOfWork> typeOfWorkList = new ArrayList<EgwTypeOfWork>();
         if (showSubPartyType != null && showSubPartyType != "") {
-            subPartyTypeList = commonsService.getSubPartyTypes(PARTY_TYPE_CODE);
+            subPartyTypeList = egPartytypeHibernateDAO.getSubPartyTypesForCode(PARTY_TYPE_CODE);
             addDropdownData("subPartyTypeList", subPartyTypeList);
         } else
             addDropdownData("subPartyTypeList", subPartyTypeList);
@@ -767,7 +769,7 @@ public class ContractorBillAction extends BaseFormAction {
         }
 
         if (contractorBillRegister.getStatus() == null)
-            contractorBillRegister.setStatus(commonsService.getStatusByModuleAndCode(BILL_MODULE_KEY,
+            contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(BILL_MODULE_KEY,
                     WorksConstants.NEW));
         contractorBillService.persist(contractorBillRegister);
         if (contractorBillRegister.getBilltype().equals(contractorBillService.getBillType().get(1).toString())) {
@@ -810,7 +812,7 @@ public class ContractorBillAction extends BaseFormAction {
          */ {
             messageKey = "bill.save.success";
             contractorBillRegister.setBillstatus(contractorBillRegister.getCurrentState().getValue());
-            contractorBillRegister.setStatus(commonsService.getStatusByModuleAndCode(BILL_MODULE_KEY,
+            contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(BILL_MODULE_KEY,
                     contractorBillRegister.getCurrentState().getValue()));
         }
         getPersistenceService().getSession().flush();
@@ -879,7 +881,7 @@ public class ContractorBillAction extends BaseFormAction {
             contractorBillRegister = workflowService.transition(actionName, contractorBillRegister,
                     contractorBillRegister.getWorkflowapproverComments());
             contractorBillRegister.setBillstatus(WorksConstants.CANCELLED_STATUS);
-            contractorBillRegister.setStatus(commonsService.getStatusByModuleAndCode(BILL_MODULE_KEY,
+            contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(BILL_MODULE_KEY,
                     WorksConstants.CANCELLED_STATUS));
             contractorBillService.persist(contractorBillRegister);
             final List<MBHeader> mbHeaderListForBillIdForCancellingBill = measurementBookService.findAllByNamedQuery(
@@ -1465,7 +1467,7 @@ public class ContractorBillAction extends BaseFormAction {
                 throw new ValidationException(errors);
             }
             if (assetNew.getStatus().getDescription().equals(value.split(",")[0])) {
-                final EgwStatus status = commonsService.getStatusByModuleAndCode("ASSET", value.split(",")[1]);
+                final EgwStatus status = egwStatusHibernateDAO.getStatusByModuleAndCode("ASSET", value.split(",")[1]);
                 assetNew.setStatus(status);
             }
             assetForBill.setEgbill(contractorBillRegister);
@@ -1642,11 +1644,7 @@ public class ContractorBillAction extends BaseFormAction {
         this.worksService = worksService;
     }
 
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
-    public List<CChartOfAccounts> getStandardDeductionAccountList() {
+     public List<CChartOfAccounts> getStandardDeductionAccountList() {
         return standardDeductionAccountList;
     }
 

@@ -124,6 +124,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.DepreciationMaster;
@@ -235,7 +236,7 @@ public class PropertyTaxUtil {
     @Autowired
     private ModuleService moduleService;
     @Autowired
-    private InstallmentDao installmentDao;
+    private InstallmentHibDao installmentDao;
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired

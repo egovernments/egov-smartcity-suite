@@ -39,18 +39,12 @@
  */
 package org.egov.works.web.actions.contractoradvance;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.infra.admin.master.entity.User;
@@ -73,6 +67,11 @@ import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 @ParentPackage("egov")
 @Result(name = ContractorAdvanceRequisitionAction.NEW, location = "contractorAdvanceRequisition-new.jsp")
 public class ContractorAdvanceRequisitionAction extends BaseFormAction {
@@ -84,8 +83,6 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
     private Long id;
     private WorkOrderEstimate workOrderEstimate = new WorkOrderEstimate();
     private BigDecimal advancePaid = BigDecimal.ZERO;
-    @Autowired
-    private CommonsService commonsService;
     private WorksService worksService;
     private ContractorAdvanceService contractorAdvanceService;
     private static final String ADVANCE_COA_LIST = "advanceAccountCodeList";
@@ -346,14 +343,6 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
 
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
-    }
-
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public Long getAdvanceAccountCode() {

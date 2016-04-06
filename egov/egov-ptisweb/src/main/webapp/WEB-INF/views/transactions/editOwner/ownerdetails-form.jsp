@@ -50,10 +50,10 @@ body {
 </style>
 
 <c:if test="${errorMsg != ''}">
- 	<div class="panel-heading">
-				<div class="add-margin error-msg" style="text-align:center;">
-					<strong><c:out value="${errorMsg}"/></strong>
-				</div>
+	<div class="panel-heading">
+		<div class="add-margin error-msg" style="text-align: center;">
+			<strong><c:out value="${errorMsg}" /></strong>
+		</div>
 	</div>
 </c:if>
 <div class="row">
@@ -137,14 +137,16 @@ body {
 										<spring:message code="lbl.extentofsite" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.propertyDetail.sitalArea.area}"></c:out>
+										<c:out value="${property.propertyDetail.sitalArea.area}"
+											default="N/A"></c:out>
 									</div>
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.extent.appurtenant" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
 										<c:out
-											value="${property.propertyDetail.extentAppartenauntLand}"></c:out>
+											value="${property.propertyDetail.extentAppartenauntLand}"
+											default="N/A"></c:out>
 									</div>
 								</div>
 								<div class="row add-border">
@@ -163,7 +165,8 @@ body {
 										<spring:message code="lbl.siteowner" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.propertyDetail.siteOwner}"></c:out>
+										<c:out value="${property.propertyDetail.siteOwner}"
+											default="N/A"></c:out>
 									</div>
 								</div>
 								<div class="row add-border">
@@ -171,7 +174,8 @@ body {
 										<spring:message code="lbl.registrationDoc.no" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.basicProperty.regdDocNo}"></c:out>
+										<c:out value="${property.basicProperty.regdDocNo}"
+											default="N/A"></c:out>
 									</div>
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.registrationDoc.date" />
@@ -213,6 +217,7 @@ body {
 										<c:out
 											value="${property.basicProperty.propertyID.locality.name}" />
 									</div>
+
 									<div class="col-sm-3 add-margin">
 										<spring:message code="lbl.zone" />
 									</div>
@@ -220,7 +225,14 @@ body {
 										<c:out value="${property.basicProperty.propertyID.zone.name}" />
 									</div>
 								</div>
+
 								<div class="row">
+									<div class="col-sm-3 add-margin">
+										<spring:message code="lbl.property.address" />
+									</div>
+									<div class="col-sm-3 add-margin view-content">
+										<c:out value="${property.basicProperty.address}" />
+									</div>
 									<div class="col-sm-3 add-margin">
 										<spring:message code="lbl.revwardno" />
 									</div>
@@ -240,7 +252,8 @@ body {
 									</div>
 									<div class="col-sm-3 add-margin view-content">
 										<c:out
-											value="${property.basicProperty.propertyID.street.name}" />
+											value="${property.basicProperty.propertyID.street.name}"
+											default="N/A" />
 									</div>
 									<div class="col-sm-3 add-margin">
 										<spring:message code="lbl.elec.wardno" />
@@ -253,15 +266,16 @@ body {
 								<div class="row">
 									<div class="col-sm-3 add-margin">
 										<spring:message code="lbl.doorno" />
+
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										<c:out value="${doorNumber}" />
+										<c:out value="${doorNumber}" default="N/A" />
 									</div>
 									<div class="col-sm-3 add-margin">
 										<spring:message code="lbl.pincode" />
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										<c:out value="${pinCode}" />
+										<c:out value="${pinCode}" default="N/A" />
 									</div>
 								</div>
 							</div>
@@ -273,10 +287,12 @@ body {
 					<div class="panel-body custom-form">
 						<div class="form-group">
 							<label class="col-sm-3 control-label"><spring:message
-									code="lbl.doorNumber" /> </label>
+									code="lbl.doorNumber" /><span class="mandatory1">*</span> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="" id="doorNumber" name="doorNumber"
-									value="${doorNumber}" maxlength="15" cssClass="form-control" />
+									value="${doorNumber}" maxlength="15"
+									cssClass="form-control patternvalidation"
+									data-pattern="alphanumerichyphenbackslash" />
 							</div>
 						</div>
 					</div>
@@ -288,16 +304,16 @@ body {
 							<tr>
 								<th class="bluebgheadtd"><spring:message code="lbl.adharno" /></th>
 								<th class="bluebgheadtd"><spring:message
-										code="lbl.MobileNumber" /></th>
+										code="lbl.MobileNumber" /><span class="mandatory1">*</span></th>
 								<th class="bluebgheadtd"><spring:message
-										code="lbl.OwnerName" /></th>
-								<th class="bluebgheadtd"><spring:message code="lbl.gender" /></th>
+										code="lbl.OwnerName" /><span class="mandatory1">*</span></th>
+								<th class="bluebgheadtd"><spring:message code="lbl.gender" /><span class="mandatory1">*</span></th>
 								<th class="bluebgheadtd"><spring:message
 										code="lbl.EmailAddress" /></th>
 								<th class="bluebgheadtd"><spring:message
-										code="lbl.GuardianRelation" /></th>
+										code="lbl.GuardianRelation" /><span class="mandatory1">*</span></th>
 								<th class="bluebgheadtd"><spring:message
-										code="lbl.Guardian" /></th>
+										code="lbl.Guardian" /><span class="mandatory1">*</span></th>
 							</tr>
 							<c:choose>
 								<c:when
@@ -306,9 +322,12 @@ body {
 										items="${property.basicProperty.propertyOwnerInfo}"
 										varStatus="status">
 										<tr id="ownerDetailsRow">
-										<form:hidden path="basicProperty.propertyOwnerInfo[${status.index}].owner.id"/>
-										<form:hidden path="basicProperty.propertyOwnerInfo[${status.index}].owner.username"/>
-										<form:hidden path="basicProperty.propertyOwnerInfo[${status.index}].owner.password"/>
+											<form:hidden
+												path="basicProperty.propertyOwnerInfo[${status.index}].owner.id" />
+											<form:hidden
+												path="basicProperty.propertyOwnerInfo[${status.index}].owner.username" />
+											<form:hidden
+												path="basicProperty.propertyOwnerInfo[${status.index}].owner.password" />
 											<td class="blueborderfortd" align="center"><form:input
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
 													id="aadharNumber" maxlength="12" cssClass="form-control" />
@@ -320,11 +339,12 @@ body {
 											<td class="blueborderfortd" align="center"><form:input
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.name"
 													id="name" maxlength="74" cssClass="form-control" /></td>
-											
+
 											<td class="blueborderfortd" align="center"><form:select
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.gender"
 													id="gender" name="gender" data-first-option="false"
 													cssClass="form-control">
+													<option>--select--</option>
 													<form:options items="${gender}" />
 												</form:select></td>
 											<td class="blueborderfortd" align="center"><form:input
@@ -334,6 +354,7 @@ body {
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.guardianRelation"
 													id="guardianRelation" name="guardianRelation"
 													data-first-option="false" cssClass="form-control">
+													<option>--select--</option>
 													<form:options items="${guardianRelationMap}" />
 												</form:select></td>
 											<td class="blueborderfortd" align="center"><form:input
@@ -351,7 +372,8 @@ body {
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-primary add-margin">
+					<button type="submit" class="btn btn-primary add-margin"
+						id="submitform">
 						<spring:message code="lbl.submit" />
 					</button>
 					<a href="javascript:void(0)" class="btn btn-default"
@@ -361,3 +383,33 @@ body {
 		</form:form>
 	</div>
 </div>
+<script
+	src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script>
+	jQuery('#submitform').click(function(e) {
+		if (jQuery('#doorNumber').val() == '') {
+			bootbox.alert('Door number is mandatory');
+			e.preventDefault();
+		}
+		if (jQuery('#mobileNumber').val() == '') {
+			bootbox.alert('Mobile Number is mandatory');
+			e.preventDefault();
+		}
+		if (jQuery('#name').val() == '') {
+			bootbox.alert('Owner Name is mandatory');
+			e.preventDefault();
+		}
+		if (jQuery('#gender').val() == '') {
+			bootbox.alert('Gender is mandatory');
+			e.preventDefault();
+		}
+		if (jQuery('#guardianRelation').val() == '') {
+			bootbox.alert('Guardian Relation is mandatory');
+			e.preventDefault();
+		}
+		if (jQuery('#guardianName').val() == '') {
+			bootbox.alert('Guardian Name is mandatory');
+			e.preventDefault();
+		}
+	})
+</script>

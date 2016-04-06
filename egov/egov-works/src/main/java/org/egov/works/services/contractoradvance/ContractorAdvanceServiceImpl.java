@@ -39,28 +39,16 @@
  */
 package org.egov.works.services.contractoradvance;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
-import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
-import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.DrawingOfficer;
-import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -79,6 +67,15 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorAdvanceRequisition, Long>implements
         ContractorAdvanceService {
 
@@ -86,13 +83,12 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
     private WorksService worksService;
     private EisUtilService eisService;
     @Autowired
-    private CommonsService commonsService;
-    @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     @Autowired
-    private AccountdetailtypeHibernateDAO  actdetltypeHibDAO;
-    @Autowired
     private FinancialYearHibernateDAO finYearHibernateDAO;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
     private ContractorAdvanceRequisitionNumberGenerator contractorAdvanceRequisitionNumberGenerator;
     private static final String CONTRACTOR_ADVANCE_ACCOUNTCODE_PURPOSE = "CONTRACTOR_ADVANCE_ACCOUNTCODE";
     private static final String CONTRACTOR_ADVANCE_REQUISITION = "ContractorAdvanceRequisition";
@@ -149,7 +145,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
                             contractorAdvanceRequisition.getStatus().getCode()))
                 shouldAddAdvanceDetails = true;
             if (contractorAdvanceRequisition.getStatus() == null)
-                contractorAdvanceRequisition.setStatus(commonsService.getStatusByModuleAndCode(
+                contractorAdvanceRequisition.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                         CONTRACTOR_ADVANCE_REQUISITION, "NEW"));
             setARFNumber(contractorAdvanceRequisition);
             contractorAdvanceRequisition = setContractorAdvanceRequisitionMis(contractorAdvanceRequisition);
@@ -179,7 +175,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
              * +contractorAdvanceRequisition.getId()); } else
              **/
             {
-                contractorAdvanceRequisition.setStatus(commonsService.getStatusByModuleAndCode(
+                contractorAdvanceRequisition.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                         CONTRACTOR_ADVANCE_REQUISITION, contractorAdvanceRequisition.getCurrentState().getValue()));
             }
             contractorAdvanceRequisition = persist(contractorAdvanceRequisition);
@@ -440,7 +436,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         if (contractorAdvanceRequisition.getId() != null) {
             contractorAdvanceRequisition = workflowService.transition(actionName, contractorAdvanceRequisition,
                     contractorAdvanceRequisition.getWorkflowapproverComments());
-            contractorAdvanceRequisition.setStatus(commonsService.getStatusByModuleAndCode(
+            contractorAdvanceRequisition.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                     CONTRACTOR_ADVANCE_REQUISITION, WorksConstants.CANCELLED_STATUS));
             persist(contractorAdvanceRequisition);
         }
@@ -511,10 +507,6 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
     public void setContractorAdvanceRequisitionNumberGenerator(
             final ContractorAdvanceRequisitionNumberGenerator contractorAdvanceRequisitionNumberGenerator) {
         this.contractorAdvanceRequisitionNumberGenerator = contractorAdvanceRequisitionNumberGenerator;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public void setRevisionAbstractEstimateService(

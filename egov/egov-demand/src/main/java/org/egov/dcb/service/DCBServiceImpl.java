@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.egov.DCBException;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBRecord;
 import org.egov.dcb.bean.DCBReport;
@@ -78,7 +79,8 @@ public class DCBServiceImpl implements DCBService {
     @Autowired
     private DemandGenericDao demandGenericDAO;
     @Autowired
-    private InstallmentDao installmentDAO;
+    private InstallmentHibDao installmentDAO;
+
     private Billable billable;
 
     /**

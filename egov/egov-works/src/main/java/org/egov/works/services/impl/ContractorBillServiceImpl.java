@@ -40,18 +40,6 @@
 
 package org.egov.works.services.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.asset.service.AssetService;
@@ -59,8 +47,7 @@ import org.egov.asset.service.CommonAssetsService;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.commons.service.CommonsService;
-import org.egov.dao.bills.EgBilldetailsDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.dao.bills.EgBilldetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -97,6 +84,18 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long>implements
         ContractorBillService {
     private static final Logger logger = Logger.getLogger(ContractorBillServiceImpl.class);
@@ -106,7 +105,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     private ContractorBillNumberGenerator contractorBillNumberGenerator;
     private EgovCommon egovCommon;
     @Autowired
-    private CommonsService commonsService;
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO; 
     private static final String WORKS_NETPAYABLE_CODE = "WORKS_NETPAYABLE_CODE";
@@ -1376,10 +1375,6 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
 
     public void setEgovCommon(final EgovCommon egovCommon) {
         this.egovCommon = egovCommon;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public void setChecklistService(final PersistenceService<EgChecklists, Long> checklistService) {

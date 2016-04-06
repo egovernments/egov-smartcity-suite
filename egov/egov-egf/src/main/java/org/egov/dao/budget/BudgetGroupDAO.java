@@ -51,13 +51,12 @@ package org.egov.dao.budget;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-import java.util.List;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.dao.GenericDAO;
-import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+
+import java.util.List;
 
 public interface BudgetGroupDAO{
     public List<BudgetGroup> getBudgetGroupList() throws ValidationException;

@@ -160,9 +160,9 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute("additionalRule", "CLOSECONNECTION");
             model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
             if (waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE))
-                waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.toString());
+                waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
             else
-                waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.toString());
+                waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
 
             model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
         }

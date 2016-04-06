@@ -39,20 +39,6 @@
  */
 package org.egov.works.web.actions.estimate;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -60,7 +46,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.EgwTypeOfWork;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
@@ -92,6 +78,20 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.workorder.AjaxWorkOrderAction;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Results({ @Result(name = SearchEstimateAction.SUCCESS, location = "searchEstimate.jsp") })
@@ -147,10 +147,9 @@ public class SearchEstimateAction extends SearchFormAction {
     public static final String TMS_OBJECT_TYPE = "TrackMilestone";
     private String workOrdEstIds;
     @Autowired
-    private CommonsService commonsService;
-    @Autowired
     private UserService userService;
-
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private EmployeeService employeeService;
     @Autowired
@@ -865,7 +864,7 @@ public class SearchEstimateAction extends SearchFormAction {
 
             for (final Milestone milestone : woe.getMilestone())
                 if (WorksConstants.APPROVED.equalsIgnoreCase(milestone.getEgwStatus().getCode())) {
-                    milestone.setEgwStatus(commonsService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
+                    milestone.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                             WorksConstants.CANCELLED_STATUS));
                             // TODO - The setter methods of variables in State.java are
                             // protected. Need to alternative way to solve this issue.
@@ -879,7 +878,7 @@ public class SearchEstimateAction extends SearchFormAction {
 
                     for (final TrackMilestone tms : milestone.getTrackMilestone())
                         if (!WorksConstants.CANCELLED_STATUS.equalsIgnoreCase(tms.getEgwStatus().getCode())) {
-                            tms.setEgwStatus(commonsService.getStatusByModuleAndCode(
+                            tms.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                                     WorksConstants.TRACK_MILESTONE_MODULE_KEY, WorksConstants.CANCELLED_STATUS));
 
                             tms.getCurrentState();

@@ -40,17 +40,11 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.CWard;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
-public class WardHibernateDAO extends GenericHibernateDAO implements WardDAO {
+@Repository
+public class WardHibernateDAO  implements WardDAO {
 
-	public WardHibernateDAO() {
-		super(CWard.class, null);
-	}
 
-	public WardHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-
-	}
 }
