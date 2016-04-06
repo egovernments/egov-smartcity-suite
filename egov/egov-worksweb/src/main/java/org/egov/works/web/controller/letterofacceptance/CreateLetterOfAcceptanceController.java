@@ -108,8 +108,8 @@ public class CreateLetterOfAcceptanceController {
 
         validateInput(workOrder, resultBinder);
         
-        if(lineEstimateDetails.getLineEstimate().isSpillOverFlag()) {
-            validateWorkOrderNuumber(workOrder, resultBinder);
+        if(lineEstimateDetails.getLineEstimate().isSpillOverFlag() && lineEstimateDetails.getLineEstimate().isWorkOrderCreated()) {
+            validateSpillOverInput(workOrder, resultBinder, lineEstimateDetails);
         }
 
         if (resultBinder.hasErrors()) {
@@ -121,7 +121,8 @@ public class CreateLetterOfAcceptanceController {
             model.addAttribute("engineerIncharge", request.getParameter("engineerIncharge"));
             return "createLetterOfAcceptance-form";
         } else {
-            if(!lineEstimateDetails.getLineEstimate().isSpillOverFlag())
+            if ((lineEstimateDetails.getLineEstimate().isSpillOverFlag() && !lineEstimateDetails.getLineEstimate()
+                    .isWorkOrderCreated()) || !lineEstimateDetails.getLineEstimate().isSpillOverFlag())
                 workOrder.setWorkOrderNumber(
                         letterOfAcceptanceNumberGenerator
                                 .generateLetterOfAcceptanceNumber(lineEstimateDetails.getProjectCode().getCode()));
@@ -155,7 +156,7 @@ public class CreateLetterOfAcceptanceController {
 
     }
     
-    private void validateWorkOrderNuumber(WorkOrder workOrder, BindingResult resultBinder) {
+    private void validateSpillOverInput(WorkOrder workOrder, BindingResult resultBinder, LineEstimateDetails lineEstimateDetails) {
         if (StringUtils.isBlank(workOrder.getWorkOrderNumber())) {
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.required");
         }
@@ -163,6 +164,10 @@ public class CreateLetterOfAcceptanceController {
         if(wo != null) {
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.unique");
         }
+        if(workOrder.getFileDate().before(lineEstimateDetails.getLineEstimate().getTechnicalSanctionDate()))
+            resultBinder.rejectValue("fileDate", "error.loa.filedate");
+        if(workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
+            resultBinder.rejectValue("fileDate", "error.loa.workorderdate");
     }
 
 }

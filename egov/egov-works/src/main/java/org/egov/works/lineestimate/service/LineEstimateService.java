@@ -177,7 +177,6 @@ public class LineEstimateService {
             final String workFlowAction) throws IOException {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.CREATED.toString()));
-        lineEstimate.setSpillOverFlag(false);
         final CFinancialYear financialYear = getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
         for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails()) {
             final String estimateNumber = estimateNumberGenerator.generateEstimateNumber(lineEstimate, financialYear);
@@ -302,7 +301,8 @@ public class LineEstimateService {
             if (lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy() != null)
                 criteria.add(Restrictions.eq("lineEstimate.createdBy.id",
                         lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
-            criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
+            if(lineEstimateNumbers != null && !lineEstimateNumbers.isEmpty())
+                criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
             criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);

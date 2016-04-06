@@ -61,7 +61,7 @@
 		<input type="text" class="form-control" id="department" value="${lineEstimateDetails.lineEstimate.executingDepartment.name}" disabled>
 	</div>
 </div>
-<c:if test="${lineEstimateDetails.lineEstimate.spillOverFlag }">
+<c:if test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">

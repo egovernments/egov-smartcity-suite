@@ -54,7 +54,9 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.DesignationService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -145,7 +147,7 @@ public class CreateSpillOverLineEstimateController {
     private SecurityUtils securityUtils;
     
     @Autowired
-    private WorksService worksService;
+    private AppConfigValueService appConfigValuesService;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -248,14 +250,13 @@ public class CreateSpillOverLineEstimateController {
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
 
         final List<Designation> designations = new ArrayList<Designation>();
+        
+        List<AppConfigValues> configValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY);
 
-        designations.add(designationService.getDesignationByName(worksService
-                .getWorksConfigValue(WorksConstants.APPCONFIG_KEY_DESIGNATION_EXE_ENGINEER)));
-        designations.add(designationService.getDesignationByName(worksService
-                .getWorksConfigValue(WorksConstants.APPCONFIG_KEY_DESIGNATION_SUPERINTENDING_ENGINEER)));
-        designations.add(designationService.getDesignationByName(worksService
-                .getWorksConfigValue(WorksConstants.APPCONFIG_KEY_DESIGNATION_CHIEF_ENGINEER)));
-
+        for(AppConfigValues value : configValues) {
+            designations.add(designationService.getDesignationByName(value.getValue()));
+        }
         model.addAttribute("designations", designations);
     }
 

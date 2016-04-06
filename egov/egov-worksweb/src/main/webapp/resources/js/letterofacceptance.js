@@ -97,7 +97,7 @@ $(document).ready(function(){
 					flag = true;
 				}
 			});
-			if(!flag) {
+			if(!flag && $('#spillOverFlag').val() == 'true' && $('#workOrderCreated').val() == 'true') {
 				var technicalSanctionDate = $('#technicalSanctionDate').data('datepicker').date;
 				var fileDate = $('#fileDate').data('datepicker').date;
 				var workOrderDate = $('#workOrderDate').data('datepicker').date;
