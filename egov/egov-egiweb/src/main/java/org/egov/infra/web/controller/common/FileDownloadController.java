@@ -39,52 +39,78 @@
  */
 package org.egov.infra.web.controller.common;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.IOUtils;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Controller
 @RequestMapping("/downloadfile")
 public class FileDownloadController {
 
+    public static final String LOG_IMAGE_PATH = "/resources/global/images/";
+    public static final String CITYLOGO = "citylogo";
+
     @Qualifier("localDiskFileStoreService")
-    private @Autowired FileStoreService fileStoreService;
+    @Autowired
+    private FileStoreService fileStoreService;
+
     @Autowired
     private FileStoreUtils fileStoreUtils;
 
+    @Autowired
+    private FileStoreMapperRepository fileStoreMapperRepository;
+
     @RequestMapping
-    public void download(@RequestParam final String fileStoreId, @RequestParam final String moduleName,
-            @RequestParam(defaultValue = "false") final boolean toSave,
-            final HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, toSave, response);
+    public void download(@RequestParam String fileStoreId, @RequestParam String moduleName,
+                         @RequestParam(defaultValue = "false") boolean toSave,
+                         HttpServletResponse response) throws IOException {
+        this.fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, toSave, response);
     }
 
     @RequestMapping("/logo")
-    public void download(@RequestParam final String fileStoreId, @RequestParam final String moduleName, final HttpSession session,
-            final HttpServletResponse response) throws IOException {
-        if (session.getAttribute("citylogo") != null && session.getAttribute("citylogo").toString().contains(fileStoreId))
-            fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, false, response);
+    public void download(@RequestParam String fileStoreId, @RequestParam String moduleName, HttpSession session,
+                         HttpServletResponse response, HttpServletRequest request) throws IOException, ServletException {
+        Path image = Paths.get(session.getServletContext().getRealPath(LOG_IMAGE_PATH) + File.separator + fileStoreId + ImageUtils.JPG_EXTN);
+        if (!Files.exists(image)) {
+            if (session.getAttribute(CITYLOGO) != null && session.getAttribute(CITYLOGO).toString().contains(fileStoreId)) {
+                FileStoreMapper fileStoreMapper = this.fileStoreMapperRepository.findByFileStoreId(fileStoreId);
+                if (fileStoreMapper != null) {
+                    File file = this.fileStoreService.fetch(fileStoreMapper, moduleName);
+                    Files.copy(file.toPath(), image);
+                }
+            }
+        }
+        session.setAttribute(CITYLOGO, LOG_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN);
+        request.getServletContext().getRequestDispatcher(LOG_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN).forward(request, response);
 
     }
 
     @RequestMapping("/gis")
-    public void download(final HttpServletResponse response) throws IOException {
+    public void download(HttpServletResponse response) throws IOException {
         try (final InputStream in = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("gis/" + EgovThreadLocals.getTenantID() + "/wards.kml");
-                final OutputStream out = response.getOutputStream();) {
+             final OutputStream out = response.getOutputStream()) {
             if (in != null) {
                 response.setHeader("Content-Disposition", "inline;filename=wards.kml");
                 response.setContentType("application/vnd.google-earth.kml+xml");
