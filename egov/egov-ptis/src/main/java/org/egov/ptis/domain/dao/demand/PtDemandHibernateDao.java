@@ -360,7 +360,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
             installment = (Installment) installmentDao.findById(instId, false);
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
                 if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
-                    currFirstHalfDmd = currFirstHalfDmd.add(new BigDecimal((Double) listObj[2]));
+                    currFirstHalfCollection = currFirstHalfCollection.add(new BigDecimal((Double) listObj[2]));
                 /*
                  * adding rebate to collection (commenting this code because,
                  * the rebate amt is been added to collection amt and is shown
@@ -372,7 +372,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
                 currFirstHalfDmd = currFirstHalfDmd.add(new BigDecimal((Double) listObj[1]));
             } else if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).equals(installment)) {
                 if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
-                    currSecondHalfDmd = currSecondHalfDmd.add(new BigDecimal((Double) listObj[2]));
+                    currSecondHalfCollection = currSecondHalfCollection.add(new BigDecimal((Double) listObj[2]));
                 /*
                  * adding rebate to collection (commenting this code because,
                  * the rebate amt is been added to collection amt and is shown

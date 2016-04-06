@@ -1617,8 +1617,8 @@ public class PropertyTaxUtil {
         arrearDemandDetails.put(ARR_COLL_STR, totalArrearCollection);
         firstHalfReasonDemandDetails.put(CURR_FIRSTHALF_DMD_STR, totalCurrentDemand);
         firstHalfReasonDemandDetails.put(CURR_FIRSTHALF_COLL_STR, totalCurrentCollection);
-        secondHalfReasonDemandDetails.put(CURR_SECONDHALF_DMD_STR, totalCurrentDemand);
-        secondHalfReasonDemandDetails.put(CURR_SECONDHALF_COLL_STR, totalCurrentCollection);
+        secondHalfReasonDemandDetails.put(CURR_SECONDHALF_DMD_STR, totalNextInstDemand);
+        secondHalfReasonDemandDetails.put(CURR_SECONDHALF_COLL_STR, totalNextInstCollection);
         
         DCBDetails.put(CURRENTYEAR_FIRST_HALF, firstHalfReasonDemandDetails);
         DCBDetails.put(CURRENTYEAR_SECOND_HALF, secondHalfReasonDemandDetails);
