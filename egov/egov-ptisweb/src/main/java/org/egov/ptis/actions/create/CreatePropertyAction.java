@@ -148,7 +148,6 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.elasticSearch.PropertyTaxIndexService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 
