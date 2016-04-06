@@ -205,7 +205,10 @@ public class ViewPropertyAction extends BaseFormAction {
                                         reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null ? reasonDmd
                                                 .get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO));
                         viewMap.put("firstHalfTaxDue",
-                                reasonDmd.get(CURR_FIRSTHALF_DMD_STR).subtract(reasonDmd.get(CURR_FIRSTHALF_COLL_STR)));
+                                reasonDmd.get(CURR_FIRSTHALF_DMD_STR).add(
+                                        reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null ? reasonDmd
+                                                .get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO)
+                                                .subtract(reasonDmd.get(CURR_FIRSTHALF_COLL_STR)));
 
                     } else if (key.equals(CURRENTYEAR_SECOND_HALF)) {
                         viewMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
@@ -224,7 +227,9 @@ public class ViewPropertyAction extends BaseFormAction {
                                         reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null ? reasonDmd
                                                 .get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO));
                         viewMap.put("secondHalfTaxDue",
-                                reasonDmd.get(CURR_SECONDHALF_DMD_STR)
+                                reasonDmd.get(CURR_SECONDHALF_DMD_STR).add(
+                                        reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null ? reasonDmd
+                                                .get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO)
                                         .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
 
                     } else {
