@@ -105,19 +105,19 @@ function callAjaxSearch() {
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "", "sClass" : "text-center"} ,{ 
+					"data" : "", "sClass" : "text-center","Width": "1%"} ,{ 
 					"data" : "",
 					"sClass" : "text-center","autoWidth": "false"
 				}, {
 					"data" : "workOrderNumber",
-					"sClass" : "text-left","autoWidth": "false"
+					"sClass" : "text-left","width": "13.5%"
 				}, {
 					"data" : "workOrderDate",
 					"sClass" : "text-left" ,"width": "6%",
 					render: function (data, type, full) {
 						if(full!=null &&  full.workOrderDate != undefined) {
 							var regDateSplit = full.workOrderDate.split("T")[0].split("-");		
-							return regDateSplit[2] + "-" + regDateSplit[1] + "/" + regDateSplit[0];
+							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
 						}
 						else return "";
 			    	}
@@ -133,7 +133,7 @@ function callAjaxSearch() {
 					
 				}, {
 					"data" : "workIdentificationNumber",
-					"sClass" : "text-left","autoWidth": "false"
+					"sClass" : "text-left","width": "12%"
 				}, {
 					"data" : "workOrderAmount","width": "6%",
 					"sClass" : "text-right"
