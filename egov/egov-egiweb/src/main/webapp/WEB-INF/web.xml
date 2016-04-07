@@ -135,7 +135,7 @@
 		<url-pattern>*.ico</url-pattern>
 		<url-pattern>*.ttf</url-pattern>
 		<url-pattern>*.map</url-pattern>
-		<url-pattern>/downloadfile/logo</url-pattern>
+		<url-pattern>*.woff2</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>

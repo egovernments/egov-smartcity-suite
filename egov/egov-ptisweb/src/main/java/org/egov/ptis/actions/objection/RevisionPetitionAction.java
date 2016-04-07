@@ -300,7 +300,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.setRecievedBy(user.getUsername());
         }
         if (null != objection && null != objection.getState()) {
-            historyMap = propService.populateHistory(objection.getState());
+            historyMap = propService.populateHistory(objection);
         }
 
         loggedUserIsEmployee = propService.isEmployee(securityUtils.getCurrentUser());
@@ -1210,7 +1210,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         // setupWorkflowDetails();
         if (objection != null && objection.getState() != null) {
             setUpWorkFlowHistory(objection.getState().getId());
-            historyMap = propService.populateHistory(objection.getState());
+            historyMap = propService.populateHistory(objection);
         }
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
@@ -1411,7 +1411,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             // objectionWorkflowService.transition(workFlowAction.toLowerCase(),objection,
             // comments);
         } else if (workFlowAction.equalsIgnoreCase("Reject Inspection")) {
-            final List<StateHistory> stateHistoryList = objection.getState().getHistory();
+            final List<StateHistory> stateHistoryList = objection.getStateHistory();
             for (final StateHistory stateHistoryObj : stateHistoryList)
                 if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_HEARINGCOMPLETED)) {
                     position = stateHistoryObj.getOwnerPosition();
@@ -1437,7 +1437,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             }
 
         } else if (workFlowAction.equalsIgnoreCase("Reject") || workFlowAction.equalsIgnoreCase("reject")) {
-            final List<StateHistory> stateHistoryList = objection.getState().getHistory();
+            final List<StateHistory> stateHistoryList = objection.getStateHistory();
             for (final StateHistory stateHistoryObj : stateHistoryList)
                 if (stateHistoryObj.getValue().equalsIgnoreCase(objection.getCurrentState().getValue())) {
                     position = stateHistoryObj.getOwnerPosition();

@@ -687,7 +687,7 @@ public class LicenseUtils {
         while (itrLic.hasNext()) {
             license = (License) itrLic.next();
             if (license.getState() != null) {
-                final List<StateHistory> states = license.getState().getHistory();
+                final List<StateHistory> states = license.getStateHistory();
                 for (final StateHistory state : states)
                     if (state.getValue().contains(
                             Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE + Constants.WORKFLOW_STATE_APPROVED)) {

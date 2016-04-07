@@ -700,7 +700,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         if (null != property && null != property.getId() && null != property.getState()) {
             preparePropertyTaxDetails(property);
-            historyMap = propService.populateHistory(property.getState());
+            historyMap = propService.populateHistory(property);
         }
 
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
