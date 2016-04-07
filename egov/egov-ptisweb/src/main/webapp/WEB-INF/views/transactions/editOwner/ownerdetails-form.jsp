@@ -314,9 +314,9 @@ body {
 
 											<td class="blueborderfortd" align="center"><form:select
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.gender"
-													id="gender" name="gender" data-first-option="false"
+													id="sgender" name="gender" data-first-option="false"
 													cssClass="form-control">
-													<option>--select--</option>
+													<option value="">--select--</option>
 													<form:options items="${gender}" />
 												</form:select></td>
 											<td class="blueborderfortd" align="center"><form:input
@@ -326,7 +326,7 @@ body {
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.guardianRelation"
 													id="guardianRelation" name="guardianRelation"
 													data-first-option="false" cssClass="form-control">
-													<option>--select--</option>
+													<option value="">--select--</option>
 													<form:options items="${guardianRelationMap}" />
 												</form:select></td>
 											<td class="blueborderfortd" align="center"><form:input
@@ -359,29 +359,35 @@ body {
 	src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script>
 	jQuery('#submitform').click(function(e) {
-		if (jQuery('#doorNumber').val() == '') {
+
+		
+		if (!jQuery('#doorNumber').val()) {
 			bootbox.alert('Door number is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		else if (jQuery('#mobileNumber').val() == '') {
+		else if (!jQuery('#mobileNumber').val()) {
 			bootbox.alert('Mobile Number is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		else if (jQuery('#name').val() == '') {
+		else if (!jQuery('#name').val()) {
 			bootbox.alert('Owner Name is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		else if (jQuery('#gender').val() == '') {
+		else if (!jQuery('#sgender').val()) {
 			bootbox.alert('Gender is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		else if (jQuery('#guardianRelation').val() == '') {
+		else if (!jQuery('#guardianRelation').val()) {
 			bootbox.alert('Guardian Relation is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		else if (jQuery('#guardianName').val() == '') {
+		else if (!jQuery('#guardianName').val()) {
 			bootbox.alert('Guardian Name is mandatory');
-			e.preventDefault();
-		}
+			return false;
+		}		
+		
+
+		return true;
+		
 	})
 </script>
