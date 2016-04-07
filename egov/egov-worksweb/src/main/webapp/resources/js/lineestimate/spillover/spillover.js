@@ -59,6 +59,15 @@ $(document).ready(function(){
 					$(this).show();
 		});
 	}
+	$('#designation').val($('#designationValue').val());
+	$('#designation').trigger('change');
+	
+	var authorityValue = $('#authorityValue').val();
+	$('#authority option').each(function() {
+		var value = $(this).val();
+		if(value == authorityValue)
+			$(this).attr('selected', 'selected');
+	});
 
 
 	return showSlumFieldsValue();
@@ -78,7 +87,13 @@ $(document).bind("input propertychange", function (e) {
 
 $('#Save').click(function(){
 	var button = $(this).attr('id');
-	if (button != null && button == 'Save') {
+	var status = false;
+	$("#lineEstimateForm").find('input, select, textarea, radio').each(function() {
+		if($(this).attr('required') == 'required' && $(this).val() == '') {
+			status = true;
+		}
+	});
+	if (button != null && button == 'Save' && !status) {
 		var flag = true;
 		
 		var adminSanctionDate = $('#adminSanctionDate').data('datepicker').date;
@@ -91,54 +106,55 @@ $('#Save').click(function(){
 			return false;
 		}
 
-		var message = $('#errorActualAmount').val();
+		var message = $('#errorActualAmount').val() + " ";
 
-		if(technicalSanctionDate != '' && technicalSanctionNumber != '') {
-			$("input[name$='actualEstimateAmount']")
-			.each(
-					function() {
-						var index = getRow(this).rowIndex - 1;
-						var estimateAmount = $(
-								'#estimateAmount' + index).val();
-						var actualAmount = $(
-								'#actualEstimateAmount' + index).val();
-						if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
-							var estimateNumber = $(
-									'#estimateNumber' + index).val();
-							message += estimateNumber + ", ";
-							flag = false;
-						}
-					});
-			message += $('#errorActualAmountContinued').val();
-			if (!flag) {
-				bootbox.alert(message);
-				return false;
-			}
+		$("input[name$='actualEstimateAmount']")
+		.each(
+				function() {
+					var index = getRow(this).rowIndex - 1;
+					var estimateAmount = $(
+							'#estimateAmount' + index).val();
+					var actualAmount = $(
+							'#actualEstimateAmount' + index).val();
+					if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
+						var estimateNumber = $(
+								'#estimateNumber' + index).val();
+						message += estimateNumber + ", ";
+						flag = false;
+					}
+				});
+		message += $('#errorActualAmountContinued').val();
+		if (!flag) {
+			bootbox.alert(message);
+			return false;
 		}
 		
 		message = $('#errorGrossBilledAmount').val() + " ";
 		
-		if(technicalSanctionDate != '' && technicalSanctionNumber != '') {
-			$("input[name$='grossBilledAmount']")
-			.each(
-					function() {
-						var index = getRow(this).rowIndex - 1;
-						var grossBilledAmount = $(
-								'#grossBilledAmount' + index).val();
-						var actualAmount = $(
-								'#actualEstimateAmount' + index).val();
-						if (parseFloat(grossBilledAmount) > parseFloat(actualAmount)) {
-							var estimateNumber = $(
-									'#estimateNumber' + index).val();
-							message += estimateNumber + ", ";
-							flag = false;
-						}
-					});
-			message += $('#errorActualAmountContinued').val();
-			if (!flag) {
-				bootbox.alert(message);
-				return false;
-			}
+		$("input[name$='grossBilledAmount']")
+		.each(
+				function() {
+					var index = getRow(this).rowIndex - 1;
+					var grossBilledAmount = $(
+							'#grossBilledAmount' + index).val();
+					var actualAmount = $(
+							'#actualEstimateAmount' + index).val();
+					if (parseFloat(grossBilledAmount) > parseFloat(actualAmount)) {
+						var estimateNumber = $(
+								'#estimateNumber' + index).val();
+						message += estimateNumber + ", ";
+						flag = false;
+					}
+				});
+		message += $('#errorActualAmountContinued').val();
+		if (!flag) {
+			bootbox.alert(message);
+			return false;
+		}
+		
+		if($('#isBillsCreated').prop("checked") == true && $('#isWorkOrderCreated').prop("checked") == false) {
+			bootbox.alert($('#msgWorkOrderCreated').val());
+			return false;
 		}
 		
 		if(!flag)
@@ -202,13 +218,13 @@ $('#designation').change(function(){
 		},
 		dataType: "json",
 		success: function (response) {
-			console.log("success"+response);
 			$('#authority').empty();
 			$('#authority').append($("<option value=''>Select from below</option>"));
 			$.each(response, function(index, value) {
 				$('#authority').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
 			});
-			
+			var authorityValue = $('#authorityValue').val();
+			$('#authority').val(authorityValue);
 		}, 
 		error: function (response) {
 			console.log("failed");
@@ -453,6 +469,8 @@ function disableSlumFields() {
 	slumfields.style.display = slum.checked ? "block" : "none";
 	document.getElementById("typeOfSlum").disabled = true;
 	document.getElementById("beneficiary").disabled = true;
+	$('#typeOfSlum').removeAttr('required');
+	$('#beneficiary').removeAttr('required');
 	$('#nonslum').attr('checked', 'checked');
 }
 
@@ -464,6 +482,8 @@ function showSlumFields() {
 	slumfields.style.display = slum.checked ? "block" : "none";
 	document.getElementById("typeOfSlum").disabled = false;
 	document.getElementById("beneficiary").disabled = false;
+	$('#typeOfSlum').attr('required', 'required');
+	$('#beneficiary').attr('required', 'required');
 	$('#slum').attr('checked', 'checked');
 	
 }

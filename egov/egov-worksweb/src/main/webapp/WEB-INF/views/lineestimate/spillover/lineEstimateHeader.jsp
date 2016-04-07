@@ -50,7 +50,7 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.date" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="lineEstimateDate" id="lineEstimateDate" data-errormsg="Line Estimate Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
+				<form:input path="lineEstimateDate" id="lineEstimateDate" data-errormsg="Line Estimate Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="-1d" required="required" />
 				<form:errors path="lineEstimateDate" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /><span class="mandatory"></span></label>

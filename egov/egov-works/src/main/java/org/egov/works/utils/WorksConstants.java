@@ -43,6 +43,7 @@ public class WorksConstants {
 
     public static final String WORKS = "Works";
     public static final String WORKS_MODULE_NAME = "Works Management";
+    public static final String EGF_MODULE_NAME = "EGF";
     public static final String alphaNumericwithspecialchar = "[0-9a-zA-Z-& :,/.()@]+";
     public static final String TEMPLATENAME_COMPLETIONCERTIFICATE = "completionCertificate";
     public static final String PARAMETERNAME_WORKCOMPLETIONINFO = "workCompletionInfo";
@@ -269,4 +270,8 @@ public class WorksConstants {
     public static final String BILL_EXPENDITURE_TYPE = "Works";
 
     public static final String APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY = "DESIGNATION_TECHSANCTION_AUTHORITY";
+    
+    public static final String APPCONFIG_KEY_BUDGETCHECK_REQUIRED = "budgetCheckRequired";
+    
+    public static final String DESIGNATION_COMMISSIONER = "Commissioner";
 }

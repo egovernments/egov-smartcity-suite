@@ -95,7 +95,7 @@
 				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" value="${workOrderDate}" />
 			</c:when>
 			<c:otherwise>
-				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" value="${workOrderDate}" readonly="true" />
+				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control" value="${workOrderDate}" readonly="true" />
 			</c:otherwise>
 		</c:choose>
 		<form:errors path="workOrderDate" cssClass="add-margin error-msg" />

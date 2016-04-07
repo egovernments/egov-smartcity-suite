@@ -56,7 +56,7 @@
 					<th><spring:message code="lbl.councilresolutionnumber"/></th>
 					<th><spring:message code="lbl.councilresolutiondate"/></th>
 					<th><spring:message code="lbl.administrativesanctionnumber"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.adminsanctiondate"/></th>
+					<th><spring:message code="lbl.adminsanctiondate"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.admin.authority"/></th>			
 				</tr>
 			</thead>
@@ -75,7 +75,7 @@
 						<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
 					</td>
 					<td>
-						<form:input path="adminSanctionDate" id="adminSanctionDate" name="adminSanctionDate" value="${adminSanctionDate}" data-errormsg="Administrative Resolution Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
+						<form:input path="adminSanctionDate" id="adminSanctionDate" name="adminSanctionDate" value="${adminSanctionDate}" data-errormsg="Administrative Resolution Date of the work is mandatory!" required="required" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
 						<form:errors path="adminSanctionDate" cssClass="add-margin error-msg" />
 					</td>
 					<td>

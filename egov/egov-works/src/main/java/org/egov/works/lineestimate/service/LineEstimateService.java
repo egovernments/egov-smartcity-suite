@@ -57,10 +57,15 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
@@ -69,6 +74,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.budget.BudgetUsage;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -153,6 +159,18 @@ public class LineEstimateService {
 
     @Autowired
     private LineEstimateDetailService lineEstimateDetailService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private DesignationService designationService;
+    
+    @Autowired
+    private DepartmentService departmentService;
+    
+    @Autowired
+    private UserService userService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -279,34 +297,36 @@ public class LineEstimateService {
         final List<String> lineEstimateNumbers = lineEstimateDetailsRepository
                 .findEstimateNumbersToSearchLineEstimatesForLoa(WorksConstants.CANCELLED_STATUS);
 
-        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimateDetails.class)
-                .createAlias("lineEstimate", "lineEstimate")
-                .createAlias("lineEstimate.status", "status");
-        if (lineEstimateForLoaSearchRequest != null) {
-            if (lineEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
-                criteria.add(Restrictions.ilike("lineEstimate.adminSanctionNumber",
-                        lineEstimateForLoaSearchRequest.getAdminSanctionNumber()));
-            if (lineEstimateForLoaSearchRequest.getExecutingDepartment() != null)
-                criteria.add(Restrictions.eq("lineEstimate.executingDepartment.id",
-                        lineEstimateForLoaSearchRequest.getExecutingDepartment()));
-            if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null)
-                criteria.add(Restrictions.eq("estimateNumber",
-                        lineEstimateForLoaSearchRequest.getEstimateNumber()));
-            if (lineEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
-                criteria.add(Restrictions.ge("lineEstimate.adminSanctionDate",
-                        lineEstimateForLoaSearchRequest.getAdminSanctionFromDate()));
-            if (lineEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
-                criteria.add(Restrictions.le("lineEstimate.adminSanctionDate",
-                        lineEstimateForLoaSearchRequest.getAdminSanctionToDate()));
-            if (lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy() != null)
-                criteria.add(Restrictions.eq("lineEstimate.createdBy.id",
-                        lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
-            if(lineEstimateNumbers != null && !lineEstimateNumbers.isEmpty())
+        if(!lineEstimateNumbers.isEmpty()) {
+            final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimateDetails.class)
+                    .createAlias("lineEstimate", "lineEstimate")
+                    .createAlias("lineEstimate.status", "status");
+            if (lineEstimateForLoaSearchRequest != null) {
+                if (lineEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
+                    criteria.add(Restrictions.ilike("lineEstimate.adminSanctionNumber",
+                            lineEstimateForLoaSearchRequest.getAdminSanctionNumber()));
+                if (lineEstimateForLoaSearchRequest.getExecutingDepartment() != null)
+                    criteria.add(Restrictions.eq("lineEstimate.executingDepartment.id",
+                            lineEstimateForLoaSearchRequest.getExecutingDepartment()));
+                if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null)
+                    criteria.add(Restrictions.eq("estimateNumber",
+                            lineEstimateForLoaSearchRequest.getEstimateNumber()));
+                if (lineEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
+                    criteria.add(Restrictions.ge("lineEstimate.adminSanctionDate",
+                            lineEstimateForLoaSearchRequest.getAdminSanctionFromDate()));
+                if (lineEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
+                    criteria.add(Restrictions.le("lineEstimate.adminSanctionDate",
+                            lineEstimateForLoaSearchRequest.getAdminSanctionToDate()));
+                if (lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy() != null)
+                    criteria.add(Restrictions.eq("lineEstimate.createdBy.id",
+                            lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
-            criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
-        }
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        return criteria.list();
+                criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
+            }
+            criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+            return criteria.list();
+        } else
+            return new ArrayList<LineEstimateDetails>();
     }
 
     public List<String> findLineEstimateNumbers(final String name) {
@@ -469,12 +489,21 @@ public class LineEstimateService {
                         !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                     setTechnicalSanctionBy(lineEstimate);
                 if (lineEstimate.getStatus().getCode()
-                        .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                    doBudgetoryAppropriation(lineEstimate);
+                        .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
+                    List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+                    AppConfigValues value = values.get(0);
+                    if(value.getValue().equalsIgnoreCase("Y"))
+                        doBudgetoryAppropriation(lineEstimate);
+                }
                 else if (workFlowAction.equals(WorksConstants.REJECT_ACTION) && lineEstimate.getStatus().getCode()
-                        .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()))
-                    for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
-                        releaseBudgetOnReject(led);
+                        .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
+                    List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+                    AppConfigValues value = values.get(0);
+                    if(value.getValue().equalsIgnoreCase("Y"))
+                        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
+                            releaseBudgetOnReject(led);
+                }
+                    
                 lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
             } catch (final ValidationException e) {
                 throw new ValidationException(e.getErrors());
@@ -714,7 +743,15 @@ public class LineEstimateService {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
         lineEstimate.setSpillOverFlag(true);
-
+        
+        List<Assignment> assignments = assignmentService.findPrimaryAssignmentForDesignationName(WorksConstants.DESIGNATION_COMMISSIONER);
+        
+        //TODO: check with BA if it is correct to get commissioner by current date
+        if(assignments != null && !assignments.isEmpty()) {
+            User adminUser = userService.getUserById(assignments.get(0).getEmployee().getId());
+            lineEstimate.setAdminSanctionBy(adminUser);
+        }
+        
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
             final String lineEstimateNumber = lineEstimateNumberGenerator.generateLineEstimateNumber(lineEstimate);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
@@ -727,7 +764,11 @@ public class LineEstimateService {
 
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
             lineEstimateDetailService.setProjectCode(led);
-        doBudgetoryAppropriation(lineEstimate);
+        
+        List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+        AppConfigValues value = values.get(0);
+        if(value.getValue().equalsIgnoreCase("Y"))
+            doBudgetoryAppropriation(lineEstimate);
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate,
                 WorksConstants.MODULE_NAME_LINEESTIMATE);

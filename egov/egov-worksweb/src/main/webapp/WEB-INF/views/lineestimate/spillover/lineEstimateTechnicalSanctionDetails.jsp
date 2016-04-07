@@ -71,7 +71,8 @@
 						<form:errors path="technicalSanctionDate" cssClass="add-margin error-msg" />
 					</td>
 					<td>
-						<select id="designation" data-first-option="false" class="form-control" required="required">
+						<input type="hidden" id="designationValue" value="${designation }" />
+						<select name="designation" id="designation" data-first-option="false" class="form-control" required="required">
 							<option value="">
 								<spring:message code="lbl.select" />
 							</option>
@@ -82,6 +83,7 @@
 						</select>
 					</td>
 					<td>
+						<input type="hidden" id="authorityValue" value="${lineEstimate.technicalSanctionBy.id }" />
 						<form:select path="technicalSanctionBy" id="authority" data-first-option="false" class="form-control" required="required">
 							<form:option value="">
 								<spring:message code="lbl.select" />

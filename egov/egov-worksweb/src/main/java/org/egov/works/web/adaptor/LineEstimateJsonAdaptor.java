@@ -61,7 +61,7 @@ public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate>
                 jsonObject.addProperty("status", lineEstimate.getStatus().getDescription());
             else
                 jsonObject.addProperty("status", "");
-            if (lineEstimate.getState().getOwnerPosition() != null)
+            if (lineEstimate.getState() != null && lineEstimate.getState().getOwnerPosition() != null)
                 jsonObject.addProperty("owner", worksUtils.getApproverName(lineEstimate.getState().getOwnerPosition().getId()));
             else
                 jsonObject.addProperty("owner", "");

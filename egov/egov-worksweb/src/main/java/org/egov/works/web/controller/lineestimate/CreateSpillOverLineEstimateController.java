@@ -181,6 +181,7 @@ public class CreateSpillOverLineEstimateController {
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", null);
+            model.addAttribute("designation", request.getParameter("designation"));
             return "spillOverLineEstimate-form";
         }
         else {

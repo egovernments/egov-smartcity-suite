@@ -89,7 +89,7 @@ $('.btn-primary').click(function(){
 				return false;
 			}
 
-			var message = $('#errorActualAmount').val();
+			var message = $('#errorActualAmount').val() + " ";
 
 			if(technicalSanctionDate != '' && technicalSanctionNumber != '') {
 				$("input[name$='actualEstimateAmount']")
@@ -119,7 +119,7 @@ $('.btn-primary').click(function(){
 			return false;
 	}
 	else {
-		validateWorkFlowApprover(button);
+		return validateWorkFlowApprover(button);
 	}
 });
 
@@ -547,7 +547,16 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');
 		
-		bootbox.confirm($('#confirm').val(), function(result) {return result});
+		if(!($('#approvalComent').val() == ''))
+			bootbox.confirm($('#confirm').val(), function(result) {
+				if(!result) {
+					$(this).hide();
+					return false;
+				} else {
+					document.forms[0].submit;
+				}
+			});
+		return false;
 	}
 	if (button != null && button == 'Forward') {
 		$('#approvalDepartment').attr('required', 'required');
