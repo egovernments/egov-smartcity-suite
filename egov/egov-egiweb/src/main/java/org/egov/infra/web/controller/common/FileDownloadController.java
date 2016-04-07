@@ -53,7 +53,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
@@ -68,8 +67,8 @@ import java.nio.file.Paths;
 @RequestMapping("/downloadfile")
 public class FileDownloadController {
 
-    public static final String LOG_IMAGE_PATH = "/resources/global/images/";
-    public static final String CITYLOGO = "citylogo";
+    public static final String LOGO_IMAGE_PATH = "/resources/global/images/";
+    public static final String CITY_LOGO_KEY = "citylogo";
 
     @Qualifier("localDiskFileStoreService")
     @Autowired
@@ -89,11 +88,10 @@ public class FileDownloadController {
     }
 
     @RequestMapping("/logo")
-    public void download(@RequestParam String fileStoreId, @RequestParam String moduleName, HttpSession session,
-                         HttpServletResponse response, HttpServletRequest request) throws IOException, ServletException {
-        Path image = Paths.get(session.getServletContext().getRealPath(LOG_IMAGE_PATH) + File.separator + fileStoreId + ImageUtils.JPG_EXTN);
+    public String download(@RequestParam String fileStoreId, @RequestParam String moduleName, HttpSession session) throws IOException, ServletException {
+        Path image = Paths.get(session.getServletContext().getRealPath(LOGO_IMAGE_PATH) + File.separator + fileStoreId + ImageUtils.JPG_EXTN);
         if (!Files.exists(image)) {
-            if (session.getAttribute(CITYLOGO) != null && session.getAttribute(CITYLOGO).toString().contains(fileStoreId)) {
+            if (session.getAttribute(CITY_LOGO_KEY) != null && session.getAttribute(CITY_LOGO_KEY).toString().contains(fileStoreId)) {
                 FileStoreMapper fileStoreMapper = this.fileStoreMapperRepository.findByFileStoreId(fileStoreId);
                 if (fileStoreMapper != null) {
                     File file = this.fileStoreService.fetch(fileStoreMapper, moduleName);
@@ -101,9 +99,9 @@ public class FileDownloadController {
                 }
             }
         }
-        session.setAttribute(CITYLOGO, LOG_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN);
-        request.getServletContext().getRequestDispatcher(LOG_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN).forward(request, response);
-
+        String logoPath = LOGO_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN;
+        session.setAttribute(CITY_LOGO_KEY, logoPath);
+        return "forward:"+logoPath;
     }
 
     @RequestMapping("/gis")
