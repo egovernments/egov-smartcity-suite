@@ -134,7 +134,6 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private static final Logger LOGGER = Logger.getLogger(BudgetDetailService.class);
     private static final String BUDGET_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'Budget','NEW',1,current_date,current_date,1,current_date,1,1,0)";
     private static final String BUDGETDETAIL_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'BudgetDetail','NEW',1,current_date,current_date,1,current_date,1,1,0)";
-    private static final String BUDGETGROUP_INSERT = "insert into egf_budgetgroup (ID,NAME,MINCODE,MAXCODE,DESCRIPTION,UPDATEDTIMESTAMP,ACCOUNTTYPE,BUDGETINGTYPE,ISACTIVE) values (:id,:name,:mincode,:maxcode,:description,:updatedtimestamp,:accounttype,:budgetingtype,:isactive)";
 
     public BudgetDetailService(final Class<BudgetDetail> budgetDetail) {
         this.type = budgetDetail;
@@ -2569,63 +2568,40 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             }
 
             bgroupId = Long.valueOf(sequenceNumber.toString());
-            /*
-             * if (budgetGroup == null) { budgetGroup = new BudgetGroup(); budgetGroup.setName(coa.getGlcode() + "-" +
-             * coa.getName()); budgetGroup.setDescription(coa.getName()); budgetGroup.setIsActive(true); if
-             * (coa.getType().compareTo('E') == 0) { budgetGroup.setAccountType(BudgetAccountType.REVENUE_EXPENDITURE);
-             * budgetGroup.setBudgetingType(BudgetingType.DEBIT); } else if (coa.getType().compareTo('A') == 0) {
-             * budgetGroup.setAccountType(BudgetAccountType.CAPITAL_EXPENDITURE);
-             * budgetGroup.setBudgetingType(BudgetingType.DEBIT); } else if (coa.getType().compareTo('L') == 0) {
-             * budgetGroup.setAccountType(BudgetAccountType.CAPITAL_RECEIPTS); budgetGroup.setBudgetingType(BudgetingType.CREDIT);
-             * } else if (coa.getType().compareTo('I') == 0) { budgetGroup.setAccountType(BudgetAccountType.REVENUE_RECEIPTS);
-             * budgetGroup.setBudgetingType(BudgetingType.CREDIT); } if (coa.getClassification().compareTo(1l) == 0 ||
-             * coa.getClassification().compareTo(2l) == 0 || coa.getClassification().compareTo(4l) == 0) {
-             * budgetGroup.setMinCode(coa); budgetGroup.setMaxCode(coa); } budgetGroup.setMajorCode(null);
-             * budgetGroupService.applyAuditing(budgetGroup); budgetGroup = budgetGroupService.persist(budgetGroup); if
-             * (coa.getType().compareTo('E') == 0 || coa.getType().compareTo('A') == 0) { coa.setBudgetCheckReq(true); coa =
-             * chartOfAccountsService.update(coa); } }
-             */
+
             if (budgetGroup == null) {
-                Query query = persistenceService
-                        .getSession()
-                        .createSQLQuery(BUDGETGROUP_INSERT);
-                query.setLong("id", bgroupId);
-                query.setString("name", coa.getGlcode() + "-" + coa.getName());
-                query.setString("description", coa.getName());
-                query.setBoolean("isactive", true);
-
+                budgetGroup = new BudgetGroup();
+                budgetGroup.setName(coa.getGlcode() + "-" +
+                        coa.getName());
+                budgetGroup.setDescription(coa.getName());
+                budgetGroup.setIsActive(true);
                 if (coa.getType().compareTo('E') == 0) {
-                    query.setString("accounttype", BudgetAccountType.REVENUE_EXPENDITURE.toString());
-                    query.setString("budgetingtype", BudgetingType.DEBIT.toString());
-                }
-                else if (coa.getType().compareTo('A') == 0) {
-                    query.setString("accounttype", BudgetAccountType.CAPITAL_EXPENDITURE.toString());
-                    query.setString("budgetingtype", BudgetingType.DEBIT.toString());
+                    budgetGroup.setAccountType(BudgetAccountType.REVENUE_EXPENDITURE);
+                    budgetGroup.setBudgetingType(BudgetingType.DEBIT);
+                } else if (coa.getType().compareTo('A') == 0) {
+                    budgetGroup.setAccountType(BudgetAccountType.CAPITAL_EXPENDITURE);
+                    budgetGroup.setBudgetingType(BudgetingType.DEBIT);
                 } else if (coa.getType().compareTo('L') == 0) {
-                    query.setString("accounttype", BudgetAccountType.CAPITAL_RECEIPTS.toString());
-                    query.setString("budgetingtype", BudgetingType.CREDIT.toString());
+                    budgetGroup.setAccountType(BudgetAccountType.CAPITAL_RECEIPTS);
+                    budgetGroup.setBudgetingType(BudgetingType.CREDIT);
                 } else if (coa.getType().compareTo('I') == 0) {
-                    query.setString("accounttype", BudgetAccountType.REVENUE_RECEIPTS.toString());
-                    query.setString("budgetingtype", BudgetingType.CREDIT.toString());
+                    budgetGroup.setAccountType(BudgetAccountType.REVENUE_RECEIPTS);
+                    budgetGroup.setBudgetingType(BudgetingType.CREDIT);
                 }
-
-                if (coa.getClassification().compareTo(1l) == 0 || coa.getClassification().compareTo(2l) == 0
-                        || coa.getClassification().compareTo(4l) == 0) {
-                    query.setLong("mincode", coa.getId());
-                    query.setLong("maxcode", coa.getId());
-                } else
-                {
-                    query.setLong("mincode", (Long) null);
-                    query.setLong("maxcode", (Long) null);
+                if (coa.getClassification().compareTo(1l) == 0 ||
+                        coa.getClassification().compareTo(2l) == 0 || coa.getClassification().compareTo(4l) == 0) {
+                    budgetGroup.setMinCode(coa);
+                    budgetGroup.setMaxCode(coa);
                 }
-                query.setDate("updatedtimestamp", new Date());
-                query.executeUpdate();
-                budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id = ?", bgroupId);
+                budgetGroup.setMajorCode(null);
+                budgetGroupService.applyAuditing(budgetGroup);
+                budgetGroup = budgetGroupService.persist(budgetGroup);
                 if (coa.getType().compareTo('E') == 0 || coa.getType().compareTo('A') == 0) {
                     coa.setBudgetCheckReq(true);
                     coa = chartOfAccountsService.update(coa);
                 }
             }
+
         } catch (final ValidationException e)
         {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
