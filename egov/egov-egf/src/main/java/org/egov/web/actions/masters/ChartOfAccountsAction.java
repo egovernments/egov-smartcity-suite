@@ -308,13 +308,16 @@ public class ChartOfAccountsAction extends BaseFormAction {
                 throw new ValidationException(Arrays.asList(new ValidationError(message, message)));
             }
         for (final Accountdetailtype entry : rowsToBeAdded)
+        
             if (!coaHasAccountdetailtype(entry, accounts)) {
                 final CChartOfAccountDetail chartOfAccountDetail = new CChartOfAccountDetail();
                 chartOfAccountDetail.setDetailTypeId(entry);
                 chartOfAccountDetail.setGlCodeId(accounts);
                 accounts.getChartOfAccountDetails().add(chartOfAccountDetail);
+                chartOfAccountsService.persist(accounts);
             }
-        chartOfAccountsService.persist(accounts);
+        
+        
         chartOfAccountsService.getSession().flush();
     }
 

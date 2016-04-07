@@ -122,7 +122,7 @@ public class PropertyThirdPartyService {
                     LOGGER.debug("Inside applicationType:" + applicationType + "for property" + property);
                 if (!property.getState().getHistory().isEmpty()) {
                     int size = property.getState().getHistory().size();
-                    stateHistory = property.getState().getHistory().get(size - 1);
+                    stateHistory = property.getStateHistory().get(size - 1);
                 }
                 if (property.getState().getValue().equals(WF_STATE_CLOSED)
                         && (stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()
@@ -151,7 +151,7 @@ public class PropertyThirdPartyService {
                     LOGGER.debug("Inside applicationType:" + applicationType + "for property mutation" + mutation);
                 if (!mutation.getState().getHistory().isEmpty()) {
                     int size = mutation.getState().getHistory().size();
-                    stateHistory = mutation.getState().getHistory().get(size - 1);
+                    stateHistory = mutation.getStateHistory().get(size - 1);
                 }
                 if (mutation.getState().getValue().equals(WF_STATE_CLOSED)
                         && (stateHistory.getValue().equals(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()
@@ -181,7 +181,7 @@ public class PropertyThirdPartyService {
                             + vacancyRemission);
                 if (!vacancyRemission.getState().getHistory().isEmpty()) {
                     int size = vacancyRemission.getState().getHistory().size();
-                    stateHistory = vacancyRemission.getState().getHistory().get(size - 1);
+                    stateHistory = vacancyRemission.getStateHistory().get(size - 1);
                 }
                 if (vacancyRemission.getState().getValue().equals(WF_STATE_CLOSED)
                         && stateHistory.getValue().endsWith(WF_STATE_BILL_COLLECTOR_APPROVED)) {
@@ -210,7 +210,7 @@ public class PropertyThirdPartyService {
                             + revisionPetition);
                 if (!revisionPetition.getState().getHistory().isEmpty()) {
                     int size = revisionPetition.getState().getHistory().size();
-                    stateHistory = revisionPetition.getState().getHistory().get(size - 1);
+                    stateHistory = revisionPetition.getStateHistory().get(size - 1);
                 }
                 if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)
                         && (stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()

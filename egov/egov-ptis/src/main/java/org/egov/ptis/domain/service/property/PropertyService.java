@@ -112,7 +112,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
@@ -2685,13 +2684,14 @@ public class PropertyService {
         return wfInitiator;
     }
 
-    public List<Hashtable<String, Object>> populateHistory(final State state) {
+    public List<Hashtable<String, Object>> populateHistory(final StateAware stateAware) {
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
         final Hashtable<String, Object> map = new Hashtable<String, Object>();
         Assignment assignment = null;
         User user = null;
         Position ownerPosition = null;
-        if (null != state) {
+        if (stateAware.hasState()) {
+            State state = stateAware.getCurrentState();
             map.put("date", state.getLastModifiedDate());
             map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
             map.put("status", state.getValue());
@@ -2705,17 +2705,18 @@ public class PropertyService {
             } else if (null != user)
                 map.put("user", user.getUsername() + "::" + user.getName());
             historyTable.add(map);
+            List<StateHistory> stateHistory = stateAware.getStateHistory();
             if (null != state.getHistory() && !state.getHistory().isEmpty()) {
-                Collections.reverse(state.getHistory());
-                for (final StateHistory stateHistory : state.getHistory()) {
+                Collections.reverse(stateHistory);
+                for (final StateHistory historyState : stateHistory) {
                     final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
-                    HistoryMap.put("date", stateHistory.getLastModifiedDate());
-                    HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
-                            + stateHistory.getLastModifiedBy().getName());
-                    HistoryMap.put("status", stateHistory.getValue());
-                    HistoryMap.put("comments", null != stateHistory.getComments() ? stateHistory.getComments() : "");
-                    ownerPosition = stateHistory.getOwnerPosition();
-                    user = stateHistory.getOwnerUser();
+                    HistoryMap.put("date", historyState.getLastModifiedDate());
+                    HistoryMap.put("updatedBy", historyState.getLastModifiedBy().getUsername() + "::"
+                            + historyState.getLastModifiedBy().getName());
+                    HistoryMap.put("status", historyState.getValue());
+                    HistoryMap.put("comments", null != historyState.getComments() ? historyState.getComments() : "");
+                    ownerPosition = historyState.getOwnerPosition();
+                    user = historyState.getOwnerUser();
                     if (null != ownerPosition) {
                         assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
                         HistoryMap.put("user", null != assignment && null != assignment.getEmployee() ? assignment

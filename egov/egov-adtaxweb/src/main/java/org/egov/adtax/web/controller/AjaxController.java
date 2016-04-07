@@ -14,6 +14,7 @@ import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.service.SubCategoryService;
+import org.egov.adtax.service.penalty.AdvertisementTaxCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -36,7 +37,8 @@ public class AjaxController {
     @Autowired
     private SubCategoryService subCategoryService;
     protected @Autowired AdvertisementRateService advertisementRateService;
-
+    
+    private  @Autowired AdvertisementTaxCalculator advertisementTaxCalculator;
     @Autowired
     @Qualifier("propertyIntegrationServiceImpl")
     private PropertyIntegrationService propertyIntegrationService;
@@ -69,44 +71,8 @@ public class AjaxController {
     public @ResponseBody Double getTaxAmount(@RequestParam final Long unitOfMeasureId,
             @RequestParam final Double measurement, @RequestParam final Long subCategoryId,
             @RequestParam final Long rateClassId) {
-        AdvertisementRatesDetails rate = null;
 
-        rate = advertisementRateService.getRatesBySubcategoryUomClassAndMeasurementByFinancialYearInDecendingOrder(
-                subCategoryId, unitOfMeasureId, rateClassId, measurement);
-
-        if (rate != null) {
-            // get data based on financial year, if not present, get from
-            // previous year data.
-            // MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
-
-            // CHECK WHETHER CALCULATION REQUIRED BASED ON PERUNIT BASIS OR
-            // NORMAL
-            // WAY ?
-            final List<AppConfigValues> calculateSorByUnit = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.CALCULATESORBYUNIT);
-            if (!calculateSorByUnit.isEmpty())
-                if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("NO"))
-                    return BigDecimal.valueOf(rate.getAmount()).multiply(BigDecimal.valueOf(measurement))
-                            .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                else if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("YES")) {
-
-                    final BigDecimal unitRate = rate.getAdvertisementRate().getUnitrate() != null ? BigDecimal
-                            .valueOf(rate.getAdvertisementRate().getUnitrate()) : BigDecimal.ZERO;
-
-                    // MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
-                    if (unitRate != BigDecimal.valueOf(0))
-                        return BigDecimal
-                                .valueOf(rate.getAmount())
-                                .multiply(
-                                        BigDecimal.valueOf(measurement).divide(unitRate, 4, RoundingMode.HALF_UP)
-                                                .setScale(0, RoundingMode.UP)).setScale(4, BigDecimal.ROUND_HALF_UP)
-                                .doubleValue();
-                    else
-                        return Double.valueOf(0);
-                }
-        }
-
-        return Double.valueOf(0);
+        return advertisementTaxCalculator.calculateTaxAmount(unitOfMeasureId, measurement, subCategoryId, rateClassId);
 
     }
 }

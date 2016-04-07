@@ -39,16 +39,8 @@
  */
 package org.egov.adtax.service.penalty;
 
-import java.math.BigDecimal;
-import java.util.Map;
+public interface AdvertisementTaxCalculator {
 
-import org.egov.adtax.entity.AdvertisementPermitDetail;
-import org.egov.commons.Installment;
-import org.egov.infra.exception.ApplicationRuntimeException;
+    Double calculateTaxAmount(Long unitOfMeasureId, Double measurement, Long subCategoryId, Long rateClassId);
 
-public interface AdvertisementPenaltyCalculator {
-
-    BigDecimal calculatePenalty(AdvertisementPermitDetail advPermitDetail) throws ApplicationRuntimeException;
-
-    Map<Installment, BigDecimal> getPenaltyByInstallment(AdvertisementPermitDetail advPermitDetail);
 }

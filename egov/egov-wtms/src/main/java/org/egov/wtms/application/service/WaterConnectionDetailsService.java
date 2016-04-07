@@ -804,7 +804,7 @@ public class WaterConnectionDetailsService {
                         .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
                         || waterConnectionDetails
                         .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED)) {
-                    final List<StateHistory> stateHistoryList = waterConnectionDetails.getState().getHistory();
+                    final List<StateHistory> stateHistoryList = waterConnectionDetails.getStateHistory();
                     Date applicationDate = null;
                     for (final StateHistory stateHistory : stateHistoryList)
                         if (stateHistory.getValue().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSER)
