@@ -69,7 +69,9 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -126,6 +128,9 @@ public class WaterTaxUtils {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
     
     @Autowired
     @Qualifier("fileStoreService")
@@ -482,6 +487,22 @@ public class WaterTaxUtils {
         return waterTaxDueforParent.doubleValue();
     }
 
+    
+     
+    public WaterDemandConnection getCurrentDemand(WaterConnectionDetails waterConnectionDetails)
+    
+    {
+    	WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
+    	
+    	final List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService.findByWaterConnectionDetails(waterConnectionDetails);
+            for (final WaterDemandConnection waterDemandConnection : waterDemandConnectionList) 
+            	if (waterDemandConnection.getDemand().getIsHistory().equalsIgnoreCase(WaterTaxConstants.DEMANDISHISTORY)){
+            		waterdemandConnection = waterDemandConnection;
+            		break;
+            	 }
+            	
+            return waterdemandConnection;
+    }
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
         if (EgovThreadLocals.getUserId() != null) {

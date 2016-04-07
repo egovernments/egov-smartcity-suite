@@ -180,9 +180,7 @@ public class WaterConnectionDetails extends StateAware {
     @Temporal(value = TemporalType.DATE)
     private Date approvalDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "demand")
-    private EgDemand demand;
+
 
     @Temporal(value = TemporalType.DATE)
     private Date workOrderDate;
@@ -229,8 +227,6 @@ public class WaterConnectionDetails extends StateAware {
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<NonMeteredConnBillDetails>(0);
 
-    @Transient
-    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
 
     private String closeConnectionType;
 
@@ -262,13 +258,6 @@ public class WaterConnectionDetails extends StateAware {
         this.meterConnection = meterConnection;
     }
 
-    public List<DemandDetail> getDemandDetailBeanList() {
-        return demandDetailBeanList;
-    }
-
-    public void setDemandDetailBeanList(final List<DemandDetail> demandDetailBeanList) {
-        this.demandDetailBeanList = demandDetailBeanList;
-    }
 
     @Override
     public Long getId() {
@@ -438,13 +427,7 @@ public class WaterConnectionDetails extends StateAware {
         this.numberOfRooms = numberOfRooms;
     }
 
-    public EgDemand getDemand() {
-        return demand;
-    }
 
-    public void setDemand(final EgDemand demand) {
-        this.demand = demand;
-    }
 
     public FieldInspectionDetails getFieldInspectionDetails() {
         return fieldInspectionDetails;

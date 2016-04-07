@@ -329,9 +329,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                         && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
                         && waterConnectionDetails.getBplCardHolderName() != null)
                     waterConnectionDetails.setBplCardHolderName(null);
-
                 populateEstimationDetails(waterConnectionDetails);
-                waterConnectionDetails.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
+                waterTaxUtils.getCurrentDemand(waterConnectionDetails).setDemand(connectionDemandService.createDemand(waterConnectionDetails));
                 waterConnectionDetailsService.save(waterConnectionDetails);
                 waterConnectionDetailsService.getCurrentSession().flush();
                 // Attach any other file during field inspection and estimation

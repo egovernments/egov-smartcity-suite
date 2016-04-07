@@ -129,6 +129,7 @@ public class WaterTaxConstants {
     public static final String TEMPERARYCLOSE = "Temporary";
     public static final String PERMENENTCLOSECODE = "P";
     public static final String TEMPERARYCLOSECODE = "T";
+    public static final String DEMANDISHISTORY = "N";
 
     public static final String WF_STATE_REJECTED = "Rejected";
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";

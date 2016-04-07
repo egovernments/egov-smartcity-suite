@@ -945,7 +945,7 @@ public class WaterConnectionDetailsService {
     }
 
     public BigDecimal getTotalAmount(final WaterConnectionDetails waterConnectionDetails) {
-        final EgDemand currentDemand = waterConnectionDetails.getDemand();
+        final EgDemand currentDemand =  waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal balance = BigDecimal.ZERO;
         if (currentDemand != null) {
             final List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
