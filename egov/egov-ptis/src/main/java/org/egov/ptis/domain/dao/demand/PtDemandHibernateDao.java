@@ -336,8 +336,6 @@ public class PtDemandHibernateDao implements PtDemandDao {
         final Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
         Installment installment = null;
         List dmdCollList = new ArrayList();
-        Installment currInst = null;
-        Installment secondHalf = null;
         Integer instId = null;
         BigDecimal currFirstHalfDmd = BigDecimal.ZERO;
         BigDecimal currSecondHalfDmd = BigDecimal.ZERO;
@@ -347,13 +345,10 @@ public class PtDemandHibernateDao implements PtDemandDao {
         BigDecimal arrColelection = BigDecimal.ZERO;
         BigDecimal demand = BigDecimal.ZERO;
         BigDecimal collection = BigDecimal.ZERO;
-        BigDecimal rebate = BigDecimal.ZERO;
         final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
 
         if (currDemand != null)
             dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
-        final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-        currInst = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 
         Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
 
@@ -362,7 +357,6 @@ public class PtDemandHibernateDao implements PtDemandDao {
             instId = Integer.valueOf(listObj[0].toString());
             demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]) : BigDecimal.ZERO;
             collection = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
-            rebate = listObj[3] != null ? new BigDecimal((Double) listObj[3]) : BigDecimal.ZERO;
 
             installment = (Installment) installmentDao.findById(instId, false);
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
