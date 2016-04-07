@@ -530,9 +530,9 @@ public class PropertyTaxUtil {
         }
         if (isRebatePeriodActive()) {
             Map<String, Installment> currYearInstMap = getInstallmentsForCurrYear(new Date());
-            Installment currSecondHalf = currYearInstMap.get(CURRENTYEAR_SECOND_HALF);
-            final DateTime dateTime = new DateTime(currSecondHalf.getInstallmentYear());
-            key = getOrder(currSecondHalf.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE));
+            Installment currFirstHalf = currYearInstMap.get(CURRENTYEAR_FIRST_HALF);
+            final DateTime dateTime = new DateTime(currFirstHalf.getInstallmentYear());
+            key = getOrder(currFirstHalf.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE));
             instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-"
                     + DEMANDRSN_CODE_REBATE);
         }

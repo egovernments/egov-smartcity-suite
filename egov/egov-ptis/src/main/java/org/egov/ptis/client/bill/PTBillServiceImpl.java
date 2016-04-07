@@ -40,7 +40,6 @@
 package org.egov.ptis.client.bill;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
@@ -210,10 +209,10 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
         BigDecimal rebate = billable.calculateEarlyPayRebate(dmndForRebate);
         if (rebate.compareTo(BigDecimal.ZERO) > 0 && currFinYearColl.compareTo(BigDecimal.ZERO) == 0) {
-            Installment currSecondHalf = currInstallments.get(CURRENTYEAR_SECOND_HALF);
-            installmentDate = new DateTime(currSecondHalf.getInstallmentYear().getTime());
+            Installment currFirstHalf = currInstallments.get(CURRENTYEAR_FIRST_HALF);
+            installmentDate = new DateTime(currFirstHalf.getInstallmentYear().getTime());
             key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + DEMANDRSN_CODE_REBATE;
-            billDetailBean = new BillDetailBean(currSecondHalf, orderMap.get(key), key, rebate,
+            billDetailBean = new BillDetailBean(currFirstHalf, orderMap.get(key), key, rebate,
                     PropertyTaxConstants.GLCODE_FOR_TAXREBATE, DEMANDRSN_CODE_REBATE, Integer.valueOf(0));
             billDetails.add(createBillDet(billDetailBean));
         }

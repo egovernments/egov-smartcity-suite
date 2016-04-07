@@ -382,7 +382,7 @@ public class PropertyTaxCollection extends TaxCollection {
                     final String reason = desc[0].trim();
                     final String instDesc = desc[1].trim();
                     demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
-                    if (!(instDesc.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
+                    if (!((Boolean) rebateDetails.get(FULL_PAYMENT)) || !(instDesc.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
                     || instDesc.equals(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription()))) {
 
                         if (rcptAccInfo.getGlCode().equalsIgnoreCase(
