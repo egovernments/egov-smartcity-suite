@@ -101,14 +101,14 @@ body {
 									</div>
 								</div>
 								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.annualvalue" />
+								<div class="col-xs-3 add-margin">
+										<spring:message code="lbl.category.ownership" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										Rs.
-										<fmt:formatNumber value="${ARV}" pattern="#,##0" />
+										<c:out default="N/A"
+											value="${property.propertyDetail.propertyTypeMaster.type}"></c:out>
 									</div>
-									<div class="col-xs-3 add-margin">
+								<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.effectivedate" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
@@ -117,29 +117,7 @@ body {
 									</div>
 								</div>
 								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.category.ownership" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<c:out default="N/A"
-											value="${property.propertyDetail.propertyTypeMaster.type}"></c:out>
-									</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.appartmentorcomplex" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.propertyDetail.apartment.name}"
-											default="N/A"></c:out>
-									</div>
-								</div>
-								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.extentofsite" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.propertyDetail.sitalArea.area}"
-											default="N/A"></c:out>
-									</div>
+									
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.extent.appurtenant" />
 									</div>
@@ -148,8 +126,6 @@ body {
 											value="${property.propertyDetail.extentAppartenauntLand}"
 											default="N/A"></c:out>
 									</div>
-								</div>
-								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.superstructure" />
 									</div>
@@ -161,14 +137,10 @@ body {
 											<div class="col-xs-3 add-margin view-content">No</div>
 										</c:otherwise>
 									</c:choose>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.siteowner" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.propertyDetail.siteOwner}"
-											default="N/A"></c:out>
-									</div>
 								</div>
+								<div class="row add-border">
+									
+									</div>
 								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.registrationDoc.no" />
@@ -290,9 +262,9 @@ body {
 									code="lbl.doorNumber" /><span class="mandatory1">*</span> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="" id="doorNumber" name="doorNumber"
-									value="${doorNumber}" maxlength="15"
+									value="${doorNumber}" maxlength="18"
 									cssClass="form-control patternvalidation"
-									data-pattern="alphanumerichyphenbackslash" />
+									data-pattern="address" />
 							</div>
 						</div>
 					</div>
@@ -330,7 +302,7 @@ body {
 												path="basicProperty.propertyOwnerInfo[${status.index}].owner.password" />
 											<td class="blueborderfortd" align="center"><form:input
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
-													id="aadharNumber" maxlength="12" cssClass="form-control" />
+													id="aadharNumber" maxlength="12" cssClass="form-control"/>
 											</td>
 											<td class="blueborderfortd" align="center"><form:input
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.mobileNumber"
@@ -342,9 +314,9 @@ body {
 
 											<td class="blueborderfortd" align="center"><form:select
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.gender"
-													id="gender" name="gender" data-first-option="false"
+													id="sgender" name="gender" data-first-option="false"
 													cssClass="form-control">
-													<option>--select--</option>
+													<option value="">--select--</option>
 													<form:options items="${gender}" />
 												</form:select></td>
 											<td class="blueborderfortd" align="center"><form:input
@@ -354,7 +326,7 @@ body {
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.guardianRelation"
 													id="guardianRelation" name="guardianRelation"
 													data-first-option="false" cssClass="form-control">
-													<option>--select--</option>
+													<option value="">--select--</option>
 													<form:options items="${guardianRelationMap}" />
 												</form:select></td>
 											<td class="blueborderfortd" align="center"><form:input
@@ -387,29 +359,35 @@ body {
 	src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script>
 	jQuery('#submitform').click(function(e) {
-		if (jQuery('#doorNumber').val() == '') {
+
+		
+		if (!jQuery('#doorNumber').val()) {
 			bootbox.alert('Door number is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		if (jQuery('#mobileNumber').val() == '') {
+		else if (!jQuery('#mobileNumber').val()) {
 			bootbox.alert('Mobile Number is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		if (jQuery('#name').val() == '') {
+		else if (!jQuery('#name').val()) {
 			bootbox.alert('Owner Name is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		if (jQuery('#gender').val() == '') {
+		else if (!jQuery('#sgender').val()) {
 			bootbox.alert('Gender is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		if (jQuery('#guardianRelation').val() == '') {
+		else if (!jQuery('#guardianRelation').val()) {
 			bootbox.alert('Guardian Relation is mandatory');
-			e.preventDefault();
+			return false;
 		}
-		if (jQuery('#guardianName').val() == '') {
+		else if (!jQuery('#guardianName').val()) {
 			bootbox.alert('Guardian Name is mandatory');
-			e.preventDefault();
-		}
+			return false;
+		}		
+		
+
+		return true;
+		
 	})
 </script>

@@ -38,7 +38,6 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ page import="org.egov.utils.Constants;"%>
 <div class="buttonbottom">
 	<table border="0" width="100" cellspacing="0" align="center">
 		<tr>
