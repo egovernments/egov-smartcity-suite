@@ -101,14 +101,14 @@ body {
 									</div>
 								</div>
 								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.annualvalue" />
+								<div class="col-xs-3 add-margin">
+										<spring:message code="lbl.category.ownership" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										Rs.
-										<fmt:formatNumber value="${ARV}" pattern="#,##0" />
+										<c:out default="N/A"
+											value="${property.propertyDetail.propertyTypeMaster.type}"></c:out>
 									</div>
-									<div class="col-xs-3 add-margin">
+								<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.effectivedate" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
@@ -117,29 +117,7 @@ body {
 									</div>
 								</div>
 								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.category.ownership" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<c:out default="N/A"
-											value="${property.propertyDetail.propertyTypeMaster.type}"></c:out>
-									</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.appartmentorcomplex" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.propertyDetail.apartment.name}"
-											default="N/A"></c:out>
-									</div>
-								</div>
-								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.extentofsite" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.propertyDetail.sitalArea.area}"
-											default="N/A"></c:out>
-									</div>
+									
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.extent.appurtenant" />
 									</div>
@@ -148,8 +126,6 @@ body {
 											value="${property.propertyDetail.extentAppartenauntLand}"
 											default="N/A"></c:out>
 									</div>
-								</div>
-								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.superstructure" />
 									</div>
@@ -161,14 +137,10 @@ body {
 											<div class="col-xs-3 add-margin view-content">No</div>
 										</c:otherwise>
 									</c:choose>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.siteowner" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.propertyDetail.siteOwner}"
-											default="N/A"></c:out>
-									</div>
 								</div>
+								<div class="row add-border">
+									
+									</div>
 								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.registrationDoc.no" />
@@ -290,9 +262,9 @@ body {
 									code="lbl.doorNumber" /><span class="mandatory1">*</span> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="" id="doorNumber" name="doorNumber"
-									value="${doorNumber}" maxlength="15"
+									value="${doorNumber}" maxlength="18"
 									cssClass="form-control patternvalidation"
-									data-pattern="alphanumerichyphenbackslash" />
+									data-pattern="address" />
 							</div>
 						</div>
 					</div>
@@ -330,7 +302,7 @@ body {
 												path="basicProperty.propertyOwnerInfo[${status.index}].owner.password" />
 											<td class="blueborderfortd" align="center"><form:input
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
-													id="aadharNumber" maxlength="12" cssClass="form-control" />
+													id="aadharNumber" maxlength="12" cssClass="form-control"/>
 											</td>
 											<td class="blueborderfortd" align="center"><form:input
 													path="basicProperty.propertyOwnerInfo[${status.index}].owner.mobileNumber"
@@ -391,23 +363,23 @@ body {
 			bootbox.alert('Door number is mandatory');
 			e.preventDefault();
 		}
-		if (jQuery('#mobileNumber').val() == '') {
+		else if (jQuery('#mobileNumber').val() == '') {
 			bootbox.alert('Mobile Number is mandatory');
 			e.preventDefault();
 		}
-		if (jQuery('#name').val() == '') {
+		else if (jQuery('#name').val() == '') {
 			bootbox.alert('Owner Name is mandatory');
 			e.preventDefault();
 		}
-		if (jQuery('#gender').val() == '') {
+		else if (jQuery('#gender').val() == '') {
 			bootbox.alert('Gender is mandatory');
 			e.preventDefault();
 		}
-		if (jQuery('#guardianRelation').val() == '') {
+		else if (jQuery('#guardianRelation').val() == '') {
 			bootbox.alert('Guardian Relation is mandatory');
 			e.preventDefault();
 		}
-		if (jQuery('#guardianName').val() == '') {
+		else if (jQuery('#guardianName').val() == '') {
 			bootbox.alert('Guardian Name is mandatory');
 			e.preventDefault();
 		}
