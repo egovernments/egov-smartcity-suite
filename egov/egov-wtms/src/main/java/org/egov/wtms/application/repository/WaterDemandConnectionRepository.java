@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.application.repository;
 
-
 import java.util.List;
 
 import org.egov.demand.model.EgDemand;
@@ -51,10 +50,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WaterDemandConnectionRepository extends JpaRepository<WaterDemandConnection, Long> {
 
-	List<WaterDemandConnection> findByWaterConnectionDetails(WaterConnectionDetails waterConnectionDetails);
-	
-	WaterDemandConnection findByWaterConnectionDetailsAndDemand(WaterConnectionDetails waterConnectionDetails,EgDemand demand);
-	
+    List<WaterDemandConnection> findByWaterConnectionDetails(WaterConnectionDetails waterConnectionDetails);
 
+    WaterDemandConnection findByWaterConnectionDetailsAndDemand(WaterConnectionDetails waterConnectionDetails,
+            EgDemand demand);
 
 }

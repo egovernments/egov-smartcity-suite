@@ -57,7 +57,6 @@ public class WaterDemandConnectionService {
     @PersistenceContext
     private EntityManager entityManager;
 
-
     @Autowired
     public WaterDemandConnectionService(final WaterDemandConnectionRepository waterDemandConnectionRepository) {
         this.waterDemandConnectionRepository = waterDemandConnectionRepository;
@@ -68,37 +67,30 @@ public class WaterDemandConnectionService {
     }
 
     public List<WaterDemandConnection> findAll() {
-        return waterDemandConnectionRepository.findAll(new Sort(Sort.Direction.ASC,
-                "id"));
+        return waterDemandConnectionRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
     }
 
     public WaterDemandConnection load(final Long id) {
         return waterDemandConnectionRepository.getOne(id);
     }
-    
-    public WaterDemandConnection findByWaterConnectionDetailsAndDemand(final WaterConnectionDetails waterConnectionDetails,final EgDemand demand) {
+
+    public WaterDemandConnection findByWaterConnectionDetailsAndDemand(
+            final WaterConnectionDetails waterConnectionDetails, final EgDemand demand) {
         return waterDemandConnectionRepository.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand);
     }
 
-    
-  
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-	@Transactional
-	public WaterDemandConnection createWaterDemandConnection(
-			final WaterDemandConnection waterDemandConnection) {
-		return waterDemandConnectionRepository.save(waterDemandConnection);
-	}
+    @Transactional
+    public WaterDemandConnection createWaterDemandConnection(final WaterDemandConnection waterDemandConnection) {
+        return waterDemandConnectionRepository.save(waterDemandConnection);
+    }
 
-	@Transactional
-	public void updateWaterDemandConnection(
-			final WaterDemandConnection waterDemandConnection) {
-		waterDemandConnectionRepository.save(waterDemandConnection);
-	}
+    @Transactional
+    public void updateWaterDemandConnection(final WaterDemandConnection waterDemandConnection) {
+        waterDemandConnectionRepository.save(waterDemandConnection);
+    }
 
-    
 }
-
-
