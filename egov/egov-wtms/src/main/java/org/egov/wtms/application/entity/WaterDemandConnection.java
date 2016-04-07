@@ -110,4 +110,13 @@ public class WaterDemandConnection extends AbstractAuditable {
 		this.waterConnectionDetails = waterConnectionDetails;
 	}
 
+	public List<DemandDetail> getDemandDetailBeanList() {
+		return demandDetailBeanList;
+	}
+
+	public void setDemandDetailBeanList(
+			final List<DemandDetail> demandDetailBeanList) {
+		this.demandDetailBeanList = demandDetailBeanList;
+	}
+
 }

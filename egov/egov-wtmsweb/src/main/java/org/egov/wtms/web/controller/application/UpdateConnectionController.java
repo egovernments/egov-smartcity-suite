@@ -338,6 +338,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 WaterDemandConnection waterDemandConnection =  waterTaxUtils.getCurrentDemand(waterConnectionDetails);
                 waterDemandConnection.setDemand(connectionDemandService.createDemand(waterConnectionDetails)); 
                 waterDemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+                waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
                 waterDemandConnectionService.createWaterDemandConnection(waterDemandConnection);
                 waterConnectionDetailsService.save(waterConnectionDetails);
                 waterConnectionDetailsService.getCurrentSession().flush();

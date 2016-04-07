@@ -500,6 +500,7 @@ public class ConnectionDemandService {
                 final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
                 waterdemandConnection.setDemand(demandObj);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+                waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
                 waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
             }
             final List<EgBill> billlist = demandGenericDao.getAllBillsForDemand(demandObj, "N", "N");
@@ -558,6 +559,7 @@ public class ConnectionDemandService {
             final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
             waterdemandConnection.setDemand(demandObj);
             waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+            waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
             waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
         }
 
@@ -663,6 +665,7 @@ public class ConnectionDemandService {
                 final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
                 waterdemandConnection.setDemand(demand);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+                waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
                 waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
             }
 

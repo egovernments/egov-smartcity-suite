@@ -445,6 +445,10 @@ public class WaterConnectionDetails extends StateAware {
     public void setWaterDemandConnection(final List<WaterDemandConnection> waterDemandConnection) {
         this.waterDemandConnection = waterDemandConnection;
     }
+    
+    public void addWaterDemandConnection(WaterDemandConnection waterDemandConnection){
+        this.getWaterDemandConnection().add(waterDemandConnection);
+    }
 
     public void setApplicationDocs(final List<ApplicationDocuments> applicationDocs) {
         this.applicationDocs = applicationDocs;
