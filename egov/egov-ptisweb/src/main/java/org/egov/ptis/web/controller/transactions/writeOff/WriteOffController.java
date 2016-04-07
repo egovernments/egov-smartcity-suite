@@ -43,8 +43,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_PENALTY_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_PENALTY_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
@@ -112,8 +112,8 @@ public class WriteOffController extends GenericWorkFlowController {
         }
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
                 .getActiveProperty());
-        final BigDecimal currTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
-                propertyTaxDetails.get(CURR_COLL_STR));
+        final BigDecimal currTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
+                propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
         final BigDecimal arrearTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                 propertyTaxDetails.get(ARR_COLL_STR));
         final Map<String, BigDecimal> penaltyDetails = ptDemandDAO.getPenaltyDemandCollMap(basicProperty

@@ -302,9 +302,9 @@ public class PropertyExternalService {
     private void loadPropertyDues() {
         final Map<String, BigDecimal> resultmap = ptDemandDAO.getDemandCollMap(property);
         if (null != resultmap && !resultmap.isEmpty()) {
-            final BigDecimal currDmd = resultmap.get(PropertyTaxConstants.CURR_DMD_STR);
+            final BigDecimal currDmd = resultmap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR);
             final BigDecimal arrDmd = resultmap.get(PropertyTaxConstants.ARR_DMD_STR);
-            final BigDecimal currCollection = resultmap.get(PropertyTaxConstants.CURR_COLL_STR);
+            final BigDecimal currCollection = resultmap.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR);
             final BigDecimal arrColelection = resultmap.get(PropertyTaxConstants.ARR_COLL_STR);
 
             final BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrColelection);

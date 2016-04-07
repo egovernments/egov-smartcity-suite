@@ -345,6 +345,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
         BigDecimal currFirstHalfCollection = BigDecimal.ZERO;
         BigDecimal currSecondHalfCollection = BigDecimal.ZERO;
         BigDecimal arrColelection = BigDecimal.ZERO;
+        BigDecimal demand = BigDecimal.ZERO;
+        BigDecimal collection = BigDecimal.ZERO;
+        BigDecimal rebate = BigDecimal.ZERO;
         final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
 
         if (currDemand != null)
@@ -357,42 +360,23 @@ public class PtDemandHibernateDao implements PtDemandDao {
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
+            demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]) : BigDecimal.ZERO;
+            collection = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
+            rebate = listObj[3] != null ? new BigDecimal((Double) listObj[3]) : BigDecimal.ZERO;
+
             installment = (Installment) installmentDao.findById(instId, false);
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
-                if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
-                    currFirstHalfCollection = currFirstHalfCollection.add(new BigDecimal((Double) listObj[2]));
-                /*
-                 * adding rebate to collection (commenting this code because,
-                 * the rebate amt is been added to collection amt and is shown
-                 * as a negative amt in 'Current Tax Due' in search results and
-                 * view property screen)
-                 */
-                if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
-                    currFirstHalfCollection = currFirstHalfCollection.add(new BigDecimal((Double) listObj[3]));
-                currFirstHalfDmd = currFirstHalfDmd.add(new BigDecimal((Double) listObj[1]));
+                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                    currFirstHalfCollection = currFirstHalfCollection.add(collection);
+                currFirstHalfDmd = currFirstHalfDmd.add(demand);
             } else if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).equals(installment)) {
-                if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
-                    currSecondHalfCollection = currSecondHalfCollection.add(new BigDecimal((Double) listObj[2]));
-                /*
-                 * adding rebate to collection (commenting this code because,
-                 * the rebate amt is been added to collection amt and is shown
-                 * as a negative amt in 'Current Tax Due' in search results and
-                 * view property screen)
-                 */
-                if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
-                    currSecondHalfCollection = currSecondHalfCollection.add(new BigDecimal((Double) listObj[3]));
-                currSecondHalfDmd = currSecondHalfDmd.add(new BigDecimal((Double) listObj[1]));
+                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                    currSecondHalfCollection = currSecondHalfCollection.add(collection);
+                currSecondHalfDmd = currSecondHalfDmd.add(demand);
             } else {
-                arrDmd = arrDmd.add(new BigDecimal((Double) listObj[1]));
-                if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
-                    arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
-                /*
-                 * adding rebate to collection (commenting this code because,
-                 * the rebate amt is been added to collection amt and is shown
-                 * as a negative amt in search results and view property screen)
-                 */
-                if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
-                    arrColelection = arrColelection.add(new BigDecimal((Double) listObj[3]));
+                arrDmd = arrDmd.add(demand);
+                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                    arrColelection = arrColelection.add(collection);
             }
         }
         retMap.put(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR, currFirstHalfDmd);
