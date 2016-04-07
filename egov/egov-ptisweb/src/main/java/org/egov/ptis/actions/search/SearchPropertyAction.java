@@ -670,9 +670,11 @@ public class SearchPropertyAction extends BaseFormAction {
                     searchResultMap.put("currSecondHalfDemandDue",
                             demandCollMap.get(CURR_SECONDHALF_DMD_STR).subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
                 } else {
-                    searchResultMap.put("currDemand", "0");
-                    searchResultMap.put("arrDemandDue", "0");
-                    searchResultMap.put("currDemandDue", "0");
+                    searchResultMap.put("currFirstHalfDemand", "0");
+                    searchResultMap.put("currFirstHalfDemandDue", "0");
+                    searchResultMap.put("currSecondHalfDemand", "0");
+                    searchResultMap.put("currSecondHalfDemandDue", "0");
+                    searchResultMap.put("arrDemandDue", "0"); 
                 }
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Assessment Number : " + searchResultMap.get("assessmentNum") + ", " + "Owner Name : "
@@ -760,12 +762,17 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (pmv.getIsExempted()) {
-                    searchResultMap.put("currDemand", "0");
-                    searchResultMap.put("arrDemandDue", "0");
-                    searchResultMap.put("currDemandDue", "0");
+                    searchResultMap.put("currFirstHalfDemand", "0");
+                    searchResultMap.put("currFirstHalfDemandDue", "0");
+                    searchResultMap.put("currSecondHalfDemand", "0");
+                    searchResultMap.put("currSecondHalfDemandDue", "0");
+                    searchResultMap.put("arrDemandDue", "0"); 
                 } else {
-                    searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
-                    searchResultMap.put("currDemandDue", pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())
+                    searchResultMap.put("currFirstHalfDemand", pmv.getAggrCurrFirstHalfDmd().toString());
+                    searchResultMap.put("currFirstHalfDemandDue", pmv.getAggrCurrFirstHalfDmd().subtract(pmv.getAggrCurrFirstHalfColl())
+                            .toString());
+                    searchResultMap.put("currSecondHalfDemand", pmv.getAggrCurrSecondHalfDmd().toString());
+                    searchResultMap.put("currSecondHalfDemandDue", pmv.getAggrCurrSecondHalfDmd().subtract(pmv.getAggrCurrSecondHalfColl())
                             .toString());
                     searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
                 }
