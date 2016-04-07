@@ -803,7 +803,7 @@ public interface PropertyTaxConstants {
         }
     };
 
-    public static final String GLCODE_FOR_TAXREBATE = "4311004";// 2801002
+    public static final String GLCODE_FOR_TAXREBATE = "2202103";// 2801002
     public static final String GLCODE_FOR_PENALTY = "1402002";// 1402001,
     // 4314208
 

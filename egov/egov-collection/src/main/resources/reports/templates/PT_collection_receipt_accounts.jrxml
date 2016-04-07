@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-01-19T18:03:43 -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-04-07T21:11:44 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="097af81c-f4bf-4e72-9596-ed5b89f2e492">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -38,7 +38,7 @@
 	</field>
 	<sortField name="orderNumber"/>
 	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{crAmount}-($F{drAmount})]]></variableExpression>
+		<variableExpression><![CDATA[$F{crAmount}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="arrearFrom" class="java.lang.String" calculation="Lowest">
@@ -85,6 +85,14 @@
 	</variable>
 	<variable name="totalpaid" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{crAmount}]]></variableExpression>
+	</variable>
+	<variable name="rebate" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA["2202103".equals($F{glCode}) ? ($F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<variable name="advance" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA["3504102".equals($F{glCode}) ? ($F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<filterExpression><![CDATA[$F{isRevenueAccount} == false && ($F{crAmount} > 0 || $F{drAmount} > 0)]]></filterExpression>
 	<group name="REPORT_GROUP">
@@ -149,7 +157,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{currentInst}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{currentInst}.substring(0 , $V{currentInst}.length() - 2)]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="20">
@@ -183,7 +191,69 @@
 					<text><![CDATA[Total Penalty]]></text>
 				</staticText>
 			</band>
-			<band height="41">
+			<band height="20">
+				<printWhenExpression><![CDATA[!$V{rebate}.equals(BigDecimal.ZERO)]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20" uuid="2f21c883-5559-4615-826b-3dfbe8a523ba"/>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{rebate}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="3d7551a4-2d71-45ad-9ccd-ee06d8f241d3"/>
+					<box leftPadding="0" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Rebate]]></text>
+				</staticText>
+			</band>
+			<band height="20">
+				<printWhenExpression><![CDATA[!$V{advance}.equals(BigDecimal.ZERO)]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20" uuid="2f21c883-5559-4615-826b-3dfbe8a523ba"/>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{advance}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="3d7551a4-2d71-45ad-9ccd-ee06d8f241d3"/>
+					<box leftPadding="0" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Advance]]></text>
+				</staticText>
+			</band>
+			<band height="43">
 				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
 					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20" uuid="54cdcec1-afd0-4a18-912e-7dbaaea065d7"/>
 					<box leftPadding="5" rightPadding="5">
