@@ -116,8 +116,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PropertyTaxCollection extends TaxCollection {
 
-    private static final String FULL_PAYMENT = "fullPayment";
-    private static final String REBATE_AMOUNT = "rebateAmount";
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxCollection.class);
     private PersistenceService persistenceService;
     private BigDecimal totalAmount = BigDecimal.ZERO;
