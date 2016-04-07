@@ -94,8 +94,8 @@ function callAjaxSearch() {
 					1
 					if (data.estimateNumber != null)
 						$('td:eq(3)', row).html(
-								'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
-										+ data.id + '\')">'
+								'<a href="javascript:void(0);" onclick="openLineEstimate(\''
+										+ data.lineEstimateId + '\')">'
 										+ data.estimateNumber + '</a>');
 					$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					$('td:eq(8)', row)
@@ -144,8 +144,8 @@ function callAjaxSearch() {
 			});
 }
 
-function openLetterOfAcceptance(id) {
-	window.open("/egworks/lineestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+function openLineEstimate(lineEstimateId) {
+	window.open("/egworks/lineestimate/view/" + lineEstimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 $(document).ready(function() {

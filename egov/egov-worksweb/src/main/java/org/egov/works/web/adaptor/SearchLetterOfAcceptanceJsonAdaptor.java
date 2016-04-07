@@ -43,12 +43,14 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkO
                 final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
                 final String nameOfWork = led.getNameOfWork();
                 jsonObject.addProperty("nameOfWork", nameOfWork);
+                jsonObject.addProperty("lineEstimateId", led.getLineEstimate().getId());
             } else
                 jsonObject.addProperty("estimateNumber", "");
 
             jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrder.getId());
+            
         }
         return jsonObject;
     }
