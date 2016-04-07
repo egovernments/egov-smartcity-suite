@@ -44,7 +44,7 @@
 		<spring:message code="title.letterofacceptance.search" />
 	</div>
 	<div id="errorMessage" style="display: none;">
-		<spring:message code="error.loc.contractor.search" />
+		<spring:message code="error.loa.contractorbill.search" />
 	</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"

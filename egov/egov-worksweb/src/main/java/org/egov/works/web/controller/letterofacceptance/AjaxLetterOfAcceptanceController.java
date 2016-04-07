@@ -112,7 +112,6 @@ public class AjaxLetterOfAcceptanceController {
         return letterOfAcceptanceService.getWorkOrderByNumber(name);
     }
     
-    //change methods
     @RequestMapping(value = "/ajaxsearchcontractors-loaforcontractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaContractorforContractorBill(@RequestParam final String name) {
         return letterOfAcceptanceService.findDistinctContractorsInWorkOrderByCodeOrName(name);
@@ -136,27 +135,17 @@ public class AjaxLetterOfAcceptanceController {
     
     @RequestMapping(value = "/ajaxestimatenumbers-contractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findEstimateNumbersForContractorBill(@RequestParam final String estimateNumber) {
-        List<WorkOrder> workOrders = letterOfAcceptanceService.getApprovedEstimateNumbers(estimateNumber);
-        List<String> results = new ArrayList<String>();
-        for(WorkOrder wo : workOrders) {
-            results.add(wo.getEstimateNumber());
-        }
-        return results;
+        return letterOfAcceptanceService.getApprovedEstimateNumbersForCreateContractorBill(estimateNumber);
     }
 
     @RequestMapping(value = "/ajaxloanumber-contractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findLoaNumbersForContractorBill(@RequestParam final String name) {
-        List<WorkOrder> workOrders = letterOfAcceptanceService.getApprovedWorkOrders(name);
-        List<String> results = new ArrayList<String>();
-        for(WorkOrder wo : workOrders) {
-            results.add(wo.getWorkOrderNumber());
-        }
-        return results;
+    public @ResponseBody List<String> findLoaNumbersForContractorBill(@RequestParam final String workOrderNumber) {
+        return letterOfAcceptanceService.getApprovedWorkOrdersForCreateContractorBill(workOrderNumber);
     }
     
     @RequestMapping(value = "/ajaxsearchcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findLoaContractor(@RequestParam final String name) {
-        return letterOfAcceptanceService.findDistinctContractorsInWorkOrderByCodeOrName(name);
+    public @ResponseBody List<String> findLoaContractor(@RequestParam final String contractorname) {
+        return letterOfAcceptanceService.getApprovedContractorsForCreateContractorBill(contractorname);
     }
 
 }

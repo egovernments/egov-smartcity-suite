@@ -39,9 +39,13 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.util.List;
+
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -75,6 +79,9 @@ public class LetterOfAcceptanceSearchController {
     
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForm(
@@ -113,6 +120,8 @@ public class LetterOfAcceptanceSearchController {
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        model.addAttribute("departments", departments);
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "searchloatocreatecontractorbill-search";
     }

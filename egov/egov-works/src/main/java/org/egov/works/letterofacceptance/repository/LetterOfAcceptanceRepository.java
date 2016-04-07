@@ -41,7 +41,6 @@ package org.egov.works.letterofacceptance.repository;
 
 import java.util.List;
 
-import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -71,4 +70,17 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     WorkOrder findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);
 
     WorkOrder findByWorkOrderNumberAndEgwStatus_codeEquals(final String workOrderNumber, final String statusCode);
+    
+    @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where upper(wo.workOrderNumber) like upper(:workOrderNumber) and wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
+    List<String> findWorkOrderNumberForContractorBill(@Param("workOrderNumber") String workOrderNumber, @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
+    
+    @Query("select distinct(wo.estimateNumber) from WorkOrder as wo where upper(wo.estimateNumber) like upper(:estimateNumber) and wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
+    List<String> findEstimateNumberForContractorBill(@Param("estimateNumber") String estimateNumber, @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
+
+    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where upper(wo.contractor.name) like upper(:contractorname) and wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
+    List<String> findContractorForContractorBill(@Param("contractorname") String contractorname, @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
+    
+    @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
+    List<String> getWorkOrderNumbersByBillStatusNotAndBillType(@Param("status") String cancelled, @Param("billtype") String finalBill );
+
 }

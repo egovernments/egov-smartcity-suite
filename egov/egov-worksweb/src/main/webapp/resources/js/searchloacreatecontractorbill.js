@@ -187,7 +187,7 @@ $(document)
 								},
 								queryTokenizer : Bloodhound.tokenizers.whitespace,
 								remote : {
-									url : '/egworks/letterofacceptance/ajaxsearchcontractors-loa?name=%QUERY',
+									url : '/egworks/letterofacceptance/ajaxsearchcontractors-loa?contractorname=%QUERY',
 									filter : function(data) {
 										return $.map(data, function(ct) {
 											return {
@@ -220,7 +220,7 @@ $(document).ready(function() {
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/egworks/letterofacceptance/ajaxloanumber-contractorbill?name=%QUERY',
+			url : '/egworks/letterofacceptance/ajaxloanumber-contractorbill?workOrderNumber=%QUERY',
 			filter : function(data) {
 				return $.map(data, function(ct) {
 					return {

@@ -91,8 +91,12 @@
 			<label class="col-sm-2 control-label text-right"><spring:message
 					code="lbl.department" /></label>
 			<div class="col-sm-3 add-margin">
-
-				<%-- 				<form:select path="departmentName" data-first-option="false" id="departments" class="form-control">
+				<form:select path="departmentName" data-first-option="false" id="departmentName" class="form-control">
+					<%-- <form:option value=""><spring:message code="lbl.select" /></form:option> --%>
+					<form:options items="${departments}" itemValue="id" itemLabel="name" />
+				</form:select>
+				<form:errors path="departmentName" cssClass="add-margin error-msg" />
+				<%-- <form:select path="departmentName" data-first-option="false" id="departments" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
 					<form:options items="${departments}" itemValue="id" itemLabel="name" />
 				</form:select>
