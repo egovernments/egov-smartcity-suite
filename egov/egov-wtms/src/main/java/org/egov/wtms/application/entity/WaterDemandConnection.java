@@ -39,9 +39,6 @@
  */
 package org.egov.wtms.application.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -52,7 +49,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.demand.model.EgDemand;
@@ -63,60 +59,47 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = WaterDemandConnection.SEQ_DEMAND_CONNECTION, sequenceName = WaterDemandConnection.SEQ_DEMAND_CONNECTION, allocationSize = 1)
 public class WaterDemandConnection extends AbstractAuditable {
 
-	private static final long serialVersionUID = 8604331107634946265L;
-	public static final String SEQ_DEMAND_CONNECTION = "seq_egwtr_demand_connection";
+    private static final long serialVersionUID = 8604331107634946265L;
+    public static final String SEQ_DEMAND_CONNECTION = "seq_egwtr_demand_connection";
 
-	@Id
-	@GeneratedValue(generator = SEQ_DEMAND_CONNECTION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_DEMAND_CONNECTION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "demand")
-	private EgDemand demand;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "demand")
+    private EgDemand demand;
 
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "connectiondetails")
-	private WaterConnectionDetails waterConnectionDetails;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "connectiondetails")
+    private WaterConnectionDetails waterConnectionDetails;
 
-	@Transient
-	private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(
-			0);
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
 
-	@Override
-	protected void setId(final Long id) {
-		this.id = id;
-	}
+    public EgDemand getDemand() {
+        return demand;
+    }
 
-	public EgDemand getDemand() {
-		return demand;
-	}
+    public void setDemand(final EgDemand demand) {
+        this.demand = demand;
+    }
 
-	public void setDemand(final EgDemand demand) {
-		this.demand = demand;
-	}
+    public WaterConnectionDetails getWaterConnectionDetails() {
+        return waterConnectionDetails;
+    }
 
-	public WaterConnectionDetails getWaterConnectionDetails() {
-		return waterConnectionDetails;
-	}
-
-	public void setWaterConnectionDetails(
-			final WaterConnectionDetails waterConnectionDetails) {
-		this.waterConnectionDetails = waterConnectionDetails;
-	}
-
-	public List<DemandDetail> getDemandDetailBeanList() {
-		return demandDetailBeanList;
-	}
-
-	public void setDemandDetailBeanList(
-			final List<DemandDetail> demandDetailBeanList) {
-		this.demandDetailBeanList = demandDetailBeanList;
-	}
+    public void setWaterConnectionDetails(
+            final WaterConnectionDetails waterConnectionDetails) {
+        this.waterConnectionDetails = waterConnectionDetails;
+    }
 
 }

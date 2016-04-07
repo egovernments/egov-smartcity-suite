@@ -250,6 +250,10 @@ public class WaterConnectionDetails extends StateAware {
     @Transient
     private String approvalComent;
 
+    @Transient
+    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(
+            0);
+
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
     }
@@ -445,9 +449,9 @@ public class WaterConnectionDetails extends StateAware {
     public void setWaterDemandConnection(final List<WaterDemandConnection> waterDemandConnection) {
         this.waterDemandConnection = waterDemandConnection;
     }
-    
-    public void addWaterDemandConnection(WaterDemandConnection waterDemandConnection){
-        this.getWaterDemandConnection().add(waterDemandConnection);
+
+    public void addWaterDemandConnection(final WaterDemandConnection waterDemandConnection) {
+        getWaterDemandConnection().add(waterDemandConnection);
     }
 
     public void setApplicationDocs(final List<ApplicationDocuments> applicationDocs) {
@@ -636,6 +640,15 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
+    }
+
+    public List<DemandDetail> getDemandDetailBeanList() {
+        return demandDetailBeanList;
+    }
+
+    public void setDemandDetailBeanList(
+            final List<DemandDetail> demandDetailBeanList) {
+        this.demandDetailBeanList = demandDetailBeanList;
     }
 
 }

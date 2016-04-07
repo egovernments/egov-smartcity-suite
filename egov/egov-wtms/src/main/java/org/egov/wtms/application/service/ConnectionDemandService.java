@@ -479,8 +479,8 @@ public class ConnectionDemandService {
      * @param waterConnectionDetails
      * @param billAmount
      * @param currentDate
-     * @return Updates WaterConnectionDetails after Meter Entry Demand
-     *         Calculettion and Update Previous Bill and Generates New Bill
+     * @return Updates WaterConnectionDetails after Meter Entry Demand Calculettion and Update Previous Bill and Generates New
+     * Bill
      */
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
@@ -519,8 +519,7 @@ public class ConnectionDemandService {
     /**
      * @param waterConnectionDetails
      * @param demandDeatilslist
-     * @return creation or updating demand and demanddetails for data Entry
-     *         Screen
+     * @return creation or updating demand and demanddetails for data Entry Screen
      */
     @Transactional
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
@@ -532,11 +531,10 @@ public class ConnectionDemandService {
 
             demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
-        for (final DemandDetail demanddetailBean : waterTaxUtils.getCurrentDemand(waterConnectionDetails)
-                .getDemandDetailBeanList())
+        for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
-                    && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) >= 0
-                    && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) < 1) {
+            && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) >= 0
+            && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) < 1) {
                 demandObj.setBaseDemand(getTotalAmountForBaseDemand(demanddetailBean, demandObj.getBaseDemand()));
                 demandObj.setAmtCollected(getTotalCollectedAmountForDemand(demanddetailBean,
                         demandObj.getAmtCollected()));
@@ -547,8 +545,8 @@ public class ConnectionDemandService {
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
         final int listlength = demandObj.getEgDemandDetails().size() - 1;
         final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
-                WaterTaxConstants.PROPERTY_MODULE_NAME, waterTaxUtils.getCurrentDemand(waterConnectionDetails)
-                        .getDemandDetailBeanList().get(listlength).getInstallment());
+                WaterTaxConstants.PROPERTY_MODULE_NAME, waterConnectionDetails.getDemandDetailBeanList().get(listlength)
+                .getInstallment());
         demandObj.setEgInstallmentMaster(installObj);
         demandObj.setModifiedDate(new Date());
         if (demandObj.getIsHistory() == null)
@@ -608,10 +606,8 @@ public class ConnectionDemandService {
 
     /**
      * @param consumerCode
-     * @return Generates Eg_bill Entry and saved with Demand and As of now we
-     *         are generating Bill and its in XML format because no Method to
-     *         just to generate Bill and Save as of now in
-     *         connectionBillService.
+     * @return Generates Eg_bill Entry and saved with Demand and As of now we are generating Bill and its in XML format because no
+     * Method to just to generate Bill and Save as of now in connectionBillService.
      */
     @Transactional
     public String generateBillForMeterAndMonthly(final String consumerCode) {
@@ -765,10 +761,8 @@ public class ConnectionDemandService {
 
     /**
      * @param waterConnectionDetails
-     * @param givenDate
-     *            It Checks the Meter Entry Exist For the Entred Date Month and
-     *            Returns True if It Exists and checks with Demand Current
-     *            Installment
+     * @param givenDate It Checks the Meter Entry Exist For the Entred Date Month and Returns True if It Exists and checks with
+     * Demand Current Installment
      */
     public Boolean meterEntryAllReadyExistForCurrentMonth(final WaterConnectionDetails waterConnectionDetails,
             final Date givenDate) {
@@ -780,8 +774,8 @@ public class ConnectionDemandService {
                 && waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
             if (installment != null
             && installment.getInstallmentNumber().equals(
-                            waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getEgInstallmentMaster()
-                                    .getInstallmentNumber()))
+                    waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getEgInstallmentMaster()
+                    .getInstallmentNumber()))
                 currrentInstallMentExist = true;
         return currrentInstallMentExist;
     }
