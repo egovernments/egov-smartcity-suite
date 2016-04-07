@@ -300,7 +300,8 @@ public class LineEstimateService {
         if(!lineEstimateNumbers.isEmpty()) {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimateDetails.class)
                     .createAlias("lineEstimate", "lineEstimate")
-                    .createAlias("lineEstimate.status", "status");
+                    .createAlias("lineEstimate.status", "status")
+                    .createAlias("projectCode", "projectCode");
             if (lineEstimateForLoaSearchRequest != null) {
                 if (lineEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
                     criteria.add(Restrictions.ilike("lineEstimate.adminSanctionNumber",
@@ -320,6 +321,9 @@ public class LineEstimateService {
                 if (lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy() != null)
                     criteria.add(Restrictions.eq("lineEstimate.createdBy.id",
                             lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
+                if(lineEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
+                    criteria.add(Restrictions.eq("projectCode.code",
+                            lineEstimateForLoaSearchRequest.getWorkIdentificationNumber()));
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
                 criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
             }
@@ -358,6 +362,14 @@ public class LineEstimateService {
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
 
         return adminSanctionNumbers;
+    }
+    
+    public List<String> findWorkIdentificationNumbersToSearchLineEstimatesForLoa(final String name) {
+        final List<String> workIdNumbers = lineEstimateDetailsRepository
+                .findWorkIdentificationNumbersToSearchLineEstimatesForLoa("%" + name + "%",
+                        WorksConstants.CANCELLED_STATUS);
+
+        return workIdNumbers;
     }
 
     public List<LineEstimateForLoaSearchResult> searchLineEstimatesForLOA(

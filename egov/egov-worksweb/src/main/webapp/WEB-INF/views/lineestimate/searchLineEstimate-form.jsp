@@ -49,7 +49,7 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.administartive.sanctionno" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control"/>
+				<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control" placeholder="Type first 3 letters of Admin Sanction Number"/>
 				<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
@@ -102,7 +102,7 @@
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimatenumber" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="estimateNumber" id="estimateNumber" class="form-control"/>
+				<form:input path="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Line Estimate Number"/>
 				<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
 			</div>
 		</div>

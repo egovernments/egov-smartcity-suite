@@ -60,7 +60,8 @@ $(document).ready(function()
 				$.each(response, function(index, value) {
 					$('#approvalDesignation').append($('<option>').text(value.name).attr('value', value.id));
 				});
-				
+				$('#approvalDesignation').val($('#approvalDesignationValue').val());
+				$('#approvalDesignation').trigger('change');
 			}, 
 			error: function (response) {
 				bootbox.alert('json fail');
@@ -68,7 +69,6 @@ $(document).ready(function()
 			}
 		});
 	});
-	
 	
 	$('#approvalDesignation').change(function(){
 		$.ajax({
@@ -86,7 +86,7 @@ $(document).ready(function()
 				$.each(response, function(index, value) {
 					$('#approvalPosition').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
 				});
-				
+				$('#approvalPosition').val($('#approvalPositionValue').val());
 			}, 
 			error: function (response) {
 				console.log("failed");
@@ -94,6 +94,7 @@ $(document).ready(function()
 		});
 	});
 	
+	$('#approvalDepartment').trigger('change');
 });
 
 function callAlertForDepartment() {

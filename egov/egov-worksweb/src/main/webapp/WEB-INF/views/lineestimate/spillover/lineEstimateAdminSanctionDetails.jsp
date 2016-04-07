@@ -85,4 +85,56 @@
 			</tbody>
 		</table>
 	</div>
+	<div class="panel-heading">
+		<div class="panel-title"><spring:message code="lbl.techsanctiondetails" /></div>
+	</div>
+	<input type="hidden" id="errorTechDate" value="<spring:message code='error.technicalsanctiondate' />" />
+	<input type="hidden" id="errorActualAmount" value="<spring:message code='error.actualamount' />" />
+	<input type="hidden" id="errorGrossBilledAmount" value="<spring:message code='error.grossbilledamount' />" />
+	<input type="hidden" id="errorActualAmountContinued" value="<spring:message code='error.actualamount.continued' />" />
+	<input type="hidden" id="adminSanctionDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${lineEstimate.adminSanctionDate }" pattern="dd/MM/yyyy"/>' />
+	<div class="panel-body">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.technicalsanctionnumber"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.technicalsanctiondate"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.technical.authority"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.authority"/><span class="mandatory"></span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<form:input path="technicalSanctionNumber" id="technicalSanctionNumber" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="Technical Sanction Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="32" required="required" />
+						<form:errors path="technicalSanctionNumber" cssClass="add-margin error-msg" />
+					</td>
+					<td>
+						<form:input path="technicalSanctionDate" id="technicalSanctionDate" data-errormsg="Technical Sanction Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
+						<form:errors path="technicalSanctionDate" cssClass="add-margin error-msg" />
+					</td>
+					<td>
+						<input type="hidden" id="designationValue" value="${designation }" />
+						<select name="designation" id="designation" data-first-option="false" class="form-control" required="required">
+							<option value="">
+								<spring:message code="lbl.select" />
+							</option>
+							<options items="${designations}" itemValue="id" itemLabel="name" />
+							<c:forEach items="${designations}" var="designation">
+								<option value="${designation.id }">${designation.name }</option>
+							</c:forEach>
+						</select>
+					</td>
+					<td>
+						<input type="hidden" id="authorityValue" value="${lineEstimate.technicalSanctionBy.id }" />
+						<form:select path="technicalSanctionBy" id="authority" data-first-option="false" class="form-control" required="required">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+						</form:select>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>

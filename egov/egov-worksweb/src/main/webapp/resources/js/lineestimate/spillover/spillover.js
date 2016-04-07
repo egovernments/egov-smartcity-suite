@@ -123,6 +123,7 @@ $('#Save').click(function(){
 						flag = false;
 					}
 				});
+		message = message.replace(/,\s*$/, ". ");
 		message += $('#errorActualAmountContinued').val();
 		if (!flag) {
 			bootbox.alert(message);
@@ -131,12 +132,12 @@ $('#Save').click(function(){
 		
 		message = $('#errorGrossBilledAmount').val() + " ";
 		
-		$("input[name$='grossBilledAmount']")
+		$("input[name$='grossAmountBilled']")
 		.each(
 				function() {
 					var index = getRow(this).rowIndex - 1;
 					var grossBilledAmount = $(
-							'#grossBilledAmount' + index).val();
+							'#grossAmountBilled' + index).val();
 					var actualAmount = $(
 							'#actualEstimateAmount' + index).val();
 					if (parseFloat(grossBilledAmount) > parseFloat(actualAmount)) {
@@ -146,6 +147,7 @@ $('#Save').click(function(){
 						flag = false;
 					}
 				});
+		message = message.replace(/,\s*$/, ". ");
 		message += $('#errorActualAmountContinued').val();
 		if (!flag) {
 			bootbox.alert(message);

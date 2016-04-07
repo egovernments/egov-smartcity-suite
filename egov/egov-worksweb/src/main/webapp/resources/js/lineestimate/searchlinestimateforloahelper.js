@@ -177,4 +177,31 @@ $(document).ready(function(){
 			displayKey : 'name',
 			source : adminSanctionNumber.ttAdapter()
 		});
+	
+	var workIdNumber = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/egworks/lineestimate/workIdNumbersForLoa?name=%QUERY',
+            filter: function (data) {
+                return $.map(data, function (ct) {
+                    return {
+                        name: ct
+                    };
+                });
+            }
+        }
+    });
+   
+	workIdNumber.initialize();
+	var workIdNumber_typeahead = $('#workIdentificationNumber').typeahead({
+		hint : true,
+		highlight : true,
+		minLength : 3
+	}, {
+		displayKey : 'name',
+		source : workIdNumber.ttAdapter()
+	});
 });

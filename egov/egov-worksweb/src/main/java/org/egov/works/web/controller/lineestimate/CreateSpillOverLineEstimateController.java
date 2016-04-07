@@ -176,7 +176,10 @@ public class CreateSpillOverLineEstimateController {
         validateAdminSanctionDetail(lineEstimate, errors);
         validateTechSanctionDetails(lineEstimate, errors);
 
-        validateBudgetAmount(lineEstimate, errors);
+        List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+        AppConfigValues value = values.get(0);
+        if(value.getValue().equalsIgnoreCase("Y"))
+            validateBudgetAmount(lineEstimate, errors);
 
         if (errors.hasErrors()) {
             setDropDownValues(model);

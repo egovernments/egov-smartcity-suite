@@ -48,6 +48,7 @@ public class LineEstimateForLoaSearchRequest {
     private Date adminSanctionFromDate;
     private Date adminSanctionToDate;
     private Long lineEstimateCreatedBy;
+    private String workIdentificationNumber;
 
     public LineEstimateForLoaSearchRequest() {
     }
@@ -98,5 +99,13 @@ public class LineEstimateForLoaSearchRequest {
 
     public void setLineEstimateCreatedBy(final Long lineEstimateCreatedBy) {
         this.lineEstimateCreatedBy = lineEstimateCreatedBy;
+    }
+
+    public String getWorkIdentificationNumber() {
+        return workIdentificationNumber;
+    }
+
+    public void setWorkIdentificationNumber(String workIdentificationNumber) {
+        this.workIdentificationNumber = workIdentificationNumber;
     }
 }

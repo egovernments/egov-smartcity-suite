@@ -107,6 +107,7 @@ $('.btn-primary').click(function(){
 								flag = false;
 							}
 						});
+				message = message.replace(/,\s*$/, ". ");
 				message += $('#errorActualAmountContinued').val();
 				if (!flag) {
 					bootbox.alert(message);

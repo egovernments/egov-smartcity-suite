@@ -58,6 +58,8 @@ import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -127,6 +129,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -200,9 +205,12 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             validateAdminSanctionDetail(lineEstimate, errors);
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
-                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
-            validateBudgetAmount(lineEstimate, errors);
-
+                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
+            List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+            AppConfigValues value = values.get(0);
+            if(value.getValue().equalsIgnoreCase("Y"))
+                validateBudgetAmount(lineEstimate, errors);
+        }
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return loadViewData(model, request, lineEstimate);
@@ -322,6 +330,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         model.addAttribute("applicationHistory", lineEstimateService.getHistory(lineEstimate));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+        model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
+        model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
 
         final LineEstimate newLineEstimate = getEstimateDocuments(lineEstimate);
         model.addAttribute("lineEstimate", newLineEstimate);

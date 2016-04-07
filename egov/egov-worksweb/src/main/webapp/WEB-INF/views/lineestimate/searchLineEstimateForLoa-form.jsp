@@ -49,7 +49,7 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.proceedingnumber" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control"/>
+				<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control" placeholder="Type first 3 letters of Proceeding Number"/>
 				<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
@@ -76,7 +76,7 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimateno" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="estimateNumber" id="estimateNumber" class="form-control"/>
+				<form:input path="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Estimate Number"/>
 				<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimate.createdby" /></label>
@@ -90,8 +90,15 @@
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-sm-2 control-label text-left">
 				<spring:message code="lbl.adminsanctioned" />
+			</div>
+			<div class="col-sm-1">
+			</div>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
+			<div class="col-sm-3 add-margin">
+				<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber" placeholder="Type first 3 letters of Work Order Number" />
+				<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 	</div>

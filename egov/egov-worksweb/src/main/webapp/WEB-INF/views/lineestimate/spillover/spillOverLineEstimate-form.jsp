@@ -55,7 +55,6 @@
 				</div>
 			</div>
 			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
-			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
 			<div class="buttonbottom" align="center">
 				<table>
 					<tr>
