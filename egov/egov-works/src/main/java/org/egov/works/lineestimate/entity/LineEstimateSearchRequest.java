@@ -50,6 +50,7 @@ public class LineEstimateSearchRequest {
     private Long budgetHead;
     private Date adminSanctionFromDate;
     private Date adminSanctionToDate;
+    private boolean spillOverFlag;
 
     public LineEstimateSearchRequest() {
     }
@@ -117,4 +118,13 @@ public class LineEstimateSearchRequest {
     public void setAdminSanctionToDate(final Date adminSanctionToDate) {
         this.adminSanctionToDate = adminSanctionToDate;
     }
+
+    public boolean isSpillOverFlag() {
+        return spillOverFlag;
+    }
+
+    public void setSpillOverFlag(boolean spillOverFlag) {
+        this.spillOverFlag = spillOverFlag;
+    }
+
 }
