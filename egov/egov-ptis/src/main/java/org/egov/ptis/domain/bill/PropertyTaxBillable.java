@@ -478,12 +478,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                                     assessmentEffecInstallment, basicProperty.getAssessmentdate(), currentInstall);
                         }
                         if (penaltyEffectiveDate.before(new Date())) {
-                            BigDecimal penalty = calculatePenalty(null, penaltyEffectiveDate, balance);
-                            BigDecimal monthPenalty = balance.multiply(
-                                    PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(1))).divide(
-                                    BIGDECIMAL_100);
-                            penalty = penalty.subtract(monthPenalty);
-                            penaltyAndRebate.setPenalty(MoneyUtils.roundOff(penalty));
+                            penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate, balance));
                         }
                     } else
                         penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
