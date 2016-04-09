@@ -68,7 +68,9 @@ import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.voucher.PayInBean;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EmployeeServiceOld;
+import org.egov.services.instrument.BankReconciliationService;
 import org.egov.services.instrument.InstrumentService;
+import org.egov.services.voucher.ContraJournalVoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
@@ -91,8 +93,12 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
-    private PersistenceService<ContraJournalVoucher, Long> contrajournalService;
-    private PersistenceService<Bankreconciliation, Integer> bankReconService;
+    @Autowired
+    @Qualifier("contraJournalVoucherService")
+    private ContraJournalVoucherService contraJournalVoucherService;
+    @Autowired
+    @Qualifier("bankReconciliationService")
+    private BankReconciliationService bankReconciliationService;
 
     
     @Autowired
@@ -129,9 +135,9 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
     public ContraJournalVoucher updateIntoContraJournal(final CVoucherHeader voucherHeader, final ContraBean contraBean) {
         ContraJournalVoucher existingCJV;
         try {
-            existingCJV = contrajournalService.find("from ContraJournalVoucher where voucherHeaderId=?", voucherHeader);
+            existingCJV = contraJournalVoucherService.find("from ContraJournalVoucher where voucherHeaderId=?", voucherHeader);
             existingCJV.setToBankAccountId(bankAccountDAO.getBankaccountById(Integer.valueOf(contraBean.getAccountNumberId())));
-            contrajournalService.update(existingCJV);
+            contraJournalVoucherService.update(existingCJV);
         } catch (final HibernateException e) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Exception occuerd while postiong into contractorJournal");
@@ -151,10 +157,10 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
             final Long iHeaderId = instrHeader.getId();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("instrHeader.getId() = " + iHeaderId);
-            existingBR = bankReconService.find("from Bankreconciliation where instrumentHeaderId=?", iHeaderId);
+            existingBR = bankReconciliationService.find("from Bankreconciliation where instrumentHeaderId=?", iHeaderId);
             existingBR.setAmount(contraBean.getAmount());
             existingBR.setBankaccount(bankAccountDAO.getBankaccountById(Integer.valueOf(contraBean.getAccountNumberId())));
-            bankReconService.update(existingBR);
+            bankReconciliationService.update(existingBR);
         } catch (final HibernateException e) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Exception occuerd while updateBankreconciliation" + e);
@@ -473,7 +479,8 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         cjv.setToBankAccountId(depositedBank);
         cjv.setInstrumentHeaderId(instrumentHeader);
         cjv.setVoucherHeaderId(payIn);
-        contrajournalService.persist(cjv);
+        contraJournalVoucherService.applyAuditing(cjv);
+        contraJournalVoucherService.persist(cjv);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Adding to contra completed");
         return cjv;
@@ -679,23 +686,6 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         this.persistenceService = persistenceService;
     }
 
-    public PersistenceService<ContraJournalVoucher, Long> getContrajournalService() {
-        return contrajournalService;
-    }
-
-    public void setContrajournalService(
-            final PersistenceService<ContraJournalVoucher, Long> contrajournalService) {
-        this.contrajournalService = contrajournalService;
-    }
-
-    public PersistenceService<Bankreconciliation, Integer> getBankReconService() {
-        return bankReconService;
-    }
-
-    public void setBankReconService(
-            final PersistenceService<Bankreconciliation, Integer> bankReconService) {
-        this.bankReconService = bankReconService;
-    }
 
     /*
      * public PersistenceService<VoucherDetail, Long> getVdPersitSer() { return vdPersitSer; } public void
