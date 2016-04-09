@@ -163,6 +163,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
         String key = "";
         BigDecimal balance = BigDecimal.ZERO;
+        BigDecimal earlyPayRebate = BigDecimal.ZERO;
         DateTime installmentDate = null;
         BillDetailBean billDetailBean = null;
         EgDemandReason reason = null;
@@ -171,27 +172,28 @@ public class PTBillServiceImpl extends BillServiceInterface {
         final BasicProperty basicProperty = billable.getBasicProperty();
         final Property activeProperty = basicProperty.getProperty();
         Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
+        Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
 
         installmentPenaltyAndRebate = billable.getCalculatedPenalty();
         billable.setInstTaxBean(installmentPenaltyAndRebate);
-
+        earlyPayRebate = installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).getRebate();
         final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
         final HashMap<String, Integer> orderMap = propertyTaxUtil.generateOrderForDemandDetails(
                 ptDemand.getEgDemandDetails(), billable);
-        BigDecimal dmndForRebate = BigDecimal.ZERO;
-        BigDecimal currFinYearColl = BigDecimal.ZERO;
-        Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        //BigDecimal dmndForRebate = BigDecimal.ZERO;
+        //BigDecimal currFinYearColl = BigDecimal.ZERO;
+        
         for (final EgDemandDetails demandDetail : ptDemand.getEgDemandDetails()) {
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
             reason = demandDetail.getEgDemandReason();
             installment = reason.getEgInstallmentMaster();
             reasonMasterCode = reason.getEgDemandReasonMaster().getCode();
-            if (currInstallments.values().contains(installment)) {
+            /*if (currInstallments.values().contains(installment)) {
                 if (!reasonMasterCode.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
                     dmndForRebate = dmndForRebate.add(demandDetail.getAmount());
                 }
                 currFinYearColl = currFinYearColl.add(demandDetail.getAmtCollected());
-            }
+            }*/
             if (balance.compareTo(BigDecimal.ZERO) == 1) {
 
                 installmentDate = new DateTime(installment.getInstallmentYear().getTime());
@@ -206,8 +208,14 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 }
             }
         }
-
-        BigDecimal rebate = billable.calculateEarlyPayRebate(dmndForRebate);
+        if (earlyPayRebate.compareTo(BigDecimal.ZERO) > 0){
+            installmentDate = new DateTime(currInstallments.get(CURRENTYEAR_FIRST_HALF).getInstallmentYear().getTime());
+            key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + DEMANDRSN_CODE_REBATE;
+            billDetailBean = new BillDetailBean(currInstallments.get(CURRENTYEAR_FIRST_HALF), orderMap.get(key), key, earlyPayRebate,
+                    PropertyTaxConstants.GLCODE_FOR_TAXREBATE, DEMANDRSN_CODE_REBATE, Integer.valueOf(0));
+            billDetails.add(createBillDet(billDetailBean));
+        }
+        /*BigDecimal rebate = billable.calculateEarlyPayRebate(dmndForRebate);
         if (rebate.compareTo(BigDecimal.ZERO) > 0 && currFinYearColl.compareTo(BigDecimal.ZERO) == 0) {
             Installment currFirstHalf = currInstallments.get(CURRENTYEAR_FIRST_HALF);
             installmentDate = new DateTime(currFirstHalf.getInstallmentYear().getTime());
@@ -215,7 +223,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             billDetailBean = new BillDetailBean(currFirstHalf, orderMap.get(key), key, rebate,
                     PropertyTaxConstants.GLCODE_FOR_TAXREBATE, DEMANDRSN_CODE_REBATE, Integer.valueOf(0));
             billDetails.add(createBillDet(billDetailBean));
-        }
+        }*/
         
         EgDemandDetails penaltyDemandDetail = null;
         for (final Map.Entry<Installment, PenaltyAndRebate> penaltyAndRebate : installmentPenaltyAndRebate.entrySet()) {
