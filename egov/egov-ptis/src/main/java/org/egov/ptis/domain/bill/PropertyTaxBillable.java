@@ -83,7 +83,6 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -363,7 +362,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
         penalty = amount.multiply(PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths))).divide(
                 BIGDECIMAL_100);
-        return penalty;
+        return MoneyUtils.roundOff(penalty);
     }
 
     @Override

@@ -176,7 +176,9 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
         installmentPenaltyAndRebate = billable.getCalculatedPenalty();
         billable.setInstTaxBean(installmentPenaltyAndRebate);
-        earlyPayRebate = installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).getRebate();
+        if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
+            earlyPayRebate = installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).getRebate();
+        }
         final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
         final HashMap<String, Integer> orderMap = propertyTaxUtil.generateOrderForDemandDetails(
                 ptDemand.getEgDemandDetails(), billable);

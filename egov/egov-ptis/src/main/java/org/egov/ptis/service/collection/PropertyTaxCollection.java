@@ -317,7 +317,7 @@ public class PropertyTaxCollection extends TaxCollection {
         for (final ReceiptAccountInfo accInfo : accountDetails) {
             if (accInfo.getDescription() != null) {
                 if (accInfo.getDescription().contains("REBATE")) {
-                    rebateAmount = accInfo.getCreditAmountToBePaid().negate();
+                    rebateAmount = accInfo.getDrAmount();
                 }
             }
         }
