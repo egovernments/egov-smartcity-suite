@@ -29,7 +29,6 @@
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.services.contra;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,7 +60,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentHeader;
@@ -76,6 +74,8 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.Transaxtion;
 
@@ -88,6 +88,8 @@ import com.exilant.GLEngine.Transaxtion;
 public class ContraService extends PersistenceService<ContraJournalVoucher, Long>
 {
     private static final Logger LOGGER = Logger.getLogger(ContraService.class);
+    @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     private PersistenceService<ContraJournalVoucher, Long> contrajournalService;
     private PersistenceService<Bankreconciliation, Integer> bankReconService;
@@ -311,10 +313,15 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
             LOGGER.debug(" updateCheque_DD_Card_Deposit for" + instrumentHeader + "and payin id" + payInId);
         final CVoucherHeader payIn = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", payInId);
 
-        updateInstrumentAndPayin(payIn, (Bankaccount) valuesMap.get("depositedBankAccount"), instrumentHeader,
-                (EgwStatus) valuesMap.get("instrumentDepositedStatus"));
+        updateInstrumentAndPayin(
+                payIn,
+                (Bankaccount) valuesMap.get("depositedBankAccount"),
+                instrumentHeader,
+                (EgwStatus) persistenceService.find("from EgwStatus where id = ?",
+                        Integer.valueOf(valuesMap.get("instrumentDepositedStatus").toString())));
         final ContraJournalVoucher cjv = addToContra(payIn, (Bankaccount) valuesMap.get("depositedBankAccount"), instrumentHeader);
-        addToBankRecon(payIn, instrumentHeader, (EgwStatus) valuesMap.get("instrumentReconciledStatus"));
+        addToBankRecon(payIn, instrumentHeader, (EgwStatus) persistenceService.find("from EgwStatus where id = ?",
+                Integer.valueOf(valuesMap.get("instrumentReconciledStatus").toString())));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" updateCheque_DD_Card_Deposit | End");
     }
@@ -356,6 +363,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
      * @param toBankaccountGlcode
      * @param instrumentHeader
      */
+    @Transactional
     public void updateCheque_DD_Card_Deposit_Receipt(final Long receiptId, final String toBankaccountGlcode,
             final InstrumentHeader instrumentHeader, final Map valuesMap)
     {
@@ -379,6 +387,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
      * @return
      */
 
+    @Transactional
     public void updateCashDeposit(final Long payInId, final String toBankaccountGlcode, final InstrumentHeader instrumentHeader,
             final Map valuesMap)
     {
@@ -448,13 +457,15 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
     }
 
-    private void addToBankRecon(final CVoucherHeader payIn, final InstrumentHeader instrumentHeader,
+    @Transactional
+    public void addToBankRecon(final CVoucherHeader payIn, final InstrumentHeader instrumentHeader,
             final EgwStatus instrumentReconciledStatus) {
         instrumentService.addToBankReconcilationWithLoop(payIn, instrumentHeader, instrumentReconciledStatus);
 
     }
 
-    private ContraJournalVoucher addToContra(final CVoucherHeader payIn, final Bankaccount depositedBank,
+    @Transactional
+    public ContraJournalVoucher addToContra(final CVoucherHeader payIn, final Bankaccount depositedBank,
             final InstrumentHeader instrumentHeader) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Adding to contra");
@@ -468,6 +479,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         return cjv;
     }
 
+    @Transactional
     private void updateInstrumentAndPayin(final CVoucherHeader payIn, final Bankaccount account,
             final InstrumentHeader instrumentHeader,
             final EgwStatus status)
