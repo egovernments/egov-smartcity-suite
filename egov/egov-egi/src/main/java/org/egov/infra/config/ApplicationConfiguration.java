@@ -39,12 +39,6 @@
  */
 package org.egov.infra.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -53,11 +47,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 @Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ApplicationConfiguration {
 
     @Autowired
@@ -103,4 +104,5 @@ public class ApplicationConfiguration {
             cities.remove("public");
         return cities;
     }
+
 }

@@ -37,55 +37,65 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.config.redis;
 
-import org.egov.infra.config.properties.ApplicationProperties;
+package org.egov.infra.config.cache;
+
+import org.egov.infra.config.cache.resolver.MultiTenantCacheResolver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheResolver;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import redis.clients.jedis.JedisPoolConfig;
+import javax.annotation.Resource;
+import java.util.List;
 
 @Configuration
-@Profile("production")
-public class RedisServerConfiguration {
+@EnableCaching(proxyTargetClass = true)
+@DependsOn("applicationConfiguration")
+public class CacheConfiguration extends CachingConfigurerSupport {
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+    private List<String> cities;
 
     @Bean
-    @Conditional(RedisServerConfigCondition.class)
-    public EmbeddedRedisServer redisServer() {
-        return new EmbeddedRedisServer();
-    }
-
-    @Bean
-    public JedisConnectionFactory redisConnectionFactory(final ApplicationProperties applicationProperties) {
-        final JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setHostName(applicationProperties.redisHost());
-        jedisConnectionFactory.setPort(applicationProperties.redisPort());
-        jedisConnectionFactory.setPoolConfig(redisPoolConfig());
-        return jedisConnectionFactory;
+    public CacheResolver cacheResolver() {
+        return new MultiTenantCacheResolver(cacheManager());
     }
 
     @Bean
-    public JedisPoolConfig redisPoolConfig() {
-        final JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setTestOnBorrow(true);
-        jedisPoolConfig.setMinEvictableIdleTimeMillis(60000);
-        jedisPoolConfig.setSoftMinEvictableIdleTimeMillis(1800000);
-        jedisPoolConfig.setNumTestsPerEvictionRun(-1);
-        jedisPoolConfig.setTestOnReturn(false);
-        jedisPoolConfig.setTestWhileIdle(true);
-        jedisPoolConfig.setTimeBetweenEvictionRunsMillis(30000);
-        return jedisPoolConfig;
+    public KeyGenerator keyGenerator() {
+        return (object, method, args) -> {
+            StringBuilder sb = new StringBuilder();
+            sb.append(object.getClass().getSimpleName());
+            sb.append(method.getName());
+            for (Object obj : args) {
+                sb.append(obj);
+            }
+            return sb.toString();
+        };
     }
 
-    @Bean(name = "redisTemplate")
-    public RedisTemplate<Object, Object> redisTemplate(final RedisConnectionFactory cf) {
-        final RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(cf);
-        return redisTemplate;
+    @Bean
+    public CacheManager cacheManager() {
+        RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
+        redisCacheManager.setTransactionAware(true);
+        redisCacheManager.setCacheNames(cities);
+        redisCacheManager.setUsePrefix(true);
+        return redisCacheManager;
     }
+
+    @Resource(name = "cities")
+    public void setCities(List<String> cities) {
+        this.cities = cities;
+    }
+
 }
