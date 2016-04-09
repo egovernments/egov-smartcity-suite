@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-07T21:11:44 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="097af81c-f4bf-4e72-9596-ed5b89f2e492">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="org.egov.infstr.utils.*"/>
 	<import value="java.math.*"/>
+	<import value="org.egov.infstr.utils.*"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -52,7 +50,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="currentTotal" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode})) ? ($F{crAmount}-$F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode})) ? ($F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="currentInst" class="java.lang.String">
@@ -101,7 +99,7 @@
 			<band height="20">
 				<printWhenExpression><![CDATA[!$V{arrearTotal}.equals(BigDecimal.ZERO)]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="dab8e3d3-0c4d-443d-9108-32f871812975"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -112,10 +110,10 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{arrearFrom} + " to " + $V{arrearTo}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{arrearFrom} + " to " + $V{arrearTo}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20" uuid="276c5cfb-3f50-4e43-a9f3-ad2c87501867"/>
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -126,13 +124,13 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{arrearTotal}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{arrearTotal}]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="20">
 				<printWhenExpression><![CDATA[!$V{currentTotal}.equals(BigDecimal.ZERO)]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20" uuid="303898e1-e08b-4f17-adf3-ac772242aedb"/>
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -143,10 +141,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{currentTotal}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{currentTotal}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="4ffaebdb-ad27-420b-b663-1eee88eaf813"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -157,13 +155,13 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{currentInst}.substring(0 , $V{currentInst}.length() - 2)]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{currentInst}.substring(0 , $V{currentInst}.length() - 2)]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="20">
 				<printWhenExpression><![CDATA[!$V{penaltyTotal}.equals(BigDecimal.ZERO)]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20" uuid="2f21c883-5559-4615-826b-3dfbe8a523ba"/>
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -174,10 +172,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{penaltyTotal}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{penaltyTotal}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="3d7551a4-2d71-45ad-9ccd-ee06d8f241d3"/>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20"/>
 					<box leftPadding="0" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -194,7 +192,7 @@
 			<band height="20">
 				<printWhenExpression><![CDATA[!$V{rebate}.equals(BigDecimal.ZERO)]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20" uuid="2f21c883-5559-4615-826b-3dfbe8a523ba"/>
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -205,10 +203,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{rebate}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{rebate}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="3d7551a4-2d71-45ad-9ccd-ee06d8f241d3"/>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20"/>
 					<box leftPadding="0" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -225,7 +223,7 @@
 			<band height="20">
 				<printWhenExpression><![CDATA[!$V{advance}.equals(BigDecimal.ZERO)]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20" uuid="2f21c883-5559-4615-826b-3dfbe8a523ba"/>
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -236,10 +234,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{advance}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{advance}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="3d7551a4-2d71-45ad-9ccd-ee06d8f241d3"/>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20"/>
 					<box leftPadding="0" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -255,7 +253,7 @@
 			</band>
 			<band height="43">
 				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20" uuid="54cdcec1-afd0-4a18-912e-7dbaaea065d7"/>
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="275" height="20"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -266,10 +264,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{totalAmount}.equals(BigDecimal.ZERO) ? "" : $V{totalAmount}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{totalAmount}.equals(BigDecimal.ZERO) ? "" : $V{totalAmount}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="033523d4-d5ca-4a54-931b-184948b00d69"/>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -277,14 +275,13 @@
 						<bottomPen lineWidth="0.5"/>
 						<rightPen lineWidth="0.5"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
-						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[Total:]]></text>
 				</staticText>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="250" height="20" uuid="c14a930f-67ea-4747-bc66-e3bc2e7178d6">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="250" height="20">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="0" rightPadding="5">
@@ -297,10 +294,10 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Paid From "+(($V{from_which_half}=="1")?"01-04-"+$V{from_year}:"01-10-"+$V{from_year})+" to "+($V{to_which_half}=="1"?("30-09-"+((Integer.parseInt($V{to_date}.substring(0,$V{to_date}.indexOf('-'))))-1)):"31-03-"+$V{to_date}.substring(0,$V{to_date}.indexOf('-')))+(($V{totalamounttobepaid}-$V{totalpaid})>0?"(Partially)":"")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Paid From "+(($V{from_which_half}=="1")?"01-04-"+$V{from_year}:"01-10-"+$V{from_year})+" to "+($V{to_which_half}=="1"?("30-09-"+((Integer.parseInt($V{to_date}.substring(0,$V{to_date}.indexOf('-'))))-1)):"31-03-"+$V{to_date}.substring(0,$V{to_date}.indexOf('-')))+(($V{totalamounttobepaid}-$V{totalpaid})>0?"(Partially)":"")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="20" width="555" height="20" uuid="c41b713e-90f0-472d-8b94-fa7faf2d1cf5"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="20" width="555" height="20"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -311,7 +308,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Amount (in words): " + ReportUtil.amountInWords($V{totalAmount})]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Amount (in words): " + ReportUtil.amountInWords($V{totalAmount})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -319,7 +316,7 @@
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="280" height="20" uuid="30cbcde9-440f-423e-b19d-1965ae71c272"/>
+				<reportElement x="0" y="0" width="280" height="20"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -333,7 +330,7 @@
 				<text><![CDATA[Description Head of A/C]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="280" y="0" width="275" height="20" uuid="64d1f6eb-a5ef-4fae-bd9e-68a1956b2926"/>
+				<reportElement x="280" y="0" width="275" height="20"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
