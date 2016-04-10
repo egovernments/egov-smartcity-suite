@@ -419,13 +419,13 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 (Bankaccount) valuesMap.get("depositedBankAccount"),
                 instrumentHeader,
                 (EgwStatus) persistenceService.find("from EgwStatus where id = ?",
-                        Long.valueOf(valuesMap.get("instrumentReconciledStatus").toString())));
+                        Integer.valueOf(valuesMap.get("instrumentReconciledStatus").toString())));
         final ContraJournalVoucher cjv = addToContra(payIn, (Bankaccount) valuesMap.get("depositedBankAccount"), instrumentHeader);
         addToBankRecon(
                 payIn,
                 instrumentHeader,
                 (EgwStatus) persistenceService.find("from EgwStatus where id = ?",
-                        Long.valueOf(valuesMap.get("instrumentReconciledStatus").toString())));
+                        Integer.valueOf(valuesMap.get("instrumentReconciledStatus").toString())));
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Contra Service | updateCashDeposit | End");
