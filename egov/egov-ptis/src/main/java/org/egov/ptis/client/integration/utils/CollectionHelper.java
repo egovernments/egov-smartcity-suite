@@ -186,7 +186,7 @@ public class CollectionHelper {
 
 		for (EgBillDetails billDet : billDetails) {
 			receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
-					billDet.getCrAmount(), billDet.getDrAmount(), billDet.getDescription()));
+					billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(), billDet.getDescription()));
 		}
 
 		SpringBeanUtil.getPropertyTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid, receiptDetails);
