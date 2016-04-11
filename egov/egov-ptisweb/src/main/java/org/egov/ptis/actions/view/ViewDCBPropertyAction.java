@@ -85,6 +85,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.client.model.PropertyArrearBean;
 import org.egov.ptis.client.util.DCBUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -203,9 +204,12 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                 viewMap.put("taxExempted", property.getIsExemptedFromTax());
                 if (!property.getIsExemptedFromTax()) {
                     Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-                    viewMap.put("currTaxAmount", demandCollMap.get(CURR_DMD_STR));
-                    viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR)
-                            .subtract(demandCollMap.get(CURR_COLL_STR)));
+                    viewMap.put("currFirstHalfTaxAmount", demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
+                    viewMap.put("currFirstHalfTaxDue", demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR)
+                            .subtract(demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)));
+                    viewMap.put("currSecondHalfTaxAmount", demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR));
+                    viewMap.put("currSecondHalfTaxDue", demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR)
+                            .subtract(demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)));
                     viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
                     PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider
                             .getBean(BEANNAME_PROPERTY_TAX_BILLABLE);

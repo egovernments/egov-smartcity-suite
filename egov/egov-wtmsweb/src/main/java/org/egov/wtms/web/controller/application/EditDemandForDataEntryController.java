@@ -130,7 +130,7 @@ public class EditDemandForDataEntryController {
                         entry.getKey(), installObj);
                 if (demandReasonObj != null) {
                     EgDemandDetails demanddet = null;
-                    if (waterConnectionDetails.getDemand() != null)
+                    if ( waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
                         demanddet = getDemandDetailsExist(waterConnectionDetails, demandReasonObj);
                     if (demanddet != null)
                         dmdDtl = createDemandDetailBean(installObj,
@@ -159,7 +159,7 @@ public class EditDemandForDataEntryController {
     private EgDemandDetails getDemandDetailsExist(final WaterConnectionDetails waterConnectionDetails,
             final EgDemandReason demandReasonObj) {
         EgDemandDetails demandDet = null;
-        for (final EgDemandDetails dd : waterConnectionDetails.getDemand().getEgDemandDetails())
+        for (final EgDemandDetails dd :  waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getEgDemandDetails())
             if (dd.getEgDemandReason().equals(demandReasonObj)) {
                 demandDet = dd;
                 break;
@@ -172,7 +172,7 @@ public class EditDemandForDataEntryController {
             final String reasonMasterDesc, final BigDecimal amount, final BigDecimal amountCollected,
             final Long demanddetailId, final WaterConnectionDetails waterConnectionDetails) {
         EgDemandDetails demandDetailsObj = null;
-        if (demanddetailId != null && waterConnectionDetails.getDemand() != null)
+        if (demanddetailId != null &&  waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
             demandDetailsObj = waterConnectionDetailsRepository.findEgDemandDetailById(demanddetailId);
 
         final DemandDetail demandDetail = new DemandDetail();

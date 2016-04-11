@@ -39,16 +39,16 @@
  */
 package org.egov.infra.config.properties;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Configuration
 @PropertySource(value = {
@@ -154,14 +154,6 @@ public class ApplicationProperties {
         return this.environment.getProperty("multitenancy.enabled", Boolean.class);
     }
 
-    public String redisHost() {
-        return this.environment.getProperty("redis.host.name");
-    }
-
-    public int redisPort() {
-        return this.environment.getProperty("redis.host.port", Integer.class);
-    }
-
     public String getProperty(String propKey) {
         return this.environment.getProperty(propKey, EMPTY);
     }
@@ -200,5 +192,29 @@ public class ApplicationProperties {
 
     public String passwordStrength() {
         return this.environment.getProperty("user.pwd.strength");
+    }
+
+    public boolean sentinelEnabled() {
+        return this.environment.getProperty("redis.enable.sentinel", Boolean.class);
+    }
+
+    public List<String> sentinelHosts() {
+        return Arrays.asList(this.environment.getProperty("redis.sentinel.hosts").split(","));
+    }
+
+    public String sentinelMasterName() {
+        return this.environment.getProperty("redis.sentinel.master.name");
+    }
+
+    public boolean usingEmbeddedRedis() {
+        return this.environment.getProperty("redis.enable.embedded", Boolean.class);
+    }
+
+    public String redisHost() {
+        return this.environment.getProperty("redis.host.name");
+    }
+
+    public int redisPort() {
+        return this.environment.getProperty("redis.host.port", Integer.class);
     }
 }

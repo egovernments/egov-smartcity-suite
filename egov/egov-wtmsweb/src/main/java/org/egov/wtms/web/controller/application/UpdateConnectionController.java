@@ -69,9 +69,11 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.service.MeterCostService;
@@ -129,6 +131,9 @@ public class UpdateConnectionController extends GenericConnectionController {
     
     @Autowired
     private ReportGenerationService reportGenerationService;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Autowired
     public UpdateConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -329,14 +334,18 @@ public class UpdateConnectionController extends GenericConnectionController {
                         && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
                         && waterConnectionDetails.getBplCardHolderName() != null)
                     waterConnectionDetails.setBplCardHolderName(null);
-
                 populateEstimationDetails(waterConnectionDetails);
-                waterConnectionDetails.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
+                WaterDemandConnection waterDemandConnection =  waterTaxUtils.getCurrentDemand(waterConnectionDetails);
+                waterDemandConnection.setDemand(connectionDemandService.createDemand(waterConnectionDetails)); 
+                waterDemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+                waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
+                waterDemandConnectionService.createWaterDemandConnection(waterDemandConnection);
                 waterConnectionDetailsService.save(waterConnectionDetails);
                 waterConnectionDetailsService.getCurrentSession().flush();
                 // Attach any other file during field inspection and estimation
                 final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
                 Iterator<FileStoreMapper> fsIterator = null;
+                
                 if (fileStoreSet != null && !fileStoreSet.isEmpty())
                     fsIterator = fileStoreSet.iterator();
                 if (fsIterator != null && fsIterator.hasNext())

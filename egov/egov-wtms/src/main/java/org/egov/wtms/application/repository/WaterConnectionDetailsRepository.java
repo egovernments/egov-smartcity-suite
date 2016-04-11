@@ -79,7 +79,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findByConnectionAndConnectionStatus(WaterConnection waterConnection,
             ConnectionStatus connectionStatus);
 
-    @Query("select wcd from WaterConnectionDetails wcd where wcd.applicationNumber=:applicationNumber and wcd.demand.egInstallmentMaster=:installment")
+    @Query("select wcd.waterConnectionDetails from org.egov.wtms.application.entity.WaterDemandConnection wcd where wcd.waterConnectionDetails.applicationNumber=:applicationNumber and wcd.demand.egInstallmentMaster=:installment")
     WaterConnectionDetails findByApplicationNumberAndInstallment(@Param("installment") Installment installment,
             @Param("applicationNumber") String applicationNumber);
 
@@ -104,7 +104,8 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndAndConnection_ParentConnectionIsNotNull(
             String consumercode, ConnectionStatus connectionStatus);
 
-    WaterConnectionDetails findByDemand(EgDemand demand);
+    @Query("select wcd.waterConnectionDetails from org.egov.wtms.application.entity.WaterDemandConnection wcd where wcd.demand=:demand")
+    WaterConnectionDetails findByDemand(@Param("demand") EgDemand demand);
 
     @Query("select wcd from MeterReadingConnectionDetails wcd where wcd.waterConnectionDetails.id=:waterConnDetId order by currentReadingDate desc")
     List<MeterReadingConnectionDetails> findPreviousMeterReadingReading(@Param("waterConnDetId") Long waterConnDetId);

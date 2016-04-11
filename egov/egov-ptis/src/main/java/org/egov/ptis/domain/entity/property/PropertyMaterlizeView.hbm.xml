@@ -63,14 +63,18 @@
 		<property name="sitalArea" column="SITAL_AREA" />
 		<property name="toalBuiltUpArea" column="TOTAL_BUILTUP_AREA" />
 		<property name="latestStatus" column="LATEST_STATUS" />
-		<property name="aggrCurrDmd" column="AGGREGATE_CURRENT_DEMAND" />
+		<property name="aggrCurrFirstHalfDmd" column="AGGREGATE_CURRENT_FIRSTHALF_DEMAND" />
+		<property name="aggrCurrSecondHalfDmd" column="AGGREGATE_CURRENT_SECONDHALF_DEMAND" />
 		<property name="aggrArrDmd" column="AGGREGATE_ARREAR_DEMAND" />
-		<property name="aggrCurrColl" column="CURRENT_COLLECTION" />
+		<property name="aggrCurrFirstHalfColl" column="CURRENT_FIRSTHALF_COLLECTION" />
+		<property name="aggrCurrSecondHalfColl" column="CURRENT_SECONDHALF_COLLECTION" />
 		<property name="aggrArrColl" column="ARREARCOLLECTION" />
 		<property name="aggrArrearPenaly" column="pen_aggr_arrear_demand" />
 		<property name="aggrArrearPenalyColl" column="pen_aggr_arr_coll" />
-		<property name="aggrCurrPenaly" column="pen_aggr_current_demand" />
-		<property name="aggrCurrPenalyColl" column="pen_aggr_current_coll" />
+		<property name="aggrCurrFirstHalfPenaly" column="pen_aggr_current_firsthalf_demand" />
+		<property name="aggrCurrSecondHalfPenaly" column="pen_aggr_current_secondhalf_demand" />
+		<property name="aggrCurrFirstHalfPenalyColl" column="pen_aggr_current_firsthalf_coll" />
+		<property name="aggrCurrSecondHalfPenalyColl" column="pen_aggr_current_secondhalf_coll" />
 		<property name="gisRefNo" column="GISREFNO" />
 		<property name="isExempted" column="ISEXEMPTED" />
 		<property name="source" column="SOURCE" />

@@ -129,12 +129,20 @@
 									title="Address"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:left" />
-								<display:column property="currDemand"
-									title="Current Tax"
+								<display:column property="currFirstHalfDemand"
+									title="Current FirstHalf Tax"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center" />
-								<display:column property="currDemandDue"
-									title="Current Tax Due"
+								<display:column property="currFirstHalfDemandDue"
+									title="Current FirstHalf Tax Due"
+									headerClass="bluebgheadtd" class="blueborderfortd"
+									style="width:10%;text-align:center" />
+									<display:column property="currSecondHalfDemand"
+									title="Current SecondHalf Tax"
+									headerClass="bluebgheadtd" class="blueborderfortd"
+									style="text-align:center" />
+								<display:column property="currSecondHalfDemandDue"
+									title="Current SecondHalf Tax Due"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="width:10%;text-align:center" />
 								<display:column property="arrDemandDue"

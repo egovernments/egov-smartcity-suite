@@ -2574,8 +2574,8 @@ public class PropertyService {
     public List<PropertyMaterlizeView> getPropertyByDemand(final String fromDemand, final String toDemand) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrDmd is not null and pmv.aggrCurrDmd>=:fromDemand ")
-                .append("and pmv.aggrCurrDmd<=:toDemand and pmv.isActive = true ");
+                "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd>=:fromDemand ")
+                .append("and pmv.aggrCurrFirstHalfDmd<=:toDemand and pmv.isActive = true ");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setBigDecimal("fromDemand", new BigDecimal(fromDemand));
         query.setBigDecimal("toDemand", new BigDecimal(toDemand));
@@ -2821,9 +2821,9 @@ public class PropertyService {
     private void loadPropertyDues(final Property property, final AssessmentDetails assessmentDetail) {
         final Map<String, BigDecimal> resultmap = ptDemandDAO.getDemandCollMap(property);
         if (null != resultmap && !resultmap.isEmpty()) {
-            final BigDecimal currDmd = resultmap.get(PropertyTaxConstants.CURR_DMD_STR);
+            final BigDecimal currDmd = resultmap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR);
             final BigDecimal arrDmd = resultmap.get(PropertyTaxConstants.ARR_DMD_STR);
-            final BigDecimal currCollection = resultmap.get(PropertyTaxConstants.CURR_COLL_STR);
+            final BigDecimal currCollection = resultmap.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR);
             final BigDecimal arrColelection = resultmap.get(PropertyTaxConstants.ARR_COLL_STR);
 
             final BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrColelection);

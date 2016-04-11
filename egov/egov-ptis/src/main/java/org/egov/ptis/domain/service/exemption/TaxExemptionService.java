@@ -241,8 +241,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             LOGGER.debug(" WorkFlow Transition Completed for Demolition ...");
     }
 
-    public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
         Property property = null;
+        public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
         if (null != basicProperty.getWFProperty())
             property = basicProperty.getWFProperty();
         else
@@ -254,8 +254,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             model.addAttribute("ARV", BigDecimal.ZERO);
         model.addAttribute("propertyByEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
         if (!property.getIsExemptedFromTax()) {
-            final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-                    PropertyTaxUtil.getCurrentInstallment());
+            final Map<String, BigDecimal> demandCollMap = null;
             model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
             model.addAttribute("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
             model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));

@@ -43,7 +43,7 @@
 package org.egov.ptis.actions.objection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
@@ -690,12 +690,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             reportParams.put("HouseNo", objection.getBasicProperty().getUpicNo());
             reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null ? objection
                     .getBasicProperty().getBoundary().getName() : "");
-            reportParams.put("HalfYearPropertyTaxTo", currentDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
+            reportParams.put("HalfYearPropertyTaxTo", currentDemand.get(CURR_FIRSTHALF_DMD_STR).divide(BigDecimal.valueOf(2))
                     .setScale(2));
-            reportParams.put("HalfYearPropertyTaxFrom", earlierDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
+            reportParams.put("HalfYearPropertyTaxFrom", earlierDemand.get(CURR_FIRSTHALF_DMD_STR).divide(BigDecimal.valueOf(2))
                     .setScale(2));
-            reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_DMD_STR).setScale(2).toString());
-            reportParams.put("AnnualPropertyTaxFrom", earlierDemand.get(CURR_DMD_STR).setScale(2).toString());
+            reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_FIRSTHALF_DMD_STR).setScale(2).toString());
+            reportParams.put("AnnualPropertyTaxFrom", earlierDemand.get(CURR_FIRSTHALF_DMD_STR).setScale(2).toString());
 
             reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT,
                     objection, reportParams);

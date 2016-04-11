@@ -195,14 +195,14 @@
 								<c:if test="${param.error}">
 								<div class="form-group">
 									<div class="text-center error-msg font-12">
-									${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}
 										<c:choose>
 										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'Maximum sessions of {0} for this principal exceeded'}">
 											<spring:message code="msg.multiple.login"/>
 										</c:when>
-										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'User credentials have expired'}">
+										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'User account has expired'}">
 											<spring:message code="msg.cred.exprd1"/>
-											<a href="#" target="_blank" style="color: blue">
+											<a href="javascript:void(0);" data-toggle="modal"
+											   data-target="#fpassword" data-backdrop="static">
 											<spring:message code="msg.cred.exprd2"/>
 											</a> <spring:message code="msg.cred.exprd3"/>
 										</c:when>
@@ -340,7 +340,7 @@
 						<h4 class="modal-title">Enable Cookies</h4>
 					</div>
 					<div class="modal-body">
-						Oops! Your browser seems to have cookies disabled. Make sure cookies are enabled or try opening a new browser window.
+						Your browser seems to have cookies disabled. Make sure cookies are enabled or try opening a new browser window.
 					</div>
 				</div>
 			</div>

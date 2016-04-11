@@ -723,7 +723,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     throw new ValidationException(EMPTY_STRING, "budgetaryCheck_groupby_values is not matching="
                             + value);
         }
-        return " and bd.budget.status in (from org.egov.commons.EgwStatus where moduletype='BUDGET' and description='Approved' )"
+        return " and bd.budget.status.description='Approved' and bd.status.description='Approved'  "
                 + query;
     }
 
@@ -1238,7 +1238,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 finalquery = " from BudgetDetail bd where bd.budget.isbere='BE' " + query;
 
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Final query=" + finalquery);
+                LOGGER.debug("Final query=" + finalquery); 
             // Query hibQuery =getCurrentSession().createQuery(finalquery);
             final Query hibQuery = getCurrentSession().createQuery(finalquery);
 

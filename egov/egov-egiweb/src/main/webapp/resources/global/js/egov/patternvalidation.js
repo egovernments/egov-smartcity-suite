@@ -77,6 +77,9 @@ var regexp_decimalvalue = /[^0-9.]/g ;
 //This will allow you to enter alphabets and numbers with specified special characters like  slash(/), hyphen(-). (eg: data-pattern="alphanumerichyphenbackslash")
 var regexp_alphanumerichyphenbackslash = /[^a-zA-Z0-9/-]/g ;
 
+//This will allow you to enter alphabets and numbers with specified special characters like  slash(/), hyphen(-),brackets(),comma(,). (eg: data-pattern="address")
+var regexp_address = /[^a-zA-Z0-9/(),-]/g ;
+
 //username pattern (eg: data-pattern="username")
 var regexp_username = /[^a-zA-Z0-9_.]/g ;
 
@@ -153,6 +156,12 @@ function alphanumerichyphenbackslash(obj){
 	}
 }
 
+
+function address(obj){
+	if(jQuery(obj).val().match(regexp_address)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_address,'') );
+	}	
+}
 function username(obj){
 	if(jQuery(obj).val().match(regexp_username)){
 		jQuery(obj).val( jQuery(obj).val().replace(regexp_username,'') );

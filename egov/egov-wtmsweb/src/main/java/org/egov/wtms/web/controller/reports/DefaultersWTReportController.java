@@ -66,6 +66,7 @@ import org.egov.wtms.application.service.DefaultersReport;
 import org.egov.wtms.application.service.DefaultersWTReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +99,9 @@ public class DefaultersWTReportController {
 
     @Autowired
     private DemandGenericDao demandGenericDao;
+    
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
 
     @RequestMapping(method = GET)
     public String search(final Model model) {
@@ -159,7 +163,7 @@ public class DefaultersWTReportController {
                 .findByApplicationNumberOrConsumerCode(consumerCode);
         final DemandComparatorByInstallmentOrder demandComparatorByOrderId = new DemandComparatorByInstallmentOrder();
         final Set<EgDemandDetails> egdemandtemplist = new HashSet<EgDemandDetails>();
-        final Set<EgDemandDetails> demnadDetList = waterConnectionDetails.getDemand().getEgDemandDetails();
+        final Set<EgDemandDetails> demnadDetList = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getEgDemandDetails();
         for (final EgDemandDetails egDemandTemp : demnadDetList)
             if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
                 egdemandtemplist.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
