@@ -132,7 +132,7 @@ public class TradeLicenseUpdateIndexService
                 applicationIndex.setApproved(ApprovalStatus.UNKNOWN);
                 Date endDate = null;
                 if (license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_GENECERT_CODE)) {
-                    final List<StateHistory> stateHistoryList = license.getState().getHistory();
+                    final List<StateHistory> stateHistoryList = license.getStateHistory();
                     for (final StateHistory stateHisObj : stateHistoryList)
                         if (stateHisObj.getValue().equalsIgnoreCase(Constants.WF_STATE_GENERATE_CERTIFICATE))
                             endDate = stateHisObj.getLastModifiedDate();

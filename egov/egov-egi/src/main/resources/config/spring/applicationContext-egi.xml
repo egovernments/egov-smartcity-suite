@@ -49,7 +49,6 @@
 	<context:component-scan base-package="org.egov.infra"/>
 	<context:component-scan base-package="org.egov.lib"/>
 	<context:component-scan base-package="org.egov.infstr"/>
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
 	

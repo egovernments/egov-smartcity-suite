@@ -364,35 +364,37 @@ public class ComplaintService {
                     ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
         }
         historyTable.add(map);
-        if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null)
-            Collections.reverse(complaint.getStateHistory());
-        for (final StateHistory stateHistory : complaint.getStateHistory()) {
-            final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
-            HistoryMap.put("date", stateHistory.getDateInfo());
-            HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
-            if (stateHistory.getLastModifiedBy().getType().equals(UserType.CITIZEN)
-                    || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
-                HistoryMap.put("updatedBy", complaint.getComplainant().getName());
-            else
-                HistoryMap.put("updatedBy",
-                        stateHistory.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
-            HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
-            HistoryMap.put("status", stateHistory.getValue());
-            final Position owner = stateHistory.getOwnerPosition();
-            user = stateHistory.getOwnerUser();
-            if (null != user) {
-                HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
-                HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
-                        ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
-            } else if (null != owner && null != owner.getDeptDesig()) {
-                user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                HistoryMap.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
-                HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
-                        ? owner.getDeptDesig().getDepartment().getName() : "");
+        if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null) {
+            List<StateHistory> complaintStateHistory = complaint.getStateHistory();
+            Collections.reverse(complaintStateHistory);
+            for (final StateHistory stateHistory : complaintStateHistory) {
+                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                HistoryMap.put("date", stateHistory.getDateInfo());
+                HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
+                if (stateHistory.getLastModifiedBy().getType().equals(UserType.CITIZEN)
+                        || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
+                    HistoryMap.put("updatedBy", complaint.getComplainant().getName());
+                else
+                    HistoryMap.put("updatedBy",
+                            stateHistory.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
+                HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
+                HistoryMap.put("status", stateHistory.getValue());
+                final Position owner = stateHistory.getOwnerPosition();
+                user = stateHistory.getOwnerUser();
+                if (null != user) {
+                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
+                    HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
+                    HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
+                            ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
+                } else if (null != owner && null != owner.getDeptDesig()) {
+                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    HistoryMap.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                    HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
+                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
+                            ? owner.getDeptDesig().getDepartment().getName() : "");
+                }
+                historyTable.add(HistoryMap);
             }
-            historyTable.add(HistoryMap);
         }
         return historyTable;
     }

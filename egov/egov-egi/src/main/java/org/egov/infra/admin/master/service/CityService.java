@@ -69,7 +69,7 @@ public class CityService {
     private HashOperations<String, String, Object> cityPrefCache;
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<Object, Object> redisTemplate;
     
     @Autowired
     public CityService(final CityRepository cityRepository) {

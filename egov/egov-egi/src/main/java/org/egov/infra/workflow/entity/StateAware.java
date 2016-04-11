@@ -43,6 +43,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -98,7 +99,7 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final List<StateHistory> getStateHistory() {
-        return state == null ? Collections.emptyList() : state.getHistory();
+        return state == null ? Collections.emptyList() : new LinkedList<>(state.getHistory());
     }
 
     public final String getStateType() {

@@ -249,7 +249,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
             paramMap.put("billDate", sdf.format(cbill.getBilldate()));
         paramMap.put("voucherDescription", getVoucherDescription());
         if (cbill != null && cbill.getState() != null)
-            loadInboxHistoryData(cbill.getState(), paramMap);
+            loadInboxHistoryData(cbill.getStateHistory(), paramMap);
 
         if (billRegistermis != null) {
             paramMap.put("billDate", Constants.DDMMYYYYFORMAT2.format(billRegistermis.getEgBillregister().getBilldate()));
@@ -415,18 +415,15 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         return voucher == null || voucher.getDescription() == null ? "" : voucher.getDescription();
     }
 
-    void loadInboxHistoryData(final State states, final Map<String, Object> paramMap) throws ApplicationRuntimeException {
+    void loadInboxHistoryData(List<StateHistory> stateHistory, final Map<String, Object> paramMap) throws ApplicationRuntimeException {
         final List<String> history = new ArrayList<String>();
         final List<String> workFlowDate = new ArrayList<String>();
-        if (states != null) {
-            final List<StateHistory> stateHistory = states.getHistory();
 
-            for (final StateHistory state : stateHistory)
-                if (!"NEW".equalsIgnoreCase(state.getValue())) {
-                    history.add(state.getSenderName());
-                    workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(state.getLastModifiedDate()));
-                }
-        }
+        for (final StateHistory historyState : stateHistory)
+            if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
+                history.add(historyState.getSenderName());
+                workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(historyState.getLastModifiedDate()));
+            }
         for (int i = 0; i < history.size(); i++) {
             paramMap.put("workFlow_" + i, history.get(i));
             paramMap.put("workFlowDate_" + i, workFlowDate.get(i));

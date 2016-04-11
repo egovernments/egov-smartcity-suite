@@ -104,8 +104,6 @@
 		parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
 		<property name="persistenceService" ref="persistenceService" />
-		<property name="contrajournalService" ref="contrajournalService" />
-		<property name="bankReconService" ref="bankReconService" />
 		<property name="instrumentService" ref="instrumentService" />
 		<property name="employeeServiceOld" ref="employeeServiceOld" />
 	</bean>

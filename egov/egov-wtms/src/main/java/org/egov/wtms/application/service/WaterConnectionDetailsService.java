@@ -804,7 +804,7 @@ public class WaterConnectionDetailsService {
                         .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
                         || waterConnectionDetails
                         .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED)) {
-                    final List<StateHistory> stateHistoryList = waterConnectionDetails.getState().getHistory();
+                    final List<StateHistory> stateHistoryList = waterConnectionDetails.getStateHistory();
                     Date applicationDate = null;
                     for (final StateHistory stateHistory : stateHistoryList)
                         if (stateHistory.getValue().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSER)
@@ -945,7 +945,7 @@ public class WaterConnectionDetailsService {
     }
 
     public BigDecimal getTotalAmount(final WaterConnectionDetails waterConnectionDetails) {
-        final EgDemand currentDemand = waterConnectionDetails.getDemand();
+        final EgDemand currentDemand =  waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal balance = BigDecimal.ZERO;
         if (currentDemand != null) {
             final List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);

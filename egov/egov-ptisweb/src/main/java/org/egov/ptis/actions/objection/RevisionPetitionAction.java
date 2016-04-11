@@ -43,7 +43,7 @@
 package org.egov.ptis.actions.objection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
@@ -300,7 +300,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.setRecievedBy(user.getUsername());
         }
         if (null != objection && null != objection.getState()) {
-            historyMap = propService.populateHistory(objection.getState());
+            historyMap = propService.populateHistory(objection);
         }
 
         loggedUserIsEmployee = propService.isEmployee(securityUtils.getCurrentUser());
@@ -690,12 +690,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             reportParams.put("HouseNo", objection.getBasicProperty().getUpicNo());
             reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null ? objection
                     .getBasicProperty().getBoundary().getName() : "");
-            reportParams.put("HalfYearPropertyTaxTo", currentDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
+            reportParams.put("HalfYearPropertyTaxTo", currentDemand.get(CURR_FIRSTHALF_DMD_STR).divide(BigDecimal.valueOf(2))
                     .setScale(2));
-            reportParams.put("HalfYearPropertyTaxFrom", earlierDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
+            reportParams.put("HalfYearPropertyTaxFrom", earlierDemand.get(CURR_FIRSTHALF_DMD_STR).divide(BigDecimal.valueOf(2))
                     .setScale(2));
-            reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_DMD_STR).setScale(2).toString());
-            reportParams.put("AnnualPropertyTaxFrom", earlierDemand.get(CURR_DMD_STR).setScale(2).toString());
+            reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_FIRSTHALF_DMD_STR).setScale(2).toString());
+            reportParams.put("AnnualPropertyTaxFrom", earlierDemand.get(CURR_FIRSTHALF_DMD_STR).setScale(2).toString());
 
             reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT,
                     objection, reportParams);
@@ -1210,7 +1210,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         // setupWorkflowDetails();
         if (objection != null && objection.getState() != null) {
             setUpWorkFlowHistory(objection.getState().getId());
-            historyMap = propService.populateHistory(objection.getState());
+            historyMap = propService.populateHistory(objection);
         }
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
@@ -1411,7 +1411,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             // objectionWorkflowService.transition(workFlowAction.toLowerCase(),objection,
             // comments);
         } else if (workFlowAction.equalsIgnoreCase("Reject Inspection")) {
-            final List<StateHistory> stateHistoryList = objection.getState().getHistory();
+            final List<StateHistory> stateHistoryList = objection.getStateHistory();
             for (final StateHistory stateHistoryObj : stateHistoryList)
                 if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_HEARINGCOMPLETED)) {
                     position = stateHistoryObj.getOwnerPosition();
@@ -1437,7 +1437,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             }
 
         } else if (workFlowAction.equalsIgnoreCase("Reject") || workFlowAction.equalsIgnoreCase("reject")) {
-            final List<StateHistory> stateHistoryList = objection.getState().getHistory();
+            final List<StateHistory> stateHistoryList = objection.getStateHistory();
             for (final StateHistory stateHistoryObj : stateHistoryList)
                 if (stateHistoryObj.getValue().equalsIgnoreCase(objection.getCurrentState().getValue())) {
                     position = stateHistoryObj.getOwnerPosition();

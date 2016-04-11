@@ -560,8 +560,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("ownerName", pmv.getOwnerName());
                 searchResultMap.put("parcelId", pmv.getGisRefNo());
                 searchResultMap.put("address", pmv.getPropertyAddress());
-                searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
-                searchResultMap.put("currDemandDue", pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl()).toString());
+                searchResultMap.put("currDemand", pmv.getAggrCurrFirstHalfDmd().toString());
+                searchResultMap.put("currDemandDue", pmv.getAggrCurrFirstHalfDmd().subtract(pmv.getAggrCurrFirstHalfColl()).toString());
                 searchResultMap.put("arrDemand", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
                 searchList.add(searchResultMap);
             }

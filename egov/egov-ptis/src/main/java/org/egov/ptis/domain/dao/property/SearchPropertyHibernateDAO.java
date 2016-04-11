@@ -188,9 +188,9 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				if (property != null) {
 					LOGGER.debug("getPropertyByPropertyId : property id : " + property.getId());
 					Map<String, BigDecimal> DmdCollMap = ptDemandDAO.getDemandCollMap(property);
-					currDemand = DmdCollMap.get(PropertyTaxConstants.CURR_DMD_STR);
+					currDemand = DmdCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR);
 					arrDemand = DmdCollMap.get(PropertyTaxConstants.ARR_DMD_STR);
-					currCollection = DmdCollMap.get(PropertyTaxConstants.CURR_COLL_STR);
+					currCollection = DmdCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR);
 					arrCollection = DmdCollMap.get(PropertyTaxConstants.ARR_COLL_STR);
 
 					currDemandDue = currDemand.subtract(currCollection);

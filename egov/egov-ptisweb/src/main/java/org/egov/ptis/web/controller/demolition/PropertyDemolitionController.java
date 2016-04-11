@@ -42,8 +42,8 @@ package org.egov.ptis.web.controller.demolition;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
@@ -124,9 +124,9 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         }
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
                 .getActiveProperty());
-        final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
-        final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
-                propertyTaxDetails.get(CURR_COLL_STR));
+        final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
+        final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
+                propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
         final BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                 propertyTaxDetails.get(ARR_COLL_STR));
         model.addAttribute("currentPropertyTax", currentPropertyTax);

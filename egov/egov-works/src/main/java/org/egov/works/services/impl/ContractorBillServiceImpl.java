@@ -1159,7 +1159,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         List<StateHistory> history = null;
         if (contractorBillRegister != null && contractorBillRegister.getCurrentState() != null
                 && contractorBillRegister.getCurrentState().getHistory() != null)
-            history = contractorBillRegister.getCurrentState().getHistory();
+            history = contractorBillRegister.getStateHistory();
 
         workCompletionInfo = new WorkCompletionInfo(workOrderEstimate, mbNumbers);
         workCompletionInfo.setWorkCommencedOn(workCommencedDate);

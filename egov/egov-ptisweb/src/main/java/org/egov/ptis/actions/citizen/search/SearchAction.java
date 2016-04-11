@@ -42,8 +42,8 @@ package org.egov.ptis.actions.citizen.search;
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -179,11 +179,11 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 searchResultMap.put("address", basicProperty.getAddress().toString());
                 final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
                 if (!property.getIsExemptedFromTax()) {
-                    searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
+                    searchResultMap.put("currDemand", demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
                     searchResultMap.put("arrDemandDue",
                             demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
                     searchResultMap.put("currDemandDue",
-                            demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
+                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR).subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
                 } else {
                     searchResultMap.put("currDemand", "0");
                     searchResultMap.put("arrDemandDue", "0");

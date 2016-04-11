@@ -112,7 +112,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
@@ -2575,8 +2574,8 @@ public class PropertyService {
     public List<PropertyMaterlizeView> getPropertyByDemand(final String fromDemand, final String toDemand) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrDmd is not null and pmv.aggrCurrDmd>=:fromDemand ")
-                .append("and pmv.aggrCurrDmd<=:toDemand and pmv.isActive = true ");
+                "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd>=:fromDemand ")
+                .append("and pmv.aggrCurrFirstHalfDmd<=:toDemand and pmv.isActive = true ");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setBigDecimal("fromDemand", new BigDecimal(fromDemand));
         query.setBigDecimal("toDemand", new BigDecimal(toDemand));
@@ -2685,13 +2684,14 @@ public class PropertyService {
         return wfInitiator;
     }
 
-    public List<Hashtable<String, Object>> populateHistory(final State state) {
+    public List<Hashtable<String, Object>> populateHistory(final StateAware stateAware) {
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
         final Hashtable<String, Object> map = new Hashtable<String, Object>();
         Assignment assignment = null;
         User user = null;
         Position ownerPosition = null;
-        if (null != state) {
+        if (stateAware.hasState()) {
+            State state = stateAware.getCurrentState();
             map.put("date", state.getLastModifiedDate());
             map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
             map.put("status", state.getValue());
@@ -2705,17 +2705,18 @@ public class PropertyService {
             } else if (null != user)
                 map.put("user", user.getUsername() + "::" + user.getName());
             historyTable.add(map);
+            List<StateHistory> stateHistory = stateAware.getStateHistory();
             if (null != state.getHistory() && !state.getHistory().isEmpty()) {
-                Collections.reverse(state.getHistory());
-                for (final StateHistory stateHistory : state.getHistory()) {
+                Collections.reverse(stateHistory);
+                for (final StateHistory historyState : stateHistory) {
                     final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
-                    HistoryMap.put("date", stateHistory.getLastModifiedDate());
-                    HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
-                            + stateHistory.getLastModifiedBy().getName());
-                    HistoryMap.put("status", stateHistory.getValue());
-                    HistoryMap.put("comments", null != stateHistory.getComments() ? stateHistory.getComments() : "");
-                    ownerPosition = stateHistory.getOwnerPosition();
-                    user = stateHistory.getOwnerUser();
+                    HistoryMap.put("date", historyState.getLastModifiedDate());
+                    HistoryMap.put("updatedBy", historyState.getLastModifiedBy().getUsername() + "::"
+                            + historyState.getLastModifiedBy().getName());
+                    HistoryMap.put("status", historyState.getValue());
+                    HistoryMap.put("comments", null != historyState.getComments() ? historyState.getComments() : "");
+                    ownerPosition = historyState.getOwnerPosition();
+                    user = historyState.getOwnerUser();
                     if (null != ownerPosition) {
                         assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
                         HistoryMap.put("user", null != assignment && null != assignment.getEmployee() ? assignment
@@ -2820,9 +2821,9 @@ public class PropertyService {
     private void loadPropertyDues(final Property property, final AssessmentDetails assessmentDetail) {
         final Map<String, BigDecimal> resultmap = ptDemandDAO.getDemandCollMap(property);
         if (null != resultmap && !resultmap.isEmpty()) {
-            final BigDecimal currDmd = resultmap.get(PropertyTaxConstants.CURR_DMD_STR);
+            final BigDecimal currDmd = resultmap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR);
             final BigDecimal arrDmd = resultmap.get(PropertyTaxConstants.ARR_DMD_STR);
-            final BigDecimal currCollection = resultmap.get(PropertyTaxConstants.CURR_COLL_STR);
+            final BigDecimal currCollection = resultmap.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR);
             final BigDecimal arrColelection = resultmap.get(PropertyTaxConstants.ARR_COLL_STR);
 
             final BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrColelection);

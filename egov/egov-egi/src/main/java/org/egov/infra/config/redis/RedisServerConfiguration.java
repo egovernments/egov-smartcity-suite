@@ -83,8 +83,8 @@ public class RedisServerConfiguration {
     }
 
     @Bean(name = "redisTemplate")
-    public RedisTemplate<String, Object> redisTemplate(final RedisConnectionFactory cf) {
-        final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<Object, Object> redisTemplate(final RedisConnectionFactory cf) {
+        final RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(cf);
         return redisTemplate;
     }
