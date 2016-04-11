@@ -3,6 +3,7 @@ package org.egov.commons.repository;
 import java.util.List;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFiscalPeriod;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +21,7 @@ public interface CFinancialYearRepository extends JpaRepository<CFinancialYear, 
 
     @Query("from CFinancialYear order by id desc")
     List<CFinancialYear> getFinYearLastDate();
+
+    @Query("from CFiscalPeriod where name=:name order by id desc")
+    CFiscalPeriod findByFiscalName(@Param("name") String name);
 }
