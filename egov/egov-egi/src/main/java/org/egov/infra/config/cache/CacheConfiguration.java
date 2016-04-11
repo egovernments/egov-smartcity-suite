@@ -42,7 +42,6 @@ package org.egov.infra.config.cache;
 
 import org.egov.infra.config.cache.resolver.MultiTenantCacheResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -90,6 +89,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
         redisCacheManager.setTransactionAware(true);
         redisCacheManager.setCacheNames(cities);
         redisCacheManager.setUsePrefix(true);
+        redisCacheManager.setDefaultExpiration(60*60);
         return redisCacheManager;
     }
 

@@ -172,7 +172,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     
     @Action(value = "/receipts/ajaxBankRemittance-accountListOfService")
     public String accountListOfService() {
-        final String bankAccountQueryString = "select ba.id as accountid,ba.accountnumber as accountnumber from BANKACCOUNT ba,"
+        final String bankAccountQueryString = "select distinct ba.id as accountid,ba.accountnumber as accountnumber from BANKACCOUNT ba,"
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
                 + "ba.BRANCHID=" + branchId;
 

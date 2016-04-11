@@ -48,7 +48,7 @@ import java.sql.Connection;
 import java.util.Collection;
 import java.util.List;
 
-public interface ChartOfAccountsDAO{
+public interface ChartOfAccountsDAO {
     // public Collection getAccountCodeList();
     @Deprecated
     public Collection getAccountCodeListForDetails();
@@ -103,13 +103,18 @@ public interface ChartOfAccountsDAO{
     public List<CChartOfAccounts> getBySubLedgerCode(String subLedgerCode);
 
     public List<CChartOfAccounts> getForRecovery();
-     CChartOfAccounts  findById(Number  id, boolean lock);
 
-    List<  CChartOfAccounts  > findAll();
+    CChartOfAccounts findById(Number id, boolean lock);
 
- 
-      CChartOfAccounts   create(  CChartOfAccounts   entity);
-      CChartOfAccounts   update(  CChartOfAccounts   entity);
+    List<CChartOfAccounts> findAll();
 
-    void delete(  CChartOfAccounts   entity);
+    CChartOfAccounts create(CChartOfAccounts entity);
+
+    CChartOfAccounts update(CChartOfAccounts entity);
+
+    void delete(CChartOfAccounts entity);
+    
+    public List<CChartOfAccounts> getAccountCodeByPurposeName(String purposeId) throws ApplicationException;
+    
+    public List<CChartOfAccounts> getAccountCodeByListOfPurposeName(String[] purposeId) throws ValidationException;
 }

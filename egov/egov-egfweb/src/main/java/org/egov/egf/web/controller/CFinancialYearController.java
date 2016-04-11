@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.service.CFinancialYearService;
@@ -50,24 +52,38 @@ public class CFinancialYearController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
-        final CFinancialYear cFinancialYear = new CFinancialYear();
-        if (cFinancialYear.getcFiscalPeriod().isEmpty())
-            cFinancialYear.addCFiscalPeriod(new CFiscalPeriod());
+        final CFinancialYear financialYear = new CFinancialYear();
+        if (financialYear.getcFiscalPeriod().isEmpty())
+            financialYear.addCFiscalPeriod(new CFiscalPeriod());
         final Date nextStartingDate = cFinancialYearService.getNextFinancialYearStartingDate();
         model.addAttribute("startingDate", dtFormat.format(nextStartingDate));
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", financialYear);
         model.addAttribute("mode", "create");
         return CFINANCIALYEAR_NEW;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute CFinancialYear cFinancialYear, final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs) {
+    public String create(@Valid @ModelAttribute CFinancialYear cFinancialYear, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
         final Boolean flag = false;
         final Boolean isActive = true;
         if (errors.hasErrors()) {
             prepareNewForm(model);
+            model.addAttribute("mode", "create");
             return CFINANCIALYEAR_NEW;
+        }
+        CFiscalPeriod fiscalPeriod = new CFiscalPeriod();
+        final List<CFiscalPeriod> fiscalList = cFinancialYear.getcFiscalPeriod();
+        for (final CFiscalPeriod fiscal : fiscalList) {
+            fiscalPeriod = cFinancialYearService.findByFiscalName(fiscal.getName());
+            if (fiscalPeriod != null) {
+                prepareNewForm(model);
+                redirectAttrs.addFlashAttribute("financialYear", cFinancialYear);
+                model.addAttribute("message", "Entered Fiscal Period Name " + fiscalPeriod.getName()
+                        + " already Exists");
+                model.addAttribute("mode", "create");
+                return CFINANCIALYEAR_NEW;
+            }
         }
         cFinancialYear.setIsActive(isActive);
         cFinancialYear.setIsClosed(flag);

@@ -42,6 +42,8 @@ package org.egov.collection.service;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -148,7 +150,7 @@ public class CollectionReportService {
         .append(" INNER JOIN EGEIS_EMPLOYEE EG_EMPLOYEE ON EG_USER.ID = EG_EMPLOYEE.ID")
         .append(" INNER JOIN EGEIS_ASSIGNMENT EGEIS_ASSIGNMENT ON EGEIS_ASSIGNMENT.EMPLOYEE = EG_EMPLOYEE.ID")
         .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
-        .append(" EGCL_COLLECTIONHEADER.RECEIPTTYPE='B' AND EGW_STATUS.DESCRIPTION != 'Cancelled' ");
+        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
 
         final StringBuilder onlineQueryStr = new StringBuilder(500);
         onlineQueryStr
@@ -166,7 +168,7 @@ public class CollectionReportService {
         .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER")
         // .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID")
         .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
-        .append(" EGCL_COLLECTIONHEADER.RECEIPTTYPE='B' AND EGW_STATUS.DESCRIPTION != 'Cancelled' ");
+        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
         final StringBuilder queryStrGroup = new StringBuilder(100);
         queryStrGroup
         .append(" GROUP BY  SOURCE, COUNTER_NAME, EMPLOYEE_NAME, USERID,SERVICE_NAME, EGF_INSTRUMENTTYPE.TYPE");
@@ -196,13 +198,13 @@ public class CollectionReportService {
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
             if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
                 queryStr.setLength(0);
-                onlineQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = :paymentMode");
+                onlineQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in (:paymentMode)");
                 queryStr.append(onlineQueryStr);
                 queryStr.append(queryStrGroup);
             } else {
-                queryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = :paymentMode");
+                queryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in (:paymentMode)");
                 queryStr.append(queryStrGroup);
-                onlineQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = :paymentMode");
+                onlineQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in (:paymentMode)");
             }
         } else {
             defaultQueryStr.append(queryStr);
@@ -210,7 +212,7 @@ public class CollectionReportService {
             defaultQueryStr.append(queryStrGroup);
             defaultQueryStr.append(" union ");
             defaultQueryStr.append(queryStr);
-            defaultQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'cheque'");
+            defaultQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in ('cheque', 'dd')");
             defaultQueryStr.append(queryStrGroup);
             defaultQueryStr.append(" union ");
             defaultQueryStr.append(onlineQueryStr);
@@ -225,7 +227,7 @@ public class CollectionReportService {
         aggregateQueryStr.append(queryStrGroup);
         aggregateQueryStr.append(" union ");
         aggregateQueryStr.append(onlineQueryStr);
-        aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'cheque'");
+        aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in( 'cheque','dd')");
         aggregateQueryStr.append(queryStrGroup);
         aggregateQueryStr.append(" union ");
         aggregateQueryStr.append(onlineQueryStr);
@@ -259,8 +261,14 @@ public class CollectionReportService {
             aggrQuery.setLong("serviceId", serviceId);
         }
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
+            if(paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
+                query.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
+                aggrQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
+            } else
+            { 
             query.setString("paymentMode", paymentMode);
             aggrQuery.setString("paymentMode", paymentMode);
+            }
         }
         final List<CollectionSummaryReport> reportResults = populateQueryResults(query.list());
         final List<CollectionSummaryReport> aggrReportResults = populateQueryResults(aggrQuery.list());
