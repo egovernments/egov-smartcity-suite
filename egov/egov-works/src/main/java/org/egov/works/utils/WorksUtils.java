@@ -45,6 +45,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -117,7 +118,7 @@ public class WorksUtils {
     }
     
     public Long getApproverPosition(final String designationName, final LineEstimate lineEstimate) {
-        final List<StateHistory> stateHistoryList = lineEstimate.getState().getHistory();
+        final Set<StateHistory> stateHistoryList = lineEstimate.getState().getHistory();
         Long approverPosition = 0l;
         final String[] desgnArray = designationName.split(",");
         if (stateHistoryList != null && !stateHistoryList.isEmpty()) {
