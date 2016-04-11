@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-06T11:39:14 -->
+<!-- 2016-04-11T11:07:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.util.*"/>
@@ -21,8 +21,8 @@
 	<parameter name="modeOfAllotment" class="java.lang.String"/>
 	<parameter name="WINCode" class="java.lang.String"/>
 	<parameter name="amountOfEstimate" class="java.math.BigDecimal"/>
-	<parameter name="emd" class="java.lang.Double"/>
-	<parameter name="asd" class="java.lang.Double"/>
+	<parameter name="emd" class="java.lang.String"/>
+	<parameter name="asd" class="java.lang.String"/>
 	<parameter name="headOfAccount" class="java.lang.String"/>
 	<parameter name="technicalSanctionBy" class="java.lang.String"/>
 	<queryString>
@@ -77,11 +77,11 @@
 				<text><![CDATA[Gentleman,]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="42" y="258" width="100" height="17" uuid="a7da07d7-6888-4682-a5f2-ecbdca756729"/>
+				<reportElement stretchType="RelativeToBandHeight" x="53" y="258" width="100" height="17" uuid="a7da07d7-6888-4682-a5f2-ecbdca756729"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Sub:-]]></text>
+				<text><![CDATA[Sub :-]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="380" y="150" width="80" height="20" uuid="dc2997ee-76d0-4d71-a24c-b7b795d9f901"/>
@@ -120,7 +120,7 @@
 				<textFieldExpression><![CDATA[$P{accountNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="106" y="258" width="445" height="44" uuid="a567e768-d225-4fd9-88ed-9d13ad8d1f57"/>
+				<reportElement stretchType="RelativeToBandHeight" x="89" y="258" width="445" height="44" uuid="a567e768-d225-4fd9-88ed-9d13ad8d1f57"/>
 				<textFieldExpression><![CDATA[$P{subject}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -221,11 +221,11 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="185" y="84" width="138" height="21" uuid="269bdd98-a0be-4fe4-aac6-037f5e5e34ca"/>
-				<textFieldExpression><![CDATA[$P{emd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{emd}.equals("0.0") || $P{emd}.equals("0"))?"N/A":$P{emd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="367" y="84" width="188" height="21" uuid="3bf765ce-0fbe-49fc-965c-e5626afd176e"/>
-				<textFieldExpression><![CDATA[$P{asd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{asd}.equals("0.0") || $P{asd}.equals("0"))?"N/A":$P{asd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="316" y="104" width="244" height="40" uuid="e8cad337-4112-41e5-bd9d-21139c01b5ed"/>
