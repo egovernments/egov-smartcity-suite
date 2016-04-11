@@ -62,7 +62,8 @@
 				
 		<property name="rateType" column="RATETYPE" not-null="true">
              <type name="org.hibernate.type.EnumType">       
-                     <param name="enumClass">org.egov.tl.entity.RateTypeEnum</param>    
+                     <param name="enumClass">org.egov.tl.entity.RateTypeEnum</param>
+                     <param name="type">12</param>  
              </type>  
         </property> 
 	</class>

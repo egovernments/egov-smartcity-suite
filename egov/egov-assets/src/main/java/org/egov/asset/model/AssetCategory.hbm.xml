@@ -75,7 +75,8 @@
         </many-to-one>
       <property name="depreciationMethod" column="depreciation_method">
 			<type name="org.hibernate.type.EnumType">       
-				<param name="enumClass">org.egov.asset.model.DepreciationMethod</param>     
+				<param name="enumClass">org.egov.asset.model.DepreciationMethod</param>
+				<param name="type">12</param>     
 			</type>   
 		</property> 
         <many-to-one name="parent" class="org.egov.asset.model.AssetCategory" fetch="select">
@@ -83,7 +84,8 @@
         </many-to-one>
        <property name="assetType" column="asset_type" not-null="true" >
 			<type name="org.hibernate.type.EnumType">       
-				<param name="enumClass">org.egov.asset.model.AssetType</param>     
+				<param name="enumClass">org.egov.asset.model.AssetType</param>
+				<param name="type">12</param>     
 			</type>   
 		</property> 
        <many-to-one name="uom" class="org.egov.common.entity.UOM" fetch="select">

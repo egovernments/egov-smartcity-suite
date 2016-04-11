@@ -77,7 +77,8 @@
         </property> 
          <property name="modeOfAcquisition" column="MODEOFACQUISITION" not-null="true">
 			<type name="org.hibernate.type.EnumType">       
-				<param name="enumClass">org.egov.asset.model.ModeOfAcquisition</param>     
+				<param name="enumClass">org.egov.asset.model.ModeOfAcquisition</param>
+				<param name="type">12</param>     
 			</type>   
 		</property> 
         <many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
