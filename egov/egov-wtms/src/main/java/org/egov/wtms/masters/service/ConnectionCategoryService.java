@@ -64,12 +64,13 @@ public class ConnectionCategoryService {
         this.connectionCategoryRepository = connectionCategoryRepository;
     }
 
-    public ConnectionCategory findBy(final Long connectionCategoryId) {
+    public ConnectionCategory findOne(final Long connectionCategoryId) {
         return connectionCategoryRepository.findOne(connectionCategoryId);
     }
 
     @Transactional
     public ConnectionCategory createConnectionCategory(final ConnectionCategory connectionCategory) {
+        connectionCategory.setActive(true);
         return connectionCategoryRepository.save(connectionCategory);
     }
 
@@ -79,15 +80,15 @@ public class ConnectionCategoryService {
     }
 
     public List<ConnectionCategory> findAll() {
-        return connectionCategoryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return connectionCategoryRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
     }
 
     public ConnectionCategory findByNameIgnoreCase(final String name) {
         return connectionCategoryRepository.findByNameIgnoreCase(name);
     }
 
-    public ConnectionCategory findByNameIgnoreCaseAndActive(final String name, final Boolean status) {
-        return connectionCategoryRepository.findByNameIgnoreCaseAndActive(name, status);
+    public ConnectionCategory findByCodeIgnoreCase(final String code) {
+        return connectionCategoryRepository.findByCodeIgnoreCase(code);
     }
 
     public List<ConnectionCategory> findAllByNameLike(final String name) {
@@ -98,8 +99,8 @@ public class ConnectionCategoryService {
         return connectionCategoryRepository.findByName(name);
     }
 
-    public ConnectionCategory load(final Long id) {
-        return connectionCategoryRepository.getOne(id);
+    public ConnectionCategory findByNameAndCode(final String name, final String code) {
+        return connectionCategoryRepository.findByNameAndCode(name, code);
     }
 
     public Page<ConnectionCategory> getListOfConnectionCategory(final Integer pageNumber, final Integer pageSize) {
