@@ -44,8 +44,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 <hibernate-mapping>
 <class name="org.egov.works.models.masters.ScheduleOfRate" table="EGW_SCHEDULEOFRATE">
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGW_SCHEDULEOFRATE</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGW_SCHEDULEOFRATE</param>
 			</generator>
 		</id>		
 		

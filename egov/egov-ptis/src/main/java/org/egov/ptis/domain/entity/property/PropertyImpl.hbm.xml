@@ -47,7 +47,7 @@
 		polymorphism="explicit">
 		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGPT_PROPERTY</param>
+				<param name="sequence_name">SEQ_EGPT_PROPERTY</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="timestamp">

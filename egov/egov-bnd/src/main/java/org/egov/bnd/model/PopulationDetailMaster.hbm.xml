@@ -50,7 +50,7 @@
         <id name="id" >
             <column name="ID"/>
             <generator class="sequence">
-				<param name="sequence">SEQ_EGBD_POPULATIONDETAILMASTER</param>
+				<param name="sequence_name">SEQ_EGBD_POPULATIONDETAILMASTER</param>
 			</generator>
         </id>
          

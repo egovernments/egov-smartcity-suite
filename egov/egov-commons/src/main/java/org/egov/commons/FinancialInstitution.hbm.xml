@@ -7,7 +7,7 @@
         <id name="id" type="integer">
             <column name="ID" not-null="true" />
             <generator class="sequence">
-            <param name="sequence">SEQ_financial_institution</param>
+            <param name="sequence_name">SEQ_financial_institution</param>
             </generator>
         </id>
         <property name="name" type="string">

@@ -47,7 +47,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_TENDER_RESP_CONTRACTORS</param> 
+				<param name="sequence_name">SEQ_EGW_TENDER_RESP_CONTRACTORS</param> 
 			</generator>
 		</id>				
 		<many-to-one name="tenderResponse" column="TENDER_RESPONSE_ID" not-null="true" insert="false" update="false" fetch="select"/>

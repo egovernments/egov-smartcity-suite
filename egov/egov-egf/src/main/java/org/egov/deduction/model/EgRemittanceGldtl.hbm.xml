@@ -46,7 +46,7 @@
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence">
-            <param name="sequence">seq_eg_remittance_gldtl</param>
+            <param name="sequence_name">seq_eg_remittance_gldtl</param>
             </generator>
         </id>
         <many-to-one name="generalledgerdetail" class="org.egov.commons.CGeneralLedgerDetail" fetch="select">

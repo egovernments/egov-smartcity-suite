@@ -44,8 +44,8 @@
     <class name="org.egov.model.recoveries.RemittanceSchedulePayment" table="EGF_REMITTANCE_SCHD_PAYMENT">
         <id
 			name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGF_REMIT_SCHD_PAYMENT</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGF_REMIT_SCHD_PAYMENT</param>
 			</generator>
 		</id>
 		

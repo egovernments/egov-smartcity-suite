@@ -43,7 +43,7 @@
 		<class name="org.egov.ptis.domain.entity.property.PropertyMutationTransferee" table="EGPT_MUTATION_TRANSFEREE">
 		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGPT_MUTATION_TRANSFEREE</param>
+				<param name="sequence_name">SEQ_EGPT_MUTATION_TRANSFEREE</param>
 			</generator>
 		</id>
 		<many-to-one name="transferee" class="org.egov.infra.admin.master.entity.User" column="transferee" cascade="none"/>

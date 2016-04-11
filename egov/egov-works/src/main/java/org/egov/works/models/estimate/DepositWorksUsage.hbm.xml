@@ -45,7 +45,7 @@
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_DEPOSITWORKS_USAGE</param>
+				<param name="sequence_name">SEQ_EGW_DEPOSITWORKS_USAGE</param>
 			</generator>
 		</id>
 		<many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" unique="true" />

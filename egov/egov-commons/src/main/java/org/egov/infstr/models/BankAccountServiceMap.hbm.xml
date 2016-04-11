@@ -48,7 +48,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="sequence">
-				<param name="sequence">seq_egcl_bankaccountservicemapping</param>
+				<param name="sequence_name">seq_egcl_bankaccountservicemapping</param>
 			</generator>
 		</id>
 

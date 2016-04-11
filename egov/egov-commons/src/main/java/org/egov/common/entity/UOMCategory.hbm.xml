@@ -7,8 +7,8 @@
     	<cache usage="transactional"/>
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
-            <generator class="native" >
-            <param name="sequence">seq_eg_uomcategory</param>
+            <generator class="sequence" >
+            <param name="sequence_name">seq_eg_uomcategory</param>
             </generator>
         </id>
         <property name="category" type="string">

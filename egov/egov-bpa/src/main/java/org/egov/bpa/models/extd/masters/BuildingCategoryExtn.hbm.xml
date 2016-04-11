@@ -7,7 +7,7 @@
         <id name="id">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence">
-				<param name="sequence">SEQ_EGBPAEXTND_MSTR_BUILDGCAT</param>
+				<param name="sequence_name">SEQ_EGBPAEXTND_MSTR_BUILDGCAT</param>
 			</generator>
         </id>
         <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">

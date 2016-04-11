@@ -45,7 +45,7 @@
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGF_BUDGET_USAGE</param>
+				<param name="sequence_name">SEQ_EGF_BUDGET_USAGE</param>
 			</generator>
 		</id>
 		<timestamp

@@ -47,7 +47,7 @@
 		table="EGPT_PROPERTY_STATUS_VALUES">
 		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_PROPERTY_STATUS_VALUES</param>
+				<param name="sequence_name">SEQ_PROPERTY_STATUS_VALUES</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">

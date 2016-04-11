@@ -47,7 +47,7 @@
 		<id
 			name="idPropertyRef" column="ID_PROPREF" type="int">
 			<generator class="sequence">
-					<param name="sequence">SEQ_PROP_REF</param>
+					<param name="sequence_name">SEQ_PROP_REF</param>
 			</generator>
 		</id>
 		<property name="fileNo" column="FILE_NO" />

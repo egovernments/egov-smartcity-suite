@@ -5,7 +5,7 @@
 	<class name="org.egov.lib.rrbac.model.AuthorizationRule" table="EG_AUTHORIZATION_RULE">
 		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_AUTH_RULE</param>
+				<param name="sequence_name">SEQ_AUTH_RULE</param>
 			</generator>
 		</id>
 		<many-to-one name="action" class="org.egov.infra.admin.master.entity.Action">

@@ -45,8 +45,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	<class name="org.egov.works.models.masters.OverheadRate"
 		table="EGW_OVERHEAD_RATE">
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGW_OVERHEADRATE</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGW_OVERHEADRATE</param>
 			</generator>
 		</id>
 		<component name="lumpsumAmount">

@@ -29,7 +29,7 @@
 
 		<id name="id" column="ID" type="int">
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGBD_NAMECHANGE</param>
+				<param name="sequence_name">SEQ_EGBD_NAMECHANGE</param>
 			</generator>
 		</id>
 		<timestamp column="LASTUPDATEDTIMESTAMP" name="lastUpatedTimestamp"

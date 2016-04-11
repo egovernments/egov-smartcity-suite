@@ -50,7 +50,7 @@
 		<id name="id" type="long">
 			<column name="DISEASESID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGBD_DIESASESMASTER</param>
+				<param name="sequence_name">SEQ_EGBD_DIESASESMASTER</param>
 			</generator>
 		</id>
 

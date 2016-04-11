@@ -49,7 +49,7 @@
         <id
 			name="ID" column="ID" type="int">
 			<generator class="sequence">
-					<param name="sequence">SEQ_PROP_INTEGRATION</param>
+					<param name="sequence_name">SEQ_PROP_INTEGRATION</param>
 			</generator>
 		</id>
 		

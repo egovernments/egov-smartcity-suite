@@ -11,7 +11,7 @@
 	column="ID"
 	type="int">
 	<generator class="sequence">
-		<param name="sequence">SEQ_SERVICE_HISTORY</param>
+		<param name="sequence_name">SEQ_SERVICE_HISTORY</param>
 	</generator>
 </id>
 	

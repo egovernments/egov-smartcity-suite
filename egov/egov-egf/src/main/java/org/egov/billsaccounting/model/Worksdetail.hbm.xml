@@ -46,7 +46,7 @@
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence" >
-            <param name="sequence">SEQ_WORKSDETAIL </param>
+            <param name="sequence_name">SEQ_WORKSDETAIL </param>
             </generator>
         </id>
         <many-to-one name="worksdetail" class="org.egov.billsaccounting.model.Worksdetail" fetch="select">

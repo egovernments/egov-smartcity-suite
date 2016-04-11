@@ -8,7 +8,7 @@
 
 		<id name="id" column="ID">
 			<generator class="sequence">
-				<param name="sequence">SEQ_EG_BILLRECEIPT</param>
+				<param name="sequence_name">SEQ_EG_BILLRECEIPT</param>
 			</generator>
 		</id>
 		

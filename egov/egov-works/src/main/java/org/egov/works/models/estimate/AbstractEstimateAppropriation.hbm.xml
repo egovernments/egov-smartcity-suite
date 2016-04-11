@@ -46,7 +46,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_ESTIMATE_APPROPRIATION</param>
+				<param name="sequence_name">SEQ_EGW_ESTIMATE_APPROPRIATION</param>
 			</generator>
 		</id> 
 			

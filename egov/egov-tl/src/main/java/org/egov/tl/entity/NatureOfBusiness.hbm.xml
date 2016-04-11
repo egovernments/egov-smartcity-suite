@@ -43,8 +43,8 @@
 <hibernate-mapping>
 	<class name="org.egov.tl.entity.NatureOfBusiness" table="EGTL_MSTR_BUSINESS_NATURE">
 		<id column="ID" name="id" type="long">
-			<generator class="native">
-				<param name="sequence">SEQ_EGTL_MSTR_BUSINESS_NATURE</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGTL_MSTR_BUSINESS_NATURE</param>
 			</generator>
 		</id>
 		<property generated="never" lazy="false" name="createdDate" type="java.util.Date">

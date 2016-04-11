@@ -10,7 +10,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 					column="ID"
 					type="int">
 					<generator class="sequence">
-						<param name="sequence">EGEIS_BLOOD_SEQ</param>
+						<param name="sequence_name">EGEIS_BLOOD_SEQ</param>
 					</generator>
 		</id>
 		

@@ -10,7 +10,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 							column="RECRUITMENT_TYPE_ID"
 							type="int">
 							<generator class="sequence">
-								<param name="sequence">EGPIMS_RECRUITMENT_TYPE_SEQ</param>
+								<param name="sequence_name">EGPIMS_RECRUITMENT_TYPE_SEQ</param>
 							</generator>
 		</id>
 		<property

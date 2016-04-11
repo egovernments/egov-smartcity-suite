@@ -5,8 +5,8 @@
 <hibernate-mapping>
 	<class name="org.egov.commons.Installment" table="EG_INSTALLMENT_MASTER">
 		<id name="id" column="ID">
-			<generator class="native">
-				<param name="sequence">SEQ_EG_INSTALLMENT_MASTER</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EG_INSTALLMENT_MASTER</param>
 			</generator>
 		</id>
 		<timestamp column="LASTUPDATEDTIMESTAMP" name="lastUpdatedTimeStamp" access="property" unsaved-value="null" />

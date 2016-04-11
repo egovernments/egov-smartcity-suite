@@ -7,7 +7,7 @@
         <id name="id" type="long">
             <column name="ID" precision="12" scale="0" />
             <generator class="sequence">
-            	<param name="sequence">EGEIS_NOMINEE_TYPE_SEQ</param>
+            	<param name="sequence_name">EGEIS_NOMINEE_TYPE_SEQ</param>
             </generator>
         </id>
         <property name="nomineeType" type="string">

@@ -7,7 +7,7 @@
       <id name="id">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence">
-				<param name="sequence">SEQ_EGBPAEXTND_INSMEASUREDTLS</param>
+				<param name="sequence_name">SEQ_EGBPAEXTND_INSMEASUREDTLS</param>
 			</generator>
         </id>
         <many-to-one name="inspectionDetails" class="org.egov.bpa.models.extd.InspectionDetailsExtn" fetch="select">

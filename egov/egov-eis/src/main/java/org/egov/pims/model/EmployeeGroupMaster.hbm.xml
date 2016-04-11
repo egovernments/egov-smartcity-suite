@@ -10,7 +10,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			column="CATEGORY_ID"
 			type="int">
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGEIS_EMPGROUP_MSTR</param>
+				<param name="sequence_name">SEQ_EGEIS_EMPGROUP_MSTR</param>
 			</generator>
 		</id>
 		

@@ -45,7 +45,7 @@
 		<id name="id" type="long">
 			<column name="ID" precision="10" scale="0" />
 			<generator class="sequence">
-				<param name="sequence">seq_egf_fixedDeposit</param>
+				<param name="sequence_name">seq_egf_fixedDeposit</param>
 			</generator>
 		</id>
 		<property name="fileNo" type="string" column="FILENO" />

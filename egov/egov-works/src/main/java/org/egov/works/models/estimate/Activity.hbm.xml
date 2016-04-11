@@ -48,8 +48,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			column="ID"
 			type="long"
 			unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGW_ESTIMATE_ACTIVITY</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGW_ESTIMATE_ACTIVITY</param>
 			</generator>
 		</id>
 		

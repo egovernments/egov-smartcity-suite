@@ -5,8 +5,8 @@
 	<class name="org.egov.commons.CWard" table="EGF_WARD"> 
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="native">
-				<param name="sequence">S_70_3_WARD</param>
+			<generator class="sequence">
+				<param name="sequence_name">S_70_3_WARD</param>
 			</generator>
 		</id>				
 		<property name="name" column="NAME" />

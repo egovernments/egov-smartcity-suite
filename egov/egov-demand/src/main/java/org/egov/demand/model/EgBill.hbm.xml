@@ -8,8 +8,8 @@
 	<class name="org.egov.demand.model.EgBill" table="EG_BILL">
 		<id name="id" type="java.lang.Long">
 			<column name="ID" />
-			<generator class="native">
-				<param name="sequence">SEQ_EG_BILL</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EG_BILL</param>
 			</generator>
 		</id>
 

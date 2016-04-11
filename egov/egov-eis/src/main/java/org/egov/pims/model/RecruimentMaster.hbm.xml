@@ -10,7 +10,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 							column="MODE_OF_RECRUIMENT_ID"
 							type="int">
 							<generator class="sequence">
-								<param name="sequence">EGPIMS_MODE_OF_RECRUIMENT_SEQ</param>
+								<param name="sequence_name">EGPIMS_MODE_OF_RECRUIMENT_SEQ</param>
 							</generator>
 		</id>
 		<property

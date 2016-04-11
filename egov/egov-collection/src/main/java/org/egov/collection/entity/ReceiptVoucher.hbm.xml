@@ -48,7 +48,7 @@
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence">
-				<param name="sequence">SEQ_EGCL_COLLECTIONVOUCHER</param>
+				<param name="sequence_name">SEQ_EGCL_COLLECTIONVOUCHER</param>
 			</generator>
         </id>
         <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">

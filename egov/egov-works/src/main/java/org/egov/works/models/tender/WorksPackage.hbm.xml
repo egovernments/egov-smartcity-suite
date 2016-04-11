@@ -46,7 +46,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">			
-				<param name="sequence">SEQ_EGW_WORKSPACKAGE</param>
+				<param name="sequence_name">SEQ_EGW_WORKSPACKAGE</param>
 			</generator>
 		</id>
 		<property name="wpNumber" type="string">

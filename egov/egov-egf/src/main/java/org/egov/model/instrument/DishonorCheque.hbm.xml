@@ -46,7 +46,7 @@
          <id name="id">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence" >
-            <param name="sequence">SEQ_EGF_DISHONORCHQ</param>
+            <param name="sequence_name">SEQ_EGF_DISHONORCHQ</param>
             </generator>
         </id>
         <many-to-one name="instrumentHeader" class="org.egov.model.instrument.InstrumentHeader" fetch="select">

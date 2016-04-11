@@ -49,7 +49,7 @@
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGBD_BIRTHREGISTRATION</param>
+				<param name="sequence_name">SEQ_EGBD_BIRTHREGISTRATION</param>
 			</generator>
 		</id>
 						

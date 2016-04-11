@@ -46,7 +46,7 @@
 	<class name="org.egov.bnd.model.AgeType" table="EGBD_AGETYPE">
 		<id name="id">
 			<column name="AGETYPEID" />
-			<generator class="native">
+			<generator class="sequence">
 
 			</generator>
 		</id>

@@ -47,7 +47,7 @@
 		<id name="id">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGBD_CREMATORIUMMASTER</param>
+				<param name="sequence_name">SEQ_EGBD_CREMATORIUMMASTER</param>
 			</generator>
 		</id>
 		<many-to-one name="registrationUnit" class="org.egov.bnd.model.RegistrationUnit"

@@ -47,7 +47,7 @@
        <id name="id"  unsaved-value="null" >
 			<column name="ID" not-null="true"/>
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGBD_NAMEINCLUSION_REFNAMES</param>
+				<param name="sequence_name">SEQ_EGBD_NAMEINCLUSION_REFNAMES</param>
 			</generator>  
 		</id>		
 

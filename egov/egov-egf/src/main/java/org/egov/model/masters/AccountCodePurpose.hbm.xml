@@ -44,8 +44,8 @@
 		<!-- A squence pk generator -->
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="native">
-				<param name="sequence">SEQ_EGF_ACCOUNTCODE_PURPOSE</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGF_ACCOUNTCODE_PURPOSE</param>
 			</generator>
 		</id>	
 		<property name="name" >

@@ -57,7 +57,7 @@
                 <column name="ESTABLISHMENTTYPEID" />
         
             <generator class="sequence">
-			<param name="sequence">SEQ_EGBD_ESTABLISHMENTTYPE</param>     
+			<param name="sequence_name">SEQ_EGBD_ESTABLISHMENTTYPE</param>     
 			</generator>
               
         </id>

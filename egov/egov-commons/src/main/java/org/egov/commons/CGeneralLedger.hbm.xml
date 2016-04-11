@@ -5,8 +5,8 @@
 	<class name="org.egov.commons.CGeneralLedger" table="GENERALLEDGER"> 
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="native">
-				<param name="sequence">SEQ_GENERALLEDGER</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_GENERALLEDGER</param>
 			</generator>
 		</id>	
 

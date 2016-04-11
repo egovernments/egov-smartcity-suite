@@ -44,8 +44,8 @@
 <hibernate-mapping auto-import="false">
 	<class name="org.egov.infstr.workflow.Action" table="EG_WF_ACTIONS">
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">EG_WF_ACTIONS_SEQ</param>
+			<generator class="sequence">
+				<param name="sequence_name">EG_WF_ACTIONS_SEQ</param>
 			</generator>
 		</id>
 		<property name="type" column="TYPE" type="string" length="255" not-null="true" />

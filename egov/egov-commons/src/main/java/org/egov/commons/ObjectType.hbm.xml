@@ -7,7 +7,7 @@
 
 		<id name="id" column="ID" type="int">
 			<generator class="sequence">
-				<param name="sequence">SEQ_OBJECT_TYPE</param>
+				<param name="sequence_name">SEQ_OBJECT_TYPE</param>
 			</generator>
 		</id>
 		<timestamp column="LASTMODIFIEDDATE" name="lastmodifieddate" access="property" unsaved-value="null" />

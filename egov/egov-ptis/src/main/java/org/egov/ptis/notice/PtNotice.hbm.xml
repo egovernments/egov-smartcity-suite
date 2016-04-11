@@ -49,7 +49,7 @@
 			column="ID"
 			type="long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGPT_NOTICE</param>
+				<param name="sequence_name">SEQ_EGPT_NOTICE</param>
 			</generator>
 		</id>
 		<property name="moduleId" column="ID_MODULE" />

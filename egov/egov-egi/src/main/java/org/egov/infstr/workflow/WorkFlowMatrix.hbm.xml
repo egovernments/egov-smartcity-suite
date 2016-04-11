@@ -46,7 +46,7 @@
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="sequence">
-				<param name="sequence">EG_WF_MATRIX_SEQ</param>
+				<param name="sequence_name">EG_WF_MATRIX_SEQ</param>
 			</generator>
 		</id>
 		<property name="department" type="java.lang.String">

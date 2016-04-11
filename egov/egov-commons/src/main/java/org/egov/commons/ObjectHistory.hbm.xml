@@ -6,7 +6,7 @@
 	<class name="org.egov.commons.ObjectHistory" table="EG_OBJECT_HISTORY">
 		<id name="id" column="ID" type="int">
 			<generator class="sequence">
-				<param name="sequence">SEQ_OBJECT_HISTORY</param>
+				<param name="sequence_name">SEQ_OBJECT_HISTORY</param>
 			</generator>
 		</id>
 		<timestamp column="MODIFIEDDATE" name="modifiedDate" access="property" unsaved-value="null" />

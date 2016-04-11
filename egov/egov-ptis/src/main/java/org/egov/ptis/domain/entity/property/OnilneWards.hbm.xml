@@ -50,7 +50,7 @@
 			column="id"
 			type="int">
 			<generator class="sequence">
-			<param name="sequence">SEQ_ONLINE_DATE</param>
+			<param name="sequence_name">SEQ_ONLINE_DATE</param>
 			</generator>
 	</id>
 	

@@ -50,7 +50,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			type="long"
 			unsaved-value="null">
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_MILESTONE</param>
+				<param name="sequence_name">SEQ_EGW_MILESTONE</param>
 			</generator>
 		</id>
 		<many-to-one name="workOrderEstimate" class="org.egov.works.models.workorder.WorkOrderEstimate" column="WORKORDER_ESTIMATE_ID" not-null="true" fetch="select" />

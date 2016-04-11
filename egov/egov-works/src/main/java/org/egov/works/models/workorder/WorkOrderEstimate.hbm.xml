@@ -47,7 +47,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_WORKORDER_ESTIMATE</param>
+				<param name="sequence_name">SEQ_WORKORDER_ESTIMATE</param>
 			</generator>
 		</id>
 		<many-to-one name="workOrder" column="WORKORDER_ID" not-null="true" insert="false" update="false" fetch="select"/>

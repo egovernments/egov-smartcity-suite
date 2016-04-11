@@ -6,7 +6,7 @@
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EG_CHECKLISTS</param>
+				<param name="sequence_name">SEQ_EG_CHECKLISTS</param>
 			</generator>
 		</id>
 

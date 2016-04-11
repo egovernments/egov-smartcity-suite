@@ -47,7 +47,7 @@
 		<id
 			name="id" column="ID" type="long">
 			<generator class="sequence">
-					<param name="sequence">SEQ_EGPT_MUTATION_MASTER</param>
+					<param name="sequence_name">SEQ_EGPT_MUTATION_MASTER</param>
 			</generator>
 		</id>
 		<property

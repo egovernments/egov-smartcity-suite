@@ -8,8 +8,8 @@
     <class name="org.egov.demand.model.EgdmCollectedReceipt" table="EGDM_COLLECTED_RECEIPTS" >
         <id name="id" type="java.lang.Long">
             <column name="ID"  />
-        <generator class="native">
-			<param name="sequence">seq_egdm_collected_receipts</param>
+        <generator class="sequence">
+			<param name="sequence_name">seq_egdm_collected_receipts</param>
 		</generator>
 		 </id>
         

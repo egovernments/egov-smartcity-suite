@@ -54,7 +54,7 @@
         <id name="id" type="long" >
            <column name="MAJORGROUPID" />
            <generator class="sequence">
-				<param name="sequence">SEQ_EGBD_ICDMAJORGROUP</param>
+				<param name="sequence_name">SEQ_EGBD_ICDMAJORGROUP</param>
 			</generator>
         </id>
         

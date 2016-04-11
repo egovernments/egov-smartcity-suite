@@ -8,8 +8,8 @@
     <class name="org.egov.demand.model.EgDemandDetails" table="EG_DEMAND_DETAILS" >
         <id name="id" type="java.lang.Long">
             <column name="ID"  />
-        <generator class="native">
-			<param name="sequence">SEQ_EG_DEMAND_DETAILS</param>
+        <generator class="sequence">
+			<param name="sequence_name">SEQ_EG_DEMAND_DETAILS</param>
 		</generator>
 		 </id>		
         <property name="modifiedDate" type="timestamp">

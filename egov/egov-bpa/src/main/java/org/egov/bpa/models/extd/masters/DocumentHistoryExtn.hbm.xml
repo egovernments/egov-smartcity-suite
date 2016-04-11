@@ -7,7 +7,7 @@
          <id name="id">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence">
-				<param name="sequence">SEQ_EGBPAEXTND_DOCUMENTHISTORY</param>
+				<param name="sequence_name">SEQ_EGBPAEXTND_DOCUMENTHISTORY</param>
 			</generator>
         </id>
        <many-to-one name="registrationId" class="org.egov.bpa.models.extd.RegistrationExtn" fetch="select" >

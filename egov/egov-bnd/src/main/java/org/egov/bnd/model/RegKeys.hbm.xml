@@ -50,7 +50,7 @@
 		<id name="id"  unsaved-value="null" >
 			<column name="ID" not-null="true"/>
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGBD_REGKEYS</param>
+				<param name="sequence_name">SEQ_EGBD_REGKEYS</param>
 			</generator>
 		</id>				
 		<property name="regType">

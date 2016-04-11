@@ -47,7 +47,7 @@
 		<id
 			name="ID" column="ID" type="int">
 			<generator class="sequence">
-					<param name="sequence">SEQ_EGPT_STATUS</param>
+					<param name="sequence_name">SEQ_EGPT_STATUS</param>
 			</generator>
 		</id>
 		<timestamp

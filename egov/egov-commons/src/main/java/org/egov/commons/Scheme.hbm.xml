@@ -7,7 +7,7 @@
         <id name="id" type="integer">
             <column name="ID" precision="10" scale="0" />
             <generator class="sequence" >
-            <param name="sequence">SEQ_SCHEME </param>
+            <param name="sequence_name">SEQ_SCHEME </param>
             </generator>
         </id>
         <many-to-one name="fund" class="org.egov.commons.Fund" fetch="select">

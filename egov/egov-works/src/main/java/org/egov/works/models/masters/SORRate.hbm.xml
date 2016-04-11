@@ -44,8 +44,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 <hibernate-mapping>
 	<class name="org.egov.works.models.masters.SORRate" table="EGW_SOR_RATE">
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGW_SOR_RATE</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGW_SOR_RATE</param>
 			</generator>
 		</id>
 		

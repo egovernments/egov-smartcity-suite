@@ -45,7 +45,7 @@
 	<class name="org.egov.tl.entity.LicenseStatus" table="EGTL_MSTR_STATUS">
 		<id name="ID" column="ID" type="int">
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGTL_MSTR_STATUS</param>
+				<param name="sequence_name">SEQ_EGTL_MSTR_STATUS</param>
 			</generator>
 		</id>
 		<timestamp column="LASTUPDATEDTIMESTAMP" name="lastUpdatedTimeStamp"

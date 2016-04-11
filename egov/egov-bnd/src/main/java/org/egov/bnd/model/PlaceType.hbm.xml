@@ -50,7 +50,7 @@
 
 		<id name="id" type="java.lang.Integer">
 			<column name="PLACEID" />
-			<generator class="native">
+			<generator class="sequence">
 				<!-- To add non XDoclet generator parameters, create a file named hibernate-generator-params-CPlaceType.xml 
 					containing the additional parameters and place it in your merge dir. -->
 			</generator>

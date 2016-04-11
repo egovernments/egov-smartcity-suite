@@ -43,8 +43,8 @@
 <hibernate-mapping auto-import="false">
 	<class name="org.egov.tl.entity.LicenseSubCategory" table="EGTL_MSTR_SUB_CATEGORY">
 		<id column="ID" name="id" type="java.lang.Long">
-			<generator class="native">
-				<param name="sequence">SEQ_EGTL_MSTR_SUB_CATEGORY</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGTL_MSTR_SUB_CATEGORY</param>
 			</generator>
 		</id>
 		<property  name="name" type="java.lang.String">

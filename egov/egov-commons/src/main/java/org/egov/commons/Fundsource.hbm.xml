@@ -6,8 +6,8 @@
 	<class name="org.egov.commons.Fundsource" table="FUNDSOURCE">
 		<id name="id" type="integer">
 			<column name="ID" not-null="true" />
-			<generator class="native">
-				<param name="sequence">seq_fundsource</param>
+			<generator class="sequence">
+				<param name="sequence_name">seq_fundsource</param>
 			</generator>
 		</id>
 		<many-to-one name="fundsource" class="org.egov.commons.Fundsource" fetch="select">

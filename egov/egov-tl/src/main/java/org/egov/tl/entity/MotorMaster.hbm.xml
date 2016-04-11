@@ -43,8 +43,8 @@
 <hibernate-mapping>
 	<class name="org.egov.tl.entity.MotorMaster" table="EGTL_MSTR_MOTOR_FEE_RANGE">
 		<id name="id" column="ID" type="java.lang.Long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGTL_MSTR_MOTOR_FEE_RANGE</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGTL_MSTR_MOTOR_FEE_RANGE</param>
 			</generator>
 		</id>
 		<property name="motorHpFrom" type="java.math.BigDecimal">

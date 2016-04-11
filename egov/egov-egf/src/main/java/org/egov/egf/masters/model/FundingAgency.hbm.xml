@@ -43,7 +43,7 @@
 	<class name="org.egov.egf.masters.model.FundingAgency" table="EGF_FUNDINGAGENCY"> 
 		<id name="id" type="long" column="ID">
 	        <generator class="sequence">
-	            <param name="sequence">SEQ_EGF_FUNDINGAGENCY</param>
+	            <param name="sequence_name">SEQ_EGF_FUNDINGAGENCY</param>
 	        </generator>
 	    </id>	    
 	    <property name="code" type="string" column="CODE" />

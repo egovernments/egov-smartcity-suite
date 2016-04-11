@@ -50,7 +50,7 @@
 		<id name="id" unsaved-value="null">
 			<column name="ADDICTIONID" not-null="true" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGBD_ADDICTIONMASTER</param>
+				<param name="sequence_name">SEQ_EGBD_ADDICTIONMASTER</param>
 			</generator>
 		</id>
 		<property name="addictionConst">

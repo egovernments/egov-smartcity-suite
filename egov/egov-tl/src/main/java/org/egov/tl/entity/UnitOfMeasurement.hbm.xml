@@ -43,8 +43,8 @@
 <hibernate-mapping>
 	<class name="org.egov.tl.entity.UnitOfMeasurement" table="egtl_mstr_UnitOfMeasure">
 		<id column="ID" name="id" type="long">
-			<generator class="native"> 
-				<param name="sequence">SEQ_egtl_mstr_UnitOfMeasure</param>
+			<generator class="sequence"> 
+				<param name="sequence_name">SEQ_egtl_mstr_UnitOfMeasure</param>
 			</generator>
 		</id>
 		<property  name="createdDate" type="java.util.Date">

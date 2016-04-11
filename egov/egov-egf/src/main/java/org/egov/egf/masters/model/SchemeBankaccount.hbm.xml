@@ -46,7 +46,7 @@
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGF_SCHEME_BANKACCOUNT</param>
+				<param name="sequence_name">SEQ_EGF_SCHEME_BANKACCOUNT</param>
 			</generator>
 		</id>
       <many-to-one name="bankAccount" class="org.egov.commons.Bankaccount" column="bankaccountid" />

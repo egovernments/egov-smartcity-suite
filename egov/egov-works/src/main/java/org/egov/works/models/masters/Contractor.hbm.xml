@@ -47,7 +47,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_CONTRACTOR</param>
+				<param name="sequence_name">SEQ_EGW_CONTRACTOR</param>
 			</generator>
 		</id>
 		<property name="code" type="string" >

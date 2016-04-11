@@ -46,7 +46,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">			
-				<param name="sequence">SEQ_EGW_RETENDER_HISTORY</param>
+				<param name="sequence_name">SEQ_EGW_RETENDER_HISTORY</param>
 			</generator>
 		</id>
 		<property name="statusDate" type="date">

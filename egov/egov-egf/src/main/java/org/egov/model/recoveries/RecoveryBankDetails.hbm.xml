@@ -44,8 +44,8 @@
     <class name="org.egov.model.recoveries.RecoveryBankDetails" table="egf_recovery_bankdetails">
          <id name="id" type="long">
             <column name="ID" precision="10" scale="0" />
-            <generator class="native">
-            <param name="sequence">SEQ_EGF_RECOVERY_BANKDETAILS</param>
+            <generator class="sequence">
+            <param name="sequence_name">SEQ_EGF_RECOVERY_BANKDETAILS</param>
             </generator>
         </id>
         <many-to-one name="tdsId" class="org.egov.model.recoveries.Recovery" fetch="select">

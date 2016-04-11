@@ -46,7 +46,7 @@
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
            <generator class="sequence" >
-            <param name="sequence">SEQ_EGCL_COLLECTIONMIS</param>
+            <param name="sequence_name">SEQ_EGCL_COLLECTIONMIS</param>
             </generator>
         </id>
         <many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">

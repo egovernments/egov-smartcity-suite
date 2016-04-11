@@ -48,7 +48,7 @@
         <id name="id" type="java.lang.Long">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence">
-            	<param name="sequence">seq_egasset_asset</param>
+            	<param name="sequence_name">seq_egasset_asset</param>
             </generator>
         </id>
         <property name="code" type="java.lang.String">

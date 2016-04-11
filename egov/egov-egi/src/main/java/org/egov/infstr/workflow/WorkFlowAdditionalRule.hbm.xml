@@ -46,7 +46,7 @@
 		table="EG_WF_ADDITIONALRULE">
 		<id name="id" type="long" column="ID">
 			<generator class="sequence">
-				<param name="sequence">eg_wf_additionalRule_Seq</param>
+				<param name="sequence_name">eg_wf_additionalRule_Seq</param>
 			</generator>
 		</id>
 

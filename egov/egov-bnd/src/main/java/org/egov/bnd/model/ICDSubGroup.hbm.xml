@@ -56,7 +56,7 @@
         <id name="id" type="long" >
             <column  name="SUBGROUPID" />
             <generator class="sequence">
-				<param name="sequence">SEQ_EGBD_ICDSUBGROUP</param>
+				<param name="sequence_name">SEQ_EGBD_ICDSUBGROUP</param>
 			</generator>
         </id>
         

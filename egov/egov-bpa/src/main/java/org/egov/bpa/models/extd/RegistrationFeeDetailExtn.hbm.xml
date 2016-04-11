@@ -6,7 +6,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGBPAEXTND_REGFEEDTL</param>
+				<param name="sequence_name">SEQ_EGBPAEXTND_REGFEEDTL</param>
 			</generator>
 		</id>
 		  <many-to-one name="registrationFee" class="org.egov.bpa.models.extd.RegistrationFeeExtn" cascade="all">

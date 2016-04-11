@@ -7,7 +7,7 @@
         <id name="id" type="java.lang.Integer">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence">
-             <param name="sequence">SEQ_EGF_RECORD_STATUS</param>
+             <param name="sequence_name">SEQ_EGF_RECORD_STATUS</param>
             </generator>
         </id>
         <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">

@@ -46,7 +46,7 @@
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="sequence">
-				<param name="sequence">EG_WF_AMOUNTRULE_SEQ</param>
+				<param name="sequence_name">EG_WF_AMOUNTRULE_SEQ</param>
 			</generator>
 		</id>
 		<property name="fromQty" type="java.lang.String">

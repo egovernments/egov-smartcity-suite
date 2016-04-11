@@ -45,8 +45,8 @@
     <class name="org.egov.model.bills.EgBilldetails" table="EG_BILLDETAILS" >
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
-            <generator class="native">
-            <param name="sequence">seq_eg_billdetails</param>
+            <generator class="sequence">
+            <param name="sequence_name">seq_eg_billdetails</param>
             </generator>
         </id>
         <timestamp

@@ -45,8 +45,8 @@
 	<class name="org.egov.tl.entity.MotorDetails" table="EGTL_MOTOR_DETAILS">
 		<id name="id" type="java.lang.Long">
 			<column name="ID" precision="22" scale="0" />
-			<generator class="native">
-				<param name="sequence">SEQ_EGTL_MOTOR_DETAILS</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGTL_MOTOR_DETAILS</param>
 			</generator>
 		</id>
 		<many-to-one name="license" class="org.egov.tl.entity.License" fetch="select">

@@ -45,8 +45,8 @@
     <class name="org.egov.model.bills.EgBillSubType" table="EG_BILL_SUBTYPE" >
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
-            <generator class="native">
-            	<param name="sequence">SEQ_EG_BILL_SUBTYPE</param>
+            <generator class="sequence">
+            	<param name="sequence_name">SEQ_EG_BILL_SUBTYPE</param>
             </generator>
         </id>
         <property name="name" type="string">

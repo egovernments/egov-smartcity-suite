@@ -47,7 +47,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_TENDER_HEADER</param>
+				<param name="sequence_name">SEQ_EGW_TENDER_HEADER</param>
 			</generator>
 		</id>
 		<property name="tenderNo" type="string" >

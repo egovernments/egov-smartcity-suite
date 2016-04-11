@@ -45,8 +45,8 @@
 	<class name="org.egov.infstr.utils.Number" table="EG_NUMBER_GENERIC">
 		<id name="id">
 			<column name="ID" />
-			<generator class="native">
-				<param name="sequence">SEQ_EG_NUMBER_GENERIC</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EG_NUMBER_GENERIC</param>
 			</generator>
 		</id>
 		<timestamp column="updatedtimestamp" name="updatedtimestamp" access="property" unsaved-value="null" generated="always" />

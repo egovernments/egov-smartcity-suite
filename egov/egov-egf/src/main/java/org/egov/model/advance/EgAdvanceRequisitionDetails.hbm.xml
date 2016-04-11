@@ -48,7 +48,7 @@
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
            <generator class="sequence">
-           <param name="sequence">SEQ_EG_ADVANCEREQDETAILS</param></generator>
+           <param name="sequence_name">SEQ_EG_ADVANCEREQDETAILS</param></generator>
         </id>
           <timestamp column="LASTUPDATEDTIME"	name="lastupdatedtime"	access="property" /> 
           

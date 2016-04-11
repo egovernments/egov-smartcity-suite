@@ -46,8 +46,8 @@
 	<class name="org.egov.commons.EgwStatus" table="EGW_STATUS">
 		<id name="id" type="integer">
 			<column name="ID" precision="22" scale="0" />
-			<generator class="native">
-				<param name="sequence">SEQ_EGW_STATUS</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGW_STATUS</param>
 			</generator>
 		</id>
 		<timestamp column="LASTMODIFIEDDATE" name="lastmodifieddate" access="property" unsaved-value="null" />

@@ -50,8 +50,8 @@
 			column="ID"
 			type="long"
 			unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_CHEQUE_DEPT_MAPPING</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_CHEQUE_DEPT_MAPPING</param>
 			</generator>
 		</id>
 		

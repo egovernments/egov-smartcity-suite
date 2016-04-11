@@ -46,7 +46,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_CONTRACTORBILL_ASSETS</param>
+				<param name="sequence_name">SEQ_EGW_CONTRACTORBILL_ASSETS</param>
 			</generator>
 		</id>
 		<many-to-one name="egbill" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" insert="false" update="false"/>

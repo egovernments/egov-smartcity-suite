@@ -45,8 +45,8 @@
 	<class name="org.egov.tl.entity.LicenseType" table="EGTL_MSTR_LICENSE_TYPE">
 		<id name="id" type="java.lang.Long">
 			<column name="id" />
-			<generator class="native">
-				<param name="sequence">SEQ_EGTL_MSTR_LICENSE_TYPE</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGTL_MSTR_LICENSE_TYPE</param>
 			</generator>
 		</id>
 		<property name="name" type="string" />

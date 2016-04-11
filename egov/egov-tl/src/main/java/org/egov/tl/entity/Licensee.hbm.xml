@@ -45,8 +45,8 @@
 
 	<class name="org.egov.tl.entity.Licensee" table="EGTL_LICENSEE">
 		<id name="id" column="ID" type="java.lang.Long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGTL_LICENSEE</param>
+			<generator class="sequence">
+				<param name="sequence_name">SEQ_EGTL_LICENSEE</param>
 			</generator>
 		</id>
 		<property name="applicantName" column="APPLICANT_NAME" />

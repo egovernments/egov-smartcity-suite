@@ -45,7 +45,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	<class name="org.egov.works.models.masters.NatureOfWork" table="EGW_NATUREOFWORK">
 		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="sequence">
-				<param name="sequence">seq_egw_natureofwork</param>
+				<param name="sequence_name">seq_egw_natureofwork</param>
 			</generator>
 		</id>
 		<property name="name" column="NAME" not-null="true"/>

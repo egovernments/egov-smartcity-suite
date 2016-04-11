@@ -7,7 +7,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_CONTRACTOR_GRADE</param>
+				<param name="sequence_name">SEQ_EGW_CONTRACTOR_GRADE</param>
 			</generator>
 		</id>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" />

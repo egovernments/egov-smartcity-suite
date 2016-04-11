@@ -45,7 +45,7 @@
 	<id name="id" type="long">
             <column name="ID" precision="10" scale="0" />
             <generator class="sequence">
-            <param name="sequence">seq_egf_grant</param>
+            <param name="sequence_name">seq_egf_grant</param>
             </generator>
         </id> 
 		<many-to-one name="department" class="org.egov.infra.admin.master.entity.Department" fetch="select" column="DEPTID" /> 

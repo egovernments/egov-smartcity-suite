@@ -45,7 +45,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence"> 
-				<param name="sequence">SEQ_EGW_DEPOSITCODE</param>
+				<param name="sequence_name">SEQ_EGW_DEPOSITCODE</param>
 			</generator>
 		</id>
 		

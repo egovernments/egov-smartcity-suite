@@ -6,8 +6,8 @@
     <class name="org.egov.commons.EgNumbers" table="EG_NUMBERS" >
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
-            <generator class="native">
-            <param name="sequence">SEQ_EG_NUMBERS</param>  
+            <generator class="sequence">
+            <param name="sequence_name">SEQ_EG_NUMBERS</param>  
             </generator>
         </id>
         <property name="vouchertype" type="string">

@@ -45,7 +45,7 @@
         <id name="id" type="long">
             <column name="ID"/>
             <generator class="sequence" >
-            	<param name="sequence">SEQ_EGW_WORKORDER_ASSETS</param>
+            	<param name="sequence_name">SEQ_EGW_WORKORDER_ASSETS</param>
             </generator>
         </id>
 		<many-to-one name="asset" column="ASSET_ID" not-null="true"/>

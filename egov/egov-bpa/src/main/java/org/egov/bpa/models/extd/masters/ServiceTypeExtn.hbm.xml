@@ -7,7 +7,7 @@
         <id name="id">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence">
-				<param name="sequence">SEQ_EGBPAEXTND_MSTR_SERTYPE</param>
+				<param name="sequence_name">SEQ_EGBPAEXTND_MSTR_SERTYPE</param>
 			</generator>
         </id>
         <property name="code" type="string">

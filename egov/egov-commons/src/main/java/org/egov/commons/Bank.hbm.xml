@@ -5,8 +5,8 @@
     <class name="org.egov.commons.Bank" table="BANK">
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
-            <generator class="native">
-            <param name="sequence">seq_bank</param>
+            <generator class="sequence">
+            <param name="sequence_name">seq_bank</param>
             </generator>
         </id>
         <property name="code" type="string">

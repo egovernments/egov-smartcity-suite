@@ -47,7 +47,7 @@
 		<id
 			name="idReason" column="ID_REASON" type="int">
 			<generator class="sequence">
-					<param name="sequence">SEQ_PROP_MODIFY_REASON</param>
+					<param name="sequence_name">SEQ_PROP_MODIFY_REASON</param>
 			</generator>
 		</id>
 		<timestamp

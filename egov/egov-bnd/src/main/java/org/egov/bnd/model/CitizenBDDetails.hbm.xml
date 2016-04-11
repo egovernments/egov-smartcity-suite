@@ -50,7 +50,7 @@
 		<id name="id" unsaved-value="null" type="java.lang.Integer">
 			<column name="EGBD_CITIZENDETAILSID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGBD_CITIZENBDDETAILS</param> 
+				<param name="sequence_name">SEQ_EGBD_CITIZENBDDETAILS</param> 
 			</generator>
 		</id>
 

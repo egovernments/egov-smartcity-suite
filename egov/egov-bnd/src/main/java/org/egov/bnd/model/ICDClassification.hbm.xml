@@ -60,7 +60,7 @@
                     name="ICDCLASSIFICATIONMASTID" 
                 />
            <generator class="sequence">
-				<param name="sequence">SEQ_EGBD_ICDCLASSIFICATIONMASTER</param>
+				<param name="sequence_name">SEQ_EGBD_ICDCLASSIFICATIONMASTER</param>
 			</generator>
         </id>
         

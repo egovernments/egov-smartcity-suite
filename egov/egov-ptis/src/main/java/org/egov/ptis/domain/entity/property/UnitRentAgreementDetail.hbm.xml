@@ -48,7 +48,7 @@
 		
 		<id name="id" column="ID" type="long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_UNIT_RENT_AGREEMENT_DETAIL</param>
+				<param name="sequence_name">SEQ_UNIT_RENT_AGREEMENT_DETAIL</param>
 			</generator>
 		</id>
 				
