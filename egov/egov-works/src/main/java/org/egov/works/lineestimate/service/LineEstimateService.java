@@ -278,11 +278,9 @@ public class LineEstimateService {
                 criteria.add(Restrictions.ge("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionFromDate()));
             if (lineEstimateSearchRequest.getAdminSanctionToDate() != null)
                 criteria.add(Restrictions.le("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionToDate()));
-            if (lineEstimateSearchRequest.isSpillOverFlag())
-                criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
-            else
-                criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
 
+            criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag())); 
+                
         }
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -324,7 +322,10 @@ public class LineEstimateService {
                             lineEstimateForLoaSearchRequest.getWorkIdentificationNumber()));
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
                 criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
+            
+                criteria.add(Restrictions.eq("lineEstimate.spillOverFlag", lineEstimateForLoaSearchRequest.isSpillOverFlag()));
             }
+            
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();
         } else

@@ -49,6 +49,7 @@ public class LineEstimateForLoaSearchRequest {
     private Date adminSanctionToDate;
     private Long lineEstimateCreatedBy;
     private String workIdentificationNumber;
+    private boolean spillOverFlag;
 
     public LineEstimateForLoaSearchRequest() {
     }
@@ -107,5 +108,13 @@ public class LineEstimateForLoaSearchRequest {
 
     public void setWorkIdentificationNumber(final String workIdentificationNumber) {
         this.workIdentificationNumber = workIdentificationNumber;
+    }
+
+    public boolean isSpillOverFlag() {
+        return spillOverFlag;
+    }
+
+    public void setSpillOverFlag(boolean spillOverFlag) {
+        this.spillOverFlag = spillOverFlag;
     }
 }

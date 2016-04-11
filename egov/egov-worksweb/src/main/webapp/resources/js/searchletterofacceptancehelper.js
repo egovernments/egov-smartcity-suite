@@ -62,6 +62,16 @@ function getFormData($form) {
 	return indexed_array;
 }
 
+function viewPDF(){
+	var id = $('#workOrderId').val();
+	window.open("/egworks/letterofacceptance/letterOfAcceptancePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function renderPDF(){
+	var id = $('#id').val();
+	window.open("/egworks/letterofacceptance/letterOfAcceptancePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
 function renderAction(id, value) {
 	if (value == 1)
 		window.open("/egworks/letterofacceptance/view/" + id, '',
@@ -91,7 +101,6 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)', row).html(index + 1);
-					1
 					if (data.estimateNumber != null)
 						$('td:eq(3)', row).html(
 								'<a href="javascript:void(0);" onclick="openLineEstimate(\''

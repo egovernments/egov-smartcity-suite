@@ -45,6 +45,7 @@
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align:center;"><spring:message code="title.search.letterofacceptance" /></div>
 	</div>
+	<input type="hidden" id="workorderid" value="${workOrder.id }"/>
 	<div class="panel-body">
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loanumber" /></label>

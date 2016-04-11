@@ -56,7 +56,7 @@
 			<c:if test="${mode != 'view' }">
 				<spring:message code="lbl.upload.document" />
 			</c:if>
-			<c:if test="${mode == 'view' && mode == 'readOnly' }">
+			<c:if test="${mode == 'view' || mode == 'readOnly' }">
 				<spring:message code="lbl.documents" />
 			</c:if>
 		</div>

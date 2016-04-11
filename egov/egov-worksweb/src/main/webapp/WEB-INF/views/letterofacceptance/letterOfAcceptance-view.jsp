@@ -256,5 +256,7 @@
 	<div class="col-sm-12 text-center">
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a>
+			<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.loapdf" /></a>
 	</div>
 </div>
+<script src="<c:url value='/resources/js/searchletterofacceptancehelper.js?rnd=${app_release_no}'/>"></script>

@@ -52,13 +52,30 @@ jQuery('#btnsearch').click(function(e) {
 });
 
 jQuery('#btncreateloa').click(function(e) {
-	var workOrderNumber = $('input[name=selectCheckbox]:checked').val();
-	if(workOrderNumber == null) {
+	var workOrderId = $('input[name=selectCheckbox]:checked').val();
+	var workOrderNumber = $('input[name=selectCheckbox]:checked').attr('data');
+	if(workOrderId == null) {
 		var message = $('#errorMessage').html();
 		bootbox.alert(message);
 	}
 	else {
-		window.location = "/egworks/contractorbill/newform?loaNumber=" + workOrderNumber;
+		$.ajax({
+			type : "GET",
+			url : '/egworks/letterofacceptance/ajaxvalidate-createcontractorbill?workOrderId='
+					+ workOrderId,
+			cache : true,
+			dataType : "json",
+			success : function(response) {
+				if (!response) {
+					bootbox.alert("The Contractor Bill is already in process you cannot create new");
+					$('#workOrderNumber').val("");
+				} else {
+					window.location = "/egworks/contractorbill/newform?loaNumber=" + workOrderNumber;
+				}
+			},
+			error : function(response) {
+			}
+		});
 	}
 });
 
@@ -94,7 +111,7 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					if (data.estimateNumber != null)
-						$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.workOrderNumber +'"/>');
+						$('td:eq(0)',row).html('<input type="radio" data='+ data.workOrderNumber +' name="selectCheckbox" value="'+ data.id +'"/>');
 					$('td:eq(1)', row).html(index + 1);
 					$('td:eq(2)', row).html(
 							'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
@@ -107,7 +124,7 @@ function callAjaxSearch() {
 				columns : [ {
 					"data" : "", "sClass" : "text-center","Width": "1%"} ,{ 
 					"data" : "",
-					"sClass" : "text-center","autoWidth": "false"
+					"sClass" : "text-center","Width": "2%"
 				}, {
 					"data" : "workOrderNumber",
 					"sClass" : "text-left","width": "13.5%"
@@ -144,8 +161,6 @@ function callAjaxSearch() {
 function openLetterOfAcceptance(id) {
 	window.open("/egworks/letterofacceptance/view/" + id, '','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
-
-//Done check Below only
 
 $(document).ready(function() {
 	var estimateNumber = new Bloodhound({

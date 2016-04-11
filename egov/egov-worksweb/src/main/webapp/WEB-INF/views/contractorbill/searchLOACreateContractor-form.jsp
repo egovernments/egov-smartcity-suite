@@ -96,11 +96,7 @@
 					<form:options items="${departments}" itemValue="id" itemLabel="name" />
 				</form:select>
 				<form:errors path="departmentName" cssClass="add-margin error-msg" />
-				<%-- <form:select path="departmentName" data-first-option="false" id="departments" class="form-control">
-					<form:option value=""><spring:message code="lbl.select" /></form:option>
-					<form:options items="${departments}" itemValue="id" itemLabel="name" />
-				</form:select>
-				<form:errors path="departmentName" cssClass="add-margin error-msg" /> --%>
+				<form:errors path="departmentName" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">

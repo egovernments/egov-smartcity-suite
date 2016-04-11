@@ -222,7 +222,7 @@ public class LetterOfAcceptanceService {
             estimateNumbers.add("");
         // TODO: replace fetching workorders by query with criteria alias
         final List<String> workOrderNumbers = letterOfAcceptanceRepository.getWorkOrderNumbersByBillStatusNotAndBillType(
-                WorksConstants.CANCELLED, WorksConstants.FINAL_BILL);
+                ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
                 .createAlias("contractor", "woc")
                 .createAlias("egwStatus", "status");
@@ -290,6 +290,15 @@ public class LetterOfAcceptanceService {
         final List<String> results = letterOfAcceptanceRepository.findContractorForContractorBill("%" + contractorname + "%",
                 WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
         return results;
+    }
+
+   public Boolean getWorkOrderNumberForCreateContractorBill(Long workOrderId) {
+        final List<String> results = letterOfAcceptanceRepository.findWorkOrderNumberTovalidateCreateContractorBill(workOrderId,
+                ContractorBillRegister.BillStatus.CREATED.toString(), ContractorBillRegister.BillStatus.REJECTED.toString());
+        if(results.isEmpty())
+            return true;
+        else
+            return false;
     }
 
 }
