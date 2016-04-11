@@ -96,6 +96,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -159,6 +160,9 @@ public class LineEstimateService {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -386,15 +390,14 @@ public class LineEstimateService {
         return lineEstimateForLoaSearchResults;
     }
 
-    public List<Hashtable<String, Object>> getHistory(final LineEstimate lineEstimate) {
+    public List<Hashtable<String, Object>> getHistory(final State state, List<StateHistory> history) {
         User user = null;
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
-        final State state = lineEstimate.getState();
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         if (null != state) {
-            if (!lineEstimate.getStateHistory().isEmpty() && lineEstimate.getStateHistory() != null)
-                Collections.reverse(lineEstimate.getStateHistory());
-            for (final StateHistory stateHistory : lineEstimate.getStateHistory()) {
+            if (!history.isEmpty() && history != null)
+                Collections.reverse(history);
+            for (final StateHistory stateHistory : history) {
                 final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
                 HistoryMap.put("date", stateHistory.getDateInfo());
                 HistoryMap.put("comments", stateHistory.getComments());
@@ -449,11 +452,11 @@ public class LineEstimateService {
                     approvalPosition = lineEstimate.getState().getOwnerPosition().getId();
                 else
                     approvalPosition = worksUtils.getApproverPosition(wfmatrix.getNextDesignation(),
-                            lineEstimate);
+                            lineEstimate.getState(), lineEstimate.getCreatedBy().getId());
         if (lineEstimate.getStatus().getCode()
                 .equals(LineEstimateStatus.CHECKED.toString()))
             approvalPosition = worksUtils.getApproverPosition(wfmatrix.getNextDesignation(),
-                    lineEstimate);
+                    lineEstimate.getState(), lineEstimate.getCreatedBy().getId());
         if (workFlowAction.equals(WorksConstants.CANCEL_ACTION)
                 && wfmatrix.getNextState().equals(WorksConstants.WF_STATE_CREATED))
             approvalPosition = null;
@@ -557,8 +560,24 @@ public class LineEstimateService {
                     .getId(),
                     appropriationAmount.doubleValue(), budgetheadid);
 
-            if (!flag)
-                throw new ValidationException("", "error.budgetappropriation.amount");
+            if (!flag) {
+                final BigDecimal budgetAvailable = budgetDetailsDAO
+                        .getPlanningBudgetAvailable(
+                                getCurrentFinancialYear(new Date()).getId(),
+                                Integer.parseInt(lineEstimate
+                                        .getExecutingDepartment().getId().toString()),
+                                lineEstimate.getFunction().getId(),
+                                null,
+                                lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId()
+                                        .toString()),
+                                lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId()
+                                        .toString()),
+                                null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
+                                        .getId().toString()));
+                String errorMessage = messageSource.getMessage("error.budgetappropriation.amount",
+                        new String[] { appropriationAmount.toString(), budgetAvailable.toString() }, null);
+                throw new ValidationException("", errorMessage);
+            }
         }
     }
 

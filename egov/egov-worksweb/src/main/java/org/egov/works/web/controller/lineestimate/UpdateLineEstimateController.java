@@ -227,12 +227,35 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                             approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction,
                             mode, null, removedLineEstimateDetailsIds, files, financialYear);
                 } catch (final ValidationException e) {
-                    model.addAttribute("message", messageSource.getMessage("error.budgetappropriation.amount", null, null));
+                    final List<Long> budgetheadid = new ArrayList<Long>();
+                    budgetheadid.add(lineEstimate.getBudgetHead().getId());
+                    
+                    final BigDecimal budgetAvailable = budgetDetailsDAO
+                            .getPlanningBudgetAvailable(
+                                    lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                                    Integer.parseInt(lineEstimate
+                                            .getExecutingDepartment().getId().toString()),
+                                    lineEstimate.getFunction().getId(),
+                                    null,
+                                    lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId()
+                                            .toString()),
+                                    lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId()
+                                            .toString()),
+                                    null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
+                                            .getId().toString()));
+                    BigDecimal totalEstimateAmount = BigDecimal.ZERO;
+                    
+                    for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
+                        totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
+                    
+                    String errorMessage = messageSource.getMessage("error.budgetappropriation.amount",
+                            new String[] { totalEstimateAmount.toString(), budgetAvailable.toString() }, null);
+                    model.addAttribute("message", errorMessage);
                     return "lineestimate-success";
                 }
             redirectAttributes.addFlashAttribute("lineEstimate", newLineEstimate);
 
-            final String pathVars = worksUtils.getPathVars(newLineEstimate, approvalPosition);
+            final String pathVars = worksUtils.getPathVars(newLineEstimate.getStatus(), newLineEstimate.getState(), newLineEstimate.getId(), approvalPosition);
 
             return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
         }
@@ -258,8 +281,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                 totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
 
-            if (budgetAvailable.compareTo(totalEstimateAmount) == -1)
-                errors.reject("error.budgetappropriation.amount");
+            if (budgetAvailable.compareTo(totalEstimateAmount) == -1) {
+                errors.reject("error.budgetappropriation.amount", new String[] { totalEstimateAmount.toString(), budgetAvailable.toString() }, null);
+            }
         } catch (final ValidationException e) {
             // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
             // budgetDetailsDAO.getPlanningBudgetAvailable API call
@@ -332,7 +356,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         else
             model.addAttribute("mode", "view");
 
-        model.addAttribute("applicationHistory", lineEstimateService.getHistory(lineEstimate));
+        model.addAttribute("applicationHistory", lineEstimateService.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));

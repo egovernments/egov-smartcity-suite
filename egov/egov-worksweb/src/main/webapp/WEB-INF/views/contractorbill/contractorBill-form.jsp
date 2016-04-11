@@ -62,18 +62,18 @@
 							<jsp:include page="contractorBill-header.jsp"/>
 							<%-- <jsp:include page="contractorBill-accountdetails.jsp"/>
 							<jsp:include page="contractorBill-deductions.jsp"/> --%>
+
 							<jsp:include page="uploadDocuments.jsp"/>
 						</div>
 					</div>
 				</div>
 			</div>	
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" class="btn btn-primary" value="Save" ><spring:message code="lbl.save"/></form:button>
-					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
-				</div>
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+			<div class="buttonbottom" align="center">
+				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</form:form>  
 	</div>
 </div>
 <script src="<c:url value='/resources/js/contractorbill.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

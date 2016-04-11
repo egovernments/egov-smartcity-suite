@@ -54,6 +54,16 @@ $(document).ready(function(){
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$('#typeofwork').trigger('blur');
 	$('#subTypeOfWork').trigger('blur');
+	
+	$( "input[name$='estimateAmount']" ).each(function(){
+		$(this).val(roundTo($(this).val()));
+	});
+	
+	$( "input[name$='actualEstimateAmount']" ).each(function(){
+		$(this).val(roundTo($(this).val()));
+	});
+	
+	$('#estimateTotal').text(roundTo($('#estimateTotal').text()));
 
 
 	return showSlumFieldsValue();
@@ -63,13 +73,6 @@ function renderPdf() {
 	var id = $('#lineEstimateId').val();
 	window.open("/egworks/lineestimate/lineEstimatePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
-
-$(document).bind("input propertychange", function (e) {
-	if($(e.target).attr('name').match(/estimateAmount$/))
-	{
-		calculateEstimatedAmountTotal();
-	}
-});
 
 $('.btn-primary').click(function(){
 	var button = $(this).attr('id');
@@ -509,6 +512,28 @@ function showSlumFieldsValue() {
 		return true;
 	} else
 		return false;
+}
+
+function roundTo(value, decimals, decimal_padding) {
+	if (!decimals)
+		decimals = 2;
+	if (!decimal_padding)
+		decimal_padding = '0';
+	if (isNaN(value))
+		value = 0;
+	value = Math.round(value * Math.pow(10, decimals));
+	var stringValue = (value / Math.pow(10, decimals)).toString();
+	var padding = 0;
+	var parts = stringValue.split(".");
+	if (parts.length == 1) {
+		padding = decimals;
+		stringValue += ".";
+	} else
+		padding = decimals - parts[1].length;
+	for (var i = 0; i < padding; i++) {
+		stringValue += decimal_padding;
+	}
+	return stringValue;
 }
 
 function validateWorkFlowApprover(name) {

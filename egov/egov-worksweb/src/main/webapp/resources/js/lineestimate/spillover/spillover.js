@@ -78,13 +78,6 @@ function renderPdf() {
 	window.open("/egworks/lineestimate/lineEstimatePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-$(document).bind("input propertychange", function (e) {
-	if($(e.target).attr('name').match(/estimateAmount$/))
-	{
-		calculateEstimatedAmountTotal();
-	}
-});
-
 $('#Save').click(function(){
 	var button = $(this).attr('id');
 	var status = false;
@@ -212,7 +205,7 @@ $('#isBillsCreated').click(function() {
 
 $('#designation').change(function(){
 	$.ajax({
-		url: "/eis/ajaxWorkFlow-positionsByDepartmentAndDesignation",     
+		url: "../lineestimate/ajax-assignmentByDepartmentAndDesignation",     
 		type: "GET",
 		data: {
 			approvalDesignation : $('#designation').val(),
@@ -223,7 +216,7 @@ $('#designation').change(function(){
 			$('#authority').empty();
 			$('#authority').append($("<option value=''>Select from below</option>"));
 			$.each(response, function(index, value) {
-				$('#authority').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
+				$('#authority').append($('<option>').text(value.name).attr('value', value.id));  
 			});
 			var authorityValue = $('#authorityValue').val();
 			$('#authority').val(authorityValue);

@@ -216,7 +216,7 @@ public class CreateSpillOverLineEstimateController {
 
     private void validateAdminSanctionDetail(final LineEstimate lineEstimate, final BindingResult errors) {
         if (lineEstimate.getAdminSanctionDate() != null
-                && lineEstimate.getAdminSanctionDate().after(lineEstimate.getLineEstimateDate()))
+                && lineEstimate.getAdminSanctionDate().before(lineEstimate.getLineEstimateDate()))
             errors.rejectValue("adminSanctionDate", "error.adminsanctiondate");
         if (lineEstimate.getCouncilResolutionDate() != null
                 && lineEstimate.getCouncilResolutionDate().after(lineEstimate.getAdminSanctionDate()))
@@ -296,7 +296,7 @@ public class CreateSpillOverLineEstimateController {
                     totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount());
 
             if (budgetAvailable.compareTo(totalAppropriationAmount) == -1)
-                errors.reject("error.budgetappropriation.amount");
+                errors.reject("error.budgetappropriation.amount", new String[] { totalAppropriationAmount.toString(), budgetAvailable.toString() }, null);
         } catch (final ValidationException e) {
             // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
             // budgetDetailsDAO.getPlanningBudgetAvailable API call

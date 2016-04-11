@@ -103,6 +103,11 @@ public class ContractorBillRegister extends EgBillregister {
     @Transient
     private List<EgBilldetails> billDetailes = new ArrayList<EgBilldetails>(0);
 
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
+
     @Override
     public String getStateDetails() {
         return "Contractor Bill No: " + getBillnumber();
@@ -200,4 +205,19 @@ public class ContractorBillRegister extends EgBillregister {
         this.billDetailes = billDetailes;
     }
 
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
 }

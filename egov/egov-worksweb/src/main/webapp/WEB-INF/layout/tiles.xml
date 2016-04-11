@@ -131,4 +131,8 @@
 		<put-attribute name="body" value="/WEB-INF/views/contractorbill/searchLOAToCreateContractorBill-header.jsp"/>
 	</definition>
 	
+	<definition name="contractorBill-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.contractorbill.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractorbill/contractorBill-update.jsp"/>
+    </definition>
 </tiles-definitions>

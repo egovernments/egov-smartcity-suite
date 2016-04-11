@@ -44,7 +44,7 @@
 	<div class="main-content">
 		<div style="font-weight:bold; color:green; text-align:center;">
 			<c:if test="${contractorBillRegister.getId() != null}">
-				<spring:message code="msg.contractorbill.create.success" arguments="${contractorBillRegister.getBillnumber()}"/>
+				<c:out value="${message }" />
 			</c:if>
 		</div>
 		<div class="row">

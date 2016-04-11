@@ -65,7 +65,7 @@
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
-			 <form:input path="workOrderNumber" name="workOrderNumber" id="workOrderNumber" type="text" onkeyup="alphanumerichyphenbackslash(this);" class="form-control" maxlength="12" required="required"/>
+			 <form:input path="workOrderNumber" name="workOrderNumber" id="workOrderNumber" type="text" onkeyup="alphanumerichyphenbackslash(this);" class="form-control" maxlength="32" required="required"/>
 			 <form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
 		</div>
 	</div>

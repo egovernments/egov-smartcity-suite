@@ -40,6 +40,8 @@
 package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -49,9 +51,13 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -97,6 +103,12 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private LineEstimateJsonAdaptor lineEstimateJsonAdaptor;
+    
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
@@ -187,5 +199,23 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/workIdNumbersForLoa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findworkIdNumbersForLoa(@RequestParam final String name) {
         return lineEstimateService.findWorkIdentificationNumbersToSearchLineEstimatesForLoa(name);
+    }
+    
+    @RequestMapping(value = "/ajax-assignmentByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<User> getAssignmentByDepartmentAndDesignation(
+            @RequestParam("approvalDesignation") Long approvalDesignation, @RequestParam("approvalDepartment") Long approvalDepartment) {
+        List<User> users = new ArrayList<User>();
+        List<Assignment> assignments = new ArrayList<Assignment>();
+        if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
+                && approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1) {
+            assignments = assignmentService.findAllAssignmentsByDeptDesigAndDates(approvalDepartment,
+                    approvalDesignation, new Date());
+        }
+        
+        for(Assignment assignment : assignments) {
+            users.add(userService.getUserById(assignment.getEmployee().getId()));
+        }
+        
+        return users;
     }
 }

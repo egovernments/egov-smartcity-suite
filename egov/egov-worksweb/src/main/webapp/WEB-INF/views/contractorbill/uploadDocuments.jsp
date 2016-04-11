@@ -56,21 +56,21 @@
 			<c:if test="${mode != 'view' }">
 				<spring:message code="lbl.upload.document" />
 			</c:if>
-			<c:if test="${mode == 'view' && mode == 'readOnly' }">
+			<c:if test="${mode == 'view' || mode == 'readOnly' }">
 				<spring:message code="lbl.documents" />
 			</c:if>
 		</div>
 	</div>
 	<c:if test="${contractorBillRegister.documentDetails != null &&  !contractorBillRegister.documentDetails.isEmpty()}">
 		<c:forEach items="${contractorBillRegister.documentDetails }" var="documentDetials">
-			<a href="/egi/downloadfile?fileStoreId=${fileStore.fileStoreId}&moduleName=WMS">${fileStore.fileName }</a><br />
+			<a href="/egi/downloadfile?fileStoreId=${documentDetials.fileStore.fileStoreId}&moduleName=WMS">${documentDetials.fileStore.fileName }</a><br />
 		</c:forEach>
 	</c:if>
 	<c:if test="${mode == 'view' && contractorBillRegister.documentDetails.isEmpty()}">
 		<spring:message code="msg.no.documents" />
 	</c:if>
 	<input type="hidden" value="${fn:length(contractorBillRegister.documentDetails)}" id="documentsSize">
-	<c:if test="${mode != 'view' && mode != 'readOnly' }">
+	<c:if test="${mode != 'view' || mode != 'readOnly' }">
 		<div>
 			<table width="100%">
 				<c:if test="${contractorBillRegister.documentDetails != null &&  fn:length(contractorBillRegister.documentDetails) lt 4}">

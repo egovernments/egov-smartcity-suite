@@ -190,7 +190,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                     approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction);
             model.addAttribute("lineEstimate", newLineEstimate);
 
-            final String pathVars = worksUtils.getPathVars(newLineEstimate, approvalPosition);
+            final String pathVars = worksUtils.getPathVars(newLineEstimate.getStatus(), newLineEstimate.getState(), newLineEstimate.getId(), approvalPosition);
 
             return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
         }

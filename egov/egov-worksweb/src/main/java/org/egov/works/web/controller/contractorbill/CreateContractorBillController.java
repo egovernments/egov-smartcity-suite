@@ -48,6 +48,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
@@ -56,8 +58,11 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -69,7 +74,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
-public class CreateContractorBillController {
+public class CreateContractorBillController extends GenericWorkFlowController{
 
     @Autowired
     private LineEstimateService lineEstimateService;
@@ -82,6 +87,12 @@ public class CreateContractorBillController {
 
     @Autowired
     private ContractorBillNumberGenerator contractorBillNumberGenerator;
+    
+    @Autowired
+    private WorksUtils worksUtils;
+    
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
@@ -94,6 +105,15 @@ public class CreateContractorBillController {
         final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
         setDropDownValues(model);
+        
+        model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
+
+        model.addAttribute("additionalRule", WorksConstants.NEWCONTRACTORBILLREGISTER);
+
+        prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
+
+        model.addAttribute("mode", "edit");
+        
         contractorBillRegister.setBilldate(new Date());
         // TODO:Fixme - Hardcoded 26 as purposeId for Creditors-Contractor Payable for time being
         final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(26);
@@ -111,7 +131,8 @@ public class CreateContractorBillController {
     @RequestMapping(value = "/contractorbill-save", method = RequestMethod.POST)
     public String create(@ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister,
             final Model model, final BindingResult resultBinder, final HttpServletRequest request,
-            @RequestParam("file") final MultipartFile[] files) throws IOException {
+            @RequestParam String workFlowAction, @RequestParam("file") final MultipartFile[] files) throws IOException {
+        
         final String loaNumber = request.getParameter("loaNumber");
         final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
@@ -123,8 +144,26 @@ public class CreateContractorBillController {
             setDropDownValues(model);
             model.addAttribute("lineEstimateDetails", lineEstimateDetails);
             model.addAttribute("workOrder", workOrder);
+            
+            model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
+
+            model.addAttribute("additionalRule", WorksConstants.NEWCONTRACTORBILLREGISTER);
+
+            prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
+
+            model.addAttribute("mode", "edit");
+            
             return "contractorBill-form";
         } else {
+            
+            Long approvalPosition = 0l;
+            String approvalComment = "";
+            if (request.getParameter("approvalComment") != null)
+                approvalComment = request.getParameter("approvalComent");
+            if (request.getParameter("workFlowAction") != null)
+                workFlowAction = request.getParameter("workFlowAction");
+            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
             Integer partBillCount = contractorBillRegisterService
                     .getMaxSequenceNumberByWorkOrder(workOrder);
@@ -141,15 +180,51 @@ public class CreateContractorBillController {
             contractorBillRegister.setBillamount(contractorBillRegister.getBillamount());
 
             final ContractorBillRegister savedContractorBillRegister = contractorBillRegisterService
-                    .create(contractorBillRegister, lineEstimateDetails, files);
-            return "redirect:/contractorbill/contractorbill-success?billNumber=" + savedContractorBillRegister.getBillnumber();
+                    .create(contractorBillRegister, lineEstimateDetails, files, approvalPosition,
+                            approvalComment, WorksConstants.NEWCONTRACTORBILLREGISTER, workFlowAction);
+            
+            final String pathVars = worksUtils.getPathVars(savedContractorBillRegister.getStatus(),
+                    savedContractorBillRegister.getState(), savedContractorBillRegister.getId(), approvalPosition);
+            
+            return "redirect:/contractorbill/contractorbill-success?pathVars=" + pathVars + "&billNumber=" + savedContractorBillRegister.getBillnumber();
         }
     }
 
     @RequestMapping(value = "/contractorbill-success", method = RequestMethod.GET)
-    public String showContractorBillSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model) {
+    public String showContractorBillSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model,
+            final HttpServletRequest request) {
+        
+        final String[] keyNameArray = request.getParameter("pathVars").split(",");
+        Long id = 0L;
+        String approverName = "";
+        String currentUserDesgn = "";
+        String nextDesign = "";
+        if (keyNameArray.length != 0 && keyNameArray.length > 0)
+            if (keyNameArray.length == 1)
+                id = Long.parseLong(keyNameArray[0]);
+            else if (keyNameArray.length == 3) {
+                id = Long.parseLong(keyNameArray[0]);
+                approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
+            } else {
+                id = Long.parseLong(keyNameArray[0]);
+                approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
+                nextDesign = keyNameArray[3];
+            }
+
+        if (id != null)
+        model.addAttribute("approverName", approverName);
+        model.addAttribute("currentUserDesgn", currentUserDesgn);
+        model.addAttribute("nextDesign", nextDesign);
+        
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
                 .getContractorBillByBillNumber(billNumber);
+        
+        final String message = getMessageByStatus(contractorBillRegister, approverName, nextDesign);
+        
+        model.addAttribute("message", message);
+        
         model.addAttribute("contractorBillRegister", contractorBillRegister);
         return "contractorBill-success";
     }
@@ -163,6 +238,26 @@ public class CreateContractorBillController {
                         .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.validate.partybilldate.lessthan.loadate");
 
+    }
+    
+    private String getMessageByStatus(final ContractorBillRegister contractorBillRegister, final String approverName, final String nextDesign) {
+        String message = "";
+
+        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())
+                && !contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+            message = messageSource.getMessage("msg.contractorbill.create.success",
+                    new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
+        else if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.APPROVED.toString()))
+            message = messageSource.getMessage("msg.contractorbill.approved.success",
+                    new String[] { contractorBillRegister.getBillnumber() }, null);
+        else if (contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+            message = messageSource.getMessage("msg.contractorbill.reject",
+                    new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
+        else if (contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_CANCELLED))
+            message = messageSource.getMessage("msg.contractorbill.cancel",
+                    new String[] { contractorBillRegister.getBillnumber() }, null);
+
+        return message;
     }
 
 }

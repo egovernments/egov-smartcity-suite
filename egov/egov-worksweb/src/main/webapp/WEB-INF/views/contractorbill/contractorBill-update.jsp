@@ -42,30 +42,53 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="page-container" id="page-container">
-	<div class="main-content">
-		<form:form name="lineEstimateForm" action="create-spillover" role="form" modelAttribute="lineEstimate" id="lineEstimateForm" class="form-horizontal form-groups-bordered" method="POST" enctype="multipart/form-data">
-			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
-			<form:hidden path="" name="lineEstimateId" id="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
+<div class="page-container">        
+   <div class="main-content">			
+		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>' "> 
+			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" /> 
 			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="lineEstimateHeader.jsp"/>
-					<jsp:include page="lineEstimateDetails.jsp"/>
+				<div class="col-md-12"> 
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title"><spring:message code="lbl.header" /></div> 
+						</div>
+						<div>
+							<spring:hasBindErrors name="contractorBillRegister">
+				        		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+				        	</spring:hasBindErrors>
+				        </div>
+						<div class="panel-body">
+							<c:if test="${mode == 'edit' }">
+								<jsp:include page="contractorBill-header.jsp"/>
+							</c:if>
+							<c:if test="${mode == 'view' }">
+								<jsp:include page="contractorBillView-header.jsp"/>
+							</c:if>
+						<%-- 	<jsp:include page="contractorBill-details.jsp"/> --%>
+						<c:if test="${mode == 'view' &&  !contractorBillRegister.documentDetails.isEmpty()}">
+							<jsp:include page="uploadDocuments.jsp"/>
+						</c:if>
+						</div>
+					</div>
 				</div>
-			</div>
-			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
-			<jsp:include page="../uploadDocuments.jsp"/>
+			</div>	
+			<c:if test="${!applicationHistory.isEmpty()}">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message  code="lbl.apphistory"/>
+						</div>
+					</div>
+					<jsp:include page="../lineestimate/lineestimatehistory-view.jsp"></jsp:include>
+				</div>
+			</c:if>
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">
-				<table>
-					<tr>
-						<td id="actionButtons">
-							<input type="submit" id="<spring:message code="lbl.save" />" class="btn btn-primary"  value="<spring:message code="lbl.save" />" />
-							<input type="button" value="<spring:message code="lbl.close" />"
-							class="btn btn-default" onclick="window.close();" /></td>
-					</tr>
-				</table>
+				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</form:form>  
 	</div>
 </div>
-<script src="<c:url value='/resources/js/lineestimate/spillover/spillover.js?rnd=${app_release_no}'/>"></script
+<script src="<c:url value='/resources/js/contractorbill.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

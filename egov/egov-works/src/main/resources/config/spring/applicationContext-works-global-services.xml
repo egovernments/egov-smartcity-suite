@@ -77,4 +77,10 @@
     <bean id="LineEstimateInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="LineEstimatePersistenceService"/>
     </bean>
+    <bean id="ContractorBillRegisterPersistenceService" parent="persistenceService">
+        <property name="type" value="org.egov.works.contractorbill.entity.ContractorBillRegister" />
+    </bean>
+    <bean id="ContractorBillRegisterInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="ContractorBillRegisterPersistenceService"/>
+    </bean>
 </beans>
