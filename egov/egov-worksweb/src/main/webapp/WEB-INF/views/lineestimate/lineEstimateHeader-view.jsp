@@ -47,9 +47,19 @@
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
+			<c:choose>
+			<c:when test="${mode == 'readOnly' && lineEstimate.spillOverFlag == 'true' }">
+			<div class="panel-heading">
+				<div class="panel-title"><spring:message code="header.spilloverlineestimate" /></div>
+			</div>
+			 </c:when> 
+			<c:otherwise>
 			<div class="panel-heading">
 				<div class="panel-title"><spring:message code="header.lineestimate" /></div>
 			</div>
+			</c:otherwise>
+			</c:choose>
+			
 			<div class="add-margin error-msg">
 				<spring:hasBindErrors name="lineEstimate">
 		       		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
@@ -174,7 +184,20 @@
 						<c:out default="N/A" value="${lineEstimate.modeOfAllotment}" />
 					</div>
 				</div>
+				<c:if test="${mode == 'readOnly' && lineEstimate.spillOverFlag == 'true' }" >
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.createdby" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out default="N/A" value="${createdbybydesignation } - ${lineEstimate.createdBy.name }"></c:out>
+					</div>
+				</div>
+				</c:if>
 			</div>
+		</div>
+				<div class="panel panel-primary" data-collapsed="0"
+			style="text-align: left">
 			<div class="panel-heading">
 				<div class="panel-title"><spring:message code="lbl.financialdetails" /></div>
 			</div>
@@ -216,6 +239,4 @@
 					</div>
 				</div>
 			</div>
-		</div>
 	</div>
-</div>

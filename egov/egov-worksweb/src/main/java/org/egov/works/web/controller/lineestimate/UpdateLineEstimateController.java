@@ -157,6 +157,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
 
         final String responsePage = loadViewData(model, request, lineEstimate);
+        model.addAttribute("adminsanctionbydesignation", worksUtils.getUserDesignation(lineEstimate.getAdminSanctionBy()));
+        model.addAttribute("technicalsanctionbydesignation", worksUtils.getUserDesignation(lineEstimate.getTechnicalSanctionBy()));
+        model.addAttribute("createdbybydesignation", worksUtils.getUserDesignation(lineEstimate.getCreatedBy()));
         model.addAttribute("mode", "readOnly");
         return responsePage;
     }

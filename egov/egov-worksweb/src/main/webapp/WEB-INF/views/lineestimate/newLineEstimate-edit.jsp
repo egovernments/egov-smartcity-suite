@@ -59,13 +59,21 @@
 					<c:if test="${mode == 'view' || mode == 'readOnly' }">
 						<jsp:include page="lineEstimateHeader-view.jsp"/>
 						<jsp:include page="lineEstimateDetails-view.jsp"/>
-						<c:if test="${!lineEstimate.documentDetails.isEmpty() }">
-							<jsp:include page="uploadDocuments.jsp"/>
-						</c:if>
 					</c:if>
 				</div>
 			</div>
-		<c:if test="${!applicationHistory.isEmpty()}">
+		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }" >
+			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
+		</c:if>
+		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
+		</c:if>
+			<c:if test="${mode == 'view' || mode == 'readOnly' }">
+				<c:if test="${!lineEstimate.documentDetails.isEmpty() }">
+					<jsp:include page="uploadDocuments.jsp" />
+				</c:if>
+			</c:if>
+			<c:if test="${!applicationHistory.isEmpty()}">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -75,15 +83,10 @@
 				<jsp:include page="lineestimatehistory-view.jsp"></jsp:include>
 			</div>
 		</c:if>
-		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }" >
-			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
-		</c:if>
-		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
-			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
-		</c:if>
 		<c:if test="${mode != 'readOnly' }">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 		</c:if>
+		
 		<div class="buttonbottom" align="center">
 			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 		</div>

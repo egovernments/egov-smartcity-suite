@@ -64,6 +64,10 @@
 								<span class="mandatory"></span>
 							</c:if>
 						</th>
+						<c:if test="${mode == 'readOnly' }">
+						<th><spring:message code="lbl.technicalsanctionauthority"/>
+						</th>
+						</c:if>
 					</tr>
 				</thead>
 				<tbody>
@@ -86,6 +90,9 @@
 								<fmt:formatDate value="${lineEstimate.technicalSanctionDate }" pattern="dd/MM/yyyy"/>
 							</c:if>
 						</td>
+						<c:if test="${mode == 'readOnly' }">
+						<td><c:out default="N/A" value="${technicalsanctionbydesignation } - ${lineEstimate.technicalSanctionBy.name }"></c:out></td>
+						</c:if>
 					</tr>
 				</tbody>
 			</table>

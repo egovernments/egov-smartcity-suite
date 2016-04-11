@@ -60,29 +60,14 @@
 </div>
 <div class="row text-center">
 	<div class="add-margin">
-		<%-- <button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button> --%>
-		<%-- <c:choose>
-			<c:when test="${lineEstimate.status == 'ACTIVE' }"> --%>
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 			<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPdf()" ><spring:message code="lbl.view.proceedings" /></a>
 		</c:if>
 		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
-			<%-- </c:when>
-			<c:otherwise>
-				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
-			</c:otherwise>
-		</c:choose> --%>
 	</div>
 </div>
 
 <script type="text/javascript">
-function printDiv(divName) {
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-}
 function renderPdf() {
 	window.open("/egworks/lineestimate/lineEstimatePDF/" + ${lineEstimate.id}, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
