@@ -1631,7 +1631,7 @@ public class ContractorBillAction extends BaseFormAction {
         this.worksService = worksService;
     }
 
-     public List<CChartOfAccounts> getStandardDeductionAccountList() {
+    public List<CChartOfAccounts> getStandardDeductionAccountList() {
         return standardDeductionAccountList;
     }
 

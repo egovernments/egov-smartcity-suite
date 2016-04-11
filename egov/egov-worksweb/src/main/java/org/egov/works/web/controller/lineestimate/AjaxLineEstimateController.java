@@ -40,7 +40,6 @@
 package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -184,7 +183,7 @@ public class AjaxLineEstimateController {
     public @ResponseBody List<String> findAdminSanctionNumbersForLoa(@RequestParam final String name) {
         return lineEstimateService.findAdminSanctionNumbersForLoa(name);
     }
-    
+
     @RequestMapping(value = "/workIdNumbersForLoa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findworkIdNumbersForLoa(@RequestParam final String name) {
         return lineEstimateService.findWorkIdentificationNumbersToSearchLineEstimatesForLoa(name);

@@ -42,9 +42,7 @@ package org.egov.works.lineestimate.entity.enums;
 import org.apache.commons.lang.StringUtils;
 
 public enum ModeOfAllotment {
-    NOMINATION,
-    TENDERING,
-    ePROCUREMENT;
+    NOMINATION, TENDERING, ePROCUREMENT;
 
     @Override
     public String toString() {

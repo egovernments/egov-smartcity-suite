@@ -57,14 +57,12 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -121,9 +119,6 @@ public class LineEstimateService {
     private LineEstimateNumberGenerator lineEstimateNumberGenerator;
 
     @Autowired
-    private WorkOrderIdentificationNumberGenerator workOrderIdentificationNumberGenerator;
-
-    @Autowired
     private BudgetAppropriationNumberGenerator budgetAppropriationNumberGenerator;
 
     @Autowired
@@ -158,16 +153,10 @@ public class LineEstimateService {
 
     @Autowired
     private LineEstimateDetailService lineEstimateDetailService;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
-    @Autowired
-    private DesignationService designationService;
-    
-    @Autowired
-    private DepartmentService departmentService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -285,13 +274,13 @@ public class LineEstimateService {
                 criteria.add(Restrictions.ge("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionFromDate()));
             if (lineEstimateSearchRequest.getAdminSanctionToDate() != null)
                 criteria.add(Restrictions.le("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionToDate()));
-            if(lineEstimateSearchRequest.isSpillOverFlag())
-                criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag())); 
+            if (lineEstimateSearchRequest.isSpillOverFlag())
+                criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
             else
-                criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag())); 
-                
+                criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
+
         }
-        
+
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
@@ -302,7 +291,7 @@ public class LineEstimateService {
         final List<String> lineEstimateNumbers = lineEstimateDetailsRepository
                 .findEstimateNumbersToSearchLineEstimatesForLoa(WorksConstants.CANCELLED_STATUS);
 
-        if(!lineEstimateNumbers.isEmpty()) {
+        if (!lineEstimateNumbers.isEmpty()) {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimateDetails.class)
                     .createAlias("lineEstimate", "lineEstimate")
                     .createAlias("lineEstimate.status", "status")
@@ -326,7 +315,7 @@ public class LineEstimateService {
                 if (lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy() != null)
                     criteria.add(Restrictions.eq("lineEstimate.createdBy.id",
                             lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
-                if(lineEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
+                if (lineEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
                     criteria.add(Restrictions.eq("projectCode.code",
                             lineEstimateForLoaSearchRequest.getWorkIdentificationNumber()));
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
@@ -368,7 +357,7 @@ public class LineEstimateService {
 
         return adminSanctionNumbers;
     }
-    
+
     public List<String> findWorkIdentificationNumbersToSearchLineEstimatesForLoa(final String name) {
         final List<String> workIdNumbers = lineEstimateDetailsRepository
                 .findWorkIdentificationNumbersToSearchLineEstimatesForLoa("%" + name + "%",
@@ -402,7 +391,7 @@ public class LineEstimateService {
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
         final State state = lineEstimate.getState();
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
-        if (null != state) {          
+        if (null != state) {
             if (!lineEstimate.getStateHistory().isEmpty() && lineEstimate.getStateHistory() != null)
                 Collections.reverse(lineEstimate.getStateHistory());
             for (final StateHistory stateHistory : lineEstimate.getStateHistory()) {
@@ -422,7 +411,7 @@ public class LineEstimateService {
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     HistoryMap
-                    .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                     HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
@@ -501,26 +490,26 @@ public class LineEstimateService {
                     setAdminSanctionByAndDate(lineEstimate);
                     for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                         lineEstimateDetailService.setProjectCode(led);
-                }
-                else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()) &&
+                } else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()) &&
                         !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                     setTechnicalSanctionBy(lineEstimate);
                 if (lineEstimate.getStatus().getCode()
                         .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
-                    List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-                    AppConfigValues value = values.get(0);
-                    if(value.getValue().equalsIgnoreCase("Y"))
+                    final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                            WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+                    final AppConfigValues value = values.get(0);
+                    if (value.getValue().equalsIgnoreCase("Y"))
                         doBudgetoryAppropriation(lineEstimate);
-                }
-                else if (workFlowAction.equals(WorksConstants.REJECT_ACTION) && lineEstimate.getStatus().getCode()
+                } else if (workFlowAction.equals(WorksConstants.REJECT_ACTION) && lineEstimate.getStatus().getCode()
                         .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
-                    List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-                    AppConfigValues value = values.get(0);
-                    if(value.getValue().equalsIgnoreCase("Y"))
+                    final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                            WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+                    final AppConfigValues value = values.get(0);
+                    if (value.getValue().equalsIgnoreCase("Y"))
                         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                             releaseBudgetOnReject(led);
                 }
-                    
+
                 lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
             } catch (final ValidationException e) {
                 throw new ValidationException(e.getErrors());
@@ -628,7 +617,8 @@ public class LineEstimateService {
     }
 
     public LineEstimateDetails findByEstimateNumber(final String estimateNumber) {
-        return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeEquals(estimateNumber, LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
+        return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeEquals(estimateNumber,
+                LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
     }
 
     public void createLineEstimateWorkflowTransition(final LineEstimate lineEstimate,
@@ -649,15 +639,15 @@ public class LineEstimateService {
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment))
                 lineEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             else {
                 final String stateValue = WorksConstants.WF_STATE_REJECTED;
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                .withOwner(wfInitiator.getPosition())
-                .withNextAction("")
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition())
+                        .withNextAction("")
+                        .withNatureOfTask(natureOfwork);
             }
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
@@ -667,27 +657,27 @@ public class LineEstimateService {
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, currState, null);
                 lineEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction())
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction("")
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction("")
+                        .withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                         null, additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction())
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
             }
         }
         if (LOG.isDebugEnabled())
@@ -760,15 +750,16 @@ public class LineEstimateService {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
         lineEstimate.setSpillOverFlag(true);
-        
-        List<Assignment> assignments = assignmentService.findPrimaryAssignmentForDesignationName(WorksConstants.DESIGNATION_COMMISSIONER);
-        
-        //TODO: check with BA if it is correct to get commissioner by current date
-        if(assignments != null && !assignments.isEmpty()) {
-            User adminUser = userService.getUserById(assignments.get(0).getEmployee().getId());
+
+        final List<Assignment> assignments = assignmentService
+                .findPrimaryAssignmentForDesignationName(WorksConstants.DESIGNATION_COMMISSIONER);
+
+        // TODO: check with BA if it is correct to get commissioner by current date
+        if (assignments != null && !assignments.isEmpty()) {
+            final User adminUser = userService.getUserById(assignments.get(0).getEmployee().getId());
             lineEstimate.setAdminSanctionBy(adminUser);
         }
-        
+
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
             final String lineEstimateNumber = lineEstimateNumberGenerator.generateLineEstimateNumber(lineEstimate);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
@@ -781,10 +772,11 @@ public class LineEstimateService {
 
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
             lineEstimateDetailService.setProjectCode(led);
-        
-        List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-        AppConfigValues value = values.get(0);
-        if(value.getValue().equalsIgnoreCase("Y"))
+
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME,
+                WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Y"))
             doBudgetoryAppropriation(lineEstimate);
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate,

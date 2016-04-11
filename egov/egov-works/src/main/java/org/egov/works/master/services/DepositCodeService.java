@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service("depositCodeService")
 @Transactional
-public class DepositCodeService extends PersistenceService<DepositCode, Long>  {
+public class DepositCodeService extends PersistenceService<DepositCode, Long> {
 
     @Autowired
     private WorksService worksService;

@@ -50,7 +50,7 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkO
             jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrder.getId());
-            
+
         }
         return jsonObject;
     }

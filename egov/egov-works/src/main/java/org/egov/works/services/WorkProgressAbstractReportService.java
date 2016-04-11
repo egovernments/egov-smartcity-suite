@@ -39,6 +39,11 @@
  */
 package org.egov.works.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
@@ -47,14 +52,9 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.model.budget.BudgetGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-
 public class WorkProgressAbstractReportService {
     private static final Logger logger = Logger.getLogger(WorkProgressAbstractReportService.class);
-   
+
     private BudgetDetailsDAO budgetDetailsDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
@@ -132,7 +132,6 @@ public class WorkProgressAbstractReportService {
         } else
             return null;
     }
-
 
     public void setBudgetDetailsDAO(final BudgetDetailsDAO budgetDetailsDAO) {
         this.budgetDetailsDAO = budgetDetailsDAO;

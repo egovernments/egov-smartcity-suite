@@ -40,6 +40,10 @@
 package org.egov.works.models.masters;
 
 public class ExpenditureType implements java.io.Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1572305670247580068L;
     private String value;
 
     private ExpenditureType() {

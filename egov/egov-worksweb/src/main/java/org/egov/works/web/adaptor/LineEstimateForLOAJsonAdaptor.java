@@ -9,15 +9,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class LineEstimateForLOAJsonAdaptor implements JsonSerializer<LineEstimateForLoaSearchResult>
-{
+public class LineEstimateForLOAJsonAdaptor implements JsonSerializer<LineEstimateForLoaSearchResult> {
     @Override
     public JsonElement serialize(final LineEstimateForLoaSearchResult lineEstimateForLoaSearchResult, final Type type,
-            final JsonSerializationContext jsc)
-    {
+            final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        if (lineEstimateForLoaSearchResult != null)
-        {
+        if (lineEstimateForLoaSearchResult != null) {
             if (lineEstimateForLoaSearchResult.getAdminSanctionNumber() != null)
                 jsonObject.addProperty("adminSanctionNumber", lineEstimateForLoaSearchResult.getAdminSanctionNumber());
             else

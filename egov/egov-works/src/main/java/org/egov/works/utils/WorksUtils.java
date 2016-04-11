@@ -65,41 +65,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 public class WorksUtils {
-    
+
     @Autowired
     private DocumentDetailsRepository documentDetailsRepository;
-    
+
     @Autowired
     private FileStoreService fileStoreService;
-    
+
     @Autowired
     private AssignmentService assignmentService;
-    
+
     @Autowired
     private PositionMasterService positionMasterService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 
-    public void persistDocuments(List<DocumentDetails> documentDetailsList) {
-        if(documentDetailsList != null && !documentDetailsList.isEmpty()) {
-            for(DocumentDetails doc : documentDetailsList)
+    public void persistDocuments(final List<DocumentDetails> documentDetailsList) {
+        if (documentDetailsList != null && !documentDetailsList.isEmpty())
+            for (final DocumentDetails doc : documentDetailsList)
                 documentDetailsRepository.save(doc);
-        }
     }
-    
-    public List<DocumentDetails> getDocumentDetails(final MultipartFile[] files, Object object, String objectType) throws IOException {
+
+    public List<DocumentDetails> getDocumentDetails(final MultipartFile[] files, final Object object, final String objectType)
+            throws IOException {
         final List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-        
+
         Long id = null;
         Method method = null;
         try {
             method = object.getClass().getMethod("getId", null);
             id = (Long) method.invoke(object, null);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
             throw new ApplicationRuntimeException("lineestimate.document.error", e);
         }
-            
+
         if (files != null && files.length > 0)
             for (int i = 0; i < files.length; i++)
                 if (!files[i].isEmpty()) {
@@ -112,64 +113,60 @@ public class WorksUtils {
                 }
         return documentDetailsList;
     }
-    
-    public List<DocumentDetails> findByObjectIdAndObjectType(Long objectId, String objectType) {
+
+    public List<DocumentDetails> findByObjectIdAndObjectType(final Long objectId, final String objectType) {
         return documentDetailsRepository.findByObjectIdAndObjectType(objectId, objectType);
     }
-    
+
     public Long getApproverPosition(final String designationName, final LineEstimate lineEstimate) {
         final Set<StateHistory> stateHistoryList = lineEstimate.getState().getHistory();
         Long approverPosition = 0l;
         final String[] desgnArray = designationName.split(",");
         if (stateHistoryList != null && !stateHistoryList.isEmpty()) {
-                for (final StateHistory stateHistory : stateHistoryList)
-                    if (stateHistory.getOwnerPosition() != null) {
-                        final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
-                                stateHistory.getOwnerPosition().getId(), new Date());
-                        for (final Assignment assgn : assignmentList)
-                            for (final String str : desgnArray)
-                                if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
-                                    approverPosition = stateHistory.getOwnerPosition().getId();
-                                    break;
-                                }
-
-                    }
-                if (approverPosition == 0) {
-                    final State stateObj = lineEstimate.getState();
-                    final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
-                            .getOwnerPosition().getId(), new Date());
+            for (final StateHistory stateHistory : stateHistoryList)
+                if (stateHistory.getOwnerPosition() != null) {
+                    final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
+                            stateHistory.getOwnerPosition().getId(), new Date());
                     for (final Assignment assgn : assignmentList)
-                        if (assgn.getDesignation().getName().equalsIgnoreCase(designationName)) {
-                            approverPosition = stateObj.getOwnerPosition().getId();
-                            break;
-                        }
+                        for (final String str : desgnArray)
+                            if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
+                                approverPosition = stateHistory.getOwnerPosition().getId();
+                                break;
+                            }
+
                 }
-        } else {
-                final Position posObjToClerk = positionMasterService
-                        .getCurrentPositionForUser(lineEstimate.getCreatedBy().getId());
-                approverPosition = posObjToClerk.getId();
+            if (approverPosition == 0) {
+                final State stateObj = lineEstimate.getState();
+                final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
+                        .getOwnerPosition().getId(), new Date());
+                for (final Assignment assgn : assignmentList)
+                    if (assgn.getDesignation().getName().equalsIgnoreCase(designationName)) {
+                        approverPosition = stateObj.getOwnerPosition().getId();
+                        break;
+                    }
             }
+        } else {
+            final Position posObjToClerk = positionMasterService
+                    .getCurrentPositionForUser(lineEstimate.getCreatedBy().getId());
+            approverPosition = posObjToClerk.getId();
+        }
         return approverPosition;
     }
-    
+
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
         List<Assignment> asignList = null;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        if (assignment != null)
-        {
+        if (assignment != null) {
             asignList = new ArrayList<Assignment>();
             asignList.add(assignment);
-        }
-        else if (assignment == null)
-        {
+        } else if (assignment == null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        }
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
 
-    public String getPathVars(LineEstimate newLineEstimate, Long approvalPosition) {
+    public String getPathVars(final LineEstimate newLineEstimate, final Long approvalPosition) {
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
 
@@ -185,28 +182,28 @@ public class WorksUtils {
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
         String nextDesign = "";
-        if(asignList != null)
+        if (asignList != null)
             nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
 
         String pathVars = "";
-        if(!newLineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
+        if (!newLineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
             pathVars = newLineEstimate.getId() + ","
                     + getApproverName(approvalPosition) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                     + (nextDesign != null ? nextDesign : "");
-        } else {
+        else
             pathVars = newLineEstimate.getId() + ","
                     + getApproverName(newLineEstimate.getState().getOwnerPosition().getId()) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
-                    + (nextDesign != null ? newLineEstimate.getState().getOwnerPosition().getDeptDesig().getDesignation().getName() : "");
-        }
+                    + (nextDesign != null
+                            ? newLineEstimate.getState().getOwnerPosition().getDeptDesig().getDesignation().getName() : "");
         return pathVars;
     }
 
-    public String getUserDesignation(User user) {
+    public String getUserDesignation(final User user) {
         List<Assignment> assignmentList = new ArrayList<Assignment>();
         assignmentList = assignmentService.findByEmployeeAndGivenDate(user != null ? user.getId() : null, new Date());
-        if(!assignmentList.isEmpty())
+        if (!assignmentList.isEmpty())
             return assignmentList.get(0).getDesignation().getName();
         return null;
     }

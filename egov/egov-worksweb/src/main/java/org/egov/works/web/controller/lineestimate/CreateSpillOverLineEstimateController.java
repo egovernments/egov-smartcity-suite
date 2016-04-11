@@ -60,7 +60,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -77,14 +76,11 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.services.NatureOfWorkService;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
-import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,12 +113,6 @@ public class CreateSpillOverLineEstimateController {
     private DepartmentService departmentService;
 
     @Autowired
-    private FileStoreService fileStoreService;
-
-    @Autowired
-    private WorksUtils worksUtils;
-
-    @Autowired
     private NatureOfWorkService natureOfWorkService;
 
     @Autowired
@@ -142,10 +132,10 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -153,11 +143,11 @@ public class CreateSpillOverLineEstimateController {
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
-        
-        List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
-        if(departments != null && !departments.isEmpty())
+
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        if (departments != null && !departments.isEmpty())
             lineEstimate.setExecutingDepartment(departments.get(0));
-        
+
         model.addAttribute("lineEstimate", lineEstimate);
 
         model.addAttribute("mode", null);
@@ -176,9 +166,10 @@ public class CreateSpillOverLineEstimateController {
         validateAdminSanctionDetail(lineEstimate, errors);
         validateTechSanctionDetails(lineEstimate, errors);
 
-        List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-        AppConfigValues value = values.get(0);
-        if(value.getValue().equalsIgnoreCase("Y"))
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME,
+                WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Y"))
             validateBudgetAmount(lineEstimate, errors);
 
         if (errors.hasErrors()) {
@@ -186,17 +177,18 @@ public class CreateSpillOverLineEstimateController {
             model.addAttribute("mode", null);
             model.addAttribute("designation", request.getParameter("designation"));
             return "spillOverLineEstimate-form";
-        }
-        else {
+        } else {
             final LineEstimate newLineEstimate = lineEstimateService.createSpillOver(lineEstimate, files);
-            return "redirect:/lineestimate/spillover-lineestimate-success?lineEstimateNumber=" + newLineEstimate.getLineEstimateNumber();
+            return "redirect:/lineestimate/spillover-lineestimate-success?lineEstimateNumber="
+                    + newLineEstimate.getLineEstimateNumber();
         }
     }
 
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            final LineEstimateDetails details = lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeNot(led.getEstimateNumber(), WorksConstants.CANCELLED_STATUS);
+            final LineEstimateDetails details = lineEstimateDetailsRepository
+                    .findByEstimateNumberAndLineEstimate_Status_CodeNot(led.getEstimateNumber(), WorksConstants.CANCELLED_STATUS);
             final ProjectCode projectCode = projectCodeService.findByCode(led.getProjectCode().getCode().toUpperCase());
             if (details != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
@@ -254,22 +246,23 @@ public class CreateSpillOverLineEstimateController {
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
 
         final List<Designation> designations = new ArrayList<Designation>();
-        
-        List<AppConfigValues> configValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+
+        final List<AppConfigValues> configValues = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY);
 
-        for(AppConfigValues value : configValues) {
+        for (final AppConfigValues value : configValues)
             designations.add(designationService.getDesignationByName(value.getValue()));
-        }
         model.addAttribute("designations", designations);
     }
 
     @RequestMapping(value = "/spillover-lineestimate-success", method = RequestMethod.GET)
     public ModelAndView successView(@RequestParam("lineEstimateNumber") final String lineEstimateNumber, final Model model) {
-        LineEstimate lineEstimate = lineEstimateService.getLineEstimateByLineEstimateNumber(lineEstimateNumber);
-        
+        final LineEstimate lineEstimate = lineEstimateService.getLineEstimateByLineEstimateNumber(lineEstimateNumber);
+
         model.addAttribute("message", messageSource.getMessage("msg.spillover.lineestimate.success",
-                new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getAdminSanctionNumber(), lineEstimate.getTechnicalSanctionNumber() }, null));
+                new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getAdminSanctionNumber(),
+                        lineEstimate.getTechnicalSanctionNumber() },
+                null));
 
         return new ModelAndView("lineestimate-success");
     }

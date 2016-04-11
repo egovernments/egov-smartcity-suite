@@ -36,7 +36,7 @@ public class ScheduleCategoryService extends PersistenceService<ScheduleCategory
         else
             return true;
     }
-    
+
     public boolean checkForScheduleCategory(final String code) {
         final Query query = entityManager.createQuery(" from ScheduleCategory  where code = :code");
         query.setParameter("code", code);

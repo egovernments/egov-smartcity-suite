@@ -47,5 +47,5 @@ public class LetterOfAcceptanceNumberGenerator {
     public String generateLetterOfAcceptanceNumber(final String projectCode) {
         return "WO/" + projectCode;
     }
-    
+
 }

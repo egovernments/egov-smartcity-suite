@@ -5,7 +5,6 @@ import java.lang.reflect.Type;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,18 +15,14 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonSerializer<WorkOrder> {
-    
-    @Autowired
-    private WorksUtils worksUtils;
 
     @Autowired
     private LineEstimateService lineEstimateService;
+
     @Override
-    public JsonElement serialize(final WorkOrder workOrder, final Type type, final JsonSerializationContext jsc)
-    {
+    public JsonElement serialize(final WorkOrder workOrder, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        if (workOrder != null)
-        {
+        if (workOrder != null) {
             if (workOrder.getWorkOrderNumber() != null)
                 jsonObject.addProperty("workOrderNumber", workOrder.getWorkOrderNumber());
             else
@@ -44,16 +39,15 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
                 jsonObject.addProperty("contractorcode", workOrder.getContractor().getCode());
             else
                 jsonObject.addProperty("contractorcode", "");
-            
+
             if (workOrder.getEstimateNumber() != null) {
                 jsonObject.addProperty("estimateNumber", workOrder.getEstimateNumber());
                 final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
                 final String nameOfWork = led.getNameOfWork();
                 jsonObject.addProperty("nameOfWork", nameOfWork);
-                final String workIdentificationNumber=led.getProjectCode().getCode();
+                final String workIdentificationNumber = led.getProjectCode().getCode();
                 jsonObject.addProperty("workIdentificationNumber", workIdentificationNumber);
-            }
-            else
+            } else
                 jsonObject.addProperty("estimateNumber", "");
 
             jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());

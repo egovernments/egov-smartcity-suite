@@ -56,7 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProjectCodeService extends PersistenceService<ProjectCode, Long>implements EntityTypeService {
+public class ProjectCodeService extends PersistenceService<ProjectCode, Long> implements EntityTypeService {
 
     @Autowired
     private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;
@@ -179,8 +179,8 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long>imp
 
     }
 
-    public ProjectCode findByCode(String code) {
-        String query = "from ProjectCode as p where upper(p.code) = '" + code.toUpperCase() + "'";
+    public ProjectCode findByCode(final String code) {
+        final String query = "from ProjectCode as p where upper(p.code) = '" + code.toUpperCase() + "'";
         return find(query);
     }
 }

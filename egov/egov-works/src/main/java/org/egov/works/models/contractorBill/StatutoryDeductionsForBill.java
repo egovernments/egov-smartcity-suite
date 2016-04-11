@@ -43,7 +43,6 @@ import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infstr.models.BaseModel;
 import org.egov.model.bills.EgBillPayeedetails;
-import org.egov.model.bills.EgBillregister;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 
 public class StatutoryDeductionsForBill extends BaseModel {

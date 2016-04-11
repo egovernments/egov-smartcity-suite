@@ -38,6 +38,7 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.master.repository;
+
 import java.util.List;
 
 import org.egov.works.models.masters.NatureOfWork;
@@ -46,7 +47,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NatureOfWorkRepository extends JpaRepository<NatureOfWork, Long> {
-    
+
+    @Override
     List<NatureOfWork> findAll();
 
 }

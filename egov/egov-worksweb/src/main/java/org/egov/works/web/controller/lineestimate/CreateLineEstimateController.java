@@ -129,7 +129,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -138,9 +138,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("lineEstimate", lineEstimate);
-        
-        List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
-        if(departments != null && !departments.isEmpty())
+
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        if (departments != null && !departments.isEmpty())
             lineEstimate.setExecutingDepartment(departments.get(0));
 
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
@@ -172,8 +172,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("mode", null);
 
             return "newLineEstimate-form";
-        }
-        else {
+        } else {
             if (lineEstimate.getState() == null)
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CREATED.toString()));
@@ -320,7 +319,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             message = messageSource.getMessage(
                     "msg.lineestimate.adminsanction.success",
                     new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign,
-                            lineEstimate.getAdminSanctionNumber() }, null);
+                            lineEstimate.getAdminSanctionNumber() },
+                    null);
         else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.TECHNICAL_SANCTIONED.toString()))
             message = messageSource.getMessage("msg.lineestimate.techsanction.success",
                     new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getTechnicalSanctionNumber() }, null);

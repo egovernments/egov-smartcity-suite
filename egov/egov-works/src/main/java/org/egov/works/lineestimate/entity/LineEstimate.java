@@ -231,7 +231,7 @@ public class LineEstimate extends StateAware {
     private boolean workOrderCreated;
 
     private boolean billsCreated;
-    
+
     private boolean spillOverFlag;
 
     @Override
@@ -537,7 +537,7 @@ public class LineEstimate extends StateAware {
         return spillOverFlag;
     }
 
-    public void setSpillOverFlag(boolean spillOverFlag) {
+    public void setSpillOverFlag(final boolean spillOverFlag) {
         this.spillOverFlag = spillOverFlag;
     }
 }

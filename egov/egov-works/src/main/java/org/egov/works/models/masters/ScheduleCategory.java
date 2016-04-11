@@ -45,7 +45,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -66,7 +65,7 @@ public class ScheduleCategory extends BaseModel {
     @Required(message = "contractor.code.null")
     private String code;
     private ScheduleCategory parent;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -91,7 +90,6 @@ public class ScheduleCategory extends BaseModel {
         this.description = description;
     }
 
-    
     @NotEmpty(message = "scheduleCategory.code.not.empty")
     public String getCode() {
         return code;
@@ -126,14 +124,9 @@ public class ScheduleCategory extends BaseModel {
             return validationErrors;
     }
 }
-    
- /*   public boolean validateId(final String code) {
-        final Query query = entityManager.createQuery("(from ScheduleCategory  where code  =  :code)");
-        query.setParameter("code", code);
-        final List retList = query.getResultList();
-        if (retList != null && !retList.isEmpty())
-            return false;
-        else
-            return true;
-    }
-}*/
+
+/*
+ * public boolean validateId(final String code) { final Query query = entityManager.createQuery(
+ * "(from ScheduleCategory  where code  =  :code)"); query.setParameter("code", code); final List retList = query.getResultList();
+ * if (retList != null && !retList.isEmpty()) return false; else return true; } }
+ */

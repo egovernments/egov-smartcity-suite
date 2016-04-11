@@ -107,10 +107,9 @@ public class CreateLetterOfAcceptanceController {
                     "error.loa.exists.for.estimate");
 
         validateInput(workOrder, resultBinder);
-        
-        if(lineEstimateDetails.getLineEstimate().isSpillOverFlag() && lineEstimateDetails.getLineEstimate().isWorkOrderCreated()) {
+
+        if (lineEstimateDetails.getLineEstimate().isSpillOverFlag() && lineEstimateDetails.getLineEstimate().isWorkOrderCreated())
             validateSpillOverInput(workOrder, resultBinder, lineEstimateDetails);
-        }
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model, lineEstimateDetails);
@@ -121,8 +120,8 @@ public class CreateLetterOfAcceptanceController {
             model.addAttribute("engineerIncharge", request.getParameter("engineerIncharge"));
             return "createLetterOfAcceptance-form";
         } else {
-            if ((lineEstimateDetails.getLineEstimate().isSpillOverFlag() && !lineEstimateDetails.getLineEstimate()
-                    .isWorkOrderCreated()) || !lineEstimateDetails.getLineEstimate().isSpillOverFlag())
+            if (lineEstimateDetails.getLineEstimate().isSpillOverFlag() && !lineEstimateDetails.getLineEstimate()
+                    .isWorkOrderCreated() || !lineEstimateDetails.getLineEstimate().isSpillOverFlag())
                 workOrder.setWorkOrderNumber(
                         letterOfAcceptanceNumberGenerator
                                 .generateLetterOfAcceptanceNumber(lineEstimateDetails.getProjectCode().getCode()));
@@ -155,18 +154,17 @@ public class CreateLetterOfAcceptanceController {
             resultBinder.rejectValue("engineerIncharge", "error.engineerincharge.required");
 
     }
-    
-    private void validateSpillOverInput(WorkOrder workOrder, BindingResult resultBinder, LineEstimateDetails lineEstimateDetails) {
-        if (StringUtils.isBlank(workOrder.getWorkOrderNumber())) {
+
+    private void validateSpillOverInput(final WorkOrder workOrder, final BindingResult resultBinder,
+            final LineEstimateDetails lineEstimateDetails) {
+        if (StringUtils.isBlank(workOrder.getWorkOrderNumber()))
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.required");
-        }
         final WorkOrder wo = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(workOrder.getWorkOrderNumber());
-        if(wo != null) {
+        if (wo != null)
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.unique");
-        }
-        if(workOrder.getFileDate().before(lineEstimateDetails.getLineEstimate().getTechnicalSanctionDate()))
+        if (workOrder.getFileDate().before(lineEstimateDetails.getLineEstimate().getTechnicalSanctionDate()))
             resultBinder.rejectValue("fileDate", "error.loa.filedate");
-        if(workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
+        if (workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
             resultBinder.rejectValue("fileDate", "error.loa.workorderdate");
     }
 

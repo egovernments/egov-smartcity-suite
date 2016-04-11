@@ -64,14 +64,13 @@ import org.egov.works.models.masters.MilestoneTemplateActivity;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-	@Result(name = MilestoneTemplateAction.NEW, location = "milestoneTemplate-new.jsp"),
-	@Result(name = MilestoneTemplateAction.SEARCH, location = "milestoneTemplate-search.jsp"),
-	@Result(name = MilestoneTemplateAction.SUCCESS, location = "milestoneTemplate-success.jsp"),
-	@Result(name = MilestoneTemplateAction.EDIT, location = "milestoneTemplate-edit.jsp")
+        @Result(name = MilestoneTemplateAction.NEW, location = "milestoneTemplate-new.jsp"),
+        @Result(name = MilestoneTemplateAction.SEARCH, location = "milestoneTemplate-search.jsp"),
+        @Result(name = MilestoneTemplateAction.SUCCESS, location = "milestoneTemplate-success.jsp"),
+        @Result(name = MilestoneTemplateAction.EDIT, location = "milestoneTemplate-edit.jsp")
 
 })
 public class MilestoneTemplateAction extends SearchFormAction {
@@ -82,23 +81,18 @@ public class MilestoneTemplateAction extends SearchFormAction {
     private Long id;
     private String mode = " ";
     private WorkflowService<MilestoneTemplate> milestoneTemplateWorkflowService;
-    private static final String SAVE_ACTION = "save";
     private String messageKey;
-    private static final String MILESTONE_TEMPLATE_MODULE_KEY = "MilestoneTemplate";
     private String actionName;
     private String sourcepage;
     private String nextEmployeeName;
     private String nextDesignation;
     private String designation;
     private WorksService worksService;
-    @Autowired
-    private UserService userService;
     private List<MilestoneTemplateActivity> templateActivities = new LinkedList<MilestoneTemplateActivity>();
-    private static final String SOURCE_INBOX = "inbox";
-    private static final String MODE_MODIFY = "modify";
     public static final String SEARCH = "search";
     public static final String SUCCESS = "success";
     public static final String EDIT = "edit";
+
     public MilestoneTemplateAction() {
         addRelatedEntity("workType", EgwTypeOfWork.class);
         addRelatedEntity("subType", EgwTypeOfWork.class);
@@ -115,7 +109,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
         populateCategoryList(ajaxEstimateAction, template.getWorkType() != null);
-      
+
     }
 
     @Override
@@ -129,13 +123,14 @@ public class MilestoneTemplateAction extends SearchFormAction {
     public String newform() {
         return NEW;
     }
-    
+
     @Override
     @SkipValidation
     @Action(value = "/masters/milestoneTemplate-search")
     public String search() {
         return SEARCH;
     }
+
     @Action(value = "/masters/milestoneTemplate-save")
     public String save() {
         populateActivities();
@@ -195,7 +190,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     @SkipValidation
     public String edit() {
         template = milestoneTemplateService.findById(template.getId(), false);
-              return EDIT;
+        return EDIT;
     }
 
     @SkipValidation
@@ -204,6 +199,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
             template.setStatus(1);
         return SEARCH;
     }
+
     @Action(value = "/masters/milestoneTemplate-searchDetails")
     @SkipValidation
     public String searchDetails() {
@@ -251,9 +247,10 @@ public class MilestoneTemplateAction extends SearchFormAction {
             // triggered on update of estimate for child objects
             template.setCreatedBy(worksService.getCurrentLoggedInUser());
             template.setCreatedDate(new Date());
-            
+
         }
     }
+
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         String dynQuery = " from MilestoneTemplate mt where mt.id is not null ";
@@ -341,7 +338,6 @@ public class MilestoneTemplateAction extends SearchFormAction {
     }
 
     public void setUserService(final UserService userService) {
-        this.userService = userService;
     }
 
 }

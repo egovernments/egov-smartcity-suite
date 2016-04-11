@@ -73,9 +73,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = DepositCodeAction.NEW, location = "depositCode-new.jsp"),
-    @Result(name = DepositCodeAction.SUCCESS, location = "depositCode-success.jsp"),
-    @Result(name = DepositCodeAction.SEARCH, location = "depositCode-search.jsp")
+        @Result(name = DepositCodeAction.NEW, location = "depositCode-new.jsp"),
+        @Result(name = DepositCodeAction.SUCCESS, location = "depositCode-success.jsp"),
+        @Result(name = DepositCodeAction.SEARCH, location = "depositCode-search.jsp")
 
 })
 public class DepositCodeAction extends BaseFormAction {

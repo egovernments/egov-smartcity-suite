@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NatureOfWorkService {
-    
+
     @Autowired
     private NatureOfWorkRepository natureOfWorkRepository;
-    
+
     public List<NatureOfWork> findAll() {
         return natureOfWorkRepository.findAll();
     }

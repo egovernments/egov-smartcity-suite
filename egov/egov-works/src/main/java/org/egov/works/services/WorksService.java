@@ -97,7 +97,7 @@ public class WorksService {
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
-    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO ;
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
 

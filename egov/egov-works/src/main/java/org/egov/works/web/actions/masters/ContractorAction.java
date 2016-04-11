@@ -54,7 +54,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bank;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.User;
@@ -74,12 +73,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
-    @Result(name = ContractorAction.SEARCH_CONTRACTOR, location = "contractor-searchContractor.jsp"),
-    @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
-    @Result(name = ContractorAction.SUCCESS, location = "contractor-success.jsp"),
-    @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp"),
-    @Result(name = ContractorAction.VIEW, location = "contractor-view.jsp")
+        @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
+        @Result(name = ContractorAction.SEARCH_CONTRACTOR, location = "contractor-searchContractor.jsp"),
+        @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
+        @Result(name = ContractorAction.SUCCESS, location = "contractor-success.jsp"),
+        @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp"),
+        @Result(name = ContractorAction.VIEW, location = "contractor-view.jsp")
 })
 public class ContractorAction extends SearchFormAction {
 
@@ -102,7 +101,7 @@ public class ContractorAction extends SearchFormAction {
     private List<ContractorDetail> actionContractorDetails = new LinkedList<ContractorDetail>();
     private Long id;
     private String mode;
-    
+
     @Autowired
     private UserService userService;
     private WorksService worksService;
@@ -187,8 +186,8 @@ public class ContractorAction extends SearchFormAction {
         // below line of code
         contractorService.persist(contractor);
         if (StringUtils.isBlank(mode))
-            addActionMessage(getText("contractor.save.success", new String[] {contractor.getCode()}));
-            else
+            addActionMessage(getText("contractor.save.success", new String[] { contractor.getCode() }));
+        else
             addActionMessage(getText("contractor.modified.success"));
         return SUCCESS;
 
@@ -221,9 +220,9 @@ public class ContractorAction extends SearchFormAction {
         for (final ContractorDetail contractorDetail : actionContractorDetails)
             if (validContractorDetail(contractorDetail)) {
                 contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
-                contractorDetail.setStatus((EgwStatus) egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
+                contractorDetail.setStatus(egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
                 if (contractorDetail.getGrade().getId() == null)
-                    contractorDetail.setGrade(null); 
+                    contractorDetail.setGrade(null);
                 else
                     contractorDetail.setGrade(contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId()));
                 contractorDetail.setContractor(contractor);
@@ -238,7 +237,7 @@ public class ContractorAction extends SearchFormAction {
                 if (contractorDetail.getStatus() == null || contractorDetail.getStatus().getId() == null)
                     contractorDetail.setStatus(null);
                 else
-                    contractorDetail.setStatus((EgwStatus) egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
+                    contractorDetail.setStatus(egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
                 if (contractorDetail.getGrade() == null || contractorDetail.getGrade().getId() == null)
                     contractorDetail.setGrade(null);
                 else
@@ -356,7 +355,7 @@ public class ContractorAction extends SearchFormAction {
     public void setSearchDate(final Date searchDate) {
         this.searchDate = searchDate;
     }
-    
+
     public Map<String, String> getExmptionMap() {
         return exmptionMap;
     }

@@ -43,9 +43,9 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.lineestimate.entity.LineEstimate;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -53,15 +53,15 @@ public interface LineEstimateRepository extends JpaRepository<LineEstimate, Long
     LineEstimate findById(final Long id);
 
     LineEstimate findByLineEstimateNumber(final String lineEstimateNumber);
-    
+
     List<LineEstimate> findByLineEstimateNumberContainingIgnoreCase(final String lineEstimateNumber);
 
     List<LineEstimate> findByAdminSanctionNumberContainingIgnoreCase(String name);
-    
+
     LineEstimate findByTechnicalSanctionNumberIgnoreCaseAndStatus_CodeNot(String technicalSanctionNumber, String code);
 
     LineEstimate findByAdminSanctionNumberIgnoreCaseAndStatus_codeNotLike(String adminSanctionNumber, String status);
-    
+
     @Query("select distinct(createdBy) from LineEstimate as le where le.status.code = :status")
     List<User> getLineEstimateCreatedByUsers(@Param("status") String status);
 }

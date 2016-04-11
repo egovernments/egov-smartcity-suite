@@ -47,9 +47,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DocumentDetailsRepository extends JpaRepository<DocumentDetails, Long> {
-    
+
     List<DocumentDetails> findByObjectId(Long objectId);
-    
+
     List<DocumentDetails> findByObjectIdAndObjectType(Long objectId, String objectType);
 
 }

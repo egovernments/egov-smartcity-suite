@@ -61,14 +61,15 @@ public class BudgetAppropriationNumberGenerator {
 
     @Autowired
     private DBSequenceGenerator dbSequenceGenerator;
-    
+
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Transactional
     public String generateBudgetAppropriationNumber(final LineEstimateDetails lineEstimateDetails) {
         try {
-            final CFinancialYear cFinancialYear = financialYearHibernateDAO.getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+            final CFinancialYear cFinancialYear = financialYearHibernateDAO
+                    .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
             final String sequenceName = "SEQ_LINEESTIMATEAPPROPRIATION_NUMBER";
             Serializable sequenceNumber;
             try {
@@ -82,11 +83,11 @@ public class BudgetAppropriationNumberGenerator {
             throw new ApplicationRuntimeException("Error occurred while generating Budget Appropriation Number", e);
         }
     }
-    
+
     @Transactional
-    public String generateCancelledBudgetAppropriationNumber(String appropriationNumber) {
-        String original = appropriationNumber.split("/")[0];
-        String modified = original + "/C";
+    public String generateCancelledBudgetAppropriationNumber(final String appropriationNumber) {
+        final String original = appropriationNumber.split("/")[0];
+        final String modified = original + "/C";
         return appropriationNumber.replace(original, modified);
     }
 }

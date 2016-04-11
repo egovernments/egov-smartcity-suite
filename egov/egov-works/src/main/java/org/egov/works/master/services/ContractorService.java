@@ -71,12 +71,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {
 
- public ContractorService()
-    {
-     super(Contractor.class) ;    
+    public ContractorService() {
+        super(Contractor.class);
     }
- 
- 
+
     private final Logger logger = Logger.getLogger(getClass());
     @Autowired
     private WorksService worksService;

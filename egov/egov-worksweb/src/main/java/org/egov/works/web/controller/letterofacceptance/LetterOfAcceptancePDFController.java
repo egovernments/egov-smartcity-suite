@@ -138,8 +138,8 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("subject", lineEstimateDetails.getNameOfWork());
             reportParams.put("modeOfAllotment", lineEstimateDetails.getLineEstimate().getModeOfAllotment().toString());
             reportParams.put("agreementAmount", Double.valueOf(df.format(workOrder.getWorkOrderAmount())));
-            reportParams.put("emd",df.format(workOrder.getEmdAmountDeposited()));
-            reportParams.put("asd",df.format(workOrder.getSecurityDeposit()) );
+            reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
+            reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
             reportParams.put("WINCode", lineEstimateDetails.getProjectCode().getCode());
             reportParams.put("amountOfEstimate",
                     lineEstimateDetails.getActualEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));

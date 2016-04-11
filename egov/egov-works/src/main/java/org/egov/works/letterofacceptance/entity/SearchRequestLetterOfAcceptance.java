@@ -3,7 +3,7 @@ package org.egov.works.letterofacceptance.entity;
 import java.util.Date;
 
 public class SearchRequestLetterOfAcceptance {
-    
+
     private String workOrderNumber;
     private Date fromDate;
     private Date toDate;
@@ -13,7 +13,7 @@ public class SearchRequestLetterOfAcceptance {
     private String estimateNumber;
     private String egwStatus;
     private String workIdentificationNumber;
-    
+
     public SearchRequestLetterOfAcceptance() {
     }
 
@@ -21,7 +21,7 @@ public class SearchRequestLetterOfAcceptance {
         return workOrderNumber;
     }
 
-    public void setWorkOrderNumber(String workOrderNumber) {
+    public void setWorkOrderNumber(final String workOrderNumber) {
         this.workOrderNumber = workOrderNumber;
     }
 
@@ -29,7 +29,7 @@ public class SearchRequestLetterOfAcceptance {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -37,7 +37,7 @@ public class SearchRequestLetterOfAcceptance {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
 
@@ -45,7 +45,7 @@ public class SearchRequestLetterOfAcceptance {
         return estimateNumber;
     }
 
-    public void setEstimateNumber(String estimateNumber) {
+    public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
     }
 
@@ -53,7 +53,7 @@ public class SearchRequestLetterOfAcceptance {
         return departmentName;
     }
 
-    public void setDepartmentName(Long departmentName) {
+    public void setDepartmentName(final Long departmentName) {
         this.departmentName = departmentName;
     }
 
@@ -61,7 +61,7 @@ public class SearchRequestLetterOfAcceptance {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -69,7 +69,7 @@ public class SearchRequestLetterOfAcceptance {
         return egwStatus;
     }
 
-    public void setEgwStatus(String egwStatus) {
+    public void setEgwStatus(final String egwStatus) {
         this.egwStatus = egwStatus;
     }
 
@@ -77,7 +77,7 @@ public class SearchRequestLetterOfAcceptance {
         return fileNumber;
     }
 
-    public void setFileNumber(String fileNumber) {
+    public void setFileNumber(final String fileNumber) {
         this.fileNumber = fileNumber;
     }
 
@@ -85,7 +85,7 @@ public class SearchRequestLetterOfAcceptance {
         return workIdentificationNumber;
     }
 
-    public void setWorkIdentificationNumber(String workIdentificationNumber) {
+    public void setWorkIdentificationNumber(final String workIdentificationNumber) {
         this.workIdentificationNumber = workIdentificationNumber;
     }
 

@@ -51,23 +51,26 @@ import org.springframework.stereotype.Repository;
 public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimateDetails, Long> {
 
     List<LineEstimateDetails> findByEstimateNumberContainingIgnoreCase(String name);
-    
+
     LineEstimateDetails findByEstimateNumberAndLineEstimate_Status_CodeEquals(String estimateNumber, String status);
-    
+
     LineEstimateDetails findByEstimateNumberAndLineEstimate_Status_CodeNot(String estimateNumber, String status);
 
     @Query("select distinct(led.estimateNumber) from LineEstimateDetails as led where led.estimateNumber like :estimateNumber and led.lineEstimate.status.code = :egwStatus and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where wo.estimateNumber = led.estimateNumber and upper(wo.egwStatus.code) != :status)")
-    List<String> findEstimateNumbersForLoa(@Param("estimateNumber") String estimateNumber, @Param("egwStatus") String egwStatus, @Param("status") String status);
+    List<String> findEstimateNumbersForLoa(@Param("estimateNumber") String estimateNumber, @Param("egwStatus") String egwStatus,
+            @Param("status") String status);
 
     @Query("select distinct(led.estimateNumber) from LineEstimateDetails as led where not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) != :status)")
     List<String> findEstimateNumbersToSearchLineEstimatesForLoa(@Param("status") String status);
-    
+
     @Query("select distinct(led.lineEstimate.adminSanctionNumber) from LineEstimateDetails as led  where led.lineEstimate.adminSanctionNumber like :adminSanctionNumber and led.lineEstimate.status.code = :egwStatus and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) != :status)")
-    List<String> findAdminSanctionNumbersForLoa(@Param("adminSanctionNumber") String adminSanctionNumber, @Param("egwStatus") String egwStatus, @Param("status") String status);
-   
+    List<String> findAdminSanctionNumbersForLoa(@Param("adminSanctionNumber") String adminSanctionNumber,
+            @Param("egwStatus") String egwStatus, @Param("status") String status);
+
     @Query("select distinct(estimateNumber) from LineEstimateDetails as led where led.lineEstimate.executingDepartment.id = :departmentId")
     List<String> findEstimateNumbersForDepartment(@Param("departmentId") Long departmentId);
-    
+
     @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where led.projectCode.code like :code and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) != :status)")
-    List<String> findWorkIdentificationNumbersToSearchLineEstimatesForLoa(@Param("code") String code, @Param("status") String status);
+    List<String> findWorkIdentificationNumbersToSearchLineEstimatesForLoa(@Param("code") String code,
+            @Param("status") String status);
 }

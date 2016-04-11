@@ -129,7 +129,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -206,9 +206,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
-            List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-            AppConfigValues value = values.get(0);
-            if(value.getValue().equalsIgnoreCase("Y"))
+            final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+            final AppConfigValues value = values.get(0);
+            if (value.getValue().equalsIgnoreCase("Y"))
                 validateBudgetAmount(lineEstimate, errors);
         }
         if (errors.hasErrors()) {
@@ -319,7 +320,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
         model.addAttribute("additionalRule", WorksConstants.NEWLINEESTIMATE);
-        if(lineEstimate.getCurrentState() != null)
+        if (lineEstimate.getCurrentState() != null)
             model.addAttribute("currentState", lineEstimate.getCurrentState().getValue());
 
         prepareWorkflow(model, lineEstimate, new WorkflowContainer());

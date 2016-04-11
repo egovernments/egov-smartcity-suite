@@ -48,7 +48,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class SubSchemeAdaptor implements JsonSerializer<SubScheme>{
+public class SubSchemeAdaptor implements JsonSerializer<SubScheme> {
 
     @Override
     public JsonElement serialize(final SubScheme subScheme, final Type type, final JsonSerializationContext jsc) {

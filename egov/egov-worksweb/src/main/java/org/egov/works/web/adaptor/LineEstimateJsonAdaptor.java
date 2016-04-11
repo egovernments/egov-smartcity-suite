@@ -14,17 +14,14 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 @Component
-public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate>
-{
+public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate> {
     @Autowired
     private WorksUtils worksUtils;
 
     @Override
-    public JsonElement serialize(final LineEstimate lineEstimate, final Type type, final JsonSerializationContext jsc)
-    {
+    public JsonElement serialize(final LineEstimate lineEstimate, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        if (lineEstimate != null)
-        {
+        if (lineEstimate != null) {
             if (lineEstimate.getLineEstimateNumber() != null)
                 jsonObject.addProperty("adminSanctionNumber", lineEstimate.getAdminSanctionNumber());
             else

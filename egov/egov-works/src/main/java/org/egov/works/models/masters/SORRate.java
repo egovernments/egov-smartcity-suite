@@ -50,7 +50,7 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
 
 public class SORRate extends BaseModel {
-    
+
     private static final long serialVersionUID = 4057715980589711248L;
 
     private ScheduleOfRate scheduleOfRate;

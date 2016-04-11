@@ -47,10 +47,8 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,17 +67,11 @@ public class LetterOfAcceptanceSearchController {
     private DepartmentService departmentService;
 
     @Autowired
-    private LetterOfAcceptanceService letterOfAcceptanceService;
-
-    @Autowired
     private LineEstimateService lineEstimateService;
 
     @Autowired
-    private WorksUtils worksUtils;
-    
-    @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -95,9 +87,9 @@ public class LetterOfAcceptanceSearchController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.WORKORDER));
-        
+
     }
-    
+
     @RequestMapping(value = "/searchloa-milestone", method = RequestMethod.GET)
     public String searchMilestone(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
@@ -107,14 +99,14 @@ public class LetterOfAcceptanceSearchController {
         return "search-searchmilestone";
     }
 
-    public Object toSearchResultJson(final Object object)
-    {
+    public Object toSearchResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(SearchRequestLetterOfAcceptance.class, new SearchLetterOfAcceptanceJsonAdaptor()).create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(SearchRequestLetterOfAcceptance.class, new SearchLetterOfAcceptanceJsonAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/searchformloa-contractorbill", method = RequestMethod.GET)
     public String showSearchLOAForContractorBill(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
@@ -125,5 +117,5 @@ public class LetterOfAcceptanceSearchController {
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "searchloatocreatecontractorbill-search";
     }
-    
+
 }

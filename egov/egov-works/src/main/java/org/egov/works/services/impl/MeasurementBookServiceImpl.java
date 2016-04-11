@@ -61,7 +61,7 @@ import org.egov.works.utils.WorksConstants;
  * This class will expose all measurment book related operations. NOTE ::: Suffix CQ and RE denote Change Quantity and Revision
  * Estimate Respectively
  */
-public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long>implements MeasurementBookService {
+public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> implements MeasurementBookService {
 
     private static final Logger logger = Logger.getLogger(MeasurementBookServiceImpl.class);
     public static final String WORKORDER_NO = "WORKORDER_NO";

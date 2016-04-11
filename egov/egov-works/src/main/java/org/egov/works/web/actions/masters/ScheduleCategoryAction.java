@@ -101,7 +101,7 @@ public class ScheduleCategoryAction extends BaseFormAction {
 
     @Action(value = "/masters/scheduleCategory-edit")
     public String edit() {
-     return EDIT;
+        return EDIT;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class ScheduleCategoryAction extends BaseFormAction {
         } else if (mode.equals("edit") && scheduleCategoryService.checkForScheduleCategory(code)) {
             addActionMessage(getText("scheduleCategory.code.isunique"));
             return EDIT;
-        } else 
+        } else
             scheduleCategoryService.persist(scheduleCategory);
         addActionMessage(getText("schedule.category.save.success"));
         return SUCCESS;

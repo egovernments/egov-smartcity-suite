@@ -47,7 +47,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -75,7 +74,7 @@ public class MilestoneTemplate extends WorkFlow {
     private EgwTypeOfWork workType;
     private EgwTypeOfWork subType;
 
-    //private EgwStatus egwStatus;
+    // private EgwStatus egwStatus;
 
     @Valid
     private List<MilestoneTemplateActivity> milestoneTemplateActivities = new LinkedList<MilestoneTemplateActivity>();
