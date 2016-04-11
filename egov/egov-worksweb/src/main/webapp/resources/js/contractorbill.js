@@ -70,4 +70,10 @@ $(document).ready(function(){
 		}
 	});
 	
+	$("#netPayableAccountCode").each(function() {
+		if($(this).children('option').length == 2) {
+		 	$(this).find('option').eq(1).prop('selected', true);
+		}
+	});
+	
 });

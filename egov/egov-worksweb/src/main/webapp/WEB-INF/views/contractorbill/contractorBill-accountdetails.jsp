@@ -37,43 +37,41 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="page-container">        
-   <div class="main-content">			
-		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="contractorbill-save" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>' "> 
-			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" /> 
-			<div class="row">
-				<div class="col-md-12"> 
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title"><spring:message code="lbl.header" /></div> 
-						</div>
-						<div>
-							<spring:hasBindErrors name="contractorBillRegister">
-				        		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
-				        	</spring:hasBindErrors>
-				        </div>
-						<div class="panel-body">
-							<jsp:include page="contractorBill-header.jsp"/>
-							<%-- <jsp:include page="contractorBill-accountdetails.jsp"/>
-							<jsp:include page="contractorBill-deductions.jsp"/> --%>
-							<jsp:include page="uploadDocuments.jsp"/>
-						</div>
-					</div>
-				</div>
-			</div>	
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" class="btn btn-primary" value="Save" ><spring:message code="lbl.save"/></form:button>
-					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
-				</div>
-			</div>
-		</form:form>  
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message  code="lbl.debit.details"/>
+		</div>
+	</div>
+	<div class="panel-body">
+		<table class="table table-bordered" id="tbldebitdetails">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.account.code"/></th>
+					<th><spring:message code="lbl.account.head"/></th>
+					<th><spring:message code="lbl.debit.amount"/><span class="mandatory"></span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<input type="text" id="debitGlcode" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.glcode}" class="form-control" disabled required="required"> 
+						<form:hidden path="billDetailes[0].glcodeid"  name="billDetailes[0].glcodeid" id="debitGlcodeId" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.id}" /> 
+						<form:errors path="billDetailes[0].glcodeid" cssClass="add-margin error-msg" />
+					</td>
+					<td>
+						<input type="text" id="debitAccountHead" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.name}" class="form-control" disabled > 
+					</td>
+					<td>
+						<form:input path="billDetailes[0].debitamount" id="debitAmount" name="billDetailes[0].debitamount" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitAmount" maxlength="12" required="required" />
+						<form:errors path="billDetailes[0].debitamount" cssClass="add-margin error-msg" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/contractorbill.js?rnd=${app_release_no}'/>"></script>

@@ -55,6 +55,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.models.contractorBill.AssetForBill;
@@ -98,6 +99,9 @@ public class ContractorBillRegister extends EgBillregister {
 
     @Transient
     private List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+    
+    @Transient
+    private List<EgBilldetails> billDetailes = new ArrayList<EgBilldetails>(0);
 
     @Override
     public String getStateDetails() {
@@ -187,4 +191,13 @@ public class ContractorBillRegister extends EgBillregister {
     public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
         this.documentDetails = documentDetails;
     }
+
+    public List<EgBilldetails> getBillDetailes() {
+        return billDetailes;
+    }
+
+    public void setBillDetailes(List<EgBilldetails> billDetailes) {
+        this.billDetailes = billDetailes;
+    }
+
 }

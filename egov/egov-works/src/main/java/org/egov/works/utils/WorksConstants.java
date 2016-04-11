@@ -274,4 +274,6 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_BUDGETCHECK_REQUIRED = "budgetCheckRequired";
 
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
+    
+    public static final String CONTRACTOR_NETPAYABLE_PURPOSE = "Creditors-Contractor Payable";
 }

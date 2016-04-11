@@ -42,9 +42,12 @@ package org.egov.works.web.controller.contractorbill;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
@@ -80,6 +83,9 @@ public class CreateContractorBillController {
     @Autowired
     private ContractorBillNumberGenerator contractorBillNumberGenerator;
 
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
             @ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister,
@@ -89,6 +95,9 @@ public class CreateContractorBillController {
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
         setDropDownValues(model);
         contractorBillRegister.setBilldate(new Date());
+        // TODO:Fixme - Hardcoded 26 as purposeId for Creditors-Contractor Payable for time being
+        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(26);
+        model.addAttribute("netPayableAccounCodes", contractorPayableAccountList);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
