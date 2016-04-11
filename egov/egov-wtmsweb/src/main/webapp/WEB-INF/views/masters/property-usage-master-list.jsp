@@ -43,17 +43,17 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<form:form method="post" action="" class="form-horizontal form-groups-bordered" id="usagetype-view" 
+<form:form method="post" action="" class="form-horizontal form-groups-bordered" id="waterpropertyusage-view" 
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	<input type="hidden" name="usageTypeList" id="usageTypeList" value="${usageTypeList}">
-	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${usageType.id}" />
+	<input type="hidden" name="waterPropertyUsageList" id="waterPropertyUsageList" value="${waterPropertyUsageList}">
+	<input type="hidden" id="waterPropertyUsageid" name="waterPropertyUsageid" value="${waterPropertyUsage.id}" />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-body custom-form ">
 			<c:if test="${not empty message}">
                 <div class="alert alert-success" role="alert">${message}</div>
              </c:if>
 			<c:choose>
-				<c:when test="${usageTypeList.isEmpty()}">
+				<c:when test="${waterPropertyUsageList.isEmpty()}">
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
@@ -62,7 +62,7 @@
 						<tr>
 							<th colspan="1">
 								<div align="center">
-									<spring:message code="lbl.code" />
+									<spring:message code="lbl.propertytype" />
 								</div>
 							</th>
 							<th colspan="1">
@@ -76,22 +76,22 @@
 							</th>
 						</tr>
 					</thead>
-					<c:forEach var="usageType" items="${usageTypeList}">
+					<c:forEach var="waterPropertyUsage" items="${waterPropertyUsageList}">
 						<tr>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${usageType.code}" />
+									<c:out value="${waterPropertyUsage.propertyType.name}" />
 								</div>
 							</td>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${usageType.name}" />
+									<c:out value="${waterPropertyUsage.usageType.name}" />
 								</div>
 							</td>
 							<td colspan="1">
 								<div align="center">
 								<c:choose>
-									<c:when test="${usageType.active == 'true'}">
+									<c:when test="${waterPropertyUsage.active == 'true'}">
 										<c:out value="ACTIVE" />
 									</c:when> 
 									<c:otherwise>
@@ -102,7 +102,7 @@
 							</td>
 							<td colspan="1">
 								<div align="center">
-									<a href="javascript:void(0);" onclick="edit('<c:out value="${usageType.id}" />');">Edit</a>
+									<a href="javascript:void(0);" onclick="edit('<c:out value="${waterPropertyUsage.id}" />');">Edit</a>
 								</div>
 							</td>
 						</tr>
@@ -122,4 +122,4 @@
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>" type="text/javascript"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>" type="text/javascript"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>" type="text/javascript"></script>
-<script src="<c:url value='/resources/js/app/usage-type-master.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/app/property-usage-master.js?rnd=${app_release_no}'/>"></script>
