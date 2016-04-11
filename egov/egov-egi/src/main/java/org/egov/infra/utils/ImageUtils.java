@@ -39,32 +39,33 @@
  */
 package org.egov.infra.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Iterator;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 public class ImageUtils {
 
-    public static InputStream compressImage(final InputStream imgInStream) throws IOException {
+    public static final String JPG_EXTN = ".jpg";
 
-        final File compressedImageFile = new File("compressed_file.jpg");
-        try (
-                final OutputStream outputStream = new FileOutputStream(compressedImageFile);
-                final ImageOutputStream ios = ImageIO.createImageOutputStream(compressedImageFile)) {
-            final Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
-            final ImageWriter writer = writers.next();
+    public static InputStream compressImage(InputStream imgInStream) throws IOException {
+
+        return compressImage(imgInStream, "compressed_file");
+    }
+
+    public static InputStream compressImage(InputStream imgInStream, String compressedImgFileName) throws IOException {
+        File compressedImageFile = new File(compressedImgFileName + JPG_EXTN);
+        try (final ImageOutputStream ios = ImageIO.createImageOutputStream(compressedImageFile)) {
+            Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
+            ImageWriter writer = writers.next();
             writer.setOutput(ios);
-            final ImageWriteParam param = writer.getDefaultWriteParam();
+            ImageWriteParam param = writer.getDefaultWriteParam();
             param.setCompressionMode(ImageWriteParam.MODE_DEFAULT);
             writer.write(null, new IIOImage(ImageIO.read(imgInStream), null, null), param);
             imgInStream.close();

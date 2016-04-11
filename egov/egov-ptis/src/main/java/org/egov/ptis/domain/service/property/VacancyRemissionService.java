@@ -280,8 +280,9 @@ public class VacancyRemissionService {
         else
             model.addAttribute("ARV", BigDecimal.ZERO);
         if (!basicProperty.getActiveProperty().getIsExemptedFromTax()) {
-            final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-                    PropertyTaxUtil.getCurrentInstallment());
+            /*final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+                    PropertyTaxUtil.getCurrentInstallment());*/
+            final Map<String, BigDecimal> demandCollMap = null;
             model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
             model.addAttribute("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
             model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));

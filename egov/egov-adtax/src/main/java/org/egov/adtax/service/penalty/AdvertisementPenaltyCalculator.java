@@ -44,10 +44,11 @@ import java.util.Map;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.commons.Installment;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 public interface AdvertisementPenaltyCalculator {
 
-    BigDecimal calculatePenaltyByAdvertisementPermit(AdvertisementPermitDetail advPermitDetail);
+    BigDecimal calculatePenalty(AdvertisementPermitDetail advPermitDetail) throws ApplicationRuntimeException;
 
     Map<Installment, BigDecimal> getPenaltyByInstallment(AdvertisementPermitDetail advPermitDetail);
 }

@@ -48,7 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTE
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
@@ -696,7 +696,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 }
             } else if (propertyState.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
                 args.add(property.getBasicProperty().getUpicNo());
-                args.add(demandCollMap.get(CURR_DMD_STR).add(demandCollMap.get(ARR_DMD_STR)).toString());
+                args.add(demandCollMap.get(CURR_FIRSTHALF_DMD_STR).add(demandCollMap.get(ARR_DMD_STR)).toString());
                 args.add(DateUtils.getFormattedDate(property.getBasicProperty().getPropOccupationDate(), "dd/MM/yyyy"));
                 args.add(EgovThreadLocals.getMunicipalityName());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {

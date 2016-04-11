@@ -37,36 +37,33 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.dao;
 
-import java.io.Serializable;
-import java.util.List;
+package org.egov.infra.cache.impl;
 
-/**
- * An interface shared by all business data access objects.
- * <p>
- * All CRUD (create, read, update, delete) basic data access operations are
- * isolated in this interface and shared accross all DAO implementations.
- * The current design is for a state-management oriented persistence layer
- * (for example, there is no UDPATE statement function) that provides
- * automatic transactional dirty checking of business objects in persistent
- * state.
- *
- * @author christian.bauer@jboss.com
- */
-@Deprecated
-public interface GenericDAO<T, ID extends Serializable> {
+import org.egov.infra.utils.EgovThreadLocals;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.stereotype.Service;
 
-    T findById(ID id, boolean lock);
+@Service
+public class ApplicationCacheManager {
 
-    List<T> findAll();
+    @Autowired
+    private CacheManager cacheManager;
 
-    List<T> findByExample(T exampleT);
+    public void put(Object key, Object value) {
+        cacheManager.getCache(EgovThreadLocals.getTenantID()).put(key, value);
+    }
 
-    T create(T entity);
+    public Object get(Object key) {
+        return cacheManager.getCache(EgovThreadLocals.getTenantID()).get(key).get();
+    }
 
-    void delete(T entity);
-    
-    T update(T entity);
-    
+    public <T> T get(Object key, Class<T> returnType) {
+        return cacheManager.getCache(EgovThreadLocals.getTenantID()).get(key, returnType);
+    }
+
+    public void remove(Object key) {
+        cacheManager.getCache(EgovThreadLocals.getTenantID()).evict(key);
+    }
 }

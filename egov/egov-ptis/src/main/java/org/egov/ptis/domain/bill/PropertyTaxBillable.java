@@ -41,6 +41,8 @@ package org.egov.ptis.domain.bill;
 
 import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
@@ -360,7 +362,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
         penalty = amount.multiply(PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths))).divide(
                 BIGDECIMAL_100);
-        return penalty;
+        return MoneyUtils.roundOff(penalty);
     }
 
     @Override
@@ -468,7 +470,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
                 if (thereIsBalance) {
                     penaltyAndRebate = new PenaltyAndRebate();
-                    penaltyAndRebate.setRebate(calculateEarlyPayRebate(tax));
                     Date penaltyEffectiveDate = null;
                     if (existingPenaltyDemandDetail == null) {
                         if (isNagarPanchayat && installment.compareTo(nagarPanchayatPenEndInstallment) <= 0) {
@@ -478,17 +479,27 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                                     assessmentEffecInstallment, basicProperty.getAssessmentdate(), currentInstall);
                         }
                         if (penaltyEffectiveDate.before(new Date())) {
-                            BigDecimal penalty = calculatePenalty(null, penaltyEffectiveDate, balance);
-                            BigDecimal monthPenalty = balance.multiply(
-                                    PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(1))).divide(
-                                    BIGDECIMAL_100);
-                            penalty = penalty.subtract(monthPenalty);
-                            penaltyAndRebate.setPenalty(MoneyUtils.roundOff(penalty));
+                            penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate, balance));
                         }
                     } else
                         penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
                                 existingPenaltyDemandDetail.getAmtCollected()));
                     installmentPenaltyAndRebate.put(installment, penaltyAndRebate);
+                }
+            }
+            //calculating early payment rebate if rebate period active and there is no partial payment for current installment
+            if (isEarlyPayRebateActive()){
+                Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+                BigDecimal currentannualcollection = instWiseAmtCollMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).add(instWiseAmtCollMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
+                if(currentannualcollection.compareTo(BigDecimal.ZERO)==0){
+                    BigDecimal currentannualtax = instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).add(instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
+                    if(installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF))!=null){
+                        installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).setRebate(calculateEarlyPayRebate(currentannualtax));
+                    }else {
+                        PenaltyAndRebate currentpenaltyAndRebate = new PenaltyAndRebate();
+                        currentpenaltyAndRebate.setRebate(calculateEarlyPayRebate(currentannualtax));
+                        installmentPenaltyAndRebate.put(currInstallments.get(CURRENTYEAR_FIRST_HALF), currentpenaltyAndRebate);
+                    }
                 }
             }
         }

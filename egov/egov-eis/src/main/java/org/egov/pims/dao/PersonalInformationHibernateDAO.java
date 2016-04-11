@@ -40,16 +40,6 @@
 
 package org.egov.pims.dao;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -58,23 +48,25 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.exception.TooManyValuesException;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This Class implememets the PersonalInformationDAO for the Hibernate specific
- * Implementation
- *
- * @author Neetu
- * @version 2.00
- */
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 @Repository
-public class PersonalInformationHibernateDAO extends GenericHibernateDAO implements PersonalInformationDAO
+public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 {
     
 	private static final Logger LOGGER = Logger.getLogger(PersonalInformationHibernateDAO.class); 
@@ -87,21 +79,11 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	@PersistenceContext
 	private EntityManager entityManager;
     
-	@Override
 	public Session  getCurrentSession() {
 		return entityManager.unwrap(Session.class);
 	}
 	
-	public PersonalInformationHibernateDAO() {
-		
-		super(PersonalInformation.class,null);
-	}
-    /*
-     *
-	 * @param persistentClass
-	 * @param session
-	 */
-	
+
 	public PersonalInformation getPersonalInformationByID(Integer idPersonalInformation)
 	{
 		Query qry = getCurrentSession().createQuery("from PersonalInformation P where P.idPersonalInformation =:idPersonalInformation ");
@@ -543,7 +525,19 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		 
 		 return qry.list();
 	 }
-	 
+
+	@Override
+	@Transactional
+	public void create(final PersonalInformation egpimsPersonalInformation) {
+		getCurrentSession().save(egpimsPersonalInformation);
+	}
+
+	@Override
+	@Transactional
+	public void update(final PersonalInformation egpimsPersonalInformation) {
+		getCurrentSession().update(egpimsPersonalInformation);
+	}
+
 }
 
 

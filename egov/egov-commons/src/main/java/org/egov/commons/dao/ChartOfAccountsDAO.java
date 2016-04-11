@@ -39,16 +39,14 @@
  */
 package org.egov.commons.dao;
 
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationException;
+
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.List;
-
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons. CChartOfAccounts ;
-import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.dao.GenericDAO;
 
 public interface ChartOfAccountsDAO{
     // public Collection getAccountCodeList();

@@ -92,13 +92,11 @@
 
 	<bean id="contrajournalService" class="org.egov.infstr.services.PersistenceService"
 		scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
 	</bean>
 
 	<bean id="bankReconService" class="org.egov.infstr.services.PersistenceService"
 		scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="type" value="org.egov.commons.Bankreconciliation" />
 	</bean>
 
@@ -106,8 +104,6 @@
 		parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
 		<property name="persistenceService" ref="persistenceService" />
-		<property name="contrajournalService" ref="contrajournalService" />
-		<property name="bankReconService" ref="bankReconService" />
 		<property name="instrumentService" ref="instrumentService" />
 		<property name="employeeServiceOld" ref="employeeServiceOld" />
 	</bean>
@@ -151,12 +147,7 @@
 	    </bean>
 		
 
-	<bean id="egwStatusHibernateDAO" class="org.egov.commons.dao.EgwStatusHibernateDAO">
-		<constructor-arg index="0" value="org.egov.commons.EgwStatus" />
-		<constructor-arg index="1">
-			<null />
-		</constructor-arg>
-	</bean>
+	<bean id="egwStatusHibernateDAO" class="org.egov.commons.dao.EgwStatusHibernateDAO"/>
 
 	<bean id="functionaryDAO" class="org.egov.commons.dao.FunctionaryHibernateDAO"/>
 

@@ -72,6 +72,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -94,6 +95,9 @@ public class CurrentViewDcbController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
     
 
 
@@ -155,7 +159,7 @@ public class CurrentViewDcbController {
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
-        if (waterConnectionDetails.getDemand() != null) {
+        if ( waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null) {
             final DCBServiceImpl dcbdemandService = (DCBServiceImpl) context.getBean("dcbdemandService");
             final DCBDisplayInfo dcbDispInfo = currentDcbService.getDcbDispInfo();
 

@@ -248,7 +248,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                     centerPara(pdfLabel.get("tenderNegotiationpdf.remarks")));
             List<StateHistory> history = null;
             if (tenderResponse.getCurrentState() != null && tenderResponse.getCurrentState().getHistory() != null)
-                history = tenderResponse.getCurrentState().getHistory();
+                history = tenderResponse.getStateHistory();
             if (history != null) {
                 Collections.reverse(history);
                 StateHistory previous = null;

@@ -139,7 +139,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         paramMap.put("bankAccountNumber", bankAccountNumber);
 
         if (paymentHeader != null && paymentHeader.getState() != null)
-            loadInboxHistoryData(paymentHeader.getState(), paramMap);
+            loadInboxHistoryData(paymentHeader.getStateHistory(), paramMap);
 
         if (miscBillDetailList != null) {
             paramMap.put("partyName", getPartyName());
@@ -439,18 +439,14 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                 .getVoucherDate());
     }
 
-    void loadInboxHistoryData(final State states, final Map<String, Object> paramMap) throws ApplicationRuntimeException {
+    void loadInboxHistoryData(final List<StateHistory> stateHistory, final Map<String, Object> paramMap) throws ApplicationRuntimeException {
         final List<String> history = new ArrayList<String>();
         final List<String> workFlowDate = new ArrayList<String>();
-        if (states != null) {
-            final List<StateHistory> stateHistory = states.getHistory();
-
-            for (final StateHistory state : stateHistory)
-                if (!"NEW".equalsIgnoreCase(state.getValue())) {
-                    history.add(state.getSenderName());
-                    workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(state.getLastModifiedDate()));
-                }
-        }
+        for (final StateHistory historyState : stateHistory)
+            if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
+                history.add(historyState.getSenderName());
+                workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(historyState.getLastModifiedDate()));
+            }
         for (int i = 0; i < history.size(); i++) {
             paramMap.put("workFlow_" + i, history.get(i));
             paramMap.put("workFlowDate_" + i, workFlowDate.get(i));

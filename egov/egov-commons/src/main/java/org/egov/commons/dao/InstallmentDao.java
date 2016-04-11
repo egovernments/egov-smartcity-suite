@@ -39,14 +39,13 @@
  */
 package org.egov.commons.dao;
 
+import org.egov.commons.Installment;
+import org.egov.infra.admin.master.entity.Module;
+
 import java.util.Date;
 import java.util.List;
 
-import org.egov.commons.Installment;
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infstr.dao.GenericDAO;
-
-public interface InstallmentDao extends GenericDAO {
+public interface InstallmentDao  {
     public List<Installment> getInsatllmentByModule(Module module);
 
     public List<Installment> getInsatllmentByModule(Module module, Date year);

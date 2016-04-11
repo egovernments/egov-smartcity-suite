@@ -39,8 +39,6 @@
  */
 package org.egov.commons.dao;
 
-import org.egov.infstr.dao.GenericDAO;
-
-public interface ObjectHistoryDAO extends GenericDAO {
+public interface ObjectHistoryDAO {
 
 }

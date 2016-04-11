@@ -41,7 +41,9 @@ package org.egov.infra.workflow.entity;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -112,7 +114,7 @@ public class State extends AbstractAuditable {
 
     @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "state")
     @OrderBy("id")
-    private List<StateHistory> history = Collections.emptyList();
+    private Set<StateHistory> history = new HashSet<>();
 
     private String senderName;
     private String nextAction;
@@ -171,11 +173,11 @@ public class State extends AbstractAuditable {
         this.ownerUser = ownerUser;
     }
 
-    public List<StateHistory> getHistory() {
+    public Set<StateHistory> getHistory() {
         return history;
     }
 
-    protected void setHistory(final List<StateHistory> history) {
+    protected void setHistory(final Set<StateHistory> history) {
         this.history = history;
     }
 

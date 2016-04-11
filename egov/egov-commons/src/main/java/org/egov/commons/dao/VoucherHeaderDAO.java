@@ -39,11 +39,9 @@
  */
 package org.egov.commons.dao;
 
-import java.util.List;
+import org.egov.commons.CVoucherHeader;
 
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.CVoucherHeader;
-import org.egov.infstr.dao.GenericDAO;
+import java.util.List;
 
 public interface VoucherHeaderDAO {
 	public List<CVoucherHeader> getVoucherHeadersByStatus(Integer status) throws Exception;

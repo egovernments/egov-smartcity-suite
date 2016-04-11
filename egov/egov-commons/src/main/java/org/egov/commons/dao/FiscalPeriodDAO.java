@@ -39,10 +39,9 @@
  */
 package org.egov.commons.dao;
 
-import java.util.Date;
-
 import org.egov.commons.CFiscalPeriod;
-import org.egov.infstr.dao.GenericDAO;
+
+import java.util.Date;
 
 public interface FiscalPeriodDAO  {
 	public String getFiscalPeriodIds(String financialYearId);

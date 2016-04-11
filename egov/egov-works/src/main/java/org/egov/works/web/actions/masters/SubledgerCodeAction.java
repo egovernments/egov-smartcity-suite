@@ -39,16 +39,6 @@
  */
 package org.egov.works.web.actions.masters;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.script.ScriptContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -61,8 +51,8 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -93,6 +83,15 @@ import org.egov.works.web.actions.estimate.AjaxFinancialDetailAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.script.ScriptContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @ParentPackage("egov")
 @Result(name = SubledgerCodeAction.NEW, location = "subledgerCode-new.jsp")
 public class SubledgerCodeAction extends BaseFormAction {
@@ -102,8 +101,6 @@ public class SubledgerCodeAction extends BaseFormAction {
     private static final Logger logger = Logger.getLogger(SubledgerCodeAction.class);
     @Autowired
     private AssignmentService assignmentService;
-    @Autowired
-    private CommonsService commonsService;
     private static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
     private WorksService worksService;
     private String currentFinancialYearId;
@@ -138,7 +135,8 @@ public class SubledgerCodeAction extends BaseFormAction {
     private BoundaryTypeService boundaryTypeService;
     @Autowired
     private BoundaryService boundaryService;
-
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Override
     public Object getModel() {
         // TODO Auto-generated method stub
@@ -253,7 +251,7 @@ public class SubledgerCodeAction extends BaseFormAction {
     public String close() {
         isProjectClose = Boolean.TRUE;
         projectCode = projectCodeService.findById(projectCodeId, false);
-        projectCode.setEgwStatus(commonsService.getStatusByModuleAndCode(ProjectCode.class.getSimpleName(), "CLOSED"));
+        projectCode.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ProjectCode.class.getSimpleName(), "CLOSED"));
         projectCode.setProjectValue(projectValue);
         projectCode.setCompletionDate(completionDate);
         projectCodeService.persist(projectCode);
@@ -411,7 +409,7 @@ public class SubledgerCodeAction extends BaseFormAction {
             projectCode.setCodeName(codeName);
             projectCode.setDescription(description);
             projectCode.setActive(ISACTIVE);
-            projectCode.setEgwStatus(commonsService.getStatusByModuleAndCode(ProjectCode.class.getSimpleName(),
+            projectCode.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ProjectCode.class.getSimpleName(),
                     WorksConstants.DEFAULT_PROJECTCODE_STATUS));
             projectCodeService.persist(projectCode); // Persists an Entry in EGW_PROJECTCODE Table
             worksService.createAccountDetailKey(projectCode.getId(), "PROJECTCODE"); // Persists an Entry in ACCOUNTDETAILKEY
@@ -423,14 +421,6 @@ public class SubledgerCodeAction extends BaseFormAction {
     @Action(value = "/masters/subledgerCode-newform")
     public String newform() {
         return NEW;
-    }
-
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public WorksService getWorksService() {

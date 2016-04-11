@@ -39,10 +39,9 @@
  */
 package org.egov.commons.dao;
 
-import java.util.List;
-
 import org.egov.commons.CFunction;
-import org.egov.infstr.dao.GenericDAO;
+
+import java.util.List;
 
 public interface FunctionDAO  {
 	public List<CFunction> getAllActiveFunctions();

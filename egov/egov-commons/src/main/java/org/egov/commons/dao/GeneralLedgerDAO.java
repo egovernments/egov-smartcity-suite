@@ -39,11 +39,10 @@
  */
 package org.egov.commons.dao;
 
+import org.egov.commons.CGeneralLedger;
+
 import java.math.BigDecimal;
 import java.util.List;
-
-import org.egov.commons.CGeneralLedger;
-import org.egov.infstr.dao.GenericDAO;
 
 public interface GeneralLedgerDAO{
 	String getActualsPrev(String accCode, String functionId, String budgetingType) throws Exception;
