@@ -58,4 +58,6 @@ public interface PropertyCategoryRepository extends JpaRepository<PropertyCatego
     PropertyCategory findByPropertyTypeAndConnectionCategory(PropertyType propertyType,
             ConnectionCategory connectionCategory);
 
+    PropertyCategory findByPropertyTypeAndConnectionCategory_name(PropertyType propertyType, String categoryType);
+
 }

@@ -49,12 +49,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "egwtr_property_category")
 @SequenceGenerator(name = PropertyCategory.SEQ_PROPERTY_CATEGORY, sequenceName = PropertyCategory.SEQ_PROPERTY_CATEGORY, allocationSize = 1)
-public class PropertyCategory extends AbstractPersistable<Long> {
+public class PropertyCategory extends AbstractAuditable {
 
     private static final long serialVersionUID = 8604331107634946265L;
     public static final String SEQ_PROPERTY_CATEGORY = "SEQ_EGWTR_PROPERTY_CATEGORY";
@@ -72,6 +72,8 @@ public class PropertyCategory extends AbstractPersistable<Long> {
     @ManyToOne
     @JoinColumn(name = "propertytype")
     private PropertyType propertyType;
+
+    private boolean active;
 
     @Override
     public Long getId() {
@@ -97,6 +99,14 @@ public class PropertyCategory extends AbstractPersistable<Long> {
 
     public void setConnectionCategory(final ConnectionCategory connectionCategory) {
         this.connectionCategory = connectionCategory;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
 }

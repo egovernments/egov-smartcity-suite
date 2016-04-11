@@ -42,19 +42,18 @@ package org.egov.wtms.web.controller.masters;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.egov.wtms.masters.entity.PipeSize;
-import org.egov.wtms.masters.entity.PropertyPipeSize;
-import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.service.PipeSizeService;
-import org.egov.wtms.masters.service.PropertyPipeSizeService;
-import org.egov.wtms.masters.service.PropertyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -63,97 +62,71 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/masters")
 public class PipeSizeMasterController {
 
-    private final PropertyTypeService propertyTypeService;
-
-    private final PipeSizeService pipeSizeService;
-
-    private final PropertyPipeSizeService propertyPipeSizeService;
-
     @Autowired
-    public PipeSizeMasterController(final PropertyTypeService propertyTypeService,
-            final PipeSizeService pipeSizeService, final PropertyPipeSizeService propertyPipeSizeService) {
-        this.propertyTypeService = propertyTypeService;
-        this.pipeSizeService = pipeSizeService;
-        this.propertyPipeSizeService = propertyPipeSizeService;
-
-    }
+    private PipeSizeService pipeSizeService;
 
     @RequestMapping(value = "/pipesizeMaster", method = GET)
-    public String viewForm(@ModelAttribute PropertyPipeSize propertyPipeSize, final Model model) {
-        propertyPipeSize = new PropertyPipeSize();
-        model.addAttribute("propertyPipeSize", propertyPipeSize);
-        model.addAttribute("propertyTypeList", propertyTypeService.getAllActivePropertyTypes());
+    public String viewForm(final Model model) {
+        final PipeSize pipeSize = new PipeSize();
+        model.addAttribute("pipeSize", pipeSize);
+        model.addAttribute("reqAttr", false);
         return "pipesize-master";
     }
 
     @RequestMapping(value = "/pipesizeMaster", method = RequestMethod.POST)
-    public String addCategoryMasterData(@Valid @ModelAttribute final PropertyPipeSize propertyPipeSize,
+    public String addCategoryMasterData(@Valid @ModelAttribute final PipeSize pipeSize,
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "pipesize-master";
+        final PipeSize pipesizecodeObj = pipeSizeService.findByCode(pipeSize.getCode());
+        final PipeSize pipesizemmObj = pipeSizeService.findBySizeInMilimeter(pipeSize.getSizeInMilimeter());
+        final PipeSize pipesizeObj = pipeSizeService.findByCodeAndPipeSizeInmm(pipeSize.getCode(),
+                pipeSize.getSizeInMilimeter());
 
-        PropertyPipeSize propertypipeSize = new PropertyPipeSize();
-        if (propertyPipeSize.getPipeSize().getId() == null)
-            propertypipeSize = null;
-        else
-            propertypipeSize = propertyPipeSizeService.findByPropertyTypeAndPipeSize(
-                    propertyPipeSize.getPropertyType(), propertyPipeSize.getPipeSize());
-        if (propertypipeSize != null) {
-            redirectAttrs.addFlashAttribute("propertyPipeSize", propertyPipeSize);
-            model.addAttribute("message", "Entered PipeSize for the Chosen Property Type is already Exists");
+        if (pipesizeObj != null) {
+            redirectAttrs.addFlashAttribute("pipeSize", pipesizeObj);
+            model.addAttribute("message", "Entered Code and H.S.C Pipe Size(mm) are already exists.");
+        } else if (pipesizecodeObj != null) {
+            redirectAttrs.addFlashAttribute("pipeSize", pipesizecodeObj);
+            model.addAttribute("message", "Entered Code already exist.");
+        } else if (pipesizemmObj != null) {
+            redirectAttrs.addFlashAttribute("pipeSize", pipesizemmObj);
+            model.addAttribute("message", "Entered  H.S.C Pipe Size(mm) already exist.");
+            return "pipesize-master";
         } else {
-            PipeSize pipesize = new PipeSize();
-            pipesize = propertyPipeSize.getPipeSize();
-            final PropertyType propertyType = propertyPipeSize.getPropertyType();
-            PropertyPipeSize propertyPipeSizeobj = new PropertyPipeSize();
-            propertyPipeSizeobj = propertyPipeSizeService.findByPropertyTypeAndPipeSizeInmm(propertyType,
-                    pipesize.getSizeInMilimeter());
-            if (propertyPipeSizeobj == null) {
-                PropertyPipeSize propertyPipesizeobj = new PropertyPipeSize();
-                final String pipeSizeCode = pipesize.getCode().trim();
-                propertyPipesizeobj = propertyPipeSizeService.findByPropertyTypeAndPipeSizecode(propertyType,
-                        pipesize.getCode());
-                if (propertyPipesizeobj != null)
+            pipeSizeService.createPipeSize(pipeSize);
+            redirectAttrs.addFlashAttribute("pipeSize", pipeSize);
 
-                {
-                    model.addAttribute("mode", "errorMode");
-                    model.addAttribute("propertyTypeList", propertyTypeService.getAllActivePropertyTypes());
-                    resultBinder.rejectValue("pipeSize.code", "invalid.code");
-                    return "pipesize-master";
-                }
-                PipeSize pipeSizeObj = new PipeSize();
-                final double pipeSizeinmm = pipesize.getSizeInMilimeter();
-                pipeSizeObj = pipeSizeService.findBySizeInMilimeter(pipesize.getSizeInMilimeter());
-                if (pipeSizeObj == null)
-                    pipesize.setSizeInMilimeter(pipeSizeinmm);
-                PipeSize pipesizeObj = new PipeSize();
-                pipesizeObj = pipeSizeService.findByCode(pipesize.getCode());
-                if (pipesizeObj == null)
-                    pipesize.setCode(pipeSizeCode);
-                if (pipeSizeObj != null || pipesizeObj != null) {
-                    final PropertyPipeSize propertypipeSizeobj = new PropertyPipeSize();
-                    propertypipeSizeobj.setPropertyType(propertyType);
-                    propertypipeSizeobj.setPipeSize(pipeSizeObj);
-                    propertyPipeSizeService.createPropertyPipeSize(propertypipeSizeobj);
-                    redirectAttrs.addFlashAttribute("propertyPipeSize", propertypipeSizeobj);
-                } else {
-                    pipesize.setActive(true);
-                    double pipeSizeininch=pipesize.getSizeInMilimeter()*0.039370;
-                    pipesize.setSizeInInch(Math.round(pipeSizeininch * 1000.0) / 1000.0);
-                    pipeSizeService.createPipeSize(pipesize);
-                    propertyPipeSizeService.createPropertyPipeSize(propertyPipeSize);
-                    redirectAttrs.addFlashAttribute("propertyPipeSize", propertyPipeSize);
-                }
-            } else {
-                model.addAttribute("mode", "errorMode");
-                model.addAttribute("propertyTypeList", propertyTypeService.getAllActivePropertyTypes());
-                resultBinder.rejectValue("pipeSize.sizeInMilimeter", "invalid.size");
-                return "pipesize-master";
-            }
-            model.addAttribute("message", "H.S.C Pipe Size Data Created Successfully");
         }
 
-        return "pipesize-master-success";
+        return getPipeSizeMasterList(model);
+    }
+
+    @RequestMapping(value = "/pipesizeMaster/list", method = GET)
+    public String getPipeSizeMasterList(final Model model) {
+        final List<PipeSize> pipeSizeList = pipeSizeService.findAll();
+        model.addAttribute("pipeSizeList", pipeSizeList);
+        return "pipesize-master-list";
+    }
+
+    @RequestMapping(value = "/pipesizeMaster/{pipeSizeId}", method = GET)
+    public String getPipeSizeMasterDetails(final Model model, @PathVariable final String pipeSizeId) {
+        final PipeSize pipeSize = pipeSizeService.findOne(Long.parseLong(pipeSizeId));
+        model.addAttribute("pipeSize", pipeSize);
+        model.addAttribute("reqAttr", "true");
+        return "pipesize-master";
+    }
+
+    @RequestMapping(value = "/pipesizeMaster/{pipeSizeId}", method = RequestMethod.POST)
+    public String editPipeSizeMasterData(@Valid @ModelAttribute final PipeSize pipeSize,
+            @PathVariable final long pipeSizeId, final RedirectAttributes redirectAttrs, final Model model,
+            final BindingResult resultBinder) {
+        if (resultBinder.hasErrors())
+            return "pipesize-master";
+        pipeSizeService.updatePipeSize(pipeSize);
+        redirectAttrs.addFlashAttribute("pipeSize", pipeSize);
+        return getPipeSizeMasterList(model);
+
     }
 
 }
