@@ -51,12 +51,9 @@ import org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl;
 import org.egov.infstr.services.PersistenceService;
 
 /**
- * Render service for collections workflow. Groups the receipt headers based on
- * user + counter + service
+ * Render service for collections workflow. Groups the receipt headers based on user + counter + service
  */
 public class CollectionsWorkflowRenderService extends DefaultInboxRenderServiceImpl<ReceiptHeader> {
-
-    private PersistenceService persistenceService;
 
     public CollectionsWorkflowRenderService(final PersistenceService<ReceiptHeader, Long> stateAwarePersistenceService) {
         super(stateAwarePersistenceService);
@@ -66,21 +63,19 @@ public class CollectionsWorkflowRenderService extends DefaultInboxRenderServiceI
      * TODO: Implement collections specific grouping logic
      */
     /**
-     * @param allItems
-     *            Workflow Items from which grouped items are to be created
-     * @return Workflow items (receipt headers) grouped by service + counter +
-     *         user
+     * @param allItems Workflow Items from which grouped items are to be created
+     * @return Workflow items (receipt headers) grouped by service + counter + user
      */
     private List<ReceiptHeader> getGroupedWorkflowItems(final List<ReceiptHeader> allItems) {
-        final List<ReceiptHeader> receiptHeaderPerGroup = new ArrayList<ReceiptHeader>();
-        final HashMap<String, Integer> assignedItems = new HashMap<String, Integer>();
+        final List<ReceiptHeader> receiptHeaderPerGroup = new ArrayList<ReceiptHeader>(0);
+        final HashMap<String, Integer> assignedItems = new HashMap<String, Integer>(0);
         for (final StateAware nextItem : allItems)
             if (nextItem instanceof ReceiptHeader) {
                 final ReceiptHeader nextReceipt = (ReceiptHeader) nextItem;
                 String groupingCriteria = "";
                 if (nextReceipt.getReceipttype() == 'B')
                     groupingCriteria = nextReceipt.myLinkId();
-                else 
+                else
                     groupingCriteria = nextReceipt.myLinkIdForChallanMisc();
                 if (assignedItems.get(groupingCriteria) == null) {
                     // Group not created yet. Create it.
@@ -101,26 +96,18 @@ public class CollectionsWorkflowRenderService extends DefaultInboxRenderServiceI
      * TODO: Implement collections specific grouping logic
      */
     /*
-     * @Override public List<ReceiptHeader> getFilteredWorkflowItems(final Long
-     * owner, final Long userId, final Long sender, final Date fromDate, final
-     * Date toDate) { return Collections.emptyList(); }
+     * @Override public List<ReceiptHeader> getFilteredWorkflowItems(final Long owner, final Long userId, final Long sender, final
+     * Date fromDate, final Date toDate) { return Collections.emptyList(); }
      */
 
     /**
-     * Returns the assigned work flow items for given user. For collections, one
-     * item is returned for every unique combination of billing service, user
-     * and counter.
+     * Returns the assigned work flow items for given user. For collections, one item is returned for every unique combination of
+     * billing service, user and counter.
      *
-     * @param owner
-     *            The owner for whom the assigned work flow items are to be
-     *            returned
-     * @param userId
-     *            The currently logged in user id (NEW items created by this
-     *            user are excluded)
-     * @param order
-     *            The field on which the items are to be sorted
-     * @return Assigned workflow items (receipt headers) grouped by service +
-     *         counter + user
+     * @param owner The owner for whom the assigned work flow items are to be returned
+     * @param userId The currently logged in user id (NEW items created by this user are excluded)
+     * @param order The field on which the items are to be sorted
+     * @return Assigned workflow items (receipt headers) grouped by service + counter + user
      */
 
     @Override
@@ -129,23 +116,16 @@ public class CollectionsWorkflowRenderService extends DefaultInboxRenderServiceI
     }
 
     /**
-     * Returns the work flow items for given filter criteria. For collections,
-     * one item is returned for every unique combination of billing service,
-     * user and counter.
+     * Returns the work flow items for given filter criteria. For collections, one item is returned for every unique combination
+     * of billing service, user and counter.
      *
-     * @param criteria
-     *            Filter criteria for fetching workflow items
-     * @return Filtered workflow items (receipt headers) grouped by service +
-     *         counter + user
+     * @param criteria Filter criteria for fetching workflow items
+     * @return Filtered workflow items (receipt headers) grouped by service + counter + user
      */
 
     @Override
     public List<ReceiptHeader> getWorkflowItems(final Map<String, Object> criteria) {
         return getGroupedWorkflowItems(super.getWorkflowItems(criteria));
-    }
-
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
     }
 
 }
