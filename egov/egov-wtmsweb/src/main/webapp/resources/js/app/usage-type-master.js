@@ -41,20 +41,21 @@ $(document).ready(function(){
 	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
-	if (activeDiv =='false')
+	if (activeDiv =='false' && 'true')
 		{
 		$('#statusdiv').hide();
 	     $('#addnewid').hide();
 		}
 	
-	else
+	else if(activeDiv=='true')
 		{
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
 	
+	
 	$("#resetid").click(function(){
-		$("#usageTypeform")[0].reset();
+		$("#usageTypeMasterform")[0].reset();
 		})
 	$( "#code" ).focusout(function() {
 	    textValue =  $.trim($(this).val());

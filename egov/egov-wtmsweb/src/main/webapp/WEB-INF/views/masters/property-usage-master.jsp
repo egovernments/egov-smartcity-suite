@@ -52,7 +52,7 @@
              </c:if>
 		<div class="panel-body custom-form">
 			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" /><span class="mandatory"></span></label>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="propertyType" data-first-option="false" id="propertyType" cssClass="form-control" required="required">
 						<form:option value=""><spring:message code="lbl.select"/></form:option>
@@ -60,7 +60,7 @@
 					</form:select>
 						<form:errors path="propertyType" cssClass="add-margin error-msg" />
 				</div>
-			 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.usagetype" /><span class="mandatory"></span></label>
+			 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.usagetype" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="usageType" data-first-option="false" id="usageType" cssClass="form-control" required="required">
 						<form:option value=""><spring:message code="lbl.select"/></form:option>
@@ -69,13 +69,15 @@
 						<form:errors path="usageType" cssClass="add-margin error-msg" />
 				</div>
 			</div>
-			<div class="form-group" id="statusdiv">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
-				<div class="col-sm-3 add-margin" >
-					<form:checkbox id="activeid" path="active" value ="active" />
-					<form:errors path="active" />
+			<div class="form-group">
+				<div class="form-group" id="statusdiv">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
+						<div class="col-sm-3 add-margin" >
+							<form:checkbox id="activeid" path="active" value ="active" />
+							<form:errors path="active" />
+						</div>
+					</div>	
 				</div>
-				</div>	
 				<input type="hidden" name="waterPropertyUsage" value="${waterPropertyUsage.id}" />
 				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>	
 

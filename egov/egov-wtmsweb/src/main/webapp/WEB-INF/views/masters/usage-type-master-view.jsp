@@ -61,9 +61,7 @@
 					<thead>
 						<tr>
 							<th colspan="1">
-								<div align="center">
-									<spring:message code="lbl.code" />
-								</div>
+								<div align="center"><spring:message code="lbl.code" /></div>
 							</th>
 							<th colspan="1">
 								<div align="center"><spring:message code="lbl.usagetype" /></div>
@@ -89,7 +87,7 @@
 								</div>
 							</td>
 							<td colspan="1">
-								<div align="center">
+								<div align="centre">
 								<c:choose>
 									<c:when test="${usageType.active == 'true'}">
 										<c:out value="ACTIVE" />
