@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-12T12:25:52 -->
+<!-- 2016-04-12T19:01:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -43,26 +43,26 @@
 	</parameter>
 	<parameter name="Q_FUND_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for fund id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_FUND_ID} == null || $P{EGOV_FUND_ID} == -1) ? "" : "AND F.\"ID\" = " + $P{EGOV_FUND_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_FUND_ID} == null || $P{EGOV_FUND_ID} == -1) ? "" : "AND F.ID = " + $P{EGOV_FUND_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_SERVICE_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for service id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "" : "AND SER.\"ID\" = " + $P{EGOV_SERVICE_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "" : "AND SER.ID = " + $P{EGOV_SERVICE_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_BRANCH_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[where clause query for bank branch id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_BANKBRANCH_ID} == null || $P{EGOV_BANKBRANCH_ID} == -1) ? "" : "AND BR.\"ID\" = " + $P{EGOV_BANKBRANCH_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_BANKBRANCH_ID} == null || $P{EGOV_BANKBRANCH_ID} == -1) ? "" : "AND BR.ID = " + $P{EGOV_BANKBRANCH_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_BANKACCOUNT_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[where clause for bank account id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_BANKACCOUNT_ID} == null || $P{EGOV_BANKACCOUNT_ID} == -1) ? "" : "AND BA.\"ID\" = " + $P{EGOV_BANKACCOUNT_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_BANKACCOUNT_ID} == null || $P{EGOV_BANKACCOUNT_ID} == -1) ? "" : "AND BA.ID = " + $P{EGOV_BANKACCOUNT_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_MODEOFPAYMENT_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[where clause for mode of payment]]></parameterDescription>
-		<defaultValueExpression><![CDATA[$P{EGOV_PAYMENT_MODE} == "cash" ? "AND INSTP.\"TYPE\" = 'cash'" :  $P{EGOV_PAYMENT_MODE} == "card" ? "AND INSTP.\"TYPE\" = 'card'" :  $P{EGOV_PAYMENT_MODE} == "bankchallan" ? "AND INSTP.\"TYPE\" = 'bankchallan'" :  $P{EGOV_PAYMENT_MODE} == "cheque/dd" ? "AND INSTP.\"TYPE\" IN ('cheque', 'dd')" : $P{EGOV_PAYMENT_MODE} == "online" ? "AND INSTP.\"TYPE\" = 'online'" :  $P{EGOV_PAYMENT_MODE} == "atm" ? "AND INSTP.\"TYPE\" = 'atm'" :  "AND INSTP.\"TYPE\" IN ('cash', 'card', 'bankchallan', 'cheque', 'dd', 'online', 'atm')"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$P{EGOV_PAYMENT_MODE} == "cash" ? "AND INSTP.TYPE = 'cash'" :  $P{EGOV_PAYMENT_MODE} == "card" ? "AND INSTP.TYPE = 'card'" :  $P{EGOV_PAYMENT_MODE} == "bankchallan" ? "AND INSTP.TYPE = 'bankchallan'" :  $P{EGOV_PAYMENT_MODE} == "cheque/dd" ? "AND INSTP.TYPE IN ('cheque', 'dd')" : $P{EGOV_PAYMENT_MODE} == "online" ? "AND INSTP.TYPE = 'online'" :  $P{EGOV_PAYMENT_MODE} == "atm" ? "AND INSTP.TYPE = 'atm'" :  "AND INSTP.TYPE IN ('cash', 'card', 'bankchallan', 'cheque', 'dd', 'online', 'atm')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_DEPT_ID" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND BNDRY.\"ID_BNDRY\" IN (" + $P{EGOV_DEPT_ID} +")"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND BNDRY.ID_BNDRY IN (" + $P{EGOV_DEPT_ID} +")"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SELECTED_DEPT_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
@@ -71,12 +71,12 @@
 		<defaultValueExpression><![CDATA[ReportUtil.add($P{EGOV_TO_DATE}, Calendar.DAY_OF_MONTH, 1)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select CH.receiptnumber as RECEIPT_NUMBER ,
-DECODE(INSTP.TYPE, 'cash', 'cash', 'bankchallan', 'bankchallan', 'card', 'card', 'online', 'online', 'atm', 'atm', 'dd','dd','cheque','cheque') as PAY_MODE,
-INS.instrumentnumber as CHEQUE_NO, decode(INS.bankid ,null,null, (select name from bank where id=INS.bankid))  as BANK_NAME ,
+		<![CDATA[select distinct CH.receiptnumber as RECEIPT_NUMBER ,
+ (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' ELSE 'cheque/dd' END) as PAY_MODE,
+INS.instrumentnumber as CHEQUE_NO, (CASE WHEN INS.bankid =null THEN null ELSE (select name from bank where id=INS.bankid) END)  as BANK_NAME ,
 INS.bankbranchname  BRANCH_NAME , ins.instrumentdate  as CHEQUE_DATE, INS.instrumentamount as AMOUNT  
 from EGCL_COLLECTIONHEADER CH , EGCL_COLLECTIONMIS CHMIS, egcl_collectioninstrument CINS,egf_instrumentheader INS,
-egw_status STA1 ,EGW_STATUS STA2, FUND F , BANK B, bankbranch BR, bankaccount BA , egcl_servicedetails SER,egf_instrumenttype INSTP,
+egw_status STA1 ,EGW_STATUS STA2, FUND F , BANK B, bankbranch BR, bankaccount BA , egcl_servicedetails SER,egf_instrumenttype EGF_INSTRUMENTTYPE,
 EG_USER USR,EGEIS_JURISDICTION JUR , EG_BOUNDARY BNDRY
 
 WHERE CH.ID = chmis.collectionheader 
@@ -84,27 +84,51 @@ AND   CHMIS.fund = F.id
 AND   CINS.collectionheader = CH.id
 AND   CINS.instrumentheader = INS.ID
 AND   ch.status = sta1.id
-AND   ins.id_status = sta2.id
-AND   BR.bankid = b.id 
-AND   BR.id = BA.branchid
-AND   BA.id = INS.bankaccountid
-AND   SER.ID = CH.servicedetails
-AND   INSTP.ID = ins.instrumenttype
-AND   CH.createddate >= $P{EGOV_FROM_DATE}
-AND   CH.createddate < $P{EGOV_TO_DATE_PLUS_ONE}
-AND   sta1.moduletype = 'ReceiptHeader'
-AND   sta1.code = 'APPROVED'
+AND   BR.bankid = b.id
+AND   BR.id = BA.branchid 
+AND   BA.id = INS.bankaccountid 
+AND   SER.ID = CH.servicedetails 
+AND   EGF_INSTRUMENTTYPE.ID = ins.instrumenttype 
+AND   sta1.moduletype = 'ReceiptHeader' 
+AND   sta1.code = 'REMITTED' 
 AND   sta2.moduletype = 'Instrument'
 AND   STA2.CODE IN ('Reconciled','Deposited')
 AND   CH.CREATEDBY =USR.ID 
-AND   JUR.ID =  USR.ID
+AND   JUR.EMPLOYEE =  USR.ID
+AND BNDRY.ID=JUR.BOUNDARY
 $P!{Q_FUND_ID}
 $P!{Q_SERVICE_ID}
 $P!{Q_BRANCH_ID}
 $P!{Q_BANKACCOUNT_ID}
 $P!{Q_MODEOFPAYMENT_ID}
 $P!{Q_DEPT_ID}
-order by CH.receiptnumber]]>
+union
+select distinct CH.receiptnumber as RECEIPT_NUMBER ,
+ (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' ELSE 'cheque/dd' END) as PAY_MODE,
+INS.instrumentnumber as CHEQUE_NO, (CASE WHEN INS.bankid =null THEN null ELSE (select name from bank where id=INS.bankid) END)  as BANK_NAME ,
+INS.bankbranchname  BRANCH_NAME , ins.instrumentdate  as CHEQUE_DATE, INS.instrumentamount as AMOUNT  
+from EGCL_COLLECTIONHEADER CH , EGCL_COLLECTIONMIS CHMIS, egcl_collectioninstrument CINS,egf_instrumentheader INS,
+egw_status STA1 ,EGW_STATUS STA2, FUND F , BANK B, bankbranch BR, bankaccount BA , egcl_servicedetails SER,egf_instrumenttype EGF_INSTRUMENTTYPE
+WHERE CH.ID = chmis.collectionheader 
+AND   CHMIS.fund = F.id 
+AND   CINS.collectionheader = CH.id
+AND   CINS.instrumentheader = INS.ID
+AND   ch.status = sta1.id
+AND   BR.bankid = b.id
+AND   BR.id = BA.branchid 
+AND   BA.id = INS.bankaccountid 
+AND   SER.ID = CH.servicedetails 
+AND   EGF_INSTRUMENTTYPE.ID = ins.instrumenttype 
+AND   sta1.moduletype = 'ReceiptHeader' 
+AND   sta1.code = 'REMITTED' 
+AND   sta2.moduletype = 'Instrument'
+AND   STA2.CODE IN ('Reconciled','Deposited')
+$P!{Q_FUND_ID}
+$P!{Q_SERVICE_ID}
+$P!{Q_BRANCH_ID}
+$P!{Q_BANKACCOUNT_ID}
+$P!{Q_MODEOFPAYMENT_ID}
+$P!{Q_DEPT_ID}]]>
 	</queryString>
 	<field name="RECEIPT_NUMBER" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -374,7 +398,7 @@ order by CH.receiptnumber]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT SERVICENAME FROM EG_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="552" y="132" width="98" height="20" uuid="72a6853e-798f-4125-974d-835d86f985a0"/>
@@ -778,7 +802,7 @@ order by CH.receiptnumber]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT SERVICENAME FROM EG_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="557" y="91" width="98" height="20" uuid="83e48854-edc4-464b-891e-2fddf135a9c7"/>

@@ -86,16 +86,8 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         final User user = collectionsUtil.getLoggedInUser();
         final Employee employee = employeeService.getEmployeeById(user.getId());
 
-        final StringBuilder jurValuesId = new StringBuilder();
         for (final Jurisdiction element : employee.getJurisdictions()) {
-            if (jurValuesId.length() > 0)
-                jurValuesId.append(',');
-            jurValuesId.append(element.getBoundary().getId());
-
-            for (final Boundary boundary : element.getBoundary().getChildren()) {
-                jurValuesId.append(',');
-                jurValuesId.append(boundary.getId());
-            }
+            boundaryList.add(element.getBoundary());
         }
 
         addDropdownData("collectionServiceList", persistenceService
