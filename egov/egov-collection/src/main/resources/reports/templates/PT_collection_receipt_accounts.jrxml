@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-11T16:01:09 -->
+<!-- 2016-04-12T15:53:13 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="dbbc36f2-fb09-429d-8985-50a04d1a0b3f">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="java.math.*"/>
 	<import value="org.egov.infstr.utils.*"/>
+	<import value="java.math.*"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -143,7 +143,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{currentTotal}) + ($V{rebate})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{currentTotal}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="899125c0-e467-429b-9a8a-9213e04eeee3"/>
@@ -178,7 +178,7 @@
 				</textField>
 				<staticText>
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="814c51b3-8a45-4433-af2d-9884347dce62"/>
-					<box leftPadding="0" rightPadding="5">
+					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
 						<leftPen lineWidth="0.5"/>
@@ -209,7 +209,7 @@
 				</textField>
 				<staticText>
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="3436c12a-eb9c-4420-af53-9624491fa5bd"/>
-					<box leftPadding="0" rightPadding="5">
+					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
 						<leftPen lineWidth="0.5"/>
@@ -240,7 +240,7 @@
 				</textField>
 				<staticText>
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="adcfb264-c93f-4bf0-9859-4997cc8b84e6"/>
-					<box leftPadding="0" rightPadding="5">
+					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
 						<leftPen lineWidth="0.5"/>
@@ -266,7 +266,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{totalAmount}.equals(BigDecimal.ZERO) ? "" : $V{totalAmount}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{totalAmount}.equals(BigDecimal.ZERO) ? "" : $V{totalAmount} - $V{rebate}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" uuid="d8b37152-27ca-47a2-9360-dd5eca5087aa"/>
@@ -283,18 +283,18 @@
 					</textElement>
 					<text><![CDATA[Total:]]></text>
 				</staticText>
-				<textField>
+				<textField isStretchWithOverflow="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="250" height="20" uuid="f4e1b77e-c186-4643-8e1d-18ac48254002">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
-					<box leftPadding="0" rightPadding="5">
+					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.0"/>
 						<leftPen lineWidth="0.0"/>
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
+					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Paid From "+(($V{from_which_half}=="1")?"01-04-"+$V{from_year}:"01-10-"+$V{from_year})+" to "+($V{to_which_half}=="1"?("30-09-"+((Integer.parseInt($V{to_date}.substring(0,$V{to_date}.indexOf('-'))))-1)):"31-03-"+$V{to_date}.substring(0,$V{to_date}.indexOf('-')))+(($V{totalamounttobepaid}-$V{totalpaid})>0?"(Partially)":"")]]></textFieldExpression>
@@ -311,7 +311,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Amount (in words): " + ReportUtil.amountInWords($V{totalAmount})]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Amount (in words): " + ReportUtil.amountInWords($V{totalAmount} - $V{rebate})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
