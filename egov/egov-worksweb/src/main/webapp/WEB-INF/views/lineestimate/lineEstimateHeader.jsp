@@ -231,7 +231,7 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="scheme" data-first-option="false" id="scheme" class="form-control" >
+				<form:select path="scheme" data-first-option="false" id="scheme" class="form-control" onchange="getSubSchemsBySchemeId(this.value);" >
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -241,6 +241,7 @@
 				</form:select>
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" /></label>
+			<input type="hidden" id="subSchemeValue" value="${lineEstimate.subScheme.id }"/>
 			<div class="col-sm-3 add-margin">
 				<form:select path="subScheme" data-first-option="false"	id="subScheme" class="form-control">
 					<form:option value="">

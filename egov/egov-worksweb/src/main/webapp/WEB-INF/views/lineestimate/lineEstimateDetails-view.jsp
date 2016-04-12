@@ -147,7 +147,7 @@
 						<c:set var="total" value="${total + lineEstimateDtls.estimateAmount}"/>
 					</c:forEach>
 				</c:if>
-				<c:set var="actualEstimateTotal" value="${1}" scope="session"/>
+				<c:set var="actualEstimateTotal" value="${0}" scope="session"/>
 				<c:if test="${lineEstimate.getLineEstimateDetails() != null}">
 					<c:forEach items="${lineEstimate.getLineEstimateDetails()}" var="lineEstimateDtls">
 						<c:set var="actualEstimateTotal" value="${actualEstimateTotal + lineEstimateDtls.actualEstimateAmount}"/>

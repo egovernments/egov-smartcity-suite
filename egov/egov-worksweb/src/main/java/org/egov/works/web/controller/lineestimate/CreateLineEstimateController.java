@@ -145,8 +145,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
-        model.addAttribute("additionalRule", WorksConstants.NEWLINEESTIMATE);
-
         prepareWorkflow(model, lineEstimate, new WorkflowContainer());
 
         model.addAttribute("mode", null);
@@ -164,8 +162,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
-
-            model.addAttribute("additionalRule", WorksConstants.NEWLINEESTIMATE);
 
             prepareWorkflow(model, lineEstimate, new WorkflowContainer());
 
@@ -187,7 +183,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
             final LineEstimate newLineEstimate = lineEstimateService.create(lineEstimate, files, approvalPosition,
-                    approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction);
+                    approvalComment, null, workFlowAction);
             model.addAttribute("lineEstimate", newLineEstimate);
 
             final String pathVars = worksUtils.getPathVars(newLineEstimate.getStatus(), newLineEstimate.getState(), newLineEstimate.getId(), approvalPosition);

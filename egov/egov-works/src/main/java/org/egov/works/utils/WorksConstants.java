@@ -242,9 +242,9 @@ public class WorksConstants {
     // Module types
     public static final String MODULE_NAME_LINEESTIMATE = "LineEstimate";
 
-    public static final String NEWLINEESTIMATE = "NEWLINEESTIMATE";
+//    public static final String NEWLINEESTIMATE = "NEWLINEESTIMATE";
     
-    public static final String NEWCONTRACTORBILLREGISTER = "NEWCONTRACTORBILLREGISTER";
+//    public static final String NEWCONTRACTORBILLREGISTER = "NEWCONTRACTORBILLREGISTER";
 
     // User roles
     public static final String ROLE_SUPERUSER = "Super User";
@@ -269,7 +269,7 @@ public class WorksConstants {
 
     public static final String WORKFLOWTYPE_DISPLAYNAME = "Line Estimate";
     
-    public static final String WORKFLOWTYPE_CBR_DISPLAYNAME = "Contractor Bill Register";
+    public static final String WORKFLOWTYPE_CBR_DISPLAYNAME = "Contractor Bill";
     
     public static final String BILL_EXPENDITURE_TYPE = "Works";
 

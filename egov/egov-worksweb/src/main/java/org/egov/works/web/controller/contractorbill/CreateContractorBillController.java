@@ -108,8 +108,6 @@ public class CreateContractorBillController extends GenericWorkFlowController{
         
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
 
-        model.addAttribute("additionalRule", WorksConstants.NEWCONTRACTORBILLREGISTER);
-
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
 
         model.addAttribute("mode", "edit");
@@ -147,8 +145,6 @@ public class CreateContractorBillController extends GenericWorkFlowController{
             
             model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
 
-            model.addAttribute("additionalRule", WorksConstants.NEWCONTRACTORBILLREGISTER);
-
             prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
 
             model.addAttribute("mode", "edit");
@@ -181,7 +177,7 @@ public class CreateContractorBillController extends GenericWorkFlowController{
 
             final ContractorBillRegister savedContractorBillRegister = contractorBillRegisterService
                     .create(contractorBillRegister, lineEstimateDetails, files, approvalPosition,
-                            approvalComment, WorksConstants.NEWCONTRACTORBILLREGISTER, workFlowAction);
+                            approvalComment, null, workFlowAction);
             
             final String pathVars = worksUtils.getPathVars(savedContractorBillRegister.getStatus(),
                     savedContractorBillRegister.getState(), savedContractorBillRegister.getId(), approvalPosition);
