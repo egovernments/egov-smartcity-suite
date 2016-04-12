@@ -41,9 +41,10 @@ package org.egov.commons;
 
 import java.util.Date;
 
-public class EgwTypeOfWork {
-
-	private Long id;
+public class EgwTypeOfWork implements java.io.Serializable{
+	
+    private static final long serialVersionUID = 1L;
+        private Long id;
 	private String code;
 	private EgwTypeOfWork parentid;
 	private EgPartytype egPartytype;

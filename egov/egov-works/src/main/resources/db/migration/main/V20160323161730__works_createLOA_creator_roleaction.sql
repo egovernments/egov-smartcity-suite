@@ -1,0 +1,9 @@
+---------------map the action urls for create LOA to the role Works Creator--------------------
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Works Creator'), (select id from eg_action where name = 'WorksSearchLineEstimatesToCreateLOA' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Works Creator'), (select id from eg_action where name = 'WorksSearchLineEstimateForLOA' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Works Creator'), (select id from eg_action where name = 'WorksCreateLetterOfAcceptanceNewForm' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Works Creator'), (select id from eg_action where name = 'WorksSaveLOA' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Works Creator'), (select id from eg_action where name = 'WorksSaveLOASuccess' and contextroot = 'egworks'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Works Creator'), (select id from eg_action where name = 'WorksAjaxContractorForLOA' and contextroot = 'egworks'));
+
+--rollback delete from eg_roleaction where roleid = (select id from eg_role where name = 'Works Creator') and actionid in(select id from eg_action where name in('WorksSearchLineEstimatesToCreateLOA','WorksSearchLineEstimateForLOA','WorksCreateLetterOfAcceptanceNewForm','WorksSaveLOA','WorksSaveLOASuccess','WorksAjaxContractorForLOA') and contextroot = 'egworks'));

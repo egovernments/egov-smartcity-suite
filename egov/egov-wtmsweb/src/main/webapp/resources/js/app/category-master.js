@@ -65,7 +65,6 @@ $(document).ready(function(){
  });
 
 $("#resetid").click(function(){
-	/* Single line Reset function executes on click of Reset Button */
 	$("#categoryMasterform")[0].reset();
 	});
 	
@@ -82,8 +81,8 @@ function addNew()
 	window.open("/wtms/masters/categoryMaster/", "_self");
 }
 
-function edit(propertyCategory)
+function edit(connectionCategory)
 {
-	window.open("/wtms/masters/categoryMaster/"+propertyCategory, "_self");
+	window.open("/wtms/masters/categoryMaster/"+connectionCategory, "_self");
 	
 }

@@ -98,7 +98,13 @@ public class CollectionApportioner {
 
             crAmountToBePaid = rd.getCramountToBePaid();
 
-            if ((rd.getDescription().contains(REBATE_STR) && isFullPayment) || !rd.getDescription().contains(REBATE_STR)) {
+            if (rd.getDescription().contains(REBATE_STR)) {
+                if (isFullPayment) {
+                    balance = balance.minus(crAmountToBePaid);
+                } else {
+                    rd.setDramount(BigDecimal.ZERO);
+                }
+            } else {
                 if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
                     // partial or exact payment
                     rd.setCramount(balance.amount);

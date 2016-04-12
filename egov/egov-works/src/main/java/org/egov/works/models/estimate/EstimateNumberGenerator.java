@@ -39,17 +39,29 @@
  */
 package org.egov.works.models.estimate;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+
 import javax.script.ScriptContext;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.works.lineestimate.entity.LineEstimate;
+import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class EstimateNumberGenerator {
+
+    private static final String ESTIMATE_NUMBER_SEQ_PREFIX = "SEQ_ESTIMATE_NUMBER";
+
     @Autowired
-    private SequenceNumberGenerator squenceGenerator;
+    private SequenceNumberGenerator sequenceGenerator;
     @Autowired
     private DBSequenceGenerator dbSequenceGenerator;
     @Autowired
@@ -57,8 +69,27 @@ public class EstimateNumberGenerator {
 
     public String getEstimateNumber(final AbstractEstimate estimate, final CFinancialYear financialYear) {
         final ScriptContext scriptContext = ScriptService.createContext("estimate", estimate, "finYear",
-                financialYear, "sequenceGenerator", squenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
+                financialYear, "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
         return scriptService.executeScript("works.estimatenumber.generator", scriptContext).toString();
 
+    }
+
+    @Transactional(readOnly = true)
+    public String generateEstimateNumber(final LineEstimate lineEstimate, final CFinancialYear financialYear) {
+        try {
+            final String financialYearRange = financialYear.getFinYearRange();
+            final String finYearRange[] = financialYearRange.split("-");
+            final String sequenceName = ESTIMATE_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
+            Serializable sequenceNumber;
+            try {
+                sequenceNumber = sequenceGenerator.getNextSequence(sequenceName);
+            } catch (final SQLGrammarException e) {
+                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
+            }
+            return String.format("%s/%s/%05d", lineEstimate.getExecutingDepartment().getCode(), financialYearRange,
+                    sequenceNumber);
+        } catch (final SQLException e) {
+            throw new ApplicationRuntimeException("Error occurred while generating Estimate Number", e);
+        }
     }
 }

@@ -39,13 +39,14 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.List;
 
 import org.egov.wtms.masters.entity.PipeSize;
-
 import org.egov.wtms.masters.entity.PropertyPipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.repository.PropertyPipeSizeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +54,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PropertyPipeSizeService {
 
-    
     private final PropertyPipeSizeRepository propertyPipeSizeRepository;
 
     @Autowired
@@ -62,39 +62,44 @@ public class PropertyPipeSizeService {
 
     }
 
+    public PropertyPipeSize findOne(final Long propertyPipeSizeId) {
+        return propertyPipeSizeRepository.findOne(propertyPipeSizeId);
+    }
+
     @Transactional
     public PropertyPipeSize createPropertyPipeSize(final PropertyPipeSize propertyPipeSize) {
+        propertyPipeSize.setActive(true);
         return propertyPipeSizeRepository.save(propertyPipeSize);
     }
 
     @Transactional
-    public void updatePropertyCategory(final PropertyPipeSize propertyPipeSize) {
+    public void updatePropertyPipeSize(final PropertyPipeSize propertyPipeSize) {
         propertyPipeSizeRepository.save(propertyPipeSize);
     }
 
-    public PropertyPipeSize findByPropertyTypecodeAndPipeSizecode(final String propertyType,
-            final String code) {
+    public PropertyPipeSize findByPropertyTypecodeAndPipeSizecode(final String propertyType, final String code) {
 
         return propertyPipeSizeRepository.findByPropertyType_codeAndPipeSize_code(propertyType, code);
     }
-    
+
     public PropertyPipeSize findByPropertyTypeAndPipeSizeInmm(final PropertyType propertyType,
             final double sizeInMilimeter) {
 
         return propertyPipeSizeRepository.findByPropertyTypeAndPipeSize_sizeInMilimeter(propertyType, sizeInMilimeter);
     }
 
-    public PropertyPipeSize findByPropertyTypeAndPipeSizecode(final PropertyType propertyType,
-            final String code) {
+    public PropertyPipeSize findByPropertyTypeAndPipeSizecode(final PropertyType propertyType, final String code) {
 
         return propertyPipeSizeRepository.findByPropertyTypeAndPipeSize_code(propertyType, code);
     }
-    
-    public PropertyPipeSize findByPropertyTypeAndPipeSize(final PropertyType propertyType,
-            final PipeSize pipeSize) {
+
+    public PropertyPipeSize findByPropertyTypeAndPipeSize(final PropertyType propertyType, final PipeSize pipeSize) {
 
         return propertyPipeSizeRepository.findByPropertyTypeAndPipeSize(propertyType, pipeSize);
     }
 
-}
+    public List<PropertyPipeSize> findAll() {
+        return propertyPipeSizeRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
+    }
 
+}

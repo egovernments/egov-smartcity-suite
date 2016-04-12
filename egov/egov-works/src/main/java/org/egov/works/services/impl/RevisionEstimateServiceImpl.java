@@ -40,6 +40,12 @@
 
 package org.egov.works.services.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
@@ -60,16 +66,10 @@ import org.egov.works.services.RevisionEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 /**
  * This class will expose all Revision Estimate related operations.
  */
-public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long>implements
+public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long> implements
         RevisionEstimateService {
 
     private AbstractEstimateService abstractEstimateService;
@@ -78,8 +78,8 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
     private DepositWorksUsageService depositWorksUsageService;
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
     private BudgetDetailsDAO budgetDetailsDAO;
-@Autowired
-private FinancialYearHibernateDAO finHibernateDao;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
     private static final String MODULE_NAME = "Works";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
 
@@ -379,7 +379,6 @@ private FinancialYearHibernateDAO finHibernateDao;
     public void setDepositWorksUsageService(final DepositWorksUsageService depositWorksUsageService) {
         this.depositWorksUsageService = depositWorksUsageService;
     }
-
 
     public void setEstimateAppropriationService(
             final PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService) {

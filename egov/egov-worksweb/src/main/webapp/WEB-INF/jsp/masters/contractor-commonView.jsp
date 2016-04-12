@@ -183,10 +183,3 @@
 		</table>
 	</div>
 </div>
-<script type="text/javascript">
-function replaceExemptionFormChar() {
-	var exemption = document.getElementById('exemptionForm').innerHTML;
-	exemption = exemption.replace(/_/g, " ");
-    document.getElementById("exemptionForm").innerHTML = exemption;
-}
-</script>

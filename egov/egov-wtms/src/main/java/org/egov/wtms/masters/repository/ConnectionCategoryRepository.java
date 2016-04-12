@@ -51,8 +51,12 @@ import org.springframework.stereotype.Repository;
 public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCategory, Long> {
 
     ConnectionCategory findByName(String name);
+    
+    ConnectionCategory findByNameAndCode(String name,String code);
 
     ConnectionCategory findByNameIgnoreCase(String name);
+    
+    ConnectionCategory findByCodeIgnoreCase(String code);
 
     List<ConnectionCategory> findByNameContainingIgnoreCase(String name);
 
@@ -60,9 +64,7 @@ public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCa
 
     List<ConnectionCategory> findByActiveTrueOrderByNameAsc();
 
-    ConnectionCategory findByNameIgnoreCaseAndActive(String name, Boolean status);
-
-    @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.connectionCategory.active=true")
+    @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.active=true")
     List<ConnectionCategory> getAllActiveCategoryTypesByPropertyType(@Param("propertyType") Long propertyType);
 
     @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.connectionCategory.name != 'BPL' ")

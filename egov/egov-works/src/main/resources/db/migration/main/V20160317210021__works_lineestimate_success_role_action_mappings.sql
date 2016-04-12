@@ -1,0 +1,4 @@
+-----------------Role action mappings to show success page----------------------
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'WorksLineEstimateSuccess','/lineestimate/lineestimate-success',null,(select id from EG_MODULE where name = 'WorksLineEstimate'),1,'Line Estimate Success Page','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+
+--rollback delete from EG_ACTION where name = 'WorksLineEstimateSuccess' and contextroot = 'egworks';

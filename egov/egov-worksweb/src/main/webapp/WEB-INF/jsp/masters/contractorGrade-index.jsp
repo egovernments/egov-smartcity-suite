@@ -37,155 +37,85 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
+<%@ include file="/includes/taglibs.jsp"%>
+<script src="<egov:url path='/resources/js/works.js'/>"></script> 
 <html>
 <title><s:text name="contractor.grade.list" /></title>
-<body >
- 
-	<s:if test="%{hasErrors()}">
-        <div class="alert alert-danger">
-          <s:actionerror/>
-          <s:fielderror/>
-        </div>
-    </s:if>
-   
-    
-    <div class="row">
-						<div class="col-md-12">
-							<div class="panel panel-primary" data-collapsed="0">
-								
-								<div class="panel-heading">
-									<div class="panel-title text-center no-float">
-										 <s:if test="%{hasActionMessages()}">
-									        <s:actionmessage theme="simple"/>
-									     </s:if>
-									     <s:else>
-									        <s:text name="contractor.grade.master" />
-									     </s:else>
-										
-									</div>
-									
-								</div>
-								<div class="panel-body">
-								
-								    <s:iterator value="contractorGradeList">
-										<div class="row add-border">
-											
-											<div class="col-xs-3 add-margin">
-												<s:text name="contractor.grade.master.grade" />
-											</div>
-											<div class="col-xs-3 add-margin view-content">
-												<s:property value="grade"/>
-											</div>
-											<div class="col-xs-3 add-margin">
-												<s:text name="contractor.grade.master.description" />
-											</div>
-											<div class="col-xs-3 add-margin view-content">
-												<s:property value="description"/>
-											</div>
-											
-										</div>
-										<div class="row add-border">
-											
-											<div class="col-xs-3 add-margin">
-												<s:text name="contractor.grade.master.minamount" />
-											</div>
-											<div class="col-xs-3 add-margin view-content">
-												<s:text name="contractor.format.number" >
-									   			<s:param name="rate" value='%{minAmount}' /></s:text>
-											</div>
-											<div class="col-xs-3 add-margin">
-												<s:text name="contractor.grade.master.maxamount" />
-											</div>
-											<div class="col-xs-3 add-margin view-content">
-												<s:text name="contractor.format.number" >
-									   	        <s:param name="rate" value='%{maxAmount}' /></s:text>
-											</div>
-											
-										</div>
-										
-									</s:iterator>
-									
-								
-									<%-- <display:table name="contractorGradeList"  uid="currentRow"
-										cellpadding="0" cellspacing="0" requestURI=""
-										class="table table-bordered">
-										
-										<display:column headerClass="pagetableth" class="pagetabletd" 
-											title="Sl.No" titleKey="column.title.SLNo"
-											style="width:4%;text-align:right" >
-											<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
-										</display:column>
-										
-										<display:column headerClass="pagetableth" class="pagetabletd" 
-											title="Grade" titleKey="contractor.grade.master.grade"
-											style="width:20%;text-align:left" property="grade"/>
-																							
-										<display:column headerClass="pagetableth" class="pagetabletd" 
-											title="Description" titleKey="contractor.grade.master.description"
-											style="width:40%;text-align:left" property="description"/>
-																							
-										<display:column headerClass="pagetableth" class="pagetabletd" 
-											title="Minimum Amount " titleKey="contractor.grade.master.minamount"
-											style="width:10%;text-align:right" >
-											<s:text name="contractor.format.number" >
-									   	<s:param name="rate" value='%{#attr.currentRow.minAmount}' /></s:text>
-										</display:column>
-										
-										<display:column headerClass="pagetableth" class="pagetabletd" 
-											title="Maximum Amount" titleKey="contractor.grade.master.maxamount"
-											style="width:10%;text-align:right"  >
-											<s:text name="contractor.format.number" >
-									   	<s:param name="rate" value='%{#attr.currentRow.maxAmount}' /></s:text>
-										</display:column>
-										
-										<display:column headerClass="pagetableth" class="pagetabletd" 
-											title="Edit/View" style="width:13%;text-align:left" >
-											<table width="100" border="0" cellpadding="0" cellspacing="2">
-												<tr>                    		
-													<td width="20">
-														
-													</td>
-													<td width="20">
-														<a href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
-															<img src='/egi/resources/erp2/images/page_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" />
-														</a>
-													</td>
-													<td width="20">&#47;
-													</td>
-													<td width="20">
-														<a href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-															<s:text name="sor.view" />
-														</a>
-													</td>
-													<td width="20">
-														<a href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view" contenteditable="false">
-															<img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" />
-														</a>
-													</td>
-												</tr>
-											</table>
-										</display:column>
-									</display:table> --%>
-								</div>
-							</div>
-						</div>
-					</div>
-					
-					<div class="row text-center">
-						<div class="add-margin">
-							<a class="btn btn-primary" href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
-							    <s:text name="sor.edit" />
-							</a>&nbsp;
-							<a class="btn btn-primary" href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-								<s:text name="sor.view" />
-							</a>&nbsp;
-							<input type="submit" name="closeButton" id="closeButton" value="Close" class="btn btn-default" onclick="window.close();" />
-						</div>
-					</div>
+<body>
 
+<s:if test="%{hasErrors()}">
+	<div class="alert alert-danger">
+		<s:actionerror />
+		<s:fielderror />
+	</div>
+</s:if>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+
+			<div class="panel-heading">
+				<div class="panel-title text-center no-float">
+					<s:if test="%{hasActionMessages()}">
+						<s:actionmessage theme="simple" />
+					</s:if>
+					<s:else>
+						<s:text name="contractor.grade.master" />
+					</s:else>
+				</div>
+
+			</div>
+			<div class="panel-body">
+				<s:iterator value="contractorGradeList">
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<s:text name="contractor.grade.master.grade" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<s:property value="grade" />
+						</div>
+						<div class="col-xs-3 add-margin">
+							<s:text name="contractor.grade.master.description" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<s:property value="description" />
+						</div>
+
+					</div>
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<s:text name="contractor.grade.master.minamount" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<s:text name="contractor.format.number">
+								<s:param name="rate" value='%{minAmount}' />
+							</s:text>
+						</div>
+						<div class="col-xs-3 add-margin">
+							<s:text name="contractor.grade.master.maxamount" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<s:text name="contractor.format.number">
+								<s:param name="rate" value='%{maxAmount}' />
+							</s:text>
+						</div>
+					</div>
+				</s:iterator>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<s:hidden name="id" id="id" />
+	
+<div class="row text-center">
+	<div class="add-margin">
+		<input type="submit" name="MODIFY" Class="btn btn-primary" value="MODIFY" id="MODIFY" onclick="modifyGradeData();" /> &nbsp;
+		<input type="submit" name="VIEW" Class="btn btn-primary" value="VIEW" id="MODIFY" onclick="viewGradeData();" /> &nbsp;
+		<input type="submit" name="closeButton" id="closeButton" value="Close" class="btn btn-default" onclick="window.close();" />
+	</div>
+</div>
 </body>
-
 </html>
 
-			
+

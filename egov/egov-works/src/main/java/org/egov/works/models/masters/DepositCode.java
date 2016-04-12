@@ -85,7 +85,7 @@ public class DepositCode extends BaseModel implements EntityType {
     private Fundsource fundSource;
     private EgwTypeOfWork typeOfWork;
     private EgwTypeOfWork subTypeOfWork;
-    private Boolean isActive;
+    private boolean isActive;
 
     @Override
     public String getCode() {

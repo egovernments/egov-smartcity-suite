@@ -38,6 +38,25 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
+	
+
+	$('#statusdiv').hide();
+	var activeDiv = $('#reqAttr').val();
+	if (activeDiv =='false')
+		{
+		$('#statusdiv').hide();
+	     $('#addnewid').hide();
+		}
+	
+	else
+		{
+		$('#statusdiv').show();
+		 $('#addnewid').show();
+		}
+	
+	$("#resetid").click(function(){
+		$("#pipeSizeform")[0].reset();
+		})
 	$( "#pipesizeid" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
 	    if(textValue ==0 || textValue =='' ){
@@ -56,3 +75,22 @@ $(document).ready(function(){
 	});
 	$("#pipesizeInInch").attr('disabled','disabled');
  });
+$('#listid').click(function() {
+	window.open("/wtms/masters/pipesizeMaster/list", "_self");
+ });
+
+$('#addnewid').click(function() {
+	window.open("/wtms/masters/pipesizeMaster/", "_self");
+});
+
+function addNew()
+{
+	window.open("/wtms/masters/pipesizeMaster/", "_self");
+}
+
+function edit(pipeSize)
+{
+	
+	window.open("/wtms/masters/pipesizeMaster/"+pipeSize, "_self");
+	
+}

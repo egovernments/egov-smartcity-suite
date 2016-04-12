@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-03-31T20:18:07 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lineEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e48ceff3-3e96-4152-8bcd-78fa1c9fed2b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.works.models.estimate.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="java.util.*"/>
+	<import value="org.egov.infstr.utils.NumberUtil"/>
+	<parameter name="zonalCommissioner" class="java.lang.String"/>
+	<parameter name="zonalCommissionerCapital" class="java.lang.String"/>
+	<parameter name="present" class="java.lang.String"/>
+	<parameter name="cityLogo" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="proNo" class="java.lang.String"/>
+	<parameter name="sub" class="java.lang.String"/>
+	<parameter name="ref" class="java.lang.String"/>
+	<parameter name="dated" class="java.lang.String"/>
+	<parameter name="basNos" class="java.lang.String"/>
+	<parameter name="scheme" class="java.lang.String"/>
+	<parameter name="function" class="java.lang.String"/>
+	<parameter name="account" class="java.lang.String"/>
+	<parameter name="modeOfAllotment" class="java.lang.String"/>
+	<parameter name="typeOfSlum" class="java.lang.String"/>
+	<parameter name="beneficiary" class="java.lang.Boolean"/>
+	<parameter name="totalAmount" class="java.math.BigDecimal"/>
+	<parameter name="totalAmountWords" class="java.lang.String"/>
+	<field name="estimateAmount" class="java.math.BigDecimal"/>
+	<field name="nameOfWork" class="java.lang.String"/>
+	<field name="projectCode" class="org.egov.works.models.estimate.ProjectCode">
+		<fieldDescription><![CDATA[projectCode]]></fieldDescription>
+	</field>
+	<variable name="code" class="java.lang.String">
+		<variableExpression><![CDATA[$F{projectCode}!=null?$F{projectCode}.getCode():""]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="401" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="140" width="80" height="25" uuid="9491a4ee-1b58-41ca-8295-a4a4b874603c"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Subject :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="180" width="78" height="20" uuid="be2fb272-fc8a-4cda-b26d-ba7503d390c0"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reference :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="340" width="66" height="20" uuid="553ae501-68e3-4698-a80a-fd9907c3c3d2"/>
+				<textElement>
+					<font size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[ORDER]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="37" y="60" width="480" height="30" uuid="413e02e7-48f7-4264-a487-5e8121c007f9"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="20" y="110" width="320" height="20" uuid="1fcf60b4-e631-4815-8850-af009dae0c50"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Proc.No : " +$P{proNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="98" y="140" width="452" height="25" uuid="8110ae1b-1f88-418e-b02e-9bf2c6dde9a2"/>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{sub}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="98" y="180" width="26" height="20" uuid="c009d77e-06ea-4bd3-bbe7-0179652bdcd7"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[a)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="98" y="215" width="26" height="19" uuid="10c466c2-3249-434f-a387-be9780e912f6"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[b)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="98" y="235" width="26" height="20" uuid="dea8e5c1-fcc4-407c-93a2-734d7dee14bd"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[c)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="98" y="256" width="26" height="20" uuid="18643e4b-cb54-43eb-aec4-afc0418c7cb1"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[d)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="98" y="276" width="26" height="20" uuid="b396a7f9-bd1d-4706-b8b0-f61da9efac00"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[e)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="130" y="213" width="420" height="21" uuid="b0967615-be07-4f93-8d40-a5c4988d842f"/>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Scheme : "+$P{scheme}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="256" width="420" height="20" uuid="e6d6f9e2-d2bc-4ab2-bf45-950b578f4f27"/>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Budget Head : "+$P{account}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="20" y="40" width="530" height="20" uuid="1c90a576-6846-45db-acec-a53b68334ba8"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PROCEEDINGS OF THE "+ $P{zonalCommissionerCapital}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="130" y="180" width="420" height="30" uuid="5f25e04d-132c-49d1-91fd-de09ed7b323c"/>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["BAS No : "+$P{basNos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="117" y="90" width="288" height="20" uuid="5bc743db-60c6-4c47-ba4d-2b025834717c"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Present : "+ $P{present}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="110" width="150" height="20" uuid="ddc60742-fe5c-49a1-9d92-c14c05bd9a93"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dated : "+$P{dated}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="276" width="420" height="20" uuid="ddc60742-fe5c-49a1-9d92-c14c05bd9a93"/>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Slum : "+$P{typeOfSlum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="234" width="420" height="21" uuid="36d1dfd3-c830-406c-a10b-b6e925ac3461"/>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Function : "+$P{function}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="250" y="0" width="50" height="40" uuid="eddbcab7-a0f6-457c-aee3-b1b0f581e2c5"/>
+				<imageExpression><![CDATA[$P{cityLogo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="98" y="296" width="26" height="20" uuid="291ff82f-475a-4243-8084-205f376b09fa"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[f)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="130" y="296" width="420" height="20" uuid="570d1b8d-df60-4829-9b9c-53ba89eed749"/>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Mode of Allotment : "+$P{modeOfAllotment}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="230" y="320" width="100" height="20" uuid="b83ae8d6-0ace-4e6a-bbb9-b9e25aeeca8b"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[******]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="361" width="550" height="40" isPrintWhenDetailOverflows="true" uuid="00a37705-2265-4f7a-99ab-668502988196"/>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["	Administrative sanction is hereby accorded for an amount of Rs. " + $P{totalAmount} + " /- (" + $P{totalAmountWords} + ") for the following works. The Superindent/Executive Engineer is hereby directed to execute the work following the Codal Rules."]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="0" width="44" height="40" uuid="068fb75e-6760-44ca-be68-57226e95a02f"/>
+				<box topPadding="10" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sl.No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="44" y="0" width="136" height="40" uuid="09379132-48a0-4118-a8cf-353110cf102a"/>
+				<box topPadding="10" leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[WIN Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="0" width="260" height="40" uuid="4d9a4d6e-fa34-4df3-9496-df90389f22d7"/>
+				<box topPadding="10" leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nature of  the Work]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="0" width="110" height="40" uuid="c707c44a-680d-4fae-9a79-177fce02447b"/>
+				<box topPadding="10" leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sanctioned Amount]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40">
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="44" height="40" uuid="ccfb0213-1810-40cf-af5f-8bf795c710f4"/>
+				<box topPadding="10" leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="44" y="0" width="136" height="40" uuid="67e4cdfc-cc87-4563-b7b1-40a9ca86e358"/>
+				<box topPadding="10">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="180" y="0" width="260" height="40" uuid="d5c89330-9bc8-4c83-9a5b-03b530f68e75"/>
+				<box topPadding="10">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{nameOfWork}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="440" y="0" width="110" height="40" uuid="85831488-fb2a-4084-8e31-e84489e14cdc"/>
+				<box topPadding="10" leftPadding="0" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{estimateAmount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="170">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField pattern="###0.00">
+				<reportElement x="440" y="0" width="110" height="18" uuid="f1e8ba12-7874-4c9a-953c-09042fb73bc9"/>
+				<box topPadding="2" leftPadding="0" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="404" y="86" width="150" height="22" uuid="d542eb8c-b1c6-4893-956c-bcf4ac73757a"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{zonalCommissioner}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="384" y="105" width="170" height="22" uuid="3550ddfc-c86a-480f-92d2-35cd17f53a54"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="440" height="18" uuid="a00e7ca6-f70b-4b1b-b487-3cb2b02c1474"/>
+				<box topPadding="2" leftPadding="0" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="125" width="50" height="16" uuid="f00cf1f4-96b6-4d3b-9841-d841a093763e"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Copy to]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="148" width="330" height="20" uuid="b7166d18-aca9-462e-904f-4059755e05f6"/>
+				<text><![CDATA[Superindent Engineer/Executive Engineer, for neceessary action.]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

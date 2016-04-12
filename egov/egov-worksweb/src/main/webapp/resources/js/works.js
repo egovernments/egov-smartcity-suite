@@ -233,3 +233,169 @@ function reinitializeDatepicker()
 		autoclose: true
 	});
 }
+
+function replaceExemptionFormChar() {
+	var exemption = document.getElementById('exemptionForm').innerHTML;
+	exemption = exemption.replace(/_/g, " ");
+    document.getElementById("exemptionForm").innerHTML = exemption;
+}
+
+function methodTest() {
+ 	if(document.getElementById("code").value=="Category Code"){
+		document.getElementById("code").value="";
+	}
+	if(document.getElementById("description").value=="Category Name") {
+		document.getElementById("description").value="";		
+	}
+}
+
+function validateSubledgerCodeBeforeSubmit() {
+    {
+        var codeName = document.getElementById("codeName").value;
+        if (codeName == '') {
+            showMessage('subledgerCode', 'Deposit Works Name is Required');
+            return false;
+
+        }
+        var codeDescription = document.getElementById("codeDescription").value;
+        if (codeDescription == '') {
+            showMessage('subledgerCode', 'Deposit Works Description is Required');
+            return false;
+        }
+        var financialYear = document.getElementById("financialYear").value;
+        if (financialYear == '-1') {
+            showMessage('subledgerCode', 'Financial Year is Required');
+            return false;
+        }
+        var fund = document.getElementById("fund").value;
+        if (fund == '-1') {
+            showMessage('subledgerCode', 'Fund is Required');
+            return false;
+        }
+        var fundSource = document.getElementById("fundSource").value;
+        if (fundSource == '-1') {
+            showMessage('subledgerCode', 'Financing source is Required');
+            return false;
+        }
+    }
+    return true;
+}
+
+function disableFields() {
+	var mode = document.getElementById('mode').value;
+	if(mode=='view'){
+	document.getElementById("code").disabled = true;
+	document.getElementById("description").disabled = true;	
+	}
+	else if(mode=='edit'){
+	document.getElementById("code").disabled = false;
+	document.getElementById("description").disabled = false;	
+	}
+}
+
+function createNewContractor() {
+	window.location = "contractor-newform.action";
+}
+
+function modifyContractorData() {
+	var model = document.getElementById('model').value;
+	window.location = 'contractor-edit.action?mode=edit&id='+model;
+}
+
+function setContractorId(val) {
+	document.getElementById('id').value = val;
+}
+
+function modifyContractorData1() {
+	var id = document.getElementById('id').value;
+	window.location = 'contractor-edit.action?mode=edit&id='+id;
+}
+function modifyContractorDataOnSearch() {
+	var id = document.getElementById('id').value;
+    if (id == '' || id == null) {
+    	var message = document.getElementById('selectMessage').value;
+        showMessage('contractorError', message);
+        window.scrollTo(0, 0);
+        return false;
+    } else
+        window.location = 'contractor-edit.action?mode=edit&id=' + id;
+    return true;
+}
+function validate(){
+	document.searchContractorForm.action='contractor-viewResult.action'; 
+   	document.searchContractorForm.submit();
+	
+}
+
+function viewContractorDataOnSearch() {
+	var id = document.getElementById('id').value;
+    if (id == '' || id == null) {
+    	var message = document.getElementById('selectMessage').value;
+        showMessage('contractorError', message);
+        window.scrollTo(0, 0);
+        return false;
+    } else
+        window.location = 'contractor-edit.action?mode=view&id=' + id;
+    return true;
+}
+
+function createNewEsimate() {
+	window.location = "estimateTemplate-newform.action";
+}
+
+function modifyEstimate() {
+	var id=document.getElementById('id')
+	window.location = "estimateTemplate-edit.action?mode=edit&id="+ id;
+}
+
+function setSorId(val) {
+	document.getElementById('id').value = val;
+} 
+
+function viewScheduleData() {
+	var id = document.getElementById('id').value;
+    if (id == '' || id == null) {
+    	var message = document.getElementById('selectMessage').value;
+        showMessage('sor.sorError', message);
+        window.scrollTo(0, 0);
+        return false;
+    } else
+		window.open("scheduleOfRate-edit.action?mode=view&id="+id+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+   		return true;
+}
+
+function modifyScheduleData() {
+	var id = document.getElementById('id').value;
+    if (id == '' || id == null) {
+    	var message = document.getElementById('selectMessage').value;
+        showMessage('sor.sorError', message);
+        window.scrollTo(0, 0);
+        return false;
+    } else
+        window.open("scheduleOfRate-edit.action?mode=edit&id="+id+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+    	return true;
+}		
+
+function validateSOR(){	
+	document.searchSORForm.action='scheduleOfRate-searchSorDetails.action';
+	document.searchSORForm.submit();
+}
+
+function modifyGradeData() {
+	var id = document.getElementById('id').value;
+	window.location = 'contractorGrade-edit.action?mode=edit&id='+id;
+}
+
+function viewGradeData() {
+	var id = document.getElementById('id').value;
+	window.location = 'contractorGrade-edit.action?mode=view&id='+id;
+}
+
+function modifyMilestoneTemplateData() {
+	var id = document.getElementById('id').value;
+	window.location = 'milestoneTemplate-edit.action?mode=edit&id='+id;
+}
+
+function createNewMilestoneTemplate() {
+	window.location = "milestoneTemplate-newform.action";
+}

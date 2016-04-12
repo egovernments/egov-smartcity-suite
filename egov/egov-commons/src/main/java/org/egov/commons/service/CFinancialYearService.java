@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.repository.CFinancialYearRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -59,6 +60,10 @@ public class CFinancialYearService {
         cal.setTime(cFinYear.get(0).getEndingDate());
         cal.add(Calendar.DATE, +1);
         return cal.getTime();
+    }
+
+    public CFiscalPeriod findByFiscalName(final String name) {
+        return cFinancialYearRepository.findByFiscalName(name);
     }
 
 }

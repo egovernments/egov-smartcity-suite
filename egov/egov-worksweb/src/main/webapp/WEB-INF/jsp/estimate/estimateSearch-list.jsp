@@ -97,7 +97,7 @@ function setEstimateId(elem){
 		title="Name" titleKey="estimate.search.name"
 		style="width:20%;text-align:left">
 		<a
-			href="${pageContext.request.contextPath}/estimate/abstractEstimate!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&sourcepage=search">
+			href="${pageContext.request.contextPath}/estimate/abstractEstimate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&sourcepage=search">
 			<s:property value='%{#attr.currentRow.name}' /> </a>
 	</display:column>
 

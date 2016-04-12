@@ -61,7 +61,7 @@ import org.egov.works.utils.WorksConstants;
  * This class will expose all measurment book related operations. NOTE ::: Suffix CQ and RE denote Change Quantity and Revision
  * Estimate Respectively
  */
-public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long>implements MeasurementBookService {
+public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> implements MeasurementBookService {
 
     private static final Logger logger = Logger.getLogger(MeasurementBookServiceImpl.class);
     public static final String WORKORDER_NO = "WORKORDER_NO";
@@ -715,7 +715,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long>i
 
     @Override
     public Date getWorkCommencedDate(final Long woId) {
-        final Date workCommencedDate = (Date) genericService.find(" select stat.statusDate from SetStatus stat "
+        final Date workCommencedDate = (Date) genericService.find(" select stat.statusDate from OfflineStatus stat "
                 + "where stat.objectId = ? and stat.objectType = ? and stat.egwStatus.code = ? ", woId, "WorkOrder",
                 WorksConstants.WO_STATUS_WOCOMMENCED);
         return workCommencedDate;

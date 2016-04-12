@@ -75,11 +75,11 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-    @Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
-    @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp"),
-    @Result(name = ScheduleOfRateAction.EDIT, location = "scheduleOfRate-edit.jsp"),
-    @Result(name = ScheduleOfRateAction.SUCCESS, location = "scheduleOfRate-success.jsp"),
-    @Result(name = ScheduleOfRateAction.VIEW, location = "scheduleOfRate-view.jsp")
+        @Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
+        @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp"),
+        @Result(name = ScheduleOfRateAction.EDIT, location = "scheduleOfRate-edit.jsp"),
+        @Result(name = ScheduleOfRateAction.SUCCESS, location = "scheduleOfRate-success.jsp"),
+        @Result(name = ScheduleOfRateAction.VIEW, location = "scheduleOfRate-view.jsp")
 })
 @ParentPackage("egov")
 public class ScheduleOfRateAction extends SearchFormAction {
@@ -179,7 +179,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
         if (StringUtils.isBlank(mode))
             addActionMessage(getText("sor.save.success"));
         else
-            addActionMessage(getText("sor.modified.success", new String[] {code}));
+            addActionMessage(getText("sor.modified.success", new String[] { code }));
         return SUCCESS;
     }
 

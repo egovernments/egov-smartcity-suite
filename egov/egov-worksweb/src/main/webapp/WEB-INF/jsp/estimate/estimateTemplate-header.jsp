@@ -105,75 +105,69 @@ var mlength=obj.getAttribute? parseInt(obj.getAttribute("maxlength")) : ""
 if (obj.getAttribute && obj.value.length>mlength)
 obj.value=obj.value.substring(0,mlength)
 }
+<s:if test="%{mode=='view'}">
+for(i=0;i<document.estimateTemplateForm.elements.length;i++){
+	document.estimateTemplateForm.elements[i].disabled=true;
+	document.estimateTemplateForm.elements[i].readonly=true;
+} 
+</s:if>
 </script>
 
-	<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
-				<div class="panel-heading">
-					<div class="panel-title">
-					    
-					</div>
-				</div>
-				<div class="panel-body">
-				
-					   <div class="form-group">
-							<label class="col-sm-2 control-label text-right">
-							    <s:text name="estimate.template.code" /><span class="mandatory"></span>
-							</label>
-							<div class="col-sm-3 add-margin">
-								<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" maxlength="25" />
-							</div>
-							<s:if test="%{model.id!=null}" >
-								<label class="col-sm-2 control-label text-right">
-								    <s:text name="estimate.template.status" />
-								</label>
-								<div class="col-sm-3 add-margin">
-									<s:select headerKey="0"  list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
-								</div>
-			                </s:if>
-			                <s:else>
-			                	<s:hidden name="status" value="%{status}" id="status"  />
-			                </s:else>
-						</div>
-						
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right">
-							    <s:text name="estimate.template.name" /> <span class="mandatory"></span>
-							</label>
-							<div class="col-sm-3 add-margin">
-								<s:textarea name="name" cols="35" rows="2" cssClass="form-control" id="name" maxlength="50" onkeyup="return ismaxlength(this)" value="%{name}"/>
-							</div>
-							<label class="col-sm-2 control-label text-right">
-							    <s:text name="estimate.template.description" />
-							</label>
-							<div class="col-sm-3 add-margin">
-								<s:textarea name="description" cols="35" rows="2" cssClass="form-control" id="description" maxlength="250" onkeyup="return ismaxlength(this)" value="%{description}"/>
-							</div>
-						</div>
-						
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right">
-							    <s:text name="estimate.template.type" /> <span class="mandatory"></span>
-							</label>
-							<div class="col-sm-3 add-margin">
-								<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
-                				<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate!subcategories.action' selectedValue="%{subType.id}"/>
-							</div>
-							<label class="col-sm-2 control-label text-right">
-							    <s:text name="estimate.template.subtype" />
-							</label>
-							<div class="col-sm-3 add-margin">
-								<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
-							</div>
-						</div>
-						
-				</div>
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title" ></div>
 	</div>
-
- <script type="text/javascript">
-  <s:if test="%{mode=='view'}">
-	for(i=0;i<document.estimateTemplateForm.elements.length;i++){
-		document.estimateTemplateForm.elements[i].disabled=true;
-		document.estimateTemplateForm.elements[i].readonly=true;
-	} 
-  </s:if>
-</script>           
+	<div class="panel-body">
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.template.code" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" maxlength="25"/>
+			</div>
+			<s:if test="%{model.id!=null}" >
+				<label class="col-sm-2 control-label text-right">
+				    <s:text name="estimate.template.status" />
+				</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="1"  list="#{'0':'ACTIVE', '1':'INACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
+			</div>
+            </s:if>
+            <s:else>
+            <s:hidden name="status" value="%{status}" id="status"  />
+            </s:else>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.template.name" /> <span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+			
+				<s:textarea name="name" cols="35" rows="2" cssClass="form-control" id="name" maxlength="250" onkeyup="return ismaxlength(this)" value="%{name}"/>
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.template.description" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="description" cols="35" rows="2" cssClass="form-control" id="description" maxlength="250" onkeyup="return ismaxlength(this)" value="%{description}"/>
+			</div>
+		</div>
+					
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.template.type" /> <span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
+            	<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{subType.id}"/>
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.template.subtype" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
+			</div>
+		</div>
+	</div>
+</div>         

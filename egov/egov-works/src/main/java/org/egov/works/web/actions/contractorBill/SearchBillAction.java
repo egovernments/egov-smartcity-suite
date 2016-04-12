@@ -39,6 +39,13 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -52,7 +59,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
 import org.egov.works.models.measurementbook.MBHeader;
@@ -65,13 +72,6 @@ import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Result(name = SearchBillAction.SEARCH, location = "searchBill-search.jsp")
 public class SearchBillAction extends BaseFormAction {
@@ -349,7 +349,7 @@ public class SearchBillAction extends BaseFormAction {
             // To get workorder ID by passing work order number.
             final WorkOrder workOrderObj = (WorkOrder) getPersistenceService().find(
                     "from WorkOrder where workOrderNumber = ?", br.getWorkordernumber());
-            br.setWorkOrderId(workOrderObj.getId());
+            br.setWorkOrder(workOrderObj);
         }
         return billList;
     }

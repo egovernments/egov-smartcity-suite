@@ -39,6 +39,12 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -46,7 +52,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
 import org.egov.works.models.measurementbook.MBHeader;
@@ -55,19 +61,13 @@ import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 @ParentPackage("egov")
 @Result(name = BaseFormAction.SUCCESS, type = "stream", location = "egBillRegisterPDF", params = { "inputName",
         "egBillRegisterPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" })
 public class ContractorBillPDFAction extends BaseFormAction {
 
     private static final long serialVersionUID = -4416572537527288800L;
-    private static final Logger logger = Logger.getLogger(ContractorBillAction.class);
+    private static final Logger logger = Logger.getLogger(ContractorBillPDFAction.class);
     private Long egbillRegisterId;
     private InputStream egBillRegisterPDF;
     @Autowired

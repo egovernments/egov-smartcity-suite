@@ -99,9 +99,9 @@
 			<list-index column="tend_resp_cont_index" />
 			<one-to-many class="org.egov.works.models.tender.TenderResponseContractors" />
 		</list>		
-		<set name="setStatuses" inverse="true" >
+		<set name="offlineStatuses" inverse="true" >
 			<key column="OBJECT_ID" />
-			<one-to-many class="org.egov.works.models.tender.SetStatus"  />
+			<one-to-many class="org.egov.works.models.tender.OfflineStatus"  />
 		</set>
 		
 	</class>

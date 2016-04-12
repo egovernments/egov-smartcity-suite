@@ -213,7 +213,7 @@ public class BankRemittanceAction extends BaseFormAction {
                     fundCode = getFundCodeArray()[i];
                     break;
                 }
-            final String bankAccountStr = "select asm.BANKACCOUNT from BANKACCOUNT ba,"
+            final String bankAccountStr = "select distinct asm.BANKACCOUNT from BANKACCOUNT ba,"
                     + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
                     + "sd.name= '" + serviceName + "'  and fd.code='" + fundCode + "'";
 

@@ -328,7 +328,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                 && mode.equalsIgnoreCase("fieldInspection"))
             if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.SUBMITWORKFLOWACTION)) {
-                final ConnectionCategory connectionCategory = connectionCategoryService.findBy(waterConnectionDetails
+                final ConnectionCategory connectionCategory = connectionCategoryService.findOne(waterConnectionDetails
                         .getCategory().getId());
                 if (connectionCategory != null
                         && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)

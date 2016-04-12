@@ -60,10 +60,10 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-	@Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp"),
-	@Result(name = ContractorGradeAction.EDIT, location = "contractorGrade-edit.jsp"),
-	@Result(name = ContractorGradeAction.SEARCH, location = "contractorGrade-searchPage.jsp"),
-	@Result(name = ContractorGradeAction.INDEX, location = "contractorGrade-index.jsp")
+        @Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp"),
+        @Result(name = ContractorGradeAction.EDIT, location = "contractorGrade-edit.jsp"),
+        @Result(name = ContractorGradeAction.SEARCH, location = "contractorGrade-searchPage.jsp"),
+        @Result(name = ContractorGradeAction.INDEX, location = "contractorGrade-index.jsp")
 })
 @ParentPackage("egov")
 public class ContractorGradeAction extends SearchFormAction {
@@ -85,10 +85,10 @@ public class ContractorGradeAction extends SearchFormAction {
     private List<String> maxAmountList;
     private List<String> minAmountList;
     private Map<String, Object> criteriaMap = null;
-    
+
     @Action(value = "/masters/contractorGrade-save")
     public String save() {
-    	contractorGrade = contractorGradeService.persist(contractorGrade);
+        contractorGrade = contractorGradeService.persist(contractorGrade);
         addActionMessage(getText("contractor.grade.save.success"));
         contractorGradeList = new ArrayList<ContractorGrade>();
         contractorGradeList.add(contractorGrade);
@@ -99,7 +99,7 @@ public class ContractorGradeAction extends SearchFormAction {
     public String newform() {
         return NEW;
     }
-    
+
     @Action(value = "/masters/contractorGrade-viewContractorGrade")
     public String viewContractorGrade() {
         return SEARCH;
@@ -166,9 +166,8 @@ public class ContractorGradeAction extends SearchFormAction {
 
         if (grade != null && !grade.equals("")) {
             hasNoErrors = Pattern.matches(Constants.ALPHANUMERIC_WITHSPACE, grade);
-            if (hasNoErrors == false) {
+            if (hasNoErrors == false)
                 addActionError(getText("contractorGrade.grade.alphaNumeric"));
-            }
         }
         if (minAmount != -1 && maxAmount != -1)
             if (minAmount >= maxAmount) {
@@ -180,7 +179,7 @@ public class ContractorGradeAction extends SearchFormAction {
             return SEARCH;
         setPageSize(WorksConstants.PAGE_SIZE);
         search();
-        
+
         if (searchResult != null && searchResult.getFullListSize() == 0)
             setDisplData(WorksConstants.NO_DATA);
         else
@@ -274,7 +273,7 @@ public class ContractorGradeAction extends SearchFormAction {
     public void setMinAmountList(final List<String> minAmountList) {
         this.minAmountList = minAmountList;
     }
-    
+
     private Map<String, Object> createCriteriaMap() {
         criteriaMap = new HashMap<String, Object>();
         criteriaMap.put(WorksConstants.GRADE, grade);

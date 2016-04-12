@@ -61,13 +61,14 @@ public class PropertyCategoryService {
         this.propertyCategoryRepository = propertyCategoryRepository;
 
     }
-    
-    public PropertyCategory findOne(final Long PropertyCategoryId) {
-        return propertyCategoryRepository.findOne(PropertyCategoryId);
+
+    public PropertyCategory findOne(final Long propertyCategoryId) {
+        return propertyCategoryRepository.findOne(propertyCategoryId);
     }
 
     @Transactional
     public PropertyCategory createPropertyCategory(final PropertyCategory propertyCategory) {
+        propertyCategory.setActive(true);
         return propertyCategoryRepository.save(propertyCategory);
     }
 
@@ -82,19 +83,25 @@ public class PropertyCategoryService {
         return propertyCategoryRepository.findByPropertyType_codeAndConnectionCategory_code(propertyType, categoryType);
     }
 
-    public PropertyCategory getByPropertyTypeAndCategory(final PropertyType propertyType,
+    public PropertyCategory findByPropertyTypeAndCategory(final PropertyType propertyType,
             final ConnectionCategory connectionCategory) {
 
         return propertyCategoryRepository.findByPropertyTypeAndConnectionCategory(propertyType, connectionCategory);
     }
-  
-    public List<PropertyCategory> findAll(){
-        return propertyCategoryRepository.findAll(new Sort(Sort.Direction.DESC,"id"));
+
+    public PropertyCategory findByPropertyTypeAndCategoryName(final PropertyType propertyType,
+            final String categoryType) {
+
+        return propertyCategoryRepository.findByPropertyTypeAndConnectionCategory_name(propertyType, categoryType);
     }
-   
-    public List<PropertyCategory> findAllByPropertyTypeAndConnectionCategory(final  PropertyType propertyType,
-            final ConnectionCategory connectionCategory){
+
+    public List<PropertyCategory> findAll() {
+        return propertyCategoryRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
+    }
+
+    public List<PropertyCategory> findAllByPropertyTypeAndConnectionCategory(final PropertyType propertyType,
+            final ConnectionCategory connectionCategory) {
         return propertyCategoryRepository.findAllByPropertyTypeAndConnectionCategory(propertyType, connectionCategory);
     }
-    
+
 }

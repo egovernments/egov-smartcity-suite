@@ -46,7 +46,7 @@
 	<body onload="roundOffMaxMinAmount();">
 	
 		<div class="new-page-header">
-			Create Contractor Grade
+			<s:text name="contractor.grade.header" />
 		</div>
 		
     	<s:if test="%{hasErrors()}">

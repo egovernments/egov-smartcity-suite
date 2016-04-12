@@ -49,7 +49,6 @@
 	default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.works" />
-
 	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" 
 		/> <bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" 
 		scope="prototype"> <property name="sessionFactory" ref="egovSessionFactory" 
@@ -85,7 +84,7 @@
 		<property name="type" value="org.egov.works.models.masters.ScheduleCategory"/>
 	</bean>
 	<bean id="worksStatusService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.tender.SetStatus" />
+		<property name="type" value="org.egov.works.models.tender.OfflineStatus" />
 	</bean>
 	
 	<bean class="org.egov.works.services.AbstractEstimateService" id="abstractEstimateService"
@@ -135,13 +134,6 @@
 			ref="sequenceGenerator"/> -->
 	</bean>
 
-	<bean
-		class="org.egov.works.models.contractorBill.ContractorBillNumberGenerator"
-		id="contractorBillNumberGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
-	</bean>
-
 	<bean class="org.egov.works.models.estimate.ProjectCodeGenerator"
 		id="projectcodeGenerator">
 		<!--  <property name="sequenceGenerator" 
@@ -154,10 +146,6 @@
 	</bean>
 	<bean id="overheadService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.masters.Overhead" />
-	</bean>
-
-	<bean id="projectCodeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.estimate.ProjectCode" />
 	</bean>
 
 	<bean id="assetsForEstimateService" parent="persistenceService"
@@ -196,6 +184,7 @@
 	<bean class="org.egov.works.services.TenderResponseService" id="tenderResponseService"
 		parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.tender.TenderResponse" />
+		<property name="persistenceService" ref="persistenceService" />
 		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
 	</bean>
 
@@ -296,11 +285,6 @@
 		</constructor-arg>
 		<property name="genericService" ref="persistenceService" />
 		<property name="worksService" ref="worksService" />
-		<property name="contractorBillNumberGenerator" ref="contractorBillNumberGenerator" />
-		<property name="egovCommon" ref="egovCommon" />
-		<property name="checklistService" ref="checklistService" />
-		<property name="commonAssetsService" ref="commonAssetsService" />
-		<property name="assetService" ref="assetService" />
 		<property name="tenderResponseService" ref="tenderResponseService" />
 		<property name="contractorAdvanceService" ref="contractorAdvanceService" />
 	</bean>
@@ -375,10 +359,10 @@
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 	</bean>
 
-
+<!-- 
 	<bean id="depositCodeService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.masters.DepositCode" />
-	</bean>
+	</bean> -->
 
 	<bean class="org.egov.works.models.masters.DepositCodeGenerator"
 		id="depositCodeGenerator">
@@ -431,9 +415,6 @@
 		scope="prototype">
 		<property name="type"
 			value="org.egov.works.models.estimate.AbstractEstimateAppropriation" />
-	</bean>
-	<bean id="budgetUsageService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.model.budget.BudgetUsage" />
 	</bean>
 	<bean id="milestoneTemplateService" parent="persistenceService"
 		scope="prototype">
@@ -555,11 +536,16 @@
 	</bean> -->
 
 	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
-	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"/>
 	<bean id="contractorGradeService" class="org.egov.works.master.services.ContractorGradeService">
 		<property name="type" value="org.egov.commons.ContractorGrade"/>
 	</bean>
 	<bean id="uomService" class="org.egov.works.master.services.UOMService">
 		<property name="type" value="org.egov.common.entity.UOM"/>
 	</bean>
+	<bean id="schemeService" class="org.egov.services.masters.SchemeService">
+      <constructor-arg index="0" value="org.egov.commons.Scheme" />
+    </bean>
+    <bean id="subSchemeService" class="org.egov.services.masters.SubSchemeService" >
+      <constructor-arg index="0" value="org.egov.commons.SubScheme" />
+    </bean>
 </beans>

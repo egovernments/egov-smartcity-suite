@@ -39,20 +39,26 @@
  */
 package org.egov.works.services;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.tender.TenderResponse;
+import org.egov.works.models.tender.TenderResponseActivity;
+import org.egov.works.models.tender.TenderResponseContractors;
 
 public class TenderResponseService extends PersistenceService<TenderResponse, Long> {
     private static final Logger logger = Logger.getLogger(TenderResponseService.class);
     private PersonalInformationService personalInformationService;
+    private PersistenceService persistenceService;
 
     public List getApprovedByList(final Integer deptId) {
         List approvedByList = null;
@@ -101,9 +107,36 @@ public class TenderResponseService extends PersistenceService<TenderResponse, Lo
      * (Exception e) { logger.debug("exception " + e); } return personalInformation; }
      */
 
+    public Collection<TenderResponseActivity> getTenderResponseActivityList(
+            final List<TenderResponseActivity> actionTenderResponseActivities) {
+        return CollectionUtils.select(
+                actionTenderResponseActivities,
+                tenderReponseAct -> {
+                    final TenderResponseActivity tra = (TenderResponseActivity) tenderReponseAct;
+                    if (tra == null)
+                        return false;
+                    else {
+                        tra.setActivity((Activity) persistenceService.find("from Activity where id=?",
+                                tra.getActivity().getId()));
+                        return true;
+                    }
+
+                });
+    }
+
+    public Collection<TenderResponseContractors> getActionTenderResponseContractorsList(
+            final List<TenderResponseContractors> actionTenderResponseContractors) {
+        return CollectionUtils.select(actionTenderResponseContractors,
+                tenderResponseContractors -> (TenderResponseContractors) tenderResponseContractors != null);
+    }
+
     public void setPersonalInformationService(
             final PersonalInformationService personalInformationService) {
         this.personalInformationService = personalInformationService;
+    }
+
+    public void setPersistenceService(final PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
     }
 
 }

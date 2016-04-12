@@ -117,8 +117,8 @@
 								<th></th>
 							</thead>
 							<c:choose>
-								<c:when test="${!cFinancialYear.cFiscalPeriod.isEmpty()}">
-									<c:forEach items="${cFinancialYear.cFiscalPeriod}" var="var1"
+								<c:when test="${!CFinancialYear.cFiscalPeriod.isEmpty()}">
+									<c:forEach items="${CFinancialYear.cFiscalPeriod}" var="var1"
 										varStatus="counter">
 										<tr id="fiscalPeroid">
 											<td><c:if test="${mode == 'create'}">

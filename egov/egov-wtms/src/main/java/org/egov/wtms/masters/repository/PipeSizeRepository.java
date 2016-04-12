@@ -51,14 +51,16 @@ import org.springframework.stereotype.Repository;
 public interface PipeSizeRepository extends JpaRepository<PipeSize, Long> {
 
     PipeSize findByCode(String code);
-    
+
     PipeSize findBySizeInInch(double sizeInInch);
-    
+
     PipeSize findBySizeInMilimeter(double sizeInMilimeter);
 
     List<PipeSize> findByActiveTrueOrderBySizeInInchAsc();
 
-    @Query("select PS.pipeSize from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType.id=:propertyType ")
+    PipeSize findByCodeAndSizeInMilimeter(String code, double sizeInMilimeter);
+
+    @Query("select PS.pipeSize from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType.id=:propertyType and PS.active=true")
     List<PipeSize> getAllPipeSizesByPropertyType(@Param("propertyType") Long propertyType);
 
 }

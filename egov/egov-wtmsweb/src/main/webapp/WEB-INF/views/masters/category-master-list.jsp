@@ -45,16 +45,16 @@
 
 <form:form method="post" action="" class="form-horizontal form-groups-bordered" id="categorytype-view" 
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	<input type="hidden" name="propertyCategoryList" id="propertyCategoryList" value="${propertyCategoryList}">
-	<input type="hidden" id="connectioncategoryid" name="connectioncategoryid" value="${connectioncategoryid.name}" />
+	<input type="hidden" name="connectionCategoryList" id="connectionCategoryList" value="${connectionCategoryList}">
+	<input type="hidden" id="connectioncategoryid" name="connectioncategoryid" value="${connectioncategory.id}" />
 
 	<div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-body custom-form ">
-	<c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
-                </c:if>
+		<div class="panel-body custom-form ">
+			<c:if test="${not empty message}">
+                  <div class="alert alert-success" role="alert">${message}</div>
+              </c:if>
 			<c:choose>
-				<c:when test="${propertyCategoryList.isEmpty()}">
+				<c:when test="${connectionCategoryList.isEmpty()}">
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
@@ -62,9 +62,7 @@
 					<thead>
 						<tr>
 							<th colspan="1">
-								<div align="center">
-									<spring:message code="lbl.propertytype" />
-								</div>
+								<div align="center"><spring:message code="lbl.code" /></div>
 							</th>
 							<th colspan="1">
 								<div align="center"><spring:message code="lbl.category.type" /></div>
@@ -77,22 +75,22 @@
 							</th>
 						</tr>
 					</thead>
-					<c:forEach var="propertyCategory" items="${propertyCategoryList}">
+					<c:forEach var="connectionCategory" items="${connectionCategoryList}">
 						<tr>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${propertyCategory.propertyType.name}" />
+									<c:out value="${connectionCategory.code}" />
 								</div>
 							</td>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${propertyCategory.connectionCategory.name}" />
+									<c:out value="${connectionCategory.name}" />
 								</div>
 							</td>
 							<td colspan="1">
 								<div align="center">
 								<c:choose>
-									<c:when test="${propertyCategory.connectionCategory.active == 'true'}">
+									<c:when test="${connectionCategory.active == 'true'}">
 										<c:out value="ACTIVE" />
 									</c:when> 
 									<c:otherwise>
@@ -103,7 +101,7 @@
 							</td>
 							<td colspan="1">
 								<div align="center">
-									<a href="javascript:void(0);" onclick="edit('<c:out value="${propertyCategory.id}" />');">Edit</a>
+									<a href="javascript:void(0);" onclick="edit('<c:out value="${connectionCategory.id}" />');">Edit</a>
 								</div>
 							</td>
 						</tr>

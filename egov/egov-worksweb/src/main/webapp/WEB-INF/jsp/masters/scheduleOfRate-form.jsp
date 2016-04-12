@@ -86,6 +86,7 @@ function enableLastEndDate(){
 	var i;
 	var records= scheduleOfRateDataTable.getRecordSet();
 
+	hideColumn('deleteRate');
 	disablePrevRates();
 	for(i=0;i<records.getLength();i++){
 		if(i <= (persistedRatesCnt-1)) {
@@ -102,6 +103,10 @@ function enableLastEndDate(){
 	}
 	dom.get("endDate"+records.getRecord(persistedRatesCnt-1).getId()).readonly=false;
 	dom.get("endDate"+records.getRecord(persistedRatesCnt-1).getId()).disabled=false;	
+}
+
+function hideColumn(colKey) {
+	scheduleOfRateDataTable.hideColumn(colKey);
 }
 
 function disableEnablePrevRateDetails(records,j) {
@@ -130,6 +135,7 @@ function disableEnablePrevRateDetails(records,j) {
 
 function disablePreviousRatesOnLoad() {
 	<s:if test="%{id!=null && mode=='edit'}">
+	hideColumn('deleteRate');
 		disablePrevRates();
 	</s:if>
 } 
@@ -198,7 +204,7 @@ var makeScheduleOfRateDataTable = function() {
 		{key:"rate", label:'<span class="mandatory"></span>Rate', formatter:rateTextboxFormatter, sortable:false, resizeable:false, width:180},		
 		{key:"startDate", label:'<span class="mandatory"></span>Start Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
 		{key:"endDate",label:'End Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
-		{key:'deleteRate',hidden:true,label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
+		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
 	
 	var scheduleOfRateDataSource = new YAHOO.util.DataSource(); 
@@ -320,16 +326,14 @@ function initializeDatePicker()
 				);
 	          </s:if>
 	          <s:else>
-	          debugger;
 	          scheduleOfRateDataTable.addRow(
-	    	          
-			        						{id:'<s:property value="id"/>',											
-			                                SlNo:'<s:property value="#rate_row_status.count"/>',
-			                                rate:'<s:property value="rate"/>',
-			                                startDate:'<s:property value="validity.startDate"/>',
-			                                endDate:'<s:property value="validity.endDate"/>'
-											}
-											);
+	             	{id:'<s:property value="id"/>',											
+                    SlNo:'<s:property value="#rate_row_status.count"/>',
+                    rate:'<s:property value="rate"/>',
+                    startDate:'<s:property value="validity.startDate"/>',
+                    endDate:'<s:property value="validity.endDate"/>'
+						}
+						);
 			</s:else>
 				var record = scheduleOfRateDataTable.getRecord(parseInt('<s:property value="#rate_row_status.index"/>'));			  									
 				var rateidValue='<s:property value="id"/>';		
@@ -443,6 +447,10 @@ function initializeDatePicker()
 	for(i=0;i<links.length;i++){    
 	links[i].onclick=function(){return false;};
 	}
+</s:if>
+<s:if test="%{mode=='edit'}">
+scheduleOfRateDataTable.removeListener('cellClickEvent');
+hideColumn('deleteRate');
 </s:if>
 <s:if test="%{estimateDtFlag=='yes' || woDateFlag=='yes' || hasErrors()}">
 scheduleOfRateDataTable.removeListener('cellClickEvent');	

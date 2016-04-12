@@ -40,7 +40,10 @@
 package org.egov.works.lineestimate.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,12 +52,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.works.models.estimate.ProjectCode;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -69,6 +75,7 @@ public class LineEstimateDetails extends AbstractAuditable {
 
     public static final String SEQ_EGW_LINEESTIMATE_DETAILS = "SEQ_EGW_LINEESTIMATE_DETAILS";
 
+    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_EGW_LINEESTIMATE_DETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -90,6 +97,29 @@ public class LineEstimateDetails extends AbstractAuditable {
     @Length(max = 50)
     @Column(unique = true)
     private String estimateNumber;
+
+    @NotNull
+    @Length(max = 50)
+    private double quantity;
+
+    @NotNull
+    @Length(max = 50)
+    private String uom;
+
+    @NotNull
+    @Length(max = 50)
+    private String beneficiary;
+
+    private BigDecimal actualEstimateAmount;
+
+    private BigDecimal grossAmountBilled;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "projectCode")
+    private ProjectCode projectCode;
+
+    @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateAppropriation.class)
+    private List<LineEstimateAppropriation> lineEstimateAppropriations = new ArrayList<LineEstimateAppropriation>(0);
 
     @Override
     public Long getId() {
@@ -133,4 +163,59 @@ public class LineEstimateDetails extends AbstractAuditable {
         this.estimateNumber = estimateNumber;
     }
 
+    public String getUom() {
+        return uom;
+    }
+
+    public void setUom(final String uom) {
+        this.uom = uom;
+    }
+
+    public String getBeneficiary() {
+        return beneficiary;
+    }
+
+    public void setBeneficiary(final String beneficiary) {
+        this.beneficiary = beneficiary;
+    }
+
+    public double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(final double quantity) {
+        this.quantity = quantity;
+    }
+
+    public BigDecimal getActualEstimateAmount() {
+        return actualEstimateAmount;
+    }
+
+    public void setActualEstimateAmount(final BigDecimal actualEstimateAmount) {
+        this.actualEstimateAmount = actualEstimateAmount;
+    }
+
+    public ProjectCode getProjectCode() {
+        return projectCode;
+    }
+
+    public void setProjectCode(final ProjectCode projectCode) {
+        this.projectCode = projectCode;
+    }
+
+    public List<LineEstimateAppropriation> getLineEstimateAppropriations() {
+        return lineEstimateAppropriations;
+    }
+
+    public void setLineEstimateAppropriations(final List<LineEstimateAppropriation> lineEstimateAppropriations) {
+        this.lineEstimateAppropriations = lineEstimateAppropriations;
+    }
+
+    public BigDecimal getGrossAmountBilled() {
+        return grossAmountBilled;
+    }
+
+    public void setGrossAmountBilled(final BigDecimal grossAmountBilled) {
+        this.grossAmountBilled = grossAmountBilled;
+    }
 }

@@ -41,6 +41,7 @@ package org.egov.works.web.actions.estimate;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,12 +61,15 @@ import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.estimate.EstimateTemplateActivity;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.AbstractEstimateService;
+import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
         @Result(name = EstimateTemplateAction.NEW, location = "estimateTemplate-new.jsp"),
-        @Result(name = EstimateTemplateAction.SEARCH, location = "estimateTemplate-search.jsp")
+        @Result(name = EstimateTemplateAction.SEARCH, location = "estimateTemplate-search.jsp"),
+        @Result(name = EstimateTemplateAction.SUCCESS, location = "estimateTemplate-success.jsp"),
+        @Result(name = EstimateTemplateAction.EDIT, location = "estimateTemplate-edit.jsp")
 })
 public class EstimateTemplateAction extends SearchFormAction {
 
@@ -76,6 +80,7 @@ public class EstimateTemplateAction extends SearchFormAction {
     private List<EstimateTemplateActivity> nonSorActivities = new LinkedList<EstimateTemplateActivity>();
     @Autowired
     private AssignmentService assignmentService;
+    private WorksService worksService;
     // @Autowired
     /* private PersonalInformationService personalInformationService; */
     private PersistenceService<EstimateTemplate, Long> estimateTemplateService;
@@ -86,6 +91,8 @@ public class EstimateTemplateAction extends SearchFormAction {
     private String estimateTemplateCode;
     private Long subTypeOfWork;
     public static final String SEARCH = "search";
+    public static final String EDIT = "edit";
+    public static final String SUCCESS = "success";
     private AbstractEstimateService abstractEstimateService;
 
     public EstimateTemplateAction() {
@@ -103,6 +110,7 @@ public class EstimateTemplateAction extends SearchFormAction {
         this.estimateTemplate = estimateTemplate;
     }
 
+    @Action(value = "/estimate/estimateTemplate-edit")
     public String edit() {
         return EDIT;
     }
@@ -142,6 +150,7 @@ public class EstimateTemplateAction extends SearchFormAction {
         return SEARCH;
     }
 
+    @Action(value = "/estimate/estimateTemplate-save")
     public String save() {
         estimateTemplate.getEstimateTemplateActivities().clear();
         populateSorActivities();
@@ -152,7 +161,7 @@ public class EstimateTemplateAction extends SearchFormAction {
         else
             setMode("edit");
         estimateTemplate = estimateTemplateService.persist(estimateTemplate);
-        return "success";
+        return SUCCESS;
     }
 
     protected void populateSorActivities() {
@@ -176,13 +185,28 @@ public class EstimateTemplateAction extends SearchFormAction {
         for (final EstimateTemplateActivity activity : nonSorActivities)
             if (activity != null) {
                 activity.setUom(activity.getNonSor().getUom());
+                activity.getNonSor().setCreatedBy(worksService.getCurrentLoggedInUser());
+                activity.getNonSor().setCreatedDate(new Date());
+                activity.getNonSor().setModifiedBy(worksService.getCurrentLoggedInUser());
+                activity.getNonSor().setModifiedDate(new Date());
                 estimateTemplate.addActivity(activity);
             }
     }
 
     private void populateActivities() {
-        for (final EstimateTemplateActivity activity : estimateTemplate.getEstimateTemplateActivities())
+        for (final EstimateTemplateActivity activity : estimateTemplate.getEstimateTemplateActivities()) {
             activity.setEstimateTemplate(estimateTemplate);
+
+            // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting
+            // triggered on update of estimate for child objects
+            activity.setCreatedBy(worksService.getCurrentLoggedInUser());
+            activity.setCreatedDate(new Date());
+            activity.setModifiedBy(worksService.getCurrentLoggedInUser());
+            activity.setModifiedDate(new Date());
+
+        }
+
+        persistenceService.applyAuditing(estimateTemplate);
     }
 
     protected void populateCategoryList(final AjaxEstimateAction ajaxEstimateAction, final boolean categoryPopulated) {
@@ -323,6 +347,10 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
         this.abstractEstimateService = abstractEstimateService;
+    }
+
+    public void setWorksService(final WorksService worksService) {
+        this.worksService = worksService;
     }
 
 }

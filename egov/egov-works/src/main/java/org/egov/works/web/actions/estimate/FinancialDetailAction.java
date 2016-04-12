@@ -39,7 +39,21 @@
  */
 package org.egov.works.web.actions.estimate;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -90,20 +104,7 @@ import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
 
 @Results({ @Result(name = FinancialDetailAction.PRINT, type = "stream", location = "budgetFolioPDF", params = {
         "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
@@ -442,7 +443,8 @@ public class FinancialDetailAction extends BaseFormAction {
                 addDropdownData(COA_LIST, chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
                         .getWorksConfigValue(KEY_DEPOSIT))));
             else
-                addDropdownData(COA_LIST, Collections.EMPTY_LIST); else
+                addDropdownData(COA_LIST, Collections.EMPTY_LIST);
+        else
             addDropdownData(COA_LIST, Collections.EMPTY_LIST);
 
         if (!StringUtils.isBlank(option)
@@ -762,9 +764,9 @@ public class FinancialDetailAction extends BaseFormAction {
     }
 
     public String viewDepositFolio() {
-        final Fund fund = fundDao.fundById(fundId,false);
+        final Fund fund = fundDao.fundById(fundId, false);
         final DepositCode depositCode = depositCodeService.findById(depositCodeId, false);
-        final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(glcodeId,false);
+        final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(glcodeId, false);
         financialDetail.setCoa(coa);
         financialDetail.setFund(fund);
         code = depositCode.getCode() + "-" + depositCode.getCodeName();

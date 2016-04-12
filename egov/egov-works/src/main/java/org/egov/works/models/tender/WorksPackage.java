@@ -45,7 +45,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +56,8 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.Auditable;
+import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.Money;
@@ -96,17 +95,24 @@ public class WorksPackage extends StateAware implements Auditable {
     @NotEmpty(message = "wp.name.is.null")
     @Length(max = 1024, message = "workspackage.name.length")
     private String name;
+
     @Length(max = 1024, message = "workspackage.description.length")
     private String description;
+
     @NotNull(message = "wp.userDepartment.is.null")
     private Department department;
+
+    // @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.wpDate")
     @NotNull(message = "wp.wpDate.is.null")
-    @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.wpDate")
+    @DateFormat(message = "invalid.fieldvalue.wpDate")
     private Date wpDate;
+
     @NotEmpty(message = "wp.wpNumber.is.null")
     private String wpNumber;
+
     private String employeeName;
     private Money workValueIncludingTaxes;
+
     private List<WorksPackageDetails> worksPackageDetails = new LinkedList<WorksPackageDetails>();
     private List<RetenderHistory> retenderHistoryDetails = new LinkedList<RetenderHistory>();
     private List<Retender> retenderDetails = new LinkedList<Retender>();
@@ -118,8 +124,8 @@ public class WorksPackage extends StateAware implements Auditable {
     private Long documentNumber;
     private EgwStatus egwStatus;
     private String wpOfflineStatus;
-    private SetStatus latestOfflineStatus;
-    private Set<SetStatus> setStatuses = Collections.EMPTY_SET;
+    private OfflineStatus latestOfflineStatus;
+    private Set<OfflineStatus> offlineStatuses = Collections.EMPTY_SET;
     private List<String> worksPackageActions = new LinkedList<String>();
     private String worksPackageStatus;
     private Date approvedDate;
@@ -383,18 +389,18 @@ public class WorksPackage extends StateAware implements Auditable {
         return negotiationNumber;
     }
 
-    public Set<SetStatus> getSetStatuses() {
-        final Set<SetStatus> returnList = new LinkedHashSet<SetStatus>();
-        // Get only statuses which are of WorksPackage
-        if (setStatuses != null && setStatuses.size() > 0)
-            for (final SetStatus ss : setStatuses)
-                if (ss.getObjectType() != null && ss.getObjectType().equalsIgnoreCase("WorksPackage"))
-                    returnList.add(ss);
-        return returnList;
+    public Set<OfflineStatus> getOfflineStatuses() {
+        // TODO:Fixme - Commented out for time being since it is giving issue on forward for already saved object
+        /*
+         * final Set<SetStatus> returnList = new HashSet<SetStatus>(); // Get only statuses which are of WorksPackage if
+         * (setStatuses != null && setStatuses.size() > 0) for (final SetStatus ss : setStatuses) if (ss.getObjectType() != null
+         * && ss.getObjectType().equalsIgnoreCase("WorksPackage")) returnList.add(ss);
+         */
+        return offlineStatuses;
     }
 
-    public void setSetStatuses(final Set<SetStatus> setStatuses) {
-        this.setStatuses = setStatuses;
+    public void setOfflineStatuses(final Set<OfflineStatus> offlineStatuses) {
+        this.offlineStatuses = offlineStatuses;
     }
 
     public EgwStatus getEgwStatus() {
@@ -437,11 +443,11 @@ public class WorksPackage extends StateAware implements Auditable {
         this.retenderDetails = retenderDetails;
     }
 
-    public SetStatus getLatestOfflineStatus() {
+    public OfflineStatus getLatestOfflineStatus() {
         return latestOfflineStatus;
     }
 
-    public void setLatestOfflineStatus(final SetStatus latestOfflineStatus) {
+    public void setLatestOfflineStatus(final OfflineStatus latestOfflineStatus) {
         this.latestOfflineStatus = latestOfflineStatus;
     }
 

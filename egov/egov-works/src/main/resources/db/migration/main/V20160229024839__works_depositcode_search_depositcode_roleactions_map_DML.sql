@@ -1,0 +1,6 @@
+﻿-- INSERT deposit code search action into EG_ACTION ---
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values(NEXTVAL('SEQ_EG_ACTION'),'Search Deposit Code','/masters/subledgerCode-search.action',null,(select id from EG_MODULE where name = 'WorksDepositCodeMaster'),2,'Search Deposit Code','true','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='Search Deposit Code' and contextroot = 'egworks'));
+
+--rollback delete from EG_ROLEACTION where roleid = (select id from eg_role where name = 'Super User') and actionid = (select id from eg_action where name ='Search Deposit Code' and contextroot = 'egworks');
+--rollback delete from EG_ACTION where name = 'Search Deposit Code' and contextroot = 'egworks';

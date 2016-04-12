@@ -274,7 +274,7 @@ public class ScheduleOfRate extends BaseModel {
                 // existing periods.
                 if (isWithin(existingPeriod, checkStartDate) || isWithin(checkPeriod1, existingStartDate)
                         || checkEndDate != null && isWithin(existingPeriod, checkEndDate) || existingEndDate != null
-                        && isWithin(checkPeriod1, existingEndDate)) {
+                                && isWithin(checkPeriod1, existingEndDate)) {
                     flag1 = false;
                     break;
                 } else if (checkEndDate != null && existingEndDate != null
@@ -387,7 +387,7 @@ public class ScheduleOfRate extends BaseModel {
                 // existing periods.
                 if (isWithin(existingPeriod, checkStartDate) || isWithin(checkPeriod1, existingStartDate)
                         || checkEndDate != null && isWithin(existingPeriod, checkEndDate) || existingEndDate != null
-                        && isWithin(checkPeriod1, existingEndDate)) {
+                                && isWithin(checkPeriod1, existingEndDate)) {
                     flag1 = false;
                     break;
                 } else if (checkEndDate != null && existingEndDate != null

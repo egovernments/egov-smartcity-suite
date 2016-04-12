@@ -39,6 +39,20 @@
  */
 package org.egov.works.web.actions.reports;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -86,7 +100,7 @@ import org.egov.works.models.milestone.PaymentDetail;
 import org.egov.works.models.milestone.TrackMilestone;
 import org.egov.works.models.milestone.TrackMilestoneActivity;
 import org.egov.works.models.milestone.WorkProgressRegister;
-import org.egov.works.models.tender.SetStatus;
+import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.workorder.WorkOrder;
@@ -95,20 +109,6 @@ import org.egov.works.services.ContractorBillService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @ParentPackage("egov")
 @Results({
@@ -165,7 +165,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
     private String sourcePage = "";
     private Integer scheme;
     private Integer subScheme;
-    private PersistenceService<SetStatus, Long> worksStatusService;
+    private PersistenceService<OfflineStatus, Long> worksStatusService;
     private static final String STATUS_OBJECTID = "getStatusDateByObjectId_Type_Desc";
     private static final String WO_OBJECT_TYPE = "WorkOrder";
     private static final String WORK_COMMENCED = "Work commenced";
@@ -241,7 +241,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
             addDropdownData("subSchemeList", Collections.emptyList());
     }
 
-     public List getMilestoneStatuses() {
+    public List getMilestoneStatuses() {
         return new LinkedList<String>(milestoneStatuses.keySet());
     }
 
@@ -396,9 +396,9 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 }
                 workProgress.setWorkOrderValue(new BigDecimal(workOrder.getWorkOrderAmount()));
                 if (workOrder != null) {
-                    final SetStatus objStatusForWorkComncd = worksStatusService.findByNamedQuery(STATUS_OBJECTID,
+                    final OfflineStatus objStatusForWorkComncd = worksStatusService.findByNamedQuery(STATUS_OBJECTID,
                             workOrder.getId(), WO_OBJECT_TYPE, WORK_COMMENCED);
-                    final SetStatus objStatusForSiteHandOver = worksStatusService.findByNamedQuery(STATUS_OBJECTID,
+                    final OfflineStatus objStatusForSiteHandOver = worksStatusService.findByNamedQuery(STATUS_OBJECTID,
                             workOrder.getId(), WO_OBJECT_TYPE, WorksConstants.WO_STATUS_WOSITEHANDEDOVER);
                     if (objStatusForWorkComncd != null)
                         workProgress.setWorkCommencementDate(DateUtils.getFormattedDate(
@@ -407,7 +407,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                         workProgress.setSiteHandedOverDate(DateUtils.getFormattedDate(
                                 objStatusForSiteHandOver.getStatusDate(), dateFormat));
                 }
-                workProgress.setContractPeriod(workOrder.getContractPeriod());
+                workProgress.setContractPeriod(workOrder.getContractPeriod().toString());
                 workProgress.setWorkOrderDate(DateUtils.getFormattedDate(workOrder.getWorkOrderDate(), dateFormat));
                 if (trackMilestone != null && "APPROVED".equalsIgnoreCase(trackMilestone.getEgwStatus().getCode())) {
                     workProgress.setTrackMilestoneActivities(trackMilestone.getActivities());
@@ -477,7 +477,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
             objects = (Object[]) iterator.next();
             if (objects[0] != null) {
                 final WorksPackage worksPackage = (WorksPackage) objects[0];
-                for (final SetStatus status : worksPackage.getSetStatuses()) {
+                for (final OfflineStatus status : worksPackage.getOfflineStatuses()) {
                     if (TENDER_NOTICE_STATUS.equalsIgnoreCase(status.getEgwStatus().getCode()))
                         tenderDates.put("tenderDate", status.getCreatedDate());
                     if (TENDER_FINALIZATION_STATUS.equalsIgnoreCase(status.getEgwStatus().getCode()))
@@ -487,7 +487,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
             if (objects[1] != null) {
                 final TenderResponse tenderResponse = (TenderResponse) objects[1];
                 if (tenderResponse != null) {
-                    final SetStatus objStatusForSite = worksStatusService.findByNamedQuery(STATUS_OBJECTID,
+                    final OfflineStatus objStatusForSite = worksStatusService.findByNamedQuery(STATUS_OBJECTID,
                             tenderResponse.getTenderResponseContractors().get(0).getId(), "TenderResponseContractors",
                             TENDER_AGGREEMENT_ORDER);
                     if (objStatusForSite != null)
@@ -698,15 +698,15 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 if (workOrderStatus.equalsIgnoreCase("APPROVED")) {
                     query.append(" and woe.workOrder.egwStatus.code=?");
                     query.append(
-                            " and woe.workOrder.id not in (select objectId from org.egov.works.models.tender.SetStatus where objectType=?)");
+                            " and woe.workOrder.id not in (select objectId from org.egov.works.models.tender.OfflineStatus where objectType=?)");
                     paramList.add(workOrderStatus);
                     paramList.add(WorkOrder.class.getSimpleName());
                 } else {
                     query.delete(0, query.length() - 1);
                     query.append(
-                            "from org.egov.works.models.workorder.WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone,org.egov.works.models.tender.SetStatus st");
+                            "from org.egov.works.models.workorder.WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone,org.egov.works.models.tender.OfflineStatus st");
                     query.append(
-                            " where st.objectId=woe.workOrder.id and st.id=(select max(id) from org.egov.works.models.tender.SetStatus where objectId=woe.workOrder.id and objectType=?) and st.objectType=? and st.egwStatus.code=?");
+                            " where st.objectId=woe.workOrder.id and st.id=(select max(id) from org.egov.works.models.tender.OfflineStatus where objectId=woe.workOrder.id and objectType=?) and st.objectType=? and st.egwStatus.code=?");
                     query.append(" and woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' ");
                     query.append(" and milestone.egwStatus.code='APPROVED' and trackMilestone.egwStatus.code='APPROVED' ");
                     paramList.add(WorkOrder.class.getSimpleName());
@@ -966,11 +966,11 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         this.subScheme = subScheme;
     }
 
-    public PersistenceService<SetStatus, Long> getWorksStatusService() {
+    public PersistenceService<OfflineStatus, Long> getWorksStatusService() {
         return worksStatusService;
     }
 
-    public void setWorksStatusService(final PersistenceService<SetStatus, Long> worksStatusService) {
+    public void setWorksStatusService(final PersistenceService<OfflineStatus, Long> worksStatusService) {
         this.worksStatusService = worksStatusService;
     }
 
