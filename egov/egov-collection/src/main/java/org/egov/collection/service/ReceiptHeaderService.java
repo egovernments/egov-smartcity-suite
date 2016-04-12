@@ -111,6 +111,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     private CollectionsNumberGenerator collectionsNumberGenerator;
     private FinancialsUtil financialsUtil;
     private PersistenceService persistenceService;
+    SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 
     @Autowired
     private DesignationService designationService;
@@ -894,7 +895,15 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         for (int i = 0; i < serviceNameArr.length; i++) {
             final String serviceName = serviceNameArr[i].trim();
-            Date voucherDate = new Date();
+            Date voucherDate;
+            try {
+                voucherDate = sdf.parse(sdf.format(new Date()));
+            } catch (ParseException e) {
+               
+                LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + e.getMessage());
+                throw new ApplicationRuntimeException("Exception while parsing date", e);
+            }
+            
 
             if (useReceiptDateAsContraVoucherDate)
                 try {
