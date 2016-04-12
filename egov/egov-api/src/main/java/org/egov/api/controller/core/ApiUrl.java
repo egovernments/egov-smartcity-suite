@@ -56,6 +56,8 @@ public class ApiUrl {
 	
 	public final static String COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT = "/complaint/{complaintNo}/downloadSupportDocument";
 	
+	public final static String COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT_BY_ID = "/complaint/downloadfile/{fileStoreId}";
+	
 	public final static String COMPLAINT_GET_LOCATION = "/complaint/getLocation";
 
 	public final static String COMPLAINT_LATEST = "/complaint/latest/{page}/{pageSize}";
