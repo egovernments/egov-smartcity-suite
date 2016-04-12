@@ -146,7 +146,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
             setDropDownValues(model);
-
+        model.addAttribute("adminsanctionbydesignation", worksUtils.getUserDesignation(lineEstimate.getAdminSanctionBy()));
         return loadViewData(model, request, lineEstimate);
     }
 

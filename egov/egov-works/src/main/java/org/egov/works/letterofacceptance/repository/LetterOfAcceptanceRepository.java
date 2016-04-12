@@ -86,10 +86,9 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
             @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
 
     @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
-    List<String> getWorkOrderNumbersByBillStatusNotAndBillType(@Param("status") String cancelled,
+    List<String> getDistinctNonCancelledWorkOrderNumbersByBillType(@Param("status") String billstatus,
             @Param("billtype") String finalBill);
     
-    @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where cbr.workOrder.id = :workOrderId and (upper(cbr.billstatus) = :createdstatus or upper(cbr.billstatus) = :rejectedstatus)")
-    List<String> findWorkOrderNumberTovalidateCreateContractorBill(@Param("workOrderId") Long workOrderId, @Param("createdstatus")String createdstatus, @Param("rejectedstatus") String rejectedstatus);
-
+    @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where cbr.workOrder.id = :workOrderId and upper(cbr.billstatus) not in (:billstatus1,:billstatus2)")
+    List<String> getContractorBillInWorkflowForWorkorder(@Param("workOrderId") Long workOrderId, @Param("billstatus1")String billstatus1, @Param("billstatus2") String billstatus2);
 }

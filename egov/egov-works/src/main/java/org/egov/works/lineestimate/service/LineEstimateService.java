@@ -807,4 +807,8 @@ public class LineEstimateService {
         }
         return newLineEstimate;
     }
+    
+    public List<String> getEstimateNumberForDepartment(Long departmentId) {
+        return  lineEstimateDetailsRepository.findEstimateNumbersForDepartment(departmentId);
+    }
 }

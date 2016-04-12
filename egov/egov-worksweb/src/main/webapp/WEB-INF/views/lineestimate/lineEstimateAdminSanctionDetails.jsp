@@ -55,7 +55,7 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.administrativesanctionnumber"/><c:if test="${mode != 'readOnly' && lineEstimate.status.code == 'BUDGET_SANCTIONED' }"><span class="mandatory"></span></c:if></th>
-					<c:if test="${mode == 'view' && mode == 'readOnly'}">
+					<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
 					<th><spring:message code="lbl.adminsanctiondate"/></th>	
 					<th><spring:message code="lbl.adminsanctionauthority"/></th>
 					</c:if>
@@ -72,8 +72,6 @@
 							<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
 						</td>
 						<td>
-						<%-- <c:out default="N/A" value="${lineEstimateDetails.estimateNumber}"></c:out> --%>
-						
 							<form:input path="councilResolutionNumber"  id="councilResolutionNumber" name="councilResolutionNumber" value="${councilResolutionNumber}" data-errormsg="Council Resolution Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right" onclick="validatecouncilResolutionNumber();" maxlength="32"/>
 							<form:errors path="councilResolutionNumber" cssClass="add-margin error-msg" />
 						</td>
@@ -82,16 +80,10 @@
 							<form:errors path="councilResolutionDate" cssClass="add-margin error-msg" />
 						</td>
 					</c:if>
-						<c:if
-							test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
-							<td><c:out default="N/A"
-									value="${lineEstimate.adminSanctionNumber }"></c:out></td>
-							<c:if test="${mode == 'view' && mode == 'readOnly'}">
-								<td><fmt:formatDate
-										value="${lineEstimate.adminSanctionDate}" pattern="dd/MM/yyyy" /></td>
-								<td><c:out default="N/A"
-										value="${adminsanctionbydesignation} - ${lineEstimate.adminSanctionBy.name }"></c:out></td>
-							</c:if>
+						<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
+							<td><c:out default="N/A" value="${lineEstimate.adminSanctionNumber }"></c:out></td>
+								<td><fmt:formatDate value="${lineEstimate.adminSanctionDate}" pattern="dd/MM/yyyy" /></td>
+								<td><c:out default="N/A" value="${adminsanctionbydesignation} - ${lineEstimate.adminSanctionBy.name }"></c:out></td>
 							<td><c:out default="N/A" value="${lineEstimate.councilResolutionNumber}"></c:out></td>
 							<c:choose>
 								<c:when test="${lineEstimate.councilResolutionDate != null }">
@@ -99,11 +91,11 @@
 										<td><fmt:formatDate value="${lineEstimate.councilResolutionDate}" pattern="dd/MM/yyyy" /></td>
 									</div>
 								</c:when>
-								<c:otherwise>
-									<div class="col-xs-3 add-margin view-content">
-										<td><c:out default="N/A" value="N/A" />
-									</div>
-								</c:otherwise>
+							<c:otherwise>
+								<div class="col-xs-3 add-margin view-content">
+									<td><c:out default="N/A" value="N/A" />
+								</div>
+							</c:otherwise>
 							</c:choose>
 						</c:if>
 					</tr>

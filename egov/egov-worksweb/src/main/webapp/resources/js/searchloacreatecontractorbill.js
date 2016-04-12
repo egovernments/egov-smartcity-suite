@@ -61,14 +61,12 @@ jQuery('#btncreateloa').click(function(e) {
 	else {
 		$.ajax({
 			type : "GET",
-			url : '/egworks/letterofacceptance/ajaxvalidate-createcontractorbill?workOrderId='
-					+ workOrderId,
+			url : '/egworks/letterofacceptance/ajaxvalidate-createcontractorbill?workOrderId='+ workOrderId,
 			cache : true,
 			dataType : "json",
 			success : function(response) {
 				if (!response) {
-					bootbox.alert("The Contractor Bill is already in process you cannot create new");
-					$('#workOrderNumber').val("");
+					bootbox.alert("There is a bill created for this work identification number " +workOrderNumber+ " which is not approved yet.Please approve it and proceed for creating a new one");
 				} else {
 					window.location = "/egworks/contractorbill/newform?loaNumber=" + workOrderNumber;
 				}
@@ -191,42 +189,40 @@ $(document).ready(function() {
 	});
 });
 
-$(document)
-		.ready(
-				function() {
-					var contractorSearch = new Bloodhound(
-							{
-								datumTokenizer : function(datum) {
-									return Bloodhound.tokenizers
-											.whitespace(datum.value);
-								},
-								queryTokenizer : Bloodhound.tokenizers.whitespace,
-								remote : {
-									url : '/egworks/letterofacceptance/ajaxsearchcontractors-loa?contractorname=%QUERY',
-									filter : function(data) {
-										return $.map(data, function(ct) {
-											return {
-												name : ct,
-											};
-										});
-									}
-								}
-							});
+$(document).ready(function() {
+	var contractorSearch = new Bloodhound(
+			{
+				datumTokenizer : function(datum) {
+					return Bloodhound.tokenizers
+							.whitespace(datum.value);
+				},
+				queryTokenizer : Bloodhound.tokenizers.whitespace,
+				remote : {
+					url : '/egworks/letterofacceptance/ajaxsearchcontractors-loa?contractorname=%QUERY',
+					filter : function(data) {
+						return $.map(data, function(ct) {
+							return {
+								name : ct,
+							};
+						});
+					}
+				}
+			});
 
-					contractorSearch.initialize();
-					var contractorSearch_typeahead = $('#contractorSearch')
-							.typeahead({
-								hint : true,
-								highlight : true,
-								minLength : 3
-							}, {
-								displayKey : 'name',
-								source : contractorSearch.ttAdapter()
-							}).on('typeahead:selected', function(event, data) {
-								$("#contractorCode").val(data.code);
-								$("#contractor").val(data.value);
-							});
-				});
+	contractorSearch.initialize();
+	var contractorSearch_typeahead = $('#contractorSearch')
+			.typeahead({
+				hint : true,
+				highlight : true,
+				minLength : 3
+			}, {
+				displayKey : 'name',
+				source : contractorSearch.ttAdapter()
+			}).on('typeahead:selected', function(event, data) {
+				$("#contractorCode").val(data.code);
+				$("#contractor").val(data.value);
+			});
+});
 
 $(document).ready(function() {
 	var workOrderNumber = new Bloodhound({

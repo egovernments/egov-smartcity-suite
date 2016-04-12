@@ -108,7 +108,9 @@
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
+			<div class="col-sm-3 add-margin">
 			<form:checkbox path="spillOverFlag" id="spillOverFlag" />
+			</div>
 		</div>
 	</div>
 </div>

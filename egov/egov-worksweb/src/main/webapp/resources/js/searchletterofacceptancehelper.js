@@ -62,11 +62,6 @@ function getFormData($form) {
 	return indexed_array;
 }
 
-function viewPDF(){
-	var id = $('#workOrderId').val();
-	window.open("/egworks/letterofacceptance/letterOfAcceptancePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
-}
-
 function renderPDF(){
 	var id = $('#id').val();
 	window.open("/egworks/letterofacceptance/letterOfAcceptancePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
@@ -117,7 +112,7 @@ function callAjaxSearch() {
 				aaSorting : [],
 				columns : [ {
 					"data" : "",
-					"sClass" : "text-center","autoWidth": "false"
+					"sClass" : "text-center","width": "2%"
 				}, {
 					"data" : "workOrderNumber",
 					"sClass" : "text-left","autoWidth": "false"
