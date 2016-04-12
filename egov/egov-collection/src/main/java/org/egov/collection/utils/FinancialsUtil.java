@@ -62,6 +62,8 @@ import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentService;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Utility class for interfacing with financials. This class should be used for
@@ -70,12 +72,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class FinancialsUtil {
     private InstrumentService instrumentService;
     public PersistenceService<InstrumentHeader, Long> instrumentHeaderService;
+    @Autowired
+    @Qualifier("contraService")
     private ContraService contraService;
     @Autowired
     private CreateVoucher createVoucher;
-    private CollectionsUtil collectionsUtil; 
     @Autowired
-    private  ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
 
     /**
@@ -97,18 +100,17 @@ public class FinancialsUtil {
         return instrumentService.getInstrumentTypeByType(type);
     }
 
+    @Transactional
     public CVoucherHeader createRemittanceVoucher(final HashMap<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountCodeList, final List<HashMap<String, Object>> subledgerList) {
         CVoucherHeader voucherHeaderCash = new CVoucherHeader();
-        final String createVoucher = collectionsUtil.getAppConfigValue(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE);
-        if (CollectionConstants.YES.equalsIgnoreCase(createVoucher))
-            try {
-                voucherHeaderCash = createApprovedVoucher(headerdetails, accountCodeList, subledgerList);
-            } catch (final Exception e) {
-                LOGGER.error("Error in createBankRemittance createPreApprovalVoucher when cash amount>0");
-            }
+        try {
+            voucherHeaderCash = createApprovedVoucher(headerdetails, accountCodeList, subledgerList);
+        } catch (final Exception e) {
+            LOGGER.error("Error in createBankRemittance createPreApprovalVoucher when cash amount>0");
+            throw new ApplicationRuntimeException(
+                    "Error in createBankRemittance createPreApprovalVoucher when cash amount>0", e);
+        }
         return voucherHeaderCash;
     }
 
@@ -152,7 +154,7 @@ public class FinancialsUtil {
 
     public CVoucherHeader createPreApprovalVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails)
-                    throws ApplicationRuntimeException {
+            throws ApplicationRuntimeException {
         CVoucherHeader voucherHeaders = null;
         try {
             if (headerdetails instanceof HashMap)
@@ -165,6 +167,7 @@ public class FinancialsUtil {
         return voucherHeaders;
     }
 
+    @Transactional
     public CVoucherHeader createApprovedVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails) {
 
@@ -239,6 +242,7 @@ public class FinancialsUtil {
      * @param instrumentHeader
      */
 
+    @Transactional
     public void updateCheque_DD_Card_Deposit(final Long payInId, final String toBankaccountGlcode,
             final InstrumentHeader instrumentHeader, final Map<String, Object> instrumentMap) {
         contraService.updateCheque_DD_Card_Deposit(payInId, toBankaccountGlcode, instrumentHeader, instrumentMap);
@@ -253,6 +257,7 @@ public class FinancialsUtil {
      * @param instrumentHeader
      */
 
+    @Transactional
     public void updateCheque_DD_Card_Deposit_Receipt(final Long receiptId, final String toBankaccountGlcode,
             final InstrumentHeader instrumentHeader, final Map<String, Object> instrumentMap) {
         contraService.updateCheque_DD_Card_Deposit_Receipt(receiptId, toBankaccountGlcode, instrumentHeader,
@@ -267,6 +272,7 @@ public class FinancialsUtil {
      * @param instrumentHeader
      */
 
+    @Transactional
     public void updateCashDeposit(final Long payInId, final String toBankaccountGlcode,
             final InstrumentHeader instrumentHeader, final Map<String, Object> instrumentMap) {
         contraService.updateCashDeposit(payInId, toBankaccountGlcode, instrumentHeader, instrumentMap);
@@ -317,15 +323,21 @@ public class FinancialsUtil {
         return false;
     }
 
-
-    
+    @Transactional
     public void updateInstrumentHeader(final List<InstrumentHeader> instrumentHeaderList, final EgwStatus status,
             final Bankaccount depositedBankAccount) {
         for (final InstrumentHeader iHeader : instrumentHeaderList) {
-            iHeader.setStatusId(status);
-            iHeader.setBankAccountId(depositedBankAccount);
-            instrumentHeaderService.persist(iHeader);
+
+            instrumentHeaderService.persist(updateInstrumentHeaderStatus(iHeader, status, depositedBankAccount));
         }
+
+    }
+
+    public InstrumentHeader updateInstrumentHeaderStatus(final InstrumentHeader instrumentHeaderObj,
+            final EgwStatus status, final Bankaccount depositedBankAccount) {
+        instrumentHeaderObj.setStatusId(status);
+        instrumentHeaderObj.setBankAccountId(depositedBankAccount);
+        return instrumentHeaderObj;
 
     }
 
@@ -338,7 +350,7 @@ public class FinancialsUtil {
      *
      * @return List of CChartOfAccounts
      */
-    public  List<CChartOfAccounts> getBankChartofAccountCodeList() {
+    public List<CChartOfAccounts> getBankChartofAccountCodeList() {
         return chartOfAccountsHibernateDAO.getBankChartofAccountCodeList();
     }
 
@@ -351,7 +363,6 @@ public class FinancialsUtil {
     }
 
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-        this.collectionsUtil = collectionsUtil;
     }
 
 }

@@ -40,24 +40,7 @@
 
 package org.egov.pgr.service;
 
-import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
-import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
-import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ValidationException;
-
 import org.apache.commons.lang3.StringUtils;
-import org.egov.commons.service.CommonsService;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
@@ -102,6 +85,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.validation.ValidationException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
+
+import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
+
 @Service
 @Transactional(readOnly = true)
 public class ComplaintService {
@@ -127,9 +125,6 @@ public class ComplaintService {
     private CitizenInboxService citizenInboxService;
 
     @Autowired
-    private CommonsService commonsService;
-
-    @Autowired
     private BoundaryService boundaryService;
 
     @Autowired
@@ -140,9 +135,6 @@ public class ComplaintService {
 
     @Autowired
     private EscalationService escalationService;
-
-    @Autowired
-    private CityService cityService;
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -174,7 +166,7 @@ public class ComplaintService {
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0)
             try {
-                final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
+                final Long bndryId = boundaryService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
                 if (bndryId != null && bndryId != 0) {
                     final Boundary location = boundaryService.getBoundaryById(bndryId);
                     complaint.setLocation(location);
@@ -372,35 +364,37 @@ public class ComplaintService {
                     ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
         }
         historyTable.add(map);
-        if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null)
-            Collections.reverse(complaint.getStateHistory());
-        for (final StateHistory stateHistory : complaint.getStateHistory()) {
-            final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
-            HistoryMap.put("date", stateHistory.getDateInfo());
-            HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
-            if (stateHistory.getLastModifiedBy().getType().equals(UserType.CITIZEN)
-                    || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
-                HistoryMap.put("updatedBy", complaint.getComplainant().getName());
-            else
-                HistoryMap.put("updatedBy",
-                        stateHistory.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
-            HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
-            HistoryMap.put("status", stateHistory.getValue());
-            final Position owner = stateHistory.getOwnerPosition();
-            user = stateHistory.getOwnerUser();
-            if (null != user) {
-                HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
-                HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
-                        ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
-            } else if (null != owner && null != owner.getDeptDesig()) {
-                user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                HistoryMap.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
-                HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
-                        ? owner.getDeptDesig().getDepartment().getName() : "");
+        if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null) {
+            List<StateHistory> complaintStateHistory = complaint.getStateHistory();
+            Collections.reverse(complaintStateHistory);
+            for (final StateHistory stateHistory : complaintStateHistory) {
+                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                HistoryMap.put("date", stateHistory.getDateInfo());
+                HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
+                if (stateHistory.getLastModifiedBy().getType().equals(UserType.CITIZEN)
+                        || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
+                    HistoryMap.put("updatedBy", complaint.getComplainant().getName());
+                else
+                    HistoryMap.put("updatedBy",
+                            stateHistory.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
+                HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
+                HistoryMap.put("status", stateHistory.getValue());
+                final Position owner = stateHistory.getOwnerPosition();
+                user = stateHistory.getOwnerUser();
+                if (null != user) {
+                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
+                    HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
+                    HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
+                            ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
+                } else if (null != owner && null != owner.getDeptDesig()) {
+                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    HistoryMap.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                    HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
+                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
+                            ? owner.getDeptDesig().getDepartment().getName() : "");
+                }
+                historyTable.add(HistoryMap);
             }
-            historyTable.add(HistoryMap);
         }
         return historyTable;
     }

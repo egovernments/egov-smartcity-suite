@@ -59,7 +59,7 @@
 						</label>
 						<div class="col-sm-4" >
 							<input style="display:none" type="password">
-							<input type="password" name="newPassword" class="form-control check-password" id="new-pass" required="required" maxlength="32" data-toggle="popover" data-content='${pwdmsg}'/>
+							<input type="password" name="newPassword" autocomplete="new-password" class="form-control check-password" id="new-pass" required="required" maxlength="32" data-toggle="popover" data-content='${pwdmsg}'/>
 						</div>
 					</div>
 					
@@ -68,7 +68,7 @@
 							<spring:message code="lbl.pwd.confirm"/> <span class="mandatory"></span> 
 						</label>
 						<div class="col-sm-4" >
-							<input type="password" name="confirmPwd" class="form-control check-password" id="retype-pass" required="required" maxlength="32"/>
+							<input type="password" name="confirmPwd" autocomplete="new-password" class="form-control check-password" id="retype-pass" required="required" maxlength="32"/>
 							<div class="password-error error-msg display-hide"><spring:message code="lbl.pwd.mismatch"/> </div>
 						</div>
 					</div>

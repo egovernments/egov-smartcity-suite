@@ -53,8 +53,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRAN
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
@@ -131,7 +133,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),
         @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "searchProperty-searchOwnerDetails", params = {
                 "namespace", "/search", "assessmentNum", "${assessmentNum}" }),
-        @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateBill", params = {
+        @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateDemandBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
@@ -570,7 +572,7 @@ public class SearchPropertyAction extends BaseFormAction {
             setRoleName(propertyTaxUtil.getRolesForUserId(userId));
 
         if (StringUtils.isNotBlank(assessmentNum)) {
-            basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(assessmentNum, null);
+            basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
         }
     }
 
@@ -659,15 +661,20 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (!property.getIsExemptedFromTax()) {
-                    searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
+                    searchResultMap.put("currFirstHalfDemand", demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
+                    searchResultMap.put("currSecondHalfDemand", demandCollMap.get(CURR_SECONDHALF_DMD_STR).toString());
                     searchResultMap.put("arrDemandDue",
                             demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
-                    searchResultMap.put("currDemandDue",
-                            demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
+                    searchResultMap.put("currFirstHalfDemandDue",
+                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR).subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
+                    searchResultMap.put("currSecondHalfDemandDue",
+                            demandCollMap.get(CURR_SECONDHALF_DMD_STR).subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
                 } else {
-                    searchResultMap.put("currDemand", "0");
-                    searchResultMap.put("arrDemandDue", "0");
-                    searchResultMap.put("currDemandDue", "0");
+                    searchResultMap.put("currFirstHalfDemand", "0");
+                    searchResultMap.put("currFirstHalfDemandDue", "0");
+                    searchResultMap.put("currSecondHalfDemand", "0");
+                    searchResultMap.put("currSecondHalfDemandDue", "0");
+                    searchResultMap.put("arrDemandDue", "0"); 
                 }
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Assessment Number : " + searchResultMap.get("assessmentNum") + ", " + "Owner Name : "
@@ -755,12 +762,17 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (pmv.getIsExempted()) {
-                    searchResultMap.put("currDemand", "0");
-                    searchResultMap.put("arrDemandDue", "0");
-                    searchResultMap.put("currDemandDue", "0");
+                    searchResultMap.put("currFirstHalfDemand", "0");
+                    searchResultMap.put("currFirstHalfDemandDue", "0");
+                    searchResultMap.put("currSecondHalfDemand", "0");
+                    searchResultMap.put("currSecondHalfDemandDue", "0");
+                    searchResultMap.put("arrDemandDue", "0"); 
                 } else {
-                    searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
-                    searchResultMap.put("currDemandDue", pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())
+                    searchResultMap.put("currFirstHalfDemand", pmv.getAggrCurrFirstHalfDmd().toString());
+                    searchResultMap.put("currFirstHalfDemandDue", pmv.getAggrCurrFirstHalfDmd().subtract(pmv.getAggrCurrFirstHalfColl())
+                            .toString());
+                    searchResultMap.put("currSecondHalfDemand", pmv.getAggrCurrSecondHalfDmd().toString());
+                    searchResultMap.put("currSecondHalfDemandDue", pmv.getAggrCurrSecondHalfDmd().subtract(pmv.getAggrCurrSecondHalfColl())
                             .toString());
                     searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
                 }

@@ -1054,7 +1054,7 @@ public class CollectionObjectFactory {
 		fund.setCode(code + getRandomNumber());
 		fund.setLlevel(BigDecimal.valueOf(0));
 		fund.setIsactive(true);
-		fund.setCreated(new Date());
+		fund.setCreatedDate(new Date());
 		session.saveOrUpdate(fund);
 		return fund;
 	}

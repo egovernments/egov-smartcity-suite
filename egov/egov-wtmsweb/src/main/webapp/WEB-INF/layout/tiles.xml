@@ -210,6 +210,10 @@
         <put-attribute name="page-title" value="title.category.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/category-master-success.jsp"/>
     </definition>
+    <definition name="category-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-list.jsp"/>
+    </definition>
     <definition name="application-process-time-master" extends="base_layout">
         <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master.jsp"/>
@@ -234,6 +238,10 @@
         <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage-master-success.jsp"/>
     </definition>
+    <definition name="usage-type-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-master-view.jsp"/>
+    </definition> 
     <definition name="pipesize-master" extends="base_layout">
         <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master.jsp"/>
@@ -250,4 +258,37 @@
         <put-attribute name="page-title" value="title.migrateddata" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dcbViewMigratedData.jsp"/>
     </definition>
+    <definition name="waterRates-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master-view.jsp"/>
+    </definition>
+     <definition name="property-usage-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyUsage.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-usage-master.jsp"/>
+    </definition>
+    <definition name="property-usage-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyUsage.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-usage-master-list.jsp"/>
+    </definition>
+     <definition name="property-category-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyCategory.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-category-master.jsp"/>
+    </definition>
+    <definition name="property-category-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyCategory.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-category-master-view.jsp"/>
+    </definition>
+     <definition name="property-pipesize-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyPipeSize.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-pipesize-master.jsp"/>
+    </definition>
+    <definition name="property-pipesize-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyPipeSize.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-pipesize-list.jsp"/>
+    </definition>
+    <definition name="pipesize-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-list.jsp"/>
+    </definition>
+    
 </tiles-definitions>

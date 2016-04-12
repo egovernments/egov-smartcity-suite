@@ -39,7 +39,5 @@
  */
 package org.egov.commons.dao;
 
-import org.egov.infstr.dao.GenericDAO;
-
-public interface WardDAO extends GenericDAO {
+public interface WardDAO  {
 }

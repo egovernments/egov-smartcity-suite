@@ -289,4 +289,9 @@
     	<put-attribute name="body" value="/WEB-INF/views/reports/ulbWiseDcbReport-form.jsp"/>
     </definition>
     
+      <definition name="ownerdetails-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.ownerdetail.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/editOwner/ownerdetails-success.jsp"/>
+    </definition>
+    
 </tiles-definitions> 

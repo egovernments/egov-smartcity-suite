@@ -70,7 +70,6 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.entity.Source;
-import org.egov.demand.model.EgDemand;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.masters.entity.ApplicationType;
@@ -180,10 +179,6 @@ public class WaterConnectionDetails extends StateAware {
     @Temporal(value = TemporalType.DATE)
     private Date approvalDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "demand")
-    private EgDemand demand;
-
     @Temporal(value = TemporalType.DATE)
     private Date workOrderDate;
 
@@ -219,6 +214,10 @@ public class WaterConnectionDetails extends StateAware {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<WaterDemandConnection> waterDemandConnection = new ArrayList<WaterDemandConnection>(0);
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConnectionEstimationDetails> estimationDetails = new ArrayList<ConnectionEstimationDetails>(0);
 
     @OrderBy("id desc")
@@ -228,9 +227,6 @@ public class WaterConnectionDetails extends StateAware {
     @OrderBy("ID DESC")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<NonMeteredConnBillDetails>(0);
-
-    @Transient
-    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
 
     private String closeConnectionType;
 
@@ -254,20 +250,16 @@ public class WaterConnectionDetails extends StateAware {
     @Transient
     private String approvalComent;
 
+    @Transient
+    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(
+            0);
+
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
     }
 
     public void setMeterConnection(final List<MeterReadingConnectionDetails> meterConnection) {
         this.meterConnection = meterConnection;
-    }
-
-    public List<DemandDetail> getDemandDetailBeanList() {
-        return demandDetailBeanList;
-    }
-
-    public void setDemandDetailBeanList(final List<DemandDetail> demandDetailBeanList) {
-        this.demandDetailBeanList = demandDetailBeanList;
     }
 
     @Override
@@ -282,7 +274,7 @@ public class WaterConnectionDetails extends StateAware {
 
     @Override
     public String myLinkId() {
-        return (applicationNumber !=null? applicationNumber :connection.getConsumerCode());
+        return applicationNumber != null ? applicationNumber : connection.getConsumerCode();
 
     }
 
@@ -438,14 +430,6 @@ public class WaterConnectionDetails extends StateAware {
         this.numberOfRooms = numberOfRooms;
     }
 
-    public EgDemand getDemand() {
-        return demand;
-    }
-
-    public void setDemand(final EgDemand demand) {
-        this.demand = demand;
-    }
-
     public FieldInspectionDetails getFieldInspectionDetails() {
         return fieldInspectionDetails;
     }
@@ -456,6 +440,18 @@ public class WaterConnectionDetails extends StateAware {
 
     public List<ApplicationDocuments> getApplicationDocs() {
         return applicationDocs;
+    }
+
+    public List<WaterDemandConnection> getWaterDemandConnection() {
+        return waterDemandConnection;
+    }
+
+    public void setWaterDemandConnection(final List<WaterDemandConnection> waterDemandConnection) {
+        this.waterDemandConnection = waterDemandConnection;
+    }
+
+    public void addWaterDemandConnection(final WaterDemandConnection waterDemandConnection) {
+        getWaterDemandConnection().add(waterDemandConnection);
     }
 
     public void setApplicationDocs(final List<ApplicationDocuments> applicationDocs) {
@@ -481,8 +477,9 @@ public class WaterConnectionDetails extends StateAware {
     @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        return String.format("Application Number %s with application date %s.", (applicationNumber !=null?applicationNumber:connection.getConsumerCode()),
-                (applicationDate!=null ?formatter.format(applicationDate):(formatter.format(new Date()))));
+        return String.format("Application Number %s with application date %s.",
+                applicationNumber != null ? applicationNumber : connection.getConsumerCode(),
+                applicationDate != null ? formatter.format(applicationDate) : formatter.format(new Date()));
     }
 
     public String getBplCardHolderName() {
@@ -643,6 +640,15 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
+    }
+
+    public List<DemandDetail> getDemandDetailBeanList() {
+        return demandDetailBeanList;
+    }
+
+    public void setDemandDetailBeanList(
+            final List<DemandDetail> demandDetailBeanList) {
+        this.demandDetailBeanList = demandDetailBeanList;
     }
 
 }

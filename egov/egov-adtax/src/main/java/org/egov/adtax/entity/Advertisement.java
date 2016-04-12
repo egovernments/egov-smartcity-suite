@@ -124,6 +124,11 @@ public class Advertisement extends AbstractAuditable {
     private SubCategory subCategory;
     private Boolean legacy = false;
     private BigDecimal pendingTax;
+    /*
+     * This field will be used to save penalty calculation date. For legacy entries current financial year start date
+     * will be saved in this field. For new advertisement entries, application date will be consider as penalty calculation date.
+     * If record in workflow, we can consider approval date to calculate penalty.
+     */
     private Date penaltyCalculationDate;
 
     @NotNull

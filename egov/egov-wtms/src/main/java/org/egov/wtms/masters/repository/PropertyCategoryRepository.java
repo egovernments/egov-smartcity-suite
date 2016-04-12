@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.masters.repository;
 
+import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PropertyCategory;
@@ -48,13 +49,15 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PropertyCategoryRepository extends JpaRepository<PropertyCategory, Long> {
-    
-   
-    PropertyCategory findByPropertyType_codeAndConnectionCategory_code(String propertyType,String categoryCode);
-    
-    PropertyCategory findByPropertyTypeAndConnectionCategory(PropertyType propertyType,ConnectionCategory connectionCategory);
-    
+
+    List<PropertyCategory> findAllByPropertyTypeAndConnectionCategory(PropertyType propertyType,
+            ConnectionCategory connectionCategory);
+
+    PropertyCategory findByPropertyType_codeAndConnectionCategory_code(String propertyType, String categoryCode);
+
+    PropertyCategory findByPropertyTypeAndConnectionCategory(PropertyType propertyType,
+            ConnectionCategory connectionCategory);
+
+    PropertyCategory findByPropertyTypeAndConnectionCategory_name(PropertyType propertyType, String categoryType);
+
 }
-
-
-

@@ -83,7 +83,7 @@ public class AgencyReportController extends GenericController {
 
     @Autowired
     private AdvertisementPermitDetailService advertisementPermitDetailService;
-
+    
     @Autowired
     private ApplicationProperties applicationProperties;
 
@@ -133,9 +133,7 @@ public class AgencyReportController extends GenericController {
                 HoardingDcbReport hoardingReport = new HoardingDcbReport();
 
                 final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                        .checkPendingAmountByDemand(advpermitdetail.getAdvertisement().getDemandId(),
-                                advpermitdetail.getAdvertisement()
-                                        .getPenaltyCalculationDate());
+                        .checkPendingAmountByDemand(advpermitdetail);
 
                 hoardingReport.setDemandAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTAL_DEMAND));
                 hoardingReport.setCollectedAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTALCOLLECTION));

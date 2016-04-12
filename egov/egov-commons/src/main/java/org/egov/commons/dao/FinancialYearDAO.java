@@ -39,13 +39,10 @@
  */
 package org.egov.commons.dao;
 
-import java.util.Collection;
+import org.egov.commons.CFinancialYear;
+
 import java.util.Date;
 import java.util.List;
-
-import org.egov.commons.CFinancialYear ;
-import org.egov.commons.CFinancialYear;
-import org.egov.infstr.dao.GenericDAO;
 
 public interface FinancialYearDAO  {
     public String getCurrYearFiscalId();

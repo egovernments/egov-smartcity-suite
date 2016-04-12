@@ -44,8 +44,6 @@ package org.egov.ptis.client.model;
 
 import java.math.BigDecimal;
 
-import org.egov.commons.Installment;
-
 /**
  * Bean to hold penalty and rebate amounts for a installment
  * 

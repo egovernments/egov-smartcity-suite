@@ -42,7 +42,6 @@ import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ApplicationProcessTime;
 import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
@@ -54,7 +53,6 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
-import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.DonationHeaderService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
@@ -77,13 +75,10 @@ public class AjaxConnectionController {
 
     @Autowired
     private DonationHeaderService donationHeaderService;
-    
-    @Autowired
-    private DonationDetailsService donationDetailsService;
 
     @Autowired
     private UsageTypeService usageTypeService;
-    
+
     @Autowired
     private ApplicationTypeService applicationTypeService;
 
@@ -92,10 +87,10 @@ public class AjaxConnectionController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
-    
+
     @Autowired
     private WaterRatesHeaderService waterRatesHeaderService;
-    
+
     @Autowired
     private WaterRatesDetailsService waterRatesDetailsService;
 
@@ -104,28 +99,26 @@ public class AjaxConnectionController {
 
     @Autowired
     private ConnectionCategoryService connectionCategoryService;
-    
+
     @Autowired
     private ApplicationProcessTimeService applicationProcessTimeService;
-    
-    
 
     @RequestMapping(value = "/ajaxconnection/check-primaryconnection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
         return newConnectionService.checkConnectionPresentForProperty(propertyID);
     }
-    
+
     @RequestMapping(value = "/ajaxconnection/assignmentByPositionId", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(@RequestParam final Long approvalPositionId, 
-    		final HttpServletResponse response) {
-        return   waterConnectionDetailsService.getApprovalPositionOnValidate(approvalPositionId);
+    public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(
+            @RequestParam final Long approvalPositionId, final HttpServletResponse response) {
+        return waterConnectionDetailsService.getApprovalPositionOnValidate(approvalPositionId);
     }
 
     @RequestMapping(value = "/ajax-CategoryTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<ConnectionCategory> getAllCategoryTypesByPropertyType(
             @RequestParam final Long propertyType, @RequestParam final String connectionType) {
         List<ConnectionCategory> categoryTypes = new ArrayList<ConnectionCategory>(0);
-        categoryTypes = connectionCategoryService.getAllCategoryTypesByPropertyType(propertyType, connectionType);
+        categoryTypes = connectionCategoryService.getAllActiveCategoryTypesByPropertyType(propertyType, connectionType);
         categoryTypes.forEach(categoryType -> categoryType.toString());
         return categoryTypes;
     }
@@ -133,7 +126,7 @@ public class AjaxConnectionController {
     @RequestMapping(value = "/ajax-UsageTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<UsageType> getAllUsageTypesByPropertyType(@RequestParam final Long propertyType) {
         List<UsageType> usageTypes = new ArrayList<UsageType>(0);
-        usageTypes = usageTypeService.getAllUsageTypesByPropertyType(propertyType);
+        usageTypes = usageTypeService.getAllActiveUsageTypesByPropertyType(propertyType);
         usageTypes.forEach(usageType -> usageType.toString());
         return usageTypes;
     }
@@ -158,8 +151,8 @@ public class AjaxConnectionController {
             @RequestParam final String requestConsumerCode) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(requestConsumerCode);
-        final Boolean enteredMonthReadingExist = connectionDemandService.meterEntryAllReadyExistForCurrentMonth(
-                waterConnectionDetails, givenDate);
+        final Boolean enteredMonthReadingExist = connectionDemandService
+                .meterEntryAllReadyExistForCurrentMonth(waterConnectionDetails, givenDate);
         return enteredMonthReadingExist;
     }
 
@@ -182,50 +175,51 @@ public class AjaxConnectionController {
     public @ResponseBody double getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
             @RequestParam final ConnectionCategory categoryType, @RequestParam final UsageType usageType,
             @RequestParam final Long maxPipeSize, @RequestParam final Long minPipeSize) {
-        PipeSize minPipesizeObj=pipeSizeService.findBy(minPipeSize);
-        PipeSize maxPipesizeObj=pipeSizeService.findBy(maxPipeSize);
-        final  List<DonationHeader> donationHeaderTempList = donationHeaderService
+        final PipeSize minPipesizeObj = pipeSizeService.findOne(minPipeSize);
+        final PipeSize maxPipesizeObj = pipeSizeService.findOne(maxPipeSize);
+        final List<DonationHeader> donationHeaderTempList = donationHeaderService
                 .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType, categoryType, usageType,
-                		minPipesizeObj.getSizeInInch() , maxPipesizeObj.getSizeInInch());
+                        minPipesizeObj.getSizeInInch(), maxPipesizeObj.getSizeInInch());
         if (donationHeaderTempList.isEmpty())
             return 0;
-        else{
-               return 1;
-            }
+        else
+            return 1;
     }
-    
+
     @RequestMapping(value = "/ajax-minimumpipesizeininch", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double getMinimumPipeSizeInInch(
-            @RequestParam final Long minPipeSize) {
-          PipeSize minPipesizeObj=pipeSizeService.findBy(minPipeSize);
-          return minPipesizeObj.getSizeInInch();
+    public @ResponseBody double getMinimumPipeSizeInInch(@RequestParam final Long minPipeSize) {
+        final PipeSize minPipesizeObj = pipeSizeService.findOne(minPipeSize);
+        return minPipesizeObj.getSizeInInch();
     }
-    
+
     @RequestMapping(value = "/ajax-maximumpipesizeininch", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double getMaximumPipeSizeInInch(
-            @RequestParam final Long maxPipeSize) {
-          PipeSize maxPipesizeObj=pipeSizeService.findBy(maxPipeSize);
-          return maxPipesizeObj.getSizeInInch();
+    public @ResponseBody double getMaximumPipeSizeInInch(@RequestParam final Long maxPipeSize) {
+        final PipeSize maxPipesizeObj = pipeSizeService.findOne(maxPipeSize);
+        return maxPipesizeObj.getSizeInInch();
     }
-    
+
     @RequestMapping(value = "/ajax-WaterRatescombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam final ConnectionType categoryType,@RequestParam final WaterSource waterSource,
-            @RequestParam final UsageType usageType,
+    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam final ConnectionType categoryType,
+            @RequestParam final WaterSource waterSource, @RequestParam final UsageType usageType,
             @RequestParam final PipeSize pipeSize) {
-        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService.findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(categoryType, usageType, waterSource, pipeSize);
-        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService. findByWaterRatesHeader(waterRatesHeader);
-       
+        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService
+                .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(categoryType, usageType, waterSource,
+                        pipeSize);
+        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeader(waterRatesHeader);
+
         if (waterRatesDetails == null)
             return 0;
         else
             return waterRatesDetails.getMonthlyRate();
     }
-    
+
     @RequestMapping(value = "/ajax-getapplicationprocesstime", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double getApplicationProcessTime(@RequestParam final Long applicationType ,@RequestParam final Long categoryType) {
-        
+    public @ResponseBody double getApplicationProcessTime(@RequestParam final Long applicationType,
+            @RequestParam final Long categoryType) {
+
         ApplicationProcessTime applicationprocessTime = new ApplicationProcessTime();
-        applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(applicationTypeService.findBy(applicationType),connectionCategoryService.findBy(categoryType));
+        applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(
+                applicationTypeService.findBy(applicationType), connectionCategoryService.findOne(categoryType));
         if (applicationprocessTime == null)
             return 0;
         else

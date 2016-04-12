@@ -39,17 +39,7 @@
  */
 package org.egov.commons.dao;
 
-import org.egov.commons.EgwSatuschange;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Session;
+public class EgwSatuschangeHibernateDAO {
+	
 
-public class EgwSatuschangeHibernateDAO extends GenericHibernateDAO {
-	
-	public EgwSatuschangeHibernateDAO() {
-		super(EgwSatuschange.class,null);
-	}
-	
-	public EgwSatuschangeHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
 }

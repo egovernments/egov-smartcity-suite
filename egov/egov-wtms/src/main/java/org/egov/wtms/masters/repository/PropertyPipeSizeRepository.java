@@ -39,10 +39,9 @@
  */
 package org.egov.wtms.masters.repository;
 
-
+import java.util.List;
 
 import org.egov.wtms.masters.entity.PipeSize;
-
 import org.egov.wtms.masters.entity.PropertyPipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,16 +49,15 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PropertyPipeSizeRepository extends JpaRepository<PropertyPipeSize, Long> {
-    
-   
-    PropertyPipeSize findByPropertyType_codeAndPipeSize_code(String propertyType,String code);
-    
-    PropertyPipeSize findByPropertyTypeAndPipeSize(PropertyType propertyType,PipeSize pipesize);
-    
-    PropertyPipeSize findByPropertyTypeAndPipeSize_sizeInMilimeter(PropertyType propertyType,double  sizeInMilimeter);
-    
-    PropertyPipeSize findByPropertyTypeAndPipeSize_code(PropertyType propertyType,String code);
-    
+
+    PropertyPipeSize findByPropertyType_codeAndPipeSize_code(String propertyType, String code);
+
+    PropertyPipeSize findByPropertyTypeAndPipeSize(PropertyType propertyType, PipeSize pipesize);
+
+    PropertyPipeSize findByPropertyTypeAndPipeSize_sizeInMilimeter(PropertyType propertyType, double sizeInMilimeter);
+
+    PropertyPipeSize findByPropertyTypeAndPipeSize_code(PropertyType propertyType, String code);
+
+    List<PropertyPipeSize> findAllByPropertyTypeAndPipeSize(PropertyType propertyType, PipeSize pipesize);
+
 }
-
-

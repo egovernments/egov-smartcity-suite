@@ -180,7 +180,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
             List<StateHistory> history = null;
             String code = "";
             if (mbHeader.getCurrentState() != null && mbHeader.getCurrentState().getHistory() != null)
-                history = mbHeader.getCurrentState().getHistory();
+                history = mbHeader.getStateHistory();
             if (history != null) {
                 Collections.reverse(history);
                 for (final StateHistory ad : history)

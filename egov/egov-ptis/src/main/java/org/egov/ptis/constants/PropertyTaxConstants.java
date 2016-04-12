@@ -110,6 +110,10 @@ public interface PropertyTaxConstants {
     public static final String ARR_PENALTY_COLL_STR = "ARR_PENALTY_COLL";
     public static final String CURRENT_REBATE_STR = "CURRENT_REBATE";
     public static final String ARREAR_REBATE_STR = "ARREAR_REBATE";
+    public static final String CURR_FIRSTHALF_DMD_STR = "CURR_FIRSTHALF_DMD";
+    public static final String CURR_FIRSTHALF_COLL_STR = "CURR_FIRSTHALF_COLL";
+    public static final String CURR_SECONDHALF_DMD_STR = "CURR_SECONDHALF_DMD";
+    public static final String CURR_SECONDHALF_COLL_STR = "CURR_SECONDHALF_COLL";
 
     public static final String BUILT_UP_PROPERTY = "BuiltUpProperty";
     public static final String VACANT_PROPERTY = "VacantProperty";
@@ -799,7 +803,7 @@ public interface PropertyTaxConstants {
         }
     };
 
-    public static final String GLCODE_FOR_TAXREBATE = "4311004";// 2801002
+    public static final String GLCODE_FOR_TAXREBATE = "2202103";// 2801002
     public static final String GLCODE_FOR_PENALTY = "1402002";// 1402001,
     // 4314208
 
@@ -962,6 +966,7 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_BILL = "Bill";
     public static final String NOTICE_TYPE_SPECIAL_NOTICE = "Special Notice";
     public static final String NOTICE_TYPE_MUTATION_CERTIFICATE = "Mutation Certificate";
+    public static final String NOTICE_TYPE_DEMAND_BILL = "Demand Bill";
 
     public static final String CREATE_AUDIT_ACTION = "Create Property";
     public static final String MODIFY_AUDIT_ACTION = "Modify Property";
@@ -1060,7 +1065,7 @@ public interface PropertyTaxConstants {
     public static final String REPORT_TEMPLATENAME_SPECIAL_NOTICE = "mainSpecialNotice";
     public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
     public static final String IMAGE_CONTEXT_PATH = "/egi";
-    public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "demandNoticeInfo";
+    public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "DemandBill";
     public static final String REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE = "revPetitionHearingNotice";
     public static final String NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE = "Revision Petition Hearing Notice";
     public static final String REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT = "revPetitionEndorsement";
@@ -1369,4 +1374,9 @@ public interface PropertyTaxConstants {
             
         }
     };
+    
+    public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
+    public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
+    public static final String ARREARS = "Arrears";
+    
 }

@@ -514,14 +514,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
                         mutationId);
                 basicproperty = propertyMutation.getBasicProperty();
-                historyMap = propertyService.populateHistory(propertyMutation.getState());
+                historyMap = propertyService.populateHistory(propertyMutation);
             }
 
             final Map<String, BigDecimal> propertyTaxDetails = propertyService
                     .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
             currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
-            currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR)
-                    .subtract(propertyTaxDetails.get(CURR_COLL_STR));
+            currentPropertyTaxDue = propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR)
+                    .subtract(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR));
             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());

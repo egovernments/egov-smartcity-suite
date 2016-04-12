@@ -69,9 +69,11 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.service.MeterCostService;
@@ -129,6 +131,9 @@ public class UpdateConnectionController extends GenericConnectionController {
     
     @Autowired
     private ReportGenerationService reportGenerationService;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Autowired
     public UpdateConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -160,9 +165,9 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute("additionalRule", "CLOSECONNECTION");
             model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
             if (waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE))
-                waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.toString());
+                waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
             else
-                waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.toString());
+                waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
 
             model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
         }
@@ -323,20 +328,24 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                 && mode.equalsIgnoreCase("fieldInspection"))
             if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.SUBMITWORKFLOWACTION)) {
-                final ConnectionCategory connectionCategory = connectionCategoryService.findBy(waterConnectionDetails
+                final ConnectionCategory connectionCategory = connectionCategoryService.findOne(waterConnectionDetails
                         .getCategory().getId());
                 if (connectionCategory != null
                         && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
                         && waterConnectionDetails.getBplCardHolderName() != null)
                     waterConnectionDetails.setBplCardHolderName(null);
-
                 populateEstimationDetails(waterConnectionDetails);
-                waterConnectionDetails.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
+                WaterDemandConnection waterDemandConnection =  waterTaxUtils.getCurrentDemand(waterConnectionDetails);
+                waterDemandConnection.setDemand(connectionDemandService.createDemand(waterConnectionDetails)); 
+                waterDemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+                waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
+                waterDemandConnectionService.createWaterDemandConnection(waterDemandConnection);
                 waterConnectionDetailsService.save(waterConnectionDetails);
                 waterConnectionDetailsService.getCurrentSession().flush();
                 // Attach any other file during field inspection and estimation
                 final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
                 Iterator<FileStoreMapper> fsIterator = null;
+                
                 if (fileStoreSet != null && !fileStoreSet.isEmpty())
                     fsIterator = fileStoreSet.iterator();
                 if (fsIterator != null && fsIterator.hasNext())

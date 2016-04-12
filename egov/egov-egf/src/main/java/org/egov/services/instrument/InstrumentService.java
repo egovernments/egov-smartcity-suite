@@ -888,7 +888,7 @@ public class InstrumentService {
             accountCheques = (AccountCheques) persistenceService
                     .find("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "
                             + " ac.bankAccountId.id=? and cd.allotedTo.id=? and ? between ac.fromChequeNumber and ac.toChequeNumber and ac.serialNo=? ",
-                            bankAccountId, departmentId.longValue(), chequeNumber, serialNo);
+                            bankAccountId, departmentId.longValue(), chequeNumber, Long.valueOf(serialNo));
         else
             accountCheques = (AccountCheques) persistenceService
                     .find("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "

@@ -116,7 +116,7 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
             final BigDecimal creditAmount, final String glCodeForDemandDetail, final String description) {
 
         final EgBillDetails billdetail = new EgBillDetails();
-        billdetail.setFunctionCode(null); // TODO ADD FUNCTIONCODE
+        billdetail.setFunctionCode(AdvertisementTaxConstants.ADVERTISEMENT_FUCNTION_CODE);
         billdetail.setOrderNo(orderNo);
         billdetail.setCreateDate(new Date());
         billdetail.setModifiedDate(new Date());

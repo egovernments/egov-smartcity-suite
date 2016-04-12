@@ -40,48 +40,50 @@
 package org.egov.ptis.scheduler;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 //import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.service.bill.BillService;
+import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.quartz.DisallowConcurrentExecution;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Transactional
-@SuppressWarnings("unchecked")
-@DisallowConcurrentExecution
 public class BulkBillGenerationJob extends AbstractQuartzJob  {
 
     private static final Logger LOGGER = Logger
                     .getLogger(BulkBillGenerationJob.class);
 
     private Integer billsCount;
-    private Integer modulo;
-    @Autowired
-    private BillService billService;
-    protected PersistenceService persistenceService;
+    private Integer modulo; 
+    private DemandBillService demandBillService;
     
-
-    public BulkBillGenerationJob() {
-            LOGGER.info("BulkBillGenerationJob instantiated.........." + this);
-    }
+    @Autowired
+    private ApplicationContext beanProvider;
+    @Autowired
+    private UserService userService;
 
     @Override
     public void executeJob() {
         LOGGER.debug("Entered into executeJob" + modulo);
-        billService.setPersistenceService(persistenceService);
-        billService.bulkBillGeneration(modulo, billsCount);
+        super.prepareCityThreadLocal();
+        DemandBillService demandBillService = null;
+        try {
+            demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
+        } catch (NoSuchBeanDefinitionException e) {
+            LOGGER.warn("DemandBillService implementation not found");
+        }
+        if (demandBillService != null)
+            demandBillService.bulkBillGeneration(modulo, billsCount);
     }
             
-    public PersistenceService getPersistenceService() {
-            return persistenceService;
-    }
-
-    public void setPersistenceService(PersistenceService persistenceService) {
-            this.persistenceService = persistenceService;
-    }
-        
     public Integer getBillsCount() { 
         return billsCount;
     }
@@ -97,4 +99,14 @@ public class BulkBillGenerationJob extends AbstractQuartzJob  {
     public void setModulo(Integer modulo) {
             this.modulo = modulo;
     }
+
+    public DemandBillService getDemandBillService() {
+        return demandBillService;
+    }
+
+    public void setDemandBillService(DemandBillService demandBillService) {
+        this.demandBillService = demandBillService;
+    }
+    
+    
 }

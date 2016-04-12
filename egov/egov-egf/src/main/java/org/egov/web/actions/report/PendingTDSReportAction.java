@@ -264,7 +264,7 @@ public class PendingTDSReportAction extends BaseFormAction {
         final RemittanceBean remittanceBean = new RemittanceBean();
         remittanceBean.setRecoveryId(recovery.getId());
         if (department.getId() != null && department.getId() != -1)
-            deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.vouchermis.departmentid.id="
+            deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.vouchermis.departmentid.id="
                     + department.getId();
         if (detailKey != null && detailKey != -1)
             partyNameQuery = " and egRemittanceGldtl.generalledgerdetail.detailkeyid=" + detailKey;
@@ -273,15 +273,15 @@ public class PendingTDSReportAction extends BaseFormAction {
         pendingTDS = remitRecoveryService.getRecoveryDetailsForReport(remittanceBean, getVoucherHeader(), detailKey);
         final StringBuffer query1 = new StringBuffer(1000);
         List<EgRemittanceDetail> result1 = new ArrayList<EgRemittanceDetail>();
-        query1.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalledger.glcodeId.id=? "
+        query1.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalLedgerId.glcodeId.id=? "
                 +
-                "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 5 and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.status=0 and "
+                "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 5 and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status=0 and "
                 +
-                "egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate <= ? ");
+                "egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate <= ? ");
         if (fromDate != null)
-            query1.append(" and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate >= ?");
+            query1.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate >= ?");
         query1.append(deptQuery).append(partyNameQuery);
-        query1.append(" order by egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherNumber ");
+        query1.append(" order by egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber ");
         if (fromDate != null)
             result1 = persistenceService.findAllBy(query1.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
                     asOnDate, fromDate);
@@ -323,22 +323,22 @@ public class PendingTDSReportAction extends BaseFormAction {
         }
         if (showRemittedEntries) {
             if (department.getId() != null && department.getId() != -1)
-                deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.vouchermis.departmentid.id="
+                deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.vouchermis.departmentid.id="
                         + department.getId();
             if (detailKey != null && detailKey != -1)
                 partyNameQuery = " and egRemittanceGldtl.generalledgerdetail.detailkeyid=" + detailKey;
             final StringBuffer query = new StringBuffer(1000);
            
             List<EgRemittanceDetail> result = new ArrayList<EgRemittanceDetail>();
-            query.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalledger.glcodeId.id=? "
+            query.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalLedgerId.glcodeId.id=? "
                     +
-                    "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 0 and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.status=0 and "
+                    "and egRemittance.fund.id=? and egRemittance.voucherheader.status = 0 and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status=0 and "
                     +
-                    "egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate <= ? ");
+                    "egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate <= ? ");
             if (fromDate != null)
-                query.append(" and egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherDate >= ?");
+                query.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate >= ?");
             query.append(deptQuery).append(partyNameQuery);
-            query.append(" order by egRemittanceGldtl.generalledgerdetail.generalledger.voucherHeaderId.voucherNumber ");
+            query.append(" order by egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber ");
             if (fromDate != null)
                 result = persistenceService.findAllBy(query.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
                         asOnDate, fromDate);

@@ -117,7 +117,7 @@
 										<div class="input-group-addon style-label">
 											<i class="entypo-key theme-color style-color"></i>
 										</div>
-										<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" maxlength="32" autocomplete="off" required="required" data-container="#wrap" data-toggle="popover" data-content='${pwdmsg}' />
+										<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" maxlength="32" autocomplete="new-password" required="required" data-container="#wrap" data-toggle="popover" data-content='${pwdmsg}' />
 										<span class="mandatory set-mandatory"></span>
 									</div>
 								</div>
@@ -127,7 +127,7 @@
 											<i class="entypo-key theme-color style-color"></i>
 										</div>
 										<input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password" 
-										autocomplete="off" required="required" maxlength="32"/><span class="mandatory set-mandatory"></span>
+										autocomplete="new-password" required="required" maxlength="32"/><span class="mandatory set-mandatory"></span>
 									</div>
 								</div>
 								<div class="text-right add-margin error-msg display-hide password-error">These passwords don't match. Try again!</div>

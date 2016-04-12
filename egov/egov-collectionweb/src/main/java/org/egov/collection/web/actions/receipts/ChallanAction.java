@@ -1035,7 +1035,7 @@ public class ChallanAction extends BaseFormAction {
             addDropdownData("departmentList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
         if (headerFields.contains(CollectionConstants.FUNCTION))
-            addDropdownData("functionList", functionDAO.findAll());
+            addDropdownData("functionList", functionDAO.getAllActiveFunctions());
         if (headerFields.contains(CollectionConstants.FIELD))
             addDropdownData("fieldList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FIELD));
         setupDropdownDataExcluding("challan.service");

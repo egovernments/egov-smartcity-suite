@@ -160,7 +160,7 @@ public class JpaConfiguration {
         // properties.put("hibernate.enable_lazy_load_no_trans", true);
 
         // Multitenancy Configuration
-        if (env.getProperty("multitenancy.enabled", Boolean.class)) {
+        if (applicationProperties.multiTenancyEnabled()) {
             properties.put(MULTI_TENANT, env.getProperty(MULTI_TENANT));
             properties.put("hibernate.database.type", env.getProperty("jpa.database"));
             if (env.getProperty(MULTI_TENANT).equals("SCHEMA")) {

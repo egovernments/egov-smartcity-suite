@@ -45,9 +45,9 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-
 import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
@@ -62,11 +62,21 @@ public class RedisServerConfiguration {
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory(final ApplicationProperties applicationProperties) {
-        final JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setHostName(applicationProperties.redisHost());
-        jedisConnectionFactory.setPort(applicationProperties.redisPort());
-        jedisConnectionFactory.setPoolConfig(redisPoolConfig());
-        return jedisConnectionFactory;
+
+        if (applicationProperties.sentinelEnabled() && !applicationProperties.usingEmbeddedRedis()) {
+            RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration();
+            sentinelConfig.master(applicationProperties.sentinelMasterName());
+            for (String host : applicationProperties.sentinelHosts()) {
+                String [] hostConfig = host.split(":");
+                sentinelConfig.sentinel(hostConfig[0].trim(),Integer.valueOf(hostConfig[1].trim()));
+            }
+            return new JedisConnectionFactory(sentinelConfig, redisPoolConfig());
+        } else {
+            final JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(redisPoolConfig());
+            jedisConnectionFactory.setHostName(applicationProperties.redisHost());
+            jedisConnectionFactory.setPort(applicationProperties.redisPort());
+            return jedisConnectionFactory;
+        }
     }
 
     @Bean
@@ -83,8 +93,8 @@ public class RedisServerConfiguration {
     }
 
     @Bean(name = "redisTemplate")
-    public RedisTemplate<String, Object> redisTemplate(final RedisConnectionFactory cf) {
-        final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<Object, Object> redisTemplate(final RedisConnectionFactory cf) {
+        final RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(cf);
         return redisTemplate;
     }

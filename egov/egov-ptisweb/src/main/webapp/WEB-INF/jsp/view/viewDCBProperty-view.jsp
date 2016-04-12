@@ -195,14 +195,31 @@
 							<s:text name="CurrentTax" /> :
 						</td>
 						<td class="greybox" width="20%">
-							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxAmount" /></s:text>
+							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currFirstHalfTaxAmount" /></s:text>
 							</span>
 						</td>
 						<td class="greybox" width="20%">
 							<s:text name="CurrentTaxDue" /> :
 						</td>
 						<td class="greybox" width="20%">
-							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxDue" /></s:text>
+							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currFirstHalfTaxDue" /></s:text>
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="greybox" width="5%">&nbsp;</td>
+						<td class="greybox">
+							<s:text name="CurrentSecondHalfTax" /> :
+						</td>
+						<td class="greybox" width="20%">
+							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currSecondHalfTaxAmount" /></s:text>
+							</span>
+						</td>
+						<td class="greybox" width="20%">
+							<s:text name="CurrentSecondHalfTaxDue" /> :
+						</td>
+						<td class="greybox" width="20%">
+							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currSecondHalfTaxDue" /></s:text>
 							</span>
 						</td>
 					</tr>

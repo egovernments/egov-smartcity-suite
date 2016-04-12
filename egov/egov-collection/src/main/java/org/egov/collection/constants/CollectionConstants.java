@@ -143,6 +143,7 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA = "USERECEIPTDATEFORCONTRA";
     public static final String MANUALRECEIPTINFOREQUIRED = "MANUALRECEIPTINFOREQUIRED";
     public static final String APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE = "CREATEVOUCHER_FOR_REMITTANCE";
+    public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_FUNCTIONCODE = "COLLECTION_BANKREMITTANCE_FUNCTIONCODE";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
@@ -528,5 +529,6 @@ public final class CollectionConstants {
     
     
     public static final String USER_TYPE_FOR_CITIZEN = "CITIZEN";
+    public static final String DEPT_CODE_FOR_ACCOUNTS = "ACC";
 
 }

@@ -135,7 +135,7 @@ public class AccountdetailtypeController {
 			@PathVariable("mode") final String mode, Model model,
 			@ModelAttribute final Accountdetailtype accountdetailtype) {
 		List<Accountdetailtype> searchResultList = accountdetailtypeService
-				.search(accountdetailtype);
+				.search(accountdetailtype,mode);
 		String result = new StringBuilder("{ \"data\":")
 		.append(toSearchResultJson(searchResultList)).append("}")
 		.toString();

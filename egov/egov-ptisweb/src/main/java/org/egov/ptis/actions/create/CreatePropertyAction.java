@@ -253,6 +253,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private BoundaryService boundaryService;
     @Autowired
     private SecurityUtils securityUtils;
+   
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
 
     public CreatePropertyAction() {
@@ -699,7 +700,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         if (null != property && null != property.getId() && null != property.getState()) {
             preparePropertyTaxDetails(property);
-            historyMap = propService.populateHistory(property.getState());
+            historyMap = propService.populateHistory(property);
         }
 
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
@@ -807,8 +808,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                             : "List is NULL"));
 
         if (null != property && null != property.getId()) {
-            final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-                    propertyTaxUtil.getCurrentInstallment());
+            final Map<String, BigDecimal> demandCollMap = null;
+            /*final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+                    propertyTaxUtil.getCurrentInstallment());*/
         }
 
         LOGGER.debug("Exiting from prepare");

@@ -246,7 +246,7 @@ public class TrialBalanceAction extends BaseFormAction {
             	
             	if(endFormat.compareTo(endDate1)>0)
             	{
-                    	addActionError(getText("End date should be within a financial year"));
+                    	addActionError(getText("Start Date and End Date should be in same financial year"));
                     	return "new";
                     
             	}
@@ -278,7 +278,7 @@ public class TrialBalanceAction extends BaseFormAction {
             }
             gererateReportForAsOnDate();
         }
-        if (al.size() > 1)
+        if (al.size() >= 1)
             return exportTrialBalance();
         else
         {

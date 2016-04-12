@@ -568,7 +568,7 @@ public class WaterConnectionSmsAndEmailService {
                 emailBody = messageSource.getMessage(code,
                         new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
                         formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                        amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(),
+                        amountFormat.format( waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getBaseDemand()).toString(),
                         waterTaxUtils.getMunicipalityName() }, null);
             else
                 emailBody = messageSource.getMessage(
@@ -700,7 +700,7 @@ public class WaterConnectionSmsAndEmailService {
                 smsMsg = messageSource.getMessage(code,
                         new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
                         formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                        amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(),
+                        amountFormat.format( waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getBaseDemand()).toString(),
                         waterTaxUtils.getMunicipalityName() }, null);
             else
                 smsMsg = messageSource.getMessage(

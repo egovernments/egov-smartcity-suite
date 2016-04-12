@@ -39,7 +39,24 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
-	$( "#usageTypeName" ).focusout(function() {
+	$('#statusdiv').hide();
+	var activeDiv = $('#reqAttr').val();
+	if (activeDiv =='false')
+		{
+		$('#statusdiv').hide();
+	     $('#addnewid').hide();
+		}
+	
+	else
+		{
+		$('#statusdiv').show();
+		 $('#addnewid').show();
+		}
+	
+	$("#resetid").click(function(){
+		$("#usageTypeform")[0].reset();
+		})
+	$( "#code" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
 	    if(textValue ==''){
 	       $.trim($(this).val('')); //to set it blank
@@ -47,4 +64,32 @@ $(document).ready(function(){
 	       return true;
 	    }
 	});
+	$( "#name" ).focusout(function() {
+	    textValue =  $.trim($(this).val());
+	    if(textValue ==''){
+	       $.trim($(this).val('')); //to set it blank
+	    } else {
+	       return true;
+	    }
+	});
+	
  });
+$('#listid').click(function() {
+	window.open("/wtms/masters/usageTypeMaster/list", "_self");
+ });
+
+$('#addnewid').click(function() {
+	window.open("/wtms/masters/usageTypeMaster/", "_self");
+});
+
+function addNew()
+{
+	window.open("/wtms/masters/usageTypeMaster/", "_self");
+}
+
+function edit(usageType)
+{
+	
+	window.open("/wtms/masters/usageTypeMaster/"+usageType, "_self");
+	
+}

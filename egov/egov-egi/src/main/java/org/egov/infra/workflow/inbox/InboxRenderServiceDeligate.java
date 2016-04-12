@@ -46,6 +46,7 @@ import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -107,7 +108,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     }
 
     public List<StateHistory> getWorkflowHistory(final Long stateId) {
-        return this.statePersistenceService.findById(stateId, false).getHistory();
+        return new LinkedList<>(this.statePersistenceService.findById(stateId, false).getHistory());
     }
 
     public List<T> fetchInboxItems(final String wfType, final String myLinkId) {

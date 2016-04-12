@@ -102,7 +102,7 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
                     accountCheques.setBankAccountId(bankaccount);
                     accountCheques.setFromChequeNumber(chequeDetail.getFromChqNo());
                     accountCheques.setToChequeNumber(chequeDetail.getToChqNo());
-                    accountCheques.setSerialNo(chequeDetail.getSerialNo());
+                    accountCheques.setSerialNo(Long.valueOf(chequeDetail.getSerialNo()));
                     try {
                         accountCheques.setReceivedDate(Constants.DDMMYYYYFORMAT2.parse(chequeDetail.getReceivedDate()));
                     } catch (final ParseException e) {

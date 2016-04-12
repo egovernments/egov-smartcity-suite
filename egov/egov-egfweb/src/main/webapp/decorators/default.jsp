@@ -1,51 +1,51 @@
-<!-- #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------   -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <%@ include file="/includes/taglibs.jsp" %>
 <html>
 <head>
  <%@ include file="/includes/meta.jsp" %>    
 		<title>eGov Financials <decorator:title/></title>
-		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
-		<link href="<c:url value='/resources/css/budget.css'/>" rel="stylesheet" type="text/css" />
-		<link href="<c:url value='/resources/css/commonegovnew.css'/>" rel="stylesheet" type="text/css" />
-		<link href="${pageContext.request.contextPath}/resources/css/error.css" rel="stylesheet" type="text/css"></link>
+		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png?rnd=${app_release_no}" sizes="32x32' context='/egi'/>">
+		<link href="<c:url value='/resources/css/budget.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
+		<link href="<c:url value='/resources/css/commonegovnew.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
+		<link href="${pageContext.request.contextPath}/resources/css/error.css?rnd=${app_release_no}" rel="stylesheet" type="text/css"></link>
 		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
 		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
 		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />	
@@ -57,12 +57,12 @@
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
 		<script type="text/javascript" src="/EGF/resources/javascript/autocomplete.js"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js?rnd=${app_release_no}"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js?rnd=${app_release_no}"></script>
 		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
 		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"> </script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js?rnd=${app_release_no}"></script>
 		<link rel="stylesheet" type="text/css" href="<c:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>" />
 		
 		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />

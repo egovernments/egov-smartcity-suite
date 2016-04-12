@@ -39,7 +39,17 @@
  */
 package org.egov.commons.dao;
 
-import java.io.Serializable;
+import org.egov.commons.CGeneralLedger;
+import org.egov.infra.exception.ApplicationException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,19 +59,14 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.egov.commons.CGeneralLedger;
-import org.egov.infra.exception.ApplicationException;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-
 public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
+    
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
+
+    @Autowired
+    private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
+    
     @Transactional
     public CGeneralLedger update(final CGeneralLedger entity) {
         getCurrentSession().update(entity);
@@ -97,9 +102,6 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(GeneralLedgerHibernateDAO.class);
 
-    private CommonsDAOFactory commonsDAOFactory;
-
-    
 
     /**
      * This method will calculate the Actuals for the previous year.
@@ -107,9 +109,9 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
     @Override
     public String getActualsPrev(final String accCode, final String functionId, final String budgetingType)
             throws Exception {
-        final FinancialYearDAO fiscal = commonsDAOFactory.getFinancialYearDAO();
+        final FinancialYearDAO fiscal = financialYearHibernateDAO;
         final String financialperiodId = fiscal.getPrevYearFiscalId();
-        final FiscalPeriodDAO fiscalperiod = commonsDAOFactory.getFiscalPeriodDAO();
+        final FiscalPeriodDAO fiscalperiod = fiscalPeriodHibernateDAO;
         final String fiscalperiodId = fiscalperiod.getFiscalPeriodIds(financialperiodId);
         String result = "";
         String hqlQuery = "";
@@ -180,7 +182,7 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
     @Override
     public String getActualsDecCurr(final String accCode, final String functionId, final String budgetingType)
             throws Exception {
-        final FinancialYearDAO fiscal = commonsDAOFactory.getFinancialYearDAO();
+        final FinancialYearDAO fiscal = financialYearHibernateDAO;
         String startdate = fiscal.getCurrYearStartDate();
         final String temp[] = startdate.split("-");
         final String temp1[] = temp[2].split(" ");

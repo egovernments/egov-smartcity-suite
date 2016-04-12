@@ -70,6 +70,7 @@ public class UsageTypeService {
 
     @Transactional
     public UsageType createUsageType(final UsageType usageType) {
+        usageType.setActive(true);
         return usageTypeRepository.save(usageType);
     }
 
@@ -79,7 +80,7 @@ public class UsageTypeService {
     }
 
     public List<UsageType> findAll() {
-        return usageTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return usageTypeRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
     }
 
     public List<UsageType> findAllByNameLike(final String name) {
@@ -88,6 +89,10 @@ public class UsageTypeService {
 
     public UsageType findByNameIgnoreCase(final String name) {
         return usageTypeRepository.findByNameIgnoreCase(name);
+    }
+
+    public UsageType findByCodeIgnoreCase(final String code) {
+        return usageTypeRepository.findByCodeIgnoreCase(code);
     }
 
     public UsageType findByName(final String name) {
@@ -111,8 +116,16 @@ public class UsageTypeService {
         return usageTypeRepository.findByActiveTrueOrderByIdAsc();
     }
 
-    public List<UsageType> getAllUsageTypesByPropertyType(final Long propertyType) {
-        return usageTypeRepository.getAllUsageTypesByPropertyType(propertyType);
+    public List<UsageType> getAllActiveUsageTypesByPropertyType(final Long propertyType) {
+        return usageTypeRepository.getAllActiveUsageTypesByPropertyType(propertyType);
+    }
+
+    public UsageType findByNameAndCode(final String name, final String code) {
+        return usageTypeRepository.findByNameAndCode(name, code);
+    }
+
+    public UsageType findOne(final Long usageTypeId) {
+        return usageTypeRepository.findOne(usageTypeId);
     }
 
     public List<UsageType> getUsageTypeListForRest() {

@@ -49,23 +49,11 @@
 	<context:component-scan base-package="org.egov.infra"/>
 	<context:component-scan base-package="org.egov.lib"/>
 	<context:component-scan base-package="org.egov.infstr"/>
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	
-	<import resource="applicationContext-messages.xml"/>
-	<!-- <alias name="${filestore.servicebean.name}" alias="fileStoreService" /> -->
 	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
 	
 	<bean id="masterDataCache" class="org.egov.infstr.utils.EgovMasterDataCaching" lazy-init="false"/>
 	
-	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory">
-	</bean>
-
-	<bean id="commonsService" class="org.egov.commons.service.CommonsServiceImpl">
-		<constructor-arg ref="commonsDAOFactory"/>
-		<constructor-arg ref="sessionFactory"/>
-	</bean>
-
 	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
@@ -89,8 +77,6 @@
 	<bean id="userPersistenceService" parent="persistenceService">
 		<property name="type" value="org.egov.infra.admin.master.entity.User"/>
 	</bean>
-
-	<bean id="installmentDao" class="org.egov.commons.dao.InstallmentHibDao" scope="prototype" />
 
 	<bean id="customizedWorkFlowService" class="org.egov.infstr.workflow.CustomizedWorkFlowService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />

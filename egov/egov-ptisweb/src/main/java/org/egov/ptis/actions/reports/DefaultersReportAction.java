@@ -189,12 +189,12 @@ public class DefaultersReportAction extends BaseFormAction {
             defaultersInfo.setMobileNumber((StringUtils.isNotBlank(propView.getMobileNumber()) ? propView
                     .getMobileNumber() : "NA"));
             defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
-            defaultersInfo.setCurrentDue(propView.getAggrCurrDmd().subtract(propView.getAggrCurrColl()));
+            defaultersInfo.setCurrentDue((propView.getAggrCurrFirstHalfDmd().add(propView.getAggrCurrSecondHalfDmd())).subtract((propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl()))));
             defaultersInfo
                     .setAggrArrearPenalyDue((propView.getAggrArrearPenaly() != null ? propView.getAggrArrearPenaly() : ZERO)
                             .subtract(propView.getAggrArrearPenalyColl() != null ? propView.getAggrArrearPenalyColl() : ZERO));
-            defaultersInfo.setAggrCurrPenalyDue((propView.getAggrCurrPenaly() != null ? propView.getAggrCurrPenaly() : ZERO)
-                    .subtract((propView.getAggrCurrPenalyColl() != null ? propView.getAggrCurrPenalyColl() : ZERO)));
+            defaultersInfo.setAggrCurrPenalyDue((propView.getAggrCurrFirstHalfPenaly() != null ? propView.getAggrCurrFirstHalfPenaly() : ZERO)
+                    .subtract((propView.getAggrCurrFirstHalfPenalyColl() != null ? propView.getAggrCurrFirstHalfPenalyColl() : ZERO)));
             totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue())
                     .add(defaultersInfo.getAggrArrearPenalyDue()).add(defaultersInfo.getAggrCurrPenalyDue());
             defaultersInfo.setTotalDue(totalDue);

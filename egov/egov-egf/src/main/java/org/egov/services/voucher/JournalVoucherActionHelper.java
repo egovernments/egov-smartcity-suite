@@ -274,8 +274,8 @@ public class JournalVoucherActionHelper {
             headerdetails.put(VoucherConstant.FUNCTIONCODE, voucherHeader.getVouchermis().getFunction().getCode());
         return headerdetails;
     }
-
-    private CVoucherHeader createVoucherAndledger(final List<VoucherDetails> billDetailslist,
+    @Transactional
+    public CVoucherHeader createVoucherAndledger(final List<VoucherDetails> billDetailslist,
             final List<VoucherDetails> subLedgerlist, CVoucherHeader voucherHeader) {
         try {
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails(voucherHeader);

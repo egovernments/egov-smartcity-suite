@@ -41,12 +41,14 @@ package org.egov.ptis.web.controller.transactions.editOwner;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,38 +66,51 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class EditOwnerDetailsController {
 
     protected static final String OWNERDETAILS_FROM = "ownerdetails-form";
+    protected static final String OWNERDETAILS_SUCCESS = "ownerdetails-success";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
-    
+
     @Autowired
-    private PropertyPersistenceService basicPropertyService; 
-   
+    private PropertyPersistenceService basicPropertyService;
+
     @ModelAttribute
     public Property propertyModel(@PathVariable final String assessmentNo) {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         PropertyImpl property = null;
         if (null != basicProperty) {
             property = (PropertyImpl) basicProperty.getProperty();
-            basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
         }
-        
         return property;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String newForm(final Model model, @PathVariable String assessmentNo) {
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         model.addAttribute("guardianRelationMap", PropertyTaxConstants.GUARDIAN_RELATION);
         model.addAttribute("gender", Gender.values());
+        for (PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
+            for (Address address : ownerInfo.getOwner().getAddress()) {
+                model.addAttribute("doorNumber", address.getHouseNoBldgApt());
+                model.addAttribute("pinCode", address.getPinCode());
+            }
+        }
         return OWNERDETAILS_FROM;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String updateOwnerDetails(@ModelAttribute final Property property, final RedirectAttributes redirectAttrs,final BindingResult errors,
-            final Model model, final HttpServletRequest request,@RequestParam String doorNumber) {
-        
-        basicPropertyService.updateOwners(property, property.getBasicProperty(), doorNumber);
-        return OWNERDETAILS_FROM;
+    public String updateOwnerDetails(@ModelAttribute final Property property, final RedirectAttributes redirectAttrs,
+            final BindingResult errors, final Model model, final HttpServletRequest request,
+            @RequestParam String doorNumber) {
+        model.addAttribute("doorNumber",doorNumber);
+        model.addAttribute("guardianRelationMap", PropertyTaxConstants.GUARDIAN_RELATION);
+       String errMsg = basicPropertyService.updateOwners(property, property.getBasicProperty(), doorNumber, errors);
+        if (!errMsg.isEmpty()) {
+            model.addAttribute("errorMsg", errMsg);
+                    
+            return OWNERDETAILS_FROM;
+        } else
+            return OWNERDETAILS_SUCCESS;
     }
 
 }

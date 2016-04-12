@@ -27,14 +27,6 @@ function validateFields(){
 	var finYearStartDate=document.getElementById("startingDate").value;
 	var finYearEndDate=document.getElementById("endingDate").value;
 
-	if(name=='' || lastRowStartDate=='' || lastRowEndDate=='' || finYearRange=='')
-	{
-		bootbox.alert('Enter all values before submit');
-		getControlInBranch(tbl.rows[1],'name').focus();
-		return false;
-	}
-
-
 	if(startingDate!=finYearStartDate){
 		bootbox.alert('Enter valid Start date');
 		getControlInBranch(tbl.rows[1],'startDate').value='';

@@ -198,7 +198,7 @@
 			<td class="${approverEvenCSS}" width="13%"><s:text
 					name="wf.approver.remarks" />:</td>
 			<td class="${approverEvenTextCSS}"><textarea
-					id="approverComments" name="approverComments" rows="2" cols="35"></textarea>
+					id="approverComments" name="approverComments" rows="2" cols="35" onMouseUp="setReadonly()"></textarea>
 			</td>
 			<td class="${approverEvenCSS}">&nbsp;</td>
 			<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
@@ -206,3 +206,12 @@
 		</tr>
 	</table>
 </div>
+<script type="text/javascript">
+
+function setReadonly()
+{
+var text = document.getElementById('approverComments');
+text.removeAttribute('readonly');
+}
+</script>
+

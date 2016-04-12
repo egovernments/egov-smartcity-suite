@@ -59,6 +59,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 
 public class CollectionApportioner {
 
+    private static final String REBATE_STR = "REBATE";
     public static final String STRING_FULLTAX = "FULLTAX";
     public static final String STRING_ADVANCE = "ADVANCE";
     private static final Logger LOGGER = Logger.getLogger(CollectionApportioner.class);
@@ -75,10 +76,18 @@ public class CollectionApportioner {
 
     public void apportion(BigDecimal amtPaid, List<ReceiptDetail> receiptDetails, Map<String, BigDecimal> instDmdMap) {
         LOGGER.info("receiptDetails before apportioning amount " + amtPaid + ": " + receiptDetails);
-
+        Boolean isFullPayment = Boolean.FALSE;
+        if (isEligibleForCurrentRebate) {
+            BigDecimal totalCrAmountToBePaid = BigDecimal.ZERO;
+            for (final ReceiptDetail receiptDetail : receiptDetails) {
+                totalCrAmountToBePaid = totalCrAmountToBePaid.add(receiptDetail.getCramountToBePaid());
+            }
+            if (amtPaid.compareTo(totalCrAmountToBePaid) == 0) {
+                isFullPayment = Boolean.TRUE;
+            }
+        }
         Amount balance = new Amount(amtPaid);
         BigDecimal crAmountToBePaid = null;
-
         for (ReceiptDetail rd : receiptDetails) {
 
             if (balance.isZero()) {
@@ -89,15 +98,22 @@ public class CollectionApportioner {
 
             crAmountToBePaid = rd.getCramountToBePaid();
 
-            if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
-                // partial or exact payment
-                rd.setCramount(balance.amount);
-                balance = Amount.ZERO;
-            } else { // excess payment
-                rd.setCramount(crAmountToBePaid);
-                balance = balance.minus(crAmountToBePaid);
+            if (rd.getDescription().contains(REBATE_STR)) {
+                if (isFullPayment) {
+                    balance = balance.minus(crAmountToBePaid);
+                } else {
+                    rd.setDramount(BigDecimal.ZERO);
+                }
+            } else {
+                if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
+                    // partial or exact payment
+                    rd.setCramount(balance.amount);
+                    balance = Amount.ZERO;
+                } else { // excess payment
+                    rd.setCramount(crAmountToBePaid);
+                    balance = balance.minus(crAmountToBePaid);
+                }
             }
-
         }
         if (balance.isGreaterThanZero()) {
             LOGGER.error("Apportioning failed: excess payment!");

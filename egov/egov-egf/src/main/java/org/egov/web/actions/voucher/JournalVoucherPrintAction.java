@@ -236,7 +236,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
         paramMap.put("voucherDate", getVoucherDate());
         paramMap.put("voucherDescription", getVoucherDescription());
         if (voucher != null && voucher.getState() != null)
-            loadHistory(voucher.getState());
+            loadInboxHistoryData(voucher.getStateHistory());
         paramMap.put("workFlowHistory", inboxHistory);
         paramMap.put("workFlowJasper",
                 reportHelper.getClass().getResourceAsStream("/reports/templates/workFlowHistoryReport.jasper"));
@@ -300,10 +300,6 @@ public class JournalVoucherPrintAction extends BaseFormAction {
                 .getVoucherDate());
     }
 
-    private void loadHistory(State state) {
-        loadInboxHistoryData(state);
-    }
-
     /*
      * private Position getStateUser(State state) { if (state.getPrevious() !=
      * null) return state.getPrevious().getOwner(); else return null;//
@@ -311,22 +307,18 @@ public class JournalVoucherPrintAction extends BaseFormAction {
      * state.getCreatedDate()); }
      */
 
-    private void loadInboxHistoryData(final State states) throws ApplicationRuntimeException {
-        if (states != null) {
-            final List<StateHistory> stateHistory = states.getHistory();
-            Collections.reverse(stateHistory);
-            for (final StateHistory state : stateHistory) {
-
-                // WorkflowTypes workflowTypes =
-                // inboxService.getWorkflowType(state.getType());
-                final String pos = state.getSenderName().concat(" / ").concat(state.getSenderName());
-                final String nextAction = state.getNextAction();
-                if (!"NEW".equalsIgnoreCase(state.getValue())) {
-                    final WorkFlowHistoryItem inboxHistoryItem = new WorkFlowHistoryItem(getFormattedDate(
-                            state.getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction, state.getValue(),
-                            state.getComments() != null ? removeSpecialCharacters(state.getComments()) : "");
-                    inboxHistory.add(inboxHistoryItem);
-                }
+    private void loadInboxHistoryData(final List<StateHistory> stateHistory) throws ApplicationRuntimeException {
+        Collections.reverse(stateHistory);
+        for (final StateHistory historyState : stateHistory) {
+            // WorkflowTypes workflowTypes =
+            // inboxService.getWorkflowType(state.getType());
+            final String pos = historyState.getSenderName().concat(" / ").concat(historyState.getSenderName());
+            final String nextAction = historyState.getNextAction();
+            if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
+                final WorkFlowHistoryItem inboxHistoryItem = new WorkFlowHistoryItem(getFormattedDate(
+                        historyState.getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction, historyState.getValue(),
+                        historyState.getComments() != null ? removeSpecialCharacters(historyState.getComments()) : "");
+                inboxHistory.add(inboxHistoryItem);
             }
         }
     }

@@ -41,7 +41,6 @@ package org.egov.wtms.masters.repository;
 
 import java.util.List;
 
-
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -53,7 +52,11 @@ public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCa
 
     ConnectionCategory findByName(String name);
     
+    ConnectionCategory findByNameAndCode(String name,String code);
+
     ConnectionCategory findByNameIgnoreCase(String name);
+    
+    ConnectionCategory findByCodeIgnoreCase(String code);
 
     List<ConnectionCategory> findByNameContainingIgnoreCase(String name);
 
@@ -61,15 +64,11 @@ public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCa
 
     List<ConnectionCategory> findByActiveTrueOrderByNameAsc();
 
-    @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType ")
-    List<ConnectionCategory> getAllCategoryTypesByPropertyType(@Param("propertyType") Long propertyType);
-    
-    
+    @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.active=true")
+    List<ConnectionCategory> getAllActiveCategoryTypesByPropertyType(@Param("propertyType") Long propertyType);
 
     @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.connectionCategory.name != 'BPL' ")
     List<ConnectionCategory> getAllCategoryTypesByPropertyTypeNotInBPL(@Param("propertyType") Long propertyType);
-    //findAllByApplicationTypeOrderByApplicationNumberAsc
-
-    
+    // findAllByApplicationTypeOrderByApplicationNumberAsc
 
 }

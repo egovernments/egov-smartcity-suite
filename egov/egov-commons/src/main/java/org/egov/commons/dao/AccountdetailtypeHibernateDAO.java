@@ -39,20 +39,17 @@
  */
 package org.egov.commons.dao;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.Accountdetailtype;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.lang.reflect.Field;
+import java.util.List;
 
 @Service
 public class AccountdetailtypeHibernateDAO  {
