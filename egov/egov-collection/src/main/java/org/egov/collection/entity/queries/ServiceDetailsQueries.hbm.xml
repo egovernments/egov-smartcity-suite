@@ -135,11 +135,17 @@
 	]]>
 	</query>
 	
-	 <query name="getServiceDetailsByCategory">
+    <query name="getServiceDetailsByCategory">
 	<![CDATA[
 	select s from org.egov.infstr.models.ServiceDetails s where s.serviceCategory.id=? and s.isEnabled=?
 	]]>
 	</query>
+	
+     <query name="getAllRemittanceVoucherCreator">
+    <![CDATA[select distinct(iod.payinslipId.createdBy) from InstrumentOtherDetails iod]]></query>
+    
+        <query name="getAllRemittanceBankAccount">
+    <![CDATA[select distinct(ba.bankAccountId) from BankAccountServiceMap ba]]></query>
     
     
 </hibernate-mapping>
