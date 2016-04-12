@@ -320,7 +320,7 @@ public class NewConnectionController extends GenericConnectionController {
             final ApplicationDocuments applicationDocument, final int i, final BindingResult resultBinder,
             final Long categoryId, final String documentRequired) {
 
-        final ConnectionCategory connectionCategory = connectionCategoryService.findBy(categoryId);
+        final ConnectionCategory connectionCategory = connectionCategoryService.findOne(categoryId);
         if (connectionCategory != null && documentRequired != null
                 && connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
                 && documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName())) {

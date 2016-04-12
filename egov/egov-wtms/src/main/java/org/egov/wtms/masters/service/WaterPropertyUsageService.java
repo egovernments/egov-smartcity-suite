@@ -67,12 +67,13 @@ public class WaterPropertyUsageService {
     }
 
     @Transactional
-    public WaterPropertyUsage createPropertyCategory(final WaterPropertyUsage waterPropertyUsage) {
+    public WaterPropertyUsage createWaterPropertyUsage(final WaterPropertyUsage waterPropertyUsage) {
+        waterPropertyUsage.setActive(true);
         return waterPropertyUsageRepository.save(waterPropertyUsage);
     }
 
     @Transactional
-    public void updatePropertyCategory(final WaterPropertyUsage waterPropertyUsage) {
+    public void updateWaterPropertyUsage(final WaterPropertyUsage waterPropertyUsage) {
         waterPropertyUsageRepository.save(waterPropertyUsage);
     }
 
@@ -93,6 +94,10 @@ public class WaterPropertyUsageService {
     public List<WaterPropertyUsage> findAllByPropertyTypeAndUsageType(final PropertyType propertyType,
             final UsageType usagetype) {
         return waterPropertyUsageRepository.findAllByPropertyTypeAndUsageType(propertyType, usagetype);
+    }
+
+    public List<WaterPropertyUsage> getActivePropertyTypeAndUsageType() {
+        return waterPropertyUsageRepository.findByActiveTrueOrderByIdAsc();
     }
 
 }

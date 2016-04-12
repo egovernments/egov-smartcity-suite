@@ -175,8 +175,8 @@ public class AjaxConnectionController {
     public @ResponseBody double getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
             @RequestParam final ConnectionCategory categoryType, @RequestParam final UsageType usageType,
             @RequestParam final Long maxPipeSize, @RequestParam final Long minPipeSize) {
-        final PipeSize minPipesizeObj = pipeSizeService.findBy(minPipeSize);
-        final PipeSize maxPipesizeObj = pipeSizeService.findBy(maxPipeSize);
+        final PipeSize minPipesizeObj = pipeSizeService.findOne(minPipeSize);
+        final PipeSize maxPipesizeObj = pipeSizeService.findOne(maxPipeSize);
         final List<DonationHeader> donationHeaderTempList = donationHeaderService
                 .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType, categoryType, usageType,
                         minPipesizeObj.getSizeInInch(), maxPipesizeObj.getSizeInInch());
@@ -188,13 +188,13 @@ public class AjaxConnectionController {
 
     @RequestMapping(value = "/ajax-minimumpipesizeininch", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody double getMinimumPipeSizeInInch(@RequestParam final Long minPipeSize) {
-        final PipeSize minPipesizeObj = pipeSizeService.findBy(minPipeSize);
+        final PipeSize minPipesizeObj = pipeSizeService.findOne(minPipeSize);
         return minPipesizeObj.getSizeInInch();
     }
 
     @RequestMapping(value = "/ajax-maximumpipesizeininch", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody double getMaximumPipeSizeInInch(@RequestParam final Long maxPipeSize) {
-        final PipeSize maxPipesizeObj = pipeSizeService.findBy(maxPipeSize);
+        final PipeSize maxPipesizeObj = pipeSizeService.findOne(maxPipeSize);
         return maxPipesizeObj.getSizeInInch();
     }
 
@@ -219,7 +219,7 @@ public class AjaxConnectionController {
 
         ApplicationProcessTime applicationprocessTime = new ApplicationProcessTime();
         applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(
-                applicationTypeService.findBy(applicationType), connectionCategoryService.findBy(categoryType));
+                applicationTypeService.findBy(applicationType), connectionCategoryService.findOne(categoryType));
         if (applicationprocessTime == null)
             return 0;
         else

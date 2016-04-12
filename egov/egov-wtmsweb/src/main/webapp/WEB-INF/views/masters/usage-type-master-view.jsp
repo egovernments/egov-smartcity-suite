@@ -45,15 +45,15 @@
 
 <form:form method="post" action="" class="form-horizontal form-groups-bordered" id="usagetype-view" 
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	<input type="hidden" name="waterPropertyUsageList" id="waterPropertyUsageList" value="${waterPropertyUsageList}">
-	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${usagetypeid.name}" />
+	<input type="hidden" name="usageTypeList" id="usageTypeList" value="${usageTypeList}">
+	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${usageType.id}" />
 	<div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-body custom-form ">
-	<c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
-                </c:if>
+		<div class="panel-body custom-form ">
+			<c:if test="${not empty message}">
+                <div class="alert alert-success" role="alert">${message}</div>
+             </c:if>
 			<c:choose>
-				<c:when test="${waterPropertyUsageList.isEmpty()}">
+				<c:when test="${usageTypeList.isEmpty()}">
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
@@ -62,7 +62,7 @@
 						<tr>
 							<th colspan="1">
 								<div align="center">
-									<spring:message code="lbl.propertytype" />
+									<spring:message code="lbl.code" />
 								</div>
 							</th>
 							<th colspan="1">
@@ -76,22 +76,22 @@
 							</th>
 						</tr>
 					</thead>
-					<c:forEach var="waterPropertyUsage" items="${waterPropertyUsageList}">
+					<c:forEach var="usageType" items="${usageTypeList}">
 						<tr>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${waterPropertyUsage.propertyType.name}" />
+									<c:out value="${usageType.code}" />
 								</div>
 							</td>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${waterPropertyUsage.usageType.name}" />
+									<c:out value="${usageType.name}" />
 								</div>
 							</td>
 							<td colspan="1">
 								<div align="center">
 								<c:choose>
-									<c:when test="${waterPropertyUsage.usageType.active == 'true'}">
+									<c:when test="${usageType.active == 'true'}">
 										<c:out value="ACTIVE" />
 									</c:when> 
 									<c:otherwise>
@@ -102,7 +102,7 @@
 							</td>
 							<td colspan="1">
 								<div align="center">
-									<a href="javascript:void(0);" onclick="edit('<c:out value="${waterPropertyUsage.id}" />');">Edit</a>
+									<a href="javascript:void(0);" onclick="edit('<c:out value="${usageType.id}" />');">Edit</a>
 								</div>
 							</td>
 						</tr>

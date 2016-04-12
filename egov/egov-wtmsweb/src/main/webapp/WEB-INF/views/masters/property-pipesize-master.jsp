@@ -43,54 +43,55 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="pipeSize" id="pipesizeform"
+<form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="propertyPipeSize" id="propertypipesizeform"
 			cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	<div class="panel panel-primary" data-collapsed="0">
+<div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading"></div>
 		<c:if test="${not empty message}">
-                  <div class="alert alert-success" role="alert">${message}</div>
+             <div class="alert alert-success" role="alert">${message}</div>
          </c:if>
-		<div class="panel-body custom-form">
-			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /><span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin"  id="codediv">
-						<form:input class="form-control patternvalidation"   data-pattern="alphanumericwithspecialcharacters"  maxlength="25" id="code"
-						path="code" required="required" />
-						<form:errors path="code"
-						cssClass="add-margin error-msg" />
-					</div>
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.hscpipesize.inches" /></label>
-					<div class="col-sm-3 add-margin" >
-						<form:input class="form-control"  id="pipesizeInInch" path="sizeInInch" />
-						<form:errors path="sizeInInch" cssClass="add-margin error-msg" />
-					</div>
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.hscpipesize.mm" /><span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin" >
-						<form:input class="form-control" title="It will allow upto 4 digits and 3 decimal points" pattern="\d{0,4}(\.\d{0,3})?" maxlength="50" id="pipesizeid"
-						path="sizeInMilimeter" required="required" />
-						<form:errors path="sizeInMilimeter" cssClass="add-margin error-msg" />
-					</div>
+	<div class="panel-body custom-form">
+		<div class="form-group">
+    		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" /><span class="mandatory"></span></label>
+		<div class="col-sm-3 add-margin">
+			<form:select path="propertyType" data-first-option="false" id="propertyType" cssClass="form-control" required="required" >
+				<form:option value="">
+					<spring:message code="lbl.select" />
+				</form:option>
+				<form:options items="${propertyTypeList}" itemValue="id" itemLabel="name" />
+			</form:select>		
+			<form:errors path="propertyType" cssClass="add-margin error-msg" />					
 		</div>
-			<div class="form-group" id="statusdiv">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
-					<div class="col-sm-3 add-margin" >
-						<form:checkbox id="activeid" path="active" value ="active" />
-						<form:errors path="active" />
-					</div>
-			</div>	
-				
-				 	<input type="hidden" name="pipeSize" value="${pipeSize.id}" />
-					<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
-					<div class="form-group text-center" >
+	 		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.hscpipesize.mm" /><span class="mandatory"></span></label>
+				<div class="col-sm-3 add-margin">
+					<form:select path="pipeSize" data-first-option="false" id="pipeSize" cssClass="form-control" required="required" >
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${pipeSize}" itemValue="id" itemLabel="sizeInMilimeter" />
+					</form:select>		
+					<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
+				</div> 
+				<div class="form-group" id="statusdiv">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
+						<div class="col-sm-3 add-margin" >
+							<form:checkbox id="activeid" path="active" value ="active" />
+							<form:errors path="active" />
+						</div>
+				</div>	
+	</div>
+ 				<input type="hidden" name="propertyPipeSize" value="${propertyPipeSize.id}" />
+				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
+				<div class="form-group text-center" >
 						<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
 						<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
 						<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
 						<button type="button" class="btn btn-default" id="resetid"><spring:message code="lbl.reset"/></button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
-					</div>
+				</div>
 	</div>
 </div>
-	</form:form>
+</form:form>
 				<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
 	            type="text/javascript"></script>
@@ -98,4 +99,4 @@
 	            type="text/javascript"></script>
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	            type="text/javascript"></script>
-	            <script src="<c:url value='/resources/js/app/pipe-size-master.js?rnd=${app_release_no}'/>"></script>
+	            <script src="<c:url value='/resources/js/app/property-pipesize-master.js?rnd=${app_release_no}'/>"></script>

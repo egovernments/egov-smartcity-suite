@@ -54,17 +54,19 @@ public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
 
     UsageType findByNameIgnoreCase(String name);
 
+    UsageType findByCodeIgnoreCase(String code);
+
     List<UsageType> findByNameContainingIgnoreCase(String name);
 
     UsageType findByCode(String code);
+
+    UsageType findByNameAndCode(String name, String code);
 
     List<UsageType> findByActiveTrueOrderByNameAsc();
 
     List<UsageType> findByActiveTrueOrderByIdAsc();
 
-    UsageType findByNameIgnoreCaseAndActive(String name, Boolean status);
-
-    @Query("select PU.usageType from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType.id=:propertyType and PU.usageType.active=true")
+    @Query("select PU.usageType from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType.id=:propertyType and PU.active=true")
     List<UsageType> getAllActiveUsageTypesByPropertyType(@Param("propertyType") Long propertyType);
 
 }

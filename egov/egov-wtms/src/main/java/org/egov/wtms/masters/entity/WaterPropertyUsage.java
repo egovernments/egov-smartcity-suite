@@ -49,12 +49,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "egwtr_property_usage")
 @SequenceGenerator(name = WaterPropertyUsage.SEQ_PROPERTY_USAGE, sequenceName = WaterPropertyUsage.SEQ_PROPERTY_USAGE, allocationSize = 1)
-public class WaterPropertyUsage extends AbstractPersistable<Long> {
+public class WaterPropertyUsage extends AbstractAuditable {
 
     private static final long serialVersionUID = 8604331107634946265L;
     public static final String SEQ_PROPERTY_USAGE = "SEQ_EGWTR_PROPERTY_USAGE";
@@ -73,11 +73,13 @@ public class WaterPropertyUsage extends AbstractPersistable<Long> {
     @JoinColumn(name = "propertytype")
     private PropertyType propertyType;
 
+    private boolean active;
+
     public PropertyType getPropertyType() {
         return propertyType;
     }
 
-    public void setPropertyType(PropertyType propertyType) {
+    public void setPropertyType(final PropertyType propertyType) {
         this.propertyType = propertyType;
     }
 
@@ -95,8 +97,16 @@ public class WaterPropertyUsage extends AbstractPersistable<Long> {
         return usageType;
     }
 
-    public void setUsageType(UsageType usageType) {
+    public void setUsageType(final UsageType usageType) {
         this.usageType = usageType;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
 }

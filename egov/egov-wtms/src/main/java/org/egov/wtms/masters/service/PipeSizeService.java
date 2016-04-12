@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.PipeSize;
-import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.repository.PipeSizeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -64,12 +63,13 @@ public class PipeSizeService {
         this.pipeSizeRepository = pipeSizeRepository;
     }
 
-    public PipeSize findBy(final Long pipeSizeId) {
+    public PipeSize findOne(final Long pipeSizeId) {
         return pipeSizeRepository.findOne(pipeSizeId);
     }
 
     @Transactional
     public PipeSize createPipeSize(final PipeSize pipeSize) {
+        pipeSize.setActive(true);
         return pipeSizeRepository.save(pipeSize);
     }
 
@@ -79,7 +79,7 @@ public class PipeSizeService {
     }
 
     public List<PipeSize> findAll() {
-        return pipeSizeRepository.findAll(new Sort(Sort.Direction.ASC, "code"));
+        return pipeSizeRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
     }
 
     public PipeSize load(final Long id) {
@@ -94,11 +94,11 @@ public class PipeSizeService {
     public PipeSize findByCode(final String code) {
         return pipeSizeRepository.findByCode(code);
     }
-    
+
     public PipeSize findBySizeInMilimeter(final double sizeInMilimeter) {
         return pipeSizeRepository.findBySizeInMilimeter(sizeInMilimeter);
     }
-    
+
     public PipeSize findBySizeInInch(final double sizeInInch) {
         return pipeSizeRepository.findBySizeInInch(sizeInInch);
     }
@@ -111,7 +111,11 @@ public class PipeSizeService {
         return pipeSizeRepository.getAllPipeSizesByPropertyType(propertyType);
     }
 
-    
+    public PipeSize findByCodeAndPipeSizeInmm(final String code, final double sizeInMilimeter) {
+
+        return pipeSizeRepository.findByCodeAndSizeInMilimeter(code, sizeInMilimeter);
+    }
+
     public List<PipeSize> getPipeSizeListForRest() {
         final List<PipeSize> pipeSizeList = pipeSizeRepository.findByActiveTrueOrderBySizeInInchAsc();
         final List<PipeSize> prepareListForRest = new ArrayList<PipeSize>(0);

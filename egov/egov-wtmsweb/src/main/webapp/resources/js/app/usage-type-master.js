@@ -54,12 +54,9 @@ $(document).ready(function(){
 		}
 	
 	$("#resetid").click(function(){
-		/* Single line Reset function executes on click of Reset Button */
-		$("#usageTypeMasterform")[0].reset();
+		$("#usageTypeform")[0].reset();
 		})
-	
-	
-	$( "#usageTypeName" ).focusout(function() {
+	$( "#code" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
 	    if(textValue ==''){
 	       $.trim($(this).val('')); //to set it blank
@@ -67,8 +64,16 @@ $(document).ready(function(){
 	       return true;
 	    }
 	});
+	$( "#name" ).focusout(function() {
+	    textValue =  $.trim($(this).val());
+	    if(textValue ==''){
+	       $.trim($(this).val('')); //to set it blank
+	    } else {
+	       return true;
+	    }
+	});
+	
  });
-
 $('#listid').click(function() {
 	window.open("/wtms/masters/usageTypeMaster/list", "_self");
  });
@@ -82,9 +87,9 @@ function addNew()
 	window.open("/wtms/masters/usageTypeMaster/", "_self");
 }
 
-function edit(waterpropertyUsage)
+function edit(usageType)
 {
 	
-	window.open("/wtms/masters/usageTypeMaster/"+waterpropertyUsage, "_self");
+	window.open("/wtms/masters/usageTypeMaster/"+usageType, "_self");
 	
 }
