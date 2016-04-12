@@ -194,7 +194,7 @@
 		<module>egov-eis</module>
 		<module>egov-egf</module>
 		<module>egov-assets</module>
-		<!-- <module>egov-works</module> -->
+		<module>egov-works</module>
 		<module>egov-portal</module>
 		<module>egov-pgr</module>
 		<module>egov-collection</module>
@@ -207,7 +207,7 @@
 		<module>egov-egiweb</module>
 		<module>egov-egfweb</module>
 		<module>egov-assetsweb</module>
-		<!-- <module>egov-worksweb</module> -->
+		<module>egov-worksweb</module>
 		<module>egov-pgrweb</module>
 		<module>egov-api</module>
 		<module>egov-portalweb</module>
