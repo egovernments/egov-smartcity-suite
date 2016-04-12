@@ -337,8 +337,8 @@
 						<tr>
 					</table>
 					<div class="buttonbottom">
-							<input name="button32" type="button" class="buttonsubmit"
-							id="button32" value="Search" onclick="return searchDataToRemit()" />
+							<input name="search" type="button" class="buttonsubmit"
+							id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
 						<display:table name="paramList" uid="currentRow" pagesize="30"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
