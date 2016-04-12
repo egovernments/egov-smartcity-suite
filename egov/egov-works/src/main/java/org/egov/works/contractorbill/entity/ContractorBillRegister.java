@@ -103,6 +103,7 @@ public class ContractorBillRegister extends EgBillregister {
     @Transient
     private List<EgBilldetails> billDetailes = new ArrayList<EgBilldetails>(0);
 
+    @Transient
     private Long approvalDepartment;
 
     @Transient
