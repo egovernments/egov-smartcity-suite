@@ -56,7 +56,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ReconciliationService {
@@ -65,8 +64,6 @@ public class ReconciliationService {
     private CollectionsUtil collectionsUtil;
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
-    @Autowired
-    private ApplicationContext beanProvider;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private CollectionCommon collectionCommon;
@@ -84,10 +81,6 @@ public class ReconciliationService {
      */
     @Transactional
     public void processSuccessMsg(final ReceiptHeader onlinePaymentReceiptHeader, final PaymentResponse paymentResponse) {
-
-        final BillingIntegrationService billingService = (BillingIntegrationService) beanProvider
-                .getBean(onlinePaymentReceiptHeader.getService().getCode()
-                        + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
 
         final List<ReceiptDetail> existingReceiptDetails = new ArrayList<ReceiptDetail>(0);
 
@@ -111,17 +104,19 @@ public class ReconciliationService {
                 existingReceiptDetails.add(newReceiptDetail);
             }
 
-        final List<ReceiptDetail> reconstructedList = billingService.reconstructReceiptDetail(
-                onlinePaymentReceiptHeader.getReferencenumber(), onlinePaymentReceiptHeader.getTotalAmount(),
+        final List<ReceiptDetail> reconstructedList = collectionsUtil.reconstructReceiptDetail(onlinePaymentReceiptHeader,
                 existingReceiptDetails);
+
         ReceiptDetail debitAccountDetail = null;
         if (reconstructedList != null)
             debitAccountDetail = collectionCommon.addDebitAccountHeadDetails(
                     onlinePaymentReceiptHeader.getTotalAmount(), onlinePaymentReceiptHeader, BigDecimal.ZERO,
                     onlinePaymentReceiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE);
 
-        receiptHeaderService.reconcileOnlineSuccessPayment(onlinePaymentReceiptHeader, paymentResponse, billingService,
-                reconstructedList, debitAccountDetail);
+        receiptHeaderService.reconcileOnlineSuccessPayment(onlinePaymentReceiptHeader, paymentResponse.getTxnDate(),
+                paymentResponse.getTxnReferenceNo(), paymentResponse.getTxnAmount(), paymentResponse.getAuthStatus(),
+                reconstructedList,
+                debitAccountDetail);
         LOGGER.debug("Persisted receipt after receiving success message from the payment gateway");
 
     }

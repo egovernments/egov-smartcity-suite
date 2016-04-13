@@ -40,10 +40,19 @@
 
 package org.egov.collection.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.OnlinePayment;
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
@@ -91,14 +100,6 @@ import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class CollectionsUtil {
     private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
@@ -159,7 +160,6 @@ public class CollectionsUtil {
 
         return status;
     }
-   
 
     /**
      * This method returns the <code>EgwStatus</code> for the given module type and status code
@@ -310,27 +310,26 @@ public class CollectionsUtil {
         for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
         List<Assignment> assignList = null;
-        Boolean isDeptAllowed=false;
+        Boolean isDeptAllowed = false;
         final Boolean isEmp = isEmployee(loggedInUser);
         if (isEmp) {
-            //dept = getDepartmentOfUser(loggedInUser);
+            // dept = getDepartmentOfUser(loggedInUser);
             assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(loggedInUser.getId());
-            for(Assignment assign: assignList) {
-                if(!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
-                isDeptAllowed = true;
-            }
+            for (final Assignment assign : assignList)
+                if (!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
+                    isDeptAllowed = true;
         }
-            
+
         if (isEmp && !isDeptAllowed) {
             final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        } else if (!isEmp || isDeptAllowed) {
+        } else if (!isEmp || isDeptAllowed)
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-           // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
-        } else {
+        // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+        else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-           // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+            // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         }
         return collectionsModeNotAllowed;
     }
@@ -776,11 +775,11 @@ public class CollectionsUtil {
         ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
         final ServiceDetails billingService = receiptHeader.getService();
 
-        String instrumentType="";
-        if(!receiptHeader.getReceiptInstrument().isEmpty())
+        String instrumentType = "";
+        if (!receiptHeader.getReceiptInstrument().isEmpty())
             instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
         final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(receiptHeader.getReceiptdate(),
-                receiptHeader.getReceiptnumber(), billingService.getName(), instrumentType , receiptHeader.getTotalAmount(),
+                receiptHeader.getReceiptnumber(), billingService.getName(), instrumentType, receiptHeader.getTotalAmount(),
                 receiptHeader.getSource(),
                 receiptHeader.getStatus().getDescription()
                 );
@@ -795,7 +794,8 @@ public class CollectionsUtil {
             final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService.getCode()
                     + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
-                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
+                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader,
+                        chartOfAccountsHibernateDAO));
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
@@ -823,20 +823,28 @@ public class CollectionsUtil {
         Boolean createVoucherForBillingService = Boolean.FALSE;
         if (receiptHeader.getService().getVoucherCutOffDate() != null
                 && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
-            if (receiptHeader.getService().getVoucherCreation()!= null)
+            if (receiptHeader.getService().getVoucherCreation() != null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         } else if (receiptHeader.getService().getVoucherCutOffDate() == null)
-            if (receiptHeader.getService().getVoucherCreation()!= null)
+            if (receiptHeader.getService().getVoucherCreation() != null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         return createVoucherForBillingService;
     }
-    
-    public String getApproverName(Position position) {
+
+    public String getApproverName(final Position position) {
         String approver;
         final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(position.getId());
         approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
                 .concat("~").concat(assignment.getPosition().getName());
         return approver;
+    }
+
+    public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
+            final List<ReceiptDetail> receiptDetailList) {
+        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService().getCode()
+                + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+        return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(), receiptHeader.getTotalAmount(),
+                receiptDetailList);
     }
 
 }
