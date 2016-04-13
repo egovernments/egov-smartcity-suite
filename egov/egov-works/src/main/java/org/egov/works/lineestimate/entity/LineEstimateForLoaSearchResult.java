@@ -51,6 +51,7 @@ public class LineEstimateForLoaSearchResult {
     private String adminSanctionBy;
     private BigDecimal estimateAmount;
     private BigDecimal actualEstimateAmount;
+    private String workIdentificationNumber;
 
     public LineEstimateForLoaSearchResult() {
     }
@@ -125,5 +126,13 @@ public class LineEstimateForLoaSearchResult {
 
     public void setActualEstimateAmount(final BigDecimal actualEstimateAmount) {
         this.actualEstimateAmount = actualEstimateAmount;
+    }
+
+    public String getWorkIdentificationNumber() {
+        return workIdentificationNumber;
+    }
+
+    public void setWorkIdentificationNumber(final String workIdentificationNumber) {
+        this.workIdentificationNumber = workIdentificationNumber;
     }
 }

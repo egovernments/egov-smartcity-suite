@@ -386,6 +386,7 @@ public class LineEstimateService {
             if (led.getLineEstimate().getAdminSanctionBy() != null)
                 result.setAdminSanctionBy(led.getLineEstimate().getAdminSanctionBy().getName());
             result.setActualEstimateAmount(led.getActualEstimateAmount());
+            result.setWorkIdentificationNumber(led.getProjectCode().getCode());
             lineEstimateForLoaSearchResults.add(result);
         }
         return lineEstimateForLoaSearchResults;

@@ -97,22 +97,23 @@ function callAjaxSearch() {
 					$('td:eq(1)',row).html(index+1);
 					if(data.adminSanctionNumber != null)
 						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.id +'\')">' + data.adminSanctionNumber + '</a>');
-					$('td:eq(7)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
+					$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
 					if(data.actualEstimateAmount != null)
-						$('td:eq(8)',row).html(parseFloat(Math.round(data.actualEstimateAmount * 100) / 100).toFixed(2));
+						$('td:eq(9)',row).html(parseFloat(Math.round(data.actualEstimateAmount * 100) / 100).toFixed(2));
 					else
-						$('td:eq(8)',row).html('0.00');
+						$('td:eq(9)',row).html('0.00');
 					return row;
 				},
 				aaSorting: [],				
 				columns : [ { 
 					"data" : "", "sClass" : "text-center"} ,{ 
-					"data" : "", "sClass" : "text-right"} , {
-					"data" : "adminSanctionNumber", "sClass" : "text-left"} ,{ 
-					"data" : "estimateNumber", "sClass" : "text-left"} ,{ 
-					"data" : "nameOfWork", "sClass" : "text-left"} ,{
-					"data" : "createdBy", "sClass" : "text-left"} ,{
-					"data" : "adminSanctionBy", "sClass" : "text-left"}, {
+					"data" : "", "sClass" : "text-center"} , {
+					"data" : "adminSanctionNumber", "sClass" : "text-center"} ,{ 
+					"data" : "estimateNumber", "sClass" : "text-center"} ,{ 
+					"data" : "nameOfWork", "sClass" : "text-center"} ,{
+					"data" : "workIdentificationNumber", "sClass" : "text-center"} ,{
+					"data" : "createdBy", "sClass" : "text-center"} ,{
+					"data" : "adminSanctionBy", "sClass" : "text-center"}, {
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"}, {
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"
 					}]				
