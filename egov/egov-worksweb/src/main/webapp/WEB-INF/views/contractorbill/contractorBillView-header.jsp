@@ -154,4 +154,11 @@
 			</div>
 		</div>
 	</div>
+	<c:if test="${mode == 'readOnly'}">
+	<div class="row">
+			<div class="col-sm-12 text-center">
+				<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+			</div>
+		</div>
+	</c:if>
 </div>

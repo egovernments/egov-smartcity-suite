@@ -60,14 +60,20 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.repository.ContractorBillRegisterRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.elasticsearch.common.joda.time.DateTime;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +112,9 @@ public class ContractorBillRegisterService {
 
     @Autowired
     private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private LineEstimateService lineEstimateService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -300,6 +309,57 @@ public class ContractorBillRegisterService {
                 contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
                         ContractorBillRegister.BillStatus.CREATED.toString()));
 
+    }
+    
+    public List<ContractorBillRegister> searchContractorBill(final SearchRequestContractorBill searchRequestContractorBill) {
+     // TODO Need TO handle in single query
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
+                .createAlias("workOrder", "cbrwo")
+                .createAlias("cbrwo.contractor", "cbrwocont");
+        
+        if (searchRequestContractorBill != null) {
+            if (searchRequestContractorBill.getBillFromDate() != null)
+                criteria.add(Restrictions.ge("billdate", searchRequestContractorBill.getBillFromDate()));
+            if (searchRequestContractorBill.getBillToDate() != null)
+                criteria.add(Restrictions.le("billdate", searchRequestContractorBill.getBillToDate()));
+            if (searchRequestContractorBill.getBillType() != null)
+                criteria.add(Restrictions.eq("billtype", searchRequestContractorBill.getBillType()));
+            if (searchRequestContractorBill.getBillNumber() != null)
+                criteria.add(Restrictions.ilike("billnumber", searchRequestContractorBill.getBillNumber(), MatchMode.ANYWHERE));
+            if (searchRequestContractorBill.getStatus() != null)
+                criteria.add(Restrictions.eq("billstatus", searchRequestContractorBill.getStatus()));
+            if (searchRequestContractorBill.getWorkIdentificationNumber() != null){
+                final List<String> estimateNumbersforWIN = lineEstimateService.getEstimateNumbersForWorkIdentificationNumber(searchRequestContractorBill.getWorkIdentificationNumber());
+                if (estimateNumbersforWIN.isEmpty())
+                    estimateNumbersforWIN.add("");
+                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforWIN));
+            }
+            if (searchRequestContractorBill.getContractorName() != null)
+                criteria.add(Restrictions.eq("cbrwocont.name", searchRequestContractorBill.getContractorName()));
+            if (searchRequestContractorBill.getDepartment() != null){
+                final List<String> estimateNumbers = lineEstimateService.getEstimateNumberForDepartment(searchRequestContractorBill.getDepartment());
+                if (estimateNumbers.isEmpty())
+                    estimateNumbers.add("");
+                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbers));
+            }
+            if(searchRequestContractorBill.isSpillOverFlag()){
+                final List<String> estimateNumbersforSpillOverFlag = lineEstimateService.getEstimateNumbersForSpillOverFlag(searchRequestContractorBill.isSpillOverFlag());
+                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforSpillOverFlag));
+            }
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+    
+    public List<String> findWorkIdentificationNumbersToSearchContractorBill(final String code) {
+        final List<String> workIdNumbers = contractorBillRegisterRepository.findWorkIdentificationNumberToSearchContractorBill("%" + code + "%");
+        return workIdNumbers;
+    }
+
+    public List<String> getApprovedContractorsForCreateContractorBill(final String contractorname) {
+        final List<String> results = contractorBillRegisterRepository.findContractorForContractorBill("%" + contractorname + "%",
+                WorksConstants.APPROVED);
+        return results;
     }
 
 }

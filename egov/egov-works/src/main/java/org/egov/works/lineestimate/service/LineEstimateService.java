@@ -797,4 +797,12 @@ public class LineEstimateService {
     public List<String> getEstimateNumberForDepartment(Long departmentId) {
         return  lineEstimateDetailsRepository.findEstimateNumbersForDepartment(departmentId);
     }
+    
+    public List<String> getEstimateNumbersForWorkIdentificationNumber(String workIdentificationNumber) {
+        return  lineEstimateDetailsRepository.findEstimateNumbersForWorkIdentificationNumber(workIdentificationNumber);
+    }
+    
+    public List<String> getEstimateNumbersForSpillOverFlag(boolean spillOverFlag) {
+        return  lineEstimateDetailsRepository.findEstimateNumbersForSpillOverFlag(spillOverFlag);
+    }
 }

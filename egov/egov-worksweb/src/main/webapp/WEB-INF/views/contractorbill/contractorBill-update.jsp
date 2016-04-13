@@ -50,8 +50,14 @@
 			<div class="row">
 				<div class="col-md-12"> 
 					<div class="panel panel-primary" data-collapsed="0">
+						
 						<div class="panel-heading">
-							<div class="panel-title"><spring:message code="lbl.header" /></div> 
+						<c:if test="${mode != 'readOnly'}">
+							<div class="panel-title"><spring:message code="lbl.header" /></div>
+						</c:if> 
+						<c:if test="${mode == 'readOnly'}">
+							<div class="panel-title"><spring:message code="hdr.contractorbill" /></div>
+						</c:if>
 						</div>
 						<div>
 							<spring:hasBindErrors name="contractorBillRegister">
@@ -59,10 +65,10 @@
 				        	</spring:hasBindErrors>
 				        </div>
 						<div class="panel-body">
-							<c:if test="${mode == 'edit' }">
+							<c:if test="${mode == 'edit'}">
 								<jsp:include page="contractorBill-header.jsp"/>
 							</c:if>
-							<c:if test="${mode == 'view' }">
+							<c:if test="${mode == 'view' || mode == 'readOnly' }">
 								<jsp:include page="contractorBillView-header.jsp"/>
 							</c:if>
 						<%-- 	<jsp:include page="contractorBill-details.jsp"/> --%>
@@ -73,7 +79,7 @@
 					</div>
 				</div>
 			</div>	
-			<c:if test="${!workflowHistory.isEmpty()}">
+			<c:if test="${!workflowHistory.isEmpty() && mode != 'readOnly'}">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
 						<div class="panel-title">
@@ -83,10 +89,12 @@
 					<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
 				</div>
 			</c:if>
+			<c:if test="${mode != 'readOnly'}">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
+			</c:if>
 		</form:form>  
 	</div>
 </div>

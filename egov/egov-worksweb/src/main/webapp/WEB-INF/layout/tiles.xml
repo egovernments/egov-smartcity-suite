@@ -135,4 +135,10 @@
         <put-attribute name="page-title" value="title.contractorbill.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/contractorbill/contractorBill-update.jsp"/>
     </definition>
+    
+    <definition name="searchcontractorbill-search" extends="base_layout">
+        <put-attribute name="page-title" value="hdr.contractorbill" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractorbill/searchContractorBill-header.jsp"/>
+    </definition>
+    
 </tiles-definitions>

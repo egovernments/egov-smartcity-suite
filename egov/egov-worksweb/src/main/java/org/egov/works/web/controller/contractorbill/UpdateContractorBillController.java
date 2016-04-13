@@ -199,4 +199,15 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         contractorBillRegister.setDocumentDetails(documentDetailsList);
         return contractorBillRegister;
     }
+    
+    @RequestMapping(value = "/view/{contractorBillRegisterId}", method = RequestMethod.GET)
+    public String viewContractorBillRegister(final Model model, @PathVariable final String contractorBillRegisterId,
+            final HttpServletRequest request)
+                    throws ApplicationException {
+        final ContractorBillRegister contractorBillRegister = getContractorBillRegister(contractorBillRegisterId);
+        final String responsePage = loadViewData(model, request, contractorBillRegister);
+        model.addAttribute("mode", "readOnly");
+        return responsePage;
+    }
+
 }

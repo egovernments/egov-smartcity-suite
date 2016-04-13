@@ -37,33 +37,41 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.contractorbill.repository;
+package org.egov.works.web.controller.contractorbill;
 
-import java.util.List;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.contractorbill.entity.ContractorBillRegister.BillStatus;
+import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
+import org.egov.works.contractorbill.entity.enums.BillTypes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.models.workorder.WorkOrder;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+@Controller
+@RequestMapping(value = "/contractorbill")
+public class SearchContractorBillController {
 
-@Repository
-public interface ContractorBillRegisterRepository extends JpaRepository<ContractorBillRegister, Long> {
+    @Autowired
+    private DepartmentService departmentService;
 
-    ContractorBillRegister findByBillnumber(final String billNumber);
+    @RequestMapping(value = "/searchcontractorform", method = RequestMethod.GET)
+    public String showSearchContractorBill(
+            @ModelAttribute final SearchRequestContractorBill searchRequestContractorBill,
+            final Model model) throws ApplicationException {
+        setDropDownValues(model);
+        model.addAttribute("searchRequestContractorBill", searchRequestContractorBill);
+        return "searchcontractorbill-search";
+    }
 
-    List<ContractorBillRegister> findByBillnumberContainingIgnoreCase(final String billNumber);
+    private void setDropDownValues(final Model model) {
+        model.addAttribute("billTypes", BillTypes.values());
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("billStatus", BillStatus.values());
 
-    List<ContractorBillRegister> findByWorkOrder(final WorkOrder workOrder);
-
-    @Query("select max(billSequenceNumber) from ContractorBillRegister where workOrder =:workOrder")
-    Integer findMaxBillSequenceNumberByWorkOrder(@Param("workOrder") final WorkOrder workOrder);
-
-    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(cbr.workOrder.estimateNumber) from ContractorBillRegister as cbr where led.estimateNumber = cbr.workOrder.estimateNumber)")
-    List<String> findWorkIdentificationNumberToSearchContractorBill(@Param("code") String code);
-
-    @Query("select distinct(cbr.workOrder.contractor.name) from ContractorBillRegister as cbr where upper(cbr.workOrder.contractor.name) like upper(:contractorname) or upper(cbr.workOrder.contractor.code) like upper(:contractorname)  and cbr.workOrder.egwStatus.code = :workOrderStatus ")
-    List<String> findContractorForContractorBill(@Param("contractorname") String contractorname,@Param("workOrderStatus") String workOrderStatus);
+    }
 
 }
