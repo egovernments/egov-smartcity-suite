@@ -218,7 +218,7 @@ function validateInput()
 	
 	if(catVal=="" && subCatVal=="" && uomVal=="" && rateClassVal=="" && financialYearVal=="")
 		{
-		bootbox.alert("Please Select atleast one field", function(result){
+		bootbox.alert("Please select atleast one field", function(result){
 		});
 		return false;
 		}

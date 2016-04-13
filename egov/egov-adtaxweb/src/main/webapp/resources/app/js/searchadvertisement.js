@@ -107,12 +107,13 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"ajax": "/adtax/hoarding/search-adtax-result?"+$("#adtaxsearchform").serialize(),
 			"columns" : [
+			              { "data" : "agencyName", "title": "Agency"},
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
-						  { "data" : "agencyName", "title": "Agency"},
 						  { "data" : "pendingDemandAmount", "title": "Amount"},
 						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
+						  { "data" : "totalAmount", "title": "Total Amount"},
 						  { "data" : "permissionNumber", "visible": false},
 						  { "data" : "permitStatus", "visible": false},
 						  { "data" : "id", "visible": false},
@@ -137,7 +138,7 @@ $(document).ready(function(){
 	$("#adtax_search").on('change','tbody tr td .dropchange',
 			function() {
 			//var applicationNumber = oTable.fnGetData($(this).parent().parent(), 1);
-			var adtaxid= oTable.fnGetData($(this).parent().parent(), 8);
+			var adtaxid= oTable.fnGetData($(this).parent().parent(), 9);
 			//var advertisementNumber = oTable.fnGetData($(this).parent().parent(), 0);
 						if (this.value == 0) {
 							var url = '/adtax/advertisement/permitOrder/'+ adtaxid;

@@ -252,6 +252,7 @@ public class AdvertisementPermitDetailService {
                                 .get(AdvertisementTaxConstants.PENALTYAMOUNT));
                         hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                                 .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                        hoardingSearchResult.setTotalAmount(hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount()));
                         hoardingSearchResult.setTotalHoardingInAgency(1);
                         hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
                         agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
@@ -261,6 +262,7 @@ public class AdvertisementPermitDetailService {
                                 demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT)));
                         hoardingSearchObj.setPendingDemandAmount(hoardingSearchObj.getPendingDemandAmount().add(
                                 demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT)));
+                        hoardingSearchObj.setTotalAmount(hoardingSearchObj.getPendingDemandAmount().add(hoardingSearchObj.getPenaltyAmount()));
                         hoardingSearchObj.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
 
                         hoardingIds.append(hoardingSearchObj.getHordingIdsSearchedByAgency()).append("~")
@@ -276,6 +278,7 @@ public class AdvertisementPermitDetailService {
                     hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
                     hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                    hoardingSearchResult.setTotalAmount(hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount()));
                     hoardingSearchResults.add(hoardingSearchResult);
                 }
             }
