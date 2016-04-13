@@ -110,8 +110,7 @@ public class CollectionReportService {
     }
 
     public List<Object[]> getUlbNames(final String districtName) {
-        final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct ulbname from public.onlinepayment_view opv where 1=1");
+        final StringBuilder queryStr = new StringBuilder("select distinct ulbname from public.onlinepayment_view opv where 1=1");
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
         final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
@@ -121,8 +120,7 @@ public class CollectionReportService {
     }
 
     public List<Object[]> getDistrictNames() {
-        final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct districtname from public.onlinepayment_view");
+        final StringBuilder queryStr = new StringBuilder("select distinct districtname from public.onlinepayment_view");
         final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         return query.list();
     }
@@ -152,7 +150,7 @@ public class CollectionReportService {
         .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
         .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
 
-        final StringBuilder onlineQueryStr = new StringBuilder(500);
+        final StringBuilder onlineQueryStr = new StringBuilder();
         onlineQueryStr
         .append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS CASH_COUNT,  ")
         .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
@@ -241,7 +239,7 @@ public class CollectionReportService {
                 .append(queryStr)
                 .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
 
-        final StringBuilder finalAggregateQryStr = new StringBuilder(500);
+        final StringBuilder finalAggregateQryStr = new StringBuilder();
         finalAggregateQryStr
                 .append("SELECT sum(CASH_COUNT) AS CASH_COUNT,sum(CHEQUEDD_COUNT) AS CHEQUEDD_COUNT,sum(ONLINE_COUNT) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,sum(CASH_AMOUNT) AS CASH_AMOUNT, sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT, sum(ONLINE_AMOUNT) AS ONLINE_AMOUNT ,USERID FROM (");
         finalAggregateQryStr
@@ -290,9 +288,9 @@ public class CollectionReportService {
                     : (BigDecimal) arrayObjectInitialIndex[1];
             onlineCnt = (BigDecimal) arrayObjectInitialIndex[2] == null ? BigDecimal.ZERO
                     : (BigDecimal) arrayObjectInitialIndex[2];
-            collSummaryReportResult.setCashCount(cashCnt == BigDecimal.ZERO ? "" : cashCnt.toString());
-            collSummaryReportResult.setChequeddCount(chequeddCnt == BigDecimal.ZERO ? "" : chequeddCnt.toString());
-            collSummaryReportResult.setOnlineCount(onlineCnt == BigDecimal.ZERO ? "" : onlineCnt.toString());
+            collSummaryReportResult.setCashCount(cashCnt.equals(BigDecimal.ZERO) ? "" : cashCnt.toString());
+            collSummaryReportResult.setChequeddCount(chequeddCnt.equals(BigDecimal.ZERO) ? "" : chequeddCnt.toString());
+            collSummaryReportResult.setOnlineCount(onlineCnt.equals(BigDecimal.ZERO) ? "" : onlineCnt.toString());
             collSummaryReportResult.setSource((String) arrayObjectInitialIndex[3]);
             collSummaryReportResult.setCounterName((String) arrayObjectInitialIndex[4]);
             collSummaryReportResult.setEmployeeName((String) arrayObjectInitialIndex[5]);
@@ -302,7 +300,7 @@ public class CollectionReportService {
             collSummaryReportResult.setOnlineAmount((BigDecimal) arrayObjectInitialIndex[9]);
             final BigDecimal receiptCount = cashCnt.add(chequeddCnt).add(onlineCnt);
             collSummaryReportResult
-            .setTotalReceiptCount(receiptCount == BigDecimal.ZERO ? "" : receiptCount.toString());
+            .setTotalReceiptCount(receiptCount.equals(BigDecimal.ZERO) ? "" : receiptCount.toString());
             collSummaryReportResult
                     .setTotalAmount(((BigDecimal) arrayObjectInitialIndex[7] != null ? (BigDecimal) arrayObjectInitialIndex[7]
                     : BigDecimal.ZERO).add(
