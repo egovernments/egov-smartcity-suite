@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-13T13:05:34 -->
+<!-- 2016-04-13T15:31:42 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -71,8 +71,8 @@
 		<defaultValueExpression><![CDATA[ReportUtil.add($P{EGOV_TO_DATE}, Calendar.DAY_OF_MONTH, 1)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select distinct CH.receiptnumber as RECEIPT_NUMBER ,
- (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' ELSE 'cheque/dd' END) as PAY_MODE,
+		<![CDATA[select * from (select distinct CH.receiptnumber as RECEIPT_NUMBER ,
+ (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' WHEN  EGF_INSTRUMENTTYPE.TYPE='cheque' THEN 'cheque' WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN 'dd' END) as PAY_MODE,
 INS.instrumentnumber as CHEQUE_NO, (CASE WHEN INS.bankid =null THEN null ELSE (select name from bank where id=INS.bankid) END)  as BANK_NAME ,
 INS.bankbranchname  BRANCH_NAME , ins.instrumentdate  as CHEQUE_DATE, INS.instrumentamount as AMOUNT  
 from EGCL_COLLECTIONHEADER CH , EGCL_COLLECTIONMIS CHMIS, egcl_collectioninstrument CINS,egf_instrumentheader INS,
@@ -104,7 +104,7 @@ $P!{Q_MODEOFPAYMENT_ID}
 $P!{Q_DEPT_ID}
 union
 select distinct CH.receiptnumber as RECEIPT_NUMBER ,
- (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' ELSE 'cheque/dd' END) as PAY_MODE,
+ (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN 'cheque' WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN 'dd' END) as PAY_MODE,
 INS.instrumentnumber as CHEQUE_NO, (CASE WHEN INS.bankid =null THEN null ELSE (select name from bank where id=INS.bankid) END)  as BANK_NAME ,
 INS.bankbranchname  BRANCH_NAME , ins.instrumentdate  as CHEQUE_DATE, INS.instrumentamount as AMOUNT  
 from EGCL_COLLECTIONHEADER CH , EGCL_COLLECTIONMIS CHMIS, egcl_collectioninstrument CINS,egf_instrumentheader INS,
@@ -128,7 +128,7 @@ $P!{Q_SERVICE_ID}
 $P!{Q_BRANCH_ID}
 $P!{Q_BANKACCOUNT_ID}
 $P!{Q_MODEOFPAYMENT_ID}
-$P!{Q_DEPT_ID}]]>
+$P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 	</queryString>
 	<field name="RECEIPT_NUMBER" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
