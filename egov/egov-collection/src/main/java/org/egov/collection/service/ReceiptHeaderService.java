@@ -111,6 +111,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     private CollectionsNumberGenerator collectionsNumberGenerator;
     private FinancialsUtil financialsUtil;
     private PersistenceService persistenceService;
+    SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 
     @Autowired
     private DesignationService designationService;
@@ -622,7 +623,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + "fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and "
                 + "ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ";
 
-        final String whereClauseForServiceAndFund = " sd.code in (" + serviceCodes + ")" + " and fnd.code = ("
+        final String whereClauseForServiceAndFund = " sd.code in (" + serviceCodes + ")" + " and fnd.code in ("
                 + fundCodes + ")" + " and ";
 
         final String whereClause = " AND ih.ID_STATUS=(select id from egw_status where moduletype='"
@@ -894,7 +895,15 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         for (int i = 0; i < serviceNameArr.length; i++) {
             final String serviceName = serviceNameArr[i].trim();
-            Date voucherDate = new Date();
+            Date voucherDate;
+            try {
+                voucherDate = sdf.parse(sdf.format(new Date()));
+            } catch (ParseException e) {
+               
+                LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + e.getMessage());
+                throw new ApplicationRuntimeException("Exception while parsing date", e);
+            }
+            
 
             if (useReceiptDateAsContraVoucherDate)
                 try {
@@ -947,7 +956,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
                         headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
                                 : serviceDetails.getFundSource().getCode());
                         headerdetails.put(VoucherConstant.FUNCTIONARYCODE,
@@ -1132,7 +1141,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
                         headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
                                 : serviceDetails.getFundSource().getCode());
                         headerdetails.put(VoucherConstant.FUNCTIONARYCODE,
@@ -1221,7 +1230,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
-                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, departmentCodeArray[i]);
+                        headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
                         headerdetails.put(VoucherConstant.FUNDSOURCECODE, serviceDetails.getFundSource() == null ? null
                                 : serviceDetails.getFundSource().getCode());
                         headerdetails.put(VoucherConstant.FUNCTIONARYCODE,

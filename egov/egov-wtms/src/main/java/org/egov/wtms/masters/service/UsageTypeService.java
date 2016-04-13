@@ -80,7 +80,7 @@ public class UsageTypeService {
     }
 
     public List<UsageType> findAll() {
-        return usageTypeRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
+        return usageTypeRepository.findAll(new Sort(Sort.Direction.DESC, "name"));
     }
 
     public List<UsageType> findAllByNameLike(final String name) {

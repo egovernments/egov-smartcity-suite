@@ -562,22 +562,7 @@ public class LineEstimateService {
                     appropriationAmount.doubleValue(), budgetheadid);
 
             if (!flag) {
-                final BigDecimal budgetAvailable = budgetDetailsDAO
-                        .getPlanningBudgetAvailable(
-                                getCurrentFinancialYear(new Date()).getId(),
-                                Integer.parseInt(lineEstimate
-                                        .getExecutingDepartment().getId().toString()),
-                                lineEstimate.getFunction().getId(),
-                                null,
-                                lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId()
-                                        .toString()),
-                                lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId()
-                                        .toString()),
-                                null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
-                                        .getId().toString()));
-                String errorMessage = messageSource.getMessage("error.budgetappropriation.amount",
-                        new String[] { appropriationAmount.toString(), budgetAvailable.toString() }, null);
-                throw new ValidationException("", errorMessage);
+                throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
             }
         }
     }
@@ -806,5 +791,9 @@ public class LineEstimateService {
             worksUtils.persistDocuments(documentDetails);
         }
         return newLineEstimate;
+    }
+    
+    public List<String> getEstimateNumberForDepartment(Long departmentId) {
+        return  lineEstimateDetailsRepository.findEstimateNumbersForDepartment(departmentId);
     }
 }

@@ -40,6 +40,7 @@
 $deletedAmt = 0;
 $locationId = 0;
 $subTypeOfWorkId = 0;
+$subSchemeId = 0;
 $detailsRowCount = $('#detailsSize').val();
 $(document).ready(function(){
 	
@@ -52,15 +53,20 @@ $(document).ready(function(){
 	$locationId = $('#locationValue').val();
 	$('#wardInput').trigger('blur');
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
+	$subSchemeId = $('#subSchemeValue').val();
 	$('#typeofwork').trigger('blur');
 	$('#subTypeOfWork').trigger('blur');
 	
 	$( "input[name$='estimateAmount']" ).each(function(){
-		$(this).val(roundTo($(this).val()));
+		var value = parseFloat(roundTo($(this).val()));
+		if(value != 0)
+			$(this).val(roundTo($(this).val()));
 	});
 	
 	$( "input[name$='actualEstimateAmount']" ).each(function(){
-		$(this).val(roundTo($(this).val()));
+		var value = parseFloat(roundTo($(this).val()));
+		if(value != 0)
+			$(this).val(roundTo($(this).val()));
 	});
 	
 	$('#estimateTotal').text(roundTo($('#estimateTotal').text()));
@@ -128,22 +134,28 @@ $('.btn-primary').click(function(){
 });
 
 function getSubSchemsBySchemeId(schemeId) {
-	$.ajax({
-		url: "../lineestimate/getsubschemesbyschemeid/"+schemeId,     
-		type: "GET",
-		dataType: "json",
-		success: function (response) {
-			$('#subScheme').empty();
-			$('#subScheme').append($("<option value=''>Select from below</option>"));
-			var responseObj = JSON.parse(response);
-			$.each(responseObj, function(index, value) {
-				$('#subScheme').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
-			});
-		}, 
-		error: function (response) {
-			console.log("failed");
-		}
-	});
+	if ($('#scheme').val() === '') {
+		   $('#subScheme').empty();
+		   $('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				$.ajax({
+					url: "../lineestimate/getsubschemesbyschemeid/"+schemeId,     
+					type: "GET",
+					dataType: "json",
+					success: function (response) {
+						$('#subScheme').empty();
+						$('#subScheme').append($("<option value=''>Select from below</option>"));
+						var responseObj = JSON.parse(response);
+						$.each(responseObj, function(index, value) {
+							$('#subScheme').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
+						});
+					}, 
+					error: function (response) {
+						console.log("failed");
+					}
+				});
+			}
 }
 
 function addLineEstimate() {
@@ -573,15 +585,17 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');
 		
-		if(!($('#approvalComent').val() == ''))
+		if($("form").valid())
+		{
 			bootbox.confirm($('#confirm').val(), function(result) {
 				if(!result) {
-					$(this).hide();
+					bootbox.hideAll();
 					return false;
 				} else {
-					document.forms[0].submit;
+					document.forms[0].submit();
 				}
 			});
+		}
 		return false;
 	}
 	if (button != null && button == 'Forward') {

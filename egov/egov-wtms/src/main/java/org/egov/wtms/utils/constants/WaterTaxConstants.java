@@ -294,4 +294,8 @@ public class WaterTaxConstants {
     public static final String RECONNECTION_ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
     public static final String CLOSURE_ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";
     public static final String SIGN_ALL = "SIGN_ALL";
+    public static final String  PDFEXTENTION =".pdf";
+    public static final String  APPLICATIONPDFNAME ="application/pdf";
+    public static final String  DOCUMENTNAMEFORBILL ="DemandBill";
+    public static final Integer QUARTZ_BULKBILL_JOBS = 3;
 }

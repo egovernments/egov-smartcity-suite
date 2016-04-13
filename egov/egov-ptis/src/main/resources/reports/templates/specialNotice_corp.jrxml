@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 5.2.0  -->
-<!-- 2016-03-29T16:13:53 -->
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-04-13T12:30:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -22,7 +22,7 @@
 	<field name="monthlyRentalValue" class="java.math.BigDecimal"/>
 	<field name="bldngFloorNo" class="java.lang.String"/>
 	<title>
-		<band height="472" splitType="Stretch">
+		<band height="425" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="36" y="108" width="478" height="159" uuid="1208afdb-6715-475c-b36f-bd0cb45c6a77"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
@@ -50,7 +50,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["(Special Notice of Property Tax Assessment/ Revision)\n(Issued U/S 200(2) of Municipal Corporation Act, 1955(formally GHMC Act, 1955))"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["(Special Notice of Property Tax Assessment/ Revision)\n(Issued U/S 220(2) of Municipal Corporation Act, 1955(Formerly GHMC Act, 1955))"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="282" y="270" width="231" height="15" uuid="5538b6f9-3bc6-428d-b383-f6233a5bb0a1"/>
@@ -403,7 +403,7 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement x="36" y="387" width="477" height="50" uuid="72cf4591-462a-4395-b8ab-1af77038034b"/>
+				<reportElement x="36" y="387" width="477" height="33" uuid="72cf4591-462a-4395-b8ab-1af77038034b"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
@@ -414,7 +414,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Reasons for increase if any:	The MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building.\n\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Reasons for increase if any:	The MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building.\n\n\n<style forecolor=\"#000000\" isBold=\"true\" size=\"9\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Details of Assessment/Revision </style>\n\n  Zone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -490,20 +490,6 @@
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Monthly Rental Value]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="43" y="-15" width="194" height="12" uuid="87cfde42-101b-4b49-ae36-8f4e3982e20b"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="10" isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[Details of Assessment/Revision]]></text>
 			</staticText>
 		</band>
 	</columnHeader>

@@ -132,7 +132,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         // For Get Configured ApprovalPosition from workflow history
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
             approvalPosition = contractorBillRegisterService.getApprovalPositionByMatrixDesignation(
-                    contractorBillRegister, approvalPosition, WorksConstants.NEWCONTRACTORBILLREGISTER,
+                    contractorBillRegister, approvalPosition, null,
                     mode, workFlowAction);
 
         if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
@@ -146,7 +146,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         } else {
             if (null != workFlowAction)
                 newContractorBillRegister = contractorBillRegisterService.update(contractorBillRegister, approvalPosition,
-                        approvalComment, WorksConstants.NEWCONTRACTORBILLREGISTER, workFlowAction,
+                        approvalComment, null, workFlowAction,
                         mode, files);
             redirectAttributes.addFlashAttribute("contractorBillRegister", newContractorBillRegister);
 
@@ -165,7 +165,6 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
 
-        model.addAttribute("additionalRule", WorksConstants.NEWCONTRACTORBILLREGISTER);
         if(contractorBillRegister.getCurrentState() != null)
             model.addAttribute("currentState", contractorBillRegister.getCurrentState().getValue());
 
@@ -175,7 +174,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         else
             model.addAttribute("mode", "view");
 
-        model.addAttribute("applicationHistory", lineEstimateService.getHistory(contractorBillRegister.getState(), contractorBillRegister.getStateHistory()));
+        model.addAttribute("workflowHistory", lineEstimateService.getHistory(contractorBillRegister.getState(), contractorBillRegister.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
@@ -186,14 +185,14 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("workOrder", workOrder);
 
-        final ContractorBillRegister newcontractorBillRegister = getEstimateDocuments(contractorBillRegister);
+        final ContractorBillRegister newcontractorBillRegister = getContractorBillDocuments(contractorBillRegister);
         model.addAttribute("contractorBillRegister", newcontractorBillRegister);
 //        if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
 //            model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
         return "contractorBill-update";
     }
 
-    private ContractorBillRegister getEstimateDocuments(final ContractorBillRegister contractorBillRegister) {
+    private ContractorBillRegister getContractorBillDocuments(final ContractorBillRegister contractorBillRegister) {
         List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
         documentDetailsList = worksUtils.findByObjectIdAndObjectType(contractorBillRegister.getId(),
                 WorksConstants.CONTRACTORBILL);

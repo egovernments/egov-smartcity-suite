@@ -148,7 +148,7 @@ public class AjaxLetterOfAcceptanceController {
     
     @RequestMapping(value = "/ajaxvalidate-createcontractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Boolean validateWorkOrderNumberForCreateContractorBill(@RequestParam("workOrderId") final Long workOrderId) {
-        return letterOfAcceptanceService.getWorkOrderNumberForCreateContractorBill(workOrderId);
+        return letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
     }
 
 }

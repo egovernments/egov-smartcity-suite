@@ -26,7 +26,7 @@
 		<property name="validto" type="date">
 			<column name="VALIDTO" length="7" />
 		</property>
-		<property name="isactive" type="string">
+		<property name="isactive" type="boolean">
 			<column name="ISACTIVE" length="1" not-null="true" />
 		</property>
 		<property name="lastmodifieddate" type="date">

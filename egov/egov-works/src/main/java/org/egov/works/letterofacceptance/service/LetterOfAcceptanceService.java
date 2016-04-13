@@ -59,6 +59,7 @@ import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
@@ -99,6 +100,9 @@ public class LetterOfAcceptanceService {
 
     @Autowired
     private LineEstimateDetailsRepository lineEstimateDetailsRepository;
+    
+    @Autowired
+    private LineEstimateService lineEstimateService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -216,12 +220,13 @@ public class LetterOfAcceptanceService {
 
     public List<WorkOrder> searchLetterOfAcceptanceForContractorBill(
             final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<String> estimateNumbers = lineEstimateDetailsRepository
-                .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
+       /* final List<String> estimateNumbers = lineEstimateDetailsRepository
+                .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());*/
+        final List<String> estimateNumbers = lineEstimateService.getEstimateNumberForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
         if (estimateNumbers.isEmpty())
             estimateNumbers.add("");
         // TODO: replace fetching workorders by query with criteria alias
-        final List<String> workOrderNumbers = letterOfAcceptanceRepository.getWorkOrderNumbersByBillStatusNotAndBillType(
+        final List<String> workOrderNumbers = letterOfAcceptanceRepository.getDistinctNonCancelledWorkOrderNumbersByBillType(
                 ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
                 .createAlias("contractor", "woc")
@@ -292,13 +297,14 @@ public class LetterOfAcceptanceService {
         return results;
     }
 
-   public Boolean getWorkOrderNumberForCreateContractorBill(Long workOrderId) {
-        final List<String> results = letterOfAcceptanceRepository.findWorkOrderNumberTovalidateCreateContractorBill(workOrderId,
-                ContractorBillRegister.BillStatus.CREATED.toString(), ContractorBillRegister.BillStatus.REJECTED.toString());
+    public Boolean validateContractorBillInWorkflowForWorkorder(Long workOrderId) {
+        final List<String> results = letterOfAcceptanceRepository.getContractorBillInWorkflowForWorkorder(workOrderId,
+                ContractorBillRegister.BillStatus.CANCELLED.toString(), ContractorBillRegister.BillStatus.APPROVED.toString());
         if(results.isEmpty())
             return true;
         else
             return false;
     }
+
 
 }

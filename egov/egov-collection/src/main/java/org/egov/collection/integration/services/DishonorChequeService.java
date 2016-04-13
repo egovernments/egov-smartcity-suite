@@ -52,6 +52,8 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.FinancialIntegrationService;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 
 public class DishonorChequeService implements FinancialIntegrationService {
 
@@ -66,6 +68,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     @Override
+    @Transactional
     public void updateCollectionsOnInstrumentDishonor(final Long instrumentHeaderId) {
         LOGGER.debug("Update Collection and Billing system for dishonored instrument id: " + instrumentHeaderId);
         final EgwStatus receiptInstrumentBounceStatus = collectionsUtil

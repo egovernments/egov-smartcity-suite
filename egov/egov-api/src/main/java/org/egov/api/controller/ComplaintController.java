@@ -70,6 +70,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -119,6 +120,9 @@ public class ComplaintController extends ApiController {
 
     @Autowired
     protected CrossHierarchyService crossHierarchyService;
+    
+    @Autowired
+    protected FileStoreUtils fileStoreUtils;
 
     // --------------------------------------------------------------------------------//
     /**
@@ -526,6 +530,11 @@ public class ComplaintController extends ApiController {
         	LOGGER.error("EGOV-API ERROR ", e);
             throw new IOException();
         }
+    }
+    
+    @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT_BY_ID)
+    public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
+        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, PGRConstants.MODULE_NAME, false, response);
     }
 
     // ---------------------------------------------------------------------//

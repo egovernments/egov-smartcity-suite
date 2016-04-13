@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="page-container" id="page-container">
 	<div class="main-content">
-	<input type="hidden" id="workOrderId" value="${workOrder.id }" />
+	<input type="hidden" id="id" value="${workOrder.id }" />
 		<div style="font-weight:bold; color:green; text-align:center;">
 			<c:if test="${workOrder.getId() != null}">
 				<spring:message code="loa.create.success" arguments="${workOrder.getWorkOrderNumber()}"/>
@@ -51,7 +51,7 @@
 		<div class="row">
 			<div class="col-sm-12 text-center">
 				<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
-				<a href="javascript:void(0)" class="btn btn-primary" onclick="viewPDF()" ><spring:message code="lbl.view.loapdf" /></a>
+				<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.loapdf" /></a>
 			</div>
 		</div>
 	</div>

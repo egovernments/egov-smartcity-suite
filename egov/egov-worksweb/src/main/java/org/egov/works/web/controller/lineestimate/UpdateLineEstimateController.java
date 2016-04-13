@@ -146,7 +146,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
             setDropDownValues(model);
-
+        model.addAttribute("adminsanctionbydesignation", worksUtils.getUserDesignation(lineEstimate.getAdminSanctionBy()));
         return loadViewData(model, request, lineEstimate);
     }
 
@@ -192,7 +192,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         // For Get Configured ApprovalPosition from workflow history
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
             approvalPosition = lineEstimateService.getApprovalPositionByMatrixDesignation(
-                    lineEstimate, approvalPosition, WorksConstants.NEWLINEESTIMATE,
+                    lineEstimate, approvalPosition, null,
                     mode, workFlowAction);
 
         if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
@@ -224,7 +224,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                     final CFinancialYear financialYear = lineEstimateService
                             .getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
                     newLineEstimate = lineEstimateService.updateLineEstimateDetails(lineEstimate, approvalPosition,
-                            approvalComment, WorksConstants.NEWLINEESTIMATE, workFlowAction,
+                            approvalComment, null, workFlowAction,
                             mode, null, removedLineEstimateDetailsIds, files, financialYear);
                 } catch (final ValidationException e) {
                     final List<Long> budgetheadid = new ArrayList<Long>();
@@ -346,7 +346,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
-        model.addAttribute("additionalRule", WorksConstants.NEWLINEESTIMATE);
         if (lineEstimate.getCurrentState() != null)
             model.addAttribute("currentState", lineEstimate.getCurrentState().getValue());
 
@@ -356,7 +355,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         else
             model.addAttribute("mode", "view");
 
-        model.addAttribute("applicationHistory", lineEstimateService.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
+        model.addAttribute("workflowHistory", lineEstimateService.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-11T11:07:29 -->
+<!-- 2016-04-12T18:22:35 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.util.*"/>
@@ -34,7 +34,7 @@
 	<title>
 		<band height="302" splitType="Stretch">
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="150" width="100" height="20" uuid="7efde6d5-355e-4002-b65c-a6186264f0c5"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="151" width="100" height="20" uuid="7efde6d5-355e-4002-b65c-a6186264f0c5"/>
 				<box topPadding="0" leftPadding="0"/>
 				<textElement>
 					<font isBold="true"/>
@@ -142,19 +142,19 @@
 				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you on " + $P{modeOfAllotment} + " based at estimate rates."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" positionType="Float" x="0" y="172" width="562" height="30" uuid="2f8740f9-5c3a-4169-a4dd-45b906c44feb">
+				<reportElement key="" positionType="Float" x="1" y="178" width="562" height="30" uuid="2f8740f9-5c3a-4169-a4dd-45b906c44feb">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("tendering")]]></printWhenExpression>
 				</reportElement>
 				<textElement markup="none"/>
-				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you on tender basis at "+ $P{modeOfAllotment} + " finalised rates."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you on tender basis at tender finalised rates"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" positionType="Float" x="0" y="173" width="562" height="30" uuid="1761c46d-2c30-4a44-9c41-1e287186d34d">
+				<reportElement key="" positionType="Float" x="2" y="177" width="562" height="30" uuid="1761c46d-2c30-4a44-9c41-1e287186d34d">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("ePROCUREMENT")]]></printWhenExpression>
 				</reportElement>
-				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you on ePROCUREMENT basis at  "+ $P{modeOfAllotment} + " finalised rates."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you by e -procurement at tender finalised rates."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="91" y="104" width="255" height="20" uuid="c5cab8ba-c704-4774-9064-6079e99a86d1"/>
@@ -189,19 +189,11 @@
 				<text><![CDATA[Reference :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="167" y="84" width="79" height="20" uuid="54e54106-256b-417f-90ca-f1c5ebb01cce"/>
-				<text><![CDATA[Rs.]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="312" y="84" width="79" height="20" uuid="6799a343-b2bd-49ad-8200-0cdc0bb51b6b"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[ASD]]></text>
-			</staticText>
-			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="347" y="84" width="79" height="20" uuid="7bf1fc7d-ec2d-4fe7-ab4a-02fc9a340415"/>
-				<text><![CDATA[Rs.]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="88" y="4" width="346" height="30" uuid="c068cca7-55f8-40e0-9d7b-5e0bded9e855"/>
@@ -221,11 +213,11 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="185" y="84" width="138" height="21" uuid="269bdd98-a0be-4fe4-aac6-037f5e5e34ca"/>
-				<textFieldExpression><![CDATA[($P{emd}.equals("0.0") || $P{emd}.equals("0"))?"N/A":$P{emd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{emd}.equals("0.0") || $P{emd}.equals("0"))?"N/A":"Rs. "+$P{emd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="367" y="84" width="188" height="21" uuid="3bf765ce-0fbe-49fc-965c-e5626afd176e"/>
-				<textFieldExpression><![CDATA[($P{asd}.equals("0.0") || $P{asd}.equals("0"))?"N/A":$P{asd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{asd}.equals("0.0") || $P{asd}.equals("0"))?"N/A":"Rs. "+$P{asd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="316" y="104" width="244" height="40" uuid="e8cad337-4112-41e5-bd9d-21139c01b5ed"/>
@@ -243,6 +235,12 @@
 				<reportElement x="91" y="83" width="49" height="30" uuid="fb07ab35-5aae-4543-8d32-6f354f765209"/>
 				<text><![CDATA[4.]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="1" y="201" width="561" height="30" uuid="e13dc80c-5f00-4442-ba72-5123025ee505">
+					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("ePROCUREMENT")]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA["	The above work is entrusted to you by e procurement basis and the work should be started within 3 days of receipt of this order and should be completed within........."]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<summary>
@@ -274,8 +272,16 @@
 				<text><![CDATA[	Please note that if you fail to start the work and complete within the stipulated time, the work will be cancelled and EMD/ASD recieved from you will be forfeited as per rules.]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="1" y="-31" width="569" height="30" uuid="40a8f677-9449-4892-b82a-f90a9690d550"/>
-				<textFieldExpression><![CDATA["	The above work is entrusted to you on " + $P{modeOfAllotment} + " basis and the work should be started within 3 days of receipt of this order and should be completed within................."]]></textFieldExpression>
+				<reportElement x="1" y="-30" width="569" height="30" uuid="40a8f677-9449-4892-b82a-f90a9690d550">
+					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("nomination")]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA["	The above work is entrusted to you on nomination basis and the work should be started within 3 days of receipt of this order and should be completed within................."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-1" y="-29" width="589" height="30" uuid="e3d8772d-69af-4582-a437-7fea724cc22e">
+					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("tendering")]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA["	The above work is entrusted to you on tender basis and the work should be started within 3 days of receipt of this order and should be completed within................."]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

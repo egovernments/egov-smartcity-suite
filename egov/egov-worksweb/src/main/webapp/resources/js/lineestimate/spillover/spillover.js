@@ -228,22 +228,28 @@ $('#designation').change(function(){
 });
 
 function getSubSchemsBySchemeId(schemeId) {
-	$.ajax({
-		url: "../lineestimate/getsubschemesbyschemeid/"+schemeId,     
-		type: "GET",
-		dataType: "json",
-		success: function (response) {
-			$('#subScheme').empty();
-			$('#subScheme').append($("<option value=''>Select from below</option>"));
-			var responseObj = JSON.parse(response);
-			$.each(responseObj, function(index, value) {
-				$('#subScheme').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
-			});
-		}, 
-		error: function (response) {
-			console.log("failed");
-		}
-	});
+	if ($('#scheme').val() === '') {
+		   $('#subScheme').empty();
+		   $('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				$.ajax({
+					url: "../lineestimate/getsubschemesbyschemeid/"+schemeId,     
+					type: "GET",
+					dataType: "json",
+					success: function (response) {
+						$('#subScheme').empty();
+						$('#subScheme').append($("<option value=''>Select from below</option>"));
+						var responseObj = JSON.parse(response);
+						$.each(responseObj, function(index, value) {
+							$('#subScheme').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
+						});
+					}, 
+					error: function (response) {
+						console.log("failed");
+					}
+				});
+			}
 }
 
 function addLineEstimate() {

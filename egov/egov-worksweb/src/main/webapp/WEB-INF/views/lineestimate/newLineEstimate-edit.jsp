@@ -73,14 +73,14 @@
 					<jsp:include page="uploadDocuments.jsp" />
 				</c:if>
 			</c:if>
-			<c:if test="${!applicationHistory.isEmpty()}">
+			<c:if test="${!workflowHistory.isEmpty()}">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
 						<spring:message  code="lbl.apphistory"/>
 					</div>
 				</div>
-				<jsp:include page="lineestimatehistory-view.jsp"></jsp:include>
+				<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
 			</div>
 		</c:if>
 		<c:if test="${mode != 'readOnly' }">

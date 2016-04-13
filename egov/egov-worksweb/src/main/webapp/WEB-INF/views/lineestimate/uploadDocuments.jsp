@@ -53,7 +53,7 @@
 <div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<c:if test="${mode != 'view' }">
+			<c:if test="${mode != 'view' && mode != 'readOnly'}">
 				<spring:message code="lbl.upload.document" />
 			</c:if>
 			<c:if test="${mode == 'view' || mode == 'readOnly' }">

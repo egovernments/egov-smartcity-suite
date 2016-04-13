@@ -47,6 +47,7 @@
 
     <import resource="classpath*:config/spring/applicationContext-wtms.xml"/>    
 	<import resource="applicationSecurityContext-wtms.xml"/>
+	<import resource="applicationQuartzContext-wtms.xml"/>
 		<context:property-placeholder />
     <context:component-scan base-package="org.egov.wtms.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
