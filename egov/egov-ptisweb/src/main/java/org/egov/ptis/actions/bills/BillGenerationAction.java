@@ -49,7 +49,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;  
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMAND_BILL_STATUS;
 
 import java.io.File;
 import java.io.InputStream;
@@ -251,27 +252,15 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                 ptBillServiceImpl.getModule(), new Date());
         final StringBuilder billQueryString = new StringBuilder();
         final StringBuilder propQueryString = new StringBuilder();
-        billQueryString
-                .append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
-                .append("from EgBill bill, Boundary bndry, PtNotice notice left join notice.basicProperty bp ")
-                .append("where bp.propertyID.ward.id=bndry.id ").append("and bp.active = true ")
-                .append("and bill.is_History = 'N' ").append("and :FromDate <= bill.issueDate ")
-                .append("and :ToDate >= bill.issueDate ")
-                .append("and bill.egBillType.code = :BillType ")
-                .append("and bill.billNo = notice.noticeNo ")
-                .append("and notice.noticeType = 'Bill' ")
-                .append("and notice.fileStore is not null ").append("group by bndry.boundaryNum ")
-                .append("order by bndry.boundaryNum");
 
-        propQueryString.append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
+        propQueryString.append("select bndry.boundaryNum,bndry.name, count(bndry.boundaryNum) ")
                 .append("from Boundary bndry, PropertyID pid left join pid.basicProperty bp ")
                 .append("where bp.active = true and pid.ward.id = bndry.id ")
-                .append("group by bndry.boundaryNum ").append("order by bndry.boundaryNum");
-        final Query billQuery = getPersistenceService().getSession().createQuery(
-                billQueryString.toString());
+                .append("group by bndry.name, bndry.boundaryNum ").append("order by bndry.boundaryNum, bndry.name");
+        final Query billQuery = getPersistenceService().getSession().getNamedQuery(QUERY_DEMAND_BILL_STATUS);
         billQuery.setDate("FromDate", currInst.getFromDate());
         billQuery.setDate("ToDate", currInst.getToDate());
-        billQuery.setString("BillType", BILLTYPE_MANUAL);
+       // billQuery.setString("BillType", BILLTYPE_MANUAL);
         final List<Object> billList = billQuery.list();
         LOGGER.info("billList : " + billList);
         final Query propQuery = getPersistenceService().getSession().createQuery(
@@ -282,15 +271,16 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         for (final Object props : propList) {
             reportInfo = new ReportInfo();
             final Object[] propObj = (Object[]) props;
-            reportInfo.setWardNo(String.valueOf(propObj[0]));
-            reportInfo.setTotalNoProps(Integer.valueOf(((Long) propObj[1]).toString()));
+            reportInfo.setWardNo(String.valueOf(propObj[0])+'-'+String.valueOf(propObj[1]));
+            reportInfo.setTotalNoProps(Integer.valueOf(((Long) propObj[2]).toString()));
 
             reportInfo.setTotalGenBills(0);
+            String propWardNo = String.valueOf(propObj[0]);
             String wardNo;
             for (final Object bills : billList) {
                 final Object[] billObj = (Object[]) bills;
                 wardNo = String.valueOf(billObj[0]);
-                if (reportInfo.getWardNo().equals(wardNo)) {
+                if (propWardNo.equals(wardNo)) {
                     reportInfo.setTotalGenBills(Integer.valueOf(((Long) billObj[1]).toString()));
                     break;
                 }
