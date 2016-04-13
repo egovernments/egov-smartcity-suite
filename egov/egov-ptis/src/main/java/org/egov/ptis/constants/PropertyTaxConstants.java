@@ -1380,4 +1380,6 @@ public interface PropertyTaxConstants {
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String ARREARS = "Arrears";
     
+    public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
+    
 }
