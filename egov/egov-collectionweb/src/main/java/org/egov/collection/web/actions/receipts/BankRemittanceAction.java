@@ -68,7 +68,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+    @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -204,24 +204,30 @@ public class BankRemittanceAction extends BaseFormAction {
     public String create() {
         final long startTimeMillis = System.currentTimeMillis();
         BigInteger accountNumber = null;
-            String serviceName = "";
-            String fundCode = "";
+        String serviceName = "";
+        String fundCode = "";
 
-            for (int i = 0; i < getServiceNameArray().length; i++)
-                if (getServiceNameArray() != null && !getServiceNameArray()[i].isEmpty()) {
-                    serviceName = getServiceNameArray()[i];
-                    fundCode = getFundCodeArray()[i];
-                    break;
-                }
-            final String bankAccountStr = "select distinct asm.BANKACCOUNT from BANKACCOUNT ba,"
-                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
-                    + "sd.name= '" + serviceName + "'  and fd.code='" + fundCode + "'";
+        for (int i = 0; i < getServiceNameArray().length; i++)
+            if (getServiceNameArray() != null && !getServiceNameArray()[i].isEmpty()) {
+                serviceName = getServiceNameArray()[i];
+                fundCode = getFundCodeArray()[i];
+                break;
+            }
+        final String bankAccountStr = "select distinct asm.BANKACCOUNT from BANKACCOUNT ba,"
+                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
+                + "sd.name= '" + serviceName + "'  and fd.code='" + fundCode + "'";
 
-            final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
-            final Object queryResults = bankAccountQry.uniqueResult();
-            accountNumber = (BigInteger) queryResults;
-            accountNumberId = accountNumber != null ? accountNumber.intValue() : accountNumberId;
-        if (accountNumber == null || accountNumber.equals(-1)  || (accountNumber!=null && accountNumber.intValue()!=accountNumberId)){
+        final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
+        if (bankAccountQry.list().size() > 1)
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    "Mulitple Bank Accounts for the same Service and Fund is mapped. Please correct the data",
+                    "bankremittance.error.multiplebankaccounterror")));
+
+        final Object queryResults = bankAccountQry.uniqueResult();
+        accountNumber = (BigInteger) queryResults;
+        accountNumberId = accountNumber != null ? accountNumber.intValue() : accountNumberId;
+        if (accountNumber == null || accountNumber.equals(-1) || accountNumber != null
+                && accountNumber.intValue() != accountNumberId) {
             list();
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
