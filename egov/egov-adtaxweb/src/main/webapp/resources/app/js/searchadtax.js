@@ -100,7 +100,6 @@ $(document).ready(function(){
 				$.each(response, function(index, value) {
 					$('#subcategories').append($('<option>').text(value.description).attr('value', value.id));
 				});
-				
 			}, 
 			error: function (response) {
 				console.log("failed");
@@ -133,6 +132,7 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
 			"columns" : [
+			              { "data" : "id","visible": false, "searchable": false },
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
@@ -183,6 +183,7 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
+			  {"data" : "id", "visible": false, "searchable" : false},
 		      { "data" : "advertisementNumber", "title":"Advertisement No."},
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "applicationFromDate", "title": "Application Date"},
@@ -206,35 +207,36 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
+			  { "data" : "id","visible" : false, "searchable": false},
 		      { "data" : "advertisementNumber", "title":"Advertisement No."},
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "agencyName", "title": "Agency"},
 			  { "data" : "status", "title": "Hoarding Status"},
-			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View Demand and Collect</button>&nbsp;'}			 
+			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB Report</button>&nbsp;'}			 
 			  ]
 		});
 		e.stopPropagation();
 	});
 	
 	$("#search-dcbresult-table").on('click','tbody tr td .fa-demandCollection',function(e) {
-		var hoardingNo = datadcbtbl.fnGetData($(this).parent().parent(),0);
-		window.open("getHoardingDcb/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		var hoardingId = datadcbtbl.fnGetData($(this).parent().parent(),0);
+		window.open("getHoardingDcb/"+hoardingId, ''+hoardingId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-edit',function(e) {
-		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		window.open("updateLegacy/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		var hoardingId = datatbl.fnGetData($(this).parent().parent().parent(),0);
+		window.open("updateLegacy/"+hoardingId, ''+hoardingId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {
-		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		var permitId = datatbl.fnGetData($(this).parent().parent().parent(),5);
+		var hoardingId = datatbl.fnGetData($(this).parent().parent().parent(),0);
+		var permitId = datatbl.fnGetData($(this).parent().parent().parent(),6);
 		window.open("view/"+permitId, ''+permitId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#adtax_search").on('click','tbody tr td .collect-hoardingWiseFee',function(event) {
-		var hoardingNo = oTable.fnGetData($(this).parent().parent(),0);
-		window.open("generatebill/hoarding/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		var permitId = oTable.fnGetData($(this).parent().parent(),0);
+		window.open("generatebill/hoarding/"+permitId, ''+permitId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 
 	});
 	
@@ -247,7 +249,32 @@ $(document).ready(function(){
 	
 	});
 	
-
+	$('#dcbReportTable').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"aoColumnDefs": [ { "bSortable": false, "aTargets": [0]}],
+		"autoWidth": false,
+		"bDestroy": true
+	});
+	
+	/*$('#dcbReportTable').dataTable({
+		   //initialization params as usual
+		   fnInitComplete : function() {
+		      if ($(this).find('tbody tr').length<=1) {
+		         $(this).parent().hide();
+		      }
+		   } 
+		});*/
+	
+	/*var _grid = $("#dcbReportTable").dataTable({
+	    fnDrawCallback: function (settings) {
+	        $("#dcbReportTable").parent().toggle(settings.fnRecordsDisplay() > 0);
+	    }
+	});*/
+	
+	//$('#dcbReportTable').hide();
+	//$('#dcbReportTable').parents('div.dataTables_wrapper').first().hide();
+	
 		
 });
 
