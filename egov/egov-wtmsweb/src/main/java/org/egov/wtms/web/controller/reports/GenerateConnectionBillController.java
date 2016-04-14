@@ -44,22 +44,37 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.wtms.application.service.GenerateConnectionBill;
 import org.egov.wtms.application.service.GenerateConnectionBillService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -69,7 +84,6 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -82,6 +96,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping("/report/generateBill/search")
@@ -114,6 +133,12 @@ public class GenerateConnectionBillController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
+
+    @Autowired
+    ServletContext context;
+
+    @Autowired
+    private FileStoreMapperRepository fileStoreMapperRepository;
 
     @RequestMapping(method = GET)
     public String search(final Model model) {
@@ -151,45 +176,15 @@ public class GenerateConnectionBillController {
     @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void searchResult(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException {
-        String zone = "";
-        String ward = "";
-        String propertyType = "";
-        String applicationType = "";
-        String connectionType = "";
-        String consumerCode = "";
-        String houseNumber = "";
-        String assessmentNumber = "";
-
-        if (null != request.getParameter("zone"))
-            zone = request.getParameter("zone");
-        if (null != request.getParameter("revenueWard"))
-            ward = request.getParameter("revenueWard");
-        if (null != request.getParameter("propertyType"))
-            propertyType = request.getParameter("propertyType");
-        if (null != request.getParameter("applicationType"))
-            applicationType = request.getParameter("applicationType");
-        if (null != request.getParameter("connectionType"))
-            connectionType = request.getParameter("connectionType");
-        if (null != request.getParameter("consumerCode"))
-            consumerCode = request.getParameter("consumerCode");
-        if (null != request.getParameter("houseNumber"))
-            houseNumber = request.getParameter("houseNumber");
-        if (null != request.getParameter("assessmentNumber"))
-            assessmentNumber = request.getParameter("assessmentNumber");
-
-        List<GenerateConnectionBill> generateConnectionBillList = new ArrayList<GenerateConnectionBill>();
-        final SQLQuery query = generateConnectionBillService.getBillReportDetails(zone, ward, propertyType,
-                applicationType, connectionType, consumerCode, houseNumber, assessmentNumber);
-        generateConnectionBillList = query.list();
         String result = null;
-        for (final GenerateConnectionBill connectionbill : generateConnectionBillList) {
-            final EgBill egbill = generateConnectionBillService.getBIll(connectionbill.getHscNo());
-            if (egbill != null) {
-                connectionbill.setBillNo(egbill.getBillNo());
-                connectionbill.setBillDate(egbill.getIssueDate().toString());
-            }
-        }
-        result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList)).append("}").toString();
+        final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
+                .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
+                        request.getParameter("propertyType"), request.getParameter("applicationType"),
+                        request.getParameter("connectionType"), request.getParameter("consumerCode"),
+                        request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+        final List<GenerateConnectionBill> generateconnectionBillList = generateConnectionBillService
+                .getBillData(generateConnectionBillList);
+        result = new StringBuilder("{ \"data\":").append(toJSON(generateconnectionBillList)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
     }
@@ -202,4 +197,187 @@ public class GenerateConnectionBillController {
         return json;
     }
 
+    @RequestMapping(value = "/mergeAndDownload", method = RequestMethod.GET)
+    public String mergeAndDownload(final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException, ParseException, ValidationException {
+
+        final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
+                .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
+                        request.getParameter("propertyType"), request.getParameter("applicationType"),
+                        request.getParameter("connectionType"), request.getParameter("consumerCode"),
+                        request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+
+        final List<InputStream> pdfs = new ArrayList<InputStream>();
+
+        for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
+            try {
+
+                final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(
+                        connectionbill.getHscNo(), connectionbill.getApplicationType());
+                if (waterChargesDocumentslist != null && waterChargesDocumentslist.get(0) != null) {
+                    final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(waterChargesDocumentslist
+                            .get(0) + "");
+                    final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                    final byte[] bFile = FileUtils.readFileToByteArray(file);
+                    pdfs.add(new ByteArrayInputStream(bFile));
+                }
+            } catch (final Exception e) {
+                System.out.println("exception" + e);
+
+                continue;
+            }
+
+        try {
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+            final byte[] data = concatPDFs(pdfs, output);
+            response.setHeader("Content-disposition", "attachment;filename=" + "generate_bill" + ".pdf");
+            response.setContentType("application/pdf");
+            response.setContentLength(data.length);
+            response.getOutputStream().write(data);
+
+        } catch (final IOException e) {
+
+            throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
+        }
+        System.currentTimeMillis();
+
+        return null;
+    }
+
+    private byte[] concatPDFs(final List<InputStream> streamOfPDFFiles, final ByteArrayOutputStream outputStream) {
+
+        Document document = null;
+        try {
+            final List<InputStream> pdfs = streamOfPDFFiles;
+            final List<PdfReader> readers = new ArrayList<PdfReader>();
+            final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
+
+            // Create Readers for the pdfs.
+            while (iteratorPDFs.hasNext()) {
+                final InputStream pdf = iteratorPDFs.next();
+                final PdfReader pdfReader = new PdfReader(pdf);
+                readers.add(pdfReader);
+                if (null == document)
+                    document = new Document(pdfReader.getPageSize(1));
+            }
+            // Create a writer for the outputstream
+            final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
+            document.open();
+            final PdfContentByte cb = writer.getDirectContent(); // Holds the
+            // PDF
+            // data
+
+            PdfImportedPage page;
+            int pageOfCurrentReaderPDF = 0;
+            final Iterator<PdfReader> iteratorPDFReader = readers.iterator();
+
+            // Loop through the PDF files and add to the output.
+            while (iteratorPDFReader.hasNext()) {
+                final PdfReader pdfReader = iteratorPDFReader.next();
+
+                // Create a new page in the target for each source page.
+                while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
+                    document.newPage();
+                    pageOfCurrentReaderPDF++;
+                    page = writer.getImportedPage(pdfReader, pageOfCurrentReaderPDF);
+                    cb.addTemplate(page, 0, 0);
+                }
+                pageOfCurrentReaderPDF = 0;
+            }
+            outputStream.flush();
+            document.close();
+            outputStream.close();
+
+        } catch (final Exception e) {
+
+            e.printStackTrace();
+        } finally {
+            if (document.isOpen())
+                document.close();
+            try {
+                if (outputStream != null)
+                    outputStream.close();
+            } catch (final IOException ioe) {
+
+                ioe.printStackTrace();
+            }
+        }
+
+        return outputStream.toByteArray();
+    }
+
+    @RequestMapping(value = "/zipAndDownload", method = RequestMethod.GET)
+    public String zipAndDownload(final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException, ParseException, ValidationException {
+
+        System.currentTimeMillis();
+
+        final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
+                .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
+                        request.getParameter("propertyType"), request.getParameter("applicationType"),
+                        request.getParameter("connectionType"), request.getParameter("consumerCode"),
+                        request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+        try {
+            ZipOutputStream zipOutputStream = null;
+            if (null != generateConnectionBillList || generateConnectionBillList.size() >= 0) {
+
+                zipOutputStream = new ZipOutputStream(response.getOutputStream());
+                response.setHeader("Content-disposition", "attachment;filename=" + "genaratebill" + ".zip");
+                response.setContentType("application/zip");
+            }
+
+            for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
+                try {
+                    final List<Long> filestoreList = generateConnectionBillService.getDocuments(
+                            connectionbill.getHscNo(), connectionbill.getApplicationType());
+                    if (filestoreList != null && filestoreList.get(0) != null) {
+                        final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(filestoreList.get(0)
+                                + "");
+                        final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                        final byte[] bFile = FileUtils.readFileToByteArray(file);
+                        zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(),
+                                zipOutputStream);
+                    }
+                } catch (final Exception e) {
+
+                    continue;
+                }
+
+            zipOutputStream.closeEntry();
+            zipOutputStream.close();
+
+        } catch (final IOException e) {
+
+            e.printStackTrace();
+            throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
+        }
+        System.currentTimeMillis();
+
+        return null;
+    }
+
+    private ZipOutputStream addFilesToZip(final InputStream inputStream, final String noticeNo,
+            final ZipOutputStream out) {
+        final byte[] buffer = new byte[1024];
+        try {
+            out.setLevel(Deflater.DEFAULT_COMPRESSION);
+            out.putNextEntry(new ZipEntry(noticeNo.replaceAll("/", "_")));
+            int len;
+            while ((len = inputStream.read(buffer)) > 0)
+                out.write(buffer, 0, len);
+            inputStream.close();
+
+        } catch (final IllegalArgumentException iae) {
+            iae.printStackTrace();
+            throw new ValidationException(Arrays.asList(new ValidationError("error", iae.getMessage())));
+        } catch (final FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            throw new ValidationException(Arrays.asList(new ValidationError("error", fnfe.getMessage())));
+        } catch (final IOException ioe) {
+            ioe.printStackTrace();
+            throw new ValidationException(Arrays.asList(new ValidationError("error", ioe.getMessage())));
+        }
+        return out;
+    }
 }

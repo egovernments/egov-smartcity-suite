@@ -130,7 +130,7 @@
 										<div class="form-group">
 				<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.hscno"/></label>
 										  <div class="col-md-4 add-margin">
-							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number"  maxlength="15" id="consumerCode"/>
+							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="alphanumericwithspace"  maxlength="10" id="consumerCode"/>
 						</div>
 						</div>
 
@@ -139,7 +139,7 @@
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.assesmentnumber" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="applicantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="16" id="assessmentNumber" />
+							<input type="text" name="assessmentNumber" class="form-control patternvalidation" data-pattern="alphanumericwithspace" maxlength="10" id="assessmentNumber" />
 						</div>
 						</div>
 						
@@ -149,7 +149,7 @@
 						<label for="field-1" class="col-md-4 control-label"><spring:message
 										code="lbl.houseno" /></label>
 										<div class="col-md-4 add-margin">
-							<input type="text" name="houseNumber" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="32" id="houseNumber"
+							<input type="text" name="houseNumber" class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" maxlength="32" id="houseNumber"
 								/>
 						</div>
 				     </div>

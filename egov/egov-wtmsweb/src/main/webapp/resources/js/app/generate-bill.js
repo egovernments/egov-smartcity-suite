@@ -38,40 +38,104 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery(document).ready(function() {
-
 	$('#report-footer').hide();
 	jQuery('#searchid').click(function(e) {
-		
+		validategeneratebill();
 		loadingReport();
 	});
 	
+	
+	
+jQuery('#mergeid').click(function(e) {
+	merge();
+	});
+
+jQuery('#resetid').click(function(e) {
+	$("#generateConnectionBill")[0].reset();
+	});
+
+jQuery('#zipid').click(function(e) {
+	zipanddownload();
+	});
 });
+
+
+
+function validategeneratebill()
+{
+	if (($("#zone").val()== '') && ($("#revenueWard").val()== '') && ($("#propertyType").val()== '') && ($("#applicationType").val()== '') &&
+			($("#consumerCode").val() == undefined || parseInt($("#consumerCode").val()) == 0) && ($("#connectionType").val() == '')
+			($("#houseNumber").val() == undefined || parseInt($("#consumerCode").val()) == 0) && ($("#assessmentNumber").val() == undefined || parseInt($("#consumerCode").val()) == 0)) {
+		bootbox.alert('Enter any one search criteria');
+		return false;
+	}
+
+}
+
+
+function merge()
+{
+	$.ajax({
+		url : "/wtms/report/generateBill/search/mergeAndDownload",
+		data : {
+			
+			'zone': $("#zone").val(),
+			'revenueWard':$("#revenueWard").val(),
+			'propertyType' :$("#propertyType").val(),
+			'applicationType': $("#applicationType").val(),
+			'connectionType': $("#connectionType").val(),
+			'consumerCode': $("#consumerCode").val(),
+			'houseNumber': $("#houseNumber").val(),
+			'assessmentNumber': $("#assessmentNumber").val()
+		},
+        dataType : 'json',
+        success: function (response) {
+			console.log("success"+response);
+		
+		},error: function (response) {
+			console.log("failed");
+		}
+    });
+}
+
+function zipanddownload()
+{
+	$.ajax({
+		url : "/wtms/report/generateBill/search/zipAndDownload",
+		data : {
+			'zone': $("#zone").val(),
+			'revenueWard':$("#revenueWard").val(),
+			'propertyType' :$("#propertyType").val(),
+			'applicationType': $("#applicationType").val(),
+			'connectionType': $("#connectionType").val(),
+			'consumerCode': $("#consumerCode").val(),
+			'houseNumber': $("#houseNumber").val(),
+			'assessmentNumber': $("#assessmentNumber").val()
+		},
+        dataType : 'json',
+        success: function (response) {
+			console.log("success"+response);
+		
+		},error: function (response) {
+			console.log("failed");
+		}
+    });
+}
 
 function loadingReport()
 {
 		if($('form').valid()){
-			alert("here");
 			var zone = $("#zone").val();
 			var revenueWard = $("#revenueWard").val(); 
 			var propertyType = $("#propertyType").val();
 			var applicationType = $("#applicationType").val();
-			
-			
 			var consumerCode = $("#consumerCode").val();
 			var assessmentNumber = $("#assessmentNumber").val();
 			var houseNumber = $("#houseNumber").val();
 			var today = getdate();
 			var connectionType = $("#connectionType").val();
 			
-			alert("revenueWard-->"+revenueWard);
-			alert("applicationType-->"+applicationType);
-			alert("consumerCode-->"+consumerCode);
-			alert("assessmentNumber-->"+assessmentNumber);
-			alert("houseNumber-->"+houseNumber);
-			alert("connectionType-->"+connectionType);
-
 			oTable= $('#generateBill-table');
-			alert("here2");
 			var oDataTable=oTable.dataTable({
 				"sPaginationType": "bootstrap",
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
@@ -95,7 +159,7 @@ function loadingReport()
 						'assessmentNumber': assessmentNumber
 					}
 				},
-				"columns" : [
+				"columns" : [{"sTitle" : "S.no", },
 							  { "data" : "hscNo" , "title": "H.S.C NO"},  
 							  { "data" : "ownerName", "title": "Owner Name"},
 							  { "data" : "propertyId", "title": "Property Id"},
@@ -120,13 +184,14 @@ function loadingReport()
 					            },
 					            "fnDrawCallback": function ( oSettings ) {
 					                /* Need to redo the counters if filtered or sorted */
-					                if ( oSettings.bSorted || oSettings.bFiltered )
+					            	if ( oSettings.bSorted || oSettings.bFiltered )
 					                {
 					                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
 					                    {
 					                        $('td:eq(0)', oSettings.aoData[ oSettings.aiDisplay[i] ].nTr ).html( i+1 );
 					                    }
 					                }
+					               
 					            },
 					            
 								"aoColumnDefs" : [ {

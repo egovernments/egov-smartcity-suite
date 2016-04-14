@@ -40,6 +40,8 @@
 package org.egov.wtms.application.service;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -68,9 +70,9 @@ public class GenerateConnectionBillService {
         return entityManager.unwrap(Session.class);
     }
 
-    public SQLQuery getBillReportDetails(final String zone, final String ward, final String propertyType,
-            final String applicationType, final String connectionType, final String consumerCode,
-            final String houseNumber, final String assessmentNumber) throws ParseException {
+    public List<GenerateConnectionBill> getBillReportDetails(final String zone, final String ward,
+            final String propertyType, final String applicationType, final String connectionType,
+            final String consumerCode, final String houseNumber, final String assessmentNumber) throws ParseException {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assementNo\","
@@ -98,8 +100,21 @@ public class GenerateConnectionBillService {
 
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(GenerateConnectionBill.class));
-        return finalQuery;
+        List<GenerateConnectionBill> generateConnectionBillList = new ArrayList<GenerateConnectionBill>();
+        generateConnectionBillList = finalQuery.list();
+        return generateConnectionBillList;
+    }
 
+    public List<GenerateConnectionBill> getBillData(final List<GenerateConnectionBill> generateConnectionBillList) {
+
+        for (final GenerateConnectionBill connectionbill : generateConnectionBillList) {
+            final EgBill egbill = getBIll(connectionbill.getHscNo());
+            if (egbill != null) {
+                connectionbill.setBillNo(egbill.getBillNo());
+                connectionbill.setBillDate(egbill.getIssueDate().toString());
+            }
+        }
+        return generateConnectionBillList;
     }
 
     public EgBill getBIll(final String consumerCode) {
@@ -109,6 +124,20 @@ public class GenerateConnectionBillService {
                 + "and conn.consumerCode = ? ";
         final EgBill egBill = (EgBill) entityQueryService.find(query, consumerCode);
         return egBill;
+    }
+
+    public List<Long> getDocuments(final String consumerCode, final String applicationType) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection "
+                + "conn,egwtr_document_names docNmae where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docNmae.id"
+                + " and conndoc.applicationdocumentsid=appD.id and docNmae.documentname='DemandBill' " + " ");
+        queryStr.append(" and conn.consumercode=  " + "'" + consumerCode + "'");
+        queryStr.append(" and docNmae.applicationtype in(select id from egwtr_application_type where code = '"
+                + applicationType + "' )");
+
+        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        final List<Long> waterChargesDocumentsList = finalQuery.list();
+        return waterChargesDocumentsList;
     }
 
 }
