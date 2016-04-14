@@ -41,6 +41,7 @@ package org.egov.wtms.scheduler;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.wtms.service.bill.WaterConnectionBillService;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -77,6 +78,7 @@ public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
                     .getBean("waterConnectionBillService");
         } catch (final NoSuchBeanDefinitionException e) {
             LOGGER.warn("waterConnectionBillService implementation not found");
+             throw new ApplicationRuntimeException("Error occured while getting bean waterConnectionBillService implementation",e);
         }
         if (waterConnectionBillService != null)
             waterConnectionBillService.bulkBillGeneration(modulo, billsCount);

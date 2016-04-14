@@ -49,24 +49,24 @@
 		<property name="triggers">
 	    	<list>
 	    		<!-- Triggers at 7pm everyday (0 0 19 * * ?) -->
-                <ref bean="bulkBillGenerationCronTrigger0" />
-                <ref bean="bulkBillGenerationCronTrigger1" />
-                <ref bean="bulkBillGenerationCronTrigger2" />
+                <ref bean="wcmsBulkBillGenerationTrigger0" />
+                <ref bean="wcmsBulkBillGenerationTrigger1" />
+                <ref bean="wcmsBulkBillGenerationTrigger2" />
 				
 	    	</list>
 		</property>	
 		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-wtms" /> 
 	</bean>      
-	 <bean id="bulkBillGenerationCronTrigger0" name="bulkBillGenerationCronTrigger0" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
-        <property name="jobDetail" ref="bulkBillGenerationJobScheduler0" />
+	 <bean id="wcmsBulkBillGenerationTrigger0" name="wcmsBulkBillGenerationTrigger0" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
+        <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler0" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger0"/>
         <property name="cronExpression" value="0 */2 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
-	<!-- Add description for bulkBillGenerationJobScheduler0 -->
+	<!-- Add description for bulkBillGenerationJobWtmsScheduler0 -->
  	 
-  <bean name="bulkBillGenerationJobScheduler0" id="bulkBillGenerationJobScheduler0" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
+  <bean name="wcmsBulkBillGenerationScheduler0" id="wcmsBulkBillGenerationScheduler0" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
 		<property name="group" value="WTMS_BILL_JOB_GROUP"/>
 		<property name="name" value="WTMSBillJob0"/>
 		<property name="durability" value="true" />
@@ -74,7 +74,7 @@
    		<property name="requestsRecovery" value="true"/>
 		<property name="jobDataMap">
             <map>
-                <entry key="jobBeanName" value="bulkBillGenerationJobDelegate0"/>
+                <entry key="jobBeanName" value="wcmsBulkBillGenerationDelegate0"/>
 				<entry key="userName" value="egovernments"/>
 				<entry key="transactional"  value="true" />
 				<entry key="moduleName" value="wtms"/>
@@ -82,21 +82,21 @@
         </property>   	
 	</bean>
 	
-	<bean id="bulkBillGenerationJobDelegate0" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
+	<bean id="wcmsBulkBillGenerationDelegate0" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="0" />
 		<property name="billsCount" value="50" />
     </bean>
-      <!-- END bulkBillGenerationJobScheduler0 -->
-     	 <bean id="bulkBillGenerationCronTrigger1" name="bulkBillGenerationCronTrigger1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
-        <property name="jobDetail" ref="bulkBillGenerationJobScheduler1" />
+      <!-- END bulkBillGenerationWtmsJobScheduler1 -->
+     	 <bean id="wcmsBulkBillGenerationTrigger1" name="wcmsBulkBillGenerationTrigger1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
+        <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler1" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger1"/>
         <property name="cronExpression" value="0 */2 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
-	<!-- Add description for bulkBillGenerationJobScheduler0 -->
+	<!-- Add description for bulkBillGenerationWtmsJobScheduler1 -->
  	 
-  <bean name="bulkBillGenerationJobScheduler1" id="bulkBillGenerationJobScheduler1" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
+  <bean name="wcmsBulkBillGenerationScheduler1" id="wcmsBulkBillGenerationScheduler1" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
 		<property name="group" value="WTMS_BILL_JOB_GROUP"/>
 		<property name="name" value="WTMSBillJob1"/>
 		<property name="durability" value="true" />
@@ -104,7 +104,7 @@
    		<property name="requestsRecovery" value="true"/>
 		<property name="jobDataMap">
             <map>
-                <entry key="jobBeanName" value="bulkBillGenerationJobDelegate1"/>
+                <entry key="jobBeanName" value="wcmsBulkBillGenerationDelegate1"/>
 				<entry key="userName" value="egovernments"/>
 				<entry key="transactional"  value="true" />
 				<entry key="moduleName" value="wtms"/>
@@ -112,21 +112,21 @@
         </property>   	
 	</bean>
 	
-	<bean id="bulkBillGenerationJobDelegate1" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
+	<bean id="wcmsBulkBillGenerationDelegate1" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="1" />
 		<property name="billsCount" value="50" />
     </bean>
       <!-- END bulkBillGenerationJobScheduler1-->
-     	 <bean id="bulkBillGenerationCronTrigger2" name="bulkBillGenerationCronTrigger2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
-        <property name="jobDetail" ref="bulkBillGenerationJobScheduler2" />
+     	 <bean id="wcmsBulkBillGenerationTrigger2" name="wcmsBulkBillGenerationTrigger2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
+        <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler2" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger2"/>
         <property name="cronExpression" value="0 */2 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
-	<!-- Add description for bulkBillGenerationJobScheduler0 -->
+	<!-- Add description for bulkBillGenerationWtmsJobScheduler2 -->
  	 
-  <bean name="bulkBillGenerationJobScheduler2" id="bulkBillGenerationJobScheduler2" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
+  <bean name="wcmsBulkBillGenerationScheduler2" id="wcmsBulkBillGenerationScheduler2" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
 		<property name="group" value="WTMS_BILL_JOB_GROUP"/>
 		<property name="name" value="WTMSBillJob2"/>
 		<property name="durability" value="true" />
@@ -134,7 +134,7 @@
    		<property name="requestsRecovery" value="true"/>
 		<property name="jobDataMap">
             <map>
-                <entry key="jobBeanName" value="bulkBillGenerationJobDelegate2"/>
+                <entry key="jobBeanName" value="wcmsBulkBillGenerationDelegate2"/>
 				<entry key="userName" value="egovernments"/>
 				<entry key="transactional"  value="true" />
 				<entry key="moduleName" value="wtms"/>
@@ -142,7 +142,7 @@
         </property>   	
 	</bean>
 	
-	<bean id="bulkBillGenerationJobDelegate2" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
+	<bean id="wcmsBulkBillGenerationDelegate2" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="2" />
 		<property name="billsCount" value="50" />
     </bean>
