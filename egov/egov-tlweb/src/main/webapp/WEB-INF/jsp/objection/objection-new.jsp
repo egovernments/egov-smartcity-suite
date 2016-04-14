@@ -42,7 +42,6 @@
 <html>
 	<head>
 		<title><s:text name="page.title.objectlicense" /></title>
-		<sx:head />
 		<script>
 			function validateForm(obj) {
 				if (validateForm_objection() == false) {
@@ -70,7 +69,7 @@
 									<div class="headingbg">
 										<s:text name="page.title.objectlicense" />
 									</div>
-									<s:form action="objection" theme="css_xhtml" name="objectionLicenseForm" validate="true">
+									<s:form action="objection" theme="simple" name="objectionLicenseForm" validate="true">
 									<s:token/>
 										<s:hidden name="licenseId" />
 										<c:set var="trclass" value="greybox" />

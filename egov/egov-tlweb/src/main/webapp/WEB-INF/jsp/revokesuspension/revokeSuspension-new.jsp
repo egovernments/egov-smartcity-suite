@@ -42,7 +42,6 @@
 <html>
 	<head>
 		<title><s:text name="Revoke Suspension" /></title>
-		<sx:head />
 		<script>
 		  function validateForm(obj) {
 		    return validateApprover(obj);
@@ -60,7 +59,7 @@
 									<div class="headingbg">
 										<s:text name="Revoke Suspension" />
 									</div>
-									<s:form action="revokeSuspension" theme="css_xhtml" name="revokeSuspensionForm" validate="true">
+									<s:form action="revokeSuspension" theme="simple" name="revokeSuspensionForm" validate="true">
 									<s:token/>
 										<s:hidden name="licenseId" />
 										<c:set var="trclass" value="greybox" />

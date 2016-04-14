@@ -42,7 +42,6 @@
 	<head>
 		<title><s:text name="page.title.approve.renew.trade" />
 		</title>
-		<sx:head />
 		<script>
 	  		function validateForm(obj) {
 	    		if (validateApprover(obj) == false) {
@@ -74,7 +73,7 @@
 											</td>
 										</tr>
 									</table>
-									<s:form action="viewTradeLicense" theme="css_xhtml" name="viewForm" validate="true">
+									<s:form action="viewTradeLicense" theme="simple" name="viewForm" validate="true">
 									<s:token/>
 										<s:push value="model">
 											<s:hidden name="docNumber" id="docNumber" />

@@ -41,7 +41,6 @@
 <html>
 <head>
 <title><s:text name="page.title.renewtrade" /></title>
-<sx:head />
 </head>
 <body>
 	<div class="row">

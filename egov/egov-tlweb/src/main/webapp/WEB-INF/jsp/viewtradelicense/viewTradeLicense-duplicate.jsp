@@ -41,7 +41,6 @@
 <html>
 	<head>
 		<title><s:text name="license.certificate.title.reprint" /></title>
-		<sx:head />
 		<script>
 			function setDuplicate(obj) {
 				if (obj.value == 'duplicate') {
