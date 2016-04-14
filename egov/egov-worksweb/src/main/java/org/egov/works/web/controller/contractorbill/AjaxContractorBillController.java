@@ -41,6 +41,8 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.util.List;
 
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
@@ -63,35 +65,44 @@ import com.google.gson.GsonBuilder;
 public class AjaxContractorBillController {
 
     @Autowired
-    private ContractorBillRegisterService contractorBillRegisterService; 
-    
+    private ContractorBillRegisterService contractorBillRegisterService;
+
     @Autowired
-    private SearchContractorBillJsonAdaptor searchContractorBillJsonAdaptor; 
+    private SearchContractorBillJsonAdaptor searchContractorBillJsonAdaptor;
+
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     @RequestMapping(value = "/ajaxsearch-contractorbill", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showSearchContractorBill(final Model model,
             @ModelAttribute final SearchRequestContractorBill searchRequestContractorBill) {
-        final List<ContractorBillRegister> searchContractorBillList = contractorBillRegisterService.searchContractorBill(searchRequestContractorBill);
+        final List<ContractorBillRegister> searchContractorBillList = contractorBillRegisterService
+                .searchContractorBill(searchRequestContractorBill);
         final String result = new StringBuilder("{ \"data\":").append(toSearchContractorBillJson(searchContractorBillList))
                 .append("}").toString();
         return result;
     }
-    
+
     public Object toSearchContractorBillJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(ContractorBillRegister.class, searchContractorBillJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxworkidentificationnumber-contractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findworkIdNumbersForLoa(@RequestParam final String code) {
         return contractorBillRegisterService.findWorkIdentificationNumbersToSearchContractorBill(code);
     }
-    
+
     @RequestMapping(value = "/ajaxsearchcontractors-contractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaContractor(@RequestParam final String contractorname) {
         return contractorBillRegisterService.getApprovedContractorsForCreateContractorBill(contractorname);
     }
-    
+
+    @RequestMapping(value = "/ajaxdeduction-coa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<CChartOfAccounts> findDetailedAccountCodesByGlcodeLike(@RequestParam final String glCode) {
+        return chartOfAccountsHibernateDAO.findDetailedAccountCodesByGlcodeLike(glCode);
+    }
+
 }

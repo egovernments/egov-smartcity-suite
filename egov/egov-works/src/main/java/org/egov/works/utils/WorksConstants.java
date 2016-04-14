@@ -242,9 +242,9 @@ public class WorksConstants {
     // Module types
     public static final String MODULE_NAME_LINEESTIMATE = "LineEstimate";
 
-//    public static final String NEWLINEESTIMATE = "NEWLINEESTIMATE";
-    
-//    public static final String NEWCONTRACTORBILLREGISTER = "NEWCONTRACTORBILLREGISTER";
+    // public static final String NEWLINEESTIMATE = "NEWLINEESTIMATE";
+
+    // public static final String NEWCONTRACTORBILLREGISTER = "NEWCONTRACTORBILLREGISTER";
 
     // User roles
     public static final String ROLE_SUPERUSER = "Super User";
@@ -268,9 +268,9 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION = "ENGINEERINCHARGE_DESIGNATION";
 
     public static final String WORKFLOWTYPE_DISPLAYNAME = "Line Estimate";
-    
+
     public static final String WORKFLOWTYPE_CBR_DISPLAYNAME = "Contractor Bill";
-    
+
     public static final String BILL_EXPENDITURE_TYPE = "Works";
 
     public static final String APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY = "DESIGNATION_TECHSANCTION_AUTHORITY";
@@ -278,6 +278,7 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_BUDGETCHECK_REQUIRED = "budgetCheckRequired";
 
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
-    
+
     public static final String CONTRACTOR_NETPAYABLE_PURPOSE = "Creditors-Contractor Payable";
+    public static final String ACCOUNTDETAIL_TYPE_CONTRACTOR = "contractor";
 }

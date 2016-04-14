@@ -53,6 +53,7 @@
 			<spring:message  code="lbl.deductions"/>
 		</div>
 	</div>
+	<input type="hidden" value="${billDetailes.size()}" id="detailsSize" /> 
 	<div class="panel-body">
 		<table class="table table-bordered" id="tblcreditdetails">
 			<thead>
@@ -60,25 +61,31 @@
 					<th><spring:message code="lbl.account.code"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.account.head"/></th>
 					<th><spring:message code="lbl.credit.amount"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.action"/></th> 					
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
+				<tr id="deductionRow">
 					<td>
-						<input type="text" id="creditGlcode" class="form-control table-input patternvalidation" data-pattern="number" maxlength="9" required="required"> 
-						<form:hidden path="billDetailes[1].glcodeid"  name="billDetailes[1].glcodeid" id="creditGlcodeId" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.id}" /> 
-						<form:errors path="billDetailes[1].glcodeid" cssClass="add-margin error-msg" />
+						<input type="text" id="creditGlcode" name="billDetailes[1].creditGlcode" class="form-control table-input patternvalidation creditGlcode" data-pattern="number" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required"> 
+						<form:hidden path="billDetailes[1].glcodeid"  name="billDetailes[1].glcodeid" id="billDetailes[1].creditglcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input creditglcodeid"/> 
+						<form:errors path="billDetailes[1].glcodeid" cssClass="add-margin error-msg" /> 
 					</td>
 					<td>
-						<input type="text" id="creditAccountHead" class="form-control" disabled> 
+						<input type="text" id="billDetailes[1].creditAccountHead" name="billDetailes[1].creditAccountHead" value="${billDetailes[1].creditAccountHead}" class="form-control creditAccountHead" disabled> 
 					</td>
 					<td>
-						<form:input path="billDetailes[1].creditamount" id="creditAmount" name="billDetailes[1].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right creditAmount" maxlength="12" required="required" />
-						<form:errors path="billDetailes[1].creditamount" cssClass="add-margin error-msg" />
-					</td>
+						<form:input path="billDetailes[1].creditamount" id="billDetailes[1].creditamount" name="billDetailes[1].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+						<form:errors path="billDetailes[1].creditamount" cssClass="add-margin error-msg" /> 
+					</td> 
+					<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>
+					 <span class="add-padding" onclick="deleteDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 				</tr>
 			</tbody>
 		</table>
+	<%-- 	<div class="col-sm-12 text-center">
+			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addDeductionRow()"><spring:message code="lbl.addrow" /></button>
+		</div> --%>
 	</div>
 	
 	<div class="panel-heading">
@@ -87,7 +94,7 @@
 		</div>
 	</div>
 	<div class="panel-body">
-		<table class="table table-bordered" id="tblcreditdetails">
+		<table class="table table-bordered" id="tblnetpayable">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.account.code"/><span class="mandatory"></span></th>
@@ -107,14 +114,14 @@
 						    </c:forEach>   
 							<%-- <form:options items="${netPayableAccounCodes}" itemLabel="glcode" itemValue="id" />  --%>
 						</form:select>
-						<form:errors path="" cssClass="add-margin error-msg" />
+						<%-- <form:errors path="" cssClass="add-margin error-msg" /> --%>
 					</td>
 					<!-- <td> 
 						<input type="text" id="creditAccountHead" class="form-control" disabled> 
 					</td> -->
 					<td>
-						<input type="text" id="netPayableAmount" name="netPayableAmount" class="form-control" readonly="true">
-						<form:errors path="" cssClass="add-margin error-msg" />
+						<input type="text" id="netPayableAmount" name="netPayableAmount" value="${netPayableAmount}" class="form-control text-right" readonly="true">
+						<%-- <form:errors path="" cssClass="add-margin error-msg" /> --%>
 					</td>
 				</tr>
 			</tbody>
