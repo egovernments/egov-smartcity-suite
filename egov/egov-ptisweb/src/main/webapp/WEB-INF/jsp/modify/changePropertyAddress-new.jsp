@@ -288,7 +288,7 @@
 					<tr><%@ include file="../workflow/property-workflow.jsp"%></tr>
 					<s:hidden name="modelId" id="modelId" value="%{modelId}" />
 				</table>
-				<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
+				<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 				<div class="buttonbottom" align="center">					
 				    <s:submit cssClass="buttonsubmit" name="action" value="Approve" theme="simple" method="save" id="ChangeAddress:Save" onclick="setWorkFlowInfo(this);doLoadingMask();"/>					
 					<s:submit cssClass="buttonsubmit" name="action" value="Forward" theme="simple" method="forward" id="ChangeAddress:Forward" onclick="setWorkFlowInfo(this);doLoadingMask();"/>

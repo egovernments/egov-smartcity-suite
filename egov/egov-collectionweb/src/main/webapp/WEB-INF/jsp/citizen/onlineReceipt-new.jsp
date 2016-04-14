@@ -42,9 +42,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Online Payment</title>
-<script src="common/js/watermark.js" type="text/javascript"></script>
+<script src="/egi/javascript/common/watermark.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/css/collectionspublic.css?rnd=${app_release_no}" />
+	href="${pageContext.request.contextPath}/resources/css/collectionspublic.css?rnd=${app_release_no}" />
 <script type="text/javascript">
 
 jQuery.noConflict();
@@ -737,7 +737,7 @@ function onLoad(){
 							<div id="loadingMask"
 								style="display: none; overflow: hidden; text-align: center">
 								<img
-									src="${pageContext.request.contextPath}/images/bar_loader.gif" />
+									src="/egi/resources/erp2/images/bar_loader.gif" />
 								<span style="color: red">Please wait....</span>
 							</div>
 							<div class="bottombuttonholder"  align="middle">

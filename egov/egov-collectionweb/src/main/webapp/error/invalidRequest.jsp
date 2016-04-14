@@ -43,7 +43,6 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>eGov - Invalid Request</title>
-	<link href="<c:url value='/css/commonegovNew.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
 	<div class="formmainbox">
