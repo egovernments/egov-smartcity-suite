@@ -127,7 +127,7 @@
     </definition>
 
 	<definition name="searchloatocreatecontractorbill-search" extends="base_layout">
-		<put-attribute name="page-title" value="hdr.letterofacceptance" cascade="true"/>
+		<put-attribute name="page-title" value="title.contractorbill.create" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/contractorbill/searchLOAToCreateContractorBill-header.jsp"/>
 	</definition>
 	

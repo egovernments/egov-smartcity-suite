@@ -54,13 +54,19 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-	var billFromDate = $('#billFromDate').data('datepicker').date;
-	var billToDate = $('#billToDate').data('datepicker').date;
+	var billFromDate = '';
+	var billToDate = '';
+	if($('#billFromDate').val() != "") {
+		billFromDate = $('#billFromDate').data('datepicker').date;
+	}
+	if($('#billToDate').val() != "") {
+		billToDate = $('#billToDate').data('datepicker').date;
+	}
 	var flag = true; 
 	if(billToDate != '' && billFromDate != '') {
 		if(billFromDate > billToDate) {
 			flag = false;
-			bootbox.alert('To Date should be greater than From Date');
+			bootbox.alert('Bill To Date should be greater than Bill From Date');
 		}
 	}
 	if(flag)

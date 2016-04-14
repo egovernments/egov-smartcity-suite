@@ -72,8 +72,9 @@
 					|| ((lineEstimate.status.code == 'CANCELLED' || lineEstimate.status.code == 'REJECTED') && (lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations != null && lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations[0].budgetUsage != null))}">
 						<th><spring:message code="lbl.estimatenumber"/></th>
 					</c:if>
-					
+					<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 					<th><spring:message code="lbl.workidentificationnumber"/></th>
+					</c:if>
 					<th><spring:message code="lbl.estimatedamount"/></th>					
 					<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 						<th><spring:message code="lbl.actualamount"/>
@@ -107,9 +108,11 @@
 								<c:out value="${lineEstimate.lineEstimateDetails[item.index].estimateNumber}"/>
 							</td>
 						</c:if>
+						<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 							<td>
 								<c:out value="${lineEstimate.lineEstimateDetails[item.index].projectCode.code}"/>
 							</td>
+						</c:if>
 						<td class="text-right" id="estimateAmount${item.index}">
 							<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${lineEstimate.lineEstimateDetails[item.index].estimateAmount}" />
 						</td>
@@ -154,21 +157,42 @@
 					</c:forEach>
 				</c:if>
 				<tr>
-					<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' 
-					|| ((lineEstimate.status.code == 'CANCELLED' || lineEstimate.status.code == 'REJECTED') && (lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations != null &&  lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations[0].budgetUsage != null))}">
-						<td colspan="4" class="text-right"><spring:message code="lbl.total" /></td>
-					</c:if>
-					<c:if test="${!(lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' 
-					|| ((lineEstimate.status.code == 'CANCELLED' || lineEstimate.status.code == 'REJECTED') && (lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations != null && lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations[0].budgetUsage != null)))}">
-						<td colspan="3" class="text-right"><spring:message code="lbl.total" /></td>
-					</c:if>
-					<td class="text-right"> <span id="estimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${total}" /></span> </td>
-					<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
-						<td class="text-right"> <span id="actualEstimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${actualEstimateTotal}" /></span> </td>
-					</c:if>
-					<td></td>
-					<td></td>
-					<td></td>
+				<c:choose>
+					<c:when test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+						<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' 
+						|| ((lineEstimate.status.code == 'CANCELLED' || lineEstimate.status.code == 'REJECTED') && (lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations != null &&  lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations[0].budgetUsage != null))}">
+							<td colspan="4" class="text-right"><spring:message code="lbl.total" /></td>
+						</c:if>
+						<c:if test="${!(lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' 
+						|| ((lineEstimate.status.code == 'CANCELLED' || lineEstimate.status.code == 'REJECTED') && (lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations != null && lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations[0].budgetUsage != null)))}">
+							<td colspan="3" class="text-right"><spring:message code="lbl.total" /></td>
+						</c:if>
+						<td class="text-right"> <span id="estimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${total}" /></span> </td>
+						<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+							<td class="text-right"> <span id="actualEstimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${actualEstimateTotal}" /></span> </td>
+						</c:if>
+						<td></td>
+						<td></td>
+						<td></td>
+					</c:when>
+					<c:otherwise>
+						<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' 
+						|| ((lineEstimate.status.code == 'CANCELLED' || lineEstimate.status.code == 'REJECTED') && (lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations != null &&  lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations[0].budgetUsage != null))}">
+							<td colspan="3" class="text-right"><spring:message code="lbl.total" /></td>
+						</c:if>
+						<c:if test="${!(lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' 
+						|| ((lineEstimate.status.code == 'CANCELLED' || lineEstimate.status.code == 'REJECTED') && (lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations != null && lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations[0].budgetUsage != null)))}">
+							<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
+						</c:if>
+							<td class="text-right"> <span id="estimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${total}" /></span> </td>
+						<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+							<td class="text-right"> <span id="actualEstimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${actualEstimateTotal}" /></span> </td>
+						</c:if>
+							<td></td>
+							<td></td>
+							<td></td>
+					</c:otherwise>
+				</c:choose>
 				</tr>
 			</tfoot>
 		</table>
@@ -176,3 +200,4 @@
 		</div>
 	</div>
 </div>
+

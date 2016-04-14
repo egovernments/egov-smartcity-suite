@@ -38,10 +38,17 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery('#btnsearch').click(function(e) {
-	var fromDate = $('#fromDate').data('datepicker').date;
-	var toDate = $('#toDate').data('datepicker').date;
+	
+	var fromDate = '';
+	var toDate = '';
+	if($('#fromDate').val() != "") {
+		fromDate = $('#fromDate').data('datepicker').date;
+	}
+	if($('#toDate').val() != "") {
+		toDate = $('#toDate').data('datepicker').date;
+	}
 	var flag = true; 
-	if(toDate != '' && fromDate != '') {
+	if(toDate != '' && fromDate != "") {
 		if(fromDate > toDate) {
 			flag = false;
 			bootbox.alert('To Date should be greater than From Date');
@@ -120,9 +127,9 @@ function callAjaxSearch() {
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "", "sClass" : "text-center","Width": "1%"} ,{ 
-					"data" : "",
-					"sClass" : "text-center","Width": "2%"
+					"data" : "", "sClass" : "text-center","sWidth": "1%"} ,{ 
+					"data" : "","autoWidth": "false",
+					"sClass" : "text-center","sWidth": "2%"
 				}, {
 					"data" : "workOrderNumber",
 					"sClass" : "text-left","width": "13.5%"
@@ -138,13 +145,13 @@ function callAjaxSearch() {
 			    	}
 				}, {
 					"data" : "contractor",
-					"sClass" : "text-left","autoWidth": "false",
+					"sClass" : "text-left","sWidth": "15%",
 						 "render":function(data, type, full, meta){
 						       return full.contractorcode + "/" + full.contractor;
 						    } 
 				}, {
 					"data" : "nameOfWork",
-					"sClass" : "text-left","autoWidth": "false"
+					"sClass" : "text-left","sWidth": "15%"
 					
 				}, {
 					"data" : "workIdentificationNumber",

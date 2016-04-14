@@ -38,8 +38,14 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery('#btnsearch').click(function(e) {
-	var adminSanctionToDate = $('#adminSanctionToDate').data('datepicker').date;
-	var adminSanctionFromDate = $('#adminSanctionFromDate').data('datepicker').date;
+	var adminSanctionFromDate = '';
+	var adminSanctionToDate = '';
+	if($('#adminSanctionFromDate').val() != "") {
+		adminSanctionFromDate = $('#adminSanctionFromDate').data('datepicker').date;
+	}
+	if($('#adminSanctionToDate').val() != "") {
+		adminSanctionToDate = $('#adminSanctionToDate').data('datepicker').date;
+	}
 	var flag = true; 
 	if(adminSanctionToDate != '' && adminSanctionFromDate != '') {
 		if(adminSanctionFromDate > adminSanctionToDate) {

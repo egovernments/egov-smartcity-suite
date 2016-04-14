@@ -113,7 +113,8 @@ public class LetterOfAcceptanceSearchController {
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
-        model.addAttribute("departments", departments);
+        if (departments != null && !departments.isEmpty())
+            searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "searchloatocreatecontractorbill-search";
     }
