@@ -98,7 +98,7 @@
 	src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"></script>
 <link
 	src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>"></link>
-<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
 
 <link rel="stylesheet" type="text/css"
 	href="/egi/commonyui/yui2.8/fonts/fonts-min.css" />

@@ -56,7 +56,7 @@
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
 		
-		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>

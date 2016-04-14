@@ -68,7 +68,7 @@
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		
-		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
