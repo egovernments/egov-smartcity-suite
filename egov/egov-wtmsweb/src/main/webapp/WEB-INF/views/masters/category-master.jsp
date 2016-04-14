@@ -52,28 +52,30 @@
               </c:if>
 		<div class="panel-body custom-form">
 			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /><span class="mandatory"></span></label>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" />:<span class="mandatory"></span></label>
 					<div class="col-sm-4 add-margin">
 						<div class="col-sm-5 add-margin"  id="codediv">
 							<form:input class="form-control patternvalidation"   data-pattern="alphanumericwithspecialcharacters"  maxlength="25" id="code" data-first-option="false"  path="code" required="required" />
 							<form:errors path="code" cssClass="add-margin error-msg" />
 						</div>
 					</div>
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.category.type" /><span class="mandatory"></span></label>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.category.type" />:<span class="mandatory"></span></label>
 					<div class="col-sm-4 add-margin">
 						<div class="col-sm-5 add-margin"  id="categorydiv">
 							<form:input class="form-control patternvalidation"   data-pattern="alphabetwithspace"  maxlength="50" id="name" data-first-option="false" path="name" required="required" />
 							<form:errors path="name" cssClass="add-margin error-msg" />
 						</div>
 					</div>
-			<div class="form-group" id="statusdiv">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
-					<div class="col-sm-3 add-margin" >
-						<form:checkbox id="activeid" path="active" value ="active" />
-						<form:errors path="active" />
-					</div>
-			</div>	
-		</div>
+				</div>
+			<div class="form-group">
+				<div class="form-group" id="statusdiv">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
+						<div class="col-sm-3 add-margin" >
+							<form:checkbox id="activeid" path="active" value ="active" />
+							<form:errors path="active" />
+						</div>
+				</div>	
+			</div>
 				<input type="hidden" name="connectionCategory" value="${connectionCategory.id}" /> 
 				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>	
 			<div class="form-group text-center">

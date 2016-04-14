@@ -80,7 +80,7 @@ public class ConnectionCategoryService {
     }
 
     public List<ConnectionCategory> findAll() {
-        return connectionCategoryRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
+        return connectionCategoryRepository.findAll(new Sort(Sort.Direction.DESC, "name"));
     }
 
     public ConnectionCategory findByNameIgnoreCase(final String name) {
