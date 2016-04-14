@@ -145,6 +145,7 @@
 	<bean id="wcmsBulkBillGenerationDelegate2" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="2" />
 		<property name="billsCount" value="50" />
+		
     </bean>
 	
 </beans>
