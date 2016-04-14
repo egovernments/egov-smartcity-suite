@@ -172,6 +172,10 @@ public class ContractorBillRegisterService {
             final MultipartFile[] files) throws ValidationException, IOException {
         ContractorBillRegister updatedContractorBillRegister = null;
 
+        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())
+                && contractorBillRegister.getState() != null && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
+            contractorBillRegister.setApprovedDate(new Date());
+        
         contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
         contractorBillRegister.setBillstatus(contractorBillRegister.getStatus().getCode());
         

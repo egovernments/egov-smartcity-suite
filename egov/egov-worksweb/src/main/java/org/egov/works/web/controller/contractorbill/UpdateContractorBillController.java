@@ -187,8 +187,6 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         final ContractorBillRegister newcontractorBillRegister = getContractorBillDocuments(contractorBillRegister);
         model.addAttribute("contractorBillRegister", newcontractorBillRegister);
-//        if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
-//            model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
         return "contractorBill-update";
     }
 

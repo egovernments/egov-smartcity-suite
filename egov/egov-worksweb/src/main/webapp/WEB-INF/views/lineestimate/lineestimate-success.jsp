@@ -60,7 +60,7 @@
 </div>
 <div class="row text-center">
 	<div class="add-margin">
-		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
 			<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPdf()" ><spring:message code="lbl.generate.proceedings" /></a>
 		</c:if>
 		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
