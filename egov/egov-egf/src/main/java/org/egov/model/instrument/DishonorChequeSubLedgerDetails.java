@@ -40,13 +40,8 @@
 package org.egov.model.instrument;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -54,49 +49,33 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
 import org.egov.infstr.models.BaseModel;
 
 @Entity
-@Table(name = "EGF_DISHONORCHEQUE_DETAIL")
+@Table(name = "EGF_DISHONORCHEQUE_SL_DETAIL")
 @Inheritance(strategy = InheritanceType.JOINED)
-@SequenceGenerator(name = DishonorChequeDetails.SEQ_EGF_DISHONORCHEQUE_DETAIL, sequenceName = DishonorChequeDetails.SEQ_EGF_DISHONORCHEQUE_DETAIL, allocationSize = 1)
-public class DishonorChequeDetails extends BaseModel {
+@SequenceGenerator(name = DishonorChequeSubLedgerDetails.SEQ_EGF_DISHONORCHEQUE_SL_DETAIL, sequenceName = DishonorChequeSubLedgerDetails.SEQ_EGF_DISHONORCHEQUE_SL_DETAIL, allocationSize = 1)
+public class DishonorChequeSubLedgerDetails extends BaseModel {
 
-    private static final long serialVersionUID = -6790212647262088197L;
+    private static final long serialVersionUID = 7262466422266226010L;
 
-    public static final String SEQ_EGF_DISHONORCHEQUE_DETAIL = "SEQ_EGF_DISHONORCHQDET";
-    
+    public static final String SEQ_EGF_DISHONORCHEQUE_SL_DETAIL = "SEQ_EGF_DISHONORCHEQUE_SL_DETAIL";
     @Id
-    @GeneratedValue(generator = SEQ_EGF_DISHONORCHEQUE_DETAIL, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGF_DISHONORCHEQUE_SL_DETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "headerid")
-    private DishonorCheque header;
+    @JoinColumn(name = "detailid")
+    private DishonorChequeDetails details;
 
-    @ManyToOne
-    @JoinColumn(name = "glcodeid")
-    private CChartOfAccounts glcodeId;
+    private BigDecimal amount;
 
-    private BigDecimal debitAmt;
+    private Integer detailTypeId;
 
-    @Column(name = "creditamt")
-    private BigDecimal creditAmount;
-
-    private Integer functionId;
-
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "details", targetEntity = DishonorChequeSubLedgerDetails.class)
-    private Set<DishonorChequeSubLedgerDetails> subLedgerDetails = new HashSet<DishonorChequeSubLedgerDetails>();
-
-    @Transient
-    private CFunction function;
+    private Integer detailKeyId;
 
     public Long getId() {
         return id;
@@ -106,60 +85,36 @@ public class DishonorChequeDetails extends BaseModel {
         this.id = id;
     }
 
-    public Integer getFunctionId() {
-        return functionId;
+    public DishonorChequeDetails getDetails() {
+        return details;
     }
 
-    public void setFunctionId(final Integer functionId) {
-        this.functionId = functionId;
+    public void setDetails(DishonorChequeDetails details) {
+        this.details = details;
     }
 
-    public DishonorCheque getHeader() {
-        return header;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setHeader(final DishonorCheque header) {
-        this.header = header;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
-    public CChartOfAccounts getGlcodeId() {
-        return glcodeId;
+    public Integer getDetailTypeId() {
+        return detailTypeId;
     }
 
-    public void setGlcodeId(final CChartOfAccounts glcodeId) {
-        this.glcodeId = glcodeId;
+    public void setDetailTypeId(Integer detailTypeId) {
+        this.detailTypeId = detailTypeId;
     }
 
-    public BigDecimal getDebitAmt() {
-        return debitAmt;
+    public Integer getDetailKeyId() {
+        return detailKeyId;
     }
 
-    public void setDebitAmt(final BigDecimal debitAmt) {
-        this.debitAmt = debitAmt;
-    }
-
-    public BigDecimal getCreditAmount() {
-        return creditAmount;
-    }
-
-    public void setCreditAmount(final BigDecimal creditAmount) {
-        this.creditAmount = creditAmount;
-    }
-
-    public CFunction getFunction() {
-        return function;
-    }
-
-    public void setFunction(final CFunction function) {
-        this.function = function;
-    }
-
-    public Set<DishonorChequeSubLedgerDetails> getSubLedgerDetails() {
-        return subLedgerDetails;
-    }
-
-    public void setSubLedgerDetails(Set<DishonorChequeSubLedgerDetails> subLedgerDetails) {
-        this.subLedgerDetails = subLedgerDetails;
+    public void setDetailKeyId(Integer detailKeyId) {
+        this.detailKeyId = detailKeyId;
     }
 
     @Override
@@ -170,11 +125,11 @@ public class DishonorChequeDetails extends BaseModel {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final DishonorChequeDetails other = (DishonorChequeDetails) obj;
-        if (debitAmt == null && creditAmount == null) {
-            if (debitAmt != null || creditAmount != null)
+        final DishonorChequeSubLedgerDetails other = (DishonorChequeSubLedgerDetails) obj;
+        if (detailKeyId == null && detailTypeId == null) {
+            if (detailKeyId != null || detailTypeId != null)
                 return false;
-        } else if (!(debitAmt.compareTo(other.debitAmt) == 0 && creditAmount.compareTo(other.creditAmount) == 0))
+        } else if (!(detailKeyId == other.detailKeyId && detailTypeId == other.detailTypeId))
             return false;
         return true;
     }

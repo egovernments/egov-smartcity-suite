@@ -69,7 +69,7 @@
 
 		if (Number(totalAmount) != Number(reversalAmount)) {
 			dom.get("errorDiv").style.display = '';
-			dom.get("errorDiv").innerHTML = 'Total amount should be equal to Reversal amount';
+			dom.get("errorDiv").innerHTML = 'Total amount should be equal to Instrument amount';
 			return false;
 		}
 
@@ -88,7 +88,7 @@
 			if (receiptGLDetails != "") {
 
 				receiptGLDetails = receiptGLDetails + ","
-						+ showGlGlcode[i].value + "-"
+						+ showGlGlcode[i].innerText + "-"
 						+ Number(showGlDebitAmount[i].innerText) + "-"
 						+ Number(showGlCreditAmount[i].innerText);
 			} else {
@@ -147,7 +147,7 @@
 		var showGlTotalAmount = 0;
 		if (Number(totalAmount) != Number(reversalAmount)) {
 			dom.get("errorDiv").style.display = '';
-			dom.get("errorDiv").innerHTML = 'Total amount should be equal to Reversal amount';
+			dom.get("errorDiv").innerHTML = 'Total amount should be equal to Instrument amount';
 			return false;
 		} else {
 			var showGlTable = dom.get("showGlEntry");
@@ -295,10 +295,11 @@
 					</table>
 					<div class="buttonbottom">
 						<td><input type="button" class="button" value="Show GLEntry"
-							id="showGlEntryButton" name="button" onclick="return showGlEntry();" />&nbsp;</td>
+							id="showGlEntryButton" name="button"
+							onclick="return showGlEntry();" />&nbsp;</td>
 						<td><input type="button" class="button"
-							value="Copy Amount Details" id="copyAmountDetailsButton" name="button"
-							onclick="return copyAmountDetails();" />&nbsp;</td>
+							value="Copy Amount Details" id="copyAmountDetailsButton"
+							name="button" onclick="return copyAmountDetails();" />&nbsp;</td>
 					</div>
 				</div>
 				<div id="showGlEntry" class="display-hide">
@@ -361,14 +362,15 @@
 									class="text-right"></div></td>
 						</tr>
 					</table>
-					<div class="buttonbottom">
-						<td><input type="submit" class="button" value="Dishonor"
-							id="dishonorButton" name="button"
-							onclick="return dishonorSelectedChq();" />&nbsp;</td>
-						<!-- <td><input type="submit" class="button" value="Copy Amount Details"
+
+				</div>
+				<div class="buttonbottom">
+					<td><input type="submit" class="buttonsubmit" value="Dishonor"
+						id="dishonorButton" name="button"
+						onclick="return dishonorSelectedChq();" />&nbsp;</td>
+					<!-- <td><input type="submit" class="button" value="Copy Amount Details"
 						id="dishonorButton" name="button"
 						onclick="return copyAmountDetails();" />&nbsp;</td> -->
-					</div>
 				</div>
 			</s:if>
 			<s:hidden name="instHeaderIds" id="instHeaderIds"

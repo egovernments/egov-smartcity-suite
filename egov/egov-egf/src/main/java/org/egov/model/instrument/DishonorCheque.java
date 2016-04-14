@@ -44,31 +44,86 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
+import org.hibernate.validator.constraints.Length;
 
+@Entity
+@Table(name = "EGF_DISHONORCHEQUE")
+@Inheritance(strategy = InheritanceType.JOINED)
+@SequenceGenerator(name = DishonorCheque.SEQ_EGF_DISHONORCHEQUE, sequenceName = DishonorCheque.SEQ_EGF_DISHONORCHEQUE, allocationSize = 1)
 public class DishonorCheque extends StateAware {
 
     private static final long serialVersionUID = -6134188498111765210L;
+    public static final String SEQ_EGF_DISHONORCHEQUE = "SEQ_EGF_DISHONORCHQ";
+    @Id
+    @GeneratedValue(generator = SEQ_EGF_DISHONORCHEQUE, strategy = GenerationType.SEQUENCE)
     private Long id;
-    private InstrumentHeader instrumentHeader;
-    private Integer payinSlipCreator;
-    private User payinSlipCreatorUser;
-    private CVoucherHeader originalVoucherHeader;
-    private EgwStatus status;
-    private BigDecimal bankChargesAmt;
 
+    @ManyToOne
+    @JoinColumn(name = "instrumentheaderid")
+    private InstrumentHeader instrumentHeader;
+
+    @Transient
+    private Integer payinSlipCreator;
+
+    @Transient
+    private User payinSlipCreatorUser;
+
+    @ManyToOne
+    @JoinColumn(name = "originalvhid")
+    private CVoucherHeader originalVoucherHeader;
+
+    @ManyToOne
+    @JoinColumn(name = "statusid")
+    private EgwStatus status;
+
+    @Column(name = "bankcharges")
+    private BigDecimal bankChargesAmt;
+    
+    @ManyToOne
+    @JoinColumn(name = "bankchargeglcodeid")
     private CChartOfAccounts bankchargeGlCodeId;
+
     private Date transactionDate;
+
+    @Length(max = 20)
     private String bankReferenceNumber;
+
     private String instrumentDishonorReason;
+
     private String bankreason;
+
+    @ManyToOne
+    @JoinColumn(name = "reversalvhid")
     private CVoucherHeader reversalVoucherHeader;
+
+    @ManyToOne
+    @JoinColumn(name = "bankchargesvhid")
     private CVoucherHeader bankchargesVoucherHeader;
+    @Transient
     private boolean firstStepWk;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "header", targetEntity = DishonorChequeDetails.class)
     private Set<DishonorChequeDetails> details = new HashSet<DishonorChequeDetails>(0);
 
     @Override

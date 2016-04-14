@@ -42,7 +42,6 @@ package org.egov.collection.integration.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,6 +62,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.DishonorCheque;
 import org.egov.model.instrument.DishonorChequeDetails;
+import org.egov.model.instrument.DishonorChequeSubLedgerDetails;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.services.voucher.GeneralLedgerDetailService;
@@ -126,6 +126,7 @@ public class DishonorChequeActionHelper {
                     Long.valueOf(chequeForm.getInstHeaderIds().split(",")[0]), false);
 
             DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
+            DishonorChequeSubLedgerDetails dishonourChqSLDetails = new DishonorChequeSubLedgerDetails();
             dishonorChq.setStatus(egwStatusDAO.getStatusByModuleAndCode(FinancialConstants.STATUS_MODULE_DISHONORCHEQUE,
                     FinancialConstants.DISHONORCHEQUE_APPROVED_STATUS));
             dishonorChq.setTransactionDate(chequeForm.getTransactionDate());
@@ -141,7 +142,10 @@ public class DishonorChequeActionHelper {
             for (String gl : receiptGeneralLedger) {
                 ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
                         originalVoucher.getId(), gl.split("-")[0]);
-
+                List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService
+                        .findAllBy(
+                                "from CGeneralLedgerDetail where generalLedgerId.id=?",
+                                ledger.getId());
                 dishonourChqDetails = new DishonorChequeDetails();
                 dishonourChqDetails.setHeader(dishonorChq);
                 CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?", ledger.getGlcode());
@@ -149,9 +153,21 @@ public class DishonorChequeActionHelper {
                 if (ledger.getFunctionId() != null) {
                     dishonourChqDetails.setFunctionId(ledger.getFunctionId());
                 }
-                dishonourChqDetails.setDebitAmt(BigDecimal.valueOf(Long.valueOf(gl.split("-")[1])));
-                dishonourChqDetails.setCreditAmount(BigDecimal.valueOf(Long.valueOf(gl.split("-")[2])));
+                dishonourChqDetails.setDebitAmt(BigDecimal.valueOf(Double.valueOf(gl.split("-")[1])));
+                dishonourChqDetails.setCreditAmount(BigDecimal.valueOf(Double.valueOf(gl.split("-")[2])));
+                for (CGeneralLedgerDetail ledgerDetail : ledgerDetailSet) {
+                    dishonourChqSLDetails = new DishonorChequeSubLedgerDetails();
+                    dishonourChqSLDetails.setDetails(dishonourChqDetails);
+                    dishonourChqSLDetails
+                            .setAmount(dishonourChqDetails.getDebitAmt().compareTo(BigDecimal.ZERO) == 0 ? dishonourChqDetails
+                                    .getCreditAmount() : dishonourChqDetails.getDebitAmt());
+                    dishonourChqSLDetails.setDetailTypeId(ledgerDetail.getDetailTypeId().getId());
+                    dishonourChqSLDetails.setDetailKeyId(ledgerDetail.getDetailKeyId());
+                    dishonourChqDetails.getSubLedgerDetails().add(dishonourChqSLDetails);
+                }
+
                 dishonorChq.getDetails().add(dishonourChqDetails);
+
             }
 
             for (String gl : remittanceGeneralLedger) {
@@ -161,7 +177,10 @@ public class DishonorChequeActionHelper {
                                 + ") ");
                 ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
                         remittanceVoucher.getId(), gl.split("-")[0]);
-
+                List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService
+                        .findAllBy(
+                                "from CGeneralLedgerDetail where generalLedgerId.id=?",
+                                ledger.getId());
                 dishonourChqDetails = new DishonorChequeDetails();
                 dishonourChqDetails.setHeader(dishonorChq);
                 CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?", ledger.getGlcode());
@@ -169,8 +188,20 @@ public class DishonorChequeActionHelper {
                 if (ledger.getFunctionId() != null) {
                     dishonourChqDetails.setFunctionId(ledger.getFunctionId());
                 }
-                dishonourChqDetails.setDebitAmt(BigDecimal.valueOf(Long.valueOf(gl.split("-")[1])));
-                dishonourChqDetails.setCreditAmount(BigDecimal.valueOf(Long.valueOf(gl.split("-")[2])));
+                dishonourChqDetails.setDebitAmt(BigDecimal.valueOf(Double.valueOf(gl.split("-")[1])));
+                dishonourChqDetails.setCreditAmount(BigDecimal.valueOf(Double.valueOf(gl.split("-")[2])));
+                for (CGeneralLedgerDetail ledgerDetail : ledgerDetailSet) {
+                    dishonourChqSLDetails = new DishonorChequeSubLedgerDetails();
+                    dishonourChqSLDetails.setDetails(dishonourChqDetails);
+                    dishonourChqSLDetails
+                            .setAmount(dishonourChqDetails.getDebitAmt().compareTo(BigDecimal.ZERO) == 0 ? dishonourChqDetails
+                                    .getCreditAmount() : dishonourChqDetails.getDebitAmt());
+                    dishonourChqSLDetails.setDetailTypeId(ledgerDetail.getDetailTypeId().getId());
+                    dishonourChqSLDetails.setDetailKeyId(ledgerDetail.getDetailKeyId());
+                    dishonourChqDetails.getSubLedgerDetails().add(dishonourChqSLDetails);
+                    // Need to handle multiple sub ledgers
+                    break;
+                }
                 dishonorChq.getDetails().add(dishonourChqDetails);
             }
             // dishonorChq.getDetails().addAll(dishonorChequeDetails);
@@ -194,10 +225,26 @@ public class DishonorChequeActionHelper {
     @Transactional
     public void approve(DishonoredChequeForm chequeForm, DishonorCheque dishonorChq, CVoucherHeader originalVoucher,
             InstrumentHeader instrumentHeader) {
-        final String instrumentHeaderIds[] = chequeForm.getInstHeaderIds().split(",");
-        createReversalVoucher(chequeForm, dishonorChq, originalVoucher, instrumentHeader);
-        for (final String instHeadId : instrumentHeaderIds)
-            dishonorChequeService.updateCollectionsOnInstrumentDishonor(Long.valueOf(instHeadId));
+        try {
+            final String instrumentHeaderIds[] = chequeForm.getInstHeaderIds().split(",");
+            CVoucherHeader reversalVoucher = createReversalVoucher(chequeForm, dishonorChq, originalVoucher, instrumentHeader);
+
+            dishonorChq.setReversalVoucherHeader(reversalVoucher);
+            persistenceService.update(dishonorChq);
+            for (final String instHeadId : instrumentHeaderIds)
+                dishonorChequeService.updateCollectionsOnInstrumentDishonor(Long.valueOf(instHeadId));
+
+        } catch (final ValidationException e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -207,56 +254,50 @@ public class DishonorChequeActionHelper {
         final HashMap<String, Object> headerDetails = createHeaderAndMisDetails(originalVoucher, instrumentHeader);
         final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
         final List<HashMap<String, Object>> subledgerdetails = new ArrayList<HashMap<String, Object>>();
+        CVoucherHeader reversalVoucher = new CVoucherHeader();
+        try {
+            List<DishonorChequeDetails> dishonorChequeDetails = new ArrayList<DishonorChequeDetails>();
+            dishonorChequeDetails.addAll(dishonorChq.getDetails());
+            HashMap<String, Object> detailMap = null;
+            HashMap<String, Object> subledgerMap = null;
+            CFunction function = null;
+            for (DishonorChequeDetails gl : dishonorChequeDetails) {
+                detailMap = new HashMap<String, Object>();
+                detailMap.put(VoucherConstant.GLCODE, gl.getGlcodeId().getGlcode());
+                // debit becomes credit ,credit becomes debit
+                detailMap.put(VoucherConstant.DEBITAMOUNT, gl.getDebitAmt());
+                detailMap.put(VoucherConstant.CREDITAMOUNT, gl.getCreditAmount());
+                accountdetails.add(detailMap);
+                Set<DishonorChequeSubLedgerDetails> dishonorChequeSubLedgerDetails = gl.getSubLedgerDetails();
+                for (final DishonorChequeSubLedgerDetails slLedgerDetail : dishonorChequeSubLedgerDetails) {
+                    subledgerMap = new HashMap<String, Object>();
+                    subledgerMap.put(VoucherConstant.GLCODE, gl.getGlcodeId().getGlcode());
+                    subledgerMap.put(VoucherConstant.DETAILTYPEID, slLedgerDetail.getDetailTypeId());
+                    subledgerMap.put(VoucherConstant.DETAILKEYID, slLedgerDetail.getDetailKeyId());
+                    subledgerMap.put(VoucherConstant.DEBITAMOUNT, slLedgerDetail.getAmount());
+                    subledgerdetails.add(subledgerMap);
+                    // Need to handle multiple sub ledgers
+                    break;
+                }
 
-        List<DishonorChequeDetails> dishonorChequeDetails = new ArrayList<DishonorChequeDetails>();
-        dishonorChequeDetails.addAll(dishonorChq.getDetails());
-        HashMap<String, Object> detailMap = null;
-        HashMap<String, Object> subledgerMap = null;
-        CFunction function = null;
-        CGeneralLedger ledger = new CGeneralLedger();
-        for (DishonorChequeDetails gl : dishonorChequeDetails) {
-            if (gl.getCreditAmount() != null && gl.getCreditAmount().compareTo(BigDecimal.ZERO) != 0) {
-                CVoucherHeader remittanceVoucher = voucherHeaderService
-                        .find("select gl.voucherHeaderId from CGeneralLedger gl ,InstrumentOtherDetails iod where gl.voucherHeaderId.id = iod.payinslipId.id and iod.instrumentHeaderId.id   in ("
-                                + chequeForm.getInstHeaderIds()
-                                + ") ");
-                ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
-                        remittanceVoucher.getId(), gl.getGlcodeId().getGlcode());
-            } else {
-                ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
-                        originalVoucher.getId(), gl.getGlcodeId().getGlcode());
-            }
-            detailMap = new HashMap<String, Object>();
-            detailMap.put(VoucherConstant.GLCODE, ledger.getGlcode());
-            // debit becomes credit ,credit becomes debit
-            detailMap.put(VoucherConstant.DEBITAMOUNT, gl.getDebitAmt());
-            detailMap.put(VoucherConstant.CREDITAMOUNT, gl.getCreditAmount());
-            accountdetails.add(detailMap);
-            List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService
-                    .findAllBy(
-                            "from CGeneralLedgerDetail where generalLedgerId.id=?",
-                            ledger.getId());
-            for (final CGeneralLedgerDetail ledgerDetail : ledgerDetailSet) {
-                subledgerMap = new HashMap<String, Object>();
-                subledgerMap.put(VoucherConstant.GLCODE, ledger.getGlcode());
-                subledgerMap.put(VoucherConstant.DETAILTYPEID, ledgerDetail.getDetailTypeId().getId());
-                subledgerMap.put(VoucherConstant.DETAILKEYID, ledgerDetail.getDetailKeyId());
-                // even for subledger debit becomes credit ,credit becomes debit
-                if (gl.getDebitAmt().compareTo(BigDecimal.ZERO) != 0)
-                    subledgerMap.put(VoucherConstant.CREDITAMOUNT, gl.getCreditAmount());
-                else
-                    subledgerMap.put(VoucherConstant.DEBITAMOUNT, gl.getDebitAmt());
-
-                subledgerdetails.add(subledgerMap);
             }
 
+            reversalVoucher = createVoucher.createVoucher(headerDetails, accountdetails, subledgerdetails);
+
+            reversalVoucher.setStatus(0);
+            voucherHeaderService.applyAuditing(reversalVoucher);
+            voucherHeaderService.persist(reversalVoucher);
+        } catch (final ValidationException e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
         }
-
-        CVoucherHeader reversalVoucher = createVoucher.createVoucher(headerDetails, accountdetails, subledgerdetails);
-
-        reversalVoucher.setStatus(0);
-        voucherHeaderService.applyAuditing(reversalVoucher);
-        voucherHeaderService.persist(reversalVoucher);
         return reversalVoucher;
     }
 

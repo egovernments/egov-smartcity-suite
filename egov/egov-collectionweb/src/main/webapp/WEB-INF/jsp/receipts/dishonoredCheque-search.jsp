@@ -253,6 +253,15 @@
 		var url = "/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+ vid;
 		window.open(url,'','width=900, height=700');
 	}
+
+	jQuery(document).ready(function(){
+	    jQuery('.check').change(function() {
+	        if(jQuery(this).is(":checked")) {
+	        	jQuery('.check').prop('checked', false);
+	        	jQuery(this).prop('checked', true);
+	        }
+	    });
+	});
 </script>
 </head>
 <body>
@@ -320,7 +329,7 @@
 					<td class="greybox"><s:text
 							name="dishonorcheque.cheque.dd.date" />:<span class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield id="chequeDate"
-							name="chequeDate"  data-date-end-date="0d"
+							name="chequeDate" data-date-end-date="0d"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" /></td>
@@ -418,7 +427,8 @@
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Select"
 												style="width:3%;text-align:center">
-												<s:checkbox id="selectedCheque" name="selectedCheque" />
+												<s:checkbox class="check" id="selectedCheque"
+													name="selectedCheque" />
 											</display:column>
 										</display:table></td>
 								</tr>
