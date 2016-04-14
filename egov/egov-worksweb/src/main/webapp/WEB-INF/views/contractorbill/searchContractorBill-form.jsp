@@ -71,7 +71,7 @@
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billnumber" /></label>
 		<div class="col-sm-3 add-margin">
-			<form:input path="billNumber" id="billNumber" class="form-control" placeholder="Type first 3 letters of billNumber"/>
+			<form:input path="billNumber" id="billNumber" class="form-control" />
 			<form:errors path="billNumber" cssClass="add-margin error-msg" />
 		</div>		
 	</div>

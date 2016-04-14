@@ -53,7 +53,7 @@
 <div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<c:if test="${mode != 'view' }">
+			<c:if test="${mode != 'view' && mode != 'readOnly' }">
 				<spring:message code="lbl.upload.document" />
 			</c:if>
 			<c:if test="${mode == 'view' || mode == 'readOnly' }">
@@ -70,7 +70,7 @@
 		<spring:message code="msg.no.documents" />
 	</c:if>
 	<input type="hidden" value="${fn:length(contractorBillRegister.documentDetails)}" id="documentsSize">
-	<c:if test="${mode != 'view' || mode != 'readOnly' }">
+	<c:if test="${mode != 'view' && mode != 'readOnly' }">
 		<div>
 			<table width="100%">
 				<c:if test="${contractorBillRegister.documentDetails != null &&  fn:length(contractorBillRegister.documentDetails) lt 4}">

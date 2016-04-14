@@ -72,8 +72,15 @@
 								<jsp:include page="contractorBillView-header.jsp"/>
 							</c:if>
 						<%-- 	<jsp:include page="contractorBill-details.jsp"/> --%>
-						<c:if test="${mode == 'view' &&  !contractorBillRegister.documentDetails.isEmpty()}">
+						<c:if test="${mode == 'view' || mode == 'readOnly' && !contractorBillRegister.documentDetails.isEmpty()}">
 							<jsp:include page="uploadDocuments.jsp"/>
+						</c:if>
+						<c:if test="${mode == 'readOnly'}">
+						<div class="row">
+							<div class="col-sm-12 text-center">
+								<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+							</div>
+						</div>
 						</c:if>
 						</div>
 					</div>
