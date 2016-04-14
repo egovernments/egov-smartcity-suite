@@ -204,7 +204,7 @@
 							id="reconciliationDate"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							value="%{asOnDate}" /> <a
-						href="javascript:show_calendar('arform.reconciliationDate');"
+						href="javascript:show_calendar('mrform.reconciliationDate');"
 						style="text-decoration: none">&nbsp;<img tabIndex="-1"
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
 
@@ -217,7 +217,7 @@
 					<td class="greybox"><s:textfield name="reconcileBean.fromDate" id="fromDate"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							value="%{fromDate}" /> <a
-						href="javascript:show_calendar('arform.fromDate');"
+						href="javascript:show_calendar('mrform.fromDate');"
 						style="text-decoration: none">&nbsp;<img tabIndex="-1"
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
 
@@ -227,7 +227,7 @@
 					<td class="greybox"><s:textfield name="reconcileBean.toDate" id="toDate"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							value="%{toDate}" /> <a
-						href="javascript:show_calendar('arform.toDate');"
+						href="javascript:show_calendar('mrform.toDate');"
 						style="text-decoration: none">&nbsp;<img tabIndex="-1"
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
 
@@ -248,6 +248,18 @@
 				</table>
 			</div>
       <div id="resultDiv"> </div>
+      
+      <div class="buttonbottom" id="reconcileDiv" style="display: none">
+        <table>
+          <tr>
+            <td><input  type="button" class="buttonsubmit"
+                value="Reconcile" name="Reconcile" method="reconcile"
+                onclick="return validateReconcile();" /></td>
+            <td><input type="button" value="Close"
+              onclick="javascript:window.close()" class="buttonsubmit" /></td>
+          </tr>
+        </table>
+      </div>
 		</center>
       </div>
 	</s:form>

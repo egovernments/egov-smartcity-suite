@@ -40,6 +40,7 @@
 package org.egov.web.actions.brs;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;
@@ -82,6 +83,8 @@ public class ManualReconciliationAction extends BaseFormAction {
     private ReconcileBean reconcileBean;
 	private String unReconciledDrCr;
 	private List<ReconcileBean> unReconciledCheques;
+	List<Long> instrumentHeaders;
+	List<Date> reconDates;
 	
     @Override
     public Object getModel() {
@@ -140,7 +143,8 @@ public class ManualReconciliationAction extends BaseFormAction {
     public String update()
     {
     	
-         return "upload";
+    	manualReconcileHelper.update(reconDates,instrumentHeaders);
+         return "update";
     }
 
    
@@ -198,6 +202,22 @@ public class ManualReconciliationAction extends BaseFormAction {
 
 	public void setUnReconciledCheques(List<ReconcileBean> unReconciledCheques) {
 		this.unReconciledCheques = unReconciledCheques;
+	}
+
+	public List<Long> getInstrumentHeaders() {
+		return instrumentHeaders;
+	}
+
+	public void setInstrumentHeaders(List<Long> instrumentHeaders) {
+		this.instrumentHeaders = instrumentHeaders;
+	}
+
+	public List<Date> getReconDates() {
+		return reconDates;
+	}
+
+	public void setReconDates(List<Date> reconDates) {
+		this.reconDates = reconDates;
 	}
 
    
