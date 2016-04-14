@@ -132,6 +132,8 @@ public class DishonorChequeActionHelper {
             dishonorChq.setBankReferenceNumber(chequeForm.getReferenceNo());
             dishonorChq.setInstrumentDishonorReason(chequeForm.getRemarks());
             dishonorChq.setOriginalVoucherHeader(originalVoucher);
+            instrumentHeader.setSurrendarReason(chequeForm.getDishonorReason());
+            instrumentHeaderService.update(instrumentHeader);
             dishonorChq.setInstrumentHeader(instrumentHeader);
             String[] receiptGeneralLedger = chequeForm.getReceiptGLDetails().split(",");
             String[] remittanceGeneralLedger = chequeForm.getRemittanceGLDetails().split(",");

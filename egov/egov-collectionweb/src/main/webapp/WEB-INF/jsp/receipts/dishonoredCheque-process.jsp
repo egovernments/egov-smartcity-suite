@@ -169,6 +169,33 @@
 			jQuery(gLTable).addClass("display-hide");
 		}
 	}
+
+	function copyAmountDetails() {
+
+		var receiptDebitAmount = document
+				.getElementsByName("receiptDebitAmount");
+		var receiptCreditAmount = document
+				.getElementsByName("receiptCreditAmount");
+		var amount = document.getElementsByName("amount");
+		var len = amount.length;
+		var debitAmount;
+		var creditAmount;
+		var totalAmount = 0;
+		for (i = 0; i < len; i++) {
+
+			debitAmount = Number(receiptDebitAmount[i].innerHTML);
+			creditAmount = Number(receiptCreditAmount[i].innerHTML);
+			if (debitAmount > 0) {
+				amount[i].value = debitAmount;
+				totalAmount = totalAmount + debitAmount;
+			} else {
+				amount[i].value = creditAmount;
+				totalAmount = totalAmount + creditAmount;
+			}
+		}
+		var total = dom.get("totalAmount");
+		total.value = totalAmount;
+	}
 </script>
 </head>
 <body>
@@ -227,44 +254,52 @@
 				</div>
 				</br>
 				</br>
-				<div id="gLEntry" >
-				<table width="70%" border="1" align="center" cellpadding="0"
-					cellspacing="0" class="tablebottom">
-					<tr>
-						<th class="bluebgheadtd">Account Code</th>
-						<th class="bluebgheadtd">Description</th>
-						<th class="bluebgheadtd">Debit Amount</th>
-						<th class="bluebgheadtd">Credit Amount</th>
-						<th class="bluebgheadtd">Reversal Amount</th>
-					</tr>
-					<s:iterator var="p" value="generalLedger" status="s">
+				<div id="gLEntry">
+					<table width="70%" border="1" align="center" cellpadding="0"
+						cellspacing="0" class="tablebottom">
 						<tr>
-							<td class="blueborderfortd" align="center"><s:property
-									value="%{glcode}" /></td>
-							<td class="blueborderfortd" align="center"><s:property
-									value="%{description}" /></td>
-							<td class="blueborderfortd text-right" align="center"
-								id="debitAmount"><s:property value="%{debitAmount}" /></td>
-							<td class="blueborderfortd text-right" align="center"><s:property
-									value="%{creditAmount}" /></td>
-							<td class="blueborderfortd" align="right"><s:textfield
-									name="amount" id="amount" value="0.00" onblur="updateTotal()"
-									cssClass="patternvalidation text-right form-control"
-									data-pattern="number" /></td>
+							<th class="bluebgheadtd">Account Code</th>
+							<th class="bluebgheadtd">Description</th>
+							<th class="bluebgheadtd">Debit Amount</th>
+							<th class="bluebgheadtd">Credit Amount</th>
+							<th class="bluebgheadtd">Reversal Amount</th>
 						</tr>
-					</s:iterator>
-					<tr>
-						<td class="blueborderfortd text-right" align="right" colspan="4">Total</td>
-						<td class="blueborderfortd "><s:textfield name="totalAmount"
-								id="totalAmount" value="0.00" readonly="true"
-								cssClass="patternvalidation text-right form-control"
-								data-pattern="number" /></td>
-					</tr>
-				</table>
-				<div class="buttonbottom">
-					<td><input type="button" class="button" value="Show GLEntry"
-						id="dishonorButton" name="button" onclick="return showGlEntry();" />&nbsp;</td>
-				</div>
+						<s:iterator var="p" value="generalLedger" status="s">
+							<tr>
+								<td class="blueborderfortd" align="center"><s:property
+										value="%{glcode}" /></td>
+								<td class="blueborderfortd" align="center"><s:property
+										value="%{description}" /></td>
+								<td class="blueborderfortd text-right" align="center"
+									id="debitAmount"><div id="receiptDebitAmount"
+										name="receiptDebitAmount">
+										<s:property value="%{debitAmount}" />
+									</div></td>
+								<td class="blueborderfortd text-right" align="center"><div
+										id="receiptCreditAmount" name="receiptCreditAmount">
+										<s:property value="%{creditAmount}" />
+									</div></td>
+								<td class="blueborderfortd" align="right"><s:textfield
+										name="amount" id="amount" value="0.00" onblur="updateTotal()"
+										cssClass="patternvalidation text-right form-control"
+										data-pattern="decimalvalue" /></td>
+							</tr>
+						</s:iterator>
+						<tr>
+							<td class="blueborderfortd text-right" align="right" colspan="4">Total</td>
+							<td class="blueborderfortd "><s:textfield name="totalAmount"
+									id="totalAmount" value="0.00" readonly="true"
+									cssClass="patternvalidation text-right form-control"
+									data-pattern="decimalvalue" /></td>
+						</tr>
+					</table>
+					<div class="buttonbottom">
+						<td><input type="button" class="button" value="Show GLEntry"
+							id="showGlEntryButton" name="button" onclick="return showGlEntry();" />&nbsp;</td>
+						<td><input type="button" class="button"
+							value="Copy Amount Details" id="copyAmountDetailsButton" name="button"
+							onclick="return copyAmountDetails();" />&nbsp;</td>
+					</div>
 				</div>
 				<div id="showGlEntry" class="display-hide">
 					<table width="70%" border="1" align="center" cellpadding="0"
@@ -319,9 +354,11 @@
 						<tr>
 							<td class="blueborderfortd text-right" align="right" colspan="2">Total</td>
 							<td class="blueborderfortd" align="right"><div
-									name="showGlDebitTotalAmount" id="showGlDebitTotalAmount" class="text-right"></div></td>
+									name="showGlDebitTotalAmount" id="showGlDebitTotalAmount"
+									class="text-right"></div></td>
 							<td class="blueborderfortd" align="right"><div
-									name="showGlCreditTotalAmount" id="showGlCreditTotalAmount" class="text-right"></div></td>
+									name="showGlCreditTotalAmount" id="showGlCreditTotalAmount"
+									class="text-right"></div></td>
 						</tr>
 					</table>
 					<div class="buttonbottom">
