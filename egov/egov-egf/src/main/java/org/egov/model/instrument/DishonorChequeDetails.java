@@ -48,9 +48,7 @@ import org.egov.commons.CFunction;
 import org.egov.infstr.models.BaseModel;
 
 public class DishonorChequeDetails extends BaseModel {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -6790212647262088197L;
     private DishonorCheque header;
     private CChartOfAccounts glcodeId;
@@ -125,4 +123,20 @@ public class DishonorChequeDetails extends BaseModel {
         this.function = function;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final DishonorChequeDetails other = (DishonorChequeDetails) obj;
+        if (debitAmt == null && creditAmount == null) {
+            if (debitAmt != null || creditAmount != null)
+                return false;
+        } else if (!(debitAmt.compareTo(other.debitAmt) == 0 && creditAmount.compareTo(other.creditAmount) == 0))
+            return false;
+        return true;
+    }
 }

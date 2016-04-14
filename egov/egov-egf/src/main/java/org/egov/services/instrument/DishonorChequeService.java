@@ -47,7 +47,9 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.DishonorCheque;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class DishonorChequeService extends PersistenceService<DishonorCheque, Long> {
 
     private static final Logger LOGGER = Logger.getLogger("DishonorChequeService.class");
@@ -75,7 +77,7 @@ public class DishonorChequeService extends PersistenceService<DishonorCheque, Lo
             if (null != financialIntegrationService)
                 financialIntegrationService.updateSourceInstrumentVoucher(
                         FinancialIntegrationService.EVENT_INSTRUMENT_DISHONOR_INITIATED, dishonorCheque.getInstrumentHeader()
-                        .getId());
+                                .getId());
             dishonorCheque.start().withOwner(pos).withComments("DishonorCheque Work flow started");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("---------" + dishonorCheque);
