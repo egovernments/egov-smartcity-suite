@@ -830,7 +830,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
                 + "join receipt.receiptInstrument as instruments where ";
         final String serviceNameCondition = "receipt.service.name=? ";
-        final String receiptDateCondition = "and to_char(receipt.receiptdate,'dd-MM-yyyy')=? ";
+        final String receiptDateCondition = "and date(receipt.receiptdate)=? ";
         final String instrumentStatusCondition = "and instruments.statusId.id=? ";
         final String instrumentTypeCondition = "and instruments.instrumentType.type = ? ";
         final String receiptFundCondition = "and receipt.receiptMisc.fund.code = ? ";
@@ -934,7 +934,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     final Object arguments[] = new Object[6];
 
                     arguments[0] = serviceName;
-                    arguments[1] = receiptDateArray[i];
+                    try{
+                        arguments[1] = dateFomatter.parse(receiptDateArray[i]);
+                        } catch (final ParseException exp) {
+                            LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + exp.getMessage());
+                            throw new ApplicationRuntimeException("Exception while parsing date", exp);
+                        }
                     arguments[2] = status.getId();
                     arguments[3] = CollectionConstants.INSTRUMENTTYPE_CASH;
                     arguments[4] = fundCodeArray[i];
@@ -1015,7 +1020,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     final Object arguments[] = new Object[9];
 
                     arguments[0] = serviceName;
-                    arguments[1] = receiptDateArray[i];
+                    try{
+                        arguments[1] = dateFomatter.parse(receiptDateArray[i]);
+                        } catch (final ParseException exp) {
+                            LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + exp.getMessage());
+                            throw new ApplicationRuntimeException("Exception while parsing date", exp);
+                        }
                     arguments[2] = status.getId();
                     arguments[3] = CollectionConstants.INSTRUMENTTYPE_CHEQUE;
                     arguments[4] = CollectionConstants.INSTRUMENTTYPE_DD;
@@ -1107,7 +1117,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     final Object arguments[] = new Object[6];
 
                     arguments[0] = serviceName;
-                    arguments[1] = receiptDateArray[i];
+                    try{
+                    arguments[1] = dateFomatter.parse(receiptDateArray[i]);
+                    } catch (final ParseException exp) {
+                        LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + exp.getMessage());
+                        throw new ApplicationRuntimeException("Exception while parsing date", exp);
+                    }
                     arguments[2] = status.getId();
                     arguments[3] = CollectionConstants.INSTRUMENTTYPE_CARD;
                     arguments[4] = fundCodeArray[i];
@@ -1196,7 +1211,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     final Object arguments[] = new Object[6];
 
                     arguments[0] = serviceName;
-                    arguments[1] = receiptDateArray[i];
+                    try{
+                        arguments[1] = dateFomatter.parse(receiptDateArray[i]);
+                        } catch (final ParseException exp) {
+                            LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + exp.getMessage());
+                            throw new ApplicationRuntimeException("Exception while parsing date", exp);
+                        }
                     arguments[2] = status.getId();
                     arguments[3] = CollectionConstants.INSTRUMENTTYPE_ONLINE;
                     arguments[4] = fundCodeArray[i];

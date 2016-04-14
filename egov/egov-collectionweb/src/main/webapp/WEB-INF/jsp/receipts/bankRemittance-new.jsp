@@ -342,7 +342,7 @@
 					</div>
 						<display:table name="paramList" uid="currentRow" pagesize="30"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
-							export="false" requestURI="">
+							export="false" requestURI="" excludedParams="*">
 							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
 								style="width:5%; text-align: center">
