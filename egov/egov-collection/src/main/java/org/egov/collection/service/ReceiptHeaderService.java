@@ -1845,10 +1845,11 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + "AND status.description = '"
                 + CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
 
-        if (bankAccId != null && bankAccId != 0)
+
+        if (bankAccId != null && bankAccId != -1)
             sb.append(" AND ih.bankaccountid=" + bankAccId + "");
-        if ((bankAccId == null || bankAccId == 0) && bankId != null && bankId != 0)
-            sb.append(" AND ih.bankid=" + bankAccId + "");
+        if ((bankAccId == null || bankAccId == -1) && bankId != null && bankId != 0)
+            sb.append(" AND ih.bankid=" + bankId + "");
         if (!"".equals(chequeDDNo) && chequeDDNo != null)
             sb.append(" AND ih.instrumentnumber=trim('" + chequeDDNo + "') ");
         if (!"".equals(chqueDDDate) && chqueDDDate != null)

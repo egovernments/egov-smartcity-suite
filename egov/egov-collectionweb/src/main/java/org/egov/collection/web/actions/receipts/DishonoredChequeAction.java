@@ -497,4 +497,12 @@ public class DishonoredChequeAction extends SearchFormAction {
         this.referenceNo = referenceNo;
     }
 
+    public Long getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(Long accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
 }

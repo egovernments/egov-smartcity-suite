@@ -165,8 +165,8 @@
 			dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
 			dom.get("showGlCreditTotalAmount").innerHTML = dom
 					.get("showRemittanceGlCreditAmount").innerHTML;
-			var gLTable = dom.get("gLEntry");
-			jQuery(gLTable).addClass("display-hide");
+			/* var gLTable = dom.get("gLEntry");
+			jQuery(gLTable).addClass("display-hide"); */
 		}
 	}
 
@@ -346,7 +346,7 @@
 								<td class="blueborderfortd" align="right">
 									<div name="showRemittanceGlCreditAmount" class="text-right"
 										id="showRemittanceGlCreditAmount">
-										<s:property value="%{creditAmount}" />
+										<s:property value="%{reversalAmount}" />
 									</div>
 								</td>
 							</tr>

@@ -151,7 +151,7 @@
 				referenceNum = referenceNo[i].value;
 			}
 			if (referenceNum == null || referenceNum == "") {
-				bootbox.alert("Please enter	Reference No for selected cheque.");
+				bootbox.alert("Please enter	Reference No for selected Cheque/DD Number.");
 				undoLoadingMask();
 				return false;
 			}
@@ -320,7 +320,7 @@
 					<td class="greybox"><s:text
 							name="dishonorcheque.cheque.dd.date" />:<span class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield id="chequeDate"
-							name="chequeDate" value="%{chequeDate}" data-date-end-date="0d"
+							name="chequeDate"  data-date-end-date="0d"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" /></td>
@@ -406,18 +406,13 @@
 												style="width:20%;text-align:left" property="accountNumber" />
 
 											<display:column headerClass="bluebgheadtd"
-												class="blueborderfortd" title="Pay to"
-												style="width:25%;text-align:left" property="payTo" />
-
-											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Status"
 												style="width:20%;text-align:center" property="description" />
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Reference No"
 												style="width:20%;text-align:center">
 												<s:textfield name="referenceNo" style="width: 200px;"
-													id="referenceNo" cssClass="patternvalidation form-control"
-													data-pattern="number" />
+													id="referenceNo" cssClass="form-control" />
 											</display:column>
 
 											<display:column headerClass="bluebgheadtd"
