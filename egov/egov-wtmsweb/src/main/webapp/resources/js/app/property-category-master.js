@@ -41,16 +41,14 @@ $(document).ready(function(){
 	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
-	if (activeDiv =='false')
-		{
-		$('#statusdiv').hide();
-	     $('#addnewid').hide();
+	if (activeDiv =='false' && 'true'){
+			$('#statusdiv').hide();
+			$('#addnewid').hide();
 		}
 	
-	else
-		{
-		$('#statusdiv').show();
-		 $('#addnewid').show();
+	else if(activeDiv=='true'){
+			$('#statusdiv').show();
+			$('#addnewid').show();
 		}
  });
 
