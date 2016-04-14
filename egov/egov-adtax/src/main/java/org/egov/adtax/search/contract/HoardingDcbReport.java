@@ -47,8 +47,8 @@ public class HoardingDcbReport {
     private String installmentYearDescription;
     private String demandReason;
     private BigDecimal demandAmount = BigDecimal.ZERO;
-    private BigDecimal penaltyAmount = BigDecimal.ZERO;
-    private BigDecimal collectedAmount = BigDecimal.ZERO;
+    private BigDecimal penaltyAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+    private BigDecimal collectedAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private String  payeeName;
     private String  receiptNumber;
     private BigDecimal pendingAmount;
@@ -60,15 +60,11 @@ public class HoardingDcbReport {
     private String ward;
     private String agencyName;
     private BigDecimal totalDemandAmount;
-    // remove this. use installmentYearDescription
-    private String installmentYear;
-    private BigDecimal arrearAmount = BigDecimal.ZERO;
-    private BigDecimal collectedArrearAmount = BigDecimal.ZERO;
-    private BigDecimal collectedDemandAmount = BigDecimal.ZERO;
-    private BigDecimal collectedPenaltyAmount = BigDecimal.ZERO;
+    private BigDecimal arrearAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+    private BigDecimal collectedArrearAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+    private BigDecimal collectedDemandAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+    private BigDecimal collectedPenaltyAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private Map<Date, String> collectReceiptMap = new HashMap<Date, String>();
-    // not used. remove this property
-   // private Date receiptDate;
     
     public String getDemandReason() {
         return demandReason;
@@ -166,12 +162,6 @@ public class HoardingDcbReport {
     public void setTotalDemandAmount(BigDecimal totalDemandAmount) {
         this.totalDemandAmount = totalDemandAmount;
     }
-    public String getInstallmentYear() {
-        return installmentYear;
-    }
-    public void setInstallmentYear(String installmentYear) {
-        this.installmentYear = installmentYear;
-    }
     public BigDecimal getArrearAmount() {
         return arrearAmount;
     }
@@ -202,10 +192,4 @@ public class HoardingDcbReport {
     public void setCollectReceiptMap(Map<Date, String> collectReceiptMap) {
         this.collectReceiptMap = collectReceiptMap;
     }
-   /* public Date getReceiptDate() {
-        return receiptDate;
-    }
-    public void setReceiptDate(Date receiptDate) {
-        this.receiptDate = receiptDate;
-    }*/
 }

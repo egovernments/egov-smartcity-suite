@@ -93,21 +93,21 @@ public class AdvertisementReportService {
                             demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX)) {
-                        hoardingReport.setArrearAmount(demandDtl.getAmount());
-                        hoardingReport.setCollectedArrearAmount(demandDtl.getAmtCollected());
+                        hoardingReport.setArrearAmount(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                        hoardingReport.setCollectedArrearAmount(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                     }
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX) ||
                             demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                     .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE)) {
-                        hoardingReport.setDemandAmount(demandDtl.getAmount());
-                        hoardingReport.setCollectedDemandAmount(demandDtl.getAmtCollected());
+                        hoardingReport.setDemandAmount(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                        hoardingReport.setCollectedDemandAmount(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                     }
 
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_PENALTY)) {
-                        hoardingReport.setPenaltyAmount(demandDtl.getAmount());
-                        hoardingReport.setCollectedPenaltyAmount(demandDtl.getAmtCollected());
+                        hoardingReport.setPenaltyAmount(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                        hoardingReport.setCollectedPenaltyAmount(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                     }
 
                     hoardingwiseMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), hoardingReport);
@@ -115,27 +115,27 @@ public class AdvertisementReportService {
                     hoardingReport = hoardingwiseMap.get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX)) {
-                        hoardingReport.setArrearAmount(hoardingReport.getArrearAmount().add(demandDtl.getAmount()));
+                        hoardingReport.setArrearAmount(hoardingReport.getArrearAmount().add(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN)));
                         hoardingReport.setCollectedArrearAmount(
-                                hoardingReport.getCollectedArrearAmount().add(demandDtl.getAmtCollected()));
+                                hoardingReport.getCollectedArrearAmount().add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN)));
                     }
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX) ||
                             demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                     .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE)) {
-                        hoardingReport.setDemandAmount(hoardingReport.getDemandAmount().add(demandDtl.getAmount()));
+                        hoardingReport.setDemandAmount(hoardingReport.getDemandAmount().add(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN)));
                         hoardingReport.setCollectedDemandAmount(
-                                hoardingReport.getCollectedDemandAmount().add(demandDtl.getAmtCollected()));
+                                hoardingReport.getCollectedDemandAmount().add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN)));
                     }
 
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_PENALTY)) {
                         hoardingReport.setPenaltyAmount(hoardingReport.getPenaltyAmount() != null
-                                ? hoardingReport.getPenaltyAmount().add(demandDtl.getAmount())
-                                : BigDecimal.ZERO.add(demandDtl.getAmount()));
+                                ? hoardingReport.getPenaltyAmount().add(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN))
+                                :demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                         hoardingReport.setCollectedPenaltyAmount(hoardingReport.getCollectedPenaltyAmount() != null
-                                ? hoardingReport.getCollectedPenaltyAmount().add(demandDtl.getAmtCollected())
-                                : BigDecimal.ZERO.add(demandDtl.getAmtCollected()));
+                                ? hoardingReport.getCollectedPenaltyAmount().add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN))
+                                : demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
                     }
                     hoardingwiseMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), hoardingReport);
