@@ -74,7 +74,7 @@
 					<tr>
 						<td>
 							<c:if test="${mode != 'readOnly' }">
-								<form:input path="technicalSanctionNumber" id="technicalSanctionNumber" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="Technical Sanction Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="32" required="required" />
+								<form:input path="technicalSanctionNumber" id="technicalSanctionNumber" onkeyup="calculateActualEstimatedAmountTotal();" onblur="calculateActualEstimatedAmountTotal();" data-errormsg="Technical Sanction Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="32" required="required" />
 								<form:errors path="technicalSanctionNumber" cssClass="add-margin error-msg" />
 							</c:if>
 							<c:if test="${lineEstimate.status.code == 'TECHNICAL_SANCTIONED' && mode == 'readOnly' }">

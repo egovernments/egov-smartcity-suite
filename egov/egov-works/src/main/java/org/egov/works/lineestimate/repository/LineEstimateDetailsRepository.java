@@ -79,4 +79,9 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
     
     @Query("select distinct(estimateNumber) from LineEstimateDetails as led where led.lineEstimate.spillOverFlag = :spillOverFlag")
     List<String> findEstimateNumbersForSpillOverFlag(@Param("spillOverFlag") boolean spillOverFlag);
+    
+    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and led.lineEstimate.status.code in (:adminSanctionstatus, :technicalSanctionstatus)")
+    List<String> findWorkIdentificationNumbersToSearchWorkProgressRegister(@Param("code") String code,
+            @Param("adminSanctionstatus") String adminSanctionstatus,
+            @Param("technicalSanctionstatus") String technicalSanctionstatus);
 }

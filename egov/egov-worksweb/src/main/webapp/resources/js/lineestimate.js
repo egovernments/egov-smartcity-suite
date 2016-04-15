@@ -315,15 +315,19 @@ function calculateEstimatedAmountTotal(){
 	var estimateTotal=0;
 	$( "input[name$='estimateAmount']" ).each(function(){
 		estimateTotal = estimateTotal + parseFloat(($(this).val()?$(this).val():"0"));
+		if(parseFloat($(this).val()) == 0)
+			$(this).val("");
 	});
 	$('#estimateTotal').html(estimateTotal);
 }
 
-function calculateActualEstimatedAmountTotal(obj) {
-	decimalvalue(obj);
+function calculateActualEstimatedAmountTotal() {
+	validateActualEstimateAmount();
 	var actualEstimateTotal = 0;
 	$( "input[name$='actualEstimateAmount']" ).each(function(){
 		actualEstimateTotal = actualEstimateTotal + parseFloat(($(this).val()?$(this).val():"0"));
+		if(parseFloat($(this).val()) == 0)
+			$(this).val("");
 	});
 	$('#actualEstimateTotal').html(actualEstimateTotal);
 }
@@ -339,6 +343,18 @@ function getLineEstimateDate() {
 
 function validateEstimateAmount() {
 	$( "input[name$='estimateAmount']" ).on("keyup", function(){
+	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
+	        val = this.value;
+	    
+	    if(!valid){
+	        console.log("Invalid input!");
+	        this.value = val.substring(0, val.length - 1);
+	    }
+	});
+}
+
+function validateActualEstimateAmount() {
+	$( "input[name$='actualEstimateAmount']" ).on("keyup", function(){
 	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
 	        val = this.value;
 	    

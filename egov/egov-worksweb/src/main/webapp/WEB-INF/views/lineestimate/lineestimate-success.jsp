@@ -50,7 +50,10 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center">
-					<c:out value="${message }" />
+					<c:out value="${message }" /><br />
+					<c:forEach items="${basMessages }" var="basMessage">
+						<c:out value="${basMessage }" /><br />
+					</c:forEach>
 				</div>
 			</div>
 		</div>

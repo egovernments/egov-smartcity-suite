@@ -217,7 +217,7 @@ public class ContractorBillRegisterService {
         if (contractorBillRegister.getStatus() != null && contractorBillRegister.getStatus().getCode() != null)
             if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())
                     && contractorBillRegister.getState() != null && !contractorBillRegister.getState().getHistory().isEmpty())
-                if (mode.equals("edit"))
+                if (mode.equals("edit") || workFlowAction.equals(WorksConstants.REJECT_ACTION))
                     approvalPosition = contractorBillRegister.getState().getOwnerPosition().getId();
                 else
                     approvalPosition = worksUtils.getApproverPosition(wfmatrix.getNextDesignation(),
@@ -236,7 +236,6 @@ public class ContractorBillRegisterService {
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
         final String currState = "";
@@ -245,18 +244,13 @@ public class ContractorBillRegisterService {
         if (null != contractorBillRegister.getId())
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(contractorBillRegister.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment))
-                contractorBillRegister.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-            else {
-                final String stateValue = WorksConstants.WF_STATE_REJECTED;
-                contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                .withOwner(wfInitiator.getPosition())
-                .withNextAction("")
-                .withNatureOfTask(natureOfwork);
-            }
+            final String stateValue = WorksConstants.WF_STATE_REJECTED;
+            contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            .withComments(approvalComent)
+            .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+            .withOwner(wfInitiator.getPosition())
+            .withNextAction("")
+            .withNatureOfTask(natureOfwork);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);

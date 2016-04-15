@@ -41,11 +41,13 @@ package org.egov.works.lineestimate.repository;
 
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LineEstimateAppropriationRepository extends JpaRepository<LineEstimateAppropriation, Long> {
     LineEstimateAppropriation findById(final Long id);
 
-    LineEstimateAppropriation findByLineEstimateDetails_EstimateNumber(final String estimateNumber);
+    @Query("from LineEstimateAppropriation lep where lep.budgetUsage.id=(select max(budgetUsage.id) from LineEstimateAppropriation lep1 where lep1.lineEstimateDetails.estimateNumber=?)")
+    LineEstimateAppropriation findLatestByLineEstimateDetails_EstimateNumber(final String estimateNumber);
 }

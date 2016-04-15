@@ -65,11 +65,14 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
+import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.services.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
@@ -132,6 +135,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -294,6 +300,20 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final String message = getMessageByStatus(lineEstimate, approverName, nextDesign);
 
         model.addAttribute("message", message);
+        
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
+            List<String> basMessages = new ArrayList<String>();
+            Integer count = 1;
+            for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+                final LineEstimateAppropriation lea = lineEstimateAppropriationService
+                        .findLatestByLineEstimateDetails_EstimateNumber(led.getEstimateNumber());
+                final String tempMessage = messageSource.getMessage("msg.lineestimatedetails.budgetsanction.success",
+                        new String[] { count.toString(), led.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() }, null);
+                basMessages.add(tempMessage);
+                count++;
+            }
+            model.addAttribute("basMessages", basMessages);
+        }
 
         return new ModelAndView("lineestimate-success", "lineEstimate", lineEstimate);
     }

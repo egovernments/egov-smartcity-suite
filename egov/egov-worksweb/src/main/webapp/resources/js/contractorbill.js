@@ -173,7 +173,7 @@ $(document).ready(function(){
 			}	
 			if(!validateNetPayableAmount())
 				return false;
-			return;
+			return validateWorkFlowApprover(button);
 		}
 		return validateWorkFlowApprover(button);
 	});
@@ -210,6 +210,9 @@ $(document).ready(function(){
 			$('#approvalDepartment').attr('required', 'required');
 			$('#approvalDesignation').attr('required', 'required');
 			$('#approvalPosition').attr('required', 'required');
+			$('#approvalComent').removeAttr('required');
+		}
+		if (button != null && button == 'Approve') {
 			$('#approvalComent').removeAttr('required');
 		}
 

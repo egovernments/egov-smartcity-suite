@@ -707,7 +707,7 @@ public class LineEstimateService {
     public boolean releaseBudgetOnReject(final LineEstimateDetails lineEstimateDetails) throws ValidationException {
 
         final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationRepository
-                .findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+                .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
         BudgetUsage budgetUsage = null;
@@ -746,7 +746,7 @@ public class LineEstimateService {
     private void persistBudgetReleaseDetails(final LineEstimateDetails lineEstimateDetails, final BudgetUsage budgetUsage) {
         LineEstimateAppropriation lineEstimateAppropriation = null;
         lineEstimateAppropriation = lineEstimateAppropriationRepository
-                .findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+                .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
         lineEstimateAppropriation.setBudgetUsage(budgetUsage);
         lineEstimateAppropriationRepository.save(lineEstimateAppropriation);
     }
