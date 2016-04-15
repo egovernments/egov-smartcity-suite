@@ -48,9 +48,9 @@
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading"></div>
 			<c:if test="${not empty message}">
-                <div class="alert alert-success" role="alert">${message}</div>
+                <div role="alert">${message}</div>
              </c:if>
-		<div class="panel-body custom-form">
+ 		<div class="panel-body custom-form">
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">

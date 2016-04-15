@@ -101,6 +101,7 @@ public class PropertyUsageMasterController {
             model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
             model.addAttribute("message", "Entered Usage Type for the Chosen Property Type already exists.");
+            viewForm(model);
             return "property-usage-master";
         } else {
 

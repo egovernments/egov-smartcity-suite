@@ -49,7 +49,7 @@
 		<div class="panel-heading"></div>
 			<div class="panel-body custom-form">
 				<c:if test="${not empty message}">
-                   <div class="alert alert-success" role="alert">${message}</div>
+                   <div role="alert">${message}</div>
                 </c:if>
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" />:<span class="mandatory"></span></label>

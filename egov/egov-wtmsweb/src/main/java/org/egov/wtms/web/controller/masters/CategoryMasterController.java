@@ -85,6 +85,7 @@ public class CategoryMasterController {
         if (connectioncategoryObj != null) {
             redirectAttrs.addFlashAttribute("ConnectionCategory", connectioncategoryObj);
             model.addAttribute("message", "Entered Category Type and Code are already exists.");
+            viewForm(model);
             return "category-master";
         } else {
             final ConnectionCategory connectionCategoryNameObj = connectionCategoryService
@@ -92,6 +93,7 @@ public class CategoryMasterController {
             if (connectionCategoryNameObj != null) {
                 redirectAttrs.addFlashAttribute("UsageType", connectionCategoryNameObj);
                 model.addAttribute("message", "Entered Category Type already exist.");
+                viewForm(model);
                 return "category-master";
             } else {
                 final ConnectionCategory connectionCategoryCodeObj = connectionCategoryService
@@ -99,6 +101,7 @@ public class CategoryMasterController {
                 if (connectionCategoryCodeObj != null) {
                     redirectAttrs.addFlashAttribute("UsageType", connectionCategoryCodeObj);
                     model.addAttribute("message", "Entered Code already exist.");
+                    viewForm(model);
                     return "category-master";
                 } else {
                     connectionCategoryService.createConnectionCategory(connectionCategory);
