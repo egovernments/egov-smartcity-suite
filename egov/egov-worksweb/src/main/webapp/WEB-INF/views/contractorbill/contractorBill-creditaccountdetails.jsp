@@ -67,7 +67,7 @@
 			<tbody>
 				<tr id="deductionRow">
 					<td>
-						<input type="text" id="creditGlcode" name="billDetailes[1].creditGlcode" class="form-control table-input patternvalidation creditGlcode" data-pattern="number" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required"> 
+						<input type="text" id="creditGlcode" name="billDetailes[1].creditGlcode" class="form-control table-input patternvalidation creditGlcode" data-pattern="number" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code"> 
 						<form:hidden path="billDetailes[1].glcodeid"  name="billDetailes[1].glcodeid" id="billDetailes[1].creditglcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input creditglcodeid"/> 
 						<form:errors path="billDetailes[1].glcodeid" cssClass="add-margin error-msg" /> 
 					</td>

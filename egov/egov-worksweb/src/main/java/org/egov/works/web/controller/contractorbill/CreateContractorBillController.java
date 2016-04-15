@@ -315,10 +315,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     .getAccountdetailtypeListByGLCode(coa.getGlcode());
             if (detailCode != null && !detailCode.isEmpty()) {
                 if (isDebit) {
-                    // adt3 =
-                    // chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coa.getGlcode(),WorksConstants.PROJECTCODE);
                     if (projectCodeAccountDetailType != null)
-                        egBilldetails.getEgBillPaydetailes().add(getEgPayeeDetails(
+                        egBilldetails.addEgBillPayeedetail(getEgPayeeDetails(
                                 egBilldetails, projectCodeAccountDetailType.getId(), egBilldetails.getDebitamount(), isDebit,
                                 Integer.valueOf(lineEstimateDetails.getProjectCode().getId()
                                         .toString())));
@@ -337,6 +335,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                             null);
             }
         }
+        egBilldetails.setLastupdatedtime(new Date());
         return egBilldetails;
     }
 
@@ -350,6 +349,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         else
             egBillPaydetail.setCreditAmount(amount);
         egBillPaydetail.setEgBilldetailsId(billDetails);
+        egBillPaydetail.setLastUpdatedTime(new Date());
         return egBillPaydetail;
     }
 
