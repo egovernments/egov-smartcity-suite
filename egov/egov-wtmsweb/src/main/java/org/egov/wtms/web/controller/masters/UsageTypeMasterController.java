@@ -84,20 +84,23 @@ public class UsageTypeMasterController {
 
         if (usagetypeObj != null) {
             redirectAttrs.addFlashAttribute("UsageType", usagetypeObj);
-            model.addAttribute("message", "Entered Usage Type and Code are already exists");
+            model.addAttribute("message", "Entered Usage Type and Code are already exists.");
+            viewForm(model);
             return "usage-type-master";
         } else {
             final UsageType usageTypeNameObj = usageTypeService.findByNameIgnoreCase(usageType.getName());
             if (usageTypeNameObj != null) {
                 redirectAttrs.addFlashAttribute("UsageType", usageTypeNameObj);
-                model.addAttribute("message", "Entered Usage Type already exist");
+                model.addAttribute("message", "Entered Usage Type already exist.");
+                viewForm(model);
                 return "usage-type-master";
             } else {
 
                 final UsageType usageTypeCodeObj = usageTypeService.findByCodeIgnoreCase(usageType.getCode());
                 if (usageTypeCodeObj != null) {
                     redirectAttrs.addFlashAttribute("UsageType", usageTypeCodeObj);
-                    model.addAttribute("message", "Entered Code already exist");
+                    model.addAttribute("message", "Entered Code already exist.");
+                    viewForm(model);
                     return "usage-type-master";
                 } else {
                     usageTypeService.createUsageType(usageType);
