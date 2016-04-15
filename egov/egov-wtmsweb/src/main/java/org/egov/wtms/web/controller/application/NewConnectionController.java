@@ -463,8 +463,8 @@ public class NewConnectionController extends GenericConnectionController {
 
     private void validateExisting(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
 
-        if (waterConnectionDetails.getExistingConnection().getArrears() == null)
-            errors.rejectValue("existingConnection.arrears", "err.required");
+        /*if (waterConnectionDetails.getExistingConnection().getArrears() == null)
+            errors.rejectValue("existingConnection.arrears", "err.required");*/
         if (waterConnectionDetails.getExistingConnection().getDonationCharges() == null)
             errors.rejectValue("existingConnection.donationCharges", "err.required");
        if (waterConnectionService.findByConsumerCode(waterConnectionDetails.getConnection().getConsumerCode())!=null)
