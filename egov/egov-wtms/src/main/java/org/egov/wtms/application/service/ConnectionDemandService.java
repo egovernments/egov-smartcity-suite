@@ -496,7 +496,7 @@ public class ConnectionDemandService {
             demandObj.setEgInstallmentMaster(installment);
             demandObj.getEgDemandDetails().addAll(dmdDetailSet);
             demandObj.setModifiedDate(new Date());
-            if (waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj) == null) {
+            if (demandObj.getId() !=null && waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj) == null) {
                 final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
                 waterdemandConnection.setDemand(demandObj);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
@@ -553,7 +553,7 @@ public class ConnectionDemandService {
             demandObj.setIsHistory("N");
         if (demandObj.getCreateDate() == null)
             demandObj.setCreateDate(new Date());
-        if (waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj) == null) {
+        if (demandObj.getId()==null) {
             final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
             waterdemandConnection.setDemand(demandObj);
             waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
@@ -657,7 +657,7 @@ public class ConnectionDemandService {
             demand.setEgInstallmentMaster(installment);
             demand.getEgDemandDetails().add(demandDetails);
             demand.setModifiedDate(new Date());
-            if (waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand) == null) {
+            if (demand.getId() !=null && waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand) == null) {
                 final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
                 waterdemandConnection.setDemand(demand);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
