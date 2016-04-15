@@ -42,9 +42,6 @@
  */
 package org.egov.web.actions.bill;
 
-
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,8 +82,8 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.EgBillPayeedetails;
@@ -99,6 +96,7 @@ import org.egov.model.voucher.WorkflowBean;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -143,11 +141,10 @@ public class ContingentBillAction extends BaseBillAction {
     private String sanctionedMessge;
     private Department primaryDepartment;
 
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private EgovMasterDataCaching masterDataCache;
 
     @Override
@@ -912,6 +909,7 @@ public class ContingentBillAction extends BaseBillAction {
 
                         payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
                         payeedetails.setAccountDetailTypeId(commonBean.getSubledgerType());
+                        payeedetails.setLastUpdatedTime(new Date());
                         payeedetails.setEgBilldetailsId(billdetails);
                         payeedetailsSet.add(payeedetails);
                         if (entityKey == null)
@@ -920,6 +918,7 @@ public class ContingentBillAction extends BaseBillAction {
                             entityCount++;
 
                     }
+                billdetails.setLastupdatedtime(new Date());
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }
@@ -945,6 +944,7 @@ public class ContingentBillAction extends BaseBillAction {
                             payeedetails.setCreditAmount(sub.getDebitAmountDetail());
                             payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
                             payeedetails.setAccountDetailTypeId(commonBean.getSubledgerType());
+                            payeedetails.setLastUpdatedTime(new Date());
                             payeedetails.setEgBilldetailsId(billdetails);
                             payeedetailsSet.add(payeedetails);
                             if (entityKey == null)
@@ -953,6 +953,7 @@ public class ContingentBillAction extends BaseBillAction {
                                 entityCount++;
 
                         }
+                    billdetails.setLastupdatedtime(new Date());
                     billdetails.setEgBillPaydetailes(payeedetailsSet);
 
                 }
@@ -977,6 +978,7 @@ public class ContingentBillAction extends BaseBillAction {
             bill.setBillamount(debitSum);
             bill.setPassedamount(debitSum);
             billdetails.setEgBillregister(bill);
+            billdetails.setLastupdatedtime(new Date());
             if (vd.getIsSubledger().equalsIgnoreCase(TRUE))
             {
                 payeedetailsSet = new HashSet<EgBillPayeedetails>();
@@ -987,6 +989,7 @@ public class ContingentBillAction extends BaseBillAction {
                         payeedetails.setCreditAmount(sub.getDebitAmountDetail());
                         payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
                         payeedetails.setAccountDetailTypeId(commonBean.getSubledgerType());
+                        payeedetails.setLastUpdatedTime(new Date());
                         payeedetails.setEgBilldetailsId(billdetails);
                         payeedetailsSet.add(payeedetails);
                         if (entityKey == null)
@@ -994,6 +997,7 @@ public class ContingentBillAction extends BaseBillAction {
                         if (!entityKey.equals(sub.getDetailKey()))
                             entityCount++;
                     }
+                billdetails.setLastupdatedtime(new Date());
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }

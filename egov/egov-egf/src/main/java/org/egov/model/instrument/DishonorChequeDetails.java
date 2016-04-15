@@ -50,8 +50,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -65,14 +63,13 @@ import org.egov.infstr.models.BaseModel;
 
 @Entity
 @Table(name = "EGF_DISHONORCHEQUE_DETAIL")
-@Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = DishonorChequeDetails.SEQ_EGF_DISHONORCHEQUE_DETAIL, sequenceName = DishonorChequeDetails.SEQ_EGF_DISHONORCHEQUE_DETAIL, allocationSize = 1)
 public class DishonorChequeDetails extends BaseModel {
 
     private static final long serialVersionUID = -6790212647262088197L;
 
     public static final String SEQ_EGF_DISHONORCHEQUE_DETAIL = "SEQ_EGF_DISHONORCHQDET";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_EGF_DISHONORCHEQUE_DETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;

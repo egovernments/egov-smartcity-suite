@@ -45,8 +45,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -56,7 +54,6 @@ import org.egov.infstr.models.BaseModel;
 
 @Entity
 @Table(name = "EGF_DISHONORCHEQUE_SL_DETAIL")
-@Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = DishonorChequeSubLedgerDetails.SEQ_EGF_DISHONORCHEQUE_SL_DETAIL, sequenceName = DishonorChequeSubLedgerDetails.SEQ_EGF_DISHONORCHEQUE_SL_DETAIL, allocationSize = 1)
 public class DishonorChequeSubLedgerDetails extends BaseModel {
 

@@ -51,8 +51,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -69,7 +67,6 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGF_DISHONORCHEQUE")
-@Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = DishonorCheque.SEQ_EGF_DISHONORCHEQUE, sequenceName = DishonorCheque.SEQ_EGF_DISHONORCHEQUE, allocationSize = 1)
 public class DishonorCheque extends StateAware {
 
@@ -99,7 +96,7 @@ public class DishonorCheque extends StateAware {
 
     @Column(name = "bankcharges")
     private BigDecimal bankChargesAmt;
-    
+
     @ManyToOne
     @JoinColumn(name = "bankchargeglcodeid")
     private CChartOfAccounts bankchargeGlCodeId;
