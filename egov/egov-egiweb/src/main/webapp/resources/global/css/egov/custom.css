@@ -1369,6 +1369,13 @@ label.error {
     display: none !important;
   }
 }
+.page-container .main-content .new-page-header {
+  font-family: semibold;
+  font-size: 20px;
+  color: #f2851f;
+  text-align: center;
+  padding: 0 15px 15px;
+}
 .page-container .main-content td.greybox input[type="text"],
 .page-container .main-content td.greybox select,
 .page-container .main-content td.bluebox input[type="text"],
