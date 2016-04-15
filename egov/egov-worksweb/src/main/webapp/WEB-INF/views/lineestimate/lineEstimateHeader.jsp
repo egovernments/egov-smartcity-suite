@@ -211,7 +211,9 @@
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
-					<form:options items="${functions}" itemValue="id" itemLabel="name" />
+					<c:forEach var="functions" items="${functions}">
+						<form:option value="${functions.id}"><c:out value="${functions.name} - ${functions.code}"/></form:option>  
+					</c:forEach>   
 				</form:select>
 				<form:errors path="function" cssClass="add-margin error-msg" />
 			</div>
