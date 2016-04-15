@@ -39,7 +39,7 @@
 #------------------------------------------------------------------------------- -->
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<form:errors path="existingConnection.arrears" cssClass="add-margin error-msg" />	
+<%-- <form:errors path="existingConnection.arrears" cssClass="add-margin error-msg" />	 --%>
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.feedetails" />
