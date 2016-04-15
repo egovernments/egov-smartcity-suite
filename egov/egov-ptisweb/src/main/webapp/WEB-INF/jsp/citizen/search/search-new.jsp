@@ -40,80 +40,84 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
-	<head>
-		<sx:head />
-		<script type="text/javascript">
-			function populateWard() {
-				populatewardId( {
-					zoneId : document.getElementById("zoneId").value
-				});
-			}
+<head>
+<sx:head />
+<script type="text/javascript">
+	function populateWard() {
+		populatewardId({
+			zoneId : document.getElementById("zoneId").value
+		});
+	}
 
-			function gotoSearch(){
-				var assessmentNum = jQuery("#assessmentNum").val();
-				document.assessmentform.action='../../view/viewDCBProperty-displayPropInfo.action?propertyId='+assessmentNum;
-				document.assessmentform.submit(); 
-			}
-			
-		</script>
-		<title><s:text name="searchProp.title"></s:text></title>
-	</head>
-	<body>
-		<div class="formmainbox">
-			<s:if test="%{hasErrors()}">
-				<div align="left">
-					<s:actionerror />
-				</div>
-			</s:if>
-				<table border="0" cellspacing="0" cellpadding="0" width="100%">
-						<s:form name="assessmentform" theme="simple">
-							<tr>
-								<td width="100%" colspan="4" class="headingbg">												
-									<div class="headingbg" style="text-align:left">					
-										<s:text name="citizen.search.welcome" />									
-									</div>									
-								</td>
-							</tr>					
-														
-							<tr>
-								<td class="bluebox">&nbsp;</td>
-								<td class="bluebox">
-									<s:text name="citizen.prop.id" />
-									<span class="mandatory"></span> :
-								</td>
-								
-								<td class="bluebox">
-									<s:textfield name="assessmentNum" id="assessmentNum" value="%{assessmentNum}" maxlength="50"/>
-								</td>
-								<td class="bluebox">&nbsp;</td>
-							</tr>
-							
-							
-							<tr>
-								<td class="bluebox" colspan="4">
-									&nbsp; &nbsp; &nbsp;
-								</td>
-							</tr>
-							<tr>
-								<td class="greybox">&nbsp;</td>
-								<td class="greybox" colspan="2">
-									<div class="greybox" style="text-align:center">
-										<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
-										<input type="submit" value="Submit" class="button"
-											onClick="gotoSearch();" />
-									</div>
-								</td>								
-								<td class="greybox">&nbsp;</td>
-							</tr>
-						</s:form>
-					</table>			
-
-					
-			<div align="left" class="mandatory" style="font-size: 11px">
-			 <s:text name="mandtryFlds"></s:text>
+	function gotoSearch() {
+		var assessmentNum = jQuery("#assessmentNum").val();
+		if (!jQuery("#assessmentNum").val()) {
+			bootbox.alert('Assessment number is mandatory');
+			return false;
+		} else {
+			document.assessmentform.action = '../../view/viewDCBProperty-displayPropInfo.action?propertyId='
+					+ assessmentNum;
+			document.assessmentform.submit();
+		}
+	}
+</script>
+<title><s:text name="searchProp.title"></s:text></title>
+</head>
+<body>
+	<div class="formmainbox">
+		<s:if test="%{hasErrors()}">
+			<div align="left">
+				<s:actionerror />
 			</div>
-					
-			</center>
+		</s:if>
+		<table border="0" cellspacing="0" cellpadding="0" width="100%">
+			<s:form name="assessmentform" theme="simple">
+				<tr>
+					<td width="100%" colspan="4" class="headingbg">
+						<div class="headingbg" style="text-align: left">
+							<s:text name="citizen.search.welcome" />
+						</div>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text name="citizen.prop.id" /> <span
+						class="mandatory"></span> :</td>
+
+					<td class="bluebox"><s:textfield name="assessmentNum"
+							id="assessmentNum" value="%{assessmentNum}"
+							cssClass="form-control patternvalidation" data-pattern="number"
+							maxlength="10" /></td>
+					<td class="bluebox">&nbsp;</td>
+				</tr>
+
+
+				<tr>
+					<td class="bluebox" colspan="4">&nbsp; &nbsp; &nbsp;</td>
+				</tr>
+				<tr>
+					<td class="greybox">&nbsp;</td>
+					<td class="greybox" colspan="2">
+						<div class="greybox" style="text-align: center">
+							<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
+							<input type="button" value="Submit" class="button"
+								onClick="gotoSearch();" />
+						</div>
+					</td>
+					<td class="greybox">&nbsp;</td>
+				</tr>
+			</s:form>
+		</table>
+
+
+		<div align="left" class="mandatory" style="font-size: 11px">
+			<s:text name="mandtryFlds"></s:text>
 		</div>
-	</body>
+
+		</center>
+	</div>
+	<script
+		src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+</body>
 </html>
