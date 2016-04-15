@@ -60,7 +60,7 @@
 			<form:errors path="existingConnection.donationCharges" cssClass="add-margin error-msg" />	
 	</div>
 </div>
-<div class="form-group">  
+<%-- <div class="form-group">  
 
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.arrears" /><span class="mandatory"></span></label>
@@ -70,7 +70,7 @@
 		
 
 	</div>	  
-</div>	
+</div>	 --%>
 <div  id="metereddetails" style="display: none" >  
 
 
