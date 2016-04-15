@@ -294,17 +294,16 @@
 							listValue="bank.name + ' ' + branchname"
 							value="%{bank.id + '-' + id}"
 							onchange="getAccountNumbers(this.value);" /> <egov:ajaxdropdown
-							id="populateAccount" fields="['Text','Value']"
+							id="accountNumber" fields="['Text','Value']"
 							dropdownId='accountNumber'
 							url='receipts/dishonoredCheque-getAccountNumbers.action'
 							selectedValue="%{bank.id + '-' + id}" /></td>
-
 					<td class="greybox"><s:text
 							name="dishonorcheque.accountnumber" />:</td>
-					<td class="greybox"><s:select headerKey="-1"
-							headerValue="---Choose---" name="accountNumber"
+					<td class="greybox"><s:select name="accountNumber"
 							id="accountNumber" list="dropdownData.accountNumberList"
-							listKey="id" listValue='name' value="%{accountNumber}" /></td>
+							headerKey="-1" headerValue="---Choose---" listKey="id"
+							listValue='name' value="%{accountNumber}" /></td>
 				</tr>
 
 				<tr>

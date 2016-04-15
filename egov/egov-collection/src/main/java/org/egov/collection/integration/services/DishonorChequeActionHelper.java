@@ -141,7 +141,7 @@ public class DishonorChequeActionHelper {
             CGeneralLedger ledger = new CGeneralLedger();
             for (String gl : receiptGeneralLedger) {
                 ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
-                        originalVoucher.getId(), gl.split("-")[0]);
+                        originalVoucher.getId(), gl.split("-")[0].trim());
                 List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService
                         .findAllBy(
                                 "from CGeneralLedgerDetail where generalLedgerId.id=?",
@@ -153,8 +153,8 @@ public class DishonorChequeActionHelper {
                 if (ledger.getFunctionId() != null) {
                     dishonourChqDetails.setFunctionId(ledger.getFunctionId());
                 }
-                dishonourChqDetails.setDebitAmt(BigDecimal.valueOf(Double.valueOf(gl.split("-")[1])));
-                dishonourChqDetails.setCreditAmount(BigDecimal.valueOf(Double.valueOf(gl.split("-")[2])));
+                dishonourChqDetails.setDebitAmt(BigDecimal.valueOf(Double.valueOf(gl.split("-")[1].trim())));
+                dishonourChqDetails.setCreditAmount(BigDecimal.valueOf(Double.valueOf(gl.split("-")[2].trim())));
                 for (CGeneralLedgerDetail ledgerDetail : ledgerDetailSet) {
                     dishonourChqSLDetails = new DishonorChequeSubLedgerDetails();
                     dishonourChqSLDetails.setDetails(dishonourChqDetails);
@@ -176,7 +176,7 @@ public class DishonorChequeActionHelper {
                                 + chequeForm.getInstHeaderIds()
                                 + ") ");
                 ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
-                        remittanceVoucher.getId(), gl.split("-")[0]);
+                        remittanceVoucher.getId(), gl.split("-")[0].trim());
                 List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService
                         .findAllBy(
                                 "from CGeneralLedgerDetail where generalLedgerId.id=?",
@@ -188,8 +188,8 @@ public class DishonorChequeActionHelper {
                 if (ledger.getFunctionId() != null) {
                     dishonourChqDetails.setFunctionId(ledger.getFunctionId());
                 }
-                dishonourChqDetails.setDebitAmt(BigDecimal.valueOf(Double.valueOf(gl.split("-")[1])));
-                dishonourChqDetails.setCreditAmount(BigDecimal.valueOf(Double.valueOf(gl.split("-")[2])));
+                dishonourChqDetails.setDebitAmt(BigDecimal.valueOf(Double.valueOf(gl.split("-")[1].trim())));
+                dishonourChqDetails.setCreditAmount(BigDecimal.valueOf(Double.valueOf(gl.split("-")[2].trim())));
                 for (CGeneralLedgerDetail ledgerDetail : ledgerDetailSet) {
                     dishonourChqSLDetails = new DishonorChequeSubLedgerDetails();
                     dishonourChqSLDetails.setDetails(dishonourChqDetails);

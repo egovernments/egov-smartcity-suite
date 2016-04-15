@@ -72,7 +72,22 @@
 			dom.get("errorDiv").innerHTML = 'Total amount should be equal to Instrument amount';
 			return false;
 		}
-
+		var showGlTotalAmount = 0;
+		var showGlTable = dom.get("showGlEntry");
+		//jQuery(showGlTable).removeClass("display-hide");
+		var amount = document.getElementsByName("amount");
+		var showGlDebitAmount = document
+				.getElementsByName("showGlDebitAmount");
+		var len = amount.length;
+		var totalAmount = 0;
+		for (i = 0; i < len; i++) {
+			showGlTotalAmount = Number(showGlTotalAmount)
+					+ Number(amount[i].value);
+			showGlDebitAmount[i].innerHTML = amount[i].value;
+		}
+		dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
+		dom.get("showGlCreditTotalAmount").innerHTML = dom
+				.get("showRemittanceGlCreditAmount").innerHTML;
 		var instHeaderIds = dom.get("instHeaderIds").value;
 		var voucherHeaderIds = dom.get("voucherHeaderIds").value;
 		var receiptGLDetails = "";
@@ -199,6 +214,47 @@
 </script>
 </head>
 <body>
+	<s:if test="%{dishonoredChequeDisplayList.size != 0}">
+		<table width="70%" border="1" align="center" cellpadding="0"
+			cellspacing="0" class="tablebottom">
+			<tr>
+				<th class="bluebgheadtd">Voucher Number</th>
+				<th class="bluebgheadtd">Receipt Number</th>
+				<th class="bluebgheadtd">Receipt Date</th>
+				<th class="bluebgheadtd">DD/Chq Number</th>
+				<th class="bluebgheadtd">DD/Chq Date</th>
+				<th class="bluebgheadtd">DD/Chq Amount</th>
+				<th class="bluebgheadtd">Bank</th>
+				<th class="bluebgheadtd">Bank Account Number</th>
+				<th class="bluebgheadtd">Status</th>
+				<th class="bluebgheadtd">Reference No</th>
+			</tr>
+			<s:iterator var="p" value="dishonoredChequeDisplayList" status="s">
+				<tr>
+					<td class="blueborderfortd" align="center"><s:property
+							value="%{voucherNumber}" /></td>
+					<td class="blueborderfortd" align="center"><s:property
+							value="%{receiptNumber}" /></td>
+					<td class="blueborderfortd text-center" align="center"
+						id="debitAmount"><s:property value="%{receiptDate}" /></td>
+					<td class="blueborderfortd text-right" align="center"><s:property
+							value="%{instrumentNumber}" /></td>
+					<td class="blueborderfortd" align="right"><s:property
+							value="%{instrumentDate}" /></td>
+					<td class="blueborderfortd" align="right"><s:property
+							value="%{instrumentAmount}" /></td>
+					<td class="blueborderfortd" align="right"><s:property
+							value="%{bankName}" /></td>
+					<td class="blueborderfortd" align="right"><s:property
+							value="%{accountNumber}" /></td>
+					<td class="blueborderfortd" align="right"><s:property
+							value="%{description}" /></td>
+					<td class="blueborderfortd" align="right"><s:property
+							value="%{referenceNo}" /></td>
+				</tr>
+			</s:iterator>
+		</table>
+	</s:if>
 	<s:form name="dishonorForm" action="dishonoredCheque" theme="simple"
 		validate="true">
 		<div style="color: green">

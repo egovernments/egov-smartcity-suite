@@ -73,6 +73,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
         @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
+        @Result(name = "process", location = "dishonoredCheque-process.jsp"),
         @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
 @ParentPackage("egov")
 public class DishonoredChequeAction extends SearchFormAction {
@@ -159,6 +160,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         setPageSize(30);
         super.search();
         prepareResults();
+        chequeDate = null;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("DishonoredChequeAction | list | End");
         return SEARCH;
@@ -258,6 +260,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         List<Object[]> slDetailsCredit = new ArrayList<Object[]>();
         List<Object[]> slDetailsDebit = new ArrayList<Object[]>();
         List<Object[]> remittanceDetailsCredit = new ArrayList<Object[]>();
+        List<Object[]> instrumentDetails = new ArrayList<Object[]>();
         reversalAmount = (BigDecimal) persistenceService
                 .find("select sum(instrumentAmount) from InstrumentHeader where id in (" + instHeaderIds + ")");
         glCodescredit = persistenceService
@@ -303,7 +306,33 @@ public class DishonoredChequeAction extends SearchFormAction {
             detail.setFunctionId(getStringValue(gl[6]));
             remittanceGeneralLedger.add(detail);
         }
-
+        instrumentDetails = persistenceService
+                .getSession()
+                .createSQLQuery(
+                        "select vh.id as voucherHeaderId,vh.vouchernumber as voucherNumber, rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,"
+                                + "ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description from voucherheader vh,egf_instrumentvoucher iv,egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,"
+                                + "bankbranch bb,bankaccount ba where  iv.voucherheaderid=vh.id and iv.instrumentheaderid = ih.id  and rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status "
+                                + "AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid and ih.id in  ("
+                                + instHeaderIds
+                                + ")").list();
+        dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>(0);
+        for (Object[] object : instrumentDetails) {
+            final DishonoredChequeBean chequeBean = new DishonoredChequeBean();
+            chequeBean.setVoucherHeaderId(getLongValue(object[0]));
+            chequeBean.setVoucherNumber(getStringValue(object[1]));
+            chequeBean.setReceiptHeaderid(getLongValue(object[2]));
+            chequeBean.setInstrumentHeaderid(getLongValue(object[3]));
+            chequeBean.setReceiptNumber(getStringValue(object[4]));
+            chequeBean.setReceiptDate(getDateValue(object[5]));
+            chequeBean.setInstrumentNumber(getStringValue(object[6]));
+            chequeBean.setInstrumentDate(getDateValue(object[7]));
+            chequeBean.setInstrumentAmount(getBigDecimalValue(object[8]));
+            chequeBean.setBankName(getStringValue(object[9]));
+            chequeBean.setAccountNumber(getStringValue(object[10]));
+            chequeBean.setPayTo(getStringValue(object[11]));
+            chequeBean.setDescription(getStringValue(object[12]));
+            dishonoredChequeDisplayList.add(chequeBean);
+        }
         /*
          * slDetailsCredit = persistenceService
          * .findAllBy("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)" +
@@ -503,6 +532,14 @@ public class DishonoredChequeAction extends SearchFormAction {
 
     public void setAccountNumber(Long accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    public List<DishonoredChequeBean> getDishonoredChequeDisplayList() {
+        return dishonoredChequeDisplayList;
+    }
+
+    public void setDishonoredChequeDisplayList(List<DishonoredChequeBean> dishonoredChequeDisplayList) {
+        this.dishonoredChequeDisplayList = dishonoredChequeDisplayList;
     }
 
 }
