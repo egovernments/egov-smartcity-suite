@@ -76,7 +76,6 @@ public class WaterSource extends AbstractAuditable {
     @Column(name = "watersourcetype", unique = true)
     private String waterSourceType;
 
-    @NotNull
     @SafeHtml
     private String description;
 

@@ -294,5 +294,13 @@
         <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/generatebill-report.jsp"/>
     </definition>
+    <definition name="water-source-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master.jsp"/>
+    </definition>
+    <definition name="water-source-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master-list.jsp"/>
+    </definition>
     
 </tiles-definitions>
