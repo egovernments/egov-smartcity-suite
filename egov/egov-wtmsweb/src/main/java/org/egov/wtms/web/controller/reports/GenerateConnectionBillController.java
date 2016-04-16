@@ -195,7 +195,7 @@ public class GenerateConnectionBillController {
     }
 
     @RequestMapping(value = "/result/{consumerCode}", method = GET)
-    public void getCHHCH(final HttpServletRequest request, final HttpServletResponse response,
+    public void getBillBySearchParameter(final HttpServletRequest request, final HttpServletResponse response,
             @PathVariable final String consumerCode) {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
@@ -234,7 +234,7 @@ public class GenerateConnectionBillController {
     @RequestMapping(value = "/mergeAndDownload", method = RequestMethod.GET)
     public String mergeAndDownload(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException, ValidationException {
-
+        final long startTime = System.currentTimeMillis();
         final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
                 .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
@@ -278,7 +278,7 @@ public class GenerateConnectionBillController {
         }
         final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("mergeAndDownload : End Time : " + endTime);
+            LOGGER.debug("GenerateBill | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
             LOGGER.debug("Exit from mergeAndDownload method");
         }
 
@@ -350,8 +350,7 @@ public class GenerateConnectionBillController {
     @RequestMapping(value = "/zipAndDownload", method = RequestMethod.GET)
     public String zipAndDownload(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException, ValidationException {
-
-        System.currentTimeMillis();
+        final long startTime = System.currentTimeMillis();
 
         final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
                 .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
@@ -392,7 +391,7 @@ public class GenerateConnectionBillController {
         }
         final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("zipAndDownload : End Time : " + endTime);
+            LOGGER.debug("GenerateBill | zipAndDownload | Time taken(ms) " + (endTime - startTime));
             LOGGER.debug("Exit from zipAndDownload method");
         }
 

@@ -131,12 +131,12 @@ public class GenerateConnectionBillService {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection  "
                 + "conn , egwtr_demand_connection demcon ,eg_demand dem,eg_bill bill, eg_bill_type billtype"
-                + ",egwtr_document_names docNmae where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docNmae.id"
+                + ",egwtr_document_names docName where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docName.id"
                 + " bill.id_demand =demcon.demand and billtype.id = bill.id_bill_type and conndoc.applicationdocumentsid=appD.id  "
-                + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and billtype.code='MANUAL' and dem.is_history ='N' and  docNmae.documentname='DemandBill' "
+                + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and appD.documentnumber=bill.bill_no  and billtype.code='MANUAL' and dem.is_history ='N' and  docName.documentname='DemandBill' "
                 + " ");
         queryStr.append(" and conn.consumercode=  " + "'" + consumerCode + "'");
-        queryStr.append(" and docNmae.applicationtype in(select id from egwtr_application_type where code = '"
+        queryStr.append(" and docName.applicationtype in(select id from egwtr_application_type where code = '"
                 + applicationType + "' )");
 
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
