@@ -130,7 +130,7 @@
 										<div class="form-group">
 				<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.hscno"/></label>
 										  <div class="col-md-4 add-margin">
-							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="alphanumericwithspace"  maxlength="10" id="consumerCode"/>
+							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number"  maxlength="10" id="consumerCode"/>
 						</div>
 						</div>
 
@@ -139,7 +139,7 @@
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.assesmentnumber" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="assessmentNumber" class="form-control patternvalidation" data-pattern="alphanumericwithspace" maxlength="10" id="assessmentNumber" />
+							<input type="text" name="assessmentNumber" class="form-control patternvalidation" data-pattern="number" maxlength="10" id="assessmentNumber" />
 						</div>
 						</div>
 						
@@ -155,10 +155,12 @@
 				     </div>
 				     
 				     <div class="form-group text-center" >
+				     
 						<form:button type="button" class="btn btn-primary" id="searchid"><spring:message code="lbl.search"/></form:button>
 						<form:button type="button" class="btn btn-primary" id="mergeid"><spring:message code="lbl.mergedownload"/></form:button>
+						<%-- <button type="submit" class="btn btn-primary" id="mergeid" onclick="merge()"><spring:message code="lbl.mergedownload"/></button> --%>
 						<form:button type="button" class="btn btn-primary" id="zipid"><spring:message code="lbl.zip"/></form:button>
-						<form:button type="button" class="btn btn-primary" id="resetid" ><spring:message code="lbl.reset"/></form:button>
+						<form:button type="reset" class="btn btn-primary"  ><spring:message code="lbl.reset"/></form:button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
 						
@@ -170,19 +172,7 @@
 			id="generateBill-table" width="200%">
 			<tbody>
 		   
-			<tfoot id="report-footer">
-							<tr>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								
-							</tr>
-				</tfoot> 
+			
 			</tbody>
 		</table>
 					</div> 

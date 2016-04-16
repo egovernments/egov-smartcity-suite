@@ -47,12 +47,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,18 +64,19 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.wtms.application.service.GenerateConnectionBill;
 import org.egov.wtms.application.service.GenerateConnectionBillService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -90,6 +92,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -140,6 +143,8 @@ public class GenerateConnectionBillController {
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
 
+    private static final Logger LOGGER = Logger.getLogger(GenerateConnectionBillController.class);
+
     @RequestMapping(method = GET)
     public String search(final Model model) {
 
@@ -189,6 +194,35 @@ public class GenerateConnectionBillController {
         IOUtils.write(result, response.getWriter());
     }
 
+    @RequestMapping(value = "/result/{consumerCode}", method = GET)
+    public void getCHHCH(final HttpServletRequest request, final HttpServletResponse response,
+            @PathVariable final String consumerCode) {
+        final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
+                waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
+                        .getCode());
+        response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
+        if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
+            try {
+
+                final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(waterChargesDocumentslist
+                        .get(0) + "");
+                final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                final FileInputStream inStream = new FileInputStream(file);
+                final PrintWriter outStream = response.getWriter();
+                int bytesRead = -1;
+                while ((bytesRead = inStream.read()) != -1)
+                    outStream.write(bytesRead);
+                inStream.close();
+                outStream.close();
+            } catch (final FileNotFoundException fileNotFoundExcep) {
+                throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
+            } catch (final IOException ioExcep) {
+                throw new ApplicationRuntimeException("Exception while generating bill : " + ioExcep);
+            }
+        else
+            throw new ValidationException("err.demand.notice");
+    }
+
     private Object toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(GenerateConnectionBill.class,
@@ -214,7 +248,7 @@ public class GenerateConnectionBillController {
 
                 final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(
                         connectionbill.getHscNo(), connectionbill.getApplicationType());
-                if (waterChargesDocumentslist != null && waterChargesDocumentslist.get(0) != null) {
+                if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null) {
                     final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(waterChargesDocumentslist
                             .get(0) + "");
                     final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
@@ -222,24 +256,31 @@ public class GenerateConnectionBillController {
                     pdfs.add(new ByteArrayInputStream(bFile));
                 }
             } catch (final Exception e) {
-                System.out.println("exception" + e);
-
+                LOGGER.debug("Entered into executeJob" + e);
                 continue;
             }
 
         try {
-            final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            final byte[] data = concatPDFs(pdfs, output);
-            response.setHeader("Content-disposition", "attachment;filename=" + "generate_bill" + ".pdf");
-            response.setContentType("application/pdf");
-            response.setContentLength(data.length);
-            response.getOutputStream().write(data);
+            if (!pdfs.isEmpty()) {
+                final ByteArrayOutputStream output = new ByteArrayOutputStream();
+                final byte[] data = concatPDFs(pdfs, output);
+                response.setHeader("Content-disposition", "attachment;filename=" + "generate_bill" + ".pdf");
+                response.setContentType("application/pdf");
+                response.setContentLength(data.length);
+                response.getOutputStream().write(data);
+            } else
+                throw new ValidationException("err.demand.notice");
 
         } catch (final IOException e) {
 
-            throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
+            throw new ValidationException(e.getMessage());
+
         }
-        System.currentTimeMillis();
+        final long endTime = System.currentTimeMillis();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("mergeAndDownload : End Time : " + endTime);
+            LOGGER.debug("Exit from mergeAndDownload method");
+        }
 
         return null;
     }
@@ -291,7 +332,7 @@ public class GenerateConnectionBillController {
 
         } catch (final Exception e) {
 
-            e.printStackTrace();
+            LOGGER.error("Exception in concat PDFs : ", e);
         } finally {
             if (document.isOpen())
                 document.close();
@@ -299,8 +340,7 @@ public class GenerateConnectionBillController {
                 if (outputStream != null)
                     outputStream.close();
             } catch (final IOException ioe) {
-
-                ioe.printStackTrace();
+                LOGGER.error("Exception in concat PDFs : ", ioe);
             }
         }
 
@@ -340,7 +380,7 @@ public class GenerateConnectionBillController {
                                 zipOutputStream);
                     }
                 } catch (final Exception e) {
-
+                    LOGGER.error("zipAndDownload : Getting demand notice failed ", e);
                     continue;
                 }
 
@@ -348,11 +388,13 @@ public class GenerateConnectionBillController {
             zipOutputStream.close();
 
         } catch (final IOException e) {
-
-            e.printStackTrace();
-            throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
+            LOGGER.error("Exception in Zip and Download : ", e);
         }
-        System.currentTimeMillis();
+        final long endTime = System.currentTimeMillis();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("zipAndDownload : End Time : " + endTime);
+            LOGGER.debug("Exit from zipAndDownload method");
+        }
 
         return null;
     }
@@ -369,14 +411,11 @@ public class GenerateConnectionBillController {
             inputStream.close();
 
         } catch (final IllegalArgumentException iae) {
-            iae.printStackTrace();
-            throw new ValidationException(Arrays.asList(new ValidationError("error", iae.getMessage())));
+            LOGGER.error("Exception in addFilesToZip : ", iae);
         } catch (final FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-            throw new ValidationException(Arrays.asList(new ValidationError("error", fnfe.getMessage())));
+            LOGGER.error("Exception in addFilesToZip : ", fnfe);
         } catch (final IOException ioe) {
-            ioe.printStackTrace();
-            throw new ValidationException(Arrays.asList(new ValidationError("error", ioe.getMessage())));
+            LOGGER.error("Exception in addFilesToZip : ", ioe);
         }
         return out;
     }

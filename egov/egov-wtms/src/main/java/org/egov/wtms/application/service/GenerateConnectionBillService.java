@@ -76,7 +76,7 @@ public class GenerateConnectionBillService {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assementNo\","
-                + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\",  "
+                + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , "
                 + " dcbinfo.connectiontype as  \"connectionType\" from egwtr_mv_dcb_view dcbinfo"
                 + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on"
                 + " dcbinfo.locality = localboundary.id  INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
@@ -118,8 +118,9 @@ public class GenerateConnectionBillService {
     }
 
     public EgBill getBIll(final String consumerCode) {
-        final String query = " select bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem "
+        final String query = " select bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd "
                 + "where billtype.id=bill.egBillType and billtype.code='MANUAL' and bill.consumerId = conn.consumerCode and conn.id=connDet.connection and connDet.id=conndem.waterConnectionDetails and bill.egDemand=conndem.demand and connDet.connectionType='NON_METERED' and "
+                + " bill.egDemand=conndem.demand and demd.isHistory = 'N' and "
                 + "connDet.connectionStatus='ACTIVE' and connDet.status=status.id and status.moduletype='WATERTAXAPPLICATION' and status.code='SANCTIONED' "
                 + "and conn.consumerCode = ? ";
         final EgBill egBill = (EgBill) entityQueryService.find(query, consumerCode);
@@ -128,9 +129,12 @@ public class GenerateConnectionBillService {
 
     public List<Long> getDocuments(final String consumerCode, final String applicationType) {
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection "
-                + "conn,egwtr_document_names docNmae where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docNmae.id"
-                + " and conndoc.applicationdocumentsid=appD.id and docNmae.documentname='DemandBill' " + " ");
+        queryStr.append("select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection  "
+                + "conn , egwtr_demand_connection demcon ,eg_demand dem,eg_bill bill, eg_bill_type billtype"
+                + ",egwtr_document_names docNmae where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docNmae.id"
+                + " bill.id_demand =demcon.demand and billtype.id = bill.id_bill_type and conndoc.applicationdocumentsid=appD.id  "
+                + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and billtype.code='MANUAL' and dem.is_history ='N' and  docNmae.documentname='DemandBill' "
+                + " ");
         queryStr.append(" and conn.consumercode=  " + "'" + consumerCode + "'");
         queryStr.append(" and docNmae.applicationtype in(select id from egwtr_application_type where code = '"
                 + applicationType + "' )");

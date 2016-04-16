@@ -40,44 +40,55 @@
 jQuery(document).ready(function() {
 	$('#report-footer').hide();
 	jQuery('#searchid').click(function(e) {
-		validategeneratebill();
+		if(validategeneratebill())
 		loadingReport();
 	});
 	
 	
 	
 jQuery('#mergeid').click(function(e) {
+	if(validategeneratebill())
 	merge();
-	});
+});
 
-jQuery('#resetid').click(function(e) {
-	$("#generateConnectionBill")[0].reset();
-	});
 
 jQuery('#zipid').click(function(e) {
+	if(validategeneratebill())
 	zipanddownload();
-	});
+});
+
+
 });
 
 
 
 function validategeneratebill()
 {
-	if (($("#zone").val()== '') && ($("#revenueWard").val()== '') && ($("#propertyType").val()== '') && ($("#applicationType").val()== '') &&
-			($("#consumerCode").val() == undefined || parseInt($("#consumerCode").val()) == 0) && ($("#connectionType").val() == '')
-			($("#houseNumber").val() == undefined || parseInt($("#consumerCode").val()) == 0) && ($("#assessmentNumber").val() == undefined || parseInt($("#consumerCode").val()) == 0)) {
+	var isFilled=false;
+	$('input[type=text], select').each(function(){
+	    if($(this).val())
+	    {
+	    	console.log('value is ->'+$(this).val());
+	    	isFilled=true;
+	    }
+	});
+	
+	if(!isFilled)
+	{
+		
 		bootbox.alert('Enter any one search criteria');
 		return false;
 	}
+	
+	return true;
 
 }
 
 
 function merge()
 {
-	$.ajax({
-		url : "/wtms/report/generateBill/search/mergeAndDownload",
-		data : {
+	
+	var params={
 			
 			'zone': $("#zone").val(),
 			'revenueWard':$("#revenueWard").val(),
@@ -87,22 +98,27 @@ function merge()
 			'consumerCode': $("#consumerCode").val(),
 			'houseNumber': $("#houseNumber").val(),
 			'assessmentNumber': $("#assessmentNumber").val()
-		},
-        dataType : 'json',
-        success: function (response) {
-			console.log("success"+response);
-		
-		},error: function (response) {
-			console.log("failed");
-		}
-    });
+		};
+	
+	window.open("/wtms/report/generateBill/search/mergeAndDownload"+obj_to_query(params));
+
 }
+
+function obj_to_query(obj) {
+    var parts = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+        }
+    }
+    return "?" + parts.join('&');
+}
+
 
 function zipanddownload()
 {
-	$.ajax({
-		url : "/wtms/report/generateBill/search/zipAndDownload",
-		data : {
+	
+var params={
 			'zone': $("#zone").val(),
 			'revenueWard':$("#revenueWard").val(),
 			'propertyType' :$("#propertyType").val(),
@@ -111,15 +127,9 @@ function zipanddownload()
 			'consumerCode': $("#consumerCode").val(),
 			'houseNumber': $("#houseNumber").val(),
 			'assessmentNumber': $("#assessmentNumber").val()
-		},
-        dataType : 'json',
-        success: function (response) {
-			console.log("success"+response);
-		
-		},error: function (response) {
-			console.log("failed");
-		}
-    });
+		};
+window.open("/wtms/report/generateBill/search/zipAndDownload"+obj_to_query(params));
+	
 }
 
 function loadingReport()
@@ -160,7 +170,12 @@ function loadingReport()
 					}
 				},
 				"columns" : [{"sTitle" : "S.no", },
-							  { "data" : "hscNo" , "title": "H.S.C NO"},  
+							  { "data" : "hscNo" , 
+								"title": "H.S.C NO",
+								"render": function ( data, type, full, meta ) {
+								      return '<a href="/wtms/report/generateBill/search/result/'+data+'" target="_blank">'+data+'</a>';
+								    }
+							  },  
 							  { "data" : "ownerName", "title": "Owner Name"},
 							  { "data" : "propertyId", "title": "Property Id"},
 							  { "data" : "billNo", "title": "Bill No"},
