@@ -48,29 +48,32 @@
 	<div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading"></div>
 		<c:if test="${not empty message}">
-                  <div class="alert alert-success" role="alert">${message}</div>
+                  <div role="alert">${message}</div>
          </c:if>
 		<div class="panel-body custom-form">
 			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /><span class="mandatory"></span></label>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" />:<span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin"  id="codediv">
-						<form:input class="form-control patternvalidation"   data-pattern="alphanumericwithspecialcharacters"  maxlength="25" id="code"
+						<form:input class="form-control patternvalidation"  data-pattern="alphanumericwithspecialcharacters"  maxlength="25" id="code"
 						path="code" required="required" />
-						<form:errors path="code"
-						cssClass="add-margin error-msg" />
+						<form:errors path="code" cssClass="add-margin error-msg" />
 					</div>
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.hscpipesize.inches" /></label>
+					</div>
+				<div class="form-group">
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.hscpipesize.mm" />:<span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin" >
+						<form:input class="form-control patternvalidation"  title="It will allow upto 4 digits and 3 decimal points" pattern="\d{0,4}(\.\d{0,3})?" data-pattern="decimalvalue" data-first-option="false&true"  maxlength="50" id="pipesizeid"
+						path="sizeInMilimeter" required="required" />
+						<form:errors path="sizeInMilimeter" cssClass="add-margin error-msg" />
+					</div>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.hscpipesize.inches" />:</label>
 					<div class="col-sm-3 add-margin" >
 						<form:input class="form-control"  id="pipesizeInInch" path="sizeInInch" />
 						<form:errors path="sizeInInch" cssClass="add-margin error-msg" />
 					</div>
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.hscpipesize.mm" /><span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin" >
-						<form:input class="form-control" title="It will allow upto 4 digits and 3 decimal points" pattern="\d{0,4}(\.\d{0,3})?" maxlength="50" id="pipesizeid"
-						path="sizeInMilimeter" required="required" />
-						<form:errors path="sizeInMilimeter" cssClass="add-margin error-msg" />
-					</div>
+				
 		</div>
+		<div class="form-group">
 			<div class="form-group" id="statusdiv">
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
 					<div class="col-sm-3 add-margin" >
@@ -78,13 +81,14 @@
 						<form:errors path="active" />
 					</div>
 			</div>	
+		</div>
 				
 				 	<input type="hidden" name="pipeSize" value="${pipeSize.id}" />
 					<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
 					<div class="form-group text-center" >
 						<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
 						<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
-						<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
+						<button type="button" class="btn btn-primary" id="listid" onchange="replaceExemptionFormChar();" ><spring:message code="lbl.list"/></button>
 						<button type="button" class="btn btn-default" id="resetid"><spring:message code="lbl.reset"/></button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>

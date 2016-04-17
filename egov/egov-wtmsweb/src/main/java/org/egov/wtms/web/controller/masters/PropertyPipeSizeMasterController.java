@@ -102,6 +102,7 @@ public class PropertyPipeSizeMasterController {
             model.addAttribute("propertyTypeList", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("pipeSize", pipeSizeService.getAllActivePipeSize());
             model.addAttribute("message", "Entered PipeSize for the Chosen Property Type already exists.");
+            viewForm(model);
             return "property-pipesize-master";
         } else {
             propertyPipeSizeService.createPropertyPipeSize(propertyPipeSize);
