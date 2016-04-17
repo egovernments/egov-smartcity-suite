@@ -40,6 +40,7 @@
 package org.egov.works.contractorbill.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -357,6 +358,10 @@ public class ContractorBillRegisterService {
         final List<String> results = contractorBillRegisterRepository.findContractorForContractorBill("%" + contractorname + "%",
                 WorksConstants.APPROVED);
         return results;
+    }
+    
+    public BigDecimal getTotalBillAmountByWorkOrder(final WorkOrder workOrder) {
+        return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatus(workOrder, ContractorBillRegister.BillStatus.CANCELLED.toString());  
     }
 
 }

@@ -39,6 +39,7 @@
  */
 package org.egov.works.contractorbill.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -64,6 +65,9 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     List<String> findWorkIdentificationNumberToSearchContractorBill(@Param("code") String code);
 
     @Query("select distinct(cbr.workOrder.contractor.name) from ContractorBillRegister as cbr where upper(cbr.workOrder.contractor.name) like upper(:contractorname) or upper(cbr.workOrder.contractor.code) like upper(:contractorname)  and cbr.workOrder.egwStatus.code = :workOrderStatus ")
-    List<String> findContractorForContractorBill(@Param("contractorname") String contractorname,@Param("workOrderStatus") String workOrderStatus);
+    List<String> findContractorForContractorBill(@Param("contractorname") String contractorname,
+            @Param("workOrderStatus") String workOrderStatus);
 
+    @Query("select sum(cbr.billamount) from ContractorBillRegister as cbr where cbr.workOrder = :workOrder and upper(cbr.billstatus) not in (:billStatus)")
+    BigDecimal findSumOfBillAmountByWorkOrderAndStatus(@Param("workOrder") final WorkOrder workOrder, @Param("billStatus") final String billStatus);
 }

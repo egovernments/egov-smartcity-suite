@@ -114,14 +114,14 @@
 						    </c:forEach>   
 							<%-- <form:options items="${netPayableAccounCodes}" itemLabel="glcode" itemValue="id" />  --%>
 						</form:select>
-						<%-- <form:errors path="" cssClass="add-margin error-msg" /> --%>
+						<%-- <form:errors path="netPayableAccountCode" cssClass="add-margin error-msg" /> --%>
 					</td>
 					<!-- <td> 
 						<input type="text" id="creditAccountHead" class="form-control" disabled> 
 					</td> -->
 					<td>
 						<input type="text" id="netPayableAmount" name="netPayableAmount" value="${netPayableAmount}" class="form-control text-right" readonly="true">
-						<%-- <form:errors path="" cssClass="add-margin error-msg" /> --%>
+						<%-- <form:errors path="netPayableAmount" cssClass="add-margin error-msg" /> --%>
 					</td>
 				</tr>
 			</tbody>

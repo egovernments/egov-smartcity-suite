@@ -160,8 +160,6 @@ $(document).ready(function(){
 			if($('#partyBillDate').val() != '') { 
 				var workOrderDate = $('#workOrderDate').data('datepicker').date;
 				var partyBillDate = $('#partyBillDate').data('datepicker').date;
-				alert(partyBillDate);
-				alert(workOrderDate);
 				if(workOrderDate > partyBillDate) {
 					bootbox.alert($('#errorPartyBillDate').val());
 					$('#partyBillDate').val("");
