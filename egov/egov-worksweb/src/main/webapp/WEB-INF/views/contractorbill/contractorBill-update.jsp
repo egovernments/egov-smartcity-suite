@@ -70,6 +70,8 @@
 							</c:if>
 							<c:if test="${mode == 'view' || mode == 'readOnly' }">
 								<jsp:include page="contractorBillView-header.jsp"/>
+								<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
+								<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
 							</c:if>
 						<%-- 	<jsp:include page="contractorBill-details.jsp"/> --%>
 						<c:if test="${mode == 'view' || mode == 'readOnly' && !contractorBillRegister.documentDetails.isEmpty()}">

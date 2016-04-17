@@ -58,6 +58,8 @@
 			</thead>
 			<tbody>
 				<tr>
+				
+				<c:if test="${mode != 'readOnly' }">
 					<td>
 						<input type="text" id="debitGlcode" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.glcode}" class="form-control" disabled required="required"> 
 						<form:hidden path="billDetailes[0].glcodeid"  name="billDetailes[0].glcodeid" id="debitGlcodeId" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.id}" /> 
@@ -70,6 +72,18 @@
 						<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount" onblur="calculateNetPayableAmount();" maxlength="12" required="required" />
 						<form:errors path="billDetailes[0].debitamount" cssClass="add-margin error-msg" /> 
 					</td>
+				</c:if>
+				<c:if test="${mode == 'readOnly' }">
+				<td>
+					<c:out default="N/A" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.glcode}" />
+				</td>
+				<td>
+					<c:out default="N/A" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.name}" />
+				</td>
+				<td>
+					<c:out default="N/A" value="${billDetailes[0].debitamount}" />
+				</td>
+				</c:if>
 				</tr>
 			</tbody>
 		</table>
