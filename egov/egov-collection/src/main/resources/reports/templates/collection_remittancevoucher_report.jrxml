@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-15T12:19:11 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_voucher_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="b76bdff0-f9b9-4afd-886d-d310a7b060b2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.lang.*"/>
@@ -59,6 +58,7 @@
 		<![CDATA[SELECT DISTINCT(VOUCHERHEADER.VOUCHERNUMBER) AS VOUCHER_NUMBER,
 VOUCHERHEADER.VOUCHERDATE AS VOUCHER_DATE,
 FUND.NAME AS FUND_NAME,
+VOUCHERHEADER.TYPE AS VOUCHER_TYPE,
 EGCL_SERVICEDETAILS.NAME AS SERVICE_NAME, 
 BANK.NAME||'-'|| BANKACCOUNT.ACCOUNTNUMBER as BANK_ACCOUNT_NUMBER,
 GENERALLEDGER.DEBITAMOUNT AS VOUCHER_AMOUNT,
@@ -83,12 +83,11 @@ WHERE
      $P!{Q_BANKACCOUNT_ID}
      $P!{Q_CREATEDBY_ID}
      $P!{Q_SERVICE_ID}
-     $P!{Q_BRANCH_ID}
-     
+     $P!{Q_BRANCH_ID}   
 GROUP BY 
      VOUCHERHEADER.VOUCHERDATE, VOUCHERHEADER.VOUCHERNUMBER,VOUCHERHEADER.TYPE,EGCL_SERVICEDETAILS.NAME,FUND.NAME,BANK.NAME||'-'|| BANKACCOUNT.ACCOUNTNUMBER,GENERALLEDGER.DEBITAMOUNT,EG_USER.USERNAME
 ORDER BY
-     VOUCHER_DATE]]>
+     VOUCHER_DATE,VOUCHER_TYPE]]>
 	</queryString>
 	<field name="VOUCHER_DATE" class="java.util.Date">
 		<fieldDescription><![CDATA[]]></fieldDescription>
