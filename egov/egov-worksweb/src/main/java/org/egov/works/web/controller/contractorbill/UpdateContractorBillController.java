@@ -41,15 +41,20 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
@@ -86,6 +91,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
 
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService.getContractorBillById(Long
@@ -98,14 +106,15 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             final HttpServletRequest request)
                     throws ApplicationException {
         final ContractorBillRegister contractorBillRegister = getContractorBillRegister(contractorBillRegisterId);
-//        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString()))
-            setDropDownValues(model);
+        // if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString()))
+        setDropDownValues(model);
 
         return loadViewData(model, request, contractorBillRegister);
     }
 
     @RequestMapping(value = "/update/{contractorBillRegisterId}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister, final BindingResult errors,
+    public String update(@Valid @ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister,
+            final BindingResult errors,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam("file") final MultipartFile[] files)
                     throws ApplicationException, IOException {
@@ -150,9 +159,11 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                         mode, files);
             redirectAttributes.addFlashAttribute("contractorBillRegister", newContractorBillRegister);
 
-            final String pathVars = worksUtils.getPathVars(newContractorBillRegister.getStatus(), newContractorBillRegister.getState(), newContractorBillRegister.getId(), approvalPosition);
+            final String pathVars = worksUtils.getPathVars(newContractorBillRegister.getStatus(),
+                    newContractorBillRegister.getState(), newContractorBillRegister.getId(), approvalPosition);
 
-            return "redirect:/contractorbill/contractorbill-success?pathVars=" + pathVars + "&billNumber=" + newContractorBillRegister.getBillnumber();
+            return "redirect:/contractorbill/contractorbill-success?pathVars=" + pathVars + "&billNumber="
+                    + newContractorBillRegister.getBillnumber();
         }
     }
 
@@ -165,23 +176,27 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
 
-        if(contractorBillRegister.getCurrentState() != null)
+        if (contractorBillRegister.getCurrentState() != null)
             model.addAttribute("currentState", contractorBillRegister.getCurrentState().getValue());
 
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
-        if (contractorBillRegister.getState() != null && contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+        if (contractorBillRegister.getState() != null
+                && contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             model.addAttribute("mode", "edit");
         else
             model.addAttribute("mode", "view");
 
-        model.addAttribute("workflowHistory", lineEstimateService.getHistory(contractorBillRegister.getState(), contractorBillRegister.getStateHistory()));
+        model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister));
+
+        model.addAttribute("workflowHistory",
+                lineEstimateService.getHistory(contractorBillRegister.getState(), contractorBillRegister.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
-        
+
         final WorkOrder workOrder = contractorBillRegister.getWorkOrder();
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
-        
+
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("workOrder", workOrder);
 
@@ -197,7 +212,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         contractorBillRegister.setDocumentDetails(documentDetailsList);
         return contractorBillRegister;
     }
-    
+
     @RequestMapping(value = "/view/{contractorBillRegisterId}", method = RequestMethod.GET)
     public String viewContractorBillRegister(final Model model, @PathVariable final String contractorBillRegisterId,
             final HttpServletRequest request)
@@ -206,6 +221,42 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         final String responsePage = loadViewData(model, request, contractorBillRegister);
         model.addAttribute("mode", "readOnly");
         return responsePage;
+    }
+
+    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister) {
+        final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
+        Map<String, Object> billDetails = new HashMap<String, Object>();
+
+        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
+            if (egBilldetails.getDebitamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getDebitamount());
+                billDetails.put("isDebit", true);
+                billDetails.put("isNetPayable", false);
+            } else if (egBilldetails.getCreditamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getCreditamount());
+                billDetails.put("isDebit", false);
+                if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
+                        && contractorPayableAccountList.contains(coa))
+                    billDetails.put("isNetPayable", true);
+                else
+                    billDetails.put("isNetPayable", false);
+
+            }
+            billDetailsList.add(billDetails);
+        }
+        return billDetailsList;
     }
 
 }

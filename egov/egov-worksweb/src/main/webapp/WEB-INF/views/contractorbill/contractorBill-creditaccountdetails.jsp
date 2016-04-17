@@ -61,14 +61,11 @@
 					<th><spring:message code="lbl.account.code"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.account.head"/></th>
 					<th><spring:message code="lbl.credit.amount"/><span class="mandatory"></span></th>
-					<c:if test="${mode != 'readOnly'}">
-					<th><spring:message code="lbl.action"/></th>
-					</c:if> 					
+					<th><spring:message code="lbl.action"/></th> 					
 				</tr>
 			</thead>
 			<tbody>
 				<tr id="deductionRow">
-				<c:if test="${mode != 'readOnly' }">
 					<td>
 						<input type="text" id="creditGlcode" name="billDetailes[1].creditGlcode" class="form-control table-input patternvalidation creditGlcode" data-pattern="number" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code"> 
 						<form:hidden path="billDetailes[1].glcodeid"  name="billDetailes[1].glcodeid" id="billDetailes[1].creditglcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input creditglcodeid"/> 
@@ -83,12 +80,6 @@
 					</td> 
 					<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>
 					 <span class="add-padding" onclick="deleteDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
-				</c:if>
-				<c:if test="${mode == 'readOnly' }">
-				<td><c:out default="N/A" value="${billDetailes.glcodeid}" /></td>
-				<td><c:out default="N/A" value="${billdetailes.creditAccountHead}" /></td>
-				<td><c:out default="N/A" value="${billDetailes[1].creditamount}" /></td>
-				</c:if>
 				</tr>
 			</tbody>
 		</table>
