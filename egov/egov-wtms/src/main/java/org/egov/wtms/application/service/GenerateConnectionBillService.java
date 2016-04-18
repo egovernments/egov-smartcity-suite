@@ -40,16 +40,12 @@
 package org.egov.wtms.application.service;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.egov.demand.model.EgBill;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,15 +56,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GenerateConnectionBillService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Qualifier("entityQueryService")
     private @Autowired PersistenceService entityQueryService;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
 
     public List<GenerateConnectionBill> getBillReportDetails(final String zone, final String ward,
             final String propertyType, final String applicationType, final String connectionType,
@@ -80,7 +69,7 @@ public class GenerateConnectionBillService {
                 + " dcbinfo.connectiontype as  \"connectionType\" from egwtr_mv_dcb_view dcbinfo"
                 + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on"
                 + " dcbinfo.locality = localboundary.id  INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
-        queryStr.append(" where dcbinfo.connectionstatus = 'ACTIVE' ");
+        queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
         if (zone != null && !zone.isEmpty())
@@ -98,10 +87,9 @@ public class GenerateConnectionBillService {
         if (propertyType != null && !propertyType.isEmpty())
             queryStr.append(" and dcbinfo.propertytype = " + "'" + propertyType + "'");
 
-        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        final SQLQuery finalQuery = entityQueryService.getSession().createSQLQuery(queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(GenerateConnectionBill.class));
-        List<GenerateConnectionBill> generateConnectionBillList = new ArrayList<GenerateConnectionBill>();
-        generateConnectionBillList = finalQuery.list();
+        final List<GenerateConnectionBill> generateConnectionBillList = finalQuery.list();
         return generateConnectionBillList;
     }
 
@@ -139,7 +127,7 @@ public class GenerateConnectionBillService {
         queryStr.append(" and docName.applicationtype in(select id from egwtr_application_type where code = '"
                 + applicationType + "' )");
 
-        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        final SQLQuery finalQuery = entityQueryService.getSession().createSQLQuery(queryStr.toString());
         final List<Long> waterChargesDocumentsList = finalQuery.list();
         return waterChargesDocumentsList;
     }
