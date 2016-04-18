@@ -42,6 +42,7 @@ package org.egov.wtms.application.service;
 import java.text.ParseException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.egov.demand.model.EgBill;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -58,6 +59,8 @@ public class GenerateConnectionBillService {
 
     @Qualifier("entityQueryService")
     private @Autowired PersistenceService entityQueryService;
+
+    private static final Logger LOGGER = Logger.getLogger(GenerateConnectionBillService.class);
 
     public List<GenerateConnectionBill> getBillReportDetails(final String zone, final String ward,
             final String propertyType, final String applicationType, final String connectionType,
@@ -88,6 +91,8 @@ public class GenerateConnectionBillService {
             queryStr.append(" and dcbinfo.propertytype = " + "'" + propertyType + "'");
 
         final SQLQuery finalQuery = entityQueryService.getSession().createSQLQuery(queryStr.toString());
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("GenerateConnectionBill -- Search Result " + queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(GenerateConnectionBill.class));
         final List<GenerateConnectionBill> generateConnectionBillList = finalQuery.list();
         return generateConnectionBillList;
@@ -119,7 +124,7 @@ public class GenerateConnectionBillService {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection  "
                 + "conn , egwtr_demand_connection demcon ,eg_demand dem,eg_bill bill, eg_bill_type billtype"
-                + ",egwtr_document_names docName where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docName.id"
+                + ",egwtr_document_names docName where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docName.id and "
                 + " bill.id_demand =demcon.demand and billtype.id = bill.id_bill_type and conndoc.applicationdocumentsid=appD.id  "
                 + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and appD.documentnumber=bill.bill_no  and billtype.code='MANUAL' and dem.is_history ='N' and  docName.documentname='DemandBill' "
                 + " ");
