@@ -254,13 +254,15 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         final StringBuilder propQueryString = new StringBuilder();
 
         propQueryString.append("select bndry.boundaryNum,bndry.name, count(bndry.boundaryNum) ")
-                .append("from Boundary bndry, PropertyID pid left join pid.basicProperty bp ")
-                .append("where bp.active = true and pid.ward.id = bndry.id ")
+                .append("from Boundary bndry, PropertyID pid left join pid.basicProperty bp where bp.upicNo is not null and bp.active = true and ")
+                .append("bp.source = 'M' and bp.isBillCreated = 'N' and pid.ward.id = bndry.id ")
+                .append("and bp.id not in (select basicProperty from PropertyStatusValues group by basicProperty having count(basicProperty) > 0 ) ")
+                .append(" and bp.id in (select basicProperty from PropertyImpl where status = 'A' and isExemptedFromTax = true ) ")
                 .append("group by bndry.name, bndry.boundaryNum ").append("order by bndry.boundaryNum, bndry.name");
+      
         final Query billQuery = getPersistenceService().getSession().getNamedQuery(QUERY_DEMAND_BILL_STATUS);
         billQuery.setDate("FromDate", currInst.getFromDate());
         billQuery.setDate("ToDate", currInst.getToDate());
-       // billQuery.setString("BillType", BILLTYPE_MANUAL);
         final List<Object> billList = billQuery.list();
         LOGGER.info("billList : " + billList);
         final Query propQuery = getPersistenceService().getSession().createQuery(
