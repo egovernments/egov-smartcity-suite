@@ -347,7 +347,7 @@ public class ContingentBillAction extends BaseBillAction {
                     throw new ValidationException(Arrays.asList(new ValidationError("bill number", "Duplicate Bill Number : "
                             + commonBean.getBillNumber())));
             populateWorkflowBean();
-            bill = egBillRegisterService.createBill(bill, workflowBean);
+            bill = egBillRegisterService.createBill(bill, workflowBean,checkListsTable);
             addActionMessage(getText("cbill.transaction.succesful") + bill.getBillnumber());
             billRegisterId = bill.getId();
             if (bill.getEgBillregistermis().getBudgetaryAppnumber() != null)
@@ -551,7 +551,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billRegisterId);
         for (final EgChecklists chk : checkLists)
             persistenceService.delete(chk);
-        createCheckList(bill);
+        //createCheckList(bill);
     }
 
     private EgBillregister updateBill(EgBillregister bill) {
@@ -843,19 +843,7 @@ public class ContingentBillAction extends BaseBillAction {
         return REVERSE;
     }
 
-    private void createCheckList(final EgBillregister bill) {
-        if (checkListsTable != null)
-            for (final CheckListHelper clh : checkListsTable)
-            {
-                final EgChecklists checkList = new EgChecklists();
-                final AppConfigValues configValue = (AppConfigValues) persistenceService.find("from AppConfigValues where id=?",
-                        clh.getId());
-                checkList.setObjectid(bill.getId());
-                checkList.setAppconfigvalue(configValue);
-                checkList.setChecklistvalue(clh.getVal());
-                persistenceService.getSession().saveOrUpdate(checkList);
-            }
-    }
+    
 
     public List<CheckListHelper> getCheckListsTable() {
         return checkListsTable;
@@ -910,6 +898,7 @@ public class ContingentBillAction extends BaseBillAction {
                         payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
                         payeedetails.setAccountDetailTypeId(commonBean.getSubledgerType());
                         payeedetails.setLastUpdatedTime(new Date());
+                        billdetails.setLastupdatedtime(new Date());
                         payeedetails.setEgBilldetailsId(billdetails);
                         payeedetailsSet.add(payeedetails);
                         if (entityKey == null)
@@ -918,10 +907,10 @@ public class ContingentBillAction extends BaseBillAction {
                             entityCount++;
 
                     }
-                billdetails.setLastupdatedtime(new Date());
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }
+            billdetails.setLastupdatedtime(new Date());
             billdetailsSet.add(billdetails);
         }
         if (billDetailsTableCreditFinal != null)
@@ -945,6 +934,7 @@ public class ContingentBillAction extends BaseBillAction {
                             payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
                             payeedetails.setAccountDetailTypeId(commonBean.getSubledgerType());
                             payeedetails.setLastUpdatedTime(new Date());
+                            billdetails.setLastupdatedtime(new Date());
                             payeedetails.setEgBilldetailsId(billdetails);
                             payeedetailsSet.add(payeedetails);
                             if (entityKey == null)
@@ -953,10 +943,10 @@ public class ContingentBillAction extends BaseBillAction {
                                 entityCount++;
 
                         }
-                    billdetails.setLastupdatedtime(new Date());
                     billdetails.setEgBillPaydetailes(payeedetailsSet);
 
                 }
+                billdetails.setLastupdatedtime(new Date());
                 billdetailsSet.add(billdetails);
             }
 
@@ -978,7 +968,6 @@ public class ContingentBillAction extends BaseBillAction {
             bill.setBillamount(debitSum);
             bill.setPassedamount(debitSum);
             billdetails.setEgBillregister(bill);
-            billdetails.setLastupdatedtime(new Date());
             if (vd.getIsSubledger().equalsIgnoreCase(TRUE))
             {
                 payeedetailsSet = new HashSet<EgBillPayeedetails>();
@@ -990,6 +979,7 @@ public class ContingentBillAction extends BaseBillAction {
                         payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
                         payeedetails.setAccountDetailTypeId(commonBean.getSubledgerType());
                         payeedetails.setLastUpdatedTime(new Date());
+                        billdetails.setLastupdatedtime(new Date());
                         payeedetails.setEgBilldetailsId(billdetails);
                         payeedetailsSet.add(payeedetails);
                         if (entityKey == null)
@@ -997,10 +987,10 @@ public class ContingentBillAction extends BaseBillAction {
                         if (!entityKey.equals(sub.getDetailKey()))
                             entityCount++;
                     }
-                billdetails.setLastupdatedtime(new Date());
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }
+            billdetails.setLastupdatedtime(new Date());
             billdetailsSet.add(billdetails);
         }
 
@@ -1058,6 +1048,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }
+            billdetails.setLastupdatedtime(new Date());
             billdetailsSet.add(billdetails);
         }
         if (billDetailsTableCreditFinal != null)
@@ -1095,6 +1086,7 @@ public class ContingentBillAction extends BaseBillAction {
                     billdetails.setEgBillPaydetailes(payeedetailsSet);
 
                 }
+                billdetails.setLastupdatedtime(new Date());
                 billdetailsSet.add(billdetails);
             }
 
@@ -1143,6 +1135,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }
+            billdetails.setLastupdatedtime(new Date());
             billdetailsSet.add(billdetails);
         }
 
