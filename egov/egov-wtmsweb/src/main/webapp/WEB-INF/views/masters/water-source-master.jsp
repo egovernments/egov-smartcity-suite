@@ -62,14 +62,14 @@
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.watersourcetype" />:<span class="mandatory"></span></label>
 					<div class="col-sm-4 add-margin">
 						<div class="col-sm-5 add-margin"  id="watersoucediv">
-							<form:input class="form-control patternvalidation"   data-pattern="alphanumericwithspecialcharacters"  maxlength="50" id="waterSourceType" data-first-option="false" path="waterSourceType" required="required" />
+							<form:input class="form-control patternvalidation"   data-pattern="alphanumericwithspace"  maxlength="50" id="waterSourceType" data-first-option="false" path="waterSourceType" required="required" />
 							<form:errors path="waterSourceType" cssClass="add-margin error-msg" />
 						</div>
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description" />:</label>
 					<div class="col-sm-4 add-margin">
 						<div class="col-sm-7 add-margin"  id="descriptiondiv">
-							<form:input class="form-control patternvalidation"   data-pattern="alphanumericwithspecialcharacters"  maxlength="255" id="description"  path="description" />
+							<form:input class="form-control patternvalidation"   data-pattern="alphanumericwithspace"  maxlength="255" id="description"  path="description" />
 							<form:errors path="description" cssClass="add-margin error-msg" />
 						</div>
 					</div>

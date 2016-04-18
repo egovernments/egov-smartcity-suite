@@ -85,7 +85,7 @@ public class WaterSourceMasterController {
 
         if (watersourceObj != null) {
             redirectAttrs.addFlashAttribute(" WaterSource", watersourceObj);
-            model.addAttribute("message", "Entered Code and Water Source Type are already exists.");
+            model.addAttribute("message", "Entered Code and Water Source Type already exists.");
             viewForm(model);
             return "water-source-master";
         } else {
