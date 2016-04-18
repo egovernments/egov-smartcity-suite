@@ -205,7 +205,9 @@ public class UpdateConnectionController extends GenericConnectionController {
         } else
             model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
+        WorkflowContainer workflowContainer= new WorkflowContainer();
+        workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
+        prepareWorkflow(model, waterConnectionDetails, workflowContainer);
 
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));

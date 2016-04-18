@@ -124,7 +124,9 @@ public class NewConnectionController extends GenericConnectionController {
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
         model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
-        prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
+        WorkflowContainer workflowContainer= new WorkflowContainer();
+        workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
+        prepareWorkflow(model, waterConnectionDetails, workflowContainer);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
@@ -192,7 +194,9 @@ public class NewConnectionController extends GenericConnectionController {
         if (resultBinder.hasErrors()) {
             waterConnectionDetails.setApplicationDate(new Date());
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-            prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
+            WorkflowContainer workflowContainer= new WorkflowContainer();
+            workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
+           prepareWorkflow(model, waterConnectionDetails, workflowContainer);
             model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
             model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
@@ -222,7 +226,9 @@ public class NewConnectionController extends GenericConnectionController {
                     .getConnection().getPropertyIdentifier());
             if (userPosition == null) {
                 model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-                prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
+                WorkflowContainer workflowContainer= new WorkflowContainer();
+                workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
+                prepareWorkflow(model, waterConnectionDetails, workflowContainer);
                 model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
                 model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
