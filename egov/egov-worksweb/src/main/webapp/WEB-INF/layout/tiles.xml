@@ -141,4 +141,9 @@
         <put-attribute name="body" value="/WEB-INF/views/contractorbill/searchContractorBill-header.jsp"/>
     </definition>
     
+    <definition name="workProgressRegister-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search.workprogressregister" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/workProgressRegisterReport-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>
