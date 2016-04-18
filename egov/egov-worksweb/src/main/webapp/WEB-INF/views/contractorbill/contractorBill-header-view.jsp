@@ -53,18 +53,46 @@
 		       	</spring:hasBindErrors>
 			</div>
 			<div class="panel-body">
-				<div class="row add-border">
+			<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.billnumber" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out default="N/A" value="${contractorBillRegister.billnumber }" />
+					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.billdate" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<fmt:formatDate value="${contractorBillRegister.billdate}" pattern="dd/MM/yyyy" />
 					</div>
+				</div>
+				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.billtype" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${contractorBillRegister.billtype }" />
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.createdby" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out default="N/A" value="${contractorBillRegister.createdBy.name }" />
+					</div> 
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.party.billnumber" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out default="N/A" value="${contractorBillRegister.egBillregistermis.partyBillNumber}"></c:out>
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.party.billdate" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out default="N/A" value="${contractorBillRegister.egBillregistermis.partyBillDate}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
@@ -79,20 +107,6 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${workOrder.contractor.code}"></c:out>
-					</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.party.billnumber" />
-					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${contractorBillRegister.egBillregistermis.partyBillNumber}"></c:out>
-					</div>
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.party.billdate" />
-					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${contractorBillRegister.egBillregistermis.partyBillDate}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
