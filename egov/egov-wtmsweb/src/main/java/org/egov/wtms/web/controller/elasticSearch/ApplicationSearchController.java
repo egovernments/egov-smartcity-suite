@@ -45,6 +45,7 @@ import static java.util.Arrays.asList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.City;
@@ -80,6 +81,8 @@ public class ApplicationSearchController {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+
+    private static final Logger LOGGER = Logger.getLogger(ApplicationSearchController.class);
 
     @Autowired
     public ApplicationSearchController(final ApplicationSearchService applicationSearchService,
@@ -124,9 +127,13 @@ public class ApplicationSearchController {
                 searchRequest.searchFilters(), sort, Page.NULL);
 
         final List<Document> searchResultFomatted = new ArrayList<Document>(0);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.info("searchResultFomat size: " + searchResult.getDocuments().size());
         for (final Document document : searchResult.getDocuments()) {
             document.getResource().remove("searchable.mobilenumber");
             document.getResource().remove("searchable.aadharnumber");
+            if (LOGGER.isDebugEnabled())
+                LOGGER.info("document : " + document);
             searchResultFomatted.add(document);
         }
         return searchResultFomatted;
