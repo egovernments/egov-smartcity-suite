@@ -110,7 +110,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     private CollectionsNumberGenerator collectionsNumberGenerator;
     private FinancialsUtil financialsUtil;
     private PersistenceService persistenceService;
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Autowired
     private DesignationService designationService;
@@ -477,7 +476,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
                 + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') ";
 
-        final String groupByClause = " group by ch.RECEIPTDATE,sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
+        final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
         final String orderBy = " order by RECEIPTDATE";
 
         /**
@@ -653,7 +652,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
                 + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') ";
 
-        final String groupByClause = " group by ch.RECEIPTDATE,sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
+        final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
         final String orderBy = " order by RECEIPTDATE";
 
         /**
@@ -904,38 +903,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
          */
 
         Boolean voucherTypeForChequeDDCard = false;
-        Boolean useReceiptDateAsContraVoucherDate = false;
 
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
                 CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
 
-        if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA).equals(CollectionConstants.YES))
-            useReceiptDateAsContraVoucherDate = true;
+      
 
         final EgwStatus instrumentStatusDeposited = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
 
         for (int i = 0; i < serviceNameArr.length; i++) {
             final String serviceName = serviceNameArr[i].trim();
-            Date voucherDate;
-            try {
-                voucherDate = sdf.parse(sdf.format(new Date()));
-            } catch (final ParseException e) {
-
-                LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + e.getMessage());
-                throw new ApplicationRuntimeException("Exception while parsing date", e);
-            }
-
-            if (useReceiptDateAsContraVoucherDate)
-                try {
-                    voucherDate = dateFomatter.parse(receiptDateArray[i]);
-                } catch (final ParseException exp) {
-                    LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + exp.getMessage());
-                    throw new ApplicationRuntimeException("Exception while parsing date", exp);
-                }
+            Date voucherDate = collectionsUtil.getRemittanceVoucherDate(receiptDateArray[i]);
 
             if (serviceName != null && serviceName.length() > 0) {
                 final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find(
