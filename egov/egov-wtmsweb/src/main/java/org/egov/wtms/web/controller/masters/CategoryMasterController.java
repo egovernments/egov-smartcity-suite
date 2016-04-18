@@ -84,7 +84,7 @@ public class CategoryMasterController {
 
         if (connectioncategoryObj != null) {
             redirectAttrs.addFlashAttribute("ConnectionCategory", connectioncategoryObj);
-            model.addAttribute("message", "Entered Category Type and Code are already exists.");
+            model.addAttribute("message", "Entered Code and Category Type already exists.");
             viewForm(model);
             return "category-master";
         } else {

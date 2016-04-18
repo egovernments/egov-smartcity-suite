@@ -84,7 +84,7 @@ public class UsageTypeMasterController {
 
         if (usagetypeObj != null) {
             redirectAttrs.addFlashAttribute("UsageType", usagetypeObj);
-            model.addAttribute("message", "Entered Usage Type and Code are already exists.");
+            model.addAttribute("message", "Entered Code and Usage Type already exists.");
             viewForm(model);
             return "usage-type-master";
         } else {
