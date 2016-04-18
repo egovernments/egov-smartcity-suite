@@ -52,6 +52,8 @@ public interface PipeSizeRepository extends JpaRepository<PipeSize, Long> {
 
     PipeSize findByCode(String code);
 
+    PipeSize findByCodeIgnoreCase(String code);
+
     PipeSize findBySizeInInch(double sizeInInch);
 
     PipeSize findBySizeInMilimeter(double sizeInMilimeter);

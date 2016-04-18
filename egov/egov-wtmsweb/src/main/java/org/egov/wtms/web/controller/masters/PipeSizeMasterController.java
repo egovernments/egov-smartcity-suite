@@ -84,11 +84,11 @@ public class PipeSizeMasterController {
 
         if (pipesizeObj != null) {
             redirectAttrs.addFlashAttribute("pipeSize", pipesizeObj);
-            model.addAttribute("message", "Entered Code and H.S.C Pipe Size(mm) are already exists.");
+            model.addAttribute("message", "Entered Code and H.S.C Pipe Size(mm) already exists.");
             viewForm(model);
             return "pipesize-master";
         } else {
-            final PipeSize pipesizecodeObj = pipeSizeService.findByCode(pipeSize.getCode());
+            final PipeSize pipesizecodeObj = pipeSizeService.findByCodeIgnoreCase(pipeSize.getCode());
             if (pipesizecodeObj != null) {
                 redirectAttrs.addFlashAttribute("pipeSize", pipesizecodeObj);
                 model.addAttribute("message", "Entered Code already exist.");

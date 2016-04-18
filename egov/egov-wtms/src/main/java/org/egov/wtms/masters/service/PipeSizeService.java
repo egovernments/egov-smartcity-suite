@@ -118,6 +118,10 @@ public class PipeSizeService {
         return pipeSizeRepository.findByCodeAndSizeInMilimeter(code, sizeInMilimeter);
     }
 
+    public PipeSize findByCodeIgnoreCase(final String code) {
+        return pipeSizeRepository.findByCodeIgnoreCase(code);
+    }
+
     public List<PipeSize> getPipeSizeListForRest() {
         final List<PipeSize> pipeSizeList = pipeSizeRepository.findByActiveTrueOrderBySizeInInchAsc();
         final List<PipeSize> prepareListForRest = new ArrayList<PipeSize>(0);
