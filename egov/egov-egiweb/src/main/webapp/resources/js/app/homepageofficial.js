@@ -144,7 +144,7 @@ $(document).ready(function()
 	});
 	
 	$('.workspace').click(function(){
-		$('.main-space').hide();
+		$('.main-space, .cleartext').hide();
 		$('.workspace').removeClass('active');
 		clearnow();
 		$('.inline-elem input').val('');
@@ -162,17 +162,23 @@ $(document).ready(function()
 		$('#'+$(this).attr('data-work')).show();
 	});
 	
-	
-	$('#inboxsearch').keyup(function(){
+	$('.search-table').keyup(function(){
+		//console.log($(this).attr('id')+ ' triggered by class');
 		tableContainer1.fnFilter(this.value);
 	});
 	
-	$('#draftsearch').keyup(function(){
-		tableContainer1.fnFilter(this.value);
+	$('.search-table').on('input', function() {
+		if(!$.trim($(this).val())) {
+			$(this).parent().find('.cleartext').hide();
+		}else{
+			$(this).parent().find('.cleartext').show();
+		}
 	});
 	
-	$('#notifysearch').keyup(function(){
-		tableContainer1.fnFilter(this.value);
+	$('.cleartext').on('click', function(){
+		$(this).parent().find('.search-table').val('');
+		$(this).hide();
+		$('#'+$(this).parent().find('.search-table').attr('id')).trigger('keyup');
 	});
 	
 	$("#official_inbox").on('click','tbody tr',function(event) {
