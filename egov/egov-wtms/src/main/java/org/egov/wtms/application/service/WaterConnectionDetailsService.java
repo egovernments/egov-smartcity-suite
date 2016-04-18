@@ -299,9 +299,9 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.findByConnection(waterConnection);
     }
 
-    public WaterConnectionDetails findByConsumerCodeAndConnectionStatus(final String comsumerCode,
+    public WaterConnectionDetails findByConsumerCodeAndConnectionStatus(final String consumerCode,
             final ConnectionStatus connectionStatus) {
-        return waterConnectionDetailsRepository.findByConnection_ConsumerCodeAndConnectionStatus(comsumerCode,
+        return waterConnectionDetailsRepository.findByConnection_ConsumerCodeAndConnectionStatus(consumerCode,
                 connectionStatus);
     }
 
