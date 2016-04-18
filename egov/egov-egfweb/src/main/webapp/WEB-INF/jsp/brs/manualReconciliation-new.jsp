@@ -153,7 +153,7 @@
 		<div class="formmainbox">
 			<div class="formheading"></div>
 			<div class="subheadnew">
-				<s:text name="autobankreconciliation" />
+				<s:text name="manualbankreconciliation" />
 			</div>
 	
 		<div align="center">
