@@ -165,7 +165,6 @@ public class UpdateConnectionController extends GenericConnectionController {
                 && waterConnectionDetails.getReConnectionReason() == null) {
             model.addAttribute("additionalRule",WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
             workflowContainer.setAdditionalRule(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
-            model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
             if (waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE))
                 waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
             else
@@ -199,11 +198,12 @@ public class UpdateConnectionController extends GenericConnectionController {
                 }
             else
                 model.addAttribute("appforDocumentList", waterConnectionDetails.getApplicationDocs());
-        } else if (waterConnectionDetails.getCloseConnectionType() != null
+        } 
+        
+        if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() != null) {
             model.addAttribute("additionalRule", WaterTaxConstants.RECONNECTIONCONNECTION);
             workflowContainer.setAdditionalRule(WaterTaxConstants.RECONNECTIONCONNECTION);	
-            model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
 
         } else{
         	workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());

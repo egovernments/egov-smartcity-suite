@@ -147,7 +147,7 @@
 		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
 		<%-- <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button> --%>
 	</c:if>
-	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!=''))  && waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION'  && waterConnectionDetails.connectionStatus == 'CLOSED' && waterConnectionDetails.closeConnectionType== 'T' }">
+	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!=''))  && waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION'  && waterConnectionDetails.connectionStatus == 'CLOSED' && waterConnectionDetails.closeConnectionType== 'T' && waterConnectionDetails.status.code == 'CLOSERSANCTIONED' }">
 		<button type="submit" class="btn btn-primary" id="re-connection"><spring:message code="lbl.re-connection"/></button>
 	</c:if>
 	</c:otherwise>
