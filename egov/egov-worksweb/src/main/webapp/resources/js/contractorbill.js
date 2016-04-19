@@ -40,96 +40,7 @@
 $detailsRowCount = $('#detailsSize').val();
 $(document).ready(function(){
 	
-	/*function creditGlcode_initialize() {
-		 var custom = new Bloodhound({
-		    datumTokenizer: function(d) { return d.tokens; },
-		    queryTokenizer: Bloodhound.tokenizers.whitespace,
-		    remote: '/egworks/letterofacceptance/ajaxcontractors-loa?name=%QUERY'
-		    });*/
-	
-		/* var creditGlcode = new Bloodhound({   
-		        datumTokenizer: function (datum) {
-		            return Bloodhound.tokenizers.whitespace(datum.value);
-		        },
-		        queryTokenizer: Bloodhound.tokenizers.whitespace,
-		        remote: {
-		            url: '/egworks/letterofacceptance/ajaxcontractors-loa?name=%QUERY',
-		            filter: function (data) {
-		                return $.map(data, function (ct) {
-		                    return {
-		                    	//glcode: ct.glcode,
-		                        id: ct.id,
-		                        name: ct.name,
-		                        code: ct.code
-		                    };
-		                });
-		            }
-		        }
-		    });
-		 
-		 	$('#creditGlcode').typeahead('destroy');
-			
-		    //custom.initialize();
-		    creditGlcode.initialize(); 
-		    var creditGlcode_typeahead = $('#creditGlcode').typeahead({ 
-				hint : true,
-				highlight : true,
-				minLength : 3
-				
-			}, {
-				displayKey : 'code',
-				source : creditGlcode.ttAdapter()
-			}).on('typeahead:selected', function(event, data){ 
-				$("#creditAccountHead").val(data.name);  
-				$("#glcodeid").val(data.id);    
-				//$("#contractor").val(data.value);   
-		    });		
-*/
-		  /*  $('.typeahead_option_items').typeahead(null, {
-		          displayKey: 'name',
-		          source: custom.ttAdapter(),
-		          hint: (App.isRTL() ? false : true),
-		    }).on('typeahead:selected', function (obj, value) {
-		        console.log(value.name);
-		    });*/
-	function creditGlcode_initialize() {
-		 var custom = new Bloodhound({
-		    datumTokenizer: function(d) { return d.tokens; },
-		    queryTokenizer: Bloodhound.tokenizers.whitespace,
-		  //remote: '/egworks/letterofacceptance/ajaxcontractors-loa?name=%QUERY'
-			   remote: {
-		            url: '/egworks/contractorbill/ajaxdeduction-coa?glCode=%QUERY',
-		            filter: function (data) {
-		                return $.map(data, function (ct) {
-		                    return {
-		                        id: ct.id,
-		                        name: ct.name,
-		                        glcode: ct.glcode
-		                    };
-		                });
-		            }
-		        }
-		    });
-
-		    custom.initialize();
-
-		    $('.creditGlcode').typeahead({
-		    	hint : true,
-				highlight : true,
-				minLength : 3
-				
-			}, {		    
-		          displayKey: 'glcode',
-		          source: custom.ttAdapter()
-		    }).on('typeahead:selected', function (event, data) {
-		    	$(".creditAccountHead").val(data.name); 
-				$(".creditglcodeid").val(data.id);    
-		    });
-		}
-	$('.creditGlcode').typeahead('destroy');
-	creditGlcode_initialize();
-		
-	
+	creditGlcode_initialize();	
 	replaceBillTypeChar();
 	
 	var currentState = $('#currentState').val();
@@ -213,7 +124,8 @@ $(document).ready(function(){
 		if (button != null && button == 'Approve') {
 			$('#approvalComent').removeAttr('required');
 		}
-
+		$('.creditGlcode').removeAttr('required');
+		$('.creditAmount').removeAttr('required');
 		document.forms[0].submit;
 		return true;
 	}
@@ -221,12 +133,15 @@ $(document).ready(function(){
 });
 
 function addDeductionRow() { 
+	
+	$('.creditGlcode').typeahead('destroy');
+	
 	var rowcount = $("#tblcreditdetails tbody tr").length;
 	if (rowcount < 30) {
 		if (document.getElementById('deductionRow') != null) {
 			// get Next Row Index to Generate
 			var nextIdx = 0;
-			if($detailsRowCount == 0)
+			if($detailsRowCount == 0 || $detailsRowCount == '')
 				nextIdx = $("#tblcreditdetails tbody tr").length;
 			else
 				nextIdx = $detailsRowCount++;
@@ -259,9 +174,12 @@ function addDeductionRow() {
 				$(this).attr(
 						{
 							'name' : function(_, name) {
-								//return name.replace(/\[.\]/g, '['+ nextIdx +']');
 								if(!($(this).attr('name')===undefined))
 									return name.replace(/\d+/, nextIdx); 
+							},
+							'id' : function(_, id) {
+								if(!($(this).attr('id')===undefined))
+									return id.replace(/\d+/, nextIdx); 
 							},
 							'data-idx' : function(_,dataIdx)
 							{
@@ -269,24 +187,20 @@ function addDeductionRow() {
 							}
 						});
 	
-					// if element is static attribute hold values for
-					// next row, otherwise it will be reset
+					// if element is static attribute hold values for next row, otherwise it will be reset
 					if (!$(this).data('static')) {
 						$(this).val('');
 					}
-					
-					//$(this).attr('readonly', false);
-					//$(this).removeAttr('disabled');
-					//$(this).prop('checked', false);
 	
 			}).end().appendTo("#tblcreditdetails tbody");		
+			
+			creditGlcode_initialize();
 			
 		}
 	} else {
 		  bootbox.alert('limit reached!');
 	}
 }
-
 
 function getRow(obj) {
 	if(!obj)return null;
@@ -321,10 +235,15 @@ function deleteDeductionRow(obj) {
 			
 			if(!$(hiddenElem).val())
 			{
-				$(this).find("input, errors, textarea").each(function() {
+				$(this).find("input, errors").each(function() {
 					   $(this).attr({
 					      'name': function(_, name) {
-					    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					    	  if(!($(this).attr('name')===undefined))
+					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'id': function(_, id) {
+					    	  if(!($(this).attr('id')===undefined))
+					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
 					      },
 						  'data-idx' : function(_,dataIdx)
 						  {
@@ -352,7 +271,7 @@ function calculateNetPayableAmount(){
 }	
 
 function validateNetPayableAmount() {
-	if($('#netPayableAmount').val() < 0) {
+	if($('#debitamount').val() != '' && $('#netPayableAmount').val() < 0) {
 		bootbox.alert("Net Payable amount cannot be less than zero!");
 		return false;
 	}
@@ -403,3 +322,43 @@ function roundTo(value, decimals, decimal_padding) {
 }
 
 
+function creditGlcode_initialize() {
+	 var custom = new Bloodhound({
+	    datumTokenizer: function(d) { return d.tokens; },
+	    queryTokenizer: Bloodhound.tokenizers.whitespace,
+		   remote: {
+	            url: '/egworks/contractorbill/ajaxdeduction-coa?glCode=%QUERY',
+	            filter: function (data) {
+	                return $.map(data, function (ct) {
+	                    return {
+	                        id: ct.id,
+	                        name: ct.name,
+	                        glcode: ct.glcode
+	                    };
+	                });
+	            }
+	        }
+    });
+
+    custom.initialize();
+
+    $('.creditGlcode').typeahead({
+    	hint : true,
+		highlight : true,
+		minLength : 3
+		
+	}, {		    
+          displayKey: 'glcode',
+          source: custom.ttAdapter()
+    }).on('typeahead:selected', function (event, data) {
+    	$(this).parents("tr:first").find('.creditaccountheadname').val(data.name);
+    	$(this).parents("tr:first").find('.creditglcodeid').val(data.id);    
+    });
+}
+
+function resetCreditAccountDetails(obj){
+	if(obj.value=='') {
+		$(obj).parents("tr:first").find('.creditglcodeid').val('');
+		$(obj).parents("tr:first").find('.creditaccountheadname').val('');
+	}
+}

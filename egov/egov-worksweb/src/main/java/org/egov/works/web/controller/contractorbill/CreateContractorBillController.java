@@ -323,9 +323,11 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         if (contractorBillRegister.getBillDetailes() == null || contractorBillRegister.getBillDetailes().isEmpty())
             resultBinder.reject("error.contractorbill.accountdetails.required", "error.contractorbill.accountdetails.required");
         for (final EgBilldetails egBilldetails : contractorBillRegister.getBillDetailes())
-            contractorBillRegister
-                    .addEgBilldetailes(
-                            getBillDetails(contractorBillRegister, egBilldetails, lineEstimateDetails, resultBinder, request));
+            if (egBilldetails.getGlcodeid() != null)
+                contractorBillRegister
+                        .addEgBilldetailes(
+                                getBillDetails(contractorBillRegister, egBilldetails, lineEstimateDetails, resultBinder,
+                                        request));
         final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
         final String netPayableAmount = request.getParameter("netPayableAmount");
         if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAmount)) {
@@ -342,7 +344,6 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     private EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
             final LineEstimateDetails lineEstimateDetails, final BindingResult resultBinder, final HttpServletRequest request) {
-
         egBilldetails.setFunctionid(new BigDecimal(lineEstimateDetails.getLineEstimate().getFunction().getId()));
         boolean isDebit = false;
         CChartOfAccounts coa = null;
